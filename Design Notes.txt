@@ -1,0 +1,47 @@
+
+Helpful Links
+-------------
+
+8 no-Flux strategies for React component communication
+https://www.javascriptstuff.com/component-communication/
+
+Setup Nest on Cloud Functions
+https://fireship.io/snippets/setup-nestjs-on-cloud-functions/
+
+UI Design Systems
+https://www.carbondesignsystem.com/
+https://cultureamp.design/
+
+Stop Using A Loading Spinner, There’s Something Better
+https://uxdesign.cc/stop-using-a-loading-spinner-theres-something-better-d186194f771e
+
+
+
+Built Using
+-------------
+https://react-bootstrap.github.io/
+https://nestjs.com/
+
+
+
+How to init a functional component. Maybe not ideal since this only runs after the first render, but that may be
+necessary if there's a delay fetching data from some sort of async call - should show a loading indicator while
+loading.
+
+useEffect(() => {
+    // No variable dependencies means this would run only once after the first render
+}, []);
+
+
+
+cd client
+npm run build
+firebase deploy --only hosting
+
+cd server
+npm run build
+firebase deploy --only functions
+
+
+Application available
+https://person-registry.web.app/
