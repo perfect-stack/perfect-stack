@@ -15,6 +15,15 @@ https://cultureamp.design/
 Stop Using A Loading Spinner, There’s Something Better
 https://uxdesign.cc/stop-using-a-loading-spinner-theres-something-better-d186194f771e
 
+Building reusable UI components with React Hooks
+https://blog.logrocket.com/building-reusable-ui-components-with-react-hooks/
+
+Making good component design decisions in React
+https://marvelapp.com/blog/making-good-component-design-decisions-in-react/
+
+How to deploy a react-app to different firebase hosting environments(dev and prod)
+https://victorbruce82.medium.com/how-to-deploy-a-react-app-to-different-firebase-hosting-environments-dev-and-prod-da3f4cae9a1e
+
 
 
 Built Using
@@ -34,13 +43,14 @@ useEffect(() => {
 
 
 
-cd client
-npm run build
-firebase deploy --only hosting
-
 cd server
 npm run build
 firebase deploy --only functions
+
+
+cd client
+npm run build:prod
+firebase deploy --only hosting
 
 
 Application available

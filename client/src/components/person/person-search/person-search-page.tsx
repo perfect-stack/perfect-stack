@@ -1,48 +1,29 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Form, Table} from "react-bootstrap";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Button, Form, Table} from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import { Person } from '../../../domain/person';
-import {findByCriteria} from "../person-client";
 import {LoadingSpinner} from "../../spinner/loading-spinner";
+import {usePersonSearch} from './use-person-search.client';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 type NameFormProps = {
-    handleSubmit: (name:string) => void;
+    nameCriteria: string;
+    onChange: (name:string) => void;
 }
 
 export const NameForm = (props:NameFormProps) => {
 
-    const [name, setName] = useState('');
-    const [ loading, setLoading ] = useState(false);
-
-    const handleSubmit = async (evt: any) => {
-        setLoading(true);
-        if(evt) {
-            evt.preventDefault();
-        }
-        await props.handleSubmit(name);
-        setLoading(false);
+    const onChange = (evt: any) => {
+        evt.preventDefault();
+        props.onChange(evt.target.value);
     }
 
-    useEffect(() => {
-        handleSubmit('');
-    }, []);
-
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={evt => evt.preventDefault()}>
             <Form.Group controlId="formName">
-                <Form.Label>Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter name" value={name} onChange={e => setName(e.target.value)}/>
-                <Form.Text className="text-muted">
-                    Filter available people by name.
-                </Form.Text>
+                <Form.Label>Search by name</Form.Label>
+                <Form.Control type="text" placeholder="Enter name" value={props.nameCriteria} onChange={onChange}/>
             </Form.Group>
-
-            <Button variant="primary" type="submit">
-                Submit
-                <LoadingSpinner loading={loading}/>
-            </Button>
         </Form>
     );
 }
@@ -50,25 +31,51 @@ export const NameForm = (props:NameFormProps) => {
 
 export const PersonSearchPage = () => {
 
-    const [personList, setPersonList] = useState<Person[]>([]);
+    const [nameCriteria, setNameCriteria] = useState<string>('');
+    const [pageNumber, setPageNumber] = useState<number>(1);
+    const {results, hasMore, loading, error} = usePersonSearch(nameCriteria, pageNumber);
 
-    const handleSubmit = async (nameCriteria: string) => {
-        setPersonList(await findByCriteria(nameCriteria));
-    }
+    const observer = useRef();
+    const lastRowElementRef = useCallback(node => {
+        if (loading) return;
+        if (observer && observer.current) {
+            // @ts-ignore
+            observer.current.disconnect();
+        }
+        // @ts-ignore
+        observer.current = new IntersectionObserver(entries => {
+            if(entries[0].isIntersecting && hasMore) {
+                setPageNumber(prevPageNumber => prevPageNumber + 1);
+            }
+        });
+        if (node) { // @ts-ignore
+            observer.current.observe(node);
+        }
+    }, [loading, hasMore]);
 
-    const renderPersonList = personList.map(person =>
-        <tr key={person.id}>
-            <td><Link to={`/app/person/view/${person.id}`}>{person.givenName} {person.familyName}</Link></td>
-            <td>{person.emailAddress}</td>
-        </tr>
-    );
+    useEffect(() => {
+        setPageNumber(1);
+    }, [nameCriteria]);
+
+    const personRows = results.map((person, index) => {
+        if(results.length === index + 1) {
+            return <tr key={person.id} ref={lastRowElementRef}>
+                <td><Link to={`/app/person/view/${person.id}`}>{person.givenName} {person.familyName}</Link></td>
+                <td>{person.emailAddress}</td>
+            </tr>
+        } else {
+            return <tr key={person.id}>
+                <td><Link to={`/app/person/view/${person.id}`}>{person.givenName} {person.familyName}</Link></td>
+                <td>{person.emailAddress}</td>
+            </tr>
+        }
+    });
 
     return (
         <div>
             <h2>Person Search</h2>
 
-            <NameForm handleSubmit={handleSubmit}/>
-            <br/>
+            <NameForm nameCriteria={nameCriteria} onChange={setNameCriteria}/>
 
             <Table striped bordered size="sm">
                 <thead>
@@ -78,9 +85,12 @@ export const PersonSearchPage = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {renderPersonList}
+                {personRows}
                 </tbody>
             </Table>
+
+            <div>{loading && 'Loading...'}</div>
+            <div>{error && 'Error!'}</div>
         </div>
     );
 }

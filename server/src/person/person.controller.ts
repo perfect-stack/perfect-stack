@@ -14,9 +14,12 @@ import { PersonService } from './person.service';
 export class PersonController {
   constructor(private personService: PersonService) {}
 
-  @Get()
-  findAll(@Query('nameCriteria') nameCriteria?: string): Promise<Person[]> {
-    return this.personService.findAll(nameCriteria);
+  @Get('/query')
+  findAll(
+    @Query('nameCriteria') nameCriteria?: string,
+    @Query('pageNumber') pageNumber?: number,
+  ): Promise<Person[]> {
+    return this.personService.findAll(nameCriteria, pageNumber);
   }
 
   @Get(':id')

@@ -16,20 +16,34 @@ const db = admin.firestore();
 export class PersonService implements OnApplicationBootstrap {
   private readonly logger = new Logger(PersonService.name);
 
-  async findAll(nameCriteria: string): Promise<Person[]> {
-    this.logger.log(`findAll nameCriteria = ${nameCriteria}`);
+  async findAll(nameCriteria?: string, pageNumber?: number): Promise<Person[]> {
+    this.logger.log(
+      `findAll pageNumber = ${pageNumber}, nameCriteria = ${nameCriteria}`,
+    );
 
     if (!nameCriteria) {
       nameCriteria = '';
     }
+
+    if (!pageNumber) {
+      pageNumber = 1;
+    }
+
+    const pageSize = 20;
+    const offset = (pageNumber - 1) * pageSize;
 
     const personRef = db.collection('person');
     const queryRef = personRef
       .where('givenName', '>=', nameCriteria)
       .where('givenName', '<=', nameCriteria + '\uf8ff');
 
+    const querySnapshot = await queryRef
+      .orderBy('givenName')
+      .offset(offset)
+      .limit(20)
+      .get();
+
     const personList: Person[] = [];
-    const querySnapshot = await queryRef.orderBy('givenName').limit(20).get();
     querySnapshot.forEach((doc) => {
       personList.push(<Person>doc.data());
     });

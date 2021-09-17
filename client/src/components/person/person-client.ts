@@ -2,10 +2,10 @@ import axios from "axios";
 import {Person} from "../../domain/person";
 import {currentUserStore} from "../../app";
 
+const { REACT_APP_API_URL } = process.env;
 
 export const api = axios.create({
-    //baseURL: `http://localhost:3080/`,
-    baseURL: ` https://us-central1-person-registry.cloudfunctions.net/api`
+    baseURL: REACT_APP_API_URL,
 });
 
 api.interceptors.request.use( async (config) => {
@@ -14,8 +14,8 @@ api.interceptors.request.use( async (config) => {
     return config;
 });
 
-export const findByCriteria = async (nameCriteria: string): Promise<Person[]> => {
-    const response = await api.get(`/person?nameCriteria=${nameCriteria}`);
+export const findByCriteria = async (nameCriteria: string, pageNumber: number): Promise<Person[]> => {
+    const response = await api.get(`/person/query?nameCriteria=${nameCriteria}&pageNumber=${pageNumber}`);
     const list:Person[] = [];
     const responseList: any[] = response.data;
     responseList.map(p => {
