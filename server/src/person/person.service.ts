@@ -1,13 +1,10 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { Person } from '../domain/person';
 import * as fs from 'fs';
-import csv from 'csv-parser';
+import * as path from 'path';
+import * as csv from 'fast-csv';
 import admin from 'firebase-admin';
-import { uuid } from 'uuidv4';
-
-// admin.initializeApp({
-//   credential: admin.credential.applicationDefault(),
-// });
+import { v4 as uuidv4 } from 'uuid';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -58,7 +55,7 @@ export class PersonService implements OnApplicationBootstrap {
   }
 
   async save(person: Person): Promise<Person> {
-    !person.id ? (person.id = uuid()) : null;
+    !person.id ? (person.id = uuidv4()) : null;
     const docRef = db.collection('person').doc(person.id);
     await docRef.set(person);
     return person;
@@ -67,27 +64,27 @@ export class PersonService implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<any> {
     const personList = await this.findAll(null);
     if (personList.length === 0) {
-      fs.createReadStream('etc/FakeNameGenerator.com_145b5e3e.csv')
-        .pipe(csv())
-        .on('data', (row) => {
-          this.createFakePerson(row);
-        })
-        .on('end', () => {
-          this.logger.log('Fake Person CSV file successfully processed');
-        });
+      fs.createReadStream(
+        path.resolve('etc', 'FakeNameGenerator.com_145b5e3e.csv'),
+      )
+        .pipe(csv.parse({ headers: true }))
+        .on('error', (error) => this.logger.error(error))
+        .on('data', (row) => this.createFakePerson(row))
+        .on('end', (rowCount: number) =>
+          this.logger.log(`Parsed and created ${rowCount} Person documents`),
+        );
     } else {
       this.logger.log('Skipping Fake Person loading.');
     }
   }
 
-  createFakePerson(row: any) {
+  async createFakePerson(row: any) {
     const person: Person = {
       givenName: row.GivenName,
       familyName: row.Surname,
       emailAddress: row.EmailAddress,
     };
 
-    console.log('Create: ' + person.emailAddress);
-    this.save(person);
+    await this.save(person);
   }
 }

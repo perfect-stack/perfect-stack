@@ -27,9 +27,8 @@
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.0.0",
     "@nestjs/platform-express": "^7.6.18",
-    "@nestjs/typeorm": "^7.1.5",
-    "csv-parser": "^3.0.0",
     "express": "^4.17.1",
+    "fast-csv": "^4.3.6",
     "firebase-admin": "^9.10.0",
     "firebase-functions": "^3.14.1",
     "passport": "^0.4.1",
@@ -37,7 +36,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
-    "uuidv4": "^6.2.10"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
