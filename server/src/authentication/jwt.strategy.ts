@@ -25,8 +25,6 @@ async function getJwtKey(keyId: string): Promise<string> {
       jwtKeys[gid] = googleKeys[gid];
     }
 
-    //jwtKeys['decisionbear'] = process.env.bearTokenSecret;
-
     keyValue = jwtKeys[keyId];
     if (!keyValue) {
       console.error('Unable to find JWT public key for; ' + keyId);
