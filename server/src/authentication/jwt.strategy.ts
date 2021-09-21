@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios');
@@ -61,6 +61,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    return payload;
+    // Uncomment the following line for a quick easy way of seeing the JWT payload in clear text (which is safe)
+    // without having to muck about grabbing the Base64 encoded version and decoding that
+    // console.log(`validate token: ${JSON.stringify(payload)}`);
+
+    const issuer = payload.iss;
+    if (issuer === 'https://securetoken.google.com/perfect-stack-demo') {
+      return payload;
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 }

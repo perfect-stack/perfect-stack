@@ -54,8 +54,8 @@ export const LoginPage = () => {
                     history.push('/app/person/search');
 
                 }).catch((error) => {
-                var errorCode = error.code;
-                var errorMessage = error.message;
+                let errorCode = error.code;
+                let errorMessage = error.message;
                 console.log(`Sign-in error: ${errorCode} ${errorMessage}`);
             });
         }
