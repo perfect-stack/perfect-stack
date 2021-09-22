@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Button, Form, Table} from 'react-bootstrap';
+import { Form, Table} from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import {LoadingSpinner} from "../../spinner/loading-spinner";
 import {usePersonSearch} from './use-person-search.client';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
