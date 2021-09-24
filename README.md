@@ -2,16 +2,17 @@
 
 It's a starter application stack for building enterprise level web applications. Based on ReactJS/NestJS/Docker and Firebase or PostgreSQL it contains ready to run working code and utilities for getting started quickly with modern enterprise development.
 
-#!! Under Construction !!
+## !! Under Construction !!
 
- - Early Demo: https://person-registry.web.app/
+ - Demo here: https://perfect-stack-demo.web.app
+ - Getting Started: https://github.com/perfect-stack/perfect-stack/wiki/Getting-Started
  - See More: https://perfect-consulting.co.nz
 
 
 ## Why - for businesses?
 
 - Speed of development
-- Modern future proof architecture
+- Modern future-proof architecture
 - Lots of baked-in features that otherwise get missed
 - Less cost
 
@@ -47,6 +48,8 @@ It's a starter application stack for building enterprise level web applications.
 - Every other serverless platform (Azure, Heroku etc)  - but it's Docker
 
 ## Features
+
+This is the roadmap of planned features.
 
 - Pagination
 - Table sorting

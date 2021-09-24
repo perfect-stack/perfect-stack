@@ -30,7 +30,7 @@
     "express": "^4.17.1",
     "fast-csv": "^4.3.6",
     "firebase-admin": "^9.10.0",
-    "firebase-functions": "^3.14.1",
+    "firebase-functions": "^3.15.7",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.13",
@@ -78,7 +78,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "engines": {
     "node": "14"
   }
