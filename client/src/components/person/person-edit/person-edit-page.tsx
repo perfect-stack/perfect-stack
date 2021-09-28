@@ -73,6 +73,13 @@ export const PersonEditPage = () => {
                     </Col>
                 </Form.Group>
 
+                <Form.Group as={Row} controlId="formBirthday">
+                    <Form.Label column sm="2">Birthday</Form.Label>
+                    <Col sm="10">
+                        <Form.Control type="date" {...register('birthday')}/>
+                    </Col>
+                </Form.Group>
+
                 <Button variant="primary" type="submit" className="mr-2">
                     Submit
                     <LoadingSpinner loading={loading}/>

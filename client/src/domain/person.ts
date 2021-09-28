@@ -6,6 +6,7 @@ export class Person {
   public familyName?: string = '';
   public emailAddress?: string = '';
   public phoneNumber?: string = '';
+  public birthday?: string = '';
 
   public getFullName() {
     return this.givenName + ' ' + this.familyName;

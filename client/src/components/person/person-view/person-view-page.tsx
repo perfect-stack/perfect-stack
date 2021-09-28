@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 
 import { Person } from "../../../domain/person";
 import { findOne } from "../person-client";
+import {DateTimeFormatter, LocalDate} from '@js-joda/core';
 
 
 export const PersonViewPage = () => {
@@ -25,6 +26,16 @@ export const PersonViewPage = () => {
         history.push(`/app/person/search`);
     }
 
+    const renderDate = (dateValue: string | undefined): string => {
+        if(dateValue) {
+            const localDate = LocalDate.parse(dateValue);
+            const displayFormat = DateTimeFormatter.ofPattern('dd/MM/yyyy');
+            return displayFormat.format(localDate);
+        }
+        else {
+            return '';
+        }
+    }
 
     return (
         <div>
@@ -42,6 +53,13 @@ export const PersonViewPage = () => {
                     <Form.Label column sm="2">Email address</Form.Label>
                     <Col sm="10">
                         <Form.Control plaintext readOnly value={person.emailAddress}/>
+                    </Col>
+                </Form.Group>
+
+                <Form.Group as={Row} controlId="formBirthday">
+                    <Form.Label column sm="2">Birthday</Form.Label>
+                    <Col sm="10">
+                        <Form.Control plaintext readOnly value={renderDate(person.birthday)}/>
                     </Col>
                 </Form.Group>
             </Form>

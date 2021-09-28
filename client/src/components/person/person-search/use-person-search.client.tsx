@@ -47,5 +47,6 @@ export const usePersonSearch = (nameCriteria: string, pageNumber: number) => {
         });
         return () => cancel();
     }, [nameCriteria, pageNumber]);
+
     return {loading, error, results, hasMore};
 }
