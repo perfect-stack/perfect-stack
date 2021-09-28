@@ -6,14 +6,6 @@ import * as csv from 'fast-csv';
 import admin from 'firebase-admin';
 import { v4 as uuidv4 } from 'uuid';
 import { DateTimeFormatter, LocalDate } from '@js-joda/core';
-import firestore, {
-  DocumentData,
-  FieldValue,
-  FirestoreDataConverter,
-  Query,
-  QueryDocumentSnapshot,
-} from '@google-cloud/firestore';
-import { plainToClass } from 'class-transformer';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -44,7 +36,6 @@ export class PersonService implements OnApplicationBootstrap {
       .where('givenName', '<=', nameCriteria + '\uf8ff');
 
     const querySnapshot = await queryRef
-      .withConverter(new ClassConverter())
       .orderBy('givenName')
       .offset(offset)
       .limit(20)
@@ -66,10 +57,7 @@ export class PersonService implements OnApplicationBootstrap {
 
   async save(person: Person): Promise<Person> {
     !person.id ? (person.id = uuidv4()) : null;
-    const docRef = db
-      .collection('person')
-      //      .withConverter(new PersonConvertor())
-      .doc(person.id);
+    const docRef = db.collection('person').doc(person.id);
     await docRef.set(person);
     return person;
   }
@@ -100,27 +88,12 @@ export class PersonService implements OnApplicationBootstrap {
       givenName: row.GivenName,
       familyName: row.Surname,
       emailAddress: row.EmailAddress,
-      birthday: LocalDate.parse(row.Birthday, fakeNameDateFormatter),
+      birthday: LocalDate.parse(row.Birthday, fakeNameDateFormatter).format(
+        DateTimeFormatter.ISO_LOCAL_DATE,
+      ),
+      gender: row.Gender,
     };
 
     await this.save(person);
-  }
-}
-
-class ClassConverter implements firestore.FirestoreDataConverter<Person> {
-  fromFirestore(snapshot: FirebaseFirestore.QueryDocumentSnapshot): Person {
-    const values = snapshot.data();
-    return plainToClass(Person, values);
-  }
-
-  toFirestore(
-    modelObject: Person | Partial<Person>,
-    options?: FirebaseFirestore.SetOptions,
-  ): FirebaseFirestore.DocumentData {
-    const data: any = {
-      ...modelObject,
-    };
-
-    return data;
   }
 }
