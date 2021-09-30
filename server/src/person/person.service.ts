@@ -84,13 +84,17 @@ export class PersonService implements OnApplicationBootstrap {
     // EmailAddress,TelephoneNumber,TelephoneCountryCode,Birthday,
     // Occupation,Company,BloodType,Centimeters
     const fakeNameDateFormatter = DateTimeFormatter.ofPattern('M/d/yyyy');
+
+    const birthday = LocalDate.parse(
+      row.Birthday,
+      fakeNameDateFormatter,
+    ).format(DateTimeFormatter.ISO_LOCAL_DATE);
+
     const person: Person = {
       givenName: row.GivenName,
       familyName: row.Surname,
       emailAddress: row.EmailAddress,
-      birthday: LocalDate.parse(row.Birthday, fakeNameDateFormatter).format(
-        DateTimeFormatter.ISO_LOCAL_DATE,
-      ),
+      birthday: birthday,
       gender: row.Gender,
     };
 
