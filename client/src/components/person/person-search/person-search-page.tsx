@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import { Form, Table} from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import {usePersonSearch} from './use-person-search.client';
+import {findByCriteria} from '../person-client';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
