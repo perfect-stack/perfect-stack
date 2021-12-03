@@ -12,6 +12,8 @@ export class PersonSearchComponent implements OnInit {
 
   public searchCriteria = new PersonSearchCriteria();
   public pageNumber = 1;
+  public pageSize = 50;
+  public collectionSize = 0;
   public searchResults: Person[] = [];
 
   constructor(protected readonly personService: PersonService) { }
@@ -21,8 +23,9 @@ export class PersonSearchComponent implements OnInit {
   }
 
   onSearch() {
-    this.personService.findByCriteria(this.searchCriteria.nameCriteria, this.pageNumber).subscribe( response => {
-      this.searchResults = response;
+    this.personService.findByCriteria(this.searchCriteria.nameCriteria, this.pageNumber, this.pageSize).subscribe( response => {
+      this.searchResults = response.resultList;
+      this.collectionSize = response.totalCount;
     });
   }
 

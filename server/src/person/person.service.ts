@@ -1,79 +1,99 @@
-import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  OnApplicationBootstrap,
+} from '@nestjs/common';
 import { Person } from '../domain/person';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as csv from 'fast-csv';
-import admin from 'firebase-admin';
-import { v4 as uuidv4 } from 'uuid';
 import { DateTimeFormatter, LocalDate } from '@js-joda/core';
-
-admin.initializeApp();
-const db = admin.firestore();
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityManager, EntityRepository, QueryOrder } from '@mikro-orm/core';
+import { PageQueryResponse } from '../domain/response/page-query.response';
 
 @Injectable()
 export class PersonService implements OnApplicationBootstrap {
   private readonly logger = new Logger(PersonService.name);
 
-  async findAll(nameCriteria?: string, pageNumber?: number): Promise<Person[]> {
+  constructor(
+    @InjectRepository(Person)
+    protected readonly personRepository: EntityRepository<Person>,
+    protected readonly em: EntityManager,
+  ) {}
+
+  async findAll(
+    nameCriteria?: string,
+    pageNumber = 1,
+    pageSize = 10,
+  ): Promise<PageQueryResponse<Person>> {
     this.logger.log(
       `findAll pageNumber = ${pageNumber}, nameCriteria = ${nameCriteria}`,
     );
 
-    if (!nameCriteria) {
-      nameCriteria = '';
+    if (nameCriteria) {
+      nameCriteria = nameCriteria + '%';
+    } else {
+      nameCriteria = '%';
     }
 
     if (!pageNumber) {
       pageNumber = 1;
     }
 
-    const pageSize = 20;
     const offset = (pageNumber - 1) * pageSize;
 
-    const personRef = db.collection('person');
-    const queryRef = personRef
-      .where('givenName', '>=', nameCriteria)
-      .where('givenName', '<=', nameCriteria + '\uf8ff');
+    const [results, resultSize] = await this.personRepository.findAndCount(
+      { givenName: { $like: nameCriteria } },
+      {
+        orderBy: { givenName: QueryOrder.ASC },
+        offset: offset,
+        limit: pageSize,
+      },
+    );
 
-    const querySnapshot = await queryRef
-      .orderBy('givenName')
-      .offset(offset)
-      .limit(20)
-      .get();
+    console.log(`Found ${results.length} of ${resultSize}`);
 
-    const personList: Person[] = [];
-    querySnapshot.forEach((doc) => {
-      personList.push(<Person>doc.data());
-    });
-
-    return personList;
+    return {
+      resultList: results,
+      totalCount: resultSize,
+    };
   }
 
   async findOne(id: string): Promise<Person> {
-    const personRef = db.collection('person');
-    const doc = await personRef.doc(id).get();
-    return <Person>doc.data();
+    const person = await this.personRepository.findOne({ id: id }, ['person']);
+
+    if (!person) {
+      throw new HttpException('Person not found', HttpStatus.NOT_FOUND);
+    }
+
+    return person;
   }
 
   async save(person: Person): Promise<Person> {
-    !person.id ? (person.id = uuidv4()) : null;
-    const docRef = db.collection('person').doc(person.id);
-    await docRef.set(person);
+    person = this.personRepository.create(person);
+    await this.personRepository.persist(person);
     return person;
   }
 
   async onApplicationBootstrap(): Promise<any> {
-    const personList = await this.findAll(null);
-    if (personList.length === 0) {
+    const personQueryResponse = await this.findAll(null);
+    console.log(
+      `onApplicationBootstrap() personList.length = ${personQueryResponse.totalCount}`,
+    );
+    if (personQueryResponse.totalCount === 0) {
       fs.createReadStream(
         path.resolve('etc', 'FakeNameGenerator.com_78362a93.csv'),
       )
         .pipe(csv.parse({ headers: true }))
         .on('error', (error) => this.logger.error(error))
         .on('data', (row) => this.createFakePerson(row))
-        .on('end', (rowCount: number) =>
-          this.logger.log(`Parsed and created ${rowCount} Person documents`),
-        );
+        .on('end', (rowCount: number) => {
+          this.personRepository.flush();
+          this.logger.log(`Parsed and created ${rowCount} Person documents`);
+        });
     } else {
       this.logger.log('Skipping Fake Person loading.');
     }

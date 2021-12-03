@@ -22,6 +22,11 @@
   },
   "dependencies": {
     "@js-joda/core": "^4.0.0",
+    "@mikro-orm/cli": "^4.5.9",
+    "@mikro-orm/core": "^4.5.9",
+    "@mikro-orm/nestjs": "^4.3.1",
+    "@mikro-orm/postgresql": "^4.5.9",
+    "@mikro-orm/sql-highlighter": "^1.0.1",
     "@nestjs/common": "^7.6.15",
     "@nestjs/config": "^1.0.1",
     "@nestjs/core": "^7.6.15",
@@ -82,5 +87,12 @@
   "main": "dist/src/index.js",
   "engines": {
     "node": "14"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./src/mikro-orm.config.ts",
+      "./dist/src/mikro-orm.config.js"
+    ]
   }
 }
