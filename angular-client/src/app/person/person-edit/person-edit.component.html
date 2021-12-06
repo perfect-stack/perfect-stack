@@ -1,1 +1,22 @@
-<p>person-edit works!</p>
+<h2>Person Edit</h2>
+
+<ng-container *ngIf="person$ | async as person">
+  <div class="container-fluid mt-3">
+    <form class="form" #form="ngForm" (ngSubmit)="onSubmit(person)">
+      <div class="form-group row">
+        <label class="col-2" for="givenName">Given name</label>
+        <input class="col-10 form-control" type="text" id="givenName" name="givenName" [(ngModel)]="person.givenName">
+      </div>
+      <div class="form-group row">
+        <label class="col-2" for="familyName">Family name</label>
+        <input class="col-10 form-control" type="text" id="familyName" name="familyName" [(ngModel)]="person.familyName">
+      </div>
+      <div class="form-group row">
+        <label class="col-2" for="emailAddress">Email address</label>
+        <input class="col-10 form-control" type="email" id="emailAddress" name="emailAddress" [(ngModel)]="person.emailAddress">
+      </div>
+      <button type="submit" class="btn btn-primary mr-2">Save</button>
+      <button class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
+    </form>
+  </div>
+</ng-container>

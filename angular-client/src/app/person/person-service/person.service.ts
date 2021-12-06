@@ -13,4 +13,12 @@ export class PersonService {
   findByCriteria(nameCriteria = "", pageNumber = 1, pageSize = 10) {
     return this.http.get<PageQueryResponse<Person>>(`http://localhost:3080/person/query?nameCriteria=${nameCriteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
+
+  findById(id: string | null) {
+    return this.http.get<Person>(`http://localhost:3080/person/${id}`);
+  }
+
+  save(person: Person) {
+    return this.http.post(`http://localhost:3080/person`, person);
+  }
 }

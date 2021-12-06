@@ -63,7 +63,7 @@ export class PersonService implements OnApplicationBootstrap {
   }
 
   async findOne(id: string): Promise<Person> {
-    const person = await this.personRepository.findOne({ id: id }, ['person']);
+    const person = await this.personRepository.findOne({ id: id });
 
     if (!person) {
       throw new HttpException('Person not found', HttpStatus.NOT_FOUND);
@@ -72,10 +72,12 @@ export class PersonService implements OnApplicationBootstrap {
     return person;
   }
 
-  async save(person: Person): Promise<Person> {
-    person = this.personRepository.create(person);
-    await this.personRepository.persist(person);
-    return person;
+  async save(personData: Person): Promise<Person> {
+    console.log(`PersonService.save(): ${JSON.stringify(personData)}`);
+    const personEntity = await this.findOne(personData.id);
+    this.personRepository.assign(personEntity, personData);
+    await this.personRepository.persistAndFlush(personEntity);
+    return personEntity;
   }
 
   async onApplicationBootstrap(): Promise<any> {

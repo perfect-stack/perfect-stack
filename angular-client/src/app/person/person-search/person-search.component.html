@@ -15,7 +15,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let item of searchResults">
-      <td>{{item.givenName}} {{item.familyName}}</td>
+      <td><a [routerLink]="['/person/view', item.id]">{{item.givenName}} {{item.familyName}}</a></td>
       <td>{{item.emailAddress}}</td>
     </tr>
   </tbody>
