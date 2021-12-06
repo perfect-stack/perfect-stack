@@ -18,13 +18,13 @@ export class PersonController {
     return this.personService.findAll(nameCriteria, pageNumber, pageSize);
   }
 
-  @PublicApi()
+  //  @PublicApi()
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Person> {
     return this.personService.findOne(id);
   }
 
-  @PublicApi()
+  //  @PublicApi()
   @Post()
   save(@Body() person: Person): Promise<Person> {
     return this.personService.save(person);
