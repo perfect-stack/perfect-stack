@@ -1,0 +1,27 @@
+{
+  "name": "Person",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "type": "Identifier",
+      "visibility": "Hidden"
+    },
+    {
+      "name": "given_name",
+      "label": "Given name",
+      "description": "The person's given name"
+    },
+    {
+      "name": "family_name",
+      "label": "Family name",
+      "description": "The person's family name"
+    },
+    {
+      "name": "email_address",
+      "label": "Email address",
+      "description": "Email address"
+    }
+  ]
+}
