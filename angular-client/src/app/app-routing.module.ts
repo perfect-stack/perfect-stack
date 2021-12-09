@@ -4,11 +4,12 @@ import {PersonSearchComponent} from './person/person-search/person-search.compon
 import {PersonViewComponent} from './person/person-view/person-view.component';
 import {PersonEditComponent} from './person/person-edit/person-edit.component';
 import {LandingComponent} from './landing/landing.component';
+import {AppGuard} from './app-guard.service';
 
 const routes: Routes = [
-  { path: 'person/search', component: PersonSearchComponent },
-  { path: 'person/view/:id', component: PersonViewComponent },
-  { path: 'person/edit/:id', component: PersonEditComponent },
+  { path: 'person/search', component: PersonSearchComponent, canActivate: [AppGuard] },
+  { path: 'person/view/:id', component: PersonViewComponent, canActivate: [AppGuard] },
+  { path: 'person/edit/:id', component: PersonEditComponent, canActivate: [AppGuard] },
   { path: '**', component: LandingComponent }
 ];
 

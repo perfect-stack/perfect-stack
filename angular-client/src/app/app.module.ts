@@ -15,6 +15,7 @@ import {AuthInterceptor} from './auth-interceptor';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import getFirebase from '../firebase';
 import { LandingComponent } from './landing/landing.component';
+import {AuthenticationService} from './authentication/authentication.service';
 
 
 function initializeApp() {
@@ -60,6 +61,7 @@ function initializeApp() {
       multi: true
     },
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+    AuthenticationService,
     PersonService
   ],
   bootstrap: [AppComponent]
