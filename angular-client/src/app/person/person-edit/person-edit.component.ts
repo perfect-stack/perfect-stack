@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {map, Observable, switchMap} from 'rxjs';
+import {Observable, switchMap} from 'rxjs';
 import {Person} from '../../domain/person';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PersonService} from '../person-service/person.service';
@@ -30,7 +30,7 @@ export class PersonEditComponent implements OnInit {
 
   onSubmit(person: Person) {
     console.log(`onSubmit: ${JSON.stringify(person)}`);
-    this.personService.save(person).subscribe(() => {
+    this.personService.update(person).subscribe(() => {
       console.log(`person save completed`);
       this.onCancel();
     });

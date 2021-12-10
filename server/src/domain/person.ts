@@ -1,26 +1,25 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import { v4 } from 'uuid';
+import { Column, Model, Table } from 'sequelize-typescript';
 
-@Entity()
-export class Person {
-  @PrimaryKey()
-  public id?: string = v4();
+@Table
+export class Person extends Model {
+  //public id?: string = v4();
 
-  @Property()
+  @Column
   public givenName?: string;
 
-  @Property()
+  @Column
   public familyName?: string;
 
-  @Property()
+  @Column
   public emailAddress: string;
 
-  @Property({ nullable: true })
+  @Column
   public phoneNumber?: string;
 
-  @Property({ nullable: true })
+  @Column
   public birthday?: string;
 
-  @Property({ nullable: true })
+  @Column
   public gender?: 'male' | 'female';
 }

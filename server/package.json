@@ -22,11 +22,6 @@
   },
   "dependencies": {
     "@js-joda/core": "^4.0.0",
-    "@mikro-orm/cli": "^4.5.9",
-    "@mikro-orm/core": "^4.5.9",
-    "@mikro-orm/nestjs": "^4.3.1",
-    "@mikro-orm/postgresql": "^4.5.9",
-    "@mikro-orm/sql-highlighter": "^1.0.1",
     "@nestjs/common": "^7.6.15",
     "@nestjs/config": "^1.0.1",
     "@nestjs/core": "^7.6.15",
@@ -39,9 +34,12 @@
     "firebase-functions": "^3.15.7",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
+    "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
+    "sequelize": "^6.11.0",
+    "sequelize-typescript": "^2.1.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -52,6 +50,7 @@
     "@types/jest": "^26.0.22",
     "@types/node": "^14.14.36",
     "@types/passport-jwt": "^3.0.6",
+    "@types/sequelize": "^4.28.10",
     "@types/supertest": "^2.0.10",
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.19.0",

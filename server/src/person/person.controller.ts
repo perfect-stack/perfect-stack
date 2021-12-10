@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { Person } from '../domain/person';
 import { PersonService } from './person.service';
 import { PageQueryResponse } from '../domain/response/page-query.response';
@@ -22,7 +22,12 @@ export class PersonController {
   }
 
   @Post()
-  save(@Body() person: Person): Promise<Person> {
-    return this.personService.save(person);
+  create(@Body() person: Person): Promise<Person> {
+    return this.personService.create(person);
+  }
+
+  @Put()
+  update(@Body() person: Person): Promise<Person> {
+    return this.personService.update(person);
   }
 }

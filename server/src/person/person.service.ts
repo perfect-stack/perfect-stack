@@ -1,6 +1,7 @@
 import {
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   Logger,
   OnApplicationBootstrap,
@@ -10,18 +11,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as csv from 'fast-csv';
 import { DateTimeFormatter, LocalDate } from '@js-joda/core';
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityManager, EntityRepository, QueryOrder } from '@mikro-orm/core';
 import { PageQueryResponse } from '../domain/response/page-query.response';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class PersonService implements OnApplicationBootstrap {
   private readonly logger = new Logger(PersonService.name);
 
   constructor(
-    @InjectRepository(Person)
-    protected readonly personRepository: EntityRepository<Person>,
-    protected readonly em: EntityManager,
+    @Inject('PERSONS_REPOSITORY')
+    private personsRepository: typeof Person,
   ) {}
 
   async findAll(
@@ -45,25 +44,28 @@ export class PersonService implements OnApplicationBootstrap {
 
     const offset = (pageNumber - 1) * pageSize;
 
-    const [results, resultSize] = await this.personRepository.findAndCount(
-      { givenName: { $like: nameCriteria } },
-      {
-        orderBy: { givenName: QueryOrder.ASC },
+    const { count, rows } =
+      await this.personsRepository.findAndCountAll<Person>({
+        where: {
+          givenName: {
+            [Op.like]: nameCriteria,
+          },
+        },
+        order: ['givenName'],
         offset: offset,
         limit: pageSize,
-      },
-    );
+      });
 
-    console.log(`Found ${results.length} of ${resultSize}`);
+    console.log(`Found ${rows.length} of ${count}`);
 
     return {
-      resultList: results,
-      totalCount: resultSize,
+      resultList: rows,
+      totalCount: count,
     };
   }
 
   async findOne(id: string): Promise<Person> {
-    const person = await this.personRepository.findOne({ id: id });
+    const person = Person.findByPk(id);
 
     if (!person) {
       throw new HttpException('Person not found', HttpStatus.NOT_FOUND);
@@ -72,12 +74,18 @@ export class PersonService implements OnApplicationBootstrap {
     return person;
   }
 
-  async save(personData: Person): Promise<Person> {
-    console.log(`PersonService.save(): ${JSON.stringify(personData)}`);
-    const personEntity = await this.findOne(personData.id);
-    this.personRepository.assign(personEntity, personData);
-    await this.personRepository.persistAndFlush(personEntity);
-    return personEntity;
+  async create(personData: any): Promise<Person> {
+    console.log(`PersonService.create(): ${JSON.stringify(personData)}`);
+    const person = await Person.create(personData);
+    return personData;
+  }
+
+  async update(personData: Person): Promise<Person> {
+    console.log(`PersonService.update(): ${JSON.stringify(personData)}`);
+    const person = await this.findOne(personData.id);
+    person.set(personData);
+    await person.save();
+    return personData;
   }
 
   async onApplicationBootstrap(): Promise<any> {
@@ -93,7 +101,6 @@ export class PersonService implements OnApplicationBootstrap {
         .on('error', (error) => this.logger.error(error))
         .on('data', (row) => this.createFakePerson(row))
         .on('end', (rowCount: number) => {
-          this.personRepository.flush();
           this.logger.log(`Parsed and created ${rowCount} Person documents`);
         });
     } else {
@@ -112,7 +119,7 @@ export class PersonService implements OnApplicationBootstrap {
       fakeNameDateFormatter,
     ).format(DateTimeFormatter.ISO_LOCAL_DATE);
 
-    const person: Person = {
+    const personData = {
       givenName: row.GivenName,
       familyName: row.Surname,
       emailAddress: row.EmailAddress,
@@ -120,6 +127,6 @@ export class PersonService implements OnApplicationBootstrap {
       gender: row.Gender,
     };
 
-    await this.save(person);
+    await this.create(personData);
   }
 }

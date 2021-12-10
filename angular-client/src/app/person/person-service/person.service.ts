@@ -18,7 +18,11 @@ export class PersonService {
     return this.http.get<Person>(`http://localhost:3080/person/${id}`);
   }
 
-  save(person: Person) {
+  create(person: Person) {
     return this.http.post(`http://localhost:3080/person`, person);
+  }
+
+  update(person: Person) {
+    return this.http.put(`http://localhost:3080/person`, person);
   }
 }
