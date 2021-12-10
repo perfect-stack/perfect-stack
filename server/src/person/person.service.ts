@@ -4,18 +4,13 @@ import {
   Inject,
   Injectable,
   Logger,
-  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { Person } from '../domain/person';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as csv from 'fast-csv';
-import { DateTimeFormatter, LocalDate } from '@js-joda/core';
 import { PageQueryResponse } from '../domain/response/page-query.response';
 import { Op } from 'sequelize';
 
 @Injectable()
-export class PersonService implements OnApplicationBootstrap {
+export class PersonService {
   private readonly logger = new Logger(PersonService.name);
 
   constructor(
@@ -86,47 +81,5 @@ export class PersonService implements OnApplicationBootstrap {
     person.set(personData);
     await person.save();
     return personData;
-  }
-
-  async onApplicationBootstrap(): Promise<any> {
-    const personQueryResponse = await this.findAll(null);
-    console.log(
-      `onApplicationBootstrap() personList.length = ${personQueryResponse.totalCount}`,
-    );
-    if (personQueryResponse.totalCount === 0) {
-      fs.createReadStream(
-        path.resolve('etc', 'FakeNameGenerator.com_78362a93.csv'),
-      )
-        .pipe(csv.parse({ headers: true }))
-        .on('error', (error) => this.logger.error(error))
-        .on('data', (row) => this.createFakePerson(row))
-        .on('end', (rowCount: number) => {
-          this.logger.log(`Parsed and created ${rowCount} Person documents`);
-        });
-    } else {
-      this.logger.log('Skipping Fake Person loading.');
-    }
-  }
-
-  async createFakePerson(row: any) {
-    // Number,Gender,NameSet,GivenName,Surname,StreetAddress,City,ZipCode,
-    // EmailAddress,TelephoneNumber,TelephoneCountryCode,Birthday,
-    // Occupation,Company,BloodType,Centimeters
-    const fakeNameDateFormatter = DateTimeFormatter.ofPattern('M/d/yyyy');
-
-    const birthday = LocalDate.parse(
-      row.Birthday,
-      fakeNameDateFormatter,
-    ).format(DateTimeFormatter.ISO_LOCAL_DATE);
-
-    const personData = {
-      givenName: row.GivenName,
-      familyName: row.Surname,
-      emailAddress: row.EmailAddress,
-      birthday: birthday,
-      gender: row.Gender,
-    };
-
-    await this.create(personData);
   }
 }

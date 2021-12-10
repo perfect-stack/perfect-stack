@@ -1,5 +1,4 @@
 import { Sequelize } from 'sequelize-typescript';
-import { Person } from './domain/person';
 
 export const databaseProviders = [
   {
@@ -13,8 +12,8 @@ export const databaseProviders = [
         password: 'Password01',
         database: 'perfect-stack-demo-db',
       });
-      sequelize.addModels([Person]);
-      await sequelize.sync();
+      // sequelize.addModels([]);
+      // await sequelize.sync();
       return sequelize;
     },
   },

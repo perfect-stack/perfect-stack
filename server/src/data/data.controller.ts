@@ -23,7 +23,7 @@ export class DataController {
     @Query('pageNumber') pageNumber?: number,
     @Query('pageSize') pageSize?: number,
   ): Promise<PageQueryResponse<Entity>> {
-    return;
+    return this.dataService.findAll(entityName, pageNumber, pageSize);
   }
 
   @Get('/:entityName/:id')
@@ -31,7 +31,7 @@ export class DataController {
     @Param('entityName') entityName: string,
     @Param('id') id: string,
   ): Promise<Entity> {
-    return;
+    return this.dataService.findOne(entityName, id);
   }
 
   @Post('/:entityName/:id')
@@ -39,15 +39,15 @@ export class DataController {
     @Param('entityName') entityName: string,
     @Body() entity: Entity,
   ): Promise<EntityResponse> {
-    return;
+    return this.dataService.create(entityName, entity);
   }
 
   @Put('/:entityName/:id')
   update(
     @Param('entityName') entityName: string,
-    @Param('id') id: string,
+    @Body() entity: Entity,
   ): Promise<EntityResponse> {
-    return;
+    return this.dataService.update(entityName, entity);
   }
 
   @Delete('/:entityName/:id')

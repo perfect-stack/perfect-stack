@@ -15,8 +15,8 @@
   </thead>
   <tbody>
     <tr *ngFor="let item of searchResults">
-      <td><a [routerLink]="['/person/view', item.id]">{{item.givenName}} {{item.familyName}}</a></td>
-      <td>{{item.emailAddress}}</td>
+      <td><a [routerLink]="['/person/view', item.id]">{{item.given_name}} {{item.family_name}}</a></td>
+      <td>{{item.email_address}}</td>
     </tr>
   </tbody>
 </table>
