@@ -24,6 +24,7 @@ export class AuthenticationService {
       if (user) {
         console.log(`AuthenticationService: user "${user.displayName}" is signed IN`);
         this.isLoggedIn = true;
+        this.navigateToFirstPage();
       } else {
         console.log('AuthenticationService: user is signed OUT');
         this.isLoggedIn = false;
@@ -66,7 +67,8 @@ export class AuthenticationService {
           //console.log(`Login successful: ${JSON.stringify(credential.toJSON())}`);
           console.log(`User = ${JSON.stringify(user.toJSON())}`);
 
-          this.navigateToFirstPage();
+          // don't do this here, let the authState change listener (above) do it instead
+          //this.navigateToFirstPage();
         }
       }).catch((error) => {
       // Handle Errors here.
