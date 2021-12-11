@@ -9,7 +9,7 @@ import {PersonSearchComponent} from './person/person-search/person-search.compon
 import {PersonEditComponent} from './person/person-edit/person-edit.component';
 import {PersonService} from './person/person-service/person.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {AuthInterceptor} from './auth-interceptor';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
@@ -49,6 +49,7 @@ function initializeApp() {
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     NgbModule,
     HttpClientModule,
