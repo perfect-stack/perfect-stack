@@ -18,7 +18,9 @@
 
             <ng-container *ngIf="attribute.visibility !== 'Hidden'">
               <div class="form-group">
-                <label [for]="attribute.name">{{attribute.label}}</label>
+                <label [for]="attribute.name">
+                  <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
+                </label>
                 <input class="form-control" type="text" [id]="attribute.name" [formControlName]="attribute.name">
               </div>
             </ng-container>
