@@ -1,0 +1,33 @@
+<h2>{{metaName}} Search</h2>
+
+<ng-container *ngIf="metaEntity$ | async as metaEntity">
+
+  <form class="form-inline">
+    <input type="text" class="form-control mb-2 mr-2" placeholder="Search by name..."
+           [(ngModel)]="searchCriteria.nameCriteria" name="nameCriteria">
+    <button type="submit" class="btn btn-primary mb-2" (click)="onSearch()">Submit</button>
+  </form>
+
+  <table class="table table-striped table-hover">
+    <thead>
+    <tr>
+      <ng-container *ngFor="let attribute of metaEntity.attributes">
+        <th scope="col" *ngIf="attribute.visibility !== 'Hidden'">{{attribute.label}}</th>
+      </ng-container>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of searchResults" (click)="onSelectRow(item.id)">
+      <ng-container *ngFor="let attribute of metaEntity.attributes">
+        <td *ngIf="attribute.visibility !== 'Hidden'">{{displayValue(attribute, item)}}</td>
+      </ng-container>
+    </tr>
+    </tbody>
+  </table>
+
+  <ngb-pagination [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize"
+                  (pageChange)="onSearch()">
+  </ngb-pagination>
+
+
+</ng-container>

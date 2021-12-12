@@ -16,6 +16,9 @@ import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import getFirebase from '../firebase';
 import { LandingComponent } from './landing/landing.component';
 import {AuthenticationService} from './authentication/authentication.service';
+import { DataSearchComponent } from './data/data-search/data-search.component';
+import { DataViewComponent } from './data/data-view/data-view.component';
+import { DataEditComponent } from './data/data-edit/data-edit.component';
 
 
 function initializeApp() {
@@ -45,6 +48,9 @@ function initializeApp() {
     PersonSearchComponent,
     PersonEditComponent,
     LandingComponent,
+    DataSearchComponent,
+    DataViewComponent,
+    DataEditComponent,
   ],
   imports: [
     BrowserModule,

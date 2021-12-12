@@ -84,7 +84,7 @@ export class AuthenticationService {
       this.redirectUrl = null;
     }
     else {
-      this.router.navigate(['/person/search']);
+      this.router.navigate(['/data/Person/search']);
     }
   }
 
