@@ -1,1 +1,42 @@
-<p>data-edit works!</p>
+<ng-container *ngIf="{
+   metaEntity: metaEntity$ | async,
+   entity: entity$ | async
+} as context">
+
+  <div *ngIf="!context.metaEntity; else EditEntity">
+    Loading...
+  </div>
+
+  <ng-template #EditEntity>
+    <ng-container *ngIf="context.entity">
+
+      <h2>{{context.metaEntity?.name}} Edit</h2>
+
+      <div class="container-fluid mt-3">
+
+        <form class="form" #form="ngForm" [formGroup]="entityForm" (ngSubmit)="onSubmit()">
+          <ng-container *ngFor="let attribute of context.metaEntity?.attributes">
+
+            <ng-container *ngIf="attribute.visibility !== 'Hidden'">
+              <div class="form-group row">
+                <label class="col-2" [for]="attribute.name">{{attribute.label}}</label>
+                <input class="col-10 form-control" type="text" [id]="attribute.name" [formControlName]="attribute.name">
+              </div>
+            </ng-container>
+
+          </ng-container>
+
+          <button type="submit" class="btn btn-primary mr-2">Save</button>
+          <button class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
+        </form>
+
+      </div>
+
+    </ng-container>
+  </ng-template>
+
+</ng-container>
+
+
+
+

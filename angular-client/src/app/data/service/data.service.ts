@@ -14,7 +14,7 @@ export class DataService {
     return this.http.get<PageQueryResponse<Entity>>(`http://localhost:3080/data/${entityName}?nameCriteria=${nameCriteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
-  findById(entityName: string, id: string | null) {
+  findById(entityName: string | null, id: string | null) {
     return this.http.get<Entity>(`http://localhost:3080/data/${entityName}/${id}`);
   }
 
@@ -22,7 +22,7 @@ export class DataService {
     return this.http.post(`http://localhost:3080/data/${entityName}/${entity.id}`, entity);
   }
 
-  update(entityName: string, entity: Entity) {
+  update(entityName: string | null, entity: Entity) {
     return this.http.put(`http://localhost:3080/data/${entityName}/${entity.id}`, entity);
   }
 }
