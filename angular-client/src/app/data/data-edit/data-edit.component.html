@@ -10,17 +10,16 @@
   <ng-template #EditEntity>
     <ng-container *ngIf="context.entity">
 
-      <h2>{{context.metaEntity?.name}} Edit</h2>
-
       <div class="container-fluid mt-3">
+        <h2 class="mb-3">{{context.metaEntity?.name}} Edit</h2>
 
         <form class="form" #form="ngForm" [formGroup]="entityForm" (ngSubmit)="onSubmit()">
           <ng-container *ngFor="let attribute of context.metaEntity?.attributes">
 
             <ng-container *ngIf="attribute.visibility !== 'Hidden'">
-              <div class="form-group row">
-                <label class="col-2" [for]="attribute.name">{{attribute.label}}</label>
-                <input class="col-10 form-control" type="text" [id]="attribute.name" [formControlName]="attribute.name">
+              <div class="form-group">
+                <label [for]="attribute.name">{{attribute.label}}</label>
+                <input class="form-control" type="text" [id]="attribute.name" [formControlName]="attribute.name">
               </div>
             </ng-container>
 

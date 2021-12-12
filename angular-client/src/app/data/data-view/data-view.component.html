@@ -10,10 +10,8 @@
   <ng-template #ViewEntity>
     <ng-container *ngIf="context.entity">
 
-      <h2>{{context.metaEntity?.name}} View</h2>
-
-
       <div class="container-fluid mt-3">
+        <h2 class="mb-3">{{context.metaEntity?.name}} View</h2>
 
         <ng-container *ngFor="let attribute of context.metaEntity?.attributes">
           <div class="row" *ngIf="attribute.visibility !== 'Hidden'">
