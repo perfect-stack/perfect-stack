@@ -7,6 +7,11 @@ import {from, switchMap} from 'rxjs';
 export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
+
+    if(req.url.includes('menu')) {
+      return next.handle(req);
+    }
+
     const auth = getAuth();
     if(auth.currentUser) {
       const obs = from(auth.currentUser.getIdToken());

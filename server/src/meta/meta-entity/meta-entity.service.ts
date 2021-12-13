@@ -7,14 +7,14 @@ import * as fs from 'fs';
 
 @Injectable()
 export class MetaEntityService {
-  static readonly META_DIR = 'meta/entities';
+  static readonly META_ENTITY_DIR = 'meta/entities';
 
   constructor(protected readonly ormService: OrmService) {}
 
   async findAll(): Promise<MetaEntity[]> {
-    if (fs.existsSync(MetaEntityService.META_DIR)) {
+    if (fs.existsSync(MetaEntityService.META_ENTITY_DIR)) {
       const resultList: MetaEntity[] = [];
-      const fileNames = fs.readdirSync(MetaEntityService.META_DIR);
+      const fileNames = fs.readdirSync(MetaEntityService.META_ENTITY_DIR);
       if (fileNames && fileNames.length > 0) {
         for (const nextName of fileNames) {
           const metaEntity = await this.findOne(this.toMetaName(nextName));
@@ -29,7 +29,7 @@ export class MetaEntityService {
 
   async findOne(metaName: string): Promise<MetaEntity> {
     const metaFileName =
-      MetaEntityService.META_DIR + '/' + this.toFileName(metaName);
+      MetaEntityService.META_ENTITY_DIR + '/' + this.toFileName(metaName);
     if (fs.existsSync(metaFileName)) {
       const metaEntityFromFile = JSON.parse(
         fs.readFileSync(metaFileName, 'utf8'),

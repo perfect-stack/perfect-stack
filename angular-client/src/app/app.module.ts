@@ -1,4 +1,4 @@
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {APP_INITIALIZER, inject, Inject, INJECTOR, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -8,7 +8,7 @@ import {PersonViewComponent} from './person/person-view/person-view.component';
 import {PersonSearchComponent} from './person/person-search/person-search.component';
 import {PersonEditComponent} from './person/person-edit/person-edit.component';
 import {PersonService} from './person/person-service/person.service';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {AuthInterceptor} from './auth-interceptor';
@@ -21,9 +21,10 @@ import { DataViewComponent } from './data/data-view/data-view.component';
 import {CustomAdapter, DataEditComponent} from './data/data-edit/data-edit.component';
 import { DatePickerControlComponent } from './data/data-edit/form-controls/date-picker-control/date-picker-control.component';
 import { TextFieldControlComponent } from './data/data-edit/form-controls/text-field-control/text-field-control.component';
+import {MetaService} from './meta/service/meta.service';
 
 
-function initializeApp() {
+function initializeApp(metaService: MetaService) {
   if(!getFirebase()) {
     throw new Error('Unable to initialise Firebase');
   }
@@ -66,15 +67,22 @@ function initializeApp() {
     CommonModule,
   ],
   providers: [
+    AuthenticationService,
+    PersonService,
+    MetaService,
     {
       provide: APP_INITIALIZER,
       useFactory: () => initializeApp,
       multi: true
     },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => inject(INJECTOR).get(MetaService).initMenu(),
+      deps: [HttpClient, MetaService],
+      multi: true
+    },
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: NgbDateAdapter, useClass: CustomAdapter},
-    AuthenticationService,
-    PersonService
   ],
   bootstrap: [AppComponent]
 })

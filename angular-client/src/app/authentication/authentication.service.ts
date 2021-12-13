@@ -8,6 +8,7 @@ import {
   signInWithPopup
 } from 'firebase/auth';
 import {Router} from '@angular/router';
+import getFirebase from '../../firebase';
 
 @Injectable({
   providedIn: 'root'
