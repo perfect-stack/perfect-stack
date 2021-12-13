@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { MetaAttribute, MetaEntity } from '../domain/meta.entity';
-import { EntityResponse } from '../domain/response/entity.response';
-import * as fs from 'fs';
+import { OrmService } from '../../orm/orm.service';
+import { MetaAttribute, MetaEntity } from '../../domain/meta.entity';
+import { EntityResponse } from '../../domain/response/entity.response';
 import { DataTypes } from 'sequelize';
-import { OrmService } from '../orm/orm.service';
+import * as fs from 'fs';
 
 @Injectable()
-export class MetaService {
-  static readonly META_DIR = 'meta';
+export class MetaEntityService {
+  static readonly META_DIR = 'meta/entities';
 
   constructor(protected readonly ormService: OrmService) {}
 
   async findAll(): Promise<MetaEntity[]> {
-    if (fs.existsSync(MetaService.META_DIR)) {
+    if (fs.existsSync(MetaEntityService.META_DIR)) {
       const resultList: MetaEntity[] = [];
-      const fileNames = fs.readdirSync(MetaService.META_DIR);
+      const fileNames = fs.readdirSync(MetaEntityService.META_DIR);
       if (fileNames && fileNames.length > 0) {
         for (const nextName of fileNames) {
           const metaEntity = await this.findOne(this.toMetaName(nextName));
@@ -28,7 +28,8 @@ export class MetaService {
   }
 
   async findOne(metaName: string): Promise<MetaEntity> {
-    const metaFileName = MetaService.META_DIR + '/' + this.toFileName(metaName);
+    const metaFileName =
+      MetaEntityService.META_DIR + '/' + this.toFileName(metaName);
     if (fs.existsSync(metaFileName)) {
       const metaEntityFromFile = JSON.parse(
         fs.readFileSync(metaFileName, 'utf8'),

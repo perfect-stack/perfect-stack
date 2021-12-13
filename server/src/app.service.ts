@@ -1,18 +1,18 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import { MetaService } from './meta/meta.service';
 import { DataService } from './data/data.service';
 import * as fs from 'fs';
 import * as csv from 'fast-csv';
 import { DateTimeFormatter, LocalDate } from '@js-joda/core';
 import * as path from 'path';
 import { v4 } from 'uuid';
+import { MetaEntityService } from './meta/meta-entity/meta-entity.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
   private readonly logger = new Logger(AppService.name);
 
   constructor(
-    protected readonly metaService: MetaService,
+    protected readonly metaEntityService: MetaEntityService,
     protected readonly dataService: DataService,
   ) {}
 
@@ -22,7 +22,7 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap(): Promise<any> {
-    await this.metaService.syncMetaModelWithDatabase();
+    await this.metaEntityService.syncMetaModelWithDatabase();
     await this.loadFakePeople();
     return;
   }

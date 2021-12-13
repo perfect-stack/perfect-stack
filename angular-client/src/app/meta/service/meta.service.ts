@@ -10,6 +10,6 @@ export class MetaService {
   constructor(protected readonly http: HttpClient) { }
 
   findOne(metaName: string | null) {
-    return this.http.get<MetaEntity>(`http://localhost:3080/meta/${metaName}`);
+    return this.http.get<MetaEntity>(`http://localhost:3080/meta/entity/${metaName}`);
   }
 }

@@ -1,0 +1,30 @@
+{
+  "menuList": [
+    [
+      {
+        "label": "Animal",
+        "route": "/data/Person/search"
+      }
+    ],
+    [
+      {
+        "label": "Person",
+        "route": "/data/Person/search"
+      }
+    ],
+    [
+      {
+        "label": "Meta",
+        "route": "/data/Person/search"
+      },
+      {
+        "label": "Menus",
+        "route": "/data/Person/search"
+      },
+      {
+        "label": "Entities",
+        "route": "/data/Person/search"
+      }
+    ]
+  ]
+}

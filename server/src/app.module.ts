@@ -7,8 +7,9 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './authentication/jwt-auth.guard';
 import { OrmModule } from './orm/orm.module';
-import { MetaModule } from './meta/meta.module';
 import { DataModule } from './data/data.module';
+import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
+import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { DataModule } from './data/data.module';
     ConfigModule.forRoot(),
     PersonModule,
     OrmModule,
-    MetaModule,
+    MetaEntityModule,
+    MetaMenuModule,
     DataModule,
   ],
   controllers: [AppController],

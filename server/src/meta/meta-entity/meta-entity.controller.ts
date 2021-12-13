@@ -7,25 +7,25 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { EntityResponse } from '../domain/response/entity.response';
-import { MetaService } from './meta.service';
-import { MetaEntity } from '../domain/meta.entity';
-import { PublicApi } from '../authentication/public-api';
+import { PublicApi } from '../../authentication/public-api';
+import { MetaEntity } from '../../domain/meta.entity';
+import { EntityResponse } from '../../domain/response/entity.response';
+import { MetaEntityService } from './meta-entity.service';
 
-@Controller('meta')
-export class MetaController {
-  constructor(protected readonly metaService: MetaService) {}
+@Controller('meta/entity')
+export class MetaEntityController {
+  constructor(protected readonly metaEntityService: MetaEntityService) {}
 
   @PublicApi()
   @Get('/')
   findAll(): Promise<MetaEntity[]> {
-    return this.metaService.findAll();
+    return this.metaEntityService.findAll();
   }
 
   @PublicApi()
   @Get('/:metaName')
   findOne(@Param('metaName') metaName: string): Promise<MetaEntity> {
-    return this.metaService.findOne(metaName);
+    return this.metaEntityService.findOne(metaName);
   }
 
   @PublicApi()
