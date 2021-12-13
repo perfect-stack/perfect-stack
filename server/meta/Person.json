@@ -22,6 +22,12 @@
       "name": "email_address",
       "label": "Email address",
       "description": "Email address"
+    },
+    {
+      "name": "last_login",
+      "label": "Last login",
+      "type": "Date",
+      "description": "The last login date of this user"
     }
   ]
 }

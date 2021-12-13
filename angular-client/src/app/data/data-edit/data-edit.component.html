@@ -18,10 +18,24 @@
 
             <ng-container *ngIf="attribute.visibility !== 'Hidden'">
               <div class="form-group">
+
                 <label [for]="attribute.name">
                   <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
                 </label>
-                <input class="form-control" type="text" [id]="attribute.name" [formControlName]="attribute.name">
+
+                <div [ngSwitch]="attribute.type">
+                  <ng-container *ngSwitchCase="'Date'">
+                    <app-date-picker-control [formGroup]="entityForm" [attribute]="attribute"></app-date-picker-control>
+                  </ng-container>
+
+                  <ng-container *ngSwitchCase="'Text'">
+                    <app-text-field-control [formGroup]="entityForm" [attribute]="attribute"></app-text-field-control>
+                  </ng-container>
+
+                  <ng-container *ngSwitchDefault>
+                    ERROR: Missing or unknown attribute type of: "{{attribute.type}}"
+                  </ng-container>
+                </div>
               </div>
             </ng-container>
 

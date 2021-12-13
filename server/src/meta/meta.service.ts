@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MetaEntity } from '../domain/meta.entity';
+import { MetaAttribute, MetaEntity } from '../domain/meta.entity';
 import { EntityResponse } from '../domain/response/entity.response';
 import * as fs from 'fs';
 import { DataTypes } from 'sequelize';
@@ -30,7 +30,21 @@ export class MetaService {
   async findOne(metaName: string): Promise<MetaEntity> {
     const metaFileName = MetaService.META_DIR + '/' + this.toFileName(metaName);
     if (fs.existsSync(metaFileName)) {
-      return JSON.parse(fs.readFileSync(metaFileName, 'utf8'));
+      const metaEntityFromFile = JSON.parse(
+        fs.readFileSync(metaFileName, 'utf8'),
+      );
+      const metaEntity: MetaEntity = Object.assign(
+        new MetaEntity(),
+        metaEntityFromFile,
+      );
+      for (let i = 0; i < metaEntity.attributes.length; i++) {
+        const nextAttribute = metaEntity.attributes[i];
+        metaEntity.attributes[i] = Object.assign(
+          new MetaAttribute(),
+          nextAttribute,
+        );
+      }
+      return metaEntity;
     } else {
       throw new Error(`Unable to find file for "${metaFileName}"`);
     }
@@ -66,10 +80,14 @@ export class MetaService {
     for (const nextMetaEntity of metaEntities) {
       const modelAttributeList = {};
       for (const nextMetaAttribute of nextMetaEntity.attributes) {
-        const modelAttribute = {
+        const modelAttribute: any = {
           type: DataTypes.STRING,
           allowNull: true,
         };
+
+        if (nextMetaAttribute.type === 'Date') {
+          modelAttribute.type = DataTypes.DATEONLY;
+        }
 
         if (nextMetaAttribute.name === 'id') {
           modelAttribute['primaryKey'] = true;

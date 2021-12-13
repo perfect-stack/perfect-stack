@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateAdapter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {PersonViewComponent} from './person/person-view/person-view.component';
 import {PersonSearchComponent} from './person/person-search/person-search.component';
 import {PersonEditComponent} from './person/person-edit/person-edit.component';
@@ -18,7 +18,9 @@ import { LandingComponent } from './landing/landing.component';
 import {AuthenticationService} from './authentication/authentication.service';
 import { DataSearchComponent } from './data/data-search/data-search.component';
 import { DataViewComponent } from './data/data-view/data-view.component';
-import { DataEditComponent } from './data/data-edit/data-edit.component';
+import {CustomAdapter, DataEditComponent} from './data/data-edit/data-edit.component';
+import { DatePickerControlComponent } from './data/data-edit/form-controls/date-picker-control/date-picker-control.component';
+import { TextFieldControlComponent } from './data/data-edit/form-controls/text-field-control/text-field-control.component';
 
 
 function initializeApp() {
@@ -51,6 +53,8 @@ function initializeApp() {
     DataSearchComponent,
     DataViewComponent,
     DataEditComponent,
+    DatePickerControlComponent,
+    TextFieldControlComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,6 +72,7 @@ function initializeApp() {
       multi: true
     },
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+    {provide: NgbDateAdapter, useClass: CustomAdapter},
     AuthenticationService,
     PersonService
   ],

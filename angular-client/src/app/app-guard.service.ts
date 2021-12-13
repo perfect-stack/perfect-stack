@@ -16,11 +16,13 @@ export class AppGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
     if(this.authenticationService.isLoggedIn) {
+      console.log(`canActivate: TRUE ${state.url}`);
       return true;
     }
     else {
       // Store the attempted URL for redirecting
       this.authenticationService.redirectUrl = state.url;
+      console.log(`canActivate: FALSE ${state.url}`);
       this.authenticationService.login();
       return this.router.navigate(['/']);
     }

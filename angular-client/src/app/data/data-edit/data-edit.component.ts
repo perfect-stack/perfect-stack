@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Injectable, OnInit} from '@angular/core';
 import {Observable, switchMap} from 'rxjs';
 import {MetaEntity} from '../../domain/meta.entity';
 import {Entity} from '../../domain/entity';
@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MetaService} from '../../meta/service/meta.service';
 import {DataService} from '../service/data.service';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-data-edit',
@@ -76,5 +77,31 @@ export class DataEditComponent implements OnInit {
 
   onCancel() {
     this.router.navigate([`/data/${this.metaName}/view`, this.entityId]);
+  }
+}
+
+
+/**
+ * This Service handles how the date is represented in scripts i.e. ngModel.
+ */
+@Injectable()
+export class CustomAdapter extends NgbDateAdapter<string> {
+
+  readonly DELIMITER = '-';
+
+  fromModel(value: string | null): NgbDateStruct | null {
+    if (value) {
+      let date = value.split(this.DELIMITER);
+      return {
+        year : parseInt(date[0], 10),
+        month : parseInt(date[1], 10),
+        day : parseInt(date[2], 10),
+      };
+    }
+    return null;
+  }
+
+  toModel(date: NgbDateStruct | null): string | null {
+    return date ? date.year + this.DELIMITER + date.month + this.DELIMITER + date.day : null;
   }
 }

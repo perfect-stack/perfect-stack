@@ -1,4 +1,4 @@
-type AttributeType = 'Text' | 'Number' | 'Identifier';
+type AttributeType = 'Text' | 'Number' | 'Identifier' | 'Date';
 type VisibilityType = 'Visible' | 'Hidden';
 
 export class MetaAttribute {
