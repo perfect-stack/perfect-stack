@@ -4,7 +4,7 @@ import {MetaEntity} from '../../domain/meta.entity';
 import {Entity} from '../../domain/entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MetaService} from '../../meta/service/meta.service';
-import {DataService} from '../service/data.service';
+import {DataService} from '../data-service/data.service';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 

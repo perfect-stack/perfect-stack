@@ -4,7 +4,7 @@ import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MetaService} from '../../meta/service/meta.service';
 import {PersonSearchCriteria} from '../../person/person-search/person-search-criteria';
-import {DataService} from '../service/data.service';
+import {DataService} from '../data-service/data.service';
 import {Entity} from '../../domain/entity';
 
 @Component({

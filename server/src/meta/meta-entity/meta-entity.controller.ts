@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { PublicApi } from '../../authentication/public-api';
 import { MetaEntity } from '../../domain/meta.entity';
@@ -18,7 +19,10 @@ export class MetaEntityController {
 
   @PublicApi()
   @Get('/')
-  findAll(): Promise<MetaEntity[]> {
+  findAll(
+    @Query('pageNumber') pageNumber?: number,
+    @Query('pageSize') pageSize?: number,
+  ): Promise<MetaEntity[]> {
     return this.metaEntityService.findAll();
   }
 

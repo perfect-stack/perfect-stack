@@ -24,6 +24,8 @@ import { TextFieldControlComponent } from './data/data-edit/form-controls/text-f
 import {MetaService} from './meta/service/meta.service';
 import { MetaEntitySearchComponent } from './meta/entity/meta-entity-search/meta-entity-search.component';
 import { MetaMenuEditComponent } from './meta/menu/meta-menu-edit/meta-menu-edit.component';
+import { MetaEntityViewComponent } from './meta/entity/meta-entity-view/meta-entity-view.component';
+import { MetaEntityEditComponent } from './meta/entity/meta-entity-edit/meta-entity-edit.component';
 
 
 function initializeApp(metaService: MetaService) {
@@ -60,6 +62,8 @@ function initializeApp(metaService: MetaService) {
     TextFieldControlComponent,
     MetaEntitySearchComponent,
     MetaMenuEditComponent,
+    MetaEntityViewComponent,
+    MetaEntityEditComponent,
   ],
   imports: [
     BrowserModule,

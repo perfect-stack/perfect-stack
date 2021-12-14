@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {MetaEntity} from '../../domain/meta.entity';
 import {MetaMenu} from '../../domain/meta.menu';
-import {map, switchMap, tap} from 'rxjs';
+import {tap} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

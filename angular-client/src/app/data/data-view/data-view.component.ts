@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Observable, switchMap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DataService} from '../service/data.service';
+import {DataService} from '../data-service/data.service';
 import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {MetaService} from '../../meta/service/meta.service';
 import {Entity} from '../../domain/entity';

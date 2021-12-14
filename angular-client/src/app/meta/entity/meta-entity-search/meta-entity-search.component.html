@@ -1,1 +1,17 @@
-<p>meta-entity-search works!</p>
+<h2>Meta Entity Search</h2>
+
+<br>
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col">Meta Entity</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let item of searchResults">
+    <td><a [routerLink]="['/meta/entity/view', item.name]">{{item.name}}</a></td>
+  </tr>
+  </tbody>
+</table>
+
