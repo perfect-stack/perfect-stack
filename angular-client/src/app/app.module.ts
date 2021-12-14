@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import {NgbDateAdapter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateAdapter, NgbDropdown, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {PersonViewComponent} from './person/person-view/person-view.component';
 import {PersonSearchComponent} from './person/person-search/person-search.component';
 import {PersonEditComponent} from './person/person-edit/person-edit.component';
@@ -22,6 +22,8 @@ import {CustomAdapter, DataEditComponent} from './data/data-edit/data-edit.compo
 import { DatePickerControlComponent } from './data/data-edit/form-controls/date-picker-control/date-picker-control.component';
 import { TextFieldControlComponent } from './data/data-edit/form-controls/text-field-control/text-field-control.component';
 import {MetaService} from './meta/service/meta.service';
+import { MetaEntitySearchComponent } from './meta/entity/meta-entity-search/meta-entity-search.component';
+import { MetaMenuEditComponent } from './meta/menu/meta-menu-edit/meta-menu-edit.component';
 
 
 function initializeApp(metaService: MetaService) {
@@ -56,6 +58,8 @@ function initializeApp(metaService: MetaService) {
     DataEditComponent,
     DatePickerControlComponent,
     TextFieldControlComponent,
+    MetaEntitySearchComponent,
+    MetaMenuEditComponent,
   ],
   imports: [
     BrowserModule,
@@ -83,6 +87,7 @@ function initializeApp(metaService: MetaService) {
     },
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: NgbDateAdapter, useClass: CustomAdapter},
+    NgbDropdown,
   ],
   bootstrap: [AppComponent]
 })

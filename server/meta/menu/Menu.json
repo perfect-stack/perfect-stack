@@ -19,11 +19,11 @@
       },
       {
         "label": "Menus",
-        "route": "/data/Person/search"
+        "route": "/meta/menu/edit"
       },
       {
         "label": "Entities",
-        "route": "/data/Person/search"
+        "route": "/meta/entity/search"
       }
     ]
   ]
