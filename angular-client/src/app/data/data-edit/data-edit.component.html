@@ -16,7 +16,7 @@
         <form class="form" #form="ngForm" [formGroup]="entityForm" (ngSubmit)="onSubmit()">
           <ng-container *ngFor="let attribute of context.metaEntity?.attributes">
 
-            <ng-container *ngIf="attribute.visibility !== 'Hidden'">
+            <ng-container *ngIf="attribute.visibility.toString() !== 'Hidden'">
               <div class="form-group">
 
                 <label [for]="attribute.name">

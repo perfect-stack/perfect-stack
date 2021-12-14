@@ -1,1 +1,40 @@
-<p>meta-entity-view works!</p>
+<h2>Meta Entity View</h2>
+
+<ng-container *ngIf="metaEntity$ | async as metaEntity">
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-2">Entity Name</div>
+      <div class="col-10">{{metaEntity.name}}</div>
+    </div>
+
+    <br>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Label</th>
+        <th scope="col">Description</th>
+        <th scope="col">Type</th>
+        <th scope="col">Visibility</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let attribute of metaEntity.attributes">
+        <td>{{attribute.name}}</td>
+        <td>{{attribute.label}}</td>
+        <td>{{attribute.description}}</td>
+        <td>{{attribute.type}}</td>
+        <td>{{attribute.visibility}}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="row mt-3">
+      <div class="col-6">
+        <button class="btn btn-primary mr-2" (click)="onEdit()">Edit</button>
+        <button class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</ng-container>

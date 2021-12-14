@@ -14,7 +14,7 @@
         <h2 class="mb-3">{{context.metaEntity?.name}} View</h2>
 
         <ng-container *ngFor="let attribute of context.metaEntity?.attributes">
-          <div class="row" *ngIf="attribute.visibility !== 'Hidden'">
+          <div class="row" *ngIf="attribute.visibility.toString() !== 'Hidden'">
             <div class="col-2">
               <span placement="top" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
             </div>

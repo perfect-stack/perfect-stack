@@ -13,14 +13,14 @@
       <thead>
       <tr>
         <ng-container *ngFor="let attribute of metaEntity.attributes">
-          <th scope="col" *ngIf="attribute.visibility !== 'Hidden'">{{attribute.label}}</th>
+          <th scope="col" *ngIf="attribute.visibility.toString() !== 'Hidden'">{{attribute.label}}</th>
         </ng-container>
       </tr>
       </thead>
       <tbody>
       <tr *ngFor="let item of searchResults" (click)="onSelectRow(item.id)">
         <ng-container *ngFor="let attribute of metaEntity.attributes">
-          <td *ngIf="attribute.visibility !== 'Hidden'">{{displayValue(attribute, item)}}</td>
+          <td *ngIf="attribute.visibility.toString() !== 'Hidden'">{{displayValue(attribute, item)}}</td>
         </ng-container>
       </tr>
       </tbody>

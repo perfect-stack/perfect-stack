@@ -1,1 +1,54 @@
-<p>meta-entity-edit works!</p>
+<h2>Meta Entity View</h2>
+
+<ng-container *ngIf="metaEntity$ | async as metaEntity">
+  <div class="container-fluid mt-3">
+    <form [formGroup]="metaEntityForm">
+      <div class="row">
+        <div class="col-2">Entity Name</div>
+        <div class="col-10">
+          <input class="form-control" type="text" formControlName="name">
+        </div>
+      </div>
+
+      <br>
+
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Label</th>
+          <th scope="col">Description</th>
+          <th scope="col">Type</th>
+          <th scope="col">Visibility</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container formArrayName="attributes" *ngFor="let group of attributes.controls ; let i=index">
+          <tr [formGroupName]="i">
+            <td><input class="form-control" type="text" formControlName="name"></td>
+            <td><input class="form-control" type="text" formControlName="label"></td>
+            <td><input class="form-control" type="text" formControlName="description"></td>
+            <td>
+              <select class="form-control" formControlName="type">
+                <option *ngFor="let o of getAttributeTypeOptions()" [ngValue]="o">{{o}}</option>
+              </select>
+            </td>
+            <td>
+              <select class="form-control" formControlName="visibility">
+                <option *ngFor="let o of getVisibilityTypeOptions()" [ngValue]="o">{{o}}</option>
+              </select>
+            </td>
+          </tr>
+        </ng-container>
+        </tbody>
+      </table>
+
+      <div class="row mt-3">
+        <div class="col-6">
+          <button class="btn btn-primary mr-2" (click)="onSave()">Save</button>
+          <button class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-container>
