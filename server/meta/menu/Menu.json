@@ -19,7 +19,7 @@
       },
       {
         "label": "Menus",
-        "route": "/meta/menu/edit"
+        "route": "/meta/menu/view"
       },
       {
         "label": "Entities",

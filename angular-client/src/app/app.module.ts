@@ -26,6 +26,9 @@ import { MetaEntitySearchComponent } from './meta/entity/meta-entity-search/meta
 import { MetaMenuEditComponent } from './meta/menu/meta-menu-edit/meta-menu-edit.component';
 import { MetaEntityViewComponent } from './meta/entity/meta-entity-view/meta-entity-view.component';
 import { MetaEntityEditComponent } from './meta/entity/meta-entity-edit/meta-entity-edit.component';
+import { MetaMenuViewComponent } from './meta/menu/meta-menu-view/meta-menu-view.component';
+import { MenuItemViewComponent } from './meta/menu/meta-menu-view/menu-item-view/menu-item-view.component';
+import { MenuHeaderViewComponent } from './meta/menu/meta-menu-view/menu-header-view/menu-header-view.component';
 
 
 function initializeApp(metaService: MetaService) {
@@ -64,6 +67,9 @@ function initializeApp(metaService: MetaService) {
     MetaMenuEditComponent,
     MetaEntityViewComponent,
     MetaEntityEditComponent,
+    MetaMenuViewComponent,
+    MenuItemViewComponent,
+    MenuHeaderViewComponent,
   ],
   imports: [
     BrowserModule,
