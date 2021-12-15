@@ -7,7 +7,7 @@ export class MetaMenuService {
   static readonly META_MENU_DIR = 'meta/menu';
 
   findOne() {
-    const metaFileName = MetaMenuService.META_MENU_DIR + '/Menu.json';
+    const metaFileName = MetaMenuService.META_MENU_DIR + '/MetaMenu.json';
     if (fs.existsSync(metaFileName)) {
       const metaMenuFromFile = JSON.parse(
         fs.readFileSync(metaFileName, 'utf8'),

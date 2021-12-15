@@ -21,7 +21,6 @@ import { DataViewComponent } from './data/data-view/data-view.component';
 import {CustomAdapter, DataEditComponent} from './data/data-edit/data-edit.component';
 import { DatePickerControlComponent } from './data/data-edit/form-controls/date-picker-control/date-picker-control.component';
 import { TextFieldControlComponent } from './data/data-edit/form-controls/text-field-control/text-field-control.component';
-import {MetaService} from './meta/service/meta.service';
 import { MetaEntitySearchComponent } from './meta/entity/meta-entity-search/meta-entity-search.component';
 import { MetaMenuEditComponent } from './meta/menu/meta-menu-edit/meta-menu-edit.component';
 import { MetaEntityViewComponent } from './meta/entity/meta-entity-view/meta-entity-view.component';
@@ -29,9 +28,10 @@ import { MetaEntityEditComponent } from './meta/entity/meta-entity-edit/meta-ent
 import { MetaMenuViewComponent } from './meta/menu/meta-menu-view/meta-menu-view.component';
 import { MenuItemViewComponent } from './meta/menu/meta-menu-view/menu-item-view/menu-item-view.component';
 import { MenuHeaderViewComponent } from './meta/menu/meta-menu-view/menu-header-view/menu-header-view.component';
+import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
 
 
-function initializeApp(metaService: MetaService) {
+function initializeApp() {
   if(!getFirebase()) {
     throw new Error('Unable to initialise Firebase');
   }
@@ -83,7 +83,7 @@ function initializeApp(metaService: MetaService) {
   providers: [
     AuthenticationService,
     PersonService,
-    MetaService,
+    MetaMenuService,
     {
       provide: APP_INITIALIZER,
       useFactory: () => initializeApp,
@@ -91,8 +91,8 @@ function initializeApp(metaService: MetaService) {
     },
     {
       provide: APP_INITIALIZER,
-      useFactory: () => inject(INJECTOR).get(MetaService).initMenu(),
-      deps: [HttpClient, MetaService],
+      useFactory: () => inject(INJECTOR).get(MetaMenuService).initMenu(),
+      deps: [HttpClient, MetaMenuService],
       multi: true
     },
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

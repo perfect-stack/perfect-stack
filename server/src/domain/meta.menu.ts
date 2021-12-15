@@ -5,6 +5,11 @@ export class MenuItem {
   roles: string[] = [];
 }
 
+export class Menu {
+  label: string;
+  items: MenuItem[] = [];
+}
+
 export class MetaMenu {
-  menuList: MenuItem[][];
+  menuList: Menu[] = [];
 }

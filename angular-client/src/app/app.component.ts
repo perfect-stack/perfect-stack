@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from './authentication/authentication.service';
-import {MetaService} from './meta/service/meta.service';
+import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +9,7 @@ import {MetaService} from './meta/service/meta.service';
 })
 export class AppComponent implements OnInit {
 
-  constructor(readonly authenticationService: AuthenticationService, public readonly metaService: MetaService) {}
+  constructor(readonly authenticationService: AuthenticationService, public readonly metaMenuService: MetaMenuService) {}
 
   ngOnInit(): void {
   }

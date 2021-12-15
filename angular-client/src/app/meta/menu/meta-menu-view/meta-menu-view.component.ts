@@ -36,8 +36,8 @@ export class MetaMenuViewComponent implements OnInit {
     this.columnCount = menu.menuList.length;
     for(let i = 0; i < this.columnCount; i++) {
       const nextMenu = menu.menuList[i];
-      if(this.rowCount < nextMenu.length) {
-        this.rowCount = nextMenu.length;
+      if(this.rowCount < nextMenu.items.length) {
+        this.rowCount = nextMenu.items.length;
       }
     }
 
@@ -48,8 +48,8 @@ export class MetaMenuViewComponent implements OnInit {
   getMenuItem(metaMenu: MetaMenu, colIdx: number, rowIdx: number) {
     let menuItem = null;
     const menu = metaMenu.menuList[colIdx];
-    if(rowIdx < menu.length) {
-      menuItem = menu[rowIdx];
+    if(rowIdx < menu.items.length) {
+      menuItem = menu.items[rowIdx];
     }
     return menuItem;
   }

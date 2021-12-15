@@ -3,8 +3,8 @@ import {Observable, switchMap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
-import {MetaService} from '../../meta/service/meta.service';
 import {Entity} from '../../domain/entity';
+import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 
 @Component({
   selector: 'app-data-view',
@@ -21,14 +21,14 @@ export class DataViewComponent implements OnInit {
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
-              protected readonly metaService: MetaService,
+              protected readonly metaEntityService: MetaEntityService,
               protected readonly dataService: DataService) {
   }
 
   ngOnInit(): void {
     this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName')
-      return this.metaService.findOne(this.metaName);
+      return this.metaEntityService.findById(this.metaName);
     }));
 
     this.entity$ = this.route.paramMap.pipe(switchMap(params => {

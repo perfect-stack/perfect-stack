@@ -3,10 +3,10 @@ import {Observable, switchMap} from 'rxjs';
 import {MetaEntity} from '../../domain/meta.entity';
 import {Entity} from '../../domain/entity';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MetaService} from '../../meta/service/meta.service';
 import {DataService} from '../data-service/data.service';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 
 @Component({
   selector: 'app-data-edit',
@@ -25,7 +25,7 @@ export class DataEditComponent implements OnInit {
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
-              protected readonly metaService: MetaService,
+              protected readonly metaEntityService: MetaEntityService,
               protected readonly dataService: DataService) {
   }
 
@@ -35,7 +35,7 @@ export class DataEditComponent implements OnInit {
     // If the entity is loaded before the metaEntity then this.entityForm.patchValue(entity); will fail
     this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName')
-      return this.metaService.findOne(this.metaName);
+      return this.metaEntityService.findById(this.metaName);
     }));
 
     this.entity$ = this.route.paramMap.pipe(switchMap(params => {

@@ -10,12 +10,12 @@
         <a class="nav-link" [routerLink]="'/'">Home <span class="sr-only">(current)</span></a>
       </li>
 
-      <li class="nav-item" ngbDropdown *ngFor="let nextMenu of metaService.menu.menuList">
+      <li class="nav-item" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
         <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown" role="button">
-          {{nextMenu[0].label}}
+          {{nextMenu.label}}
         </a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu">
+          <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items">
             {{menuItem.label}}
           </a>
         </div>
