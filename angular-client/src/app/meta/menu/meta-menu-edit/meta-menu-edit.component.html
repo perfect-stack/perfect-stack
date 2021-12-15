@@ -1,1 +1,29 @@
-<p>meta-menu-edit works!</p>
+<h2>Meta Menu View</h2>
+
+<ng-container *ngIf="metaMenu$ | async as metaMenu">
+  <div class="container-fluid mt-3">
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th *ngFor="let colIdx of columnNumbers">
+          Y
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let rowIdx of rowNumbers">
+        <td *ngFor="let colIdx of columnNumbers">
+          X
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex">
+      <div class="flex-grow-1"></div>
+      <button class="btn btn-outline-secondary mr-2" (click)="onCancel()">Back</button>
+      <button class="btn btn-primary" (click)="onSave()">Save</button>
+    </div>
+  </div>
+</ng-container>

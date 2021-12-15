@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Observable, switchMap, tap} from 'rxjs';
+import {Observable, tap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MenuItem, MetaMenu} from '../../../domain/meta.menu';
 import {MetaMenuService} from '../meta-menu-service/meta-menu.service';
