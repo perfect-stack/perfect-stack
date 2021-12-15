@@ -20,5 +20,5 @@ export class MetaAttribute {
 
 export class MetaEntity {
   name: string;
-  attributes: MetaAttribute[];
+  attributes: MetaAttribute[] = [];
 }

@@ -30,7 +30,7 @@ export class MetaEntityViewComponent implements OnInit {
     this.router.navigate(['/meta/entity/edit/', this.metaName]);
   }
 
-  onCancel() {
+  onBack() {
     this.router.navigate(['meta/entity/search']);
   }
 

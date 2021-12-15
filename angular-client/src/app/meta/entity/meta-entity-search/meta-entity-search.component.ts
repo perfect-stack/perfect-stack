@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MetaEntity} from '../../../domain/meta.entity';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-meta-entity-search',
@@ -11,7 +12,9 @@ export class MetaEntitySearchComponent implements OnInit {
 
   public searchResults: MetaEntity[] = [];
 
-  constructor(protected readonly metaEntityService: MetaEntityService) { }
+  constructor(
+    protected readonly router: Router,
+    protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
     this.onSearch();
@@ -23,4 +26,7 @@ export class MetaEntitySearchComponent implements OnInit {
     });
   }
 
+  onNew() {
+    this.router.navigate(['/meta/entity/edit/**NEW**'])
+  }
 }

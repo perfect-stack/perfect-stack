@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
-import {Observable, switchMap} from 'rxjs';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {MetaEntity, AttributeType, VisibilityType} from '../../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -16,7 +16,7 @@ export class MetaEntityEditComponent implements OnInit {
   public metaEntity$: Observable<MetaEntity>;
 
   metaEntityForm = this.fb.group({
-    name: [''],
+    name: ['', Validators.required],
     attributes: this.fb.array([]),
   })
 
@@ -28,7 +28,7 @@ export class MetaEntityEditComponent implements OnInit {
   ngOnInit(): void {
     this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
-      return this.metaEntityService.findById(this.metaName);
+      return this.metaName === '**NEW**' ? of(new MetaEntity()) : this.metaEntityService.findById(this.metaName);
     }));
 
     this.metaEntity$.subscribe((metaEntity) => {
@@ -47,19 +47,13 @@ export class MetaEntityEditComponent implements OnInit {
     this.attributes.push(this.createTableRow());
   }
 
-  // addAttributeRow(attribute: MetaAttribute) {
-  //   const tableRowFormGroup = this.createTableRow();
-  //   tableRowFormGroup.patchValue(attribute);
-  //   this.attributes.push(this.createTableRow());
-  // }
-
   createTableRow(): FormGroup {
     return this.fb.group({
-      name: [''],
-      label: [''],
+      name: ['', Validators.required],
+      label: ['', Validators.required],
       description: [''],
-      type: [''],
-      visibility: ['']
+      type: [AttributeType.Text],
+      visibility: [VisibilityType.Visible]
     });
   }
 
@@ -71,7 +65,12 @@ export class MetaEntityEditComponent implements OnInit {
   }
 
   onCancel() {
-
+    if(this.metaName === '**NEW**') {
+      this.router.navigate(['meta/entity/search'])
+    }
+    else {
+      this.router.navigate(['meta/entity/view', this.metaName]);
+    }
   }
 
   getAttributeTypeOptions(): string[] {
@@ -80,5 +79,11 @@ export class MetaEntityEditComponent implements OnInit {
 
   getVisibilityTypeOptions(): string[] {
     return Object.keys(VisibilityType);
+  }
+
+  onAddAttribute(count: number) {
+    for(let i = 0; i < count; i++) {
+      this.addBlankRow();
+    }
   }
 }
