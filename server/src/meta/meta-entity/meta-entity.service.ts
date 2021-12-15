@@ -52,10 +52,33 @@ export class MetaEntityService {
   }
 
   create(metaEntity: MetaEntity): Promise<EntityResponse> {
+    const metaFileName =
+      MetaEntityService.META_ENTITY_DIR +
+      '/' +
+      this.toFileName(metaEntity.name);
+    if (!fs.existsSync(metaFileName)) {
+      fs.writeFileSync(metaFileName, JSON.stringify(metaEntity, null, 2));
+    } else {
+      throw new Error(
+        `Create meta entity failed file exists already; ${metaFileName}`,
+      );
+    }
+
     return;
   }
 
-  update(): Promise<EntityResponse> {
+  update(metaEntity: MetaEntity): Promise<EntityResponse> {
+    const metaFileName =
+      MetaEntityService.META_ENTITY_DIR +
+      '/' +
+      this.toFileName(metaEntity.name);
+    if (fs.existsSync(metaFileName)) {
+      fs.writeFileSync(metaFileName, JSON.stringify(metaEntity, null, 2));
+    } else {
+      throw new Error(
+        `Update meta entity failed file does not exist; ${metaFileName}`,
+      );
+    }
     return;
   }
 

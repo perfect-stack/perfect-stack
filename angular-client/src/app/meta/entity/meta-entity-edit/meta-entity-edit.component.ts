@@ -60,8 +60,18 @@ export class MetaEntityEditComponent implements OnInit {
   onSave() {
     const metaEntityData = this.metaEntityForm.value;
     console.log(`onSave():`, metaEntityData);
-
-    console.log(`AttributeType: ${Object.keys(AttributeType)}`)
+    if(this.metaName === '**NEW**') {
+      this.metaEntityService.create(metaEntityData).subscribe(() => {
+        console.log('create complete');
+        this.router.navigate(['meta/entity/view', metaEntityData.name]);
+      });
+    }
+    else {
+      this.metaEntityService.update(metaEntityData).subscribe(() => {
+        console.log('update complete');
+        this.router.navigate(['meta/entity/view', metaEntityData.name]);
+      });
+    }
   }
 
   onCancel() {

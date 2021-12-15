@@ -34,14 +34,30 @@ export class MetaEntityController {
 
   @PublicApi()
   @Post('/:metaName')
-  create(@Body() metaEntity: MetaEntity): Promise<EntityResponse> {
-    return;
+  create(
+    @Param('metaName') metaName: string,
+    @Body() metaEntity: MetaEntity,
+  ): Promise<EntityResponse> {
+    if (metaEntity.name !== metaName) {
+      throw new Error(
+        `Parameter metaName of "${metaName}" does not match the metaEntity name of "${metaEntity.name}"`,
+      );
+    }
+    return this.metaEntityService.create(metaEntity);
   }
 
   @PublicApi()
   @Put('/:metaName')
-  update(): Promise<EntityResponse> {
-    return;
+  update(
+    @Param('metaName') metaName: string,
+    @Body() metaEntity: MetaEntity,
+  ): Promise<EntityResponse> {
+    if (metaEntity.name !== metaName) {
+      throw new Error(
+        `Parameter metaName of "${metaName}" does not match the metaEntity name of "${metaEntity.name}"`,
+      );
+    }
+    return this.metaEntityService.update(metaEntity);
   }
 
   @PublicApi()
