@@ -1,5 +1,34 @@
 <ng-container *ngIf="menuItem">
   <div>{{menuItem.label}}</div>
   <div class="small">{{menuItem.route}}</div>
+  <button class="btn btn-outline-primary btn-sm mr-2" (click)="onAdd(-1)">+Above</button>
+  <button class="btn btn-outline-primary btn-sm mr-2" (click)="onAdd(+1)">+Below</button>
+  <button class="btn btn-outline-danger btn-sm mr-2" (click)="onDelete()">Delete</button>
+  <button class="btn btn-outline-primary btn-sm" (click)="onEditMenuItem(content)">Edit</button>
 </ng-container>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Menu Item</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="menuItemForm" (ngSubmit)="modal.close('Save click')">
+      <div class="form-group">
+        <label for="label">Label</label>
+        <input id="label" class="form-control" formControlName="label">
+      </div>
+      <div class="form-group">
+        <label for="route">Route</label>
+        <input id="route" class="form-control" formControlName="route">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="modal.close('Save click')">Save</button>
+  </div>
+</ng-template>
 

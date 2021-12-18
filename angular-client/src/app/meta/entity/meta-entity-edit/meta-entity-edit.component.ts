@@ -18,7 +18,7 @@ export class MetaEntityEditComponent implements OnInit {
   metaEntityForm = this.fb.group({
     name: ['', Validators.required],
     attributes: this.fb.array([]),
-  })
+  });
 
   constructor(private fb: FormBuilder,
               protected readonly route: ActivatedRoute,

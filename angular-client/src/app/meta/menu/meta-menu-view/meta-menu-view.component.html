@@ -14,7 +14,12 @@
       <tbody>
         <tr *ngFor="let rowIdx of rowNumbers">
           <td *ngFor="let colIdx of columnNumbers">
-            <app-menu-item-view [menuItem]="getMenuItem(metaMenu, colIdx, rowIdx)"></app-menu-item-view>
+            <app-menu-item-view
+              [menu]="getMenu(metaMenu, colIdx)"
+              [menuItem]="getMenuItem(metaMenu, colIdx, rowIdx)"
+              (menuItemAdded)="onMenuItemAdded(metaMenu, colIdx, $event)"
+            >
+            </app-menu-item-view>
           </td>
         </tr>
       </tbody>
@@ -23,7 +28,7 @@
     <div class="d-flex">
       <div class="flex-grow-1"></div>
       <button class="btn btn-outline-secondary mr-2" (click)="onBack(getMenuItem(metaMenu, 0, 0))">Back</button>
-      <button class="btn btn-primary" (click)="onEdit()">Edit</button>
+      <!--<button class="btn btn-primary" (click)="onEdit()">Edit</button>-->
     </div>
   </div>
 </ng-container>

@@ -29,4 +29,8 @@ export class MetaEntitySearchComponent implements OnInit {
   onNew() {
     this.router.navigate(['/meta/entity/edit/**NEW**'])
   }
+
+  onSelect(item: MetaEntity) {
+    this.router.navigate(['/meta/entity/view', item.name]);
+  }
 }

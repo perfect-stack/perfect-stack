@@ -34,4 +34,7 @@ export class MetaEntityViewComponent implements OnInit {
     this.router.navigate(['meta/entity/search']);
   }
 
+  onDelete() {
+
+  }
 }

@@ -9,7 +9,6 @@ import {DataSearchComponent} from './data/data-search/data-search.component';
 import {DataViewComponent} from './data/data-view/data-view.component';
 import {DataEditComponent} from './data/data-edit/data-edit.component';
 import {MetaEntitySearchComponent} from './meta/entity/meta-entity-search/meta-entity-search.component';
-import {MetaMenuEditComponent} from './meta/menu/meta-menu-edit/meta-menu-edit.component';
 import {MetaEntityViewComponent} from './meta/entity/meta-entity-view/meta-entity-view.component';
 import {MetaEntityEditComponent} from './meta/entity/meta-entity-edit/meta-entity-edit.component';
 import {MetaMenuViewComponent} from './meta/menu/meta-menu-view/meta-menu-view.component';
@@ -28,7 +27,6 @@ const routes: Routes = [
   { path: 'meta/entity/edit/:metaName', component: MetaEntityEditComponent, canActivate: [AppGuard] },
 
   { path: 'meta/menu/view', component: MetaMenuViewComponent, canActivate: [AppGuard] },
-  { path: 'meta/menu/edit', component: MetaMenuEditComponent, canActivate: [AppGuard] },
 
   { path: '**', component: LandingComponent }
 ];

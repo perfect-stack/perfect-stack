@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {Observable, tap} from 'rxjs';
+import {Observable, of, tap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MenuItem, MetaMenu} from '../../../domain/meta.menu';
 import {MetaMenuService} from '../meta-menu-service/meta-menu.service';
+import {MenuItemAddEvent} from './menu-item-view/menu-item-view.component';
 
 @Component({
   selector: 'app-meta-menu-view',
@@ -45,9 +46,13 @@ export class MetaMenuViewComponent implements OnInit {
     this.rowNumbers = Array(this.rowCount).fill(this.rowCount).map((x,i) => i);
   }
 
+  getMenu(metaMenu: MetaMenu, colIdx: number) {
+    return metaMenu.menuList[colIdx];
+  }
+
   getMenuItem(metaMenu: MetaMenu, colIdx: number, rowIdx: number) {
     let menuItem = null;
-    const menu = metaMenu.menuList[colIdx];
+    const menu = this.getMenu(metaMenu, colIdx);
     if(rowIdx < menu.items.length) {
       menuItem = menu.items[rowIdx];
     }
@@ -62,5 +67,15 @@ export class MetaMenuViewComponent implements OnInit {
     if(menuItem) {
       this.router.navigate([menuItem.route]);
     }
+  }
+
+  onMenuItemAdded(metaMenu: MetaMenu, colIdx: number, menuItemAddEvent: MenuItemAddEvent) {
+    const menu = metaMenu.menuList[colIdx];
+    const idx = menuItemAddEvent.position;
+    const menuItem = menuItemAddEvent.menuItem;
+    menu.items.splice(idx, 0, menuItem);
+
+    this.examine(metaMenu);
+    this.metaMenu$ = of(metaMenu);
   }
 }
