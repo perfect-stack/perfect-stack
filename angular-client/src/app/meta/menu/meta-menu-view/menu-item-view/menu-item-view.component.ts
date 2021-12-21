@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Menu, MenuItem} from '../../../../domain/meta.menu';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder} from '@angular/forms';
@@ -24,6 +24,8 @@ export class MenuItemViewComponent implements OnInit {
 
   @Output()
   public menuItemAdded = new EventEmitter<MenuItemAddEvent>();
+
+  public mouseActive = false;
 
   menuItemForm = this.fb.group({
     label: [''],
@@ -70,6 +72,18 @@ export class MenuItemViewComponent implements OnInit {
     return menu?.items.findIndex((m) => {
       return m.label === menuItem?.label && m.route === menuItem.route;
     });
+  }
+
+  @HostListener('mouseenter')
+  mouseenter() {
+    console.log("OMG It's a Mouse!!!");
+    this.mouseActive = true;
+  }
+
+  @HostListener('mouseleave')
+  mouseleave() {
+    console.log("OMG It's a Mouse!!!");
+    this.mouseActive = false;
   }
 
   onDelete() {

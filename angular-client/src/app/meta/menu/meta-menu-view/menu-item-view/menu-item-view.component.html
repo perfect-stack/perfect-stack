@@ -1,11 +1,38 @@
-<ng-container *ngIf="menuItem">
-  <div>{{menuItem.label}}</div>
-  <div class="small">{{menuItem.route}}</div>
-  <button class="btn btn-outline-primary btn-sm mr-2" (click)="onAdd(-1)">+Above</button>
-  <button class="btn btn-outline-primary btn-sm mr-2" (click)="onAdd(+1)">+Below</button>
-  <button class="btn btn-outline-danger btn-sm mr-2" (click)="onDelete()">Delete</button>
-  <button class="btn btn-outline-primary btn-sm" (click)="onEditMenuItem(content)">Edit</button>
-</ng-container>
+<div class="wrapper" *ngIf="menuItem">
+
+  <div>
+    <div>{{menuItem.label}}</div>
+    <div class="small">{{menuItem.route}}</div>
+  </div>
+
+  <!--<div class="overlay" *ngIf="mouseActive">
+    <button class="btn btn-outline-primary btn-sm mr-2">
+      <span class="material-icons">arrow_upward</span>
+    </button>
+    <button class="btn btn-outline-primary btn-sm mr-2">
+      <span class="material-icons">arrow_downward</span>
+    </button>
+    &lt;!&ndash;<button class="btn btn-outline-primary btn-sm mr-2" (click)="onAdd(-1)">+Above</button>&ndash;&gt;
+    <button class="btn btn-outline-primary btn-sm mr-2" (click)="onAdd(+1)">
+      <span class="material-icons">add</span>
+    </button>
+    <button class="btn btn-outline-danger btn-sm mr-2" (click)="onDelete()">
+      <span class="material-icons">delete</span>
+    </button>
+    <button class="btn btn-outline-primary btn-sm" (click)="onEditMenuItem(content)">
+      <span class="material-icons">edit</span>
+    </button>
+  </div>-->
+
+
+  <div class="overlay" *ngIf="mouseActive">
+    <span class="circle material-icons">arrow_upward</span>
+    <span class="circle material-icons">arrow_downward</span>
+    <span class="material-icons">add</span>
+    <span class="material-icons">delete</span>
+    <span class="material-icons">edit</span>
+  </div>
+</div>
 
 <ng-template #content let-modal>
   <div class="modal-header">
