@@ -1,0 +1,28 @@
+<div class="wrapper">
+  <div style="min-height: 7em;" class="p-2 cell-highlight hover-highlight" draggable droppable>
+    <div class="row">
+      <div class="col-12">
+        <!--<div class="form-group my-hidden">
+          <label for="givenName">Given name</label>
+          <input class="form-control" type="text" id="givenName">
+        </div>-->
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="mouseActive">
+    <div class="overlay-top-right p-1">
+      <span class="material-icons hover-highlight no_selection" (click)="onChangeWidth(-1,$event)">remove_circle_outline</span>
+      <span class="material-icons hover-highlight no_selection" (click)="onChangeWidth(1, $event)">add_circle_outline</span>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="mouseActive">
+    <div class="d-flex flex-column overlay-bottom-right p-1">
+      <span class="material-icons hover-highlight no_selection" (click)="onChangeHeight(-1)">remove_circle_outline</span>
+      <span class="material-icons hover-highlight no_selection" (click)="onChangeHeight(1)">add_circle_outline</span>
+    </div>
+  </ng-container>
+
+</div>
+

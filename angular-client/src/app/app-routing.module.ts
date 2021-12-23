@@ -12,6 +12,7 @@ import {MetaEntitySearchComponent} from './meta/entity/meta-entity-search/meta-e
 import {MetaEntityViewComponent} from './meta/entity/meta-entity-view/meta-entity-view.component';
 import {MetaEntityEditComponent} from './meta/entity/meta-entity-edit/meta-entity-edit.component';
 import {MetaMenuViewComponent} from './meta/menu/meta-menu-view/meta-menu-view.component';
+import {TemplateEditComponent} from './template/template-edit/template-edit.component';
 
 const routes: Routes = [
   { path: 'person/search', component: PersonSearchComponent, canActivate: [AppGuard] },
@@ -27,6 +28,8 @@ const routes: Routes = [
   { path: 'meta/entity/edit/:metaName', component: MetaEntityEditComponent, canActivate: [AppGuard] },
 
   { path: 'meta/menu/view', component: MetaMenuViewComponent, canActivate: [AppGuard] },
+
+  { path: 'meta/template/edit', component: TemplateEditComponent, canActivate: [AppGuard] },
 
   { path: '**', component: LandingComponent }
 ];

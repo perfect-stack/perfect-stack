@@ -1,0 +1,74 @@
+
+<div class="pt-1 d-flex" *ngFor="let nextRow of cells">
+  <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
+    <app-cell-view
+      [cell]="nextCell"
+      (changeWidth)="onChangeWidth($event, nextRow, nextCell)">
+    </app-cell-view>
+  </div>
+  <ng-container *ngIf="getTotalWidth(nextRow) < 12">
+    <div class="bg-light">
+      <table class="h-100">
+        <tbody>
+          <td>
+            <span class="material-icons hover-highlight no_selection" (click)="onAddCell(nextRow)">add_circle_outline</span>
+          </td>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</div>
+
+<div class="pt-1 d-flex">
+  <div class="col-12">
+    <div class="p-2" droppable>
+      <p>&nbsp;</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+<hr>
+
+<div class="pt-1 d-flex">
+  <div class="col-3">
+    <div class="p-2 bg-success" draggable>
+      <p>Drag me to Add</p>
+    </div>
+  </div>
+
+  <div class="col-3">
+    <div class="p-2 bg-warning" droppable>
+      <p>Drag here - to Clear</p>
+    </div>
+  </div>
+
+  <div class="col-3">
+    <div class="p-2 bg-danger" droppable>
+      <p>Drop here to Delete</p>
+    </div>
+  </div>
+</div>
+
+
+<hr>
+
+<h3 class="mt-5">Transfer Data via Drag Drop</h3>
+<div class="row">
+  <div class="col-sm-3">
+    <ul class="list-group">
+      <li draggable *ngFor="let item of items" [dragData]="item" class="list-group-item">{{item.name}}</li>
+    </ul>
+  </div>
+
+  <div class="col-sm-3">
+    <div class="panel panel-default" droppable (onDrop)="onItemDrop($event)">
+      <div class="panel-heading">Drop Items here</div>
+      <div class="panel-body">
+        <li *ngFor="let item of droppedItems" class="list-group-item">{{item.name}}</li>
+      </div>
+    </div>
+  </div>
+</div>

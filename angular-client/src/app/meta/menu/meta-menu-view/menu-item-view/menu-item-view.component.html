@@ -26,11 +26,11 @@
 
 
   <div class="overlay" *ngIf="mouseActive">
-    <span class="circle material-icons">arrow_upward</span>
-    <span class="circle material-icons">arrow_downward</span>
+    <span class="material-icons">arrow_upward</span>
+    <span class="material-icons">arrow_downward</span>
     <span class="material-icons">add</span>
     <span class="material-icons">delete</span>
-    <span class="material-icons">edit</span>
+    <span class="material-icons" (click)="onEditMenuItem(content)">edit</span>
   </div>
 </div>
 

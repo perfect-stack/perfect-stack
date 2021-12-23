@@ -29,6 +29,10 @@ import { MenuItemViewComponent } from './meta/menu/meta-menu-view/menu-item-view
 import { MenuHeaderViewComponent } from './meta/menu/meta-menu-view/menu-header-view/menu-header-view.component';
 import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
 import { MenuItemEditComponent } from './meta/menu/meta-menu-view/menu-item-edit/menu-item-edit.component';
+import { TemplateEditComponent } from './template/template-edit/template-edit.component';
+import {NgDragDropModule} from 'ng-drag-drop';
+import { CellViewComponent } from './template/template-edit/cell-view/cell-view.component';
+import { ToolBarComponent } from './template/template-edit/tool-bar/tool-bar.component';
 
 
 function initializeApp() {
@@ -70,6 +74,9 @@ function initializeApp() {
     MenuItemViewComponent,
     MenuHeaderViewComponent,
     MenuItemEditComponent,
+    TemplateEditComponent,
+    CellViewComponent,
+    ToolBarComponent,
   ],
   imports: [
     BrowserModule,
@@ -79,6 +86,7 @@ function initializeApp() {
     NgbModule,
     HttpClientModule,
     CommonModule,
+    NgDragDropModule.forRoot(),
   ],
   providers: [
     AuthenticationService,

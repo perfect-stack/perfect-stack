@@ -22,12 +22,16 @@
       "label": "Meta",
       "items": [
         {
+          "label": "Entity",
+          "route": "/meta/entity/search"
+        },
+        {
           "label": "Menu",
           "route": "/meta/menu/view"
         },
         {
-          "label": "Entity",
-          "route": "/meta/entity/search"
+          "label": "Template",
+          "route": "/meta/template/edit"
         }
       ]
     }
