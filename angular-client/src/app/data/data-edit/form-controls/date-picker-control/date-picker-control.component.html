@@ -2,6 +2,8 @@
   <input class="form-control" placeholder="yyyy-mm-dd" [id]="attribute.name"
          [name]="attribute.name" [formControlName]="attribute.name" ngbDatepicker #d="ngbDatepicker">
   <div class="input-group-append">
-    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"></button>
+    <button class="btn btn-outline-secondary bg-light p-0" (click)="d.toggle()" type="button">
+      <span class="material-icons p-1">calendar_month</span>
+    </button>
   </div>
 </div>

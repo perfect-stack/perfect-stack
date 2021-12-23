@@ -1,19 +1,49 @@
 <div class="wrapper">
-  <div style="min-height: 7em;" class="p-2 cell-highlight hover-highlight" draggable droppable>
+  <div style="min-height: 7em;" class="p-2 cell-highlight hover-highlight"
+       draggable droppable
+       (onDrop)="onItemDrop($event)">
     <div class="row">
       <div class="col-12">
         <!--<div class="form-group my-hidden">
           <label for="givenName">Given name</label>
           <input class="form-control" type="text" id="givenName">
         </div>-->
+
+        <ng-container *ngIf="attribute">
+          <label [for]="attribute.name">
+            <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
+          </label>
+
+          <div [ngSwitch]="attribute.type">
+            <ng-container *ngSwitchCase="'Date'">
+              <app-date-picker-control [formGroup]="entityForm" [attribute]="attribute"></app-date-picker-control>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'Text'">
+              <app-text-field-control [formGroup]="entityForm" [attribute]="attribute"></app-text-field-control>
+            </ng-container>
+
+            <ng-container *ngSwitchDefault>
+              ERROR: Missing or unknown attribute type of: "{{attribute.type}}"
+            </ng-container>
+          </div>
+        </ng-container>
+
       </div>
     </div>
   </div>
 
   <ng-container *ngIf="mouseActive">
     <div class="overlay-top-right p-1">
-      <span class="material-icons hover-highlight no_selection" (click)="onChangeWidth(-1,$event)">remove_circle_outline</span>
+      <span class="material-icons hover-highlight no_selection" (click)="onChangeWidth(-1, $event)">remove_circle_outline</span>
       <span class="material-icons hover-highlight no_selection" (click)="onChangeWidth(1, $event)">add_circle_outline</span>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="mouseActive">
+    <div class="overlay-bottom-left p-1">
+      <span class="material-icons hover-highlight no_selection" (click)="onDeleteCell()">highlight_off</span>
+      <span class="material-icons hover-highlight no_selection" (click)="onClearCell()">block</span>
     </div>
   </ng-container>
 

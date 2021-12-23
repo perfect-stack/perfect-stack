@@ -1,4 +1,7 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
+import {Observable, switchMap} from 'rxjs';
+import {MetaEntity} from '../../domain/meta.entity';
 
 export class Cell {
   width: string;
@@ -13,9 +16,12 @@ export class Cell {
 })
 export class TemplateEditComponent implements OnInit {
 
+  public metaName: string | null = 'Person';
+  public metaEntity$: Observable<MetaEntity>;
+
   cells: Cell[][];
 
-  constructor() { }
+  constructor(protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
     this.cells = [
@@ -30,6 +36,8 @@ export class TemplateEditComponent implements OnInit {
         { width: '6', height: '1'},
       ]
     ]
+
+    this.metaEntity$ = this.metaEntityService.findById(this.metaName);
   }
 
   items: any[] = [
@@ -96,10 +104,34 @@ export class TemplateEditComponent implements OnInit {
 
   onAddCell(row: Cell[]) {
     const totalWidth = this.getTotalWidth(row);
-    const cellWidth = 12 - totalWidth;
+    const cellWidth = Math.min(12 - totalWidth, 4);
+
     const cell = new Cell();
     cell.width = String(cellWidth);
     cell.height = String(1)
     row.push(cell);
+  }
+
+  onAddRow(number: number) {
+    for(let i = 0; i < number; i++) {
+      const row: Cell[] = [];
+      this.onAddCell(row);
+      this.cells.push(row);
+    }
+  }
+
+  onDeleteCell(cell: Cell, row: Cell[]) {
+    row.splice(row.indexOf(cell), 1);
+    if(row.length == 0) {
+      this.cells = this.cells.filter((r) => r.length > 0);
+    }
+  }
+
+  onCancel() {
+
+  }
+
+  onSave() {
+
   }
 }

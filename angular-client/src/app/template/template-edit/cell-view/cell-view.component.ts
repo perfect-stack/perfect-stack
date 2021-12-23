@@ -1,5 +1,8 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Cell} from '../template-edit.component';
+import {DropEvent} from 'ng-drag-drop';
+import {MetaAttribute} from '../../../domain/meta.entity';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-cell-view',
@@ -17,7 +20,16 @@ export class CellViewComponent implements OnInit {
   @Output()
   changeHeight = new EventEmitter<number>();
 
+  @Output()
+  deleteCell = new EventEmitter<Cell>();
+
+  @Output()
+  clearCell = new EventEmitter<Cell>();
+
   mouseActive = false;
+  attribute: MetaAttribute | null = null;
+
+  entityForm: FormGroup = new FormGroup([] as any);
 
   constructor() { }
 
@@ -51,4 +63,16 @@ export class CellViewComponent implements OnInit {
     this.changeHeight.next(value);
   }
 
+  onDeleteCell() {
+    this.deleteCell.next(this.cell);
+  }
+
+  onClearCell() {
+    this.clearCell.next(this.cell);
+  }
+
+  onItemDrop($event: DropEvent) {
+    const attribute = $event.dragData;
+    this.attribute = attribute;
+  }
 }
