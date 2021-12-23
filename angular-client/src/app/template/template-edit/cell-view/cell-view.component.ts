@@ -1,7 +1,7 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {DropEvent} from 'ng-drag-drop';
 import {Cell, MetaAttribute} from '../../../domain/meta.entity';
-import {FormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-cell-view',
@@ -10,11 +10,22 @@ import {FormGroup} from '@angular/forms';
 })
 export class CellViewComponent implements OnInit {
 
+  get attribute(): MetaAttribute | undefined {
+    return this._attribute;
+  }
+
+  @Input()
+  set attribute(value: MetaAttribute | undefined) {
+    this._attribute = value;
+    if(value && value.name) {
+      this.entityForm.addControl(value.name, new FormControl(''));
+    }
+  }
+
   @Input()
   cell: Cell;
 
-  @Input()
-  attribute: MetaAttribute | undefined;
+  private _attribute: MetaAttribute | undefined;
 
   @Output()
   changeWidth = new EventEmitter<number>();
@@ -24,9 +35,6 @@ export class CellViewComponent implements OnInit {
 
   @Output()
   deleteCell = new EventEmitter<Cell>();
-
-  @Output()
-  clearCell = new EventEmitter<Cell>();
 
   mouseActive = false;
 
@@ -54,9 +62,6 @@ export class CellViewComponent implements OnInit {
   }
 
   onChangeWidth(value: number, $event: MouseEvent) {
-    // const width = Number(this.cell.width) + value;
-    // this.cell.width = String(width);
-    $event.preventDefault();
     this.changeWidth.next(value);
   }
 
@@ -69,12 +74,14 @@ export class CellViewComponent implements OnInit {
   }
 
   onClearCell() {
-    this.clearCell.next(this.cell);
+    this.cell.attributeName = undefined;
+    this.attribute = undefined;
+    this.entityForm = new FormGroup([] as any);
   }
 
   onItemDrop($event: DropEvent) {
     const attribute = $event.dragData;
-    this.attribute = attribute;
+    this._attribute = attribute;
     this.cell.attributeName = attribute.name;
   }
 }

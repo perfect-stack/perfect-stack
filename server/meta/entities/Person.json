@@ -62,12 +62,12 @@
         ],
         [
           {
-            "width": "6",
+            "width": "8",
             "height": "1",
             "attributeName": "email_address"
           },
           {
-            "width": "6",
+            "width": "4",
             "height": "1"
           }
         ]

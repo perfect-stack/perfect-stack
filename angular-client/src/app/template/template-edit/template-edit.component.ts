@@ -132,4 +132,5 @@ export class TemplateEditComponent implements OnInit {
       console.log('Invalid template:', this.template);
     }
   }
+
 }
