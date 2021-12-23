@@ -2,32 +2,77 @@
   "name": "Person",
   "attributes": [
     {
+      "type": "Identifier",
+      "visibility": "Hidden",
       "name": "id",
       "label": "Id",
-      "description": "Entity Identifier",
-      "type": "Identifier",
-      "visibility": "Hidden"
+      "description": "Entity Identifier"
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "given_name",
       "label": "Given name",
       "description": "The person's given name"
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "family_name",
       "label": "Family name",
       "description": "The person's family name"
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "email_address",
       "label": "Email address",
       "description": "Email address"
     },
     {
+      "type": "Date",
+      "visibility": "Visible",
       "name": "last_login",
       "label": "Last login",
-      "type": "Date",
       "description": "The last login date of this user"
     }
-  ]
+  ],
+  "templates": {
+    "view-edit": {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "given_name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "family_name"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "email_address"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "name": "view-edit"
+    }
+  }
 }

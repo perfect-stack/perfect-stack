@@ -21,16 +21,31 @@ export class MetaAttribute {
 export class Cell {
   width: string;
   height: string;
-  attributeName: string;
+  attributeName?: string;
 }
 
 export class Template {
   name: string;
-  cells: Cell[][];
+  cells: Cell[][] = [
+    [
+      { width: '3', height: '1'},
+      { width: '3', height: '1'},
+      { width: '3', height: '1'},
+      { width: '3', height: '1'},
+    ],
+    [
+      { width: '6', height: '1'},
+      { width: '6', height: '1'},
+    ]
+  ];
 }
+
+export type TemplateMap = {
+  [key: string]: Template;
+};
 
 export class MetaEntity {
   name: string;
   attributes: MetaAttribute[];
-  templates: Map<string, Template>;
+  templates: TemplateMap;
 }

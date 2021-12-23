@@ -1,62 +1,51 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
-import {Observable, switchMap} from 'rxjs';
-import {MetaEntity} from '../../domain/meta.entity';
-
-export class Cell {
-  width: string;
-  height: string;
-}
+import {map, Observable} from 'rxjs';
+import {Cell, MetaAttribute, MetaEntity, Template} from '../../domain/meta.entity';
 
 @Component({
   selector: 'app-template-edit',
   templateUrl: './template-edit.component.html',
   styleUrls: ['./template-edit.component.css'],
-  //encapsulation: ViewEncapsulation.None
 })
 export class TemplateEditComponent implements OnInit {
 
   public metaName: string | null = 'Person';
   public metaEntity$: Observable<MetaEntity>;
-
-  cells: Cell[][];
+  public template: Template;
 
   constructor(protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
-    this.cells = [
-      [
-        { width: '3', height: '1'},
-        { width: '3', height: '1'},
-        { width: '3', height: '1'},
-        { width: '3', height: '1'},
-      ],
-      [
-        { width: '6', height: '1'},
-        { width: '6', height: '1'},
-      ]
-    ]
+    this.metaEntity$ = this.metaEntityService.findById(this.metaName).pipe(map(metaEntity => {
+      if(!metaEntity.templates) {
+        metaEntity.templates = {};
+      }
 
-    this.metaEntity$ = this.metaEntityService.findById(this.metaName);
-  }
+      if(!metaEntity.templates['view-edit']) {
+        const template = new Template();
+        template.name = 'view-edit'
+        metaEntity.templates['view-edit'] = template;
+      }
 
-  items: any[] = [
-    {name: "Apple", type: "fruit"},
-    {name: "Carrot", type: "vegetable"},
-    {name: "Orange", type: "fruit"}
-  ];
+      return metaEntity;
+    }));
 
-  droppedItems: any[] = [];
-
-    onItemDrop(e: any) {
-    // Get the dropped data here
-    this.droppedItems.push(e.dragData);
+    this.metaEntity$.subscribe(metaEntity => {
+      if(metaEntity.templates && metaEntity.templates['view-edit']) {
+        this.template = metaEntity.templates['view-edit'] as Template;
+      }
+    });
   }
 
   getCSS(cell: Cell): string[] {
     return [
       `col-${cell.width}`
     ];
+  }
+
+  getAttribute(name: string | undefined, metaEntity: MetaEntity): MetaAttribute | undefined {
+    return name ? metaEntity.attributes.find(a => name === a.name) : undefined;
   }
 
   onChangeWidth(value: number, row: Cell[], cell: Cell) {
@@ -116,14 +105,14 @@ export class TemplateEditComponent implements OnInit {
     for(let i = 0; i < number; i++) {
       const row: Cell[] = [];
       this.onAddCell(row);
-      this.cells.push(row);
+      this.template.cells.push(row);
     }
   }
 
   onDeleteCell(cell: Cell, row: Cell[]) {
     row.splice(row.indexOf(cell), 1);
     if(row.length == 0) {
-      this.cells = this.cells.filter((r) => r.length > 0);
+      this.template.cells = this.template.cells.filter((r) => r.length > 0);
     }
   }
 
@@ -131,7 +120,16 @@ export class TemplateEditComponent implements OnInit {
 
   }
 
-  onSave() {
-
+  onSave(metaEntity: MetaEntity) {
+    console.log(`onSave():`, this.template);
+    if(this.template && this.template.name) {
+      metaEntity.templates[this.template.name] = this.template;
+      this.metaEntityService.update(metaEntity).subscribe((result) => {
+        console.log('Meta entity is saved');
+      });
+    }
+    else {
+      console.log('Invalid template:', this.template);
+    }
   }
 }

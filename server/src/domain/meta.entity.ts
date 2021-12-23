@@ -1,5 +1,5 @@
-type AttributeType = 'Text' | 'Number' | 'Identifier' | 'Date';
-type VisibilityType = 'Visible' | 'Hidden';
+export type AttributeType = 'Text' | 'Number' | 'Identifier' | 'Date';
+export type VisibilityType = 'Visible' | 'Hidden';
 
 export class MetaAttribute {
   name: string;
@@ -20,8 +20,12 @@ export class Template {
   cells: Cell[][];
 }
 
+export type TemplateMap = {
+  [key: string]: Template;
+};
+
 export class MetaEntity {
   name: string;
   attributes: MetaAttribute[];
-  templates: Map<string, Template>;
+  templates: TemplateMap;
 }
