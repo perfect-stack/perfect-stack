@@ -42,12 +42,12 @@
       "cells": [
         [
           {
-            "width": "3",
+            "width": "4",
             "height": "1",
             "attributeName": "given_name"
           },
           {
-            "width": "3",
+            "width": "4",
             "height": "1",
             "attributeName": "family_name"
           },
@@ -56,7 +56,7 @@
             "height": "1"
           },
           {
-            "width": "3",
+            "width": "1",
             "height": "1"
           }
         ],

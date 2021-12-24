@@ -1,12 +1,20 @@
 import {Component, Injectable, OnInit} from '@angular/core';
 import {Observable, switchMap} from 'rxjs';
-import {MetaEntity} from '../../domain/meta.entity';
+import {Cell, MetaAttribute, MetaEntity, Template} from '../../domain/meta.entity';
 import {Entity} from '../../domain/entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
+
+// Try not to make this exported out of this class
+class CellAttribute {
+  width: string;
+  height: string;
+  attributeName?: string;
+  attribute?: MetaAttribute;
+}
 
 @Component({
   selector: 'app-data-edit',
@@ -17,6 +25,9 @@ export class DataEditComponent implements OnInit {
 
   public metaName: string | null;
   public metaEntity$: Observable<MetaEntity>;
+
+  public template: Template;
+  public cells: CellAttribute[][] = [];
 
   public entityId: string | null;
   public entity$: Observable<Entity>;
@@ -54,17 +65,61 @@ export class DataEditComponent implements OnInit {
     });
 
     this.metaEntity$.subscribe((metaEntity) => {
+
+      this.template = metaEntity.templates['view-edit'];
+      this.cells = [];
+      if(this.template && this.template.cells) {
+        for(const nextRow of this.template.cells) {
+          const cellAttributeRow = []
+          for(const nextCell of nextRow) {
+            cellAttributeRow.push(this.toCellAttribute(nextCell, metaEntity));
+          }
+          this.cells.push(cellAttributeRow);
+        }
+      }
+
       const controls: {
         [key: string]: AbstractControl;
       } = {};
 
-      for(const nextAttribute of metaEntity.attributes) {
-        controls[nextAttribute.name] = new FormControl('');
+      // loop through cells and add FormControls for Cell attributes
+      for(const nextRow of this.template.cells) {
+        for(const nextCell of nextRow) {
+          if(nextCell.attributeName) {
+            controls[nextCell.attributeName] = new FormControl('');
+          }
+        }
       }
 
       this.entityForm = new FormGroup(controls);
     });
   }
+
+  private toCellAttribute(cell: Cell, metaEntity: MetaEntity) {
+
+    const cellAttribute: CellAttribute = {
+      ...cell,
+    }
+
+    const attribute = metaEntity.attributes.find(a => cell.attributeName == a.name);
+    if(attribute) {
+      cellAttribute.attribute = attribute;
+    }
+
+    return cellAttribute;
+  }
+
+  getCSS(cell: Cell): string[] {
+    return [
+      `col-${cell.width}`
+    ];
+  }
+
+  getAttribute(cell: Cell): MetaAttribute {
+    return new MetaAttribute();
+  }
+
+
 
   onSubmit() {
     const entityData = this.entityForm.value;
