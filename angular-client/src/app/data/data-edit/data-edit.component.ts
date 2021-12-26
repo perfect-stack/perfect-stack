@@ -26,6 +26,8 @@ export class DataEditComponent implements OnInit {
   public metaName: string | null;
   public metaEntity$: Observable<MetaEntity>;
 
+  public mode: string | null;
+
   public template: Template;
   public cells: CellAttribute[][] = [];
 
@@ -45,7 +47,8 @@ export class DataEditComponent implements OnInit {
     // TODO: there's probably a race condition here between loading the metaEntity and loading the entity value itself.
     // If the entity is loaded before the metaEntity then this.entityForm.patchValue(entity); will fail
     this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
-      this.metaName = params.get('metaName')
+      this.metaName = params.get('metaName');
+      this.mode = params.get('mode');
       return this.metaEntityService.findById(this.metaName);
     }));
 
@@ -65,7 +68,6 @@ export class DataEditComponent implements OnInit {
     });
 
     this.metaEntity$.subscribe((metaEntity) => {
-
       this.template = metaEntity.templates['view-edit'];
       this.cells = [];
       if(this.template && this.template.cells) {
@@ -115,23 +117,41 @@ export class DataEditComponent implements OnInit {
     ];
   }
 
-  getAttribute(cell: Cell): MetaAttribute {
-    return new MetaAttribute();
+  onSubmit() {
+    switch (this.mode) {
+      case 'view':
+        this.onEdit();
+        break;
+      case 'edit':
+        this.onSave()
+        break;
+      default:
+        throw new Error(`Unknown mode of ${this.mode}`);
+    }
   }
 
+  onBack() {
+    this.router.navigate([`/data/${this.metaName}/search`]);
+  }
 
-
-  onSubmit() {
-    const entityData = this.entityForm.value;
-    console.log(`onSubmit: ${JSON.stringify(entityData)}`);
-    this.dataService.update(this.metaName, entityData).subscribe(() => {
-      console.log(`entity save completed`);
-      this.onCancel();
-    });
+  onEdit() {
+    this.router.navigate([`/data/${this.metaName}/edit`, this.entityId]);
   }
 
   onCancel() {
     this.router.navigate([`/data/${this.metaName}/view`, this.entityId]);
+  }
+
+  onSave() {
+    const entityData = this.entityForm.value;
+
+    // TODO: we are going to need to think about hidden attributes not bound to the form, otherwise they are not
+    // going to survive the round trip from the database.
+    entityData.id = this.entityId;
+
+    this.dataService.update(this.metaName, entityData).subscribe(() => {
+      this.onCancel();
+    });
   }
 }
 

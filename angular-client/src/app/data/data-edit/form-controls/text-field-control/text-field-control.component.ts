@@ -15,6 +15,9 @@ export class TextFieldControlComponent implements OnInit {
   @Input()
   attribute: MetaAttribute;
 
+  @Input()
+  mode: string | null;
+
   constructor() { }
 
   ngOnInit(): void {

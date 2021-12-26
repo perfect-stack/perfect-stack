@@ -17,7 +17,6 @@ import getFirebase from '../firebase';
 import { LandingComponent } from './landing/landing.component';
 import {AuthenticationService} from './authentication/authentication.service';
 import { DataSearchComponent } from './data/data-search/data-search.component';
-import { DataViewComponent } from './data/data-view/data-view.component';
 import {CustomAdapter, DataEditComponent} from './data/data-edit/data-edit.component';
 import { DatePickerControlComponent } from './data/data-edit/form-controls/date-picker-control/date-picker-control.component';
 import { TextFieldControlComponent } from './data/data-edit/form-controls/text-field-control/text-field-control.component';
@@ -63,7 +62,6 @@ function initializeApp() {
     PersonEditComponent,
     LandingComponent,
     DataSearchComponent,
-    DataViewComponent,
     DataEditComponent,
     DatePickerControlComponent,
     TextFieldControlComponent,
