@@ -2,88 +2,88 @@
   "name": "Person",
   "attributes": [
     {
+      "type": "Identifier",
+      "visibility": "Hidden",
       "name": "id",
       "label": "Id",
-      "description": "Entity Identifier",
-      "type": "Identifier",
-      "visibility": "Hidden"
+      "description": "Entity Identifier"
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "given_name",
       "label": "Given name",
-      "description": "The person's given name",
-      "type": "Text",
-      "visibility": "Visible"
+      "description": "The person's given name"
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "family_name",
       "label": "Family name",
-      "description": "The person's family name",
-      "type": "Text",
-      "visibility": "Visible"
+      "description": "The person's family name"
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "email_address",
       "label": "Email address",
-      "description": "Email address",
-      "type": "Text",
-      "visibility": "Visible"
+      "description": "Email address"
     },
     {
+      "type": "Date",
+      "visibility": "Visible",
       "name": "last_login",
       "label": "Last login",
-      "description": "The last login date of this user",
-      "type": "Date",
-      "visibility": "Visible"
+      "description": "The last login date of this user"
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "gender",
       "label": "Gender",
-      "description": "The gender of the person",
-      "type": "Text",
-      "visibility": "Visible"
+      "description": "The gender of the person"
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "street_address",
       "label": "Street address",
-      "description": "",
-      "type": "Text",
-      "visibility": "Visible"
+      "description": ""
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "city",
       "label": "City",
-      "description": "",
-      "type": "Text",
-      "visibility": "Visible"
+      "description": ""
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "postcode",
       "label": "Postcode",
-      "description": "",
-      "type": "Text",
-      "visibility": "Visible"
+      "description": ""
     },
     {
+      "type": "Date",
+      "visibility": "Visible",
       "name": "birthday",
       "label": "Birthday",
-      "description": "",
-      "type": "Date",
-      "visibility": "Visible"
+      "description": ""
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "occupation",
       "label": "Occupation",
-      "description": "",
-      "type": "Text",
-      "visibility": "Visible"
+      "description": ""
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "company",
       "label": "Company",
-      "description": "",
-      "type": "Text",
-      "visibility": "Visible"
+      "description": ""
     }
   ],
   "templates": {
@@ -102,21 +102,53 @@
           },
           {
             "width": "3",
-            "height": "1"
+            "height": "1",
+            "attributeName": "birthday"
           },
           {
             "width": "3",
+            "height": "1",
+            "attributeName": "last_login"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "email_address"
+          },
+          {
+            "width": "6",
             "height": "1"
           }
         ],
         [
           {
             "width": "6",
-            "height": "1"
+            "height": "1",
+            "attributeName": "street_address"
           },
           {
             "width": "6",
-            "height": "1"
+            "height": "1",
+            "attributeName": "occupation"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "city"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "postcode"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "company"
           }
         ]
       ],

@@ -20,7 +20,6 @@ const routes: Routes = [
 
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AppGuard] },
   { path: 'data/:metaName/:mode/:id', component: DataEditComponent, canActivate: [AppGuard] },
-  { path: 'data/:metaName/:mode/:id', component: DataEditComponent, canActivate: [AppGuard] },
 
   { path: 'meta/entity/search', component: MetaEntitySearchComponent, canActivate: [AppGuard] },
   { path: 'meta/entity/view/:metaName', component: MetaEntityViewComponent, canActivate: [AppGuard] },

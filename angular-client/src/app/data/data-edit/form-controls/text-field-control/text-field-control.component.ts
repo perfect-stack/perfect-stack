@@ -23,4 +23,8 @@ export class TextFieldControlComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  isReadOnly() {
+    return this.mode === 'view' ? true : null;
+  }
+
 }

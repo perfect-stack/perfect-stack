@@ -26,7 +26,7 @@
 
                 <div [ngSwitch]="nextCell.attribute.type">
                   <ng-container *ngSwitchCase="'Date'">
-                    <app-date-picker-control [formGroup]="entityForm" [attribute]="nextCell.attribute"></app-date-picker-control>
+                    <app-date-picker-control [formGroup]="entityForm" [mode]="mode" [attribute]="nextCell.attribute"></app-date-picker-control>
                   </ng-container>
 
                   <ng-container *ngSwitchCase="'Text'">

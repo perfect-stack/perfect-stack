@@ -15,9 +15,15 @@ export class DatePickerControlComponent implements OnInit {
   @Input()
   attribute: MetaAttribute;
 
+  @Input()
+  mode: string | null;
+
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  isReadOnly() {
+    return this.mode === 'view' ? true : null;
+  }
 }
