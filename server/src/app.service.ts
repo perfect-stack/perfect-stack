@@ -75,8 +75,13 @@ export class AppService implements OnApplicationBootstrap {
       given_name: row.GivenName,
       family_name: row.Surname,
       email_address: row.EmailAddress,
-      //      birthday: birthday,
-      //      gender: row.Gender,
+      gender: row.Gender,
+      street_address: row.StreetAddress,
+      city: row.City,
+      postcode: row.ZipCode,
+      birthday: birthday,
+      occupation: row.Occupation,
+      company: row.Company,
     };
 
     await this.dataService.create('Person', personData);
