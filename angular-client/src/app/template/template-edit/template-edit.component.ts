@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {map, Observable} from 'rxjs';
-import {Cell, MetaAttribute, MetaEntity, Template} from '../../domain/meta.entity';
+import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
+import {Cell, Template} from '../../domain/meta.page';
 
 @Component({
   selector: 'app-template-edit',

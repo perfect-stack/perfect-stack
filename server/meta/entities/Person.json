@@ -129,7 +129,7 @@
             "attributeName": "street_address"
           },
           {
-            "width": "6",
+            "width": "5",
             "height": "1",
             "attributeName": "occupation"
           }
@@ -146,7 +146,7 @@
             "attributeName": "postcode"
           },
           {
-            "width": "6",
+            "width": "5",
             "height": "1",
             "attributeName": "company"
           }

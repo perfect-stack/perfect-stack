@@ -9,6 +9,7 @@ import { OrmModule } from './orm/orm.module';
 import { DataModule } from './data/data.module';
 import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
 import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
+import { MetaPageModule } from './meta/meta-page/meta-page.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
     OrmModule,
     MetaEntityModule,
     MetaMenuModule,
+    MetaPageModule,
     DataModule,
   ],
   controllers: [AppController],

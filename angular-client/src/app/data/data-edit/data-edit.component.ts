@@ -1,12 +1,14 @@
 import {Component, Injectable, OnInit} from '@angular/core';
-import {Observable, switchMap} from 'rxjs';
-import {Cell, MetaAttribute, MetaEntity, Template} from '../../domain/meta.entity';
+import {Observable, switchMap, tap} from 'rxjs';
+import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {Entity} from '../../domain/entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
+import {MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
+import {Cell, MetaPage, Template} from '../../domain/meta.page';
 
 // Try not to make this exported out of this class
 class CellAttribute {
@@ -24,9 +26,10 @@ class CellAttribute {
 export class DataEditComponent implements OnInit {
 
   public metaName: string | null;
-  public metaEntity$: Observable<MetaEntity>;
-
   public mode: string | null;
+
+  public metaPage$: Observable<MetaPage>;
+  public metaEntity$: Observable<MetaEntity>;
 
   public template: Template;
   public cells: CellAttribute[][] = [];
@@ -39,20 +42,67 @@ export class DataEditComponent implements OnInit {
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly metaEntityService: MetaEntityService,
+              protected readonly metaPageService: MetaPageService,
               protected readonly dataService: DataService) {
   }
 
   ngOnInit(): void {
+    this.metaPage$ = this.route.paramMap.pipe(switchMap(params => {
+      this.metaName = params.get('metaName');
+      this.mode = params.get('mode');
+
+      const metaPageName = `${this.metaName}.${this.mode}`;
+
+      return this.metaPageService.findById(metaPageName).pipe(tap(metaPage => {
+
+        this.metaEntity$ = this.metaEntityService.findById(this.metaName).pipe(tap(metaEntity => {
+          this.template = metaPage.template;
+          this.cells = [];
+          if(this.template && this.template.cells) {
+            for(const nextRow of this.template.cells) {
+              const cellAttributeRow = []
+              for(const nextCell of nextRow) {
+                cellAttributeRow.push(this.toCellAttribute(nextCell, metaEntity));
+              }
+              this.cells.push(cellAttributeRow);
+            }
+          }
+
+          const controls: {
+            [key: string]: AbstractControl;
+          } = {};
+
+          // loop through cells and add FormControls for Cell attributes
+          for(const nextRow of this.template.cells) {
+            for(const nextCell of nextRow) {
+              if(nextCell.attributeName) {
+                controls[nextCell.attributeName] = new FormControl('');
+              }
+            }
+          }
+
+          this.entityForm = new FormGroup(controls);
+
+          this.entity$ = this.route.paramMap.pipe(switchMap(params => {
+            const metaName = params.get('metaName')
+            this.entityId = params.get('id');
+            return this.dataService.findById(metaName, this.entityId).pipe(tap(entity => {
+              this.entityForm.patchValue(entity);
+            }));
+          }));
+        }));
+      }));
+    }));
 
     // TODO: there's probably a race condition here between loading the metaEntity and loading the entity value itself.
     // If the entity is loaded before the metaEntity then this.entityForm.patchValue(entity); will fail
-    this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
+    /*this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
       this.mode = params.get('mode');
       return this.metaEntityService.findById(this.metaName);
-    }));
+    }));*/
 
-    this.entity$ = this.route.paramMap.pipe(switchMap(params => {
+    /*this.entity$ = this.route.paramMap.pipe(switchMap(params => {
       const metaName = params.get('metaName')
       this.entityId = params.get('id');
       return this.dataService.findById(metaName, this.entityId)
@@ -65,36 +115,8 @@ export class DataEditComponent implements OnInit {
       else {
         console.error('Unable to set entity value since entityForm is not yet created. Need to sort out dependencies better');
       }
-    });
+    });*/
 
-    this.metaEntity$.subscribe((metaEntity) => {
-      this.template = metaEntity.templates['view-edit'];
-      this.cells = [];
-      if(this.template && this.template.cells) {
-        for(const nextRow of this.template.cells) {
-          const cellAttributeRow = []
-          for(const nextCell of nextRow) {
-            cellAttributeRow.push(this.toCellAttribute(nextCell, metaEntity));
-          }
-          this.cells.push(cellAttributeRow);
-        }
-      }
-
-      const controls: {
-        [key: string]: AbstractControl;
-      } = {};
-
-      // loop through cells and add FormControls for Cell attributes
-      for(const nextRow of this.template.cells) {
-        for(const nextCell of nextRow) {
-          if(nextCell.attributeName) {
-            controls[nextCell.attributeName] = new FormControl('');
-          }
-        }
-      }
-
-      this.entityForm = new FormGroup(controls);
-    });
   }
 
   private toCellAttribute(cell: Cell, metaEntity: MetaEntity) {

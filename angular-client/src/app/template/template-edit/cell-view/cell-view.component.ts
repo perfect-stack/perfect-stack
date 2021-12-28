@@ -1,7 +1,8 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {DropEvent} from 'ng-drag-drop';
-import {Cell, MetaAttribute} from '../../../domain/meta.entity';
+import {MetaAttribute} from '../../../domain/meta.entity';
 import {FormControl, FormGroup} from '@angular/forms';
+import {Cell} from '../../../domain/meta.page';
 
 @Component({
   selector: 'app-cell-view',
