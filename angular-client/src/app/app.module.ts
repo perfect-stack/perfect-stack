@@ -31,7 +31,7 @@ import { MenuItemEditComponent } from './meta/menu/meta-menu-view/menu-item-edit
 import { TemplateEditComponent } from './template/template-edit/template-edit.component';
 import {NgDragDropModule} from 'ng-drag-drop';
 import { CellViewComponent } from './template/template-edit/cell-view/cell-view.component';
-import { ToolBarComponent } from './template/template-edit/tool-bar/tool-bar.component';
+import { MetaPageEditComponent } from './meta/page/meta-page-edit/meta-page-edit.component';
 
 
 function initializeApp() {
@@ -74,7 +74,7 @@ function initializeApp() {
     MenuItemEditComponent,
     TemplateEditComponent,
     CellViewComponent,
-    ToolBarComponent,
+    MetaPageEditComponent,
   ],
   imports: [
     BrowserModule,

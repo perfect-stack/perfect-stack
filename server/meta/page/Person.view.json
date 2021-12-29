@@ -2,6 +2,7 @@
   "name": "Person.view",
   "type": "view",
   "template": {
+    "metaEntityName": "Person",
     "cells": [
       [
         {

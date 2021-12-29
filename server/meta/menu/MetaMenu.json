@@ -30,8 +30,8 @@
           "route": "/meta/menu/view"
         },
         {
-          "label": "Template",
-          "route": "/meta/template/edit"
+          "label": "Page",
+          "route": "/meta/page/edit"
         }
       ]
     }

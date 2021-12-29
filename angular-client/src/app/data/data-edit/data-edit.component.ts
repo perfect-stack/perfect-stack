@@ -93,30 +93,6 @@ export class DataEditComponent implements OnInit {
         }));
       }));
     }));
-
-    // TODO: there's probably a race condition here between loading the metaEntity and loading the entity value itself.
-    // If the entity is loaded before the metaEntity then this.entityForm.patchValue(entity); will fail
-    /*this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
-      this.metaName = params.get('metaName');
-      this.mode = params.get('mode');
-      return this.metaEntityService.findById(this.metaName);
-    }));*/
-
-    /*this.entity$ = this.route.paramMap.pipe(switchMap(params => {
-      const metaName = params.get('metaName')
-      this.entityId = params.get('id');
-      return this.dataService.findById(metaName, this.entityId)
-    }));
-
-    this.entity$.subscribe((entity) => {
-      if(this.entityForm) {
-        this.entityForm.patchValue(entity);
-      }
-      else {
-        console.error('Unable to set entity value since entityForm is not yet created. Need to sort out dependencies better');
-      }
-    });*/
-
   }
 
   private toCellAttribute(cell: Cell, metaEntity: MetaEntity) {

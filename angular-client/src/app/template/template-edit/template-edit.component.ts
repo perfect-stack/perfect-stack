@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
-import {map, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {Cell, Template} from '../../domain/meta.page';
 
@@ -11,32 +11,25 @@ import {Cell, Template} from '../../domain/meta.page';
 })
 export class TemplateEditComponent implements OnInit {
 
-  public metaName: string | null = 'Person';
+  get template(): Template {
+    return this._template;
+  }
+
+  @Input()
+  set template(value: Template) {
+    this._template = value;
+    if(value) {
+      this.metaEntity$ = this.metaEntityService.findById(value.metaEntityName);
+    }
+  }
+
+  private _template: Template;
+
   public metaEntity$: Observable<MetaEntity>;
-  public template: Template;
 
   constructor(protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
-    this.metaEntity$ = this.metaEntityService.findById(this.metaName).pipe(map(metaEntity => {
-      if(!metaEntity.templates) {
-        metaEntity.templates = {};
-      }
-
-      if(!metaEntity.templates['view-edit']) {
-        const template = new Template();
-        template.name = 'view-edit'
-        metaEntity.templates['view-edit'] = template;
-      }
-
-      return metaEntity;
-    }));
-
-    this.metaEntity$.subscribe(metaEntity => {
-      if(metaEntity.templates && metaEntity.templates['view-edit']) {
-        this.template = metaEntity.templates['view-edit'] as Template;
-      }
-    });
   }
 
   getCSS(cell: Cell): string[] {
@@ -102,36 +95,19 @@ export class TemplateEditComponent implements OnInit {
     row.push(cell);
   }
 
+  onDeleteCell(cell: Cell, row: Cell[]) {
+    row.splice(row.indexOf(cell), 1);
+    if(row.length == 0) {
+      this._template.cells = this._template.cells.filter((r) => r.length > 0);
+    }
+  }
+
+
   onAddRow(number: number) {
     for(let i = 0; i < number; i++) {
       const row: Cell[] = [];
       this.onAddCell(row);
-      this.template.cells.push(row);
+      this._template.cells.push(row);
     }
   }
-
-  onDeleteCell(cell: Cell, row: Cell[]) {
-    row.splice(row.indexOf(cell), 1);
-    if(row.length == 0) {
-      this.template.cells = this.template.cells.filter((r) => r.length > 0);
-    }
-  }
-
-  onCancel() {
-
-  }
-
-  onSave(metaEntity: MetaEntity) {
-    console.log(`onSave():`, this.template);
-    if(this.template && this.template.name) {
-      metaEntity.templates[this.template.name] = this.template;
-      this.metaEntityService.update(metaEntity).subscribe((result) => {
-        console.log('Meta entity is saved');
-      });
-    }
-    else {
-      console.log('Invalid template:', this.template);
-    }
-  }
-
 }

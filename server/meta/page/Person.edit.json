@@ -2,6 +2,7 @@
   "name": "Person.edit",
   "type": "edit",
   "template": {
+    "metaEntityName": "Person",
     "cells": [
       [
         {

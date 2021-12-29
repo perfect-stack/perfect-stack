@@ -1,0 +1,20 @@
+<ng-container *ngIf="metaPage$ | async as metaPage">
+
+  <h2>Meta Page Edit</h2>
+
+  <app-template-edit [template]="template">
+  </app-template-edit>
+
+
+  <div class="d-flex mt-5">
+    <button class="btn btn-outline-success mr-2" (click)="onAddRow(1)">Add Row</button>
+    <button class="btn btn-outline-success mr-2" (click)="onAddRow(5)">x5</button>
+    <button class="btn btn-outline-success" (click)="onAddRow(10)">x10</button>
+    <div class="flex-grow-1"></div>
+    <button class="btn btn-outline-secondary mr-2" (click)="onCancel()">Cancel</button>
+    <button class="btn btn-primary" (click)="onSave(metaPage)">Save</button>
+  </div>
+
+</ng-container>
+
+

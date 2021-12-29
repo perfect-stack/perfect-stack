@@ -8,6 +8,7 @@ export class Cell {
 
 export class Template {
   name: string;
+  metaEntityName: string;
   cells: Cell[][] = [
     [
       {width: '3', height: '1'},
