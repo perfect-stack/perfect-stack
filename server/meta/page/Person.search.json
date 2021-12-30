@@ -4,6 +4,7 @@
   "templates": [
     {
       "metaEntityName": "Person",
+      "type": "form",
       "cells": [
         [
           {

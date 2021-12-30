@@ -28,11 +28,13 @@ import { MenuItemViewComponent } from './meta/menu/meta-menu-view/menu-item-view
 import { MenuHeaderViewComponent } from './meta/menu/meta-menu-view/menu-header-view/menu-header-view.component';
 import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
 import { MenuItemEditComponent } from './meta/menu/meta-menu-view/menu-item-edit/menu-item-edit.component';
-import { TemplateEditComponent } from './template/template-edit/template-edit.component';
+import { TemplateFormEditor } from './template/template-edit/template-form-editor.component';
 import {NgDragDropModule} from 'ng-drag-drop';
 import { CellViewComponent } from './template/template-edit/cell-view/cell-view.component';
 import { MetaPageEditComponent } from './meta/page/meta-page-edit/meta-page-edit.component';
 import { MetaPageSearchComponent } from './meta/page/meta-page-search/meta-page-search.component';
+import { TemplateControllerComponent } from './template/template-controller/template-controller.component';
+import { TemplateTableEditorComponent } from './template/template-table-editor/template-table-editor.component';
 
 
 function initializeApp() {
@@ -73,10 +75,12 @@ function initializeApp() {
     MenuItemViewComponent,
     MenuHeaderViewComponent,
     MenuItemEditComponent,
-    TemplateEditComponent,
+    TemplateFormEditor,
     CellViewComponent,
     MetaPageEditComponent,
     MetaPageSearchComponent,
+    TemplateControllerComponent,
+    TemplateTableEditorComponent,
   ],
   imports: [
     BrowserModule,

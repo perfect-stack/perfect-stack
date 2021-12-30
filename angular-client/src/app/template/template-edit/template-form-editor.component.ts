@@ -5,11 +5,11 @@ import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {Cell, Template} from '../../domain/meta.page';
 
 @Component({
-  selector: 'app-template-edit',
-  templateUrl: './template-edit.component.html',
-  styleUrls: ['./template-edit.component.css'],
+  selector: 'app-template-form-editor',
+  templateUrl: './template-form-editor.component.html',
+  styleUrls: ['./template-form-editor.component.css'],
 })
-export class TemplateEditComponent implements OnInit {
+export class TemplateFormEditor implements OnInit {
 
   get template(): Template {
     return this._template;

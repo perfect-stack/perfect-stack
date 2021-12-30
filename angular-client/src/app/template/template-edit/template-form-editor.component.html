@@ -1,8 +1,5 @@
 <div class="row" *ngIf="template">
   <div class="col-10">
-
-    <h3>Template</h3>
-
     <ng-container *ngIf="metaEntity$ | async as metaEntity">
       <div class="pt-1 d-flex" *ngFor="let nextRow of template.cells">
         <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
