@@ -18,24 +18,29 @@ export class TemplateEditComponent implements OnInit {
   @Input()
   set template(value: Template) {
     this._template = value;
-    if(value) {
-      this.metaEntity$ = this.metaEntityService.findById(value.metaEntityName);
+    if(value && value.metaEntityName) {
+      this.loadMetaEntity(value.metaEntityName);
     }
   }
 
   private _template: Template;
-
   public metaEntity$: Observable<MetaEntity>;
+  public metaEntityOptions$: Observable<MetaEntity[]>;
 
   constructor(protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
+    this.metaEntityOptions$ = this.metaEntityService.findAll();
   }
 
   getCSS(cell: Cell): string[] {
     return [
       `col-${cell.width}`
     ];
+  }
+
+  loadMetaEntity(metaEntityName: string) {
+    this.metaEntity$ = this.metaEntityService.findById(metaEntityName);
   }
 
   getAttribute(name: string | undefined, metaEntity: MetaEntity): MetaAttribute | undefined {
@@ -45,7 +50,6 @@ export class TemplateEditComponent implements OnInit {
   onChangeWidth(value: number, row: Cell[], cell: Cell) {
     const lastCell = row[row.length - 1];
     let lastCellWidth = Number(lastCell.width);
-
 
     const totalWidth = this.getTotalWidth(row);
     const newTotalWidth = totalWidth + value;
@@ -102,12 +106,29 @@ export class TemplateEditComponent implements OnInit {
     }
   }
 
-
   onAddRow(number: number) {
     for(let i = 0; i < number; i++) {
       const row: Cell[] = [];
       this.onAddCell(row);
       this._template.cells.push(row);
     }
+  }
+
+  clearAllCells() {
+    for(const nextRow of this.template.cells) {
+      for(const nextCell of nextRow) {
+        this.clearOneCell(nextCell);
+      }
+    }
+  }
+
+  clearOneCell(cell: Cell) {
+    cell.attributeName = undefined;
+  }
+
+  onEntityChange(target: any) {
+    const metaEntityName = target.value;
+    this.loadMetaEntity(metaEntityName);
+    console.log(`onEntityChange(): ${metaEntityName}`);
   }
 }

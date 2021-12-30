@@ -7,7 +7,6 @@ export class Cell {
 }
 
 export class Template {
-  name: string;
   metaEntityName: string;
   cells: Cell[][] = [
     [
@@ -27,10 +26,17 @@ export type TemplateMap = {
   [key: string]: Template;
 };
 
-export type PageType = 'search' | 'view' | 'edit' | 'map' | 'content' | 'composite';
+export enum PageType {
+  search = 'search',
+  view = 'view',
+  edit = 'edit',
+  map = 'map',
+  content = 'content',
+  composite = 'composite',
+}
 
 export class MetaPage {
   name: string;
   type: PageType;
-  template: Template;
+  templates: Template[] = [];
 }

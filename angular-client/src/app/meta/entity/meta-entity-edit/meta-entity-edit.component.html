@@ -4,9 +4,22 @@
   <div class="container-fluid mt-3">
     <form [formGroup]="metaEntityForm">
       <div class="row">
-        <div class="col-2">Entity Name</div>
-        <div class="col-10">
-          <input class="form-control" type="text" formControlName="name">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">Entity Name</div>
+            <div class="col-10">
+              <input class="form-control" type="text" formControlName="name">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">Type</div>
+            <div class="col-10">
+              <select class="form-control" formControlName="type">
+                <option *ngFor="let o of getEntityTypeOptions()" [ngValue]="o">{{o}}</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 

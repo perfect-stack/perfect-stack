@@ -56,7 +56,13 @@ export class DataEditComponent implements OnInit {
       return this.metaPageService.findById(metaPageName).pipe(tap(metaPage => {
 
         this.metaEntity$ = this.metaEntityService.findById(this.metaName).pipe(tap(metaEntity => {
-          this.template = metaPage.template;
+          if(metaPage.templates && metaPage.templates.length !== 1) {
+            throw new Error(`Zero or more than one template supplied to DataEditComponent for ${this.metaName}`);
+          }
+          else {
+            this.template = metaPage.templates[0];
+          }
+
           this.cells = [];
           if(this.template && this.template.cells) {
             for(const nextRow of this.template.cells) {

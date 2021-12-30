@@ -1,7 +1,7 @@
 {
   "name": "Person.view",
   "type": "view",
-  "template": {
+  "templates": [{
     "metaEntityName": "Person",
     "cells": [
       [
@@ -67,5 +67,5 @@
         }
       ]
     ]
-  }
+  }]
 }

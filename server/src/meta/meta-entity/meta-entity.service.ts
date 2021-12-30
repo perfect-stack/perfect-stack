@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { OrmService } from '../../orm/orm.service';
-import { MetaAttribute, MetaEntity } from '../../domain/meta.entity';
+import {
+  AttributeType,
+  EntityType,
+  MetaAttribute,
+  MetaEntity,
+} from '../../domain/meta.entity';
 import { EntityResponse } from '../../domain/response/entity.response';
 import { DataTypes } from 'sequelize';
 import * as fs from 'fs';
@@ -100,8 +105,11 @@ export class MetaEntityService {
 
   async syncMetaModelWithDatabase(): Promise<void> {
     const metaEntities = await this.findAll();
+    const databaseEntities = metaEntities.filter(
+      (me) => me.type === EntityType.Database,
+    );
 
-    for (const nextMetaEntity of metaEntities) {
+    for (const nextMetaEntity of databaseEntities) {
       const modelAttributeList = {};
       for (const nextMetaAttribute of nextMetaEntity.attributes) {
         const modelAttribute: any = {
@@ -109,7 +117,7 @@ export class MetaEntityService {
           allowNull: true,
         };
 
-        if (nextMetaAttribute.type === 'Date') {
+        if (nextMetaAttribute.type === AttributeType.Date) {
           modelAttribute.type = DataTypes.DATEONLY;
         }
 

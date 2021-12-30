@@ -1,0 +1,13 @@
+{
+  "name": "PersonSearchCriteria",
+  "type": "Basic",
+  "attributes": [
+    {
+      "name": "name",
+      "label": "Name",
+      "description": "Person where name starts with this value",
+      "type": "Text",
+      "visibility": "Visible"
+    }
+  ]
+}

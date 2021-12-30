@@ -32,6 +32,7 @@ import { TemplateEditComponent } from './template/template-edit/template-edit.co
 import {NgDragDropModule} from 'ng-drag-drop';
 import { CellViewComponent } from './template/template-edit/cell-view/cell-view.component';
 import { MetaPageEditComponent } from './meta/page/meta-page-edit/meta-page-edit.component';
+import { MetaPageSearchComponent } from './meta/page/meta-page-search/meta-page-search.component';
 
 
 function initializeApp() {
@@ -75,6 +76,7 @@ function initializeApp() {
     TemplateEditComponent,
     CellViewComponent,
     MetaPageEditComponent,
+    MetaPageSearchComponent,
   ],
   imports: [
     BrowserModule,

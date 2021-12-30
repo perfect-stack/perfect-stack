@@ -1,0 +1,20 @@
+{
+  "name": "Test",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "t1",
+      "label": "t1",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible"
+    },
+    {
+      "name": "t2",
+      "label": "t2",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible"
+    }
+  ]
+}

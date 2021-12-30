@@ -1,9 +1,9 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {Observable, switchMap, tap} from 'rxjs';
-import {MetaPage, Template} from '../../../domain/meta.page';
+import {Component, OnInit} from '@angular/core';
+import {Observable, of, switchMap, tap} from 'rxjs';
+import {MetaPage, PageType, Template} from '../../../domain/meta.page';
 import {ActivatedRoute} from '@angular/router';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
-import {TemplateEditComponent} from '../../../template/template-edit/template-edit.component';
+import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-meta-page-edit',
@@ -15,42 +15,68 @@ export class MetaPageEditComponent implements OnInit {
   metaPageName: string | null;
   metaPage$: Observable<MetaPage>;
 
-  template: Template;
+  templates: Template[];
 
-  @ViewChild(TemplateEditComponent)
-  templateEditComponent: TemplateEditComponent;
+  metaPageForm = new FormGroup({
+    name: new FormControl(''),
+    type: new FormControl(''),
+  });
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly metaPageService: MetaPageService) { }
 
   ngOnInit(): void {
     this.metaPage$ = this.route.paramMap.pipe(switchMap(params => {
-      this.metaPageName = params.get('metaName');
-      if(!this.metaPageName) {
-        this.metaPageName = 'Person.edit'
-      }
-
-      return this.metaPageService.findById(this.metaPageName).pipe(tap(metaPage => {
-        this.template = metaPage.template;
+      this.metaPageName = params.get('metaPageName');
+      const obs = this.metaPageName === '**NEW**' ? this.newMetaPage() : this.loadMetaPage();
+      return obs.pipe(tap(metaPage => {
+        this.templates = metaPage.templates;
+        this.metaPageForm.patchValue(metaPage);
       }));
     }));
   }
 
-  onAddRow(number: number) {
-    this.templateEditComponent.onAddRow(number);
+  newMetaPage() {
+    return of(new MetaPage());
+  }
+
+  loadMetaPage() {
+    return this.metaPageService.findById(this.metaPageName);
+  }
+
+  onAddTemplate() {
+    console.log(`Add Template`);
+    const template = new Template();
+    this.templates.push(template);
   }
 
   onCancel() {
 
   }
 
-  onSave(metaPage: MetaPage) {
-    console.log(`onSave():`);
-    if(metaPage) {
+  onSave() {
+    const metaPage = this.metaPageForm.value;
+    metaPage.templates = this.templates;
+
+    console.log('onSave()', metaPage);
+
+    if(this.metaPageName === '**NEW**') {
+      this.metaPageService.create(metaPage).subscribe(() => {
+        console.log('MetaPage created.');
+      })
+    }
+    else {
       this.metaPageService.update(metaPage).subscribe(() => {
-        console.log('MetaPage saved.');
+        console.log('MetaPage updated.');
       });
     }
   }
 
+  onSubmit() {
+
+  }
+
+  getPageTypeOptions() {
+    return Object.keys(PageType);
+  }
 }

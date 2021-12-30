@@ -6,7 +6,7 @@ export class Cell {
 }
 
 export class Template {
-  name: string; // TODO remove this name
+  metaEntityName = 'Person';
   cells: Cell[][] = [
     [
       { width: '3', height: '1' },
@@ -25,16 +25,17 @@ export type TemplateMap = {
   [key: string]: Template;
 };
 
-export type PageType =
-  | 'search'
-  | 'view'
-  | 'edit'
-  | 'map'
-  | 'content'
-  | 'composite';
+export enum PageType {
+  search = 'search',
+  view = 'view',
+  edit = 'edit',
+  map = 'map',
+  content = 'content',
+  composite = 'composite',
+}
 
 export class MetaPage {
   name: string;
   type: PageType;
-  template: Template;
+  templates: Template[] = [];
 }

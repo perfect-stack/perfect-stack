@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
-import {MetaEntity, AttributeType, VisibilityType} from '../../../domain/meta.entity';
+import {MetaEntity, AttributeType, VisibilityType, EntityType} from '../../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
@@ -17,6 +17,7 @@ export class MetaEntityEditComponent implements OnInit {
 
   metaEntityForm = this.fb.group({
     name: ['', Validators.required],
+    type: ['', Validators.required],
     attributes: this.fb.array([]),
   });
 
@@ -59,7 +60,6 @@ export class MetaEntityEditComponent implements OnInit {
 
   onSave(metaEntity: MetaEntity) {
     const metaEntityData = this.metaEntityForm.value;
-    metaEntityData.templates = metaEntity.templates;
 
     console.log(`onSave():`, metaEntityData);
     if(this.metaName === '**NEW**') {
@@ -97,5 +97,9 @@ export class MetaEntityEditComponent implements OnInit {
     for(let i = 0; i < count; i++) {
       this.addBlankRow();
     }
+  }
+
+  getEntityTypeOptions() {
+    return Object.keys(EntityType);
   }
 }
