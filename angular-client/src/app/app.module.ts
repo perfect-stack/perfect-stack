@@ -28,13 +28,14 @@ import { MenuItemViewComponent } from './meta/menu/meta-menu-view/menu-item-view
 import { MenuHeaderViewComponent } from './meta/menu/meta-menu-view/menu-header-view/menu-header-view.component';
 import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
 import { MenuItemEditComponent } from './meta/menu/meta-menu-view/menu-item-edit/menu-item-edit.component';
-import { TemplateFormEditor } from './template/template-edit/template-form-editor.component';
+import { TemplateFormEditor } from './template/template-form-editor/template-form-editor.component';
 import {NgDragDropModule} from 'ng-drag-drop';
-import { CellViewComponent } from './template/template-edit/cell-view/cell-view.component';
+import { CellViewComponent } from './template/template-form-editor/cell-view/cell-view.component';
 import { MetaPageEditComponent } from './meta/page/meta-page-edit/meta-page-edit.component';
 import { MetaPageSearchComponent } from './meta/page/meta-page-search/meta-page-search.component';
 import { TemplateControllerComponent } from './template/template-controller/template-controller.component';
 import { TemplateTableEditorComponent } from './template/template-table-editor/template-table-editor.component';
+import { AttributePaletteComponent } from './template/attribute-palette/attribute-palette.component';
 
 
 function initializeApp() {
@@ -81,6 +82,7 @@ function initializeApp() {
     MetaPageSearchComponent,
     TemplateControllerComponent,
     TemplateTableEditorComponent,
+    AttributePaletteComponent,
   ],
   imports: [
     BrowserModule,

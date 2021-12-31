@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, of, switchMap, tap} from 'rxjs';
-import {MetaPage, PageType, Template} from '../../../domain/meta.page';
+import {MetaPage, PageType, Template, TemplateType} from '../../../domain/meta.page';
 import {ActivatedRoute} from '@angular/router';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
 import {FormControl, FormGroup} from '@angular/forms';
@@ -47,6 +47,8 @@ export class MetaPageEditComponent implements OnInit {
   onAddTemplate() {
     console.log(`Add Template`);
     const template = new Template();
+    template.metaEntityName = 'Person';
+    template.type = TemplateType.form;
     this.templates.push(template);
   }
 

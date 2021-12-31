@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
-import {Observable} from 'rxjs';
 import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {Cell, Template} from '../../domain/meta.page';
 
@@ -11,36 +10,21 @@ import {Cell, Template} from '../../domain/meta.page';
 })
 export class TemplateFormEditor implements OnInit {
 
-  get template(): Template {
-    return this._template;
-  }
+  @Input()
+  public template: Template;
 
   @Input()
-  set template(value: Template) {
-    this._template = value;
-    if(value && value.metaEntityName) {
-      this.loadMetaEntity(value.metaEntityName);
-    }
-  }
-
-  private _template: Template;
-  public metaEntity$: Observable<MetaEntity>;
-  public metaEntityOptions$: Observable<MetaEntity[]>;
+  public metaEntity: MetaEntity;
 
   constructor(protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
-    this.metaEntityOptions$ = this.metaEntityService.findAll();
   }
 
   getCSS(cell: Cell): string[] {
     return [
       `col-${cell.width}`
     ];
-  }
-
-  loadMetaEntity(metaEntityName: string) {
-    this.metaEntity$ = this.metaEntityService.findById(metaEntityName);
   }
 
   getAttribute(name: string | undefined, metaEntity: MetaEntity): MetaAttribute | undefined {
@@ -102,7 +86,7 @@ export class TemplateFormEditor implements OnInit {
   onDeleteCell(cell: Cell, row: Cell[]) {
     row.splice(row.indexOf(cell), 1);
     if(row.length == 0) {
-      this._template.cells = this._template.cells.filter((r) => r.length > 0);
+      this.template.cells = this.template.cells.filter((r) => r.length > 0);
     }
   }
 
@@ -110,7 +94,7 @@ export class TemplateFormEditor implements OnInit {
     for(let i = 0; i < number; i++) {
       const row: Cell[] = [];
       this.onAddCell(row);
-      this._template.cells.push(row);
+      this.template.cells.push(row);
     }
   }
 
@@ -126,9 +110,4 @@ export class TemplateFormEditor implements OnInit {
     cell.attributeName = undefined;
   }
 
-  onEntityChange(target: any) {
-    const metaEntityName = target.value;
-    this.loadMetaEntity(metaEntityName);
-    console.log(`onEntityChange(): ${metaEntityName}`);
-  }
 }

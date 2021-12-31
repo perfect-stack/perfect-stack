@@ -1,23 +1,37 @@
+<ng-container *ngIf="template && metaEntityOptions$ | async as metaEntityOptions">
 
-<ng-container *ngIf="template">
-  <div class="d-flex">
-    <h3 class="mr-2">Template</h3>
-    <select class="col-1 form-control" id="entity" [(ngModel)]="template.type">
-      <option *ngFor="let o of getTemplateTypeOptions()" [ngValue]="o">{{o}}</option>
-    </select>
+  <div class="row">
+    <div class="col-10">
+
+      <div class="d-flex mb-2">
+        <h3 class="mr-2">Template</h3>
+
+        <select class="col-2 form-control mr-2" id="entity" [ngModel]="metaEntity"  (ngModelChange)="onEntityChange($event)">
+          <option *ngFor="let o of metaEntityOptions" [ngValue]="o">{{o.name}}</option>
+        </select>
+
+        <select class="col-1 form-control" id="templateType" [(ngModel)]="template.type">
+          <option *ngFor="let o of getTemplateTypeOptions()" [ngValue]="o">{{o}}</option>
+        </select>
+      </div>
+
+      <ng-container [ngSwitch]="template.type">
+        <ng-container *ngSwitchCase="'form'">
+          <app-template-form-editor [template]="template" [metaEntity]="metaEntity"></app-template-form-editor>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'table'">
+          <app-template-table-editor [template]="template"></app-template-table-editor>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <div>UNKNOWN template type of {{template.type}}</div>
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <div class="col-2" style="border-left: #5a6268 thin solid">
+      <app-attribute-palette [metaEntity]="metaEntity"></app-attribute-palette>
+    </div>
   </div>
-
-  <ng-container [ngSwitch]="template.type">
-    <ng-container *ngSwitchCase="'form'">
-      <app-template-form-editor [template]="template"></app-template-form-editor>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="'table'">
-      <app-template-table-editor [template]="template"></app-template-table-editor>
-    </ng-container>
-
-    <ng-container *ngSwitchDefault>
-      <div>UNKNOWN template type of {{template.type}}</div>
-    </ng-container>
-  </ng-container>
 </ng-container>

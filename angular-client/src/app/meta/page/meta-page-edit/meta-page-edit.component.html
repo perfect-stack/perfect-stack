@@ -20,7 +20,11 @@
   </div>
 
   <ng-container *ngFor="let nextTemplate of templates">
-    <app-template-controller [template]="nextTemplate"></app-template-controller>
+    <div class="row my-2">
+      <div class="col-12">
+        <app-template-controller [template]="nextTemplate"></app-template-controller>
+      </div>
+    </div>
   </ng-container>
 
   <div class="d-flex mt-5">

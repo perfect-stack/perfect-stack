@@ -4,11 +4,6 @@
        (onDrop)="onItemDrop($event)">
     <div class="row">
       <div class="col-12">
-        <!--<div class="form-group my-hidden">
-          <label for="givenName">Given name</label>
-          <input class="form-control" type="text" id="givenName">
-        </div>-->
-
         <ng-container *ngIf="attribute">
           <label [for]="attribute.name">
             <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
@@ -28,7 +23,6 @@
             </ng-container>
           </div>
         </ng-container>
-
       </div>
     </div>
   </div>
