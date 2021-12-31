@@ -9,7 +9,7 @@ import {MetaEntity} from '../../domain/meta.entity';
 export class AttributePaletteComponent implements OnInit {
 
   @Input()
-  metaEntity: MetaEntity;
+  metaEntity: MetaEntity | undefined;
 
   constructor() { }
 

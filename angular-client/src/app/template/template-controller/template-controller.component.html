@@ -1,4 +1,4 @@
-<ng-container *ngIf="template && metaEntityOptions$ | async as metaEntityOptions">
+<ng-container *ngIf="template && metaEntityOptions">
 
   <div class="row">
     <div class="col-10">
@@ -6,7 +6,7 @@
       <div class="d-flex mb-2">
         <h3 class="mr-2">Template</h3>
 
-        <select class="col-2 form-control mr-2" id="entity" [ngModel]="metaEntity"  (ngModelChange)="onEntityChange($event)">
+        <select class="col-2 form-control mr-2" id="entity" [ngModel]="getMetaEntity(template, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
           <option *ngFor="let o of metaEntityOptions" [ngValue]="o">{{o.name}}</option>
         </select>
 
@@ -17,7 +17,7 @@
 
       <ng-container [ngSwitch]="template.type">
         <ng-container *ngSwitchCase="'form'">
-          <app-template-form-editor [template]="template" [metaEntity]="metaEntity"></app-template-form-editor>
+          <app-template-form-editor [template]="template" [metaEntity]="getMetaEntity(template, metaEntityOptions)"></app-template-form-editor>
         </ng-container>
 
         <ng-container *ngSwitchCase="'table'">
@@ -31,7 +31,7 @@
     </div>
 
     <div class="col-2" style="border-left: #5a6268 thin solid">
-      <app-attribute-palette [metaEntity]="metaEntity"></app-attribute-palette>
+      <app-attribute-palette [metaEntity]="getMetaEntity(template, metaEntityOptions)"></app-attribute-palette>
     </div>
   </div>
 </ng-container>

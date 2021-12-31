@@ -19,12 +19,14 @@
     </div>
   </div>
 
-  <ng-container *ngFor="let nextTemplate of templates">
-    <div class="row my-2">
-      <div class="col-12">
-        <app-template-controller [template]="nextTemplate"></app-template-controller>
+  <ng-container *ngIf="metaEntityOptions$ | async as metaEntityOptions">
+    <ng-container *ngFor="let nextTemplate of templates">
+      <div class="row my-2">
+        <div class="col-12">
+          <app-template-controller [template]="nextTemplate" [metaEntityOptions]="metaEntityOptions"></app-template-controller>
+        </div>
       </div>
-    </div>
+    </ng-container>
   </ng-container>
 
   <div class="d-flex mt-5">

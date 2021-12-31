@@ -14,7 +14,7 @@ export class TemplateFormEditor implements OnInit {
   public template: Template;
 
   @Input()
-  public metaEntity: MetaEntity;
+  public metaEntity: MetaEntity | undefined;
 
   constructor(protected readonly metaEntityService: MetaEntityService) { }
 

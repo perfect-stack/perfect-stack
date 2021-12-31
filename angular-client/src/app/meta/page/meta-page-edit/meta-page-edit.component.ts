@@ -4,6 +4,8 @@ import {MetaPage, PageType, Template, TemplateType} from '../../../domain/meta.p
 import {ActivatedRoute} from '@angular/router';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
 import {FormControl, FormGroup} from '@angular/forms';
+import {MetaEntity} from '../../../domain/meta.entity';
+import {MetaEntityService} from '../../entity/meta-entity-service/meta-entity.service';
 
 @Component({
   selector: 'app-meta-page-edit',
@@ -15,6 +17,8 @@ export class MetaPageEditComponent implements OnInit {
   metaPageName: string | null;
   metaPage$: Observable<MetaPage>;
 
+  public metaEntityOptions$: Observable<MetaEntity[]>;
+
   templates: Template[];
 
   metaPageForm = new FormGroup({
@@ -23,9 +27,12 @@ export class MetaPageEditComponent implements OnInit {
   });
 
   constructor(protected readonly route: ActivatedRoute,
+              protected readonly metaEntityService: MetaEntityService,
               protected readonly metaPageService: MetaPageService) { }
 
   ngOnInit(): void {
+    this.metaEntityOptions$ = this.metaEntityService.findAll();
+
     this.metaPage$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaPageName = params.get('metaPageName');
       const obs = this.metaPageName === '**NEW**' ? this.newMetaPage() : this.loadMetaPage();
@@ -81,4 +88,5 @@ export class MetaPageEditComponent implements OnInit {
   getPageTypeOptions() {
     return Object.keys(PageType);
   }
+
 }
