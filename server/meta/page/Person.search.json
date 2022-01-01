@@ -28,19 +28,18 @@
         [
           {
             "width": "3",
-            "height": "1"
+            "height": "1",
+            "attributeName": "given_name"
           },
           {
             "width": "3",
-            "height": "1"
+            "height": "1",
+            "attributeName": "family_name"
           },
           {
-            "width": "3",
-            "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1"
+            "width": "1",
+            "height": "1",
+            "attributeName": "email_address"
           }
         ],
         [

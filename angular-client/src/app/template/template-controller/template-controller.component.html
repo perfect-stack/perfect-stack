@@ -1,6 +1,6 @@
 <ng-container *ngIf="template && metaEntityOptions">
 
-  <div class="row">
+  <div class="row border-top border-dark py-3">
     <div class="col-10">
 
       <div class="d-flex mb-2">
@@ -21,7 +21,7 @@
         </ng-container>
 
         <ng-container *ngSwitchCase="'table'">
-          <app-template-table-editor [template]="template"></app-template-table-editor>
+          <app-template-table-editor [template]="template" [metaEntity]="getMetaEntity(template, metaEntityOptions)"></app-template-table-editor>
         </ng-container>
 
         <ng-container *ngSwitchDefault>

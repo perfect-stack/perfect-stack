@@ -1,9 +1,9 @@
 <ng-container *ngIf="metaPage$ | async as metaPage">
 
-  <h2>Meta Page Edit</h2>
+  <h2>Page Edit</h2>
 
   <div class="row">
-    <div class="col-6">
+    <div class="col-4">
       <form class="form" #form="ngForm" [formGroup]="metaPageForm" (ngSubmit)="onSubmit()">
         <div class="form-group row">
           <label class="col-2" for="name">Name</label>
