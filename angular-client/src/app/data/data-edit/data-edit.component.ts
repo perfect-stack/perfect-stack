@@ -7,16 +7,9 @@ import {DataService} from '../data-service/data.service';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
-import {MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
+import {CellAttribute, MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
 import {Cell, MetaPage, Template} from '../../domain/meta.page';
 
-// Try not to make this exported out of this class
-class CellAttribute {
-  width: string;
-  height: string;
-  attributeName?: string;
-  attribute?: MetaAttribute;
-}
 
 @Component({
   selector: 'app-data-edit',
@@ -63,16 +56,7 @@ export class DataEditComponent implements OnInit {
             this.template = metaPage.templates[0];
           }
 
-          this.cells = [];
-          if(this.template && this.template.cells) {
-            for(const nextRow of this.template.cells) {
-              const cellAttributeRow = []
-              for(const nextCell of nextRow) {
-                cellAttributeRow.push(this.toCellAttribute(nextCell, metaEntity));
-              }
-              this.cells.push(cellAttributeRow);
-            }
-          }
+          this.cells = this.metaPageService.toCellAttributeArray(this.template, metaEntity);
 
           const controls: {
             [key: string]: AbstractControl;
@@ -99,20 +83,6 @@ export class DataEditComponent implements OnInit {
         }));
       }));
     }));
-  }
-
-  private toCellAttribute(cell: Cell, metaEntity: MetaEntity) {
-
-    const cellAttribute: CellAttribute = {
-      ...cell,
-    }
-
-    const attribute = metaEntity.attributes.find(a => cell.attributeName == a.name);
-    if(attribute) {
-      cellAttribute.attribute = attribute;
-    }
-
-    return cellAttribute;
   }
 
   getCSS(cell: Cell): string[] {

@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import {Observable, switchMap} from 'rxjs';
+import {Observable, switchMap, tap} from 'rxjs';
 import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PersonSearchCriteria} from '../../person/person-search/person-search-criteria';
 import {DataService} from '../data-service/data.service';
 import {Entity} from '../../domain/entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
+import {MetaPage} from '../../domain/meta.page';
+import {CellAttribute, MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
   selector: 'app-data-search',
@@ -15,7 +17,13 @@ import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-enti
 export class DataSearchComponent implements OnInit {
 
   public metaName: string | null;
+  public mode: string | null;
+
+  public metaPage$: Observable<MetaPage>;
   public metaEntity$: Observable<MetaEntity>;
+
+  criteriaFormCells: CellAttribute[][];
+  resultTableCells: CellAttribute[][];
 
   public searchCriteria = new PersonSearchCriteria();
   public pageNumber = 1;
@@ -26,18 +34,31 @@ export class DataSearchComponent implements OnInit {
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
+              protected readonly metaPageService: MetaPageService,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
-    this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
+    this.metaPage$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
-      return this.metaEntityService.findById(this.metaName);
-    }));
+      this.mode = 'search';
+      const metaPageName = `${this.metaName}.${this.mode}`;
+      return this.metaPageService.findById(metaPageName).pipe(tap(metaPage => {
+        this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
+          this.metaName = params.get('metaName');
+          return this.metaEntityService.findById(this.metaName).pipe(tap(metaEntity => {
 
-    this.metaEntity$.subscribe((metaEntity) => {
-      this.onSearch();
-    })
+            const criteriaTemplate = metaPage.templates[0];
+            this.criteriaFormCells = this.metaPageService.toCellAttributeArray(criteriaTemplate, metaEntity);
+
+            const resultTableTemplate = metaPage.templates[1];
+            this.resultTableCells = this.metaPageService.toCellAttributeArray(resultTableTemplate, metaEntity);
+
+            this.onSearch();
+          }));
+        }));
+      }));
+    }));
   }
 
 

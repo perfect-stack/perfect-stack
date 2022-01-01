@@ -39,6 +39,11 @@
           {
             "width": "1",
             "height": "1",
+            "attributeName": "gender"
+          },
+          {
+            "width": "1",
+            "height": "1",
             "attributeName": "email_address"
           }
         ],
