@@ -8,6 +8,7 @@ import {Entity} from '../../domain/entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {MetaPage} from '../../domain/meta.page';
 import {CellAttribute, MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
+import {FormService} from '../data-edit/form-service/form.service';
 
 @Component({
   selector: 'app-data-search',
@@ -34,6 +35,7 @@ export class DataSearchComponent implements OnInit {
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
+              protected readonly formService: FormService,
               protected readonly metaPageService: MetaPageService,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly dataService: DataService) { }
@@ -49,10 +51,10 @@ export class DataSearchComponent implements OnInit {
           return this.metaEntityService.findById(this.metaName).pipe(tap(metaEntity => {
 
             const criteriaTemplate = metaPage.templates[0];
-            this.criteriaFormCells = this.metaPageService.toCellAttributeArray(criteriaTemplate, metaEntity);
+            this.criteriaFormCells = this.formService.toCellAttributeArray(criteriaTemplate, metaEntity);
 
             const resultTableTemplate = metaPage.templates[1];
-            this.resultTableCells = this.metaPageService.toCellAttributeArray(resultTableTemplate, metaEntity);
+            this.resultTableCells = this.formService.toCellAttributeArray(resultTableTemplate, metaEntity);
 
             this.onSearch();
           }));

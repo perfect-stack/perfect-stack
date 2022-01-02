@@ -1,18 +1,14 @@
 
-<ng-container *ngIf="mode && template">
-  <ng-container *ngIf="metaEntity$ | async as metaEntity">
-    <ng-container *ngIf="entityForm">
-      <form class="form" #form="ngForm" [formGroup]="entityForm"> <!-- (ngSubmit)="onSubmit()" -->
+<ng-container *ngIf="mode && cells && entityForm">
+  <form class="form" #form="ngForm" [formGroup]="entityForm"> <!-- (ngSubmit)="onSubmit()" -->
 
-        <app-form-layout [mode]="mode" [formGroup]="entityForm" [cells]="cells"></app-form-layout>
+    <app-form-layout [mode]="mode" [formGroup]="entityForm" [cells]="cells"></app-form-layout>
 
-        <div class="d-flex">
-          <ng-content select="[BottomLeftActions]"></ng-content>
-          <div class="flex-grow-1"></div>
-          <ng-content select="[BottomRightActions]"></ng-content>
-          <ng-content></ng-content>
-        </div>
-      </form>
-    </ng-container>
-  </ng-container>
+    <div class="d-flex">
+      <ng-content select="[BottomLeftActions]"></ng-content>
+      <div class="flex-grow-1"></div>
+      <ng-content select="[BottomRightActions]"></ng-content>
+      <ng-content></ng-content>
+    </div>
+  </form>
 </ng-container>

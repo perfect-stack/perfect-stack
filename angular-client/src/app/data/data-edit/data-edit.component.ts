@@ -1,12 +1,9 @@
 import {Component, Injectable, OnInit} from '@angular/core';
-import {Observable, switchMap, tap} from 'rxjs';
-import {Entity} from '../../domain/entity';
+import {Observable, switchMap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
-import {FormGroup} from '@angular/forms';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
-import {MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
-import {MetaPage, Template} from '../../domain/meta.page';
+import {FormContext, FormService} from './form-service/form.service';
 
 
 @Component({
@@ -18,67 +15,29 @@ export class DataEditComponent implements OnInit {
 
   public metaName: string | null;
   public mode: string | null;
-
-  public metaPage$: Observable<MetaPage>;
-  public template: Template;
-
   public entityId: string | null;
-  public entity$: Observable<Entity>;
 
-  entityForm: FormGroup;
+  ctx$: Observable<FormContext>;
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
-              protected readonly metaPageService: MetaPageService,
+              protected readonly formService: FormService,
               protected readonly dataService: DataService) {
   }
 
   ngOnInit(): void {
-    this.metaPage$ = this.route.paramMap.pipe(switchMap(params => {
+    this.ctx$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
       this.mode = params.get('mode');
       this.entityId = params.get('id');
 
-      const metaPageName = `${this.metaName}.${this.mode}`;
-
-      return this.metaPageService.findById(metaPageName).pipe(tap(metaPage => {
-        if(metaPage.templates && metaPage.templates.length !== 1) {
-          throw new Error(`Zero or more than one template supplied to DataEditComponent for ${this.metaName}`);
-        }
-      }));
+      if(this.metaName && this.mode && this.entityId) {
+        return this.formService.loadFormContext(this.metaName, this.mode, this.entityId);
+      }
+      else {
+        throw new Error('Invalid input parameters; ');
+      }
     }));
-
-    this.entity$ = this.route.paramMap.pipe(switchMap(params => {
-      const metaName = params.get('metaName');
-      const entityId = params.get('id');
-
-      return this.dataService.findById(metaName, entityId).pipe(tap(entity => {
-        this.entityForm.patchValue(entity);
-      }));
-    }));
-  }
-
-  onEntityFormEvent($event: any): void {
-    console.log(`DataEdit: onChanges()`);
-    this.entityForm = $event;
-
-    // this.entity$.subscribe(entity => {
-    //   console.log('loaded entity, TODO better way of doing this please');
-    // })
-  }
-
-
-  onSubmit() {
-    switch (this.mode) {
-      case 'view':
-        this.onEdit();
-        break;
-      case 'edit':
-        this.onSave()
-        break;
-      default:
-        throw new Error(`Unknown mode of ${this.mode}`);
-    }
   }
 
   onBack() {
@@ -93,8 +52,8 @@ export class DataEditComponent implements OnInit {
     this.router.navigate([`/data/${this.metaName}/view`, this.entityId]);
   }
 
-  onSave() {
-    const entityData = this.entityForm.value;
+  onSave(ctx: FormContext) {
+    const entityData = ctx.entityForm.value;
 
     // TODO: we are going to need to think about hidden attributes not bound to the form, otherwise they are not
     // going to survive the round trip from the database.

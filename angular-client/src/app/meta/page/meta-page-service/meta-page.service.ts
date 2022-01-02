@@ -34,33 +34,4 @@ export class MetaPageService {
     return this.http.put(`http://localhost:3080/meta/page/${metaPage.name}`, metaPage);
   }
 
-  public toCellAttributeArray(template: Template, metaEntity: MetaEntity) {
-    const cells: CellAttribute[][] = [];
-    if(template && template.cells) {
-      for(const nextRow of template.cells) {
-        const row = []
-        for(const nextCell of nextRow) {
-          row.push(this.toCellAttribute(nextCell, metaEntity));
-        }
-        cells.push(row);
-      }
-    }
-
-    return cells;
-  }
-
-  private toCellAttribute(cell: Cell, metaEntity: MetaEntity) {
-
-    const cellAttribute: CellAttribute = {
-      ...cell,
-    }
-
-    const attribute = metaEntity.attributes.find(a => cell.attributeName == a.name);
-    if(attribute) {
-      cellAttribute.attribute = attribute;
-    }
-
-    return cellAttribute;
-  }
-
 }
