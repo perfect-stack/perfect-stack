@@ -1,70 +1,24 @@
-<ng-container *ngIf="{
-   metaPage: metaPage$ | async,
-   metaEntity: metaEntity$ | async,
-   entity: entity$ | async
-} as context">
+<ng-container *ngIf="metaPage$ | async as metaPage">
+  <ng-container *ngIf="entity$ | async as entity">
 
-  <div *ngIf="!context.metaEntity; else EditEntity">
-    Loading...
-  </div>
+    <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
+      <h2 class="mb-3">{{metaPage.name}} Edit</h2>
 
-  <ng-template #EditEntity>
-    <ng-container *ngIf="context.entity">
+      <app-form [mode]="mode" [template]="metaPage.templates[0]" (entityFormEvent)="onEntityFormEvent($event)">
+        <ng-container BottomRightActions [ngSwitch]="mode">
+          <ng-container *ngSwitchCase="'view'">
+            <button class="btn btn-outline-secondary mr-2" (click)="onBack()">Back</button>
+            <button type="submit" class="btn btn-primary mr-2" (click)="onEdit()">Edit</button>
+          </ng-container>
+          <ng-container *ngSwitchCase="'edit'">
+            <button class="btn btn-outline-secondary mr-2" (click)="onCancel()">Cancel</button>
+            <button type="submit" class="btn btn-primary mr-2" (click)="onSave()">Save</button>
+          </ng-container>
+        </ng-container>
+      </app-form>
+    </div>
 
-      <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
-        <h2 class="mb-3">{{context.metaEntity?.name}} Edit</h2>
-
-        <form class="form" #form="ngForm" [formGroup]="entityForm"> <!-- (ngSubmit)="onSubmit()" -->
-
-          <div class="pt-1 d-flex" *ngFor="let nextRow of cells">
-            <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
-
-              <div class="form-group" *ngIf="nextCell.attribute">
-
-                <label [for]="nextCell.attribute.name">
-                  <span placement="right" [ngbTooltip]="nextCell.attribute.description">{{nextCell.attribute.label}}</span>
-                </label>
-
-                <div [ngSwitch]="nextCell.attribute.type">
-                  <ng-container *ngSwitchCase="'Date'">
-                    <app-date-picker-control [formGroup]="entityForm" [mode]="mode" [attribute]="nextCell.attribute"></app-date-picker-control>
-                  </ng-container>
-
-                  <ng-container *ngSwitchCase="'Text'">
-                    <app-text-field-control [formGroup]="entityForm" [mode]="mode" [attribute]="nextCell.attribute"></app-text-field-control>
-                  </ng-container>
-
-                  <ng-container *ngSwitchDefault>
-                    ERROR: Missing or unknown attribute type of: "{{nextCell.attribute.type}}"
-                  </ng-container>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-
-
-          <div class="d-flex">
-            <div class="flex-grow-1"></div>
-            <ng-container [ngSwitch]="mode">
-              <ng-container *ngSwitchCase="'view'">
-                <button class="btn btn-outline-secondary mr-2" (click)="onBack()">Back</button>
-                <button type="submit" class="btn btn-primary mr-2" (click)="onEdit()">Edit</button>
-              </ng-container>
-              <ng-container *ngSwitchCase="'edit'">
-                <button class="btn btn-outline-secondary mr-2" (click)="onCancel()">Cancel</button>
-                <button type="submit" class="btn btn-primary mr-2" (click)="onSave()">Save</button>
-              </ng-container>
-            </ng-container>
-          </div>
-
-        </form>
-
-      </div>
-
-    </ng-container>
-  </ng-template>
+  </ng-container>
 
 </ng-container>
 

@@ -1,14 +1,12 @@
 import {Component, Injectable, OnInit} from '@angular/core';
 import {Observable, switchMap, tap} from 'rxjs';
-import {MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {Entity} from '../../domain/entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
-import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
-import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
-import {CellAttribute, MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
-import {Cell, MetaPage, Template} from '../../domain/meta.page';
+import {MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
+import {MetaPage, Template} from '../../domain/meta.page';
 
 
 @Component({
@@ -22,10 +20,7 @@ export class DataEditComponent implements OnInit {
   public mode: string | null;
 
   public metaPage$: Observable<MetaPage>;
-  public metaEntity$: Observable<MetaEntity>;
-
   public template: Template;
-  public cells: CellAttribute[][] = [];
 
   public entityId: string | null;
   public entity$: Observable<Entity>;
@@ -34,7 +29,6 @@ export class DataEditComponent implements OnInit {
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
-              protected readonly metaEntityService: MetaEntityService,
               protected readonly metaPageService: MetaPageService,
               protected readonly dataService: DataService) {
   }
@@ -43,53 +37,36 @@ export class DataEditComponent implements OnInit {
     this.metaPage$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
       this.mode = params.get('mode');
+      this.entityId = params.get('id');
 
       const metaPageName = `${this.metaName}.${this.mode}`;
 
       return this.metaPageService.findById(metaPageName).pipe(tap(metaPage => {
+        if(metaPage.templates && metaPage.templates.length !== 1) {
+          throw new Error(`Zero or more than one template supplied to DataEditComponent for ${this.metaName}`);
+        }
+      }));
+    }));
 
-        this.metaEntity$ = this.metaEntityService.findById(this.metaName).pipe(tap(metaEntity => {
-          if(metaPage.templates && metaPage.templates.length !== 1) {
-            throw new Error(`Zero or more than one template supplied to DataEditComponent for ${this.metaName}`);
-          }
-          else {
-            this.template = metaPage.templates[0];
-          }
+    this.entity$ = this.route.paramMap.pipe(switchMap(params => {
+      const metaName = params.get('metaName');
+      const entityId = params.get('id');
 
-          this.cells = this.metaPageService.toCellAttributeArray(this.template, metaEntity);
-
-          const controls: {
-            [key: string]: AbstractControl;
-          } = {};
-
-          // loop through cells and add FormControls for Cell attributes
-          for(const nextRow of this.template.cells) {
-            for(const nextCell of nextRow) {
-              if(nextCell.attributeName) {
-                controls[nextCell.attributeName] = new FormControl('');
-              }
-            }
-          }
-
-          this.entityForm = new FormGroup(controls);
-
-          this.entity$ = this.route.paramMap.pipe(switchMap(params => {
-            const metaName = params.get('metaName')
-            this.entityId = params.get('id');
-            return this.dataService.findById(metaName, this.entityId).pipe(tap(entity => {
-              this.entityForm.patchValue(entity);
-            }));
-          }));
-        }));
+      return this.dataService.findById(metaName, entityId).pipe(tap(entity => {
+        this.entityForm.patchValue(entity);
       }));
     }));
   }
 
-  getCSS(cell: Cell): string[] {
-    return [
-      `col-${cell.width}`
-    ];
+  onEntityFormEvent($event: any): void {
+    console.log(`DataEdit: onChanges()`);
+    this.entityForm = $event;
+
+    // this.entity$.subscribe(entity => {
+    //   console.log('loaded entity, TODO better way of doing this please');
+    // })
   }
+
 
   onSubmit() {
     switch (this.mode) {

@@ -36,6 +36,8 @@ import { MetaPageSearchComponent } from './meta/page/meta-page-search/meta-page-
 import { TemplateControllerComponent } from './template/template-controller/template-controller.component';
 import { TemplateTableEditorComponent } from './template/template-table-editor/template-table-editor.component';
 import { AttributePaletteComponent } from './template/attribute-palette/attribute-palette.component';
+import { FormComponent } from './data/data-edit/form/form.component';
+import { FormLayoutComponent } from './data/data-edit/form-layout/form-layout.component';
 
 
 function initializeApp() {
@@ -83,6 +85,8 @@ function initializeApp() {
     TemplateControllerComponent,
     TemplateTableEditorComponent,
     AttributePaletteComponent,
+    FormComponent,
+    FormLayoutComponent,
   ],
   imports: [
     BrowserModule,
