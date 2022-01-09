@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, of, switchMap, tap} from 'rxjs';
 import {MetaPage, PageType, Template, TemplateType} from '../../../domain/meta.page';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {MetaEntity} from '../../../domain/meta.entity';
@@ -23,10 +23,12 @@ export class MetaPageEditComponent implements OnInit {
 
   metaPageForm = new FormGroup({
     name: new FormControl(''),
+    title: new FormControl(''),
     type: new FormControl(''),
   });
 
   constructor(protected readonly route: ActivatedRoute,
+              protected readonly router: Router,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly metaPageService: MetaPageService) { }
 
@@ -60,7 +62,7 @@ export class MetaPageEditComponent implements OnInit {
   }
 
   onCancel() {
-
+    this.router.navigate(['/meta/page/search']);
   }
 
   onSave() {
@@ -72,11 +74,13 @@ export class MetaPageEditComponent implements OnInit {
     if(this.metaPageName === '**NEW**') {
       this.metaPageService.create(metaPage).subscribe(() => {
         console.log('MetaPage created.');
-      })
+        this.onCancel();
+      });
     }
     else {
       this.metaPageService.update(metaPage).subscribe(() => {
         console.log('MetaPage updated.');
+        this.onCancel();
       });
     }
   }

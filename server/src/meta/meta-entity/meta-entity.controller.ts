@@ -32,7 +32,6 @@ export class MetaEntityController {
     return this.metaEntityService.findOne(metaName);
   }
 
-  @PublicApi()
   @Post('/:metaName')
   create(
     @Param('metaName') metaName: string,
@@ -46,7 +45,6 @@ export class MetaEntityController {
     return this.metaEntityService.create(metaEntity);
   }
 
-  @PublicApi()
   @Put('/:metaName')
   update(
     @Param('metaName') metaName: string,
@@ -60,9 +58,13 @@ export class MetaEntityController {
     return this.metaEntityService.update(metaEntity);
   }
 
-  @PublicApi()
   @Delete('/:metaName')
   archive(): Promise<void> {
     return;
+  }
+
+  @Post('/database/sync')
+  sync() {
+    return this.metaEntityService.syncMetaModelWithDatabase();
   }
 }

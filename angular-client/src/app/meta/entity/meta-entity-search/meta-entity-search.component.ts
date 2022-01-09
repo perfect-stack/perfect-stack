@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {MetaEntity} from '../../../domain/meta.entity';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {Router} from '@angular/router';
+import {ToastService} from '../../../utils/toast.service';
 
 @Component({
   selector: 'app-meta-entity-search',
@@ -14,6 +15,7 @@ export class MetaEntitySearchComponent implements OnInit {
 
   constructor(
     protected readonly router: Router,
+    public readonly toastService: ToastService,
     protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
@@ -32,5 +34,11 @@ export class MetaEntitySearchComponent implements OnInit {
 
   onSelect(item: MetaEntity) {
     this.router.navigate(['/meta/entity/view', item.name]);
+  }
+
+  onUpdateSchema() {
+    this.metaEntityService.sync().subscribe( () => {
+      this.toastService.showSuccess('Database schema updated successfully');
+    });
   }
 }

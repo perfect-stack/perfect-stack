@@ -1,5 +1,6 @@
 {
   "name": "Person.edit",
+  "title": "Person Edit",
   "type": "edit",
   "templates": [
     {

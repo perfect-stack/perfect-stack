@@ -38,6 +38,7 @@ import { TemplateTableEditorComponent } from './template/template-table-editor/t
 import { AttributePaletteComponent } from './template/attribute-palette/attribute-palette.component';
 import { FormComponent } from './data/data-edit/form/form.component';
 import { FormLayoutComponent } from './data/data-edit/form-layout/form-layout.component';
+import { ToastsComponent } from './utils/toasts/toasts.component';
 
 
 function initializeApp() {
@@ -87,6 +88,7 @@ function initializeApp() {
     AttributePaletteComponent,
     FormComponent,
     FormLayoutComponent,
+    ToastsComponent,
   ],
   imports: [
     BrowserModule,

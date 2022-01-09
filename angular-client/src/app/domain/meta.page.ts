@@ -3,14 +3,14 @@ export class Cell {
   width: string;
   height: string;
   attributeName?: string;
-  component?: string;  // The "type" of component used to display stuff in this cell, e.g. "Page reference"
+  component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
 }
 
 export enum TemplateType {
   form = 'form',
   table = 'table',
   map = 'map',
-  chart = 'chart'
+  chart = 'chart',
 }
 
 export class Template {
@@ -18,15 +18,15 @@ export class Template {
   type: TemplateType;
   cells: Cell[][] = [
     [
-      {width: '3', height: '1'},
-      {width: '3', height: '1'},
-      {width: '3', height: '1'},
-      {width: '3', height: '1'},
+      { width: '3', height: '1' },
+      { width: '3', height: '1' },
+      { width: '3', height: '1' },
+      { width: '3', height: '1' },
     ],
     [
-      {width: '6', height: '1'},
-      {width: '6', height: '1'},
-    ]
+      { width: '6', height: '1' },
+      { width: '6', height: '1' },
+    ],
   ];
 }
 
@@ -45,6 +45,7 @@ export enum PageType {
 
 export class MetaPage {
   name: string;
+  title: string;
   type: PageType;
   templates: Template[] = [];
 }

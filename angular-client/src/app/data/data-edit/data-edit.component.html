@@ -1,7 +1,7 @@
 <ng-container *ngIf="ctx$ | async as ctx">
 
   <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
-    <h2 class="mb-3">{{ctx.metaPage.name}} Edit</h2>
+    <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
 
     <app-form [mode]="mode" [cells]="ctx.cells" [entityForm]="ctx.entityForm">
       <ng-container BottomRightActions [ngSwitch]="mode">

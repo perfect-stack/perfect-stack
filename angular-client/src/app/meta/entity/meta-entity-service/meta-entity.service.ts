@@ -24,4 +24,8 @@ export class MetaEntityService {
   update(metaEntity: MetaEntity) {
     return this.http.put(`http://localhost:3080/meta/entity/${metaEntity.name}`, metaEntity);
   }
+
+  sync() {
+    return this.http.post(`http://localhost:3080/meta/entity/database/sync`, null);
+  }
 }

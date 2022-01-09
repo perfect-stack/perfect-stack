@@ -1,5 +1,6 @@
 {
   "name": "Person.search",
+  "title": "Person Search",
   "type": "search",
   "templates": [
     {
