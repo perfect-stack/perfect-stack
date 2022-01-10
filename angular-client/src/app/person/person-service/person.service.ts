@@ -11,14 +11,18 @@ export class PersonService {
   constructor(protected readonly http: HttpClient) { }
 
   findByCriteria(nameCriteria = "", pageNumber = 1, pageSize = 10) {
-    return this.http.get<PageQueryResponse<Person>>(`http://localhost:3080/person/query?nameCriteria=${nameCriteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return this.http.get<PageQueryResponse<Person>>(`http://localhost:3080/data/Person?nameCriteria=${nameCriteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
   findById(id: string | null) {
-    return this.http.get<Person>(`http://localhost:3080/person/${id}`);
+    return this.http.get<Person>(`http://localhost:3080/data/Person/${id}`);
   }
 
-  save(person: Person) {
-    return this.http.post(`http://localhost:3080/person`, person);
+  create(person: Person) {
+    return this.http.post(`http://localhost:3080/data/Person/${person.id}`, person);
+  }
+
+  update(person: Person) {
+    return this.http.put(`http://localhost:3080/data/Person/${person.id}`, person);
   }
 }

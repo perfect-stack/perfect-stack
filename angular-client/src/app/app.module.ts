@@ -1,21 +1,44 @@
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {APP_INITIALIZER, inject, Inject, INJECTOR, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateAdapter, NgbDropdown, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {PersonViewComponent} from './person/person-view/person-view.component';
 import {PersonSearchComponent} from './person/person-search/person-search.component';
 import {PersonEditComponent} from './person/person-edit/person-edit.component';
 import {PersonService} from './person/person-service/person.service';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {AuthInterceptor} from './auth-interceptor';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import getFirebase from '../firebase';
 import { LandingComponent } from './landing/landing.component';
 import {AuthenticationService} from './authentication/authentication.service';
+import { DataSearchComponent } from './data/data-search/data-search.component';
+import {CustomAdapter, DataEditComponent} from './data/data-edit/data-edit.component';
+import { DatePickerControlComponent } from './data/data-edit/form-controls/date-picker-control/date-picker-control.component';
+import { TextFieldControlComponent } from './data/data-edit/form-controls/text-field-control/text-field-control.component';
+import { MetaEntitySearchComponent } from './meta/entity/meta-entity-search/meta-entity-search.component';
+import { MetaEntityViewComponent } from './meta/entity/meta-entity-view/meta-entity-view.component';
+import { MetaEntityEditComponent } from './meta/entity/meta-entity-edit/meta-entity-edit.component';
+import { MetaMenuViewComponent } from './meta/menu/meta-menu-view/meta-menu-view.component';
+import { MenuItemViewComponent } from './meta/menu/meta-menu-view/menu-item-view/menu-item-view.component';
+import { MenuHeaderViewComponent } from './meta/menu/meta-menu-view/menu-header-view/menu-header-view.component';
+import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
+import { MenuItemEditComponent } from './meta/menu/meta-menu-view/menu-item-edit/menu-item-edit.component';
+import { TemplateFormEditor } from './template/template-form-editor/template-form-editor.component';
+import {NgDragDropModule} from 'ng-drag-drop';
+import { CellViewComponent } from './template/template-form-editor/cell-view/cell-view.component';
+import { MetaPageEditComponent } from './meta/page/meta-page-edit/meta-page-edit.component';
+import { MetaPageSearchComponent } from './meta/page/meta-page-search/meta-page-search.component';
+import { TemplateControllerComponent } from './template/template-controller/template-controller.component';
+import { TemplateTableEditorComponent } from './template/template-table-editor/template-table-editor.component';
+import { AttributePaletteComponent } from './template/attribute-palette/attribute-palette.component';
+import { FormComponent } from './data/data-edit/form/form.component';
+import { FormLayoutComponent } from './data/data-edit/form-layout/form-layout.component';
+import { ToastsComponent } from './utils/toasts/toasts.component';
 
 
 function initializeApp() {
@@ -45,24 +68,56 @@ function initializeApp() {
     PersonSearchComponent,
     PersonEditComponent,
     LandingComponent,
+    DataSearchComponent,
+    DataEditComponent,
+    DatePickerControlComponent,
+    TextFieldControlComponent,
+    MetaEntitySearchComponent,
+    MetaEntityViewComponent,
+    MetaEntityEditComponent,
+    MetaMenuViewComponent,
+    MenuItemViewComponent,
+    MenuHeaderViewComponent,
+    MenuItemEditComponent,
+    TemplateFormEditor,
+    CellViewComponent,
+    MetaPageEditComponent,
+    MetaPageSearchComponent,
+    TemplateControllerComponent,
+    TemplateTableEditorComponent,
+    AttributePaletteComponent,
+    FormComponent,
+    FormLayoutComponent,
+    ToastsComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     NgbModule,
     HttpClientModule,
     CommonModule,
+    NgDragDropModule.forRoot(),
   ],
   providers: [
+    AuthenticationService,
+    PersonService,
+    MetaMenuService,
     {
       provide: APP_INITIALIZER,
       useFactory: () => initializeApp,
       multi: true
     },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => inject(INJECTOR).get(MetaMenuService).initMenu(),
+      deps: [HttpClient, MetaMenuService],
+      multi: true
+    },
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-    AuthenticationService,
-    PersonService
+    {provide: NgbDateAdapter, useClass: CustomAdapter},
+    NgbDropdown,
   ],
   bootstrap: [AppComponent]
 })

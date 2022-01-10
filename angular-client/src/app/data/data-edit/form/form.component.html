@@ -1,0 +1,14 @@
+
+<ng-container *ngIf="mode && cells && entityForm">
+  <form class="form" #form="ngForm" [formGroup]="entityForm"> <!-- (ngSubmit)="onSubmit()" -->
+
+    <app-form-layout [mode]="mode" [formGroup]="entityForm" [cells]="cells"></app-form-layout>
+
+    <div class="d-flex">
+      <ng-content select="[BottomLeftActions]"></ng-content>
+      <div class="flex-grow-1"></div>
+      <ng-content select="[BottomRightActions]"></ng-content>
+      <ng-content></ng-content>
+    </div>
+  </form>
+</ng-container>

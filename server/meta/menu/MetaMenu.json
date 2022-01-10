@@ -1,0 +1,39 @@
+{
+  "menuList": [
+    {
+      "label": "Animals",
+      "items": [
+        {
+          "label": "Animal",
+          "route": "/data/Person/search"
+        }
+      ]
+    },
+    {
+      "label": "Person",
+      "items": [
+        {
+          "label": "Person",
+          "route": "/data/Person/search"
+        }
+      ]
+    },
+    {
+      "label": "Meta",
+      "items": [
+        {
+          "label": "Entity",
+          "route": "/meta/entity/search"
+        },
+        {
+          "label": "Menu",
+          "route": "/meta/menu/view"
+        },
+        {
+          "label": "Page",
+          "route": "/meta/page/search"
+        }
+      ]
+    }
+  ]
+}

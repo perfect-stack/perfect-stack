@@ -24,6 +24,7 @@ export class AuthenticationService {
       if (user) {
         console.log(`AuthenticationService: user "${user.displayName}" is signed IN`);
         this.isLoggedIn = true;
+        this.navigateToFirstPage();
       } else {
         console.log('AuthenticationService: user is signed OUT');
         this.isLoggedIn = false;
@@ -35,10 +36,6 @@ export class AuthenticationService {
     const auth = getAuth();
     setPersistence(auth, browserLocalPersistence)
       .then(() => {
-        // Existing and future Auth states are now persisted in the current
-        // session only. Closing the window would clear any existing state even
-        // if a user forgets to sign out.
-        // ...
         // New sign-in will be persisted with session persistence.
         return this.signInWithGoogle();
       })
@@ -66,6 +63,7 @@ export class AuthenticationService {
           //console.log(`Login successful: ${JSON.stringify(credential.toJSON())}`);
           console.log(`User = ${JSON.stringify(user.toJSON())}`);
 
+          // don't do this here, let the authState change listener (above) do it instead
           this.navigateToFirstPage();
         }
       }).catch((error) => {
@@ -82,7 +80,7 @@ export class AuthenticationService {
       this.redirectUrl = null;
     }
     else {
-      this.router.navigate(['/person/search']);
+      this.router.navigate(['/data/Person/search']);
     }
   }
 

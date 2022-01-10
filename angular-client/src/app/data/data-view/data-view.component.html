@@ -1,0 +1,36 @@
+<ng-container *ngIf="{
+   metaEntity: metaEntity$ | async,
+   entity: entity$ | async
+} as context">
+
+  <div *ngIf="!context.metaEntity; else ViewEntity">
+    Loading...
+  </div>
+
+  <ng-template #ViewEntity>
+    <ng-container *ngIf="context.entity">
+
+      <div class="container-fluid mt-3">
+        <h2 class="mb-3">{{context.metaEntity?.name}} View</h2>
+
+        <ng-container *ngFor="let attribute of context.metaEntity?.attributes">
+          <div class="row" *ngIf="attribute.visibility.toString() !== 'Hidden'">
+            <div class="col-2">
+              <span placement="top" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
+            </div>
+            <div class="col-10">{{displayValue(attribute, context.entity)}}</div>
+          </div>
+        </ng-container>
+
+        <div class="row mt-3">
+          <div class="col-6">
+            <button class="btn btn-primary mr-2" (click)="onEdit()">Edit</button>
+            <button class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+  </ng-template>
+
+</ng-container>

@@ -1,0 +1,61 @@
+<div class="wrapper" *ngIf="menuItem">
+
+  <div>
+    <div>{{menuItem.label}}</div>
+    <div class="small">{{menuItem.route}}</div>
+  </div>
+
+  <!--<div class="overlay" *ngIf="mouseActive">
+    <button class="btn btn-outline-primary btn-sm mr-2">
+      <span class="material-icons">arrow_upward</span>
+    </button>
+    <button class="btn btn-outline-primary btn-sm mr-2">
+      <span class="material-icons">arrow_downward</span>
+    </button>
+    &lt;!&ndash;<button class="btn btn-outline-primary btn-sm mr-2" (click)="onAdd(-1)">+Above</button>&ndash;&gt;
+    <button class="btn btn-outline-primary btn-sm mr-2" (click)="onAdd(+1)">
+      <span class="material-icons">add</span>
+    </button>
+    <button class="btn btn-outline-danger btn-sm mr-2" (click)="onDelete()">
+      <span class="material-icons">delete</span>
+    </button>
+    <button class="btn btn-outline-primary btn-sm" (click)="onEditMenuItem(content)">
+      <span class="material-icons">edit</span>
+    </button>
+  </div>-->
+
+
+  <div class="overlay" *ngIf="mouseActive">
+    <span class="material-icons">arrow_upward</span>
+    <span class="material-icons">arrow_downward</span>
+    <span class="material-icons">add</span>
+    <span class="material-icons">delete</span>
+    <span class="material-icons" (click)="onEditMenuItem(content)">edit</span>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Menu Item</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="menuItemForm" (ngSubmit)="modal.close('Save click')">
+      <div class="form-group">
+        <label for="label">Label</label>
+        <input id="label" class="form-control" formControlName="label">
+      </div>
+      <div class="form-group">
+        <label for="route">Route</label>
+        <input id="route" class="form-control" formControlName="route">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="modal.close('Save click')">Save</button>
+  </div>
+</ng-template>
+

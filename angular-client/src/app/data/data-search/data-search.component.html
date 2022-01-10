@@ -1,0 +1,39 @@
+<div class="container-fluid mt-3" *ngIf="metaPage$ | async as metaPage">
+  <h2 class="mb-3">{{metaPage.title}}</h2>
+
+  <ng-container *ngIf="metaEntity$ | async as metaEntity">
+
+    <form class="form-inline">
+      <input type="text" class="form-control mb-2 mr-2" placeholder="Search by name..."
+             [(ngModel)]="searchCriteria.nameCriteria" name="nameCriteria">
+      <button type="submit" class="btn btn-primary mb-2" (click)="onSearch()">Submit</button>
+    </form>
+
+    <table class="table table-striped table-hover">
+      <thead>
+      <tr>
+        <th scope="col" *ngFor="let nextCell of resultTableCells[0]">
+          <ng-container *ngIf="nextCell.attribute">
+            {{nextCell.attribute.label}}
+          </ng-container>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of searchResults" (click)="onSelectRow(item.id)">
+        <td *ngFor="let nextCell of resultTableCells[0]">
+          <ng-container *ngIf="nextCell.attribute">
+            {{displayValue(nextCell.attribute, item)}}
+          </ng-container>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <ngb-pagination [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize"
+                    (pageChange)="onSearch()">
+    </ngb-pagination>
+
+  </ng-container>
+
+</div>

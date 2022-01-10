@@ -1,0 +1,24 @@
+<ng-container *ngIf="ctx$ | async as ctx">
+
+  <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
+    <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
+
+    <app-form [mode]="mode" [cells]="ctx.cells" [entityForm]="ctx.entityForm">
+      <ng-container BottomRightActions [ngSwitch]="mode">
+        <ng-container *ngSwitchCase="'view'">
+          <button class="btn btn-outline-secondary mr-2" (click)="onBack()">Back</button>
+          <button type="submit" class="btn btn-primary mr-2" (click)="onEdit()">Edit</button>
+        </ng-container>
+        <ng-container *ngSwitchCase="'edit'">
+          <button class="btn btn-outline-secondary mr-2" (click)="onCancel()">Cancel</button>
+          <button type="submit" class="btn btn-primary mr-2" (click)="onSave(ctx)">Save</button>
+        </ng-container>
+      </ng-container>
+    </app-form>
+  </div>
+
+</ng-container>
+
+
+
+
