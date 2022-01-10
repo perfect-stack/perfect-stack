@@ -8,7 +8,6 @@ import {
   signInWithPopup
 } from 'firebase/auth';
 import {Router} from '@angular/router';
-import getFirebase from '../../firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -76,13 +75,13 @@ export class AuthenticationService {
   }
 
   navigateToFirstPage() {
-    // if(this.redirectUrl) {
-    //   this.router.navigateByUrl(this.redirectUrl);
-    //   this.redirectUrl = null;
-    // }
-    // else {
-    //   this.router.navigate(['/data/Person/search']);
-    // }
+    if(this.redirectUrl) {
+      this.router.navigateByUrl(this.redirectUrl);
+      this.redirectUrl = null;
+    }
+    else {
+      this.router.navigate(['/data/Person/search']);
+    }
   }
 
 
