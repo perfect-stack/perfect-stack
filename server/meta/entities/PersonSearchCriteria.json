@@ -1,13 +1,30 @@
 {
   "name": "PersonSearchCriteria",
-  "type": "Basic",
+  "type": "Criteria",
   "attributes": [
     {
-      "name": "name",
-      "label": "Name",
+      "name": "given_name",
+      "label": "Given Name",
       "description": "Person where name starts with this value",
       "type": "Text",
-      "visibility": "Visible"
+      "visibility": "Visible",
+      "comparisonOperator": "StartsWith"
+    },
+    {
+      "name": "family_name",
+      "label": "Family Name",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "StartsWith"
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "Equals"
     }
   ]
 }

@@ -5,6 +5,14 @@ export enum AttributeType {
   Date = 'Date',
 }
 
+export enum ComparisonOperator {
+  Equals = 'Equals',
+  StartsWith = 'StartsWith',
+  Includes = 'Includes',
+  GreaterThan = 'GreaterThan',
+  LessThan = 'LessThan',
+}
+
 export enum VisibilityType {
   Visible = 'Visible',
   Hidden = 'Hidden',
@@ -16,11 +24,13 @@ export class MetaAttribute {
   description: string;
   type = AttributeType.Text;
   visibility = VisibilityType.Visible;
+  comparisonOperator: ComparisonOperator; // Only used by Criteria objects
 }
 
 export enum EntityType {
-  Database = 'Database',
   Basic = 'Basic',
+  Criteria = 'Criteria',
+  Database = 'Database',
 }
 
 export class MetaEntity {

@@ -12,6 +12,8 @@ import { PageQueryResponse } from '../domain/response/page-query.response';
 import { DataService } from './data.service';
 import { Entity } from '../domain/entity';
 import { EntityResponse } from '../domain/response/entity.response';
+import { QueryResponse } from './query.response';
+import { QueryRequest } from './query.request';
 
 @Controller('data')
 export class DataController {
@@ -22,8 +24,13 @@ export class DataController {
     @Param('entityName') entityName: string,
     @Query('pageNumber') pageNumber?: number,
     @Query('pageSize') pageSize?: number,
-  ): Promise<PageQueryResponse<Entity>> {
+  ) {
     return this.dataService.findAll(entityName, pageNumber, pageSize);
+  }
+
+  @Post('/query')
+  findByCriteria(@Body() queryRequest: QueryRequest) {
+    return this.dataService.findByCriteria(queryRequest);
   }
 
   @Get('/:entityName/:id')

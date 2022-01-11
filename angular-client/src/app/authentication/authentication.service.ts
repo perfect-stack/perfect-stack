@@ -75,13 +75,13 @@ export class AuthenticationService {
   }
 
   navigateToFirstPage() {
-    if(this.redirectUrl) {
-      this.router.navigateByUrl(this.redirectUrl);
-      this.redirectUrl = null;
-    }
-    else {
-      this.router.navigate(['/data/Person/search']);
-    }
+    // if(this.redirectUrl) {
+    //   this.router.navigateByUrl(this.redirectUrl);
+    //   this.redirectUrl = null;
+    // }
+    // else {
+    //   this.router.navigate(['/data/Person/search']);
+    // }
   }
 
 

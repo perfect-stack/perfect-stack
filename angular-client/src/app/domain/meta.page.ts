@@ -28,6 +28,8 @@ export class Template {
       { width: '6', height: '1' },
     ],
   ];
+  orderByName: string; // Only for search result tables
+  orderByDir: string; // Only for search result tables
 }
 
 export type TemplateMap = {

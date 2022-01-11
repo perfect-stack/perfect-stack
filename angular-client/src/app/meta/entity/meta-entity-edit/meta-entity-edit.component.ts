@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
-import {MetaEntity, AttributeType, VisibilityType, EntityType} from '../../../domain/meta.entity';
+import {MetaEntity, AttributeType, VisibilityType, EntityType, ComparisonOperator} from '../../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
@@ -54,7 +54,8 @@ export class MetaEntityEditComponent implements OnInit {
       label: ['', Validators.required],
       description: [''],
       type: [AttributeType.Text],
-      visibility: [VisibilityType.Visible]
+      visibility: [VisibilityType.Visible],
+      comparisonOperator: [''],
     });
   }
 
@@ -93,13 +94,18 @@ export class MetaEntityEditComponent implements OnInit {
     return Object.keys(VisibilityType);
   }
 
+  getEntityTypeOptions() {
+    return Object.keys(EntityType);
+  }
+
+  getComparisonOperatorOptions() {
+    return Object.keys(ComparisonOperator);
+  }
+
   onAddAttribute(count: number) {
     for(let i = 0; i < count; i++) {
       this.addBlankRow();
     }
   }
 
-  getEntityTypeOptions() {
-    return Object.keys(EntityType);
-  }
 }

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Template, TemplateType} from '../../domain/meta.page';
 import {MetaEntity} from '../../domain/meta.entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
@@ -8,7 +8,7 @@ import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-enti
   templateUrl: './template-controller.component.html',
   styleUrls: ['./template-controller.component.css']
 })
-export class TemplateControllerComponent implements OnInit {
+export class TemplateControllerComponent implements OnInit, OnChanges {
 
   @Input()
   public template: Template;
@@ -16,9 +16,23 @@ export class TemplateControllerComponent implements OnInit {
   @Input()
   public metaEntityOptions: MetaEntity[];
 
+  metaEntity: MetaEntity;
+
   constructor(protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['template']) {
+      this.onTemplateChange(changes['template'].currentValue);
+    }
+  }
+
+  onTemplateChange(template: Template) {
+    if(template && template.metaEntityName) {
+      this.metaEntityService.findById(template.metaEntityName).subscribe(metaEntity => this.metaEntity = metaEntity);
+    }
   }
 
   getTemplateTypeOptions() {
@@ -26,7 +40,7 @@ export class TemplateControllerComponent implements OnInit {
   }
 
   onEntityChange(metaEntity: MetaEntity) {
-    console.log(`TODO: onEntityChange(): ${metaEntity.name}`)
+    this.metaEntity = metaEntity;
     this.template.metaEntityName = metaEntity.name;
   }
 
@@ -34,4 +48,11 @@ export class TemplateControllerComponent implements OnInit {
     return metaEntityOptions.find(me => me.name === template.metaEntityName);
   }
 
+  getOrderByNameOptions() {
+    return this.metaEntity ? this.metaEntity.attributes.map(a => a.name) : [];
+  }
+
+  getOrderByDirOptions() {
+    return ['ASC', "DESC"];
+  }
 }

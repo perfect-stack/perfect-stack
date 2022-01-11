@@ -3,16 +3,29 @@
   <div class="row border-top border-dark py-3">
     <div class="col-10">
 
-      <div class="d-flex mb-2">
-        <h3 class="mr-2">Template</h3>
+      <div class="form-inline">
+        <h3 class="mr-5">Template</h3>
 
-        <select class="col-2 form-control mr-2" id="entity" [ngModel]="getMetaEntity(template, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
+        <label class="ml-5 mr-2" for="entity">Entity</label>
+        <select class="form-control mr-2" id="entity" [ngModel]="getMetaEntity(template, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
           <option *ngFor="let o of metaEntityOptions" [ngValue]="o">{{o.name}}</option>
         </select>
 
-        <select class="col-1 form-control" id="templateType" [(ngModel)]="template.type">
+        <label class="ml-5 mr-2" for="templateType">Type</label>
+        <select class="form-control" id="templateType" [(ngModel)]="template.type">
           <option *ngFor="let o of getTemplateTypeOptions()" [ngValue]="o">{{o}}</option>
         </select>
+
+        <ng-container *ngIf="template.type === 'table'">
+          <label class="ml-5 mr-2" for="orderByName">Order by</label>
+          <select class="form-control mr-1" id="orderByName" [(ngModel)]="template.orderByName">
+            <option *ngFor="let o of getOrderByNameOptions()" [ngValue]="o">{{o}}</option>
+          </select>
+
+          <select class="form-control" id="orderByDir" [(ngModel)]="template.orderByDir">
+            <option *ngFor="let o of getOrderByDirOptions()" [ngValue]="o">{{o}}</option>
+          </select>
+        </ng-container>
       </div>
 
       <ng-container [ngSwitch]="template.type">

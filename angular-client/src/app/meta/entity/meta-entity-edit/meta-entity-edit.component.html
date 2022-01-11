@@ -33,6 +33,7 @@
           <th scope="col">Description</th>
           <th scope="col">Type</th>
           <th scope="col">Visibility</th>
+          <th scope="col">Comparison</th>
         </tr>
         </thead>
         <tbody>
@@ -49,6 +50,11 @@
             <td>
               <select class="form-control" formControlName="visibility">
                 <option *ngFor="let o of getVisibilityTypeOptions()" [ngValue]="o">{{o}}</option>
+              </select>
+            </td>
+            <td>
+              <select class="form-control" formControlName="comparisonOperator">
+                <option *ngFor="let o of getComparisonOperatorOptions()" [ngValue]="o">{{o}}</option>
               </select>
             </td>
           </tr>

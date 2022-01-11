@@ -5,8 +5,8 @@ import {DataService} from '../../data-service/data.service';
 import {Entity} from '../../../domain/entity';
 import {Cell, MetaPage, Template} from '../../../domain/meta.page';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
-import {forkJoin, of, switchMap} from 'rxjs';
-import {MetaEntity} from '../../../domain/meta.entity';
+import {of, switchMap} from 'rxjs';
+import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 
 
 export class FormContext {
@@ -15,6 +15,10 @@ export class FormContext {
   entity: Entity;
   entityForm: FormGroup;
   cells: CellAttribute[][];
+}
+
+export class FormControlWithAttribute extends FormControl {
+  attribute: MetaAttribute;
 }
 
 @Injectable({
@@ -26,27 +30,31 @@ export class FormService {
               protected readonly metaEntityService: MetaEntityService,
               protected readonly dataService: DataService) { }
 
-  loadFormContext(metaName: string, mode: string, id: string) {
+  loadFormContext(metaName: string, mode: string, id: string | null) {
     const metaPageName = `${metaName}.${mode}`;
-    const obs = [
-      this.metaPageService.findById(metaPageName),
-      this.metaEntityService.findById(metaName),
-      this.dataService.findById(metaName, id),
-    ];
-
-    return forkJoin(obs).pipe(switchMap(([metaPage, metaEntity, entity]) => {
-      const ctx = new FormContext();
+    const ctx = new FormContext();
+    return this.metaPageService.findById(metaPageName).pipe(switchMap((metaPage) => {
       ctx.metaPage = metaPage as MetaPage;
-      ctx.metaEntity = metaEntity as MetaEntity;
-      ctx.entity = entity as Entity;
 
       const template = ctx.metaPage.templates[0];
-      ctx.entityForm = this.createForm(template);
-      ctx.cells = this.toCellAttributeArray(template, ctx.metaEntity);
+      const metaEntityName = template.metaEntityName
 
-      ctx.entityForm.patchValue(ctx.entity);
+      return this.metaEntityService.findById(metaEntityName).pipe(switchMap( (metaEntity) => {
+        ctx.metaEntity = metaEntity as MetaEntity;
+        ctx.cells = this.toCellAttributeArray(template, ctx.metaEntity);
+        ctx.entityForm = this.createForm(template, ctx.metaEntity);
 
-      return of(ctx);
+        if(id) {
+          return this.dataService.findById(ctx.metaEntity.name, id).pipe(switchMap((entity) => {
+            ctx.entity = entity as Entity;
+            ctx.entityForm.patchValue(ctx.entity);
+            return of(ctx);
+          }));
+        }
+        else {
+          return of(ctx);
+        }
+      }));
     }));
   }
 
@@ -80,7 +88,7 @@ export class FormService {
   }
 
 
-  createForm(template: Template) {
+  createForm(template: Template, metaEntity: MetaEntity) {
     const controls: {
       [key: string]: AbstractControl;
     } = {};
@@ -89,7 +97,14 @@ export class FormService {
     for(const nextRow of template.cells) {
       for(const nextCell of nextRow) {
         if(nextCell.attributeName) {
-          controls[nextCell.attributeName] = new FormControl('');
+
+          const attribute = metaEntity.attributes.find(a => nextCell.attributeName == a.name);
+          if(attribute) {
+
+            const formControl = new FormControlWithAttribute('');
+            formControl.attribute = attribute;
+            controls[nextCell.attributeName] = formControl;
+          }
         }
       }
     }
