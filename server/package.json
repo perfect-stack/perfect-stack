@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.46.0",
     "@js-joda/core": "^4.3.1",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^1.0.1",

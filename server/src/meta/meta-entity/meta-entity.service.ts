@@ -103,7 +103,7 @@ export class MetaEntityService {
     return metaName + '.json';
   }
 
-  async syncMetaModelWithDatabase(): Promise<void> {
+  async syncMetaModelWithDatabase(alterDatabase: boolean): Promise<void> {
     const metaEntities = await this.findAll();
     const databaseEntities = metaEntities.filter(
       (me) => me.type === EntityType.Database,
@@ -136,7 +136,9 @@ export class MetaEntityService {
         },
       );
 
-      await entityModel.sync({ alter: true });
+      if (alterDatabase) {
+        await entityModel.sync({ alter: true });
+      }
     }
   }
 }

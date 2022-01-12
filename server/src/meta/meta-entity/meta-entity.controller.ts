@@ -65,6 +65,6 @@ export class MetaEntityController {
 
   @Post('/database/sync')
   sync() {
-    return this.metaEntityService.syncMetaModelWithDatabase();
+    return this.metaEntityService.syncMetaModelWithDatabase(true);
   }
 }
