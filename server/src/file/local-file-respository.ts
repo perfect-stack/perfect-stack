@@ -1,10 +1,10 @@
-import { FileRepository } from './file-repository.types';
 import { Injectable } from '@nestjs/common';
+import { FileRepositoryInterface } from './file-repository.interface';
 
 import * as fs from 'fs';
 
 @Injectable()
-export class LocalFileRepository implements FileRepository {
+export class LocalFileRepository implements FileRepositoryInterface {
   async listFiles(dir: string): Promise<string[]> {
     if (fs.existsSync(dir)) {
       return fs.readdirSync(dir);

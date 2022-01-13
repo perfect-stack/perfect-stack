@@ -47,9 +47,14 @@
             "attributeName": "street_address"
           },
           {
-            "width": "5",
+            "width": "3",
             "height": "1",
             "attributeName": "occupation"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "company"
           }
         ],
         [
@@ -65,8 +70,7 @@
           },
           {
             "width": "5",
-            "height": "1",
-            "attributeName": "company"
+            "height": "1"
           }
         ]
       ]

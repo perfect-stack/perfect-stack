@@ -1,14 +1,17 @@
-import { FileRepository } from './file-repository.types';
 import { Injectable } from '@nestjs/common';
 import {
   S3Client,
   ListObjectsCommand,
   GetObjectCommand,
+  PutObjectCommand,
 } from '@aws-sdk/client-s3';
+import { FileRepositoryInterface } from './file-repository.interface';
 
 @Injectable()
-export class S3FileRepository implements FileRepository {
-  client = new S3Client({});
+export class S3FileRepository implements FileRepositoryInterface {
+  client = new S3Client({
+    region: 'us-east-1',
+  });
 
   async listFiles(dir: string): Promise<string[]> {
     if (!dir.endsWith('/')) {
@@ -49,8 +52,16 @@ export class S3FileRepository implements FileRepository {
     return await this.streamToString(data.Body);
   }
 
-  writeFile(filename: string, content: string): Promise<void> {
-    return Promise.resolve(undefined);
+  async writeFile(filename: string, content: string): Promise<void> {
+    const response = await this.client.send(
+      new PutObjectCommand({
+        Bucket: '',
+        Key: filename,
+        Body: content,
+      }),
+    );
+
+    return;
   }
 
   streamToString = (stream) =>

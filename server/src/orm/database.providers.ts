@@ -20,11 +20,12 @@ export const databaseProviders = [
         dialect: 'postgres',
         dialectModule: require('pg'),
         // host: 'WeAreTheBorg.local',
-        // host: 'localhost',
+        //host: 'localhost',
         host: 'perfect-stack-demo-db2.ctomh1fo55cy.us-east-1.rds.amazonaws.com',
         port: 5432,
         username: 'postgres',
         password: password,
+        //password: 'Password01',
         database: 'perfect-stack-demo-db',
       });
       // sequelize.addModels([]);

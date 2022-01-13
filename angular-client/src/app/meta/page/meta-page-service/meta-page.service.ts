@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Cell, MetaPage, Template} from '../../../domain/meta.page';
-import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
+import {MetaPage} from '../../../domain/meta.page';
+import {MetaAttribute} from '../../../domain/meta.entity';
+import {environment} from '../../../../environments/environment';
 
 
 export class CellAttribute {
@@ -19,19 +20,19 @@ export class MetaPageService {
   constructor(protected readonly http: HttpClient) { }
 
   findAll() {
-    return this.http.get<MetaPage[]>(`http://localhost:3080/meta/page`);
+    return this.http.get<MetaPage[]>(`${environment.apiUrl}/meta/page`);
   }
 
   findById(metaPageName: string | null) {
-    return this.http.get<MetaPage>(`http://localhost:3080/meta/page/${metaPageName}`);
+    return this.http.get<MetaPage>(`${environment.apiUrl}/meta/page/${metaPageName}`);
   }
 
   create(metaPage: MetaPage) {
-    return this.http.post(`http://localhost:3080/meta/page/${metaPage.name}`, metaPage);
+    return this.http.post(`${environment.apiUrl}/meta/page/${metaPage.name}`, metaPage);
   }
 
   update(metaPage: MetaPage) {
-    return this.http.put(`http://localhost:3080/meta/page/${metaPage.name}`, metaPage);
+    return this.http.put(`${environment.apiUrl}/meta/page/${metaPage.name}`, metaPage);
   }
 
 }

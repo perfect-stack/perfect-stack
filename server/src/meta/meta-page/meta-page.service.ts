@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { EntityResponse } from '../../domain/response/entity.response';
 import { MetaPage } from '../../domain/meta.page';
-import { LocalFileRepository } from '../../file/local-file-respository';
+import { FileRepositoryService } from '../../file/file-repository.service';
 
 @Injectable()
 export class MetaPageService {
   static readonly META_PAGE_DIR = 'meta/page';
 
-  constructor(protected readonly fileRepository: LocalFileRepository) {}
+  constructor(
+    protected readonly fileRepositoryService: FileRepositoryService,
+  ) {}
 
   async findAll(): Promise<MetaPage[]> {
     const resultList: MetaPage[] = [];
-    const fileNames = await this.fileRepository.listFiles(
+    const fileNames = await this.fileRepositoryService.listFiles(
       MetaPageService.META_PAGE_DIR,
     );
 
@@ -29,7 +31,7 @@ export class MetaPageService {
       MetaPageService.META_PAGE_DIR + '/' + this.toFileName(metaPageName);
 
     const metaPageFromFile = JSON.parse(
-      await this.fileRepository.readFile(metaFileName),
+      await this.fileRepositoryService.readFile(metaFileName),
     );
 
     return Object.assign(new MetaPage(), metaPageFromFile);
@@ -39,7 +41,7 @@ export class MetaPageService {
     const metaFileName =
       MetaPageService.META_PAGE_DIR + '/' + this.toFileName(metaPage.name);
 
-    await this.fileRepository.writeFile(
+    await this.fileRepositoryService.writeFile(
       metaFileName,
       JSON.stringify(metaPage, null, 2),
     );
@@ -51,7 +53,7 @@ export class MetaPageService {
     const metaFileName =
       MetaPageService.META_PAGE_DIR + '/' + this.toFileName(metaPage.name);
 
-    await this.fileRepository.writeFile(
+    await this.fileRepositoryService.writeFile(
       metaFileName,
       JSON.stringify(metaPage, null, 2),
     );

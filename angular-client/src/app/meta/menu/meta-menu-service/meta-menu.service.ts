@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {MetaMenu} from '../../../domain/meta.menu';
 import {HttpClient} from '@angular/common/http';
 import {tap} from 'rxjs';
+import {environment} from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class MetaMenuService {
   constructor(protected readonly http: HttpClient) { }
 
   initMenu() {
-    return () => this.http.get("http://localhost:3080/meta/menu")
+    return () => this.http.get(`${environment.apiUrl}/meta/menu`)
       .pipe(
         tap((menu) => {
           this.menu = menu as MetaMenu;
@@ -22,6 +23,6 @@ export class MetaMenuService {
   }
 
   find() {
-    return this.http.get<MetaMenu>(`http://localhost:3080/meta/menu`);
+    return this.http.get<MetaMenu>(`${environment.apiUrl}/meta/menu`);
   }
 }

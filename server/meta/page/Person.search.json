@@ -42,12 +42,12 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "gender"
+            "attributeName": "email_address"
           },
           {
             "width": "1",
             "height": "1",
-            "attributeName": "email_address"
+            "attributeName": "birthday"
           }
         ],
         [

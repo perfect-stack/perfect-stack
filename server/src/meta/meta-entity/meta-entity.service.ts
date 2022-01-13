@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { OrmService } from '../../orm/orm.service';
 import {
   AttributeType,
@@ -8,7 +8,7 @@ import {
 } from '../../domain/meta.entity';
 import { EntityResponse } from '../../domain/response/entity.response';
 import { DataTypes } from 'sequelize';
-import { LocalFileRepository } from '../../file/local-file-respository';
+import { FileRepositoryService } from '../../file/file-repository.service';
 
 @Injectable()
 export class MetaEntityService {
@@ -16,14 +16,17 @@ export class MetaEntityService {
 
   constructor(
     protected readonly ormService: OrmService,
-    protected readonly fileRepository: LocalFileRepository,
+    protected readonly fileRepositoryService: FileRepositoryService,
   ) {}
 
   async findAll(): Promise<MetaEntity[]> {
+    console.log('About to list all files');
     const resultList: MetaEntity[] = [];
-    const fileNames = await this.fileRepository.listFiles(
+    const fileNames = await this.fileRepositoryService.listFiles(
       MetaEntityService.META_ENTITY_DIR,
     );
+
+    console.log(`Found: ${fileNames}`);
 
     if (fileNames && fileNames.length > 0) {
       for (const nextName of fileNames) {
@@ -38,7 +41,7 @@ export class MetaEntityService {
     const metaFileName =
       MetaEntityService.META_ENTITY_DIR + '/' + this.toFileName(metaName);
     const metaEntityFromFile = JSON.parse(
-      await this.fileRepository.readFile(metaFileName),
+      await this.fileRepositoryService.readFile(metaFileName),
     );
 
     const metaEntity: MetaEntity = Object.assign(
@@ -62,7 +65,7 @@ export class MetaEntityService {
       '/' +
       this.toFileName(metaEntity.name);
 
-    await this.fileRepository.writeFile(
+    await this.fileRepositoryService.writeFile(
       metaFileName,
       JSON.stringify(metaEntity, null, 2),
     );
@@ -76,7 +79,7 @@ export class MetaEntityService {
       '/' +
       this.toFileName(metaEntity.name);
 
-    await this.fileRepository.writeFile(
+    await this.fileRepositoryService.writeFile(
       metaFileName,
       JSON.stringify(metaEntity, null, 2),
     );
