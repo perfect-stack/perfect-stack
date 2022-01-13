@@ -21,7 +21,7 @@ export const databaseProviders = [
         dialectModule: require('pg'),
         // host: 'WeAreTheBorg.local',
         //host: 'localhost',
-        host: 'perfect-stack-demo-db2.ctomh1fo55cy.us-east-1.rds.amazonaws.com',
+        host: 'perfect-stack-demo-db.cwbt69xytp0e.ap-southeast-2.rds.amazonaws.com',
         port: 5432,
         username: 'postgres',
         password: password,

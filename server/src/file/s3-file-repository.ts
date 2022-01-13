@@ -9,8 +9,10 @@ import { FileRepositoryInterface } from './file-repository.interface';
 
 @Injectable()
 export class S3FileRepository implements FileRepositoryInterface {
+  static readonly BUCKET_NAME = 'perfect-stack-demo-meta-s3';
+
   client = new S3Client({
-    region: 'us-east-1',
+    region: 'ap-southeast-2',
   });
 
   async listFiles(dir: string): Promise<string[]> {
@@ -19,7 +21,7 @@ export class S3FileRepository implements FileRepositoryInterface {
     }
 
     const command = new ListObjectsCommand({
-      Bucket: 'perfect-stack-demo-meta',
+      Bucket: S3FileRepository.BUCKET_NAME,
     });
 
     const response = await this.client.send(command);
@@ -28,7 +30,6 @@ export class S3FileRepository implements FileRepositoryInterface {
     const contents = response.Contents;
     for (const nextObject of contents) {
       const objectKey = nextObject.Key;
-      console.log(`objectKey = ${objectKey}`);
       if (objectKey.startsWith(dir)) {
         const filename = objectKey.substring(dir.length);
         if (filename) {
@@ -44,7 +45,7 @@ export class S3FileRepository implements FileRepositoryInterface {
   async readFile(filename: string): Promise<string> {
     const data = await this.client.send(
       new GetObjectCommand({
-        Bucket: 'perfect-stack-demo-meta',
+        Bucket: S3FileRepository.BUCKET_NAME,
         Key: filename,
       }),
     );
@@ -55,7 +56,7 @@ export class S3FileRepository implements FileRepositoryInterface {
   async writeFile(filename: string, content: string): Promise<void> {
     const response = await this.client.send(
       new PutObjectCommand({
-        Bucket: '',
+        Bucket: S3FileRepository.BUCKET_NAME,
         Key: filename,
         Body: content,
       }),
