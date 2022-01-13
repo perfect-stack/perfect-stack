@@ -11,4 +11,10 @@ export class AppController {
   get(): string {
     return this.appService.get();
   }
+
+  @Get('/health')
+  @PublicApi()
+  getHealth(): string {
+    return this.appService.get();
+  }
 }

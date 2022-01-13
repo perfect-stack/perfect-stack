@@ -8,82 +8,79 @@ import {
 } from '../../domain/meta.entity';
 import { EntityResponse } from '../../domain/response/entity.response';
 import { DataTypes } from 'sequelize';
-import * as fs from 'fs';
+import { LocalFileRepository } from '../../file/local-file-respository';
 
 @Injectable()
 export class MetaEntityService {
   static readonly META_ENTITY_DIR = 'meta/entities';
 
-  constructor(protected readonly ormService: OrmService) {}
+  constructor(
+    protected readonly ormService: OrmService,
+    protected readonly fileRepository: LocalFileRepository,
+  ) {}
 
   async findAll(): Promise<MetaEntity[]> {
-    if (fs.existsSync(MetaEntityService.META_ENTITY_DIR)) {
-      const resultList: MetaEntity[] = [];
-      const fileNames = fs.readdirSync(MetaEntityService.META_ENTITY_DIR);
-      if (fileNames && fileNames.length > 0) {
-        for (const nextName of fileNames) {
-          const metaEntity = await this.findOne(this.toMetaName(nextName));
-          resultList.push(metaEntity);
-        }
+    const resultList: MetaEntity[] = [];
+    const fileNames = await this.fileRepository.listFiles(
+      MetaEntityService.META_ENTITY_DIR,
+    );
+
+    if (fileNames && fileNames.length > 0) {
+      for (const nextName of fileNames) {
+        const metaEntity = await this.findOne(this.toMetaName(nextName));
+        resultList.push(metaEntity);
       }
-      return resultList;
-    } else {
-      throw new Error('Meta directory does not exist');
     }
+    return resultList;
   }
 
   async findOne(metaName: string): Promise<MetaEntity> {
     const metaFileName =
       MetaEntityService.META_ENTITY_DIR + '/' + this.toFileName(metaName);
-    if (fs.existsSync(metaFileName)) {
-      const metaEntityFromFile = JSON.parse(
-        fs.readFileSync(metaFileName, 'utf8'),
+    const metaEntityFromFile = JSON.parse(
+      await this.fileRepository.readFile(metaFileName),
+    );
+
+    const metaEntity: MetaEntity = Object.assign(
+      new MetaEntity(),
+      metaEntityFromFile,
+    );
+
+    for (let i = 0; i < metaEntity.attributes.length; i++) {
+      const nextAttribute = metaEntity.attributes[i];
+      metaEntity.attributes[i] = Object.assign(
+        new MetaAttribute(),
+        nextAttribute,
       );
-      const metaEntity: MetaEntity = Object.assign(
-        new MetaEntity(),
-        metaEntityFromFile,
-      );
-      for (let i = 0; i < metaEntity.attributes.length; i++) {
-        const nextAttribute = metaEntity.attributes[i];
-        metaEntity.attributes[i] = Object.assign(
-          new MetaAttribute(),
-          nextAttribute,
-        );
-      }
-      return metaEntity;
-    } else {
-      throw new Error(`Unable to find file for "${metaFileName}"`);
     }
+    return metaEntity;
   }
 
-  create(metaEntity: MetaEntity): Promise<EntityResponse> {
+  async create(metaEntity: MetaEntity): Promise<EntityResponse> {
     const metaFileName =
       MetaEntityService.META_ENTITY_DIR +
       '/' +
       this.toFileName(metaEntity.name);
-    if (!fs.existsSync(metaFileName)) {
-      fs.writeFileSync(metaFileName, JSON.stringify(metaEntity, null, 2));
-    } else {
-      throw new Error(
-        `Create meta entity failed file exists already; ${metaFileName}`,
-      );
-    }
+
+    await this.fileRepository.writeFile(
+      metaFileName,
+      JSON.stringify(metaEntity, null, 2),
+    );
 
     return;
   }
 
-  update(metaEntity: MetaEntity): Promise<EntityResponse> {
+  async update(metaEntity: MetaEntity): Promise<EntityResponse> {
     const metaFileName =
       MetaEntityService.META_ENTITY_DIR +
       '/' +
       this.toFileName(metaEntity.name);
-    if (fs.existsSync(metaFileName)) {
-      fs.writeFileSync(metaFileName, JSON.stringify(metaEntity, null, 2));
-    } else {
-      throw new Error(
-        `Update meta entity failed file does not exist; ${metaFileName}`,
-      );
-    }
+
+    await this.fileRepository.writeFile(
+      metaFileName,
+      JSON.stringify(metaEntity, null, 2),
+    );
+
     return;
   }
 

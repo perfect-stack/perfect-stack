@@ -18,6 +18,7 @@ export const databaseProviders = [
 
       const sequelize = new Sequelize({
         dialect: 'postgres',
+        dialectModule: require('pg'),
         // host: 'WeAreTheBorg.local',
         // host: 'localhost',
         host: 'perfect-stack-demo-db2.ctomh1fo55cy.us-east-1.rds.amazonaws.com',

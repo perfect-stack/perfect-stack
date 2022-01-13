@@ -1,72 +1,60 @@
 import { Injectable } from '@nestjs/common';
 import { EntityResponse } from '../../domain/response/entity.response';
 import { MetaPage } from '../../domain/meta.page';
-
-import * as fs from 'fs';
+import { LocalFileRepository } from '../../file/local-file-respository';
 
 @Injectable()
 export class MetaPageService {
   static readonly META_PAGE_DIR = 'meta/page';
 
+  constructor(protected readonly fileRepository: LocalFileRepository) {}
+
   async findAll(): Promise<MetaPage[]> {
-    if (fs.existsSync(MetaPageService.META_PAGE_DIR)) {
-      const resultList: MetaPage[] = [];
-      const fileNames = fs.readdirSync(MetaPageService.META_PAGE_DIR);
-      if (fileNames && fileNames.length > 0) {
-        for (const nextName of fileNames) {
-          const metaPage = await this.findOne(this.toMetaName(nextName));
-          resultList.push(metaPage);
-        }
+    const resultList: MetaPage[] = [];
+    const fileNames = await this.fileRepository.listFiles(
+      MetaPageService.META_PAGE_DIR,
+    );
+
+    if (fileNames && fileNames.length > 0) {
+      for (const nextName of fileNames) {
+        const metaPage = await this.findOne(this.toMetaName(nextName));
+        resultList.push(metaPage);
       }
-      return resultList;
-    } else {
-      throw new Error(
-        `Meta directory ${MetaPageService.META_PAGE_DIR} does not exist`,
-      );
     }
+    return resultList;
   }
 
   async findOne(metaPageName: string): Promise<MetaPage> {
     const metaFileName =
       MetaPageService.META_PAGE_DIR + '/' + this.toFileName(metaPageName);
-    if (fs.existsSync(metaFileName)) {
-      const metaPageFromFile = JSON.parse(
-        fs.readFileSync(metaFileName, 'utf8'),
-      );
-      const metaPage: MetaPage = Object.assign(
-        new MetaPage(),
-        metaPageFromFile,
-      );
-      return metaPage;
-    } else {
-      throw new Error(`Unable to find file for "${metaFileName}"`);
-    }
+
+    const metaPageFromFile = JSON.parse(
+      await this.fileRepository.readFile(metaFileName),
+    );
+
+    return Object.assign(new MetaPage(), metaPageFromFile);
   }
 
-  create(metaPage: MetaPage): Promise<any> {
+  async create(metaPage: MetaPage): Promise<void> {
     const metaFileName =
       MetaPageService.META_PAGE_DIR + '/' + this.toFileName(metaPage.name);
-    if (!fs.existsSync(metaFileName)) {
-      fs.writeFileSync(metaFileName, JSON.stringify(metaPage, null, 2));
-    } else {
-      throw new Error(
-        `Create meta page failed, file exists already; ${metaFileName}`,
-      );
-    }
+
+    await this.fileRepository.writeFile(
+      metaFileName,
+      JSON.stringify(metaPage, null, 2),
+    );
 
     return;
   }
 
-  update(metaPage: MetaPage): Promise<EntityResponse> {
+  async update(metaPage: MetaPage): Promise<EntityResponse> {
     const metaFileName =
       MetaPageService.META_PAGE_DIR + '/' + this.toFileName(metaPage.name);
-    if (fs.existsSync(metaFileName)) {
-      fs.writeFileSync(metaFileName, JSON.stringify(metaPage, null, 2));
-    } else {
-      throw new Error(
-        `Update meta page failed, file does not exist; ${metaFileName}`,
-      );
-    }
+
+    await this.fileRepository.writeFile(
+      metaFileName,
+      JSON.stringify(metaPage, null, 2),
+    );
     return;
   }
 
