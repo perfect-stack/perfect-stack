@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {MetaEntity, AttributeType, VisibilityType, EntityType, ComparisonOperator} from '../../../domain/meta.entity';
@@ -108,4 +108,15 @@ export class MetaEntityEditComponent implements OnInit {
     }
   }
 
+  onLabelKeyup(group: AbstractControl) {
+    const formGroup = group as FormGroup;
+    const label = formGroup.controls['label'].value;
+
+    function toEntityNameFromLabel(label: string) {
+      return label ? label.toLowerCase().replace(/ /g, '_') : label;
+    }
+
+    const name = toEntityNameFromLabel(label);
+    formGroup.controls['name'].setValue(name);
+  }
 }
