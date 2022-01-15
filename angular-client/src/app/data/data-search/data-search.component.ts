@@ -64,7 +64,6 @@ export class DataSearchComponent implements OnInit {
       const orderByName = resultTableTemplate.orderByName;
       const orderByDir = resultTableTemplate.orderByDir;
 
-      console.log(`Search for...`);
       const queryRequest = new QueryRequest();
       queryRequest.metaEntityName = this.metaName;
       queryRequest.orderByName = orderByName;
@@ -76,7 +75,6 @@ export class DataSearchComponent implements OnInit {
         const control = entityForm.controls[controlsKey];
         if(control instanceof FormControlWithAttribute) {
           const attribute = control.attribute;
-          console.log(`>> ${attribute.name} ${attribute.comparisonOperator} ${control.value}`);
           const criteria = new Criteria();
           criteria.name = attribute.name;
           criteria.operator = attribute.comparisonOperator;

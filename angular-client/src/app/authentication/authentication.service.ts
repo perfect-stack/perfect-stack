@@ -7,19 +7,28 @@ import {
   setPersistence,
   signInWithPopup
 } from 'firebase/auth';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
+  get redirectUrl(): string | null {
+    return this._redirectUrl;
+  }
+
+  set redirectUrl(value: string | null) {
+    console.log(`set redirectUrl = ${value}`);
+    this._redirectUrl = value;
+  }
 
   isLoggedIn = false;
 
   // store the URL so we can redirect after logging in
-  redirectUrl: string | null = null;
+  private _redirectUrl: string | null = null;
 
-  constructor(protected readonly router: Router) {
+  constructor(protected readonly router: Router,
+              protected readonly route: ActivatedRoute) {
     onAuthStateChanged(getAuth(), (user) => {
       if (user) {
         console.log(`AuthenticationService: user "${user.displayName}" is signed IN`);
@@ -61,10 +70,10 @@ export class AuthenticationService {
           // The signed-in user info.
           const user = result.user;
           //console.log(`Login successful: ${JSON.stringify(credential.toJSON())}`);
-          console.log(`User = ${JSON.stringify(user.toJSON())}`);
+          //console.log(`User = ${JSON.stringify(user.toJSON())}`);
 
           // don't do this here, let the authState change listener (above) do it instead
-          this.navigateToFirstPage();
+          //this.navigateToFirstPage();
         }
       }).catch((error) => {
       // Handle Errors here.
@@ -75,13 +84,15 @@ export class AuthenticationService {
   }
 
   navigateToFirstPage() {
-    // if(this.redirectUrl) {
-    //   this.router.navigateByUrl(this.redirectUrl);
-    //   this.redirectUrl = null;
-    // }
-    // else {
-    //   this.router.navigate(['/data/Person/search']);
-    // }
+    if(this._redirectUrl) {
+      this.router.navigateByUrl(this._redirectUrl);
+      this._redirectUrl = null;
+    }
+    else {
+      // TODO: needs to support query parameters once the app starts using them
+      const currentUrl = new URL(window.location.href);
+      this.router.navigate([currentUrl.pathname]);
+    }
   }
 
 

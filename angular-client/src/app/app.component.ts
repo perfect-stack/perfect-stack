@@ -17,6 +17,8 @@ export class AppComponent implements OnInit {
   }
 
   onLogin() {
+    // TODO: this is going to need to change if there is no Person object to start with.
+    this.authenticationService.redirectUrl = '/data/Person/search';
     this.authenticationService.login();
   }
 

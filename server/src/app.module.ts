@@ -14,7 +14,9 @@ import { MetaPageModule } from './meta/meta-page/meta-page.module';
 @Module({
   imports: [
     AuthenticationModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     OrmModule,
     MetaEntityModule,
     MetaMenuModule,
