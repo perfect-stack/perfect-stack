@@ -1,10 +1,14 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#">Perfect-Stack</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+  <button class="navbar-toggler" type="button"
+          data-target="#navbarSupportedContent"
+          (click)="isMenuCollapsed = !isMenuCollapsed"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
         <a class="nav-link" [routerLink]="'/'">Home <span class="sr-only">(current)</span></a>
@@ -15,7 +19,7 @@
           {{nextMenu.label}}
         </a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items">
+          <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" (click)="isMenuCollapsed = true">
             {{menuItem.label}}
           </a>
         </div>
