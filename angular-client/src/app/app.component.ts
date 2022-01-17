@@ -11,7 +11,8 @@ export class AppComponent implements OnInit {
 
   public isMenuCollapsed = true;
 
-  constructor(readonly authenticationService: AuthenticationService, public readonly metaMenuService: MetaMenuService) {}
+  constructor(public readonly authenticationService: AuthenticationService,
+              public readonly metaMenuService: MetaMenuService) {}
 
   ngOnInit(): void {
   }

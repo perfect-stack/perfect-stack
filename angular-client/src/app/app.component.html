@@ -14,17 +14,18 @@
         <a class="nav-link" [routerLink]="'/'">Home <span class="sr-only">(current)</span></a>
       </li>
 
-      <li class="nav-item" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
-        <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown" role="button">
-          {{nextMenu.label}}
-        </a>
-        <div class="dropdown-menu" ngbDropdownMenu>
-          <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" (click)="isMenuCollapsed = true">
-            {{menuItem.label}}
+      <ng-container *ngIf="authenticationService.isLoggedIn">
+        <li class="nav-item" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
+          <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown" role="button">
+            {{nextMenu.label}}
           </a>
-        </div>
-      </li>
-
+          <div class="dropdown-menu" ngbDropdownMenu>
+            <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" (click)="isMenuCollapsed = true">
+              {{menuItem.label}}
+            </a>
+          </div>
+        </li>
+      </ng-container>
     </ul>
 
     <ng-container *ngIf="authenticationService.isLoggedIn">
@@ -37,8 +38,6 @@
   </div>
 </nav>
 
-<div class="p-4">
-  <router-outlet></router-outlet>
-</div>
+<router-outlet></router-outlet>
 
 <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
