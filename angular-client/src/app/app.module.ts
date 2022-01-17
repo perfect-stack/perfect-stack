@@ -39,6 +39,7 @@ import { AttributePaletteComponent } from './template/attribute-palette/attribut
 import { FormComponent } from './data/data-edit/form/form.component';
 import { FormLayoutComponent } from './data/data-edit/form-layout/form-layout.component';
 import { ToastsComponent } from './utils/toasts/toasts.component';
+import {ClientConfigService} from './client/config/client-config.service';
 
 
 function initializeApp() {
@@ -102,6 +103,7 @@ function initializeApp() {
   ],
   providers: [
     AuthenticationService,
+    ClientConfigService,
     PersonService,
     MetaMenuService,
     {

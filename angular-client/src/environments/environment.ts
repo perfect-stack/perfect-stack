@@ -5,7 +5,6 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3080'
-  //apiUrl: 'https://46q081p2g7.execute-api.us-east-1.amazonaws.com/dev'
 };
 
 /*

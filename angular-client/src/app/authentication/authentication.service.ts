@@ -8,6 +8,7 @@ import {
   signInWithPopup
 } from 'firebase/auth';
 import {ActivatedRoute, Router} from '@angular/router';
+import {ClientConfigService} from '../client/config/client-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,8 @@ export class AuthenticationService {
   private _redirectUrl: string | null = null;
 
   constructor(protected readonly router: Router,
-              protected readonly route: ActivatedRoute) {
+              protected readonly route: ActivatedRoute,
+              protected readonly clientConfigService: ClientConfigService) {
     onAuthStateChanged(getAuth(), (user) => {
       if (user) {
         console.log(`AuthenticationService: user "${user.displayName}" is signed IN`);
@@ -39,14 +41,13 @@ export class AuthenticationService {
         this.isLoggedIn = false;
       }
     });
-  }
 
-  login() {
     const auth = getAuth();
     setPersistence(auth, browserLocalPersistence)
       .then(() => {
         // New sign-in will be persisted with session persistence.
-        return this.signInWithGoogle();
+        //return this.signInWithGoogle();
+        console.log('browserLocalPersistence has been set');
       })
       .catch((error) => {
         // Handle Errors here.
@@ -54,6 +55,31 @@ export class AuthenticationService {
         const errorMessage = error.message;
         console.log(`Login failed: ${errorCode} - ${errorMessage}`);
       });
+  }
+
+  login() {
+    // const auth = getAuth();
+    // setPersistence(auth, browserLocalPersistence)
+    //   .then(() => {
+    //     // New sign-in will be persisted with session persistence.
+    //     return this.signInWithGoogle();
+    //   })
+    //   .catch((error) => {
+    //     // Handle Errors here.
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //     console.log(`Login failed: ${errorCode} - ${errorMessage}`);
+    //   });
+
+    this.clientConfigService.getConfig().subscribe((config) => {
+      if(config && config.AUTH_DISABLE_FOR_DEV === 'true') {
+        console.warn('WARNING: authentication DISABLED for local development')
+        this.isLoggedIn = true;
+      }
+      else {
+        return this.signInWithGoogle();
+      }
+    })
   }
 
   signInWithGoogle() {
@@ -98,6 +124,7 @@ export class AuthenticationService {
 
   logout() {
     console.log('logout()');
+    this.isLoggedIn = false;
     const auth = getAuth();
     auth.signOut().then(() => {
       this.router.navigate(['/']);

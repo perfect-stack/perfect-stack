@@ -10,10 +10,12 @@ import { DataModule } from './data/data.module';
 import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
 import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 import { MetaPageModule } from './meta/meta-page/meta-page.module';
+import { ClientConfigModule } from './client/config/client-config.module';
 
 @Module({
   imports: [
     AuthenticationModule,
+    ClientConfigModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
