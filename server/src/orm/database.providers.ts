@@ -15,7 +15,10 @@ export const databaseProviders = [
       const databaseUser = configService.get<string>('DATABASE_USER');
       const databasePassword = configService.get<string>('DATABASE_PASSWORD');
 
-      const client = new SecretsManagerClient({});
+      const client = new SecretsManagerClient({
+        region: 'ap-southeast-2',
+      });
+
       const command = new GetSecretValueCommand({
         SecretId: 'dev/perfect-stack-demo',
       });

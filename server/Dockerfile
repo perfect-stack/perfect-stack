@@ -1,26 +1,11 @@
-FROM node:12.19.0-alpine3.9 AS development
+FROM public.ecr.aws/lambda/nodejs:14
+# Alternatively, you can pull the base image from Docker Hub: amazon/aws-lambda-nodejs:12
 
-WORKDIR /usr/src/app
-COPY package*.json ./
+# Assumes your function is named "app.js", and there is a package.json file in the app directory
+COPY dist/ .env package.json  ${LAMBDA_TASK_ROOT}
 
-RUN npm install glob rimraf
-RUN npm install --only=development
+# Install NPM dependencies for function
+RUN npm install
 
-COPY . .
-
-RUN npm run build
-
-FROM node:12.19.0-alpine3.9 as production
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-RUN npm install --only=production
-COPY . .
-COPY --from=development /usr/src/app/dist ./dist
-
-CMD ["node", "dist/main"]
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "src/lambda.handler" ]
