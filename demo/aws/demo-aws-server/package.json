@@ -1,5 +1,5 @@
 {
-  "name": "demo-server",
+  "name": "@perfect-stack/demo-aws-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,7 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@perfect-stack/nestjs-server": "^0.0.3",
+    "@perfect-stack/nestjs-server": "^0.0.3"
+  },
+  "devDependencies": {
     "@types/node": "^17.0.9",
     "rimraf": "^3.0.2",
     "source-map-support": "^0.5.21",
