@@ -80,6 +80,9 @@
             "production": {
               "browserTarget": "angular-client:build:production"
             },
+            "test": {
+              "browserTarget": "angular-client:build:test"
+            },
             "development": {
               "browserTarget": "angular-client:build:development"
             }

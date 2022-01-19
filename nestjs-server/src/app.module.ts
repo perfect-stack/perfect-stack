@@ -12,12 +12,17 @@ import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 import { MetaPageModule } from './meta/meta-page/meta-page.module';
 import { ClientConfigModule } from './client/config/client-config.module';
 
+const envFile = process.env.NESTJS_ENV
+  ? process.env.NESTJS_ENV
+  : '/env/local.env';
+
 @Module({
   imports: [
     AuthenticationModule,
     ClientConfigModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: [envFile],
     }),
     OrmModule,
     MetaEntityModule,

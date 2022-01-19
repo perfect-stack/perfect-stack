@@ -1,4 +1,7 @@
+# don't publish our credentials
 .npmrc
+# don't publish our environment settings
+env
 
 # compiled output
 ##### Don't exclude the dist folder for a npm publish
