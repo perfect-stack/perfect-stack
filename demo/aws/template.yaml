@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   demo-aws-server
 
-  Sample SAM Template for sam-app
+  SAM Template for docker image lambda
   
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -11,14 +11,14 @@ Globals:
     Timeout: 5
 
 Resources:
-  HelloWorldFunction:
+  ProxyFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       PackageType: Image
       ImageConfig:
         Command: ["src/lambda.handler"]
       Events:
-        HelloWorld:
+        HttpApiEvent:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /{any+}
@@ -32,12 +32,12 @@ Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  ProxyApi:
+    Description: "API Gateway endpoint URL for proxy function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  ProxyFunction:
+    Description: "Lambda Proxy Function ARN"
+    Value: !GetAtt ProxyFunction.Arn
+  ProxyFunctionRole:
+    Description: "Implicit IAM Role created for proxy function"
+    Value: !GetAtt ProxyFunctionRole.Arn

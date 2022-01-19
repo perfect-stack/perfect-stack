@@ -1,0 +1,20 @@
+version = 0.1
+[test]
+[test.deploy]
+[test.deploy.parameters]
+stack_name = "perfect-stack-demo-app"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1g08tzulytk5k"
+s3_prefix = "perfect-stack-demo-app"
+region = "ap-southeast-2"
+capabilities = "CAPABILITY_IAM"
+image_repositories = ["ProxyFunction=100150877581.dkr.ecr.ap-southeast-2.amazonaws.com/perfectstackdemoappb11d70a5/proxyfunctione83b7c75repo"]
+
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "perfect-stack-demo-app"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1g08tzulytk5k"
+s3_prefix = "perfect-stack-demo-app"
+region = "ap-southeast-2"
+capabilities = "CAPABILITY_IAM"
+image_repositories = ["ProxyFunction=100150877581.dkr.ecr.ap-southeast-2.amazonaws.com/perfectstackdemoappb11d70a5/proxyfunctione83b7c75repo"]
