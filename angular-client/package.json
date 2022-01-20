@@ -7,6 +7,7 @@
     "start:test": "ng serve --configuration=test",
     "build": "ng build",
     "build:test": "ng build --configuration=test",
+    "publish" : "aws s3 cp --recursive ./dist/angular-client/ s3://demo-aws-client-release/0.0.0",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
