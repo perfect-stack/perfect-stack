@@ -1,3 +1,4 @@
+import * as dotenv from 'dotenv';
 import * as cdk from 'aws-cdk-lib';
 import {Duration, Stack, StackProps} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
@@ -8,12 +9,22 @@ export class DemoAwsCdkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    //const repo = new cdk.aws_ecr.Repository(this, 'demo-aws-service');
-    const repo = cdk.aws_ecr.Repository.fromRepositoryName(this, 'demo-aws-server-repo', 'demo-aws-server');
+    if(!process.env.NESTJS_ENV) {
+      throw new Error('NESTJS_ENV environment variable is not defined');
+    }
 
+    console.log(`NESTJS_ENV = ${process.env.NESTJS_ENV}`);
+    const envMap = dotenv.config({
+      path: process.env.NESTJS_ENV
+    });
+    console.log(`envMap = ${JSON.stringify(envMap.parsed)}`);
+
+    const repo = cdk.aws_ecr.Repository.fromRepositoryName(this, 'demo-aws-server-repo', 'demo-aws-server');
     const dockerImageFunction = new cdk.aws_lambda.DockerImageFunction(this, 'ProxyFunction', {
-      environment: {},
-      code: cdk.aws_lambda.DockerImageCode.fromEcr(repo),
+      environment: envMap.parsed,
+      code: cdk.aws_lambda.DockerImageCode.fromEcr(repo, {
+        tag: '1.0.0'
+      }),
       timeout: Duration.seconds(30),
       functionName: 'ProxyFunction',
     });

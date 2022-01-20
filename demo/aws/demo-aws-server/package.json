@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@perfect-stack/nestjs-server": "^0.0.7"
+    "@perfect-stack/nestjs-server": "^0.0.8"
   },
   "devDependencies": {
     "@types/node": "^17.0.9",
