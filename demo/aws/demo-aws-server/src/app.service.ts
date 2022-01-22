@@ -23,7 +23,7 @@ export class AppService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap(): Promise<any> {
     await this.metaEntityService.syncMetaModelWithDatabase(false);
-    //await this.loadFakePeople();
+    //await this.createFakePeople();
     return;
   }
 

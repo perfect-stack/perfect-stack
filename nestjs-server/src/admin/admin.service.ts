@@ -1,53 +1,42 @@
-import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import { DataService } from './data/data.service';
+import { Injectable, Logger } from '@nestjs/common';
+import * as path from 'path';
 import * as fs from 'fs';
 import * as csv from 'fast-csv';
+import { v4 as uuid } from 'uuid';
+
 import { DateTimeFormatter, LocalDate } from '@js-joda/core';
-import * as path from 'path';
-import { v4 } from 'uuid';
-import { MetaEntityService } from './meta/meta-entity/meta-entity.service';
+import { DataService } from '../data/data.service';
 
 @Injectable()
-export class AppService implements OnApplicationBootstrap {
-  private readonly logger = new Logger(AppService.name);
+export class AdminService {
+  private readonly logger = new Logger(AdminService.name);
 
-  constructor(
-    protected readonly metaEntityService: MetaEntityService,
-    protected readonly dataService: DataService,
-  ) {}
+  constructor(protected readonly dataService: DataService) {}
 
-  get(): string {
-    this.logger.log('Health check is ok.');
-    return `Health check ok at: ${new Date().toISOString()}`;
-  }
-
-  async onApplicationBootstrap(): Promise<any> {
-    await this.metaEntityService.syncMetaModelWithDatabase(false);
-    //await this.createFakePeople();
-    return;
-  }
-
-  async loadFakePeople(): Promise<any> {
+  public async createFakePeople(): Promise<any> {
     const personQueryResponse = await this.dataService.findAll('Person');
 
     console.log(
-      `onApplicationBootstrap() personList.length = ${personQueryResponse.totalCount}`,
+      `loadFakePeople() personList.length = ${personQueryResponse.totalCount}`,
     );
 
     if (personQueryResponse.totalCount === 0) {
-      const p = path.resolve('etc', 'FakeNameGenerator.com_78362a93.csv');
-      console.log(`path = ${p}`);
+      // console.log(`cwd = ${process.cwd()}`);
+      // const p = path.resolve(
+      //   __dirname,
+      //   './etc/FakeNameGenerator.com_78362a93.csv',
+      // );
+      // console.log(`path = ${p}`);
+      //
+      // const fileData = fs.readFileSync(p);
+      // console.log('got file data');
+      //
+      // const exists = fs.existsSync(p);
+      // console.log(`exists = ${exists}`);
 
-      const fileData = fs.readFileSync(p);
-      console.log('got file data');
-
-      const exists = fs.existsSync(p);
-      console.log(`exists = ${exists}`);
-
-      await fs
-        .createReadStream(
-          path.resolve('etc', 'FakeNameGenerator.com_78362a93.csv'),
-        )
+      fs.createReadStream(
+        path.resolve(__dirname, '../../etc/FakeNameGenerator.com_78362a93.csv'),
+      )
         .pipe(csv.parse({ headers: true }))
         .on('error', (error) => this.logger.error(error))
         .on('data', (row) => this.createFakePerson(row))
@@ -71,7 +60,7 @@ export class AppService implements OnApplicationBootstrap {
     ).format(DateTimeFormatter.ISO_LOCAL_DATE);
 
     const personData = {
-      id: v4(),
+      id: uuid(),
       given_name: row.GivenName,
       family_name: row.Surname,
       email_address: row.EmailAddress,

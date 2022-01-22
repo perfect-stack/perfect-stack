@@ -13,7 +13,7 @@ export class DemoAwsServerStack extends Stack {
     const dockerImageFunction = new cdk.aws_lambda.DockerImageFunction(this, 'ProxyFunction', {
       environment: props?.envMap.parsed,
       code: cdk.aws_lambda.DockerImageCode.fromEcr(repo, {
-        tag: '1.0.0'
+        tag: '1.0.2'
       }),
       timeout: Duration.seconds(30),
       functionName: 'ProxyFunction',

@@ -1,6 +1,6 @@
 {
   "name": "@perfect-stack/nestjs-server",
-  "version": "0.0.8",
+  "version": "0.0.11",
   "description": "",
   "author": "Richard Perfect",
   "private": false,
@@ -90,5 +90,11 @@
   },
   "repository": {
     "url": "https://github.com/perfect-stack/perfect-stack.git"
-  }
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist",
+    "/etc"
+  ]
 }

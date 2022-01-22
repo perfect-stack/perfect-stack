@@ -29,4 +29,8 @@ export class MetaEntityService {
   sync() {
     return this.http.post(`${environment.apiUrl}/meta/entity/database/sync`, null);
   }
+
+  createFakePeople() {
+    return this.http.post(`${environment.apiUrl}/admin/createFakePeople`, null);
+  }
 }

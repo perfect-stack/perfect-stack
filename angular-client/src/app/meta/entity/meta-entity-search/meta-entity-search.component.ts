@@ -41,4 +41,10 @@ export class MetaEntitySearchComponent implements OnInit {
       this.toastService.showSuccess('Database schema updated successfully');
     });
   }
+
+  onCreateFakePeople() {
+    this.metaEntityService.createFakePeople().subscribe(() => {
+      this.toastService.showSuccess('Fake people created successfully');
+    });
+  }
 }
