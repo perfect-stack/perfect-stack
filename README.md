@@ -1,13 +1,12 @@
 # Perfect-Stack
 
-It's a starter application stack for building enterprise level web applications. Based on ReactJS/NestJS/Docker and Firebase or PostgreSQL it contains ready to run working code and utilities for getting started quickly with modern enterprise development.
+It's a starter application stack for building enterprise level web applications. Based on Angular/NestJS/Docker and 
+PostgreSQL it contains ready to run working code and utilities for getting started quickly with modern 
+enterprise development.
 
 ## !! Under Construction !!
 
- - Demo here: https://perfect-stack-demo.web.app
- - Getting Started: https://github.com/perfect-stack/perfect-stack/wiki/Getting-Started
  - See More: https://perfect-consulting.co.nz
-
 
 ## Why - for businesses?
 
@@ -26,21 +25,13 @@ It's a starter application stack for building enterprise level web applications.
 
 ## What
 
-- React-Bootstrap
-- ReactJS
+- Angular
 - NestJS
-- Firebase || PostgreSQL
-- Docker
-- Terraform
-- GCP || AWS || On Premise
-- Good testing support
+- PostgresSQL
 
-- Codebase
-- Demo application online
-- Lots of documentation
-- A few key videos
-- Some sort of forum for Q & A
-- Website
+- JWT authentication (Firebase or cognito)
+- Deployment (Google or AWS)
+
 
 ## What Not?
 
