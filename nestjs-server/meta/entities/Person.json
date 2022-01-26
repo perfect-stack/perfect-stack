@@ -3,88 +3,121 @@
   "type": "Database",
   "attributes": [
     {
-      "type": "Identifier",
-      "visibility": "Hidden",
       "name": "id",
       "label": "Id",
-      "description": "Entity Identifier"
+      "description": "Entity Identifier",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
     },
     {
-      "type": "Text",
-      "visibility": "Visible",
       "name": "given_name",
       "label": "Given name",
-      "description": "The person's given name"
-    },
-    {
+      "description": "The person's given name",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
       "name": "family_name",
       "label": "Family name",
-      "description": "The person's family name"
-    },
-    {
+      "description": "The person's family name",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
       "name": "email_address",
       "label": "Email address",
-      "description": "Email address"
+      "description": "Email address",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
     },
     {
-      "type": "Date",
-      "visibility": "Visible",
       "name": "last_login",
       "label": "Last login",
-      "description": "The last login date of this user"
-    },
-    {
-      "type": "Text",
-      "visibility": "Visible",
-      "name": "gender",
-      "label": "Gender",
-      "description": "The gender of the person"
-    },
-    {
-      "type": "Text",
-      "visibility": "Visible",
-      "name": "street_address",
-      "label": "Street address",
-      "description": ""
-    },
-    {
-      "type": "Text",
-      "visibility": "Visible",
-      "name": "city",
-      "label": "City",
-      "description": ""
-    },
-    {
-      "type": "Text",
-      "visibility": "Visible",
-      "name": "postcode",
-      "label": "Postcode",
-      "description": ""
-    },
-    {
+      "description": "The last login date of this user",
       "type": "Date",
       "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "description": "The gender of the person",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "street_address",
+      "label": "Street address",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "city",
+      "label": "City",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "postcode",
+      "label": "Postcode",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
       "name": "birthday",
       "label": "Birthday",
-      "description": ""
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
     },
     {
-      "type": "Text",
-      "visibility": "Visible",
       "name": "occupation",
       "label": "Occupation",
-      "description": ""
-    },
-    {
+      "description": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
       "name": "company",
       "label": "Company",
-      "description": ""
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "phone_numbers",
+      "label": "Phone numbers",
+      "description": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "PhoneNumber"
     }
   ]
 }

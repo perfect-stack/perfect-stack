@@ -47,6 +47,13 @@
                 <select class="form-control" formControlName="type">
                   <option *ngFor="let o of getAttributeTypeOptions()" [ngValue]="o">{{o}}</option>
                 </select>
+                <ng-container *ngIf="metaEntityOptions$ | async as metaEntityOptions">
+                  <ng-container *ngIf="isRelationshipType(i)">
+                    <select class="form-control mt-1" formControlName="relationshipTarget">
+                      <option *ngFor="let o of metaEntityOptions" [ngValue]="o.name">{{o.name}}</option>
+                    </select>
+                  </ng-container>
+                </ng-container>
               </td>
               <td>
                 <select class="form-control" formControlName="visibility">

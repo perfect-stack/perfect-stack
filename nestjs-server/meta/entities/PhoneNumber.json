@@ -1,0 +1,42 @@
+{
+  "name": "PhoneNumber",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "type",
+      "label": "Type",
+      "description": "Home, Work, Cell, Fax",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "country",
+      "label": "Country",
+      "description": "International country code",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "number",
+      "label": "Number",
+      "description": "The phone number",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    }
+  ]
+}

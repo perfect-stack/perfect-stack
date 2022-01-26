@@ -21,19 +21,23 @@ export const databaseProviders = [
         configService.get<string>('DATABASE_PASSWORD');
 
       let databasePassword;
-      if (databasePasswordProperty.startsWith('arn:aws:secretsmanager:')) {
-        const client = new SecretsManagerClient({
-          region: 'ap-southeast-2',
-        });
+      if (databasePasswordProperty) {
+        if (databasePasswordProperty.startsWith('arn:aws:secretsmanager:')) {
+          const client = new SecretsManagerClient({
+            region: 'ap-southeast-2',
+          });
 
-        const command = new GetSecretValueCommand({
-          SecretId: 'dev/perfect-stack-demo',
-        });
-        const response = await client.send(command);
-        const secret = JSON.parse(response.SecretString);
-        databasePassword = secret['perfect-stack-demo-db'];
+          const command = new GetSecretValueCommand({
+            SecretId: 'dev/perfect-stack-demo',
+          });
+          const response = await client.send(command);
+          const secret = JSON.parse(response.SecretString);
+          databasePassword = secret['perfect-stack-demo-db'];
+        } else {
+          databasePassword = databasePasswordProperty;
+        }
       } else {
-        databasePassword = databasePasswordProperty;
+        throw new Error('Database properties have not been initialised');
       }
 
       logger.log(

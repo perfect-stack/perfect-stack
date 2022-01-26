@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OrmService } from '../../orm/orm.service';
 import {
   AttributeType,
@@ -9,6 +9,7 @@ import {
 import { EntityResponse } from '../../domain/response/entity.response';
 import { DataTypes } from 'sequelize';
 import { FileRepositoryService } from '../../file/file-repository.service';
+import { ModelCtor } from 'sequelize-typescript';
 
 @Injectable()
 export class MetaEntityService {
@@ -109,23 +110,35 @@ export class MetaEntityService {
       (me) => me.type === EntityType.Database,
     );
 
+    const entityModelMap = new Map<string, any>();
     for (const nextMetaEntity of databaseEntities) {
       const modelAttributeList = {};
       for (const nextMetaAttribute of nextMetaEntity.attributes) {
-        const modelAttribute: any = {
-          type: DataTypes.STRING,
-          allowNull: true,
-        };
+        let modelAttribute;
+        if (
+          nextMetaAttribute.type === AttributeType.Identifier ||
+          nextMetaAttribute.type === AttributeType.Text
+        ) {
+          modelAttribute = {
+            type: DataTypes.STRING,
+            allowNull: true,
+          };
+
+          if (nextMetaAttribute.name === 'id') {
+            modelAttribute['primaryKey'] = true;
+          }
+        }
 
         if (nextMetaAttribute.type === AttributeType.Date) {
-          modelAttribute.type = DataTypes.DATEONLY;
+          modelAttribute = {
+            type: DataTypes.DATEONLY,
+            allowNull: true,
+          };
         }
 
-        if (nextMetaAttribute.name === 'id') {
-          modelAttribute['primaryKey'] = true;
+        if (modelAttribute) {
+          modelAttributeList[nextMetaAttribute.name] = modelAttribute;
         }
-
-        modelAttributeList[nextMetaAttribute.name] = modelAttribute;
       }
 
       const entityModel = this.ormService.sequelize.define(
@@ -136,9 +149,55 @@ export class MetaEntityService {
         },
       );
 
-      if (alterDatabase) {
-        await entityModel.sync({ alter: true });
+      entityModelMap.set(nextMetaEntity.name, entityModel);
+    }
+
+    // second pass create the relationships
+    for (const nextMetaEntity of databaseEntities) {
+      for (const nextMetaAttribute of nextMetaEntity.attributes) {
+        if (this.isRelationshipType(nextMetaAttribute.type)) {
+          const sourceModel = entityModelMap.get(
+            nextMetaEntity.name,
+          ) as ModelCtor;
+
+          const targetModel = entityModelMap.get(
+            nextMetaAttribute.relationshipTarget,
+          ) as ModelCtor;
+
+          switch (nextMetaAttribute.type) {
+            case AttributeType.OneToMany:
+              sourceModel.hasMany(targetModel);
+              targetModel.belongsTo(sourceModel);
+              break;
+            case AttributeType.OneToOne:
+              sourceModel.hasOne(targetModel);
+              targetModel.belongsTo(sourceModel);
+              break;
+            case AttributeType.ManyToOne:
+              // Not sure about this one, don't know if Sequelize handles this
+              break;
+            default:
+              throw new Error(
+                `Attribute ${nextMetaAttribute.name} has an unknown relationship type of ${nextMetaAttribute.type}`,
+              );
+          }
+        }
       }
     }
+
+    if (alterDatabase) {
+      for (const nextModel of entityModelMap.values()) {
+        await nextModel.sync({ alter: true });
+      }
+    }
+  }
+
+  private isRelationshipType(type: AttributeType) {
+    const relationShipTypes = [
+      AttributeType.OneToMany,
+      AttributeType.OneToOne,
+      AttributeType.ManyToOne,
+    ];
+    return relationShipTypes.includes(type);
   }
 }

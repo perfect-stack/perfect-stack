@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthenticationModule } from './authentication/authentication.module';
@@ -13,9 +13,13 @@ import { MetaPageModule } from './meta/meta-page/meta-page.module';
 import { ClientConfigModule } from './client/config/client-config.module';
 import { AdminModule } from './admin/admin.module';
 
-const envFile = process.env.NESTJS_ENV
-  ? process.env.NESTJS_ENV
-  : '/env/local.env';
+const envFile =
+  process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
+    ? process.env.NESTJS_ENV
+    : './env/local.env';
+
+const logger = new Logger('Global');
+logger.log(`envFile = ${envFile}`);
 
 @Module({
   imports: [

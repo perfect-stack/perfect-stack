@@ -21,6 +21,8 @@ export class MetaEntityEditComponent implements OnInit {
     attributes: this.fb.array([]),
   });
 
+  public metaEntityOptions$: Observable<MetaEntity[]>
+
   constructor(private fb: FormBuilder,
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
@@ -37,7 +39,9 @@ export class MetaEntityEditComponent implements OnInit {
         this.addBlankRow();
       }
       this.metaEntityForm.patchValue(metaEntity);
-    })
+    });
+
+    this.metaEntityOptions$ = this.metaEntityService.findAll();
   }
 
   get attributes() {
@@ -56,6 +60,7 @@ export class MetaEntityEditComponent implements OnInit {
       type: [AttributeType.Text],
       visibility: [VisibilityType.Visible],
       comparisonOperator: [''],
+      relationshipTarget: [''],
     });
   }
 
@@ -118,5 +123,12 @@ export class MetaEntityEditComponent implements OnInit {
 
     const name = toEntityNameFromLabel(label);
     formGroup.controls['name'].setValue(name);
+  }
+
+  isRelationshipType(index: any) {
+    const row = this.attributes.at(index) as FormGroup;
+    const type = row.controls['type'].value;
+    const relationshipTypes = [AttributeType.OneToMany, AttributeType.OneToOne, AttributeType.ManyToOne];
+    return relationshipTypes.includes(type);
   }
 }

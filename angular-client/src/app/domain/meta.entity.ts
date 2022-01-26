@@ -3,6 +3,9 @@ export enum AttributeType {
   Number = 'Number',
   Identifier = 'Identifier',
   Date = 'Date',
+  OneToMany = 'OneToMany',
+  OneToOne = 'OneToOne',
+  ManyToOne = 'ManyToOne',
 }
 
 export enum ComparisonOperator {
@@ -10,7 +13,7 @@ export enum ComparisonOperator {
   StartsWith = 'StartsWith',
   Includes = 'Includes',
   GreaterThan = 'GreaterThan',
-  LessThan = 'LessThan'
+  LessThan = 'LessThan',
 }
 
 export enum VisibilityType {
@@ -25,6 +28,7 @@ export class MetaAttribute {
   type = AttributeType.Text;
   visibility = VisibilityType.Visible;
   comparisonOperator: ComparisonOperator; // Only used by Criteria objects
+  relationshipTarget: string;
 }
 
 export enum EntityType {
