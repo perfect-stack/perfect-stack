@@ -1,0 +1,17 @@
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th *ngFor="let nextCell of cells[0]">
+      <ng-container *ngIf="nextCell.attribute">
+        {{nextCell.attribute.label}}
+      </ng-container>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td></td>
+  </tr>
+  </tbody>
+</table>

@@ -18,6 +18,10 @@
               <app-text-field-control [formGroup]="entityForm" [attribute]="attribute"></app-text-field-control>
             </ng-container>
 
+            <ng-container *ngSwitchCase="'OneToMany'">
+              <app-one-to-many-control [formGroup]="entityForm" [attribute]="attribute" [cell]="cell"></app-one-to-many-control>
+            </ng-container>
+
             <ng-container *ngSwitchDefault>
               ERROR: Missing or unknown attribute type of: "{{attribute.type}}"
             </ng-container>

@@ -17,6 +17,10 @@
             <app-text-field-control [formGroup]="formGroup" [mode]="mode" [attribute]="nextCell.attribute"></app-text-field-control>
           </ng-container>
 
+          <ng-container *ngSwitchCase="'OneToMany'">
+            <app-one-to-many-control [formGroup]="formGroup" [mode]="mode" [attribute]="nextCell.attribute" [cell]="nextCell"></app-one-to-many-control>
+          </ng-container>
+
           <ng-container *ngSwitchDefault>
             ERROR: Missing or unknown attribute type of: "{{nextCell.attribute.type}}"
           </ng-container>

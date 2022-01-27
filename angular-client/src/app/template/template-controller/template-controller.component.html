@@ -1,4 +1,4 @@
-<ng-container *ngIf="template && metaEntityOptions">
+<ng-container *ngIf="template && metaEntityOptions$ | async as metaEntityOptions">
 
   <div class="row border-top border-dark py-3">
     <div class="col-10">
