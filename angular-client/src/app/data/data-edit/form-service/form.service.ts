@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 import {DataService} from '../../data-service/data.service';
 import {Entity} from '../../../domain/entity';
 import {Cell, MetaPage, Template} from '../../../domain/meta.page';
-import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 import {of, switchMap} from 'rxjs';
-import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
+import {AttributeType, MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 
 
 export class FormContext {
@@ -18,6 +18,10 @@ export class FormContext {
 }
 
 export class FormControlWithAttribute extends FormControl {
+  attribute: MetaAttribute;
+}
+
+export class FormArrayWithAttribute extends FormArray {
   attribute: MetaAttribute;
 }
 
@@ -97,11 +101,15 @@ export class FormService {
     for(const nextRow of template.cells) {
       for(const nextCell of nextRow) {
         if(nextCell.attributeName) {
-
           const attribute = metaEntity.attributes.find(a => nextCell.attributeName == a.name);
           if(attribute) {
-
-            const formControl = new FormControlWithAttribute('');
+            let formControl;
+            if(attribute.type === AttributeType.OneToMany) {
+              formControl = new FormArrayWithAttribute([]);
+            }
+            else {
+              formControl = new FormControlWithAttribute('');
+            }
             formControl.attribute = attribute;
             controls[nextCell.attributeName] = formControl;
           }

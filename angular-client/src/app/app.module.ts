@@ -42,6 +42,7 @@ import { ToastsComponent } from './utils/toasts/toasts.component';
 import {ClientConfigService} from './client/config/client-config.service';
 import { OneToManyControlComponent } from './data/data-edit/form-controls/one-to-many-control/one-to-many-control.component';
 import { TableLayoutComponent } from './data/data-edit/table-layout/table-layout.component';
+import { CellContainerComponent } from './data/data-edit/form-controls/cell-container/cell-container.component';
 
 
 function initializeApp() {
@@ -94,6 +95,7 @@ function initializeApp() {
     ToastsComponent,
     OneToManyControlComponent,
     TableLayoutComponent,
+    CellContainerComponent,
   ],
   imports: [
     BrowserModule,

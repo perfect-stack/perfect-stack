@@ -166,7 +166,10 @@ export class MetaEntityService {
 
           switch (nextMetaAttribute.type) {
             case AttributeType.OneToMany:
-              sourceModel.hasMany(targetModel);
+              sourceModel.hasMany(targetModel, {
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE',
+              });
               targetModel.belongsTo(sourceModel);
               break;
             case AttributeType.OneToOne:

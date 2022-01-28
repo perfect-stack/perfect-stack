@@ -14,7 +14,6 @@ export class DataService {
 
   constructor(protected readonly ormService: OrmService) {}
 
-  @Get('/:entityName')
   async findAll(
     entityName: string,
     pageNumber?: number,
@@ -61,16 +60,18 @@ export class DataService {
     return (await model.findByPk(id)) as unknown as Entity;
   }
 
-  @Post('/:entityName/:id')
   async create(entityName: string, entity: Entity): Promise<EntityResponse> {
     const model = this.ormService.sequelize.model(entityName);
     return model.create(entity);
   }
 
   async update(entityName: string, entity: Entity): Promise<EntityResponse> {
+    this.logger.log(`UPDATE.1: ${entityName}: ${JSON.stringify(entity)}`);
     const model = this.ormService.sequelize.model(entityName);
     const entityFromDb = await model.findByPk(entity.id);
     entityFromDb.set(entity);
+
+    this.logger.log(`UPDATE.2: ${entityName}: ${JSON.stringify(entityFromDb)}`);
     return entityFromDb.save();
   }
 

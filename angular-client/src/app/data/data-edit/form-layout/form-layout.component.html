@@ -8,7 +8,7 @@
           <span placement="right" [ngbTooltip]="nextCell.attribute.description">{{nextCell.attribute.label}}</span>
         </label>
 
-        <div [ngSwitch]="nextCell.attribute.type">
+        <!--<div [ngSwitch]="nextCell.attribute.type">
           <ng-container *ngSwitchCase="'Date'">
             <app-date-picker-control [formGroup]="formGroup" [mode]="mode" [attribute]="nextCell.attribute"></app-date-picker-control>
           </ng-container>
@@ -24,7 +24,8 @@
           <ng-container *ngSwitchDefault>
             ERROR: Missing or unknown attribute type of: "{{nextCell.attribute.type}}"
           </ng-container>
-        </div>
+        </div>-->
+        <app-cell-container [formGroup]="formGroup" [mode]="mode" [cell]="nextCell"></app-cell-container>
       </div>
 
     </div>
