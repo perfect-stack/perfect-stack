@@ -14,6 +14,7 @@ import { Entity } from '../domain/entity';
 import { EntityResponse } from '../domain/response/entity.response';
 import { QueryResponse } from './query.response';
 import { QueryRequest } from './query.request';
+import { PublicApi } from '../authentication/public-api';
 
 @Controller('data')
 export class DataController {
@@ -33,6 +34,8 @@ export class DataController {
     return this.dataService.findByCriteria(queryRequest);
   }
 
+  // TODO REMOVE THIS becore commit
+  @PublicApi()
   @Get('/:entityName/:id')
   findOne(
     @Param('entityName') entityName: string,

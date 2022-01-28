@@ -7,15 +7,26 @@ import {
   MetaEntity,
 } from '../../domain/meta.entity';
 import { EntityResponse } from '../../domain/response/entity.response';
-import { DataTypes } from 'sequelize';
 import { FileRepositoryService } from '../../file/file-repository.service';
-import { ModelCtor } from 'sequelize-typescript';
+import {
+  AnyEntity,
+  Constructor,
+  EntityMetadata,
+  EntitySchema,
+  MetadataDiscovery,
+  MetadataValidator,
+  MikroORM,
+  Utils,
+} from '@mikro-orm/core';
 
 @Injectable()
 export class MetaEntityService {
   static readonly META_ENTITY_DIR = 'meta/entities';
 
+  public entitySchemaMap = new Map<string, EntitySchema>();
+
   constructor(
+    protected readonly orm: MikroORM,
     protected readonly ormService: OrmService,
     protected readonly fileRepositoryService: FileRepositoryService,
   ) {}
@@ -110,9 +121,12 @@ export class MetaEntityService {
       (me) => me.type === EntityType.Database,
     );
 
-    const entityModelMap = new Map<string, any>();
     for (const nextMetaEntity of databaseEntities) {
-      const modelAttributeList = {};
+      const entityMetaData = new EntityMetadata();
+      entityMetaData.name = nextMetaEntity.name;
+      entityMetaData.tableName = nextMetaEntity.name;
+
+      const properties = {};
       for (const nextMetaAttribute of nextMetaEntity.attributes) {
         let modelAttribute;
         if (
@@ -120,80 +134,66 @@ export class MetaEntityService {
           nextMetaAttribute.type === AttributeType.Text
         ) {
           modelAttribute = {
-            type: DataTypes.STRING,
-            allowNull: true,
+            type: String,
+            nullable: true,
           };
 
           if (nextMetaAttribute.name === 'id') {
-            modelAttribute['primaryKey'] = true;
+            modelAttribute['primary'] = true;
           }
         }
 
         if (nextMetaAttribute.type === AttributeType.Date) {
           modelAttribute = {
-            type: DataTypes.DATEONLY,
-            allowNull: true,
+            type: Date,
+            nullable: true,
           };
         }
 
         if (modelAttribute) {
-          modelAttributeList[nextMetaAttribute.name] = modelAttribute;
+          properties[nextMetaAttribute.name] = modelAttribute;
         }
       }
 
-      const entityModel = this.ormService.sequelize.define(
-        nextMetaEntity.name,
-        modelAttributeList,
-        {
-          freezeTableName: true,
-        },
-      );
+      entityMetaData.properties = properties;
+      const entitySchema = new EntitySchema(entityMetaData);
+      this.entitySchemaMap.set(nextMetaEntity.name, entitySchema);
 
-      entityModelMap.set(nextMetaEntity.name, entityModel);
+      //const emd = new EntityMetadata(entityMetaData);
+      //this.orm.getMetadata().set(nextMetaEntity.name, emd);
+
+      await this.orm.discoverEntity(entitySchema as any);
     }
 
-    // second pass create the relationships
-    for (const nextMetaEntity of databaseEntities) {
-      for (const nextMetaAttribute of nextMetaEntity.attributes) {
-        if (this.isRelationshipType(nextMetaAttribute.type)) {
-          const sourceModel = entityModelMap.get(
-            nextMetaEntity.name,
-          ) as ModelCtor;
-
-          const targetModel = entityModelMap.get(
-            nextMetaAttribute.relationshipTarget,
-          ) as ModelCtor;
-
-          switch (nextMetaAttribute.type) {
-            case AttributeType.OneToMany:
-              sourceModel.hasMany(targetModel, {
-                onDelete: 'CASCADE',
-                onUpdate: 'CASCADE',
-              });
-              targetModel.belongsTo(sourceModel);
-              break;
-            case AttributeType.OneToOne:
-              sourceModel.hasOne(targetModel);
-              targetModel.belongsTo(sourceModel);
-              break;
-            case AttributeType.ManyToOne:
-              // Not sure about this one, don't know if Sequelize handles this
-              break;
-            default:
-              throw new Error(
-                `Attribute ${nextMetaAttribute.name} has an unknown relationship type of ${nextMetaAttribute.type}`,
-              );
-          }
-        }
-      }
-    }
-
-    if (alterDatabase) {
-      for (const nextModel of entityModelMap.values()) {
-        await nextModel.sync({ alter: true });
-      }
-    }
+    // if (alterDatabase) {
+    //   for (const nextModel of entityModelMap.values()) {
+    //     await nextModel.sync({ alter: true });
+    //   }
+    // }
   }
+
+  // async discoverEntity<T>(
+  //   entities: Constructor<T> | Constructor<AnyEntity>[],
+  // ): Promise<void> {
+  //   entities = Utils.asArray(entities);
+  //   const discovery = new MetadataDiscovery(
+  //     this.orm.getMetadata(),
+  //     this.orm.config.getDriver().getPlatform(),
+  //     this.orm.config,
+  //   );
+  //
+  //   const tmp = await discovery.discoverReferences(entities);
+  //   new MetadataValidator().validateDiscovered(
+  //     [...Object.values(this.orm.getMetadata().getAll()), ...tmp],
+  //     this.orm.config.get('discovery').warnWhenNoEntities!,
+  //   );
+  //
+  //   const metadata = await discovery.processDiscoveredEntities(tmp);
+  //   metadata.forEach((meta) =>
+  //     this.orm.getMetadata().set(meta.className, meta),
+  //   );
+  //   this.orm.getMetadata().decorate(this.orm.em);
+  // }
 
   private isRelationshipType(type: AttributeType) {
     const relationShipTypes = [

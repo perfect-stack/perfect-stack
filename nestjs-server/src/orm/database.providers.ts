@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize-typescript';
+//import { Sequelize } from 'sequelize-typescript';
 import {
   GetSecretValueCommand,
   SecretsManagerClient,
@@ -44,18 +44,18 @@ export const databaseProviders = [
         `Database connection = ${databaseHost}:${databasePort}, ${databaseUser}`,
       );
 
-      const sequelize = new Sequelize({
-        dialect: 'postgres',
-        dialectModule: require('pg'),
-        host: databaseHost,
-        port: databasePort,
-        username: databaseUser,
-        password: databasePassword,
-        database: 'perfect-stack-demo-db',
-      });
-      // sequelize.addModels([]);
-      // await sequelize.sync();
-      return sequelize;
+      // const sequelize = new Sequelize({
+      //   dialect: 'postgres',
+      //   dialectModule: require('pg'),
+      //   host: databaseHost,
+      //   port: databasePort,
+      //   username: databaseUser,
+      //   password: databasePassword,
+      //   database: 'perfect-stack-demo-db',
+      // });
+      // // sequelize.addModels([]);
+      // // await sequelize.sync();
+      // return sequelize;
     },
   },
 ];

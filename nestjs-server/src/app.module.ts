@@ -12,6 +12,7 @@ import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 import { MetaPageModule } from './meta/meta-page/meta-page.module';
 import { ClientConfigModule } from './client/config/client-config.module';
 import { AdminModule } from './admin/admin.module';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -31,6 +32,18 @@ logger.log(`envFile = ${envFile}`);
       envFilePath: [envFile],
     }),
     OrmModule,
+    MikroOrmModule.forRoot({
+      discovery: { warnWhenNoEntities: false },
+      //entities: [Person],
+      //entitiesTs: [Person],
+      type: 'postgresql',
+      dbName: 'perfect-stack-demo-db',
+      host: 'localhost',
+      port: 5432,
+      user: 'postgres',
+      password: 'Password01',
+      //metadataProvider: MyMetadataProviderService,
+    }),
     MetaEntityModule,
     MetaMenuModule,
     MetaPageModule,
