@@ -41,7 +41,10 @@
           <ng-container formArrayName="attributes" *ngFor="let group of attributes.controls ; let i=index">
             <tr [formGroupName]="i">
               <td><input class="form-control" type="text" formControlName="name" readonly></td>
-              <td><input class="form-control" type="text" formControlName="label" (keyup)="onLabelKeyup(group)"></td>
+              <td>
+                <input class="form-control" type="text" formControlName="label" (keyup)="onLabelKeyup(group)">
+                <app-validation-message [control]="getAttributeAt(i).controls['label']" [attributePath]="'label'"></app-validation-message>
+              </td>
               <td><input class="form-control" type="text" formControlName="description"></td>
               <td>
                 <select class="form-control" formControlName="type">

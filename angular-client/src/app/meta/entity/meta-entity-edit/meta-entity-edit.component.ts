@@ -1,8 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
-import {MetaEntity, AttributeType, VisibilityType, EntityType, ComparisonOperator} from '../../../domain/meta.entity';
+import {
+  MetaEntity,
+  AttributeType,
+  VisibilityType,
+  EntityType,
+  ComparisonOperator,
+  MetaAttribute
+} from '../../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
@@ -19,7 +33,7 @@ export class MetaEntityEditComponent implements OnInit {
     name: ['', Validators.required],
     type: ['', Validators.required],
     attributes: this.fb.array([]),
-  });
+  }, {validators: [uniqueNameValidator]});
 
   public metaEntityOptions$: Observable<MetaEntity[]>
 
@@ -46,6 +60,10 @@ export class MetaEntityEditComponent implements OnInit {
 
   get attributes() {
     return this.metaEntityForm.get('attributes') as FormArray;
+  }
+
+  getAttributeAt(idx: number) {
+    return this.attributes.at(idx) as FormGroup;
   }
 
   addBlankRow() {
@@ -131,4 +149,40 @@ export class MetaEntityEditComponent implements OnInit {
     const relationshipTypes = [AttributeType.OneToMany, AttributeType.OneToOne, AttributeType.ManyToOne];
     return relationshipTypes.includes(type);
   }
+}
+
+
+export const uniqueNameValidator = (control: AbstractControl): ValidationErrors | null => {
+
+  const attributes = control.get('attributes') as FormArray;
+  for(const sourceRowControls of attributes.controls) {
+    const sourceAttribute = sourceRowControls.value as MetaAttribute;
+    const labelControl = sourceRowControls.get('label');
+
+    // This next little block isn't really about this validation rule, it's more about removing any previous
+    // error state from earlier invocations so that it doesn't matter which of the non-unique names the user
+    // actually corrects, they'll both get corrected. Due to how the Angular API works, you can't just delete
+    // one error, you have to "set" the error object/map again.
+    const errors = labelControl?.errors;
+    if(errors && errors['label']) {
+      delete errors['label'];
+      if(Object.keys(errors).length > 0) {
+        labelControl?.setErrors(errors);
+      }
+      else {
+        labelControl?.setErrors(null);
+      }
+    }
+
+    for (const targetRowControls of attributes.controls) {
+      if (sourceRowControls !== targetRowControls) {
+        const targetAttribute = targetRowControls.value as MetaAttribute;
+        if (sourceAttribute.name && sourceAttribute.name === targetAttribute.name) {
+          labelControl?.setErrors({'label': {errorText: 'Attribute name must be unique'}});
+        }
+      }
+    }
+  }
+
+  return null;
 }
