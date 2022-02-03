@@ -33,10 +33,6 @@ export class DataEditComponent implements OnInit {
 
       if(this.metaName && this.mode && this.entityId) {
         return this.formService.loadFormContext(this.metaName, this.mode, this.entityId);
-        // return this.formService.loadFormContext(this.metaName, this.mode, this.entityId).pipe(tap( (value) => {
-        //   console.log(`DataEditComponent: loadFormContext: entity = ${JSON.stringify(value.entity)}`);
-        //   value.entityForm.patchValue(value.entity);
-        // }));
       }
       else {
         throw new Error('Invalid input parameters; ');
