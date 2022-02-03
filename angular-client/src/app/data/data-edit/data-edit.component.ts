@@ -1,5 +1,5 @@
 import {Component, Injectable, OnInit} from '@angular/core';
-import {Observable, switchMap} from 'rxjs';
+import {Observable, switchMap, tap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
@@ -33,6 +33,10 @@ export class DataEditComponent implements OnInit {
 
       if(this.metaName && this.mode && this.entityId) {
         return this.formService.loadFormContext(this.metaName, this.mode, this.entityId);
+        // return this.formService.loadFormContext(this.metaName, this.mode, this.entityId).pipe(tap( (value) => {
+        //   console.log(`DataEditComponent: loadFormContext: entity = ${JSON.stringify(value.entity)}`);
+        //   value.entityForm.patchValue(value.entity);
+        // }));
       }
       else {
         throw new Error('Invalid input parameters; ');
@@ -63,6 +67,7 @@ export class DataEditComponent implements OnInit {
       this.onCancel();
     });
   }
+
 }
 
 

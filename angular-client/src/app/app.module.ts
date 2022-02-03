@@ -40,6 +40,10 @@ import { FormComponent } from './data/data-edit/form/form.component';
 import { FormLayoutComponent } from './data/data-edit/form-layout/form-layout.component';
 import { ToastsComponent } from './utils/toasts/toasts.component';
 import {ClientConfigService} from './client/config/client-config.service';
+import { OneToManyControlComponent } from './data/data-edit/form-controls/one-to-many-control/one-to-many-control.component';
+import { TableLayoutComponent } from './data/data-edit/table-layout/table-layout.component';
+import { CellContainerComponent } from './data/data-edit/form-controls/cell-container/cell-container.component';
+import { ValidationMessageComponent } from './utils/validation/validation-message/validation-message.component';
 
 
 function initializeApp() {
@@ -90,6 +94,10 @@ function initializeApp() {
     FormComponent,
     FormLayoutComponent,
     ToastsComponent,
+    OneToManyControlComponent,
+    TableLayoutComponent,
+    CellContainerComponent,
+    ValidationMessageComponent,
   ],
   imports: [
     BrowserModule,

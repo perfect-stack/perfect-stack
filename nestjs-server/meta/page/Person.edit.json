@@ -69,8 +69,48 @@
             "attributeName": "postcode"
           },
           {
-            "width": "5",
-            "height": "1"
+            "width": "6",
+            "height": "1",
+            "attributeName": "phone_numbers",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1",
+                    "attributeName": "type"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1",
+                    "attributeName": "country"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1",
+                    "attributeName": "number"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table",
+              "metaEntityName": "PhoneNumber",
+              "orderByName": "type",
+              "orderByDir": "ASC"
+            }
           }
         ]
       ]

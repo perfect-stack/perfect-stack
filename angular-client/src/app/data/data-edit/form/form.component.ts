@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {CellAttribute} from '../../../meta/page/meta-page-service/meta-page.service';
-import {FormGroup} from '@angular/forms';
+import {FormContext} from '../form-service/form.service';
 
 @Component({
   selector: 'app-form',
@@ -10,13 +9,7 @@ import {FormGroup} from '@angular/forms';
 export class FormComponent implements OnInit {
 
   @Input()
-  mode: string | null;
-
-  @Input()
-  cells: CellAttribute[][];
-
-  @Input()
-  entityForm: FormGroup;
+  ctx: FormContext;
 
   constructor() { }
 

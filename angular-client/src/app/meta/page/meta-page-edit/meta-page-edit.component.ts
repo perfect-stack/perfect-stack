@@ -17,7 +17,7 @@ export class MetaPageEditComponent implements OnInit {
   metaPageName: string | null;
   metaPage$: Observable<MetaPage>;
 
-  public metaEntityOptions$: Observable<MetaEntity[]>;
+  //public metaEntityOptions$: Observable<MetaEntity[]>;
 
   templates: Template[];
 
@@ -33,7 +33,7 @@ export class MetaPageEditComponent implements OnInit {
               protected readonly metaPageService: MetaPageService) { }
 
   ngOnInit(): void {
-    this.metaEntityOptions$ = this.metaEntityService.findAll();
+    //this.metaEntityOptions$ = this.metaEntityService.findAll();
 
     this.metaPage$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaPageName = params.get('metaPageName');

@@ -1,0 +1,6 @@
+<ng-container *ngIf="cell && cell.template">
+  <ng-container *ngIf="mode === 'edit'">
+    <app-table-layout [formGroup]="formGroup" [mode]="mode" [template]="cell.template" [relationshipProperty]="attribute.name"></app-table-layout>
+  </ng-container>
+  <!--<app-template-controller [template]="cell.template"></app-template-controller>-->
+</ng-container>

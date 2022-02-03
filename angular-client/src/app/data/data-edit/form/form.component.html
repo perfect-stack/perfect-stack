@@ -1,8 +1,8 @@
 
-<ng-container *ngIf="mode && cells && entityForm">
-  <form class="form" #form="ngForm" [formGroup]="entityForm"> <!-- (ngSubmit)="onSubmit()" -->
+<ng-container *ngIf="ctx">
+  <form class="form" #form="ngForm" [formGroup]="ctx.entityForm"> <!-- (ngSubmit)="onSubmit()" -->
 
-    <app-form-layout [mode]="mode" [formGroup]="entityForm" [cells]="cells"></app-form-layout>
+    <app-form-layout [ctx]="ctx"></app-form-layout>
 
     <div class="d-flex">
       <ng-content select="[BottomLeftActions]"></ng-content>

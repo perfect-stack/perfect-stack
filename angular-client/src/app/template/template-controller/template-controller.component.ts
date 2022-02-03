@@ -2,6 +2,7 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import {Template, TemplateType} from '../../domain/meta.page';
 import {MetaEntity} from '../../domain/meta.entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-template-controller',
@@ -13,14 +14,14 @@ export class TemplateControllerComponent implements OnInit, OnChanges {
   @Input()
   public template: Template;
 
-  @Input()
-  public metaEntityOptions: MetaEntity[];
+  public metaEntityOptions$: Observable<MetaEntity[]>;
 
   metaEntity: MetaEntity;
 
   constructor(protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
+    this.metaEntityOptions$ = this.metaEntityService.findAll();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

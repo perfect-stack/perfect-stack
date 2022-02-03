@@ -1,0 +1,31 @@
+
+<table class="table table-striped" [formGroup]="formGroup">
+  <thead>
+  <tr *ngIf="cells">
+    <th *ngFor="let nextCell of cells[0]">
+      <ng-container *ngIf="nextCell.attribute">
+        {{nextCell.attribute.label}}
+      </ng-container>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+
+  <ng-container *ngIf="cells && attributes.length > 0">
+    <ng-container [formArrayName]="relationshipProperty" *ngFor="let group of attributes.controls; let i=index">
+      <tr [formGroupName]="i">
+        <td *ngFor="let nextCell of cells[0]">
+          <ng-container *ngIf="nextCell.attribute">
+            <app-cell-container [formGroup]="getFormGroupForRow(i)" [mode]="mode" [cell]="nextCell"></app-cell-container>
+          </ng-container>
+        </td>
+      </tr>
+    </ng-container>
+  </ng-container>
+
+  </tbody>
+</table>
+
+<div class="d-flex">
+  <button class="btn btn-outline-success mr-2" (click)="onAddRow(1)">Add Row</button>
+</div>

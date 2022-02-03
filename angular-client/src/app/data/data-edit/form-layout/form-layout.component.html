@@ -1,5 +1,5 @@
-<ng-container *ngIf="mode && formGroup && cells">
-  <div class="pt-1 d-flex" *ngFor="let nextRow of cells">
+<ng-container *ngIf="ctx">
+  <div class="pt-1 d-flex" *ngFor="let nextRow of ctx.cells">
     <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
 
       <div class="form-group" *ngIf="nextCell.attribute">
@@ -8,19 +8,7 @@
           <span placement="right" [ngbTooltip]="nextCell.attribute.description">{{nextCell.attribute.label}}</span>
         </label>
 
-        <div [ngSwitch]="nextCell.attribute.type">
-          <ng-container *ngSwitchCase="'Date'">
-            <app-date-picker-control [formGroup]="formGroup" [mode]="mode" [attribute]="nextCell.attribute"></app-date-picker-control>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'Text'">
-            <app-text-field-control [formGroup]="formGroup" [mode]="mode" [attribute]="nextCell.attribute"></app-text-field-control>
-          </ng-container>
-
-          <ng-container *ngSwitchDefault>
-            ERROR: Missing or unknown attribute type of: "{{nextCell.attribute.type}}"
-          </ng-container>
-        </div>
+        <app-cell-container [formGroup]="ctx.entityForm" [mode]="ctx.mode" [cell]="nextCell"></app-cell-container>
       </div>
 
     </div>
