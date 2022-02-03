@@ -3,8 +3,7 @@
   <ng-container>
     <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
       <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
-
-      <app-form [mode]="mode" [cells]="ctx.cells" [entityForm]="ctx.entityForm">
+      <app-form [ctx]="ctx">
         <ng-container BottomRightActions>
           <button class="btn btn-outline-secondary mr-2" (click)="onReset()">Reset</button>
           <button type="submit" class="btn btn-primary mr-2" (click)="onSearch(ctx)">Search</button>

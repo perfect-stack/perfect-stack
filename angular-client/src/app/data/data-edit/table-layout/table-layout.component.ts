@@ -1,8 +1,8 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Template} from '../../../domain/meta.page';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
-import {AttributeType, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
+import {MetaEntity} from '../../../domain/meta.entity';
 import {FormService} from '../form-service/form.service';
 import {CellAttribute} from '../../../meta/page/meta-page-service/meta-page.service';
 
@@ -26,6 +26,8 @@ export class TableLayoutComponent implements OnInit, OnChanges {
   relationshipProperty: string;
 
   metaEntity: MetaEntity;
+  metaEntityList: MetaEntity[];
+
   cells: CellAttribute[][];
 
   constructor(protected readonly metaEntityService: MetaEntityService,
@@ -33,23 +35,49 @@ export class TableLayoutComponent implements OnInit, OnChanges {
               private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    this.metaEntityService.findAll().subscribe(metaEntityList => {
+      this.metaEntityList = metaEntityList;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['template']) {
       this.onTemplateChange(changes['template'].currentValue);
     }
+
+    if(changes['formGroup']) {
+      this.onFormGroupChange(changes['formGroup']);
+    }
   }
 
   onTemplateChange(template: Template) {
     if(template && template.metaEntityName) {
-      this.metaEntityService.findById(template.metaEntityName).subscribe(metaEntity => {
-        this.metaEntity = metaEntity
-        this.cells = this.formService.toCellAttributeArray(template, metaEntity);
+      this.metaEntityService.findAll().subscribe(metaEntityList => {
+        this.metaEntityList = metaEntityList;
+        const me = metaEntityList.find(m => m.name === template.metaEntityName);
+        if(me) {
+          this.metaEntity = me;
+          this.cells = this.formService.toCellAttributeArray(template, this.metaEntity);
+        }
       });
     }
   }
 
+  onFormGroupChange(formGroupChange: SimpleChange) {
+    if(formGroupChange.previousValue) {
+      // TODO: remove listener
+      console.warn(`TODO: remove listener in onFormGroupChange()`);
+    }
+
+    if(formGroupChange.currentValue) {
+      const formGroup = formGroupChange.currentValue as FormGroup;
+      console.log(`TableLayoutComponent: got new formGroup to deal with: value = ${JSON.stringify(formGroup.value)}`);
+
+      formGroup.valueChanges.subscribe((value) => {
+        console.log(`TableLayoutComponent: got new formGroup VALUE to worry about of ${JSON.stringify(value)}`);
+      });
+    }
+  }
 
   onAddRow(number: number) {
     console.log(`add row ${number}`)
@@ -69,15 +97,6 @@ export class TableLayoutComponent implements OnInit, OnChanges {
   }
 
   createTableRow(): FormGroup {
-/*    return this.fb.group({
-      name: ['', Validators.required],
-      label: ['', Validators.required],
-      description: [''],
-      type: [AttributeType.Text],
-      visibility: [VisibilityType.Visible],
-      comparisonOperator: [''],
-      relationshipTarget: [''],
-    });*/
-    return this.formService.createForm(this.template, this.metaEntity);
+    return this.formService.createFormGroup(this.template, this.metaEntityList, null);
   }
 }

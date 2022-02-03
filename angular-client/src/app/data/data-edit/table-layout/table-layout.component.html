@@ -11,7 +11,7 @@
   </thead>
   <tbody>
 
-  <ng-container *ngIf="attributes.length > 0">
+  <ng-container *ngIf="cells && attributes.length > 0">
     <ng-container [formArrayName]="relationshipProperty" *ngFor="let group of attributes.controls; let i=index">
       <tr [formGroupName]="i">
         <td *ngFor="let nextCell of cells[0]">
@@ -22,7 +22,6 @@
       </tr>
     </ng-container>
   </ng-container>
-
 
   </tbody>
 </table>

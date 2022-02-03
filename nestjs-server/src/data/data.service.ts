@@ -1,4 +1,4 @@
-import { Get, Injectable, Logger, Post } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PageQueryResponse } from '../domain/response/page-query.response';
 import { Entity } from '../domain/entity';
 import { EntityResponse } from '../domain/response/entity.response';
@@ -7,6 +7,7 @@ import { QueryRequest } from './query.request';
 import { QueryResponse } from './query.response';
 import { Op } from 'sequelize';
 import { ComparisonOperator } from '../domain/meta.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class DataService {
@@ -57,7 +58,10 @@ export class DataService {
 
   async findOne(entityName: string, id: string): Promise<Entity> {
     const model = this.ormService.sequelize.model(entityName);
-    return (await model.findByPk(id)) as unknown as Entity;
+    //const childModel = this.ormService.sequelize.model('PhoneNumber');
+    return (await model.findByPk(id, {
+      include: 'phone_numbers',
+    })) as unknown as Entity;
   }
 
   async create(entityName: string, entity: Entity): Promise<EntityResponse> {
@@ -70,6 +74,25 @@ export class DataService {
     const model = this.ormService.sequelize.model(entityName);
     const entityFromDb = await model.findByPk(entity.id);
     entityFromDb.set(entity);
+
+    const children = entity['phone_numbers'];
+    for (const nextChild of children) {
+      const childModel = this.ormService.sequelize.model('PhoneNumber');
+      let childModelFromDb;
+      if (nextChild.id) {
+        childModelFromDb = await childModel.findByPk(nextChild.id);
+        if (childModelFromDb) {
+          childModelFromDb.set(nextChild);
+          childModelFromDb.save();
+        } else {
+          throw new Error(`Unable to find child entity ${nextChild.id}`);
+        }
+      } else {
+        nextChild.id = uuidv4();
+        nextChild['PersonId'] = entity.id;
+        childModelFromDb = childModel.create(nextChild);
+      }
+    }
 
     this.logger.log(`UPDATE.2: ${entityName}: ${JSON.stringify(entityFromDb)}`);
     return entityFromDb.save();

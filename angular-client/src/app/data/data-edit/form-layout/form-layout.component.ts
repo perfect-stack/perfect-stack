@@ -1,7 +1,6 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {CellAttribute} from '../../../meta/page/meta-page-service/meta-page.service';
-import {FormGroup} from '@angular/forms';
+import {Component, Input, OnInit} from '@angular/core';
 import {Cell} from '../../../domain/meta.page';
+import {FormContext} from '../form-service/form.service';
 
 @Component({
   selector: 'app-form-layout',
@@ -11,13 +10,7 @@ import {Cell} from '../../../domain/meta.page';
 export class FormLayoutComponent implements OnInit {
 
   @Input()
-  mode: string | null;
-
-  @Input()
-  cells: CellAttribute[][];
-
-  @Input()
-  formGroup: FormGroup;
+  ctx: FormContext;
 
   constructor() { }
 

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../domain/meta.entity';
 import {Cell, Template, TemplateType} from '../../../../domain/meta.page';
@@ -8,21 +8,7 @@ import {Cell, Template, TemplateType} from '../../../../domain/meta.page';
   templateUrl: './one-to-many-control.component.html',
   styleUrls: ['./one-to-many-control.component.css']
 })
-export class OneToManyControlComponent implements OnInit {
-  get cell(): Cell {
-    return this._cell;
-  }
-
-  @Input()
-  set cell(value: Cell) {
-    this._cell = value;
-    if(!this._cell.template) {
-      const template = new Template();
-      template.type = TemplateType.table;
-      template.metaEntityName = this.attribute.relationshipTarget;
-      this._cell.template = template;
-    }
-  }
+export class OneToManyControlComponent implements OnInit, OnChanges {
 
   @Input()
   formGroup: FormGroup;
@@ -33,7 +19,8 @@ export class OneToManyControlComponent implements OnInit {
   @Input()
   mode: string | null;
 
-  private _cell: Cell;
+  @Input()
+  cell: Cell;
 
   constructor() { }
 
@@ -44,4 +31,19 @@ export class OneToManyControlComponent implements OnInit {
     return this.mode === 'view' ? true : null;
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['cell']) {
+      this.onCellChange(changes['cell'].currentValue);
+    }
+
+  }
+
+  onCellChange(cell: Cell) {
+    if(!cell.template) {
+      const template = new Template();
+      template.type = TemplateType.table;
+      template.metaEntityName = this.attribute.relationshipTarget;
+      cell.template = template;
+    }
+  }
 }

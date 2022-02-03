@@ -6,7 +6,6 @@ import {DataService} from '../data-service/data.service';
 import {Entity} from '../../domain/entity';
 import {CellAttribute} from '../../meta/page/meta-page-service/meta-page.service';
 import {FormContext, FormControlWithAttribute, FormService} from '../data-edit/form-service/form.service';
-import {FormControl, FormGroup} from '@angular/forms';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {Criteria, QueryRequest} from '../data-service/query.request';
 
@@ -58,7 +57,6 @@ export class DataSearchComponent implements OnInit {
 
   onSearch(ctx: FormContext) {
     if(this.metaName) {
-
       const entityForm = ctx.entityForm;
       const resultTableTemplate = ctx.metaPage.templates[1];
       const orderByName = resultTableTemplate.orderByName;
