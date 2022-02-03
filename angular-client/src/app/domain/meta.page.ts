@@ -39,8 +39,7 @@ export type TemplateMap = {
 
 export enum PageType {
   search = 'search',
-  view = 'view',
-  edit = 'edit',
+  view_edit = 'view_edit',
   map = 'map',
   content = 'content',
   composite = 'composite',

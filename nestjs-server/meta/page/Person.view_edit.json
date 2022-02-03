@@ -1,7 +1,7 @@
 {
-  "name": "Person.edit",
-  "title": "Person Edit",
-  "type": "edit",
+  "name": "Person.view_edit",
+  "title": "Person View/Edit",
+  "type": "view_edit",
   "templates": [
     {
       "metaEntityName": "Person",

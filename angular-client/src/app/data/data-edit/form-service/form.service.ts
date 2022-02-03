@@ -40,7 +40,7 @@ export class FormService {
 
   loadFormContext(metaName: string, mode: string, id: string | null) {
 
-    const pageKey = mode === 'view' || mode === 'edit' ? 'view-edit' : mode;
+    const pageKey = mode === 'view' || mode === 'edit' ? 'view_edit' : mode;
 
     const metaPageName = `${metaName}.${pageKey}`;
     const ctx = new FormContext();
