@@ -7,11 +7,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './authentication/jwt-auth.guard';
 import { OrmModule } from './orm/orm.module';
 import { DataModule } from './data/data.module';
-import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
-import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
-import { MetaPageModule } from './meta/meta-page/meta-page.module';
 import { ClientConfigModule } from './client/config/client-config.module';
 import { AdminModule } from './admin/admin.module';
+import { MetaModule } from './meta/meta.module';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -21,19 +19,19 @@ const envFile =
 const logger = new Logger('Global');
 logger.log(`envFile = ${envFile}`);
 
+export const CONFIG_MODULE = ConfigModule.forRoot({
+  isGlobal: true,
+  envFilePath: [envFile],
+});
+
 @Module({
   imports: [
     AdminModule,
     AuthenticationModule,
     ClientConfigModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: [envFile],
-    }),
+    CONFIG_MODULE,
     OrmModule,
-    MetaEntityModule,
-    MetaMenuModule,
-    MetaPageModule,
+    MetaModule,
     DataModule,
   ],
   controllers: [AppController],

@@ -59,9 +59,11 @@ export class DataEditComponent implements OnInit {
     // going to survive the round trip from the database.
     entityData.id = this.entityId;
 
-    this.dataService.update(this.metaName, entityData).subscribe(() => {
-      this.onCancel();
-    });
+    if(this.metaName) {
+      this.dataService.save(this.metaName, entityData).subscribe(() => {
+        this.onCancel();
+      });
+    }
   }
 
 }

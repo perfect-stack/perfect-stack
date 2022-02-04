@@ -25,11 +25,7 @@ export class DataService {
     return this.http.get<Entity>(`${environment.apiUrl}/data/${entityName}/${id}`);
   }
 
-  create(entityName: string, entity: Entity) {
+  save(entityName: string, entity: Entity) {
     return this.http.post(`${environment.apiUrl}/data/${entityName}/${entity.id}`, entity);
-  }
-
-  update(entityName: string | null, entity: Entity) {
-    return this.http.put(`${environment.apiUrl}/data/${entityName}/${entity.id}`, entity);
   }
 }

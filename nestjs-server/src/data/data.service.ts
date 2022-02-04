@@ -6,14 +6,23 @@ import { OrmService } from '../orm/orm.service';
 import { QueryRequest } from './query.request';
 import { QueryResponse } from './query.response';
 import { Op } from 'sequelize';
-import { ComparisonOperator } from '../domain/meta.entity';
+import {
+  AttributeType,
+  ComparisonOperator,
+  MetaAttribute,
+  MetaEntity,
+} from '../domain/meta.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
 
 @Injectable()
 export class DataService {
   private readonly logger = new Logger(DataService.name);
 
-  constructor(protected readonly ormService: OrmService) {}
+  constructor(
+    protected readonly metaEntityService: MetaEntityService,
+    protected readonly ormService: OrmService,
+  ) {}
 
   async findAll(
     entityName: string,
@@ -59,60 +68,136 @@ export class DataService {
   async findOne(entityName: string, id: string): Promise<Entity> {
     const model = this.ormService.sequelize.model(entityName);
     return (await model.findByPk(id, {
-      include: ['phone_numbers', 'physical_address'],
+      include: { all: true, nested: true },
     })) as unknown as Entity;
   }
 
-  async create(entityName: string, entity: Entity): Promise<EntityResponse> {
+  async save(entityName: string, entity: Entity): Promise<EntityResponse> {
     const model = this.ormService.sequelize.model(entityName);
-    return model.create(entity);
+
+    // entity may arrive with or without an id, and may exist or not exist in the database
+    let entityModel;
+    if (entity.id) {
+      entityModel = await model.findByPk(entity.id);
+    } else {
+      entity.id = uuidv4();
+    }
+
+    // recursively save all the children
+    await this.saveTheChildren(entityName, entity);
+
+    if (!entityModel) {
+      // if entityModel was not found, or entity did not arrive with id
+      entityModel = await model.create(entity);
+    } else {
+      // else entityModel was found
+      entityModel.set(entity);
+      await entityModel.save();
+    }
+
+    return entityModel;
   }
 
-  async update(entityName: string, entity: Entity): Promise<EntityResponse> {
-    this.logger.log(`UPDATE.1: ${entityName}: ${JSON.stringify(entity)}`);
-    const model = this.ormService.sequelize.model(entityName);
-    const entityFromDb = await model.findByPk(entity.id);
-    entityFromDb.set(entity);
+  private async saveTheChildren(
+    parentEntityName: string,
+    parentEntity: Entity,
+  ) {
+    const parentMetaEntity = await this.metaEntityService.findOne(
+      parentEntityName,
+    );
 
-    const children = entity['phone_numbers'];
-    for (const nextChild of children) {
-      const childModel = this.ormService.sequelize.model('PhoneNumber');
-      if (nextChild.id) {
-        const childModelFromDb = await childModel.findByPk(nextChild.id);
-        if (childModelFromDb) {
-          childModelFromDb.set(nextChild);
-          await childModelFromDb.save();
-        } else {
-          throw new Error(`Unable to find child entity ${nextChild.id}`);
+    if (parentMetaEntity) {
+      for (const attribute of parentMetaEntity.attributes) {
+        switch (attribute.type) {
+          case AttributeType.OneToMany:
+            await this.saveListOfChildren(
+              parentEntity,
+              parentMetaEntity,
+              attribute,
+            );
+            break;
+          case AttributeType.OneToOne:
+            await this.saveOneChild(parentEntity, attribute);
+            break;
+          default:
+          // Do nothing
         }
-      } else {
-        nextChild.id = uuidv4();
-        nextChild['PersonId'] = entity.id;
-        await childModel.create(nextChild);
+      }
+    } else {
+      throw new Error(`Unable to find MetaEntity ${parentEntityName}`);
+    }
+  }
+
+  private async saveListOfChildren(
+    parentEntity: Entity,
+    parentMetaEntity: MetaEntity,
+    relationshipAttribute: MetaAttribute,
+  ) {
+    let childEntityModel;
+    const childModel = await this.ormService.sequelize.model(
+      relationshipAttribute.relationshipTarget,
+    );
+
+    const childList = parentEntity[relationshipAttribute.name] as [];
+    if (childList) {
+      for (const nextChild of childList) {
+        const childEntity = nextChild as Entity;
+
+        if (childEntity.id) {
+          childEntityModel = await childModel.findByPk(childEntity.id);
+        } else {
+          childEntity.id = uuidv4();
+        }
+
+        if (!childEntityModel) {
+          childEntityModel = await childModel.create(childEntity);
+        }
+
+        await this.saveTheChildren(
+          relationshipAttribute.relationshipTarget,
+          childEntity,
+        );
+
+        childEntityModel.set(childEntity);
+        childEntityModel[parentMetaEntity.name + 'Id'] = parentEntity.id;
+        childEntityModel.save();
       }
     }
+  }
 
-    const singleChild = entity['physical_address'];
-    if (singleChild) {
-      const childModel = this.ormService.sequelize.model('Address');
-
-      if (singleChild.id) {
-        const childModelFromDb = await childModel.findByPk(singleChild.id);
-        if (childModelFromDb) {
-          childModelFromDb.set(singleChild);
-          await childModelFromDb.save();
-        } else {
-          throw new Error(`Unable to find child entity ${singleChild.id}`);
-        }
-      } else {
-        singleChild.id = uuidv4();
-        entityFromDb['physical_address_id'] = singleChild.id;
-        await childModel.create(singleChild);
-      }
+  private async saveOneChild(
+    parentEntity: Entity,
+    relationshipAttribute: MetaAttribute,
+  ) {
+    const childEntity = parentEntity[relationshipAttribute.name] as Entity;
+    if (!childEntity) {
+      return;
     }
 
-    this.logger.log(`UPDATE.2: ${entityName}: ${JSON.stringify(entityFromDb)}`);
-    return entityFromDb.save();
+    let childEntityModel;
+    const childModel = await this.ormService.sequelize.model(
+      relationshipAttribute.relationshipTarget,
+    );
+
+    if (childEntity.id) {
+      childEntityModel = await childModel.findByPk(childEntity.id);
+    } else {
+      childEntity.id = uuidv4();
+    }
+
+    if (!childEntityModel) {
+      childEntityModel = await childModel.create(childEntity);
+    }
+
+    // recurse down into the children of this child (if needed)
+    await this.saveTheChildren(
+      relationshipAttribute.relationshipTarget,
+      childEntity,
+    );
+
+    childEntityModel.set(childEntity);
+    childEntityModel.save();
+    parentEntity[relationshipAttribute.name + '_id'] = childEntity.id;
   }
 
   archive(entityName: string, id: string): Promise<void> {

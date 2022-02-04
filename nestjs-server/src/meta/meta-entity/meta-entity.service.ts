@@ -202,7 +202,7 @@ export class MetaEntityService {
     }
   }
 
-  private isRelationshipType(type: AttributeType) {
+  isRelationshipType(type: AttributeType) {
     const relationShipTypes = [
       AttributeType.OneToMany,
       AttributeType.OneToOne,

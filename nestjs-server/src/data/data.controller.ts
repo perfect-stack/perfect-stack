@@ -5,14 +5,11 @@ import {
   Get,
   Param,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
-import { PageQueryResponse } from '../domain/response/page-query.response';
 import { DataService } from './data.service';
 import { Entity } from '../domain/entity';
 import { EntityResponse } from '../domain/response/entity.response';
-import { QueryResponse } from './query.response';
 import { QueryRequest } from './query.request';
 
 @Controller('data')
@@ -42,19 +39,11 @@ export class DataController {
   }
 
   @Post('/:entityName/:id')
-  create(
+  save(
     @Param('entityName') entityName: string,
     @Body() entity: Entity,
   ): Promise<EntityResponse> {
-    return this.dataService.create(entityName, entity);
-  }
-
-  @Put('/:entityName/:id')
-  update(
-    @Param('entityName') entityName: string,
-    @Body() entity: Entity,
-  ): Promise<EntityResponse> {
-    return this.dataService.update(entityName, entity);
+    return this.dataService.save(entityName, entity);
   }
 
   @Delete('/:entityName/:id')

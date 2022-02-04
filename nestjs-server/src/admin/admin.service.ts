@@ -73,6 +73,6 @@ export class AdminService {
       company: row.Company,
     };
 
-    await this.dataService.create('Person', personData);
+    await this.dataService.save('Person', personData);
   }
 }
