@@ -119,7 +119,7 @@ export class FormService {
 
     // loop through cells and add FormControls for Cell attributes
     for (const nextAttribute of templateMetaEntity.attributes) {
-      let formControl;
+      let formControl: any;
       if (nextAttribute.type === AttributeType.OneToMany) {
         formControl = new FormArrayWithAttribute([]);
 
@@ -130,22 +130,32 @@ export class FormService {
           if(attributeCell) {
             const childTemplate = attributeCell.template;
             if (childTemplate) {
-              const childMetaEntity = metaEntityList.find(m => m.name === nextAttribute.relationshipTarget);
-              if (childMetaEntity) {
-                for (let i = 0; i < itemCount; i++) {
-                  const childEntity = itemArray[i];
-                  formControl.push(this.createFormGroup(childTemplate, metaEntityList, childEntity))
-                }
+              for (let i = 0; i < itemCount; i++) {
+                const childEntity = itemArray[i];
+                formControl.push(this.createFormGroup(childTemplate, metaEntityList, childEntity))
               }
             }
           }
         }
-      } else {
+      }
+      else if (nextAttribute.type === AttributeType.OneToOne) {
+        const attributeCell = this.findCellForAttribute(nextAttribute, template);
+        if(attributeCell) {
+          const childTemplate = attributeCell.template;
+          if (childTemplate) {
+            const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
+            formControl = this.createFormGroup(childTemplate, metaEntityList, childEntity);
+          }
+        }
+      }
+      else {
         formControl = new FormControlWithAttribute('');
       }
 
-      formControl.attribute = nextAttribute;
-      controls[nextAttribute.name] = formControl;
+      if(formControl) {
+        formControl.attribute = nextAttribute;
+        controls[nextAttribute.name] = formControl;
+      }
     }
 
     return new FormGroup(controls);

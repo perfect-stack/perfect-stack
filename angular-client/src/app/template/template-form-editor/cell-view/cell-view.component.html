@@ -19,7 +19,18 @@
             </ng-container>
 
             <ng-container *ngSwitchCase="'OneToMany'">
-              <app-one-to-many-control [formGroup]="entityForm" [attribute]="attribute" [cell]="cell"></app-one-to-many-control>
+              <!--<app-one-to-many-control [formGroup]="entityForm" [attribute]="attribute" [cell]="cell"></app-one-to-many-control>-->
+              <!--<app-template-table-editor [template]="cell.template"></app-template-table-editor>-->
+              <ng-container *ngIf="cell.template">
+                <app-template-controller [template]="cell.template"></app-template-controller>
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'OneToOne'">
+              <!--<app-one-to-one-control [formGroup]="entityForm" [attribute]="attribute" [cell]="cell"></app-one-to-one-control>-->
+              <ng-container *ngIf="cell.template">
+                <app-template-controller [template]="cell.template"></app-template-controller>
+              </ng-container>
             </ng-container>
 
             <ng-container *ngSwitchDefault>

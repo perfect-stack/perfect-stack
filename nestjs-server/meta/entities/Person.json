@@ -118,6 +118,15 @@
       "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "PhoneNumber"
+    },
+    {
+      "name": "physical_address",
+      "label": "Physical Address",
+      "description": "",
+      "type": "OneToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Address"
     }
   ]
 }

@@ -175,8 +175,13 @@ export class MetaEntityService {
               targetModel.belongsTo(sourceModel);
               break;
             case AttributeType.OneToOne:
-              sourceModel.hasOne(targetModel);
-              targetModel.belongsTo(sourceModel);
+              sourceModel.belongsTo(targetModel, {
+                as: nextMetaAttribute.name,
+                foreignKey: { name: nextMetaAttribute.name + '_id' },
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE',
+              });
+              //targetModel.belongsTo(sourceModel);
               break;
             case AttributeType.ManyToOne:
               // Not sure about this one, don't know if Sequelize handles this

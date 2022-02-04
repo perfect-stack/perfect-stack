@@ -44,6 +44,7 @@ import { OneToManyControlComponent } from './data/data-edit/form-controls/one-to
 import { TableLayoutComponent } from './data/data-edit/table-layout/table-layout.component';
 import { CellContainerComponent } from './data/data-edit/form-controls/cell-container/cell-container.component';
 import { ValidationMessageComponent } from './utils/validation/validation-message/validation-message.component';
+import { OneToOneControlComponent } from './data/data-edit/form-controls/one-to-one-control/one-to-one-control.component';
 
 
 function initializeApp() {
@@ -98,6 +99,7 @@ function initializeApp() {
     TableLayoutComponent,
     CellContainerComponent,
     ValidationMessageComponent,
+    OneToOneControlComponent,
   ],
   imports: [
     BrowserModule,

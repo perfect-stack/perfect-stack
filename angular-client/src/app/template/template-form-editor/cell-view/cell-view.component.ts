@@ -1,15 +1,15 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {DropEvent} from 'ng-drag-drop';
 import {MetaAttribute} from '../../../domain/meta.entity';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Cell} from '../../../domain/meta.page';
+import {Cell, Template, TemplateType} from '../../../domain/meta.page';
 
 @Component({
   selector: 'app-cell-view',
   templateUrl: './cell-view.component.html',
   styleUrls: ['./cell-view.component.css'],
 })
-export class CellViewComponent implements OnInit {
+export class CellViewComponent implements OnInit, OnChanges {
 
   get attribute(): MetaAttribute | undefined {
     return this._attribute;
@@ -44,6 +44,26 @@ export class CellViewComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['cell']) {
+      this.onCellChange(changes['cell'].currentValue);
+    }
+  }
+
+  onCellChange(cell: Cell) {
+    if(!cell.template) {
+      const template = new Template();
+      template.type = TemplateType.table;
+      if(this.attribute) {
+        template.metaEntityName = this.attribute.relationshipTarget;
+      }
+      else {
+        console.warn('UNABLE to set template metaEntityName since attribute is unknown');
+      }
+      cell.template = template;
+    }
   }
 
   @HostListener('mouseenter')

@@ -58,9 +58,8 @@ export class DataService {
 
   async findOne(entityName: string, id: string): Promise<Entity> {
     const model = this.ormService.sequelize.model(entityName);
-    //const childModel = this.ormService.sequelize.model('PhoneNumber');
     return (await model.findByPk(id, {
-      include: 'phone_numbers',
+      include: ['phone_numbers', 'physical_address'],
     })) as unknown as Entity;
   }
 
@@ -78,19 +77,37 @@ export class DataService {
     const children = entity['phone_numbers'];
     for (const nextChild of children) {
       const childModel = this.ormService.sequelize.model('PhoneNumber');
-      let childModelFromDb;
       if (nextChild.id) {
-        childModelFromDb = await childModel.findByPk(nextChild.id);
+        const childModelFromDb = await childModel.findByPk(nextChild.id);
         if (childModelFromDb) {
           childModelFromDb.set(nextChild);
-          childModelFromDb.save();
+          await childModelFromDb.save();
         } else {
           throw new Error(`Unable to find child entity ${nextChild.id}`);
         }
       } else {
         nextChild.id = uuidv4();
         nextChild['PersonId'] = entity.id;
-        childModelFromDb = childModel.create(nextChild);
+        await childModel.create(nextChild);
+      }
+    }
+
+    const singleChild = entity['physical_address'];
+    if (singleChild) {
+      const childModel = this.ormService.sequelize.model('Address');
+
+      if (singleChild.id) {
+        const childModelFromDb = await childModel.findByPk(singleChild.id);
+        if (childModelFromDb) {
+          childModelFromDb.set(singleChild);
+          await childModelFromDb.save();
+        } else {
+          throw new Error(`Unable to find child entity ${singleChild.id}`);
+        }
+      } else {
+        singleChild.id = uuidv4();
+        entityFromDb['physical_address_id'] = singleChild.id;
+        await childModel.create(singleChild);
       }
     }
 

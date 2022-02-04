@@ -1,0 +1,42 @@
+{
+  "name": "Address",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "street_address",
+      "label": "Street Address",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "city",
+      "label": "City",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    },
+    {
+      "name": "postcode",
+      "label": "Postcode",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": ""
+    }
+  ]
+}
