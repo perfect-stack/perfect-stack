@@ -45,6 +45,7 @@ import { TableLayoutComponent } from './data/data-edit/table-layout/table-layout
 import { CellContainerComponent } from './data/data-edit/form-controls/cell-container/cell-container.component';
 import { ValidationMessageComponent } from './utils/validation/validation-message/validation-message.component';
 import { OneToOneControlComponent } from './data/data-edit/form-controls/one-to-one-control/one-to-one-control.component';
+import { TemplateOptionsModalComponent } from './template/template-controller/template-options-modal/template-options-modal.component';
 
 
 function initializeApp() {
@@ -100,6 +101,7 @@ function initializeApp() {
     CellContainerComponent,
     ValidationMessageComponent,
     OneToOneControlComponent,
+    TemplateOptionsModalComponent,
   ],
   imports: [
     BrowserModule,

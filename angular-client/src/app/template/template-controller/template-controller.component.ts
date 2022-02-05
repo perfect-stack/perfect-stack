@@ -3,6 +3,8 @@ import {Template, TemplateType} from '../../domain/meta.page';
 import {MetaEntity} from '../../domain/meta.entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {Observable} from 'rxjs';
+import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {TemplateOptionsModalComponent} from './template-options-modal/template-options-modal.component';
 
 @Component({
   selector: 'app-template-controller',
@@ -14,11 +16,13 @@ export class TemplateControllerComponent implements OnInit, OnChanges {
   @Input()
   public template: Template;
 
-  public metaEntityOptions$: Observable<MetaEntity[]>;
+  closeResult = '';
 
+  public metaEntityOptions$: Observable<MetaEntity[]>;
   metaEntity: MetaEntity;
 
-  constructor(protected readonly metaEntityService: MetaEntityService) { }
+  constructor(protected readonly metaEntityService: MetaEntityService,
+              protected readonly modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.metaEntityOptions$ = this.metaEntityService.findAll();
@@ -49,11 +53,19 @@ export class TemplateControllerComponent implements OnInit, OnChanges {
     return metaEntityOptions.find(me => me.name === template.metaEntityName);
   }
 
-  getOrderByNameOptions() {
-    return this.metaEntity ? this.metaEntity.attributes.map(a => a.name) : [];
+  openTemplateOptions() {
+    const modalRef = this.modalService.open(TemplateOptionsModalComponent, {});
+    modalRef.componentInstance.assignTemplate(this.template);
   }
 
-  getOrderByDirOptions() {
-    return ['ASC', "DESC"];
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
   }
+
 }
