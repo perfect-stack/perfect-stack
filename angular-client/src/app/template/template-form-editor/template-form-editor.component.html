@@ -1,6 +1,6 @@
 <ng-container *ngIf="template">
   <ng-container *ngIf="metaEntity">
-    <div class="d-flex pt-1" *ngFor="let nextRow of template.cells">
+    <div class="row" *ngFor="let nextRow of template.cells">
       <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
         <app-cell-view
           [cell]="nextCell"

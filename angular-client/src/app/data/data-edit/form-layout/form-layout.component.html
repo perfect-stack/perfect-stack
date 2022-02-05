@@ -1,5 +1,5 @@
 <ng-container *ngIf="cells && mode && formGroup">
-  <div class="d-flex pt-1" *ngFor="let nextRow of cells">
+  <div class="row" *ngFor="let nextRow of cells">
     <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
 
       <div class="form-group" *ngIf="nextCell.attribute">
