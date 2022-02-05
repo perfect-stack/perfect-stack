@@ -105,4 +105,8 @@ export class DataSearchComponent implements OnInit {
   onReset() {
 
   }
+
+  onNew(ctx: FormContext) {
+    this.router.navigate([`/data/${this.metaName}/edit/**NEW**`]);
+  }
 }

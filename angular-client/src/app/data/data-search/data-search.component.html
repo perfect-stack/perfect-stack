@@ -4,6 +4,9 @@
     <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
       <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
       <app-form [ctx]="ctx">
+        <ng-container BottomLeftActions>
+          <button type="submit" class="btn btn-outline-success mr-2" (click)="onNew(ctx)">New...</button>
+        </ng-container>
         <ng-container BottomRightActions>
           <button class="btn btn-outline-secondary mr-2" (click)="onReset()">Reset</button>
           <button type="submit" class="btn btn-primary mr-2" (click)="onSearch(ctx)">Search</button>
