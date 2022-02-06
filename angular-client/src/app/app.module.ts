@@ -46,6 +46,7 @@ import { CellContainerComponent } from './data/data-edit/form-controls/cell-cont
 import { ValidationMessageComponent } from './utils/validation/validation-message/validation-message.component';
 import { OneToOneControlComponent } from './data/data-edit/form-controls/one-to-one-control/one-to-one-control.component';
 import { TemplateOptionsModalComponent } from './template/template-controller/template-options-modal/template-options-modal.component';
+import { RelationshipTypeEditComponent } from './meta/entity/meta-entity-edit/relationship-type-edit/relationship-type-edit.component';
 
 
 function initializeApp() {
@@ -102,6 +103,7 @@ function initializeApp() {
     ValidationMessageComponent,
     OneToOneControlComponent,
     TemplateOptionsModalComponent,
+    RelationshipTypeEditComponent,
   ],
   imports: [
     BrowserModule,

@@ -79,6 +79,7 @@ export class MetaEntityEditComponent implements OnInit {
       visibility: [VisibilityType.Visible],
       comparisonOperator: [''],
       relationshipTarget: [''],
+      typeaheadSearch: [[]],
     });
   }
 
@@ -143,11 +144,17 @@ export class MetaEntityEditComponent implements OnInit {
     formGroup.controls['name'].setValue(name);
   }
 
-  isRelationshipType(index: any) {
-    const row = this.attributes.at(index) as FormGroup;
-    const type = row.controls['type'].value;
+  isRelationshipType(rowIdx: number) {
+    const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
+    const type = rowFormGroup.controls['type'].value;
     const relationshipTypes = [AttributeType.OneToMany, AttributeType.OneToOne, AttributeType.ManyToOne];
     return relationshipTypes.includes(type);
+  }
+
+  isManyToOne(rowIdx: number) {
+    const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
+    const type = rowFormGroup.controls['type'].value;
+    return type === AttributeType.ManyToOne;
   }
 }
 

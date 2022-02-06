@@ -29,6 +29,8 @@ export class MetaAttribute {
   visibility = VisibilityType.Visible;
   comparisonOperator: ComparisonOperator; // Only used by Criteria objects
   relationshipTarget: string;
+  // List of attribute names in the relationshipTarget entity used for Typeahead components
+  typeaheadSearch: string[];
 }
 
 export enum EntityType {

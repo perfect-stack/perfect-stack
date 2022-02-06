@@ -5,17 +5,17 @@
     <div class="mt-3">
       <form [formGroup]="metaEntityForm">
         <div class="row">
-          <div class="col-6">
-            <div class="row">
-              <div class="col-2">Entity Name</div>
-              <div class="col-10">
+          <div class="col-4">
+            <div class="row mb-2">
+              <div class="col-3">Entity name</div>
+              <div class="col-9">
                 <input class="form-control" type="text" formControlName="name">
               </div>
             </div>
 
             <div class="row">
-              <div class="col-2">Type</div>
-              <div class="col-10">
+              <div class="col-3">Type</div>
+              <div class="col-9">
                 <select class="form-control" formControlName="type">
                   <option *ngFor="let o of getEntityTypeOptions()" [ngValue]="o">{{o}}</option>
                 </select>
@@ -38,11 +38,11 @@
           </tr>
           </thead>
           <tbody>
-          <ng-container formArrayName="attributes" *ngFor="let group of attributes.controls ; let i=index">
+          <ng-container formArrayName="attributes" *ngFor="let formGroup of attributes.controls; let i=index">
             <tr [formGroupName]="i">
               <td><input class="form-control" type="text" formControlName="name" readonly></td>
               <td>
-                <input class="form-control" type="text" formControlName="label" (keyup)="onLabelKeyup(group)">
+                <input class="form-control" type="text" formControlName="label" (keyup)="onLabelKeyup(formGroup)">
                 <app-validation-message [control]="getAttributeAt(i).controls['label']" [attributePath]="'label'"></app-validation-message>
               </td>
               <td><input class="form-control" type="text" formControlName="description"></td>
@@ -52,9 +52,7 @@
                 </select>
                 <ng-container *ngIf="metaEntityOptions$ | async as metaEntityOptions">
                   <ng-container *ngIf="isRelationshipType(i)">
-                    <select class="form-control mt-1" formControlName="relationshipTarget">
-                      <option *ngFor="let o of metaEntityOptions" [ngValue]="o.name">{{o.name}}</option>
-                    </select>
+                    <app-relationship-type-edit [formGroup]="getAttributeAt(i)"></app-relationship-type-edit>
                   </ng-container>
                 </ng-container>
               </td>
