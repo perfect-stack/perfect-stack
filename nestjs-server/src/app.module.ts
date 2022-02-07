@@ -10,6 +10,7 @@ import { DataModule } from './data/data.module';
 import { ClientConfigModule } from './client/config/client-config.module';
 import { AdminModule } from './admin/admin.module';
 import { MetaModule } from './meta/meta.module';
+import { TypeaheadModule } from './typeahead/Typeahead.module';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -33,6 +34,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     OrmModule,
     MetaModule,
     DataModule,
+    TypeaheadModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],

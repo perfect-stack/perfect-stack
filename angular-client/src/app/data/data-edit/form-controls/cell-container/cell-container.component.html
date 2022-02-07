@@ -16,6 +16,10 @@
       <app-one-to-one-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute" [cell]="cell"></app-one-to-one-control>
     </ng-container>
 
+    <ng-container *ngSwitchCase="'ManyToOne'">
+      <app-many-to-one-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-many-to-one-control>
+    </ng-container>
+
     <ng-container *ngSwitchDefault>
       ERROR: Missing or unknown attribute type of: "{{cell.attribute.type}}"
     </ng-container>

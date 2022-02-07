@@ -1,0 +1,13 @@
+<ng-template #rt let-r="result" let-t="term">
+  <ngb-highlight [result]="r.displayText" [term]="t"></ngb-highlight>
+</ng-template>
+
+<fieldset class="form-inline">
+  <div class="form-group">
+    <label for="typeahead-http">Person:</label>
+    <input id="typeahead-http" type="text" class="form-control mx-sm-3" [class.is-invalid]="searchFailed" [(ngModel)]="model" [ngbTypeahead]="search" [inputFormatter]="formatter" [resultTemplate]="rt" placeholder="Person search..." />
+    <small *ngIf="searching" class="form-text text-muted">searching...</small>
+    <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
+  </div>
+</fieldset>
+

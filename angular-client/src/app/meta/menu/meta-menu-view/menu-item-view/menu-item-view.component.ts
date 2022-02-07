@@ -50,28 +50,14 @@ export class MenuItemViewComponent implements OnInit {
     }
   }
 
-  onAdd(relativeIdx: number) {
+  onAdd() {
     if(this.menu && this.menuItem) {
-      const currentIdx = this.findIndex(this.menuItem, this.menu);
-      if(currentIdx > -1) {
-        const nextItem = new MenuItem();
-        nextItem.label = 'Label';
-        nextItem.route = '/route/here';
-        const nextIdx = currentIdx + relativeIdx;
-        //this.menu?.items.splice(nextIdx, 0, nextItem);
-        //console.log(`Added item at position: ${nextIdx}`);
-        this.menuItemAdded.next({
-          menuItem: nextItem,
-          position: nextIdx,
-        })
-      }
-    }
-  }
+      const nextItem = new MenuItem();
+      nextItem.label = 'Label';
+      nextItem.route = '/route/here';
 
-  private findIndex(menuItem: MenuItem, menu: Menu): number {
-    return menu?.items.findIndex((m) => {
-      return m.label === menuItem?.label && m.route === menuItem.route;
-    });
+      this.menu.items.push(nextItem);
+    }
   }
 
   @HostListener('mouseenter')

@@ -47,6 +47,7 @@ import { ValidationMessageComponent } from './utils/validation/validation-messag
 import { OneToOneControlComponent } from './data/data-edit/form-controls/one-to-one-control/one-to-one-control.component';
 import { TemplateOptionsModalComponent } from './template/template-controller/template-options-modal/template-options-modal.component';
 import { RelationshipTypeEditComponent } from './meta/entity/meta-entity-edit/relationship-type-edit/relationship-type-edit.component';
+import { ManyToOneControlComponent } from './data/data-edit/form-controls/many-to-one-control/many-to-one-control.component';
 
 
 function initializeApp() {
@@ -104,6 +105,7 @@ function initializeApp() {
     OneToOneControlComponent,
     TemplateOptionsModalComponent,
     RelationshipTypeEditComponent,
+    ManyToOneControlComponent,
   ],
   imports: [
     BrowserModule,

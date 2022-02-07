@@ -54,6 +54,16 @@
         "given_name",
         "family_name"
       ]
+    },
+    {
+      "name": "id",
+      "label": "id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     }
   ]
 }

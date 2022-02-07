@@ -15,6 +15,10 @@
         {
           "label": "Person",
           "route": "/data/Person/search"
+        },
+        {
+          "label": "Test",
+          "route": "/data/Test/search"
         }
       ]
     },
