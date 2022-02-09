@@ -1,9 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../domain/meta.entity';
 import {catchError, debounceTime, distinctUntilChanged, Observable, of, OperatorFunction, switchMap, tap} from 'rxjs';
 import {TypeaheadService} from './typeahead.service';
 import {Item} from './typeahead.response';
+import {NgbTypeaheadSelectItemEvent} from '@ng-bootstrap/ng-bootstrap';
+import {DataService} from '../../../data-service/data.service';
 
 @Component({
   selector: 'app-many-to-one-control',
@@ -21,15 +23,22 @@ export class ManyToOneControlComponent implements OnInit {
   @Input()
   mode: string | null;
 
+  @ViewChild('searchInput')
+  searchInput: ElementRef;
 
   model: any;
   searching = false;
   searchFailed = false;
 
-  constructor(protected readonly typeaheadService: TypeaheadService) {
+  displayValue: string;
+
+  constructor(protected readonly dataService: DataService,
+              protected readonly typeaheadService: TypeaheadService) {
   }
 
   ngOnInit(): void {
+    this.model = this.formGroup.controls[this.attribute.name].value;
+    this.updateDisplayValue();
   }
 
   search: OperatorFunction<string, readonly Item[]> = (text$: Observable<string>) =>
@@ -54,4 +63,29 @@ export class ManyToOneControlComponent implements OnInit {
     return this.mode === 'view' ? true : null;
   }
 
+  onSelectItem(event: NgbTypeaheadSelectItemEvent<Item>) {
+    const item = event.item;
+    this.dataService.findById(this.attribute.relationshipTarget, item.id).subscribe(entity => {
+      this.formGroup.controls[this.attribute.name].setValue(entity);
+      this.updateDisplayValue();
+    });
+  }
+
+  updateDisplayValue() {
+    this.displayValue = '';
+    for(const displayAttributeName of this.attribute.typeaheadSearch) {
+      this.displayValue += this.formGroup.controls[this.attribute.name].value[displayAttributeName];
+      this.displayValue += ' ';
+    }
+
+    //this.formGroup.controls[this.attribute.name].value.displayText = this.displayValue;
+    this.model.displayText = this.displayValue;
+  }
+
+  onSearchRequested() {
+    this.model = null;
+    setTimeout(()=>{ // this will make the execution after the above boolean has changed
+      this.searchInput.nativeElement.focus();
+    },0);
+  }
 }

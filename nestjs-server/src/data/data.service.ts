@@ -12,8 +12,8 @@ import {
   MetaAttribute,
   MetaEntity,
 } from '../domain/meta.entity';
-import { v4 as uuidv4 } from 'uuid';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
+import * as uuid from 'uuid';
 
 @Injectable()
 export class DataService {
@@ -72,15 +72,24 @@ export class DataService {
     })) as unknown as Entity;
   }
 
+  validateUuid(value: string) {
+    try {
+      uuid.parse(value);
+    } catch (error) {
+      throw new Error(`Invalid UUID of ${value}`);
+    }
+  }
+
   async save(entityName: string, entity: Entity): Promise<EntityResponse> {
     const model = this.ormService.sequelize.model(entityName);
 
     // entity may arrive with or without an id, and may exist or not exist in the database
     let entityModel;
     if (entity.id) {
+      this.validateUuid(entity.id);
       entityModel = await model.findByPk(entity.id);
     } else {
-      entity.id = uuidv4();
+      entity.id = uuid.v4();
     }
 
     // recursively save all the children
@@ -119,6 +128,9 @@ export class DataService {
           case AttributeType.OneToOne:
             await this.saveOneChild(parentEntity, attribute);
             break;
+          case AttributeType.ManyToOne:
+            await this.saveManyToOne(parentEntity, attribute);
+            break;
           default:
           // Do nothing
         }
@@ -144,9 +156,10 @@ export class DataService {
         const childEntity = nextChild as Entity;
 
         if (childEntity.id) {
+          this.validateUuid(childEntity.id);
           childEntityModel = await childModel.findByPk(childEntity.id);
         } else {
-          childEntity.id = uuidv4();
+          childEntity.id = uuid.v4();
         }
 
         if (!childEntityModel) {
@@ -180,9 +193,10 @@ export class DataService {
     );
 
     if (childEntity.id) {
+      this.validateUuid(childEntity.id);
       childEntityModel = await childModel.findByPk(childEntity.id);
     } else {
-      childEntity.id = uuidv4();
+      childEntity.id = uuid.v4();
     }
 
     if (!childEntityModel) {
@@ -197,6 +211,18 @@ export class DataService {
 
     childEntityModel.set(childEntity);
     childEntityModel.save();
+    parentEntity[relationshipAttribute.name + '_id'] = childEntity.id;
+  }
+
+  private async saveManyToOne(
+    parentEntity: Entity,
+    relationshipAttribute: MetaAttribute,
+  ) {
+    const childEntity = parentEntity[relationshipAttribute.name] as Entity;
+    if (!childEntity) {
+      return;
+    }
+
     parentEntity[relationshipAttribute.name + '_id'] = childEntity.id;
   }
 
@@ -255,6 +281,7 @@ export class DataService {
       order: orderBy,
       offset: offset,
       limit: pageSize,
+      include: { all: true, nested: true }, // TODO this should only return row data needed not nested entities
     });
 
     const response = new QueryResponse<Entity>();

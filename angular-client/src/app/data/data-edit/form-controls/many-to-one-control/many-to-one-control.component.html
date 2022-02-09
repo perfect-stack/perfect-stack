@@ -2,12 +2,32 @@
   <ngb-highlight [result]="r.displayText" [term]="t"></ngb-highlight>
 </ng-template>
 
-<fieldset class="form-inline">
-  <div class="form-group">
-    <label for="typeahead-http">Person:</label>
-    <input id="typeahead-http" type="text" class="form-control mx-sm-3" [class.is-invalid]="searchFailed" [(ngModel)]="model" [ngbTypeahead]="search" [inputFormatter]="formatter" [resultTemplate]="rt" placeholder="Person search..." />
-    <small *ngIf="searching" class="form-text text-muted">searching...</small>
-    <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
-  </div>
-</fieldset>
+<ng-container *ngIf="mode === 'edit'">
+  <fieldset class="form-inline">
+    <div class="input-group">
+      <input id="typeahead-http" #searchInput type="text" class="form-control" [class.is-invalid]="searchFailed"
+             [(ngModel)]="model" [ngbTypeahead]="search" (selectItem)="onSelectItem($event)"
+             [inputFormatter]="formatter" [resultTemplate]="rt" placeholder="Person search..." />
+      <small *ngIf="searching" class="form-text text-muted">searching...</small>
+      <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
 
+      <div class="input-group-append">
+        <button class="form-control btn-outline-secondary btn p-0" readonly (click)="onSearchRequested()" type="button">
+          <span class="material-icons p-1">search</span>
+        </button>
+      </div>
+    </div>
+  </fieldset>
+</ng-container>
+
+<ng-container *ngIf="mode === 'view'">
+  <div class="input-group">
+    <input class="form-control" type="text" readonly [value]="displayValue">
+  </div>
+</ng-container>
+
+<!--
+<br>
+Model: {{model|json}}<br>
+Control: {{formGroup.controls[attribute.name].value|json}}
+-->

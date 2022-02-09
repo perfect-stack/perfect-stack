@@ -7,7 +7,7 @@
     "start:test": "ng serve --configuration=test",
     "build": "ng build",
     "build:test": "ng build --configuration=test",
-    "publish" : "aws s3 cp --recursive ./dist/angular-client/ s3://demo-aws-client-release/0.0.0",
+    "publish": "aws s3 cp --recursive ./dist/angular-client/ s3://demo-aws-client-release/0.0.0",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -30,6 +30,7 @@
     "ng-drag-drop": "^5.0.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
+    "uuid": "^8.3.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -38,6 +39,7 @@
     "@angular/compiler-cli": "~13.0.0",
     "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
+    "@types/uuid": "^8.3.4",
     "jasmine-core": "~3.10.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",

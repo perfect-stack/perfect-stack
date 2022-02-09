@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {FormContext, FormService} from './form-service/form.service';
+import * as uuid from 'uuid';
 
 
 @Component({
@@ -29,15 +30,26 @@ export class DataEditComponent implements OnInit {
     this.ctx$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
       this.mode = params.get('mode');
-      this.entityId = params.get('id');
+      this.entityId = this.toUuid(params.get('id'));
 
-      if(this.metaName && this.mode && this.entityId) {
+      if(this.metaName && this.mode) {
         return this.formService.loadFormContext(this.metaName, this.mode, this.entityId);
       }
       else {
         throw new Error('Invalid input parameters; ');
       }
     }));
+  }
+
+  toUuid(value: string | null) {
+    if(value === null || value === '**NEW**') {
+      return null;
+    }
+    else {
+      // will throw error if invalid, caller should bail out of use case
+      uuid.parse(value);
+      return value;
+    }
   }
 
   onBack() {
@@ -49,7 +61,12 @@ export class DataEditComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate([`/data/${this.metaName}/view`, this.entityId]);
+    if(this.entityId) {
+      this.router.navigate([`/data/${this.metaName}/view`, this.entityId]);
+    }
+    else {
+      this.router.navigate([`/data/${this.metaName}/search`]);
+    }
   }
 
   onSave(ctx: FormContext) {

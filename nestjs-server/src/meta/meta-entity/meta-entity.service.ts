@@ -184,7 +184,12 @@ export class MetaEntityService {
               //targetModel.belongsTo(sourceModel);
               break;
             case AttributeType.ManyToOne:
-              // Not sure about this one, don't know if Sequelize handles this
+              sourceModel.belongsTo(targetModel, {
+                as: nextMetaAttribute.name,
+                foreignKey: { name: nextMetaAttribute.name + '_id' },
+                // don't cascade updates into target model
+              });
+              // targetModel doesn't care about source model
               break;
             default:
               throw new Error(

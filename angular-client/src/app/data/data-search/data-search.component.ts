@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {map, Observable, switchMap} from 'rxjs';
-import {MetaAttribute} from '../../domain/meta.entity';
+import {AttributeType, MetaAttribute} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {Entity} from '../../domain/entity';
@@ -91,10 +91,20 @@ export class DataSearchComponent implements OnInit {
 
   displayValue(metaAttribute: MetaAttribute, item: any) {
     if(Object.keys(item).includes(metaAttribute.name)) {
-      return item[metaAttribute.name];
+      if(metaAttribute.type === AttributeType.ManyToOne) {
+        let displayValue = '';
+        for(const displayAttributeName of metaAttribute.typeaheadSearch) {
+          displayValue += item[metaAttribute.name][displayAttributeName];
+          displayValue += ' ';
+        }
+        return displayValue;
+      }
+      else {
+        return item[metaAttribute.name];
+      }
     }
     else {
-      return `Unknown attribute name of ${metaAttribute.name}`
+      return `Unknown attribute name of ${metaAttribute.name} in row data of ${JSON.stringify(item)}`
     }
   }
 
