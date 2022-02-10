@@ -1,5 +1,5 @@
 <div class="container-fluid mt-3">
-  <h2>Meta Menu View</h2>
+  <h2>Meta Menu</h2>
 
   <ng-container *ngIf="metaMenu$ | async as metaMenu">
     <div class="mt-3">
@@ -8,7 +8,12 @@
         <thead>
         <tr>
           <th *ngFor="let colIdx of columnNumbers">
-            <app-menu-header-view [menuItem]="getMenuItem(metaMenu, colIdx, 0)"></app-menu-header-view>
+            <app-menu-header-view [menu]="getMenu(metaMenu, colIdx)"
+                                  (menuAdded)="onMenuAdded(metaMenu, colIdx)"
+                                  (menuDeleted)="onMenuDeleted(metaMenu, colIdx)"
+                                  (menuMoved)="onMenuMove(metaMenu, colIdx, $event)"
+            >
+            </app-menu-header-view>
           </th>
         </tr>
         </thead>
@@ -19,6 +24,8 @@
               [menu]="getMenu(metaMenu, colIdx)"
               [menuItem]="getMenuItem(metaMenu, colIdx, rowIdx)"
               (menuItemAdded)="onMenuItemAdded(metaMenu, colIdx, $event)"
+              (menuItemDeleted)="onMenuItemDeleted(metaMenu, colIdx, rowIdx)"
+              (menuItemMoved)="onMenuItemMoved(metaMenu, colIdx, rowIdx, $event)"
             >
             </app-menu-item-view>
           </td>
@@ -29,7 +36,7 @@
       <div class="d-flex">
         <div class="flex-grow-1"></div>
         <button class="btn btn-outline-secondary mr-2" (click)="onBack(getMenuItem(metaMenu, 0, 0))">Back</button>
-        <!--<button class="btn btn-primary" (click)="onEdit()">Edit</button>-->
+        <button class="btn btn-primary" (click)="onSaveMetaMenu(metaMenu)">Save</button>
       </div>
     </div>
   </ng-container>

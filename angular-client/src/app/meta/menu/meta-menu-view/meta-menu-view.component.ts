@@ -3,7 +3,6 @@ import {Observable, of, tap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MenuItem, MetaMenu} from '../../../domain/meta.menu';
 import {MetaMenuService} from '../meta-menu-service/meta-menu.service';
-import {MenuItemAddEvent} from './menu-item-view/menu-item-view.component';
 
 @Component({
   selector: 'app-meta-menu-view',
@@ -69,13 +68,75 @@ export class MetaMenuViewComponent implements OnInit {
     }
   }
 
-  onMenuItemAdded(metaMenu: MetaMenu, colIdx: number, menuItemAddEvent: MenuItemAddEvent) {
-    const menu = metaMenu.menuList[colIdx];
-    const idx = menuItemAddEvent.position;
-    const menuItem = menuItemAddEvent.menuItem;
-    menu.items.splice(idx, 0, menuItem);
+  onMenuAdded(metaMenu: MetaMenu, coldIdx: number) {
+    metaMenu.menuList.push({
+      label: 'Label',
+      items: [{
+        label: 'Label',
+        route: '/route/here',
+        editable: true,
+        roles: []
+      }]
+    });
 
     this.examine(metaMenu);
     this.metaMenu$ = of(metaMenu);
+  }
+
+  onMenuDeleted(metaMenu: MetaMenu, colIdx: number) {
+    metaMenu.menuList.splice(colIdx, 1);
+
+    this.examine(metaMenu);
+    this.metaMenu$ = of(metaMenu);
+  }
+
+  onMenuMove(metaMenu: MetaMenu, colIdx: number, direction: number) {
+    const targetColIdx = colIdx + direction;
+    const canMove = targetColIdx >= 0 && targetColIdx <= (metaMenu.menuList.length - 1);
+    if(canMove) {
+      const sourceMenu = metaMenu.menuList[colIdx];
+      const targetMenu = metaMenu.menuList[targetColIdx]
+      metaMenu.menuList[targetColIdx] = sourceMenu;
+      metaMenu.menuList[colIdx] = targetMenu;
+    }
+
+    this.examine(metaMenu);
+    this.metaMenu$ = of(metaMenu);
+  }
+
+  onMenuItemAdded(metaMenu: MetaMenu, colIdx: number, menuItem: MenuItem) {
+    const menu = metaMenu.menuList[colIdx];
+    menu.items.push(menuItem);
+
+    this.examine(metaMenu);
+    this.metaMenu$ = of(metaMenu);
+  }
+
+  onMenuItemDeleted(metaMenu: MetaMenu, colIdx: number, rowIdx: number) {
+    const menu = metaMenu.menuList[colIdx];
+    menu.items.splice(rowIdx, 1);
+    this.examine(metaMenu);
+    this.metaMenu$ = of(metaMenu);
+  }
+
+  onMenuItemMoved(metaMenu: MetaMenu, colIdx: number, rowIdx: number, direction: number) {
+    const menu = metaMenu.menuList[colIdx];
+    const targetRowIdx = rowIdx + direction;
+    const canMove = targetRowIdx >= 0 && targetRowIdx <= (menu.items.length - 1);
+    if(canMove) {
+      const sourceMenuItem = menu.items[rowIdx];
+      const targetMenuItem = menu.items[targetRowIdx]
+      menu.items[targetRowIdx] = sourceMenuItem;
+      menu.items[rowIdx] = targetMenuItem;
+    }
+
+    this.examine(metaMenu);
+    this.metaMenu$ = of(metaMenu);
+  }
+
+  onSaveMetaMenu(metaMenu: MetaMenu) {
+    this.metaMenuService.update(metaMenu).subscribe(() => {
+      console.log('Meta Menu updated')
+    });
   }
 }

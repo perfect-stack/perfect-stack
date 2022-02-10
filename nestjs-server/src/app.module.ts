@@ -9,8 +9,10 @@ import { OrmModule } from './orm/orm.module';
 import { DataModule } from './data/data.module';
 import { ClientConfigModule } from './client/config/client-config.module';
 import { AdminModule } from './admin/admin.module';
-import { MetaModule } from './meta/meta.module';
 import { TypeaheadModule } from './typeahead/Typeahead.module';
+import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
+import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
+import { MetaPageModule } from './meta/meta-page/meta-page.module';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -32,7 +34,9 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     ClientConfigModule,
     CONFIG_MODULE,
     OrmModule,
-    MetaModule,
+    MetaMenuModule,
+    MetaEntityModule,
+    MetaPageModule,
     DataModule,
     TypeaheadModule,
   ],

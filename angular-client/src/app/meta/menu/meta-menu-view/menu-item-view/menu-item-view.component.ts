@@ -4,10 +4,6 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder} from '@angular/forms';
 
 
-export class MenuItemAddEvent {
-  menuItem: MenuItem;
-  position: number;
-}
 
 @Component({
   selector: 'app-menu-item-view',
@@ -23,9 +19,15 @@ export class MenuItemViewComponent implements OnInit {
   public menuItem: MenuItem | null;
 
   @Output()
-  public menuItemAdded = new EventEmitter<MenuItemAddEvent>();
+  public menuItemAdded = new EventEmitter<MenuItem>();
 
-  public mouseActive = false;
+  @Output()
+  public menuItemDeleted = new EventEmitter<MenuItem>();
+
+  @Output()
+  menuItemMoved = new EventEmitter<number>();
+
+  mouseActive = false;
 
   menuItemForm = this.fb.group({
     label: [''],
@@ -37,6 +39,18 @@ export class MenuItemViewComponent implements OnInit {
     protected readonly modalService: NgbModal) { }
 
   ngOnInit(): void {
+  }
+
+  @HostListener('mouseenter')
+  mouseenter() {
+    // console.log("OMG It's a Mouse!!!");
+    this.mouseActive = true;
+  }
+
+  @HostListener('mouseleave')
+  mouseleave() {
+    // console.log("OMG It's a Mouse!!!");
+    this.mouseActive = false;
   }
 
   onEditMenuItem(content: any) {
@@ -52,27 +66,27 @@ export class MenuItemViewComponent implements OnInit {
 
   onAdd() {
     if(this.menu && this.menuItem) {
-      const nextItem = new MenuItem();
-      nextItem.label = 'Label';
-      nextItem.route = '/route/here';
-
-      this.menu.items.push(nextItem);
+      const menuItem = new MenuItem();
+      menuItem.label = 'Label';
+      menuItem.route = '/route/here';
+      this.menuItemAdded.next(menuItem)
     }
   }
 
-  @HostListener('mouseenter')
-  mouseenter() {
-    console.log("OMG It's a Mouse!!!");
-    this.mouseActive = true;
-  }
-
-  @HostListener('mouseleave')
-  mouseleave() {
-    console.log("OMG It's a Mouse!!!");
-    this.mouseActive = false;
+  onMove(direction: number) {
+    this.menuItemMoved.next(direction);
   }
 
   onDelete() {
+    if(this.menuItem) {
+      this.menuItemDeleted.next(this.menuItem);
+    }
+  }
 
+  onSave(modal: any) {
+    modal.close('Save click')
+    const editedItem = this.menuItemForm.value;
+    console.log(`Edited item: ${JSON.stringify(editedItem)}`);
+    this.menuItem = Object.assign(this.menuItem, editedItem);
   }
 }

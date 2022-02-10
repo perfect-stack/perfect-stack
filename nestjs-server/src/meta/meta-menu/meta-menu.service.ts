@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MetaMenu } from '../../domain/meta.menu';
 import { FileRepositoryService } from '../../file/file-repository.service';
 
@@ -23,5 +23,16 @@ export class MetaMenuService {
     // }
 
     return metaMenu;
+  }
+
+  async update(metaMenu: MetaMenu) {
+    const metaFileName = MetaMenuService.META_MENU_DIR + '/MetaMenu.json';
+
+    await this.fileRepositoryService.writeFile(
+      metaFileName,
+      JSON.stringify(metaMenu, null, 2),
+    );
+
+    return;
   }
 }

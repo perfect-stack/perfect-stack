@@ -8,7 +8,9 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
 
-    if(req.url.includes('menu')) {
+    // WARNING: hack code here for dealing with loading menu when there
+    // is no user logged in
+    if(req.method === 'GET' && req.url.includes('menu')) {
       return next.handle(req);
     }
 

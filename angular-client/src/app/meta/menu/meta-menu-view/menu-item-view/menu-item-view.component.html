@@ -6,10 +6,10 @@
   </div>
 
   <div class="overlay" *ngIf="mouseActive">
-    <span class="material-icons">arrow_upward</span>
-    <span class="material-icons">arrow_downward</span>
+    <span class="material-icons" (click)="onMove(-1)">arrow_upward</span>
+    <span class="material-icons" (click)="onMove(+1)">arrow_downward</span>
     <span class="material-icons" (click)="onAdd()">add</span>
-    <span class="material-icons">delete</span>
+    <span class="material-icons" (click)="onDelete()">delete</span>
     <span class="material-icons" (click)="onEditMenuItem(content)">edit</span>
   </div>
 </div>
@@ -25,17 +25,17 @@
     <form [formGroup]="menuItemForm" (ngSubmit)="modal.close('Save click')">
       <div class="form-group">
         <label for="label">Label</label>
-        <input id="label" class="form-control" formControlName="label">
+        <input id="label" class="form-control" [formControlName]="'label'">
       </div>
       <div class="form-group">
         <label for="route">Route</label>
-        <input id="route" class="form-control" formControlName="route">
+        <input id="route" class="form-control" [formControlName]="'route'">
       </div>
     </form>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
-    <button type="button" class="btn btn-primary" (click)="modal.close('Save click')">Save</button>
+    <button type="button" class="btn btn-primary" (click)="onSave(modal)">Save</button>
   </div>
 </ng-template>
 

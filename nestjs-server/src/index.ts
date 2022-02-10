@@ -8,7 +8,6 @@ import { DataModule } from './data/data.module';
 import { DataService } from './data/data.service';
 import { FileRepositoryModule } from './file/file-repository.module';
 import { FileRepositoryService } from './file/file-repository.service';
-import { MetaModule } from './meta/meta.module';
 import { OrmModule } from './orm/orm.module';
 import { OrmService } from './orm/orm.service';
 
@@ -16,5 +15,4 @@ export { AuthenticationModule, AuthenticationService, PublicApi, JwtAuthGuard };
 export { ClientConfigModule, ClientConfigService };
 export { DataModule, DataService };
 export { FileRepositoryModule, FileRepositoryService };
-export { MetaModule };
 export { OrmModule, OrmService };

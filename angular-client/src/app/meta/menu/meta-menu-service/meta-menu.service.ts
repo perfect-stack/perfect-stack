@@ -11,6 +11,9 @@ export class MetaMenuService {
 
   menu: MetaMenu;
 
+  // WARNING: there is some hack code in AuthInterceptor to allow it to bypass
+  // authentication logic when the user is not logged in.
+
   constructor(protected readonly http: HttpClient) { }
 
   initMenu() {
@@ -24,5 +27,9 @@ export class MetaMenuService {
 
   find() {
     return this.http.get<MetaMenu>(`${environment.apiUrl}/meta/menu`);
+  }
+
+  update(metaMenu: MetaMenu) {
+    return this.http.post<void>(`${environment.apiUrl}/meta/menu`, metaMenu);
   }
 }
