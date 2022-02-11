@@ -68,8 +68,8 @@ export class MetaMenuViewComponent implements OnInit {
     }
   }
 
-  onMenuAdded(metaMenu: MetaMenu, coldIdx: number) {
-    metaMenu.menuList.push({
+  onMenuAdded(metaMenu: MetaMenu, colIdx: number) {
+    const newMenu = {
       label: 'Label',
       items: [{
         label: 'Label',
@@ -77,7 +77,10 @@ export class MetaMenuViewComponent implements OnInit {
         editable: true,
         roles: []
       }]
-    });
+    };
+
+    // this is deliberately not +1 to add to the "left" (see onMenuItemAdded)
+    metaMenu.menuList.splice(colIdx, 0, newMenu);
 
     this.examine(metaMenu);
     this.metaMenu$ = of(metaMenu);
@@ -104,9 +107,10 @@ export class MetaMenuViewComponent implements OnInit {
     this.metaMenu$ = of(metaMenu);
   }
 
-  onMenuItemAdded(metaMenu: MetaMenu, colIdx: number, menuItem: MenuItem) {
+  onMenuItemAdded(metaMenu: MetaMenu, colIdx: number, rowIdx: number, menuItem: MenuItem) {
     const menu = metaMenu.menuList[colIdx];
-    menu.items.push(menuItem);
+    // this is deliberately +1 to add to the end of the list
+    menu.items.splice(rowIdx + 1, 0, menuItem);
 
     this.examine(metaMenu);
     this.metaMenu$ = of(metaMenu);
@@ -132,6 +136,27 @@ export class MetaMenuViewComponent implements OnInit {
 
     this.examine(metaMenu);
     this.metaMenu$ = of(metaMenu);
+  }
+
+  onMenuItemMenuMoved(metaMenu: MetaMenu, colIdx: number, rowIdx: number, direction: number) {
+    console.log(`onMenuItemMenuMoved: ${colIdx}, ${rowIdx}`);
+    const targetMenuIdx = colIdx + direction;
+    const canMove = targetMenuIdx >= 0 && targetMenuIdx <= (metaMenu.menuList.length - 1);
+    if(canMove) {
+      const sourceMenu = metaMenu.menuList[colIdx];
+      const targetMenu = metaMenu.menuList[targetMenuIdx];
+      const sourceItem = sourceMenu.items[rowIdx];
+      let targetRowIdx = rowIdx;
+      if(targetRowIdx > (targetMenu.items.length - 1)) {
+        targetRowIdx = targetMenu.items.length;
+      }
+
+      targetMenu.items.splice(targetRowIdx, 0, sourceItem);
+      sourceMenu.items.splice(rowIdx, 1);
+
+      this.examine(metaMenu);
+      this.metaMenu$ = of(metaMenu);
+    }
   }
 
   onSaveMetaMenu(metaMenu: MetaMenu) {

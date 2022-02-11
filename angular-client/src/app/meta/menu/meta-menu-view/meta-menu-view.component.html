@@ -23,9 +23,10 @@
             <app-menu-item-view
               [menu]="getMenu(metaMenu, colIdx)"
               [menuItem]="getMenuItem(metaMenu, colIdx, rowIdx)"
-              (menuItemAdded)="onMenuItemAdded(metaMenu, colIdx, $event)"
+              (menuItemAdded)="onMenuItemAdded(metaMenu, colIdx, rowIdx, $event)"
               (menuItemDeleted)="onMenuItemDeleted(metaMenu, colIdx, rowIdx)"
               (menuItemMoved)="onMenuItemMoved(metaMenu, colIdx, rowIdx, $event)"
+              (menuItemMenuMoved)="onMenuItemMenuMoved(metaMenu, colIdx, rowIdx, $event)"
             >
             </app-menu-item-view>
           </td>

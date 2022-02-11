@@ -1,11 +1,13 @@
 {
   "menuList": [
     {
-      "label": "Animals",
+      "label": "Bird",
       "items": [
         {
-          "label": "Animal",
-          "route": "/data/Person/search"
+          "label": "Label",
+          "route": "/route/here",
+          "editable": true,
+          "roles": []
         }
       ]
     },
@@ -13,13 +15,20 @@
       "label": "Person",
       "items": [
         {
+          "editable": true,
+          "roles": [],
           "label": "Person",
           "route": "/data/Person/search"
         },
         {
-          "label": "Test",
-          "route": "/data/Test/search"
-        },
+          "label": "Animal",
+          "route": "/data/Person/search"
+        }
+      ]
+    },
+    {
+      "label": "Admin",
+      "items": [
         {
           "editable": true,
           "roles": [],
@@ -29,14 +38,14 @@
         {
           "editable": true,
           "roles": [],
-          "label": "Project Status",
-          "route": "/data/ProjectStatus/search"
+          "label": "Project",
+          "route": "/data/Project/search"
         },
         {
           "editable": true,
           "roles": [],
-          "label": "Project",
-          "route": "/data/Project/search"
+          "label": "Project Status",
+          "route": "/data/ProjectStatus/search"
         }
       ]
     },

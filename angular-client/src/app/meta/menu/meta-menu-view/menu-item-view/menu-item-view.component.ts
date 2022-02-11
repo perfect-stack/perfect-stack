@@ -27,6 +27,9 @@ export class MenuItemViewComponent implements OnInit {
   @Output()
   menuItemMoved = new EventEmitter<number>();
 
+  @Output()
+  menuItemMenuMoved = new EventEmitter<number>();
+
   mouseActive = false;
 
   menuItemForm = this.fb.group({
@@ -75,6 +78,10 @@ export class MenuItemViewComponent implements OnInit {
 
   onMove(direction: number) {
     this.menuItemMoved.next(direction);
+  }
+
+  onMenuMoved(direction: number) {
+    this.menuItemMenuMoved.next(direction);
   }
 
   onDelete() {
