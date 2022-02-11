@@ -30,7 +30,7 @@ export class MetaAttribute {
   comparisonOperator: ComparisonOperator; // Only used by Criteria objects
   relationshipTarget: string;
   // List of attribute names in the relationshipTarget entity used for Typeahead components
-  typeaheadSearchAttributes: string[];
+  typeaheadSearch: string[];
 }
 
 export enum EntityType {

@@ -7,7 +7,7 @@
     <div class="input-group">
       <input id="typeahead-http" #searchInput type="text" class="form-control" [class.is-invalid]="searchFailed"
              [(ngModel)]="model" [ngbTypeahead]="search" (selectItem)="onSelectItem($event)"
-             [inputFormatter]="formatter" [resultTemplate]="rt" placeholder="Person search..." />
+             [inputFormatter]="formatter" [resultTemplate]="rt" placeholder="Search..." />
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
 

@@ -47,7 +47,7 @@ export class ManyToOneControlComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => this.searching = true),
       switchMap(term =>
-        this.typeaheadService.search(term).pipe(
+        this.typeaheadService.search(term, this.attribute).pipe(
           tap(() => this.searchFailed = false),
           catchError(() => {
             this.searchFailed = true;
@@ -72,14 +72,16 @@ export class ManyToOneControlComponent implements OnInit {
   }
 
   updateDisplayValue() {
-    this.displayValue = '';
-    for(const displayAttributeName of this.attribute.typeaheadSearch) {
-      this.displayValue += this.formGroup.controls[this.attribute.name].value[displayAttributeName];
-      this.displayValue += ' ';
-    }
+    if(this.model) {
+      this.displayValue = '';
+      for(const displayAttributeName of this.attribute.typeaheadSearch) {
+        this.displayValue += this.formGroup.controls[this.attribute.name].value[displayAttributeName];
+        this.displayValue += ' ';
+      }
 
-    //this.formGroup.controls[this.attribute.name].value.displayText = this.displayValue;
-    this.model.displayText = this.displayValue;
+      //this.formGroup.controls[this.attribute.name].value.displayText = this.displayValue;
+      this.model.displayText = this.displayValue;
+    }
   }
 
   onSearchRequested() {

@@ -19,6 +19,24 @@
         {
           "label": "Test",
           "route": "/data/Test/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Organisation",
+          "route": "/data/Organisation/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Project Status",
+          "route": "/data/ProjectStatus/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Project",
+          "route": "/data/Project/search"
         }
       ]
     },
