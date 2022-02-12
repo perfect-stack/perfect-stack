@@ -145,7 +145,6 @@ export class DataService {
     parentMetaEntity: MetaEntity,
     relationshipAttribute: MetaAttribute,
   ) {
-    let childEntityModel;
     const childModel = await this.ormService.sequelize.model(
       relationshipAttribute.relationshipTarget,
     );
@@ -155,6 +154,7 @@ export class DataService {
       for (const nextChild of childList) {
         const childEntity = nextChild as Entity;
 
+        let childEntityModel = null;
         if (childEntity.id) {
           this.validateUuid(childEntity.id);
           childEntityModel = await childModel.findByPk(childEntity.id);

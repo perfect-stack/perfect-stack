@@ -34,7 +34,7 @@
           <td>
             <div>{{attribute.type}}</div>
             <div>{{attribute.relationshipTarget}}</div>
-            <div *ngIf="attribute.typeaheadSearch.length > 0">{{attribute.typeaheadSearch | json}}</div>
+            <div *ngIf="attribute.typeaheadSearch && attribute.typeaheadSearch.length > 0">{{attribute.typeaheadSearch | json}}</div>
           </td>
           <td>{{attribute.visibility}}</td>
           <td>{{attribute.comparisonOperator}}</td>

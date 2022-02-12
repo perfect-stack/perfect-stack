@@ -64,19 +64,19 @@ export class TableLayoutComponent implements OnInit, OnChanges {
   }
 
   onFormGroupChange(formGroupChange: SimpleChange) {
-    if(formGroupChange.previousValue) {
-      // TODO: remove listener
-      console.warn(`TODO: remove listener in onFormGroupChange()`);
-    }
-
-    if(formGroupChange.currentValue) {
-      const formGroup = formGroupChange.currentValue as FormGroup;
-      console.log(`TableLayoutComponent: got new formGroup to deal with: value = ${JSON.stringify(formGroup.value)}`);
-
-      formGroup.valueChanges.subscribe((value) => {
-        console.log(`TableLayoutComponent: got new formGroup VALUE to worry about of ${JSON.stringify(value)}`);
-      });
-    }
+    // if(formGroupChange.previousValue) {
+    //   // TODO: remove listener
+    //   console.warn(`TODO: remove listener in onFormGroupChange()`);
+    // }
+    //
+    // if(formGroupChange.currentValue) {
+    //   const formGroup = formGroupChange.currentValue as FormGroup;
+    //   console.log(`TableLayoutComponent: got new formGroup to deal with: value = ${JSON.stringify(formGroup.value)}`);
+    //
+    //   formGroup.valueChanges.subscribe((value) => {
+    //     console.log(`TableLayoutComponent: got new formGroup VALUE to worry about of ${JSON.stringify(value)}`);
+    //   });
+    // }
   }
 
   onAddRow(number: number) {

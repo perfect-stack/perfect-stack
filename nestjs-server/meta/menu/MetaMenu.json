@@ -23,6 +23,12 @@
         {
           "label": "Animal",
           "route": "/data/Person/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Test",
+          "route": "/data/Test/search"
         }
       ]
     },
