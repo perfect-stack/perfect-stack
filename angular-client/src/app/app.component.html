@@ -16,14 +16,22 @@
 
       <ng-container *ngIf="authenticationService.isLoggedIn">
         <li class="nav-item" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
-          <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown" role="button">
-            {{nextMenu.label}}
-          </a>
-          <div class="dropdown-menu" ngbDropdownMenu>
-            <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" (click)="isMenuCollapsed = true">
-              {{menuItem.label}}
+          <ng-container *ngIf="nextMenu.items.length > 1">
+            <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown" role="button">
+              {{nextMenu.label}}
             </a>
-          </div>
+            <div class="dropdown-menu" ngbDropdownMenu>
+              <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" (click)="isMenuCollapsed = true">
+                {{menuItem.label}}
+              </a>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="nextMenu.items.length === 1">
+            <a class="nav-link" [routerLink]="nextMenu.items[0].route">
+              {{nextMenu.items[0].label}}
+            </a>
+          </ng-container>
         </li>
       </ng-container>
     </ul>
