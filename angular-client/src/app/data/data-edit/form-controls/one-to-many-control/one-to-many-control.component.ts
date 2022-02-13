@@ -17,7 +17,7 @@ export class OneToManyControlComponent implements OnInit, OnChanges {
   attribute: MetaAttribute;
 
   @Input()
-  mode: string | null;
+  mode: string;
 
   @Input()
   cell: Cell;

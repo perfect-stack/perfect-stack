@@ -4,18 +4,16 @@
       <app-date-picker-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-date-picker-control>
     </ng-container>
 
-    <ng-container *ngSwitchCase="'Text'">
+    <ng-container *ngSwitchCase="['Text', 'Html'].includes(cell.attribute.type) ? cell.attribute.type : ''">
       <ng-container [ngSwitch]="cell.component">
         <ng-container *ngSwitchCase="'TextArea'">
-          <app-text-area-control [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></app-text-area-control>
+          <app-text-area-control [cell]="cell" [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-text-area-control>
         </ng-container>
 
         <ng-container *ngSwitchDefault>
-          <app-text-field-control [formGroup]="formGroup" [attribute]="cell.attribute"></app-text-field-control>
+          <app-text-field-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-text-field-control>
         </ng-container>
       </ng-container>
-
-      <!--<app-text-field-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-text-field-control>-->
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToMany'">
@@ -27,7 +25,15 @@
     </ng-container>
 
     <ng-container *ngSwitchCase="'ManyToOne'">
-      <app-many-to-one-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-many-to-one-control>
+      <ng-container [ngSwitch]="cell.component">
+        <ng-container *ngSwitchCase="'Select'">
+          <app-select-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-select-control>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <app-many-to-one-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-many-to-one-control>
+        </ng-container>
+      </ng-container>
     </ng-container>
 
     <ng-container *ngSwitchDefault>

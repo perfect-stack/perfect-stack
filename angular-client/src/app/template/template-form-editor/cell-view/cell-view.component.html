@@ -14,7 +14,7 @@
               <app-date-picker-control [formGroup]="entityForm" [attribute]="attribute"></app-date-picker-control>
             </ng-container>
 
-            <ng-container *ngSwitchCase="'Text'">
+            <ng-container *ngSwitchCase="['Text', 'Html'].includes(attribute.type) ? attribute.type : ''">
               <ng-container [ngSwitch]="cell.component">
                 <ng-container *ngSwitchCase="'TextArea'">
                   <app-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>
@@ -27,17 +27,26 @@
             </ng-container>
 
             <ng-container *ngSwitchCase="'OneToMany'">
-              <!--<app-one-to-many-control [formGroup]="entityForm" [attribute]="attribute" [cell]="cell"></app-one-to-many-control>-->
-              <!--<app-template-table-editor [template]="cell.template"></app-template-table-editor>-->
               <ng-container *ngIf="cell.template">
                 <app-template-controller [template]="cell.template"></app-template-controller>
               </ng-container>
             </ng-container>
 
             <ng-container *ngSwitchCase="'OneToOne'">
-              <!--<app-one-to-one-control [formGroup]="entityForm" [attribute]="attribute" [cell]="cell"></app-one-to-one-control>-->
               <ng-container *ngIf="cell.template">
                 <app-template-controller [template]="cell.template"></app-template-controller>
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'ManyToOne'">
+              <ng-container [ngSwitch]="cell.component">
+                <ng-container *ngSwitchCase="'Select'">
+                  <app-select-control [formGroup]="entityForm" [attribute]="attribute"></app-select-control>
+                </ng-container>
+
+                <ng-container *ngSwitchDefault>
+                  <app-many-to-one-control [formGroup]="entityForm" [mode]="'edit'" [attribute]="attribute"></app-many-to-one-control>
+                </ng-container>
               </ng-container>
             </ng-container>
 

@@ -53,7 +53,7 @@ export class DataService {
     const offset = (pageNumber - 1) * pageSize;
 
     const { count, rows } = await model.findAndCountAll({
-      order: ['given_name'],
+      //order: ['given_name'],
       offset: offset,
       limit: pageSize,
     });

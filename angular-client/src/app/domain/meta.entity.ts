@@ -1,5 +1,6 @@
 export enum AttributeType {
   Text = 'Text',
+  Html = 'Html',
   Number = 'Number',
   Identifier = 'Identifier',
   Date = 'Date',

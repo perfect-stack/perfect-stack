@@ -65,12 +65,12 @@ export class FormService {
         if (id) {
           return this.dataService.findById(ctx.metaEntity.name, id).pipe(switchMap((entity) => {
             ctx.entity = entity as Entity;
-            ctx.entityForm = this.createFormGroup(template, metaEntityList, ctx.entity);
+            ctx.entityForm = this.createFormGroup(mode, template, metaEntityList, ctx.entity);
             ctx.entityForm.patchValue(ctx.entity);
             return of(ctx);
           }));
         } else {
-          ctx.entityForm = this.createFormGroup(template, metaEntityList, null);
+          ctx.entityForm = this.createFormGroup(mode, template, metaEntityList, null);
           return of(ctx);
         }
       }));
@@ -107,7 +107,7 @@ export class FormService {
   }
 
 
-  createFormGroup(template: Template, metaEntityList: MetaEntity[], entity: Entity | null) {
+  createFormGroup(mode: string, template: Template, metaEntityList: MetaEntity[], entity: Entity | null) {
     const controls: {
       [key: string]: AbstractControl;
     } = {};
@@ -132,7 +132,7 @@ export class FormService {
             if (childTemplate) {
               for (let i = 0; i < itemCount; i++) {
                 const childEntity = itemArray[i];
-                formControl.push(this.createFormGroup(childTemplate, metaEntityList, childEntity))
+                formControl.push(this.createFormGroup(mode, childTemplate, metaEntityList, childEntity))
               }
             }
           }
@@ -144,12 +144,12 @@ export class FormService {
           const childTemplate = attributeCell.template;
           if (childTemplate) {
             const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
-            formControl = this.createFormGroup(childTemplate, metaEntityList, childEntity);
+            formControl = this.createFormGroup(mode, childTemplate, metaEntityList, childEntity);
           }
         }
       }
       else {
-        formControl = new FormControlWithAttribute('');
+        formControl = new FormControlWithAttribute({value: '', disabled: mode === 'view'});
       }
 
       if(formControl) {

@@ -4,6 +4,7 @@ export enum ComponentType {
   TextInput = 'TextInput',
   TextArea = 'TextArea',
   DatePicker = 'DatePicker',
+  Select = 'Select',
 }
 
 export class Cell {

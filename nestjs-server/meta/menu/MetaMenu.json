@@ -19,16 +19,17 @@
           "roles": [],
           "label": "Person",
           "route": "/data/Person/search"
-        },
-        {
-          "label": "Animal",
-          "route": "/data/Person/search"
-        },
+        }
+      ]
+    },
+    {
+      "label": "Project",
+      "items": [
         {
           "editable": true,
           "roles": [],
-          "label": "Test",
-          "route": "/data/Test/search"
+          "label": "Project",
+          "route": "/data/Project/search"
         }
       ]
     },
@@ -44,14 +45,14 @@
         {
           "editable": true,
           "roles": [],
-          "label": "Project",
-          "route": "/data/Project/search"
+          "label": "Project Status",
+          "route": "/data/ProjectStatus/search"
         },
         {
           "editable": true,
           "roles": [],
-          "label": "Project Status",
-          "route": "/data/ProjectStatus/search"
+          "label": "Test",
+          "route": "/data/Test/search"
         }
       ]
     },

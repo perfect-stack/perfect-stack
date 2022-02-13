@@ -74,7 +74,9 @@ export class TemplateTableEditorComponent implements OnInit {
         case AttributeType.Text:
           return 'Abc...';
         case AttributeType.Number:
-          return '123.0'
+          return '123.0';
+        case AttributeType.ManyToOne:
+          return 'Search...';
         default:
           return `UNKNOWN: data type ${attribute.type}`;
       }

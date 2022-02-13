@@ -129,6 +129,13 @@ export class MetaEntityService {
           }
         }
 
+        if (nextMetaAttribute.type === AttributeType.Html) {
+          modelAttribute = {
+            type: DataTypes.TEXT,
+            allowNull: true,
+          };
+        }
+
         if (nextMetaAttribute.type === AttributeType.Date) {
           modelAttribute = {
             type: DataTypes.DATEONLY,

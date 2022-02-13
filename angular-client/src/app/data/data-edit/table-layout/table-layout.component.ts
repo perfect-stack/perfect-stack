@@ -14,7 +14,7 @@ import {CellAttribute} from '../../../meta/page/meta-page-service/meta-page.serv
 export class TableLayoutComponent implements OnInit, OnChanges {
 
   @Input()
-  mode: string | null;
+  mode: string;
 
   @Input()
   template: Template;
@@ -97,6 +97,6 @@ export class TableLayoutComponent implements OnInit, OnChanges {
   }
 
   createTableRow(): FormGroup {
-    return this.formService.createFormGroup(this.template, this.metaEntityList, null);
+    return this.formService.createFormGroup(this.mode, this.template, this.metaEntityList, null);
   }
 }
