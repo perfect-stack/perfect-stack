@@ -48,6 +48,7 @@ import { OneToOneControlComponent } from './data/data-edit/form-controls/one-to-
 import { TemplateOptionsModalComponent } from './template/template-controller/template-options-modal/template-options-modal.component';
 import { RelationshipTypeEditComponent } from './meta/entity/meta-entity-edit/relationship-type-edit/relationship-type-edit.component';
 import { ManyToOneControlComponent } from './data/data-edit/form-controls/many-to-one-control/many-to-one-control.component';
+import { TextAreaControlComponent } from './data/data-edit/form-controls/text-area-control/text-area-control.component';
 
 
 function initializeApp() {
@@ -106,6 +107,7 @@ function initializeApp() {
     TemplateOptionsModalComponent,
     RelationshipTypeEditComponent,
     ManyToOneControlComponent,
+    TextAreaControlComponent,
   ],
   imports: [
     BrowserModule,

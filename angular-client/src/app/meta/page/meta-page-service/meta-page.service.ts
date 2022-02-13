@@ -9,6 +9,7 @@ export class CellAttribute {
   width: string;
   height: string;
   attributeName?: string;
+  component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   attribute?: MetaAttribute;
 }
 

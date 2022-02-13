@@ -5,7 +5,17 @@
     </ng-container>
 
     <ng-container *ngSwitchCase="'Text'">
-      <app-text-field-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-text-field-control>
+      <ng-container [ngSwitch]="cell.component">
+        <ng-container *ngSwitchCase="'TextArea'">
+          <app-text-area-control [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></app-text-area-control>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <app-text-field-control [formGroup]="formGroup" [attribute]="cell.attribute"></app-text-field-control>
+        </ng-container>
+      </ng-container>
+
+      <!--<app-text-field-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute"></app-text-field-control>-->
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToMany'">

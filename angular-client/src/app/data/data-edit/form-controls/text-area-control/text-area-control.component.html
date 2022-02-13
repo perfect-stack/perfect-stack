@@ -1,0 +1,4 @@
+<div class="input-group" [formGroup]="formGroup">
+  <textarea [ngStyle]="{'min-height': getCSSHeight(cell)}" class="form-control" type="text" [readonly]="isReadOnly()" [id]="attribute.name" [formControlName]="attribute.name">
+  </textarea>
+</div>

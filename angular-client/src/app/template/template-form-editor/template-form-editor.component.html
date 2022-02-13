@@ -6,6 +6,7 @@
           [cell]="nextCell"
           [attribute]="getAttribute(nextCell.attributeName, metaEntity)"
           (changeWidth)="onChangeWidth($event, nextRow, nextCell)"
+          (changeHeight)="onChangeHeight($event, nextRow, nextCell)"
           (deleteCell)="onDeleteCell($event, nextRow)">
         </app-cell-view>
       </div>

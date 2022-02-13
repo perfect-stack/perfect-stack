@@ -73,6 +73,20 @@ export class TemplateFormEditor implements OnInit {
     return totalWidth;
   }
 
+  onChangeHeight($event: number, nextRow: Cell[], nextCell: Cell) {
+    console.log(`onChangeHeight: ${$event}`);
+    let newHeight: number = Number(nextCell.height) + $event;
+    if(newHeight < 1) {
+      newHeight = 1;
+    }
+
+    if(newHeight > 10) {
+      newHeight = 10;
+    }
+
+    nextCell.height = String(newHeight);
+  }
+
   onAddCell(row: Cell[]) {
     const totalWidth = this.getTotalWidth(row);
     const cellWidth = Math.min(12 - totalWidth, 4);

@@ -2,7 +2,8 @@ import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output,
 import {DropEvent} from 'ng-drag-drop';
 import {MetaAttribute} from '../../../domain/meta.entity';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Cell, Template, TemplateType} from '../../../domain/meta.page';
+import {Cell, ComponentType, Template, TemplateType} from '../../../domain/meta.page';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-cell-view',
@@ -41,7 +42,9 @@ export class CellViewComponent implements OnInit, OnChanges {
 
   entityForm: FormGroup = new FormGroup([] as any);
 
-  constructor() { }
+  closeResult = '';
+
+  constructor(private modalService: NgbModal) { }
 
   ngOnInit(): void {
   }
@@ -82,6 +85,12 @@ export class CellViewComponent implements OnInit, OnChanges {
     ];
   }
 
+  getCSSHeight(cell: Cell) {
+    const height: number = cell && cell.height ? Number(cell.height) : 1;
+    const cssHeight = 6 + ((height - 1) * 3) + 1;  // 1, 4
+    return `${cssHeight}em`;
+  }
+
   onChangeWidth(value: number, $event: MouseEvent) {
     this.changeWidth.next(value);
   }
@@ -104,5 +113,21 @@ export class CellViewComponent implements OnInit, OnChanges {
     const attribute = $event.dragData;
     this._attribute = attribute;
     this.cell.attributeName = attribute.name;
+  }
+
+  onSettings(settingsTemplate: any) {
+    this.modalService.open(settingsTemplate, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed`;
+    });
+  }
+
+  getComponentTypeOptions() {
+    return Object.keys(ComponentType);
+  }
+
+  onComponentTypeChange(value: any) {
+    console.log(`onComponentTypeChange = ${value}`);
   }
 }

@@ -1,4 +1,11 @@
 
+
+export enum ComponentType {
+  TextInput = 'TextInput',
+  TextArea = 'TextArea',
+  DatePicker = 'DatePicker',
+}
+
 export class Cell {
   width: string;
   height: string;
