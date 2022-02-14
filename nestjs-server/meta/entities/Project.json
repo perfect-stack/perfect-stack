@@ -1,0 +1,90 @@
+{
+  "name": "Project",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "project_name",
+      "label": "Project Name",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "organisation",
+      "label": "Organisation",
+      "description": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Organisation",
+      "typeaheadSearch": [
+        "organisation_name"
+      ]
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "description": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "ProjectStatus",
+      "typeaheadSearch": [
+        "status"
+      ]
+    },
+    {
+      "name": "start_date",
+      "label": "Start date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "end_date",
+      "label": "End date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "members",
+      "label": "Members",
+      "description": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "ProjectMember",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "description",
+      "label": "Description",
+      "description": "",
+      "type": "Html",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "name": "ProjectStatus.view_edit",
+  "title": "Project Status",
+  "type": "view_edit",
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "5",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
+            "attributeName": "status"
+          }
+        ]
+      ],
+      "metaEntityName": "ProjectStatus",
+      "type": "form"
+    }
+  ]
+}
