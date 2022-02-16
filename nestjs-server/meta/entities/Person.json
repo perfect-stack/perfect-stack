@@ -9,7 +9,8 @@
       "type": "Identifier",
       "visibility": "Hidden",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "given_name",
@@ -18,7 +19,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "family_name",
@@ -27,7 +29,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "email_address",
@@ -36,7 +39,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "last_login",
@@ -45,7 +49,8 @@
       "type": "Date",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "gender",
@@ -54,7 +59,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "street_address",
@@ -63,7 +69,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "city",
@@ -72,7 +79,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "postcode",
@@ -81,7 +89,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "birthday",
@@ -90,7 +99,8 @@
       "type": "Date",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "occupation",
@@ -99,7 +109,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "company",
@@ -108,7 +119,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "phone_numbers",
@@ -117,7 +129,8 @@
       "type": "OneToMany",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": "PhoneNumber"
+      "relationshipTarget": "PhoneNumber",
+      "typeaheadSearch": []
     },
     {
       "name": "physical_address",
@@ -126,7 +139,18 @@
       "type": "OneToOne",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": "Address"
+      "relationshipTarget": "Address",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "postal_address",
+      "label": "Postal Address",
+      "description": "",
+      "type": "OneToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Address",
+      "typeaheadSearch": []
     }
   ]
 }

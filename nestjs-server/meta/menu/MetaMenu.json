@@ -12,6 +12,17 @@
       ]
     },
     {
+      "label": "Project",
+      "items": [
+        {
+          "label": "Project",
+          "route": "/data/Project/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
       "label": "Person",
       "items": [
         {
@@ -23,24 +34,13 @@
       ]
     },
     {
-      "label": "Project",
-      "items": [
-        {
-          "editable": true,
-          "roles": [],
-          "label": "Project",
-          "route": "/data/Project/search"
-        }
-      ]
-    },
-    {
       "label": "Admin",
       "items": [
         {
           "editable": true,
           "roles": [],
-          "label": "Organisation",
-          "route": "/data/Organisation/search"
+          "label": "Test",
+          "route": "/data/Test/search"
         },
         {
           "editable": true,
@@ -51,8 +51,8 @@
         {
           "editable": true,
           "roles": [],
-          "label": "Test",
-          "route": "/data/Test/search"
+          "label": "Organisation",
+          "route": "/data/Organisation/search"
         }
       ]
     },

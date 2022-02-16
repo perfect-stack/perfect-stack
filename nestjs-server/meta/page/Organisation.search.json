@@ -198,7 +198,7 @@
               ],
               "type": "table"
             },
-            "attributeName": "organisation_name"
+            "attributeName": "name"
           }
         ],
         [
@@ -280,7 +280,7 @@
       ],
       "metaEntityName": "Organisation",
       "type": "table",
-      "orderByName": "organisation_name",
+      "orderByName": "name",
       "orderByDir": "ASC"
     }
   ]

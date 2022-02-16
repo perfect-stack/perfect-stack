@@ -154,6 +154,82 @@
               "type": "table"
             }
           }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            }
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            }
+          }
         ]
       ],
       "metaEntityName": "Project",
@@ -198,17 +274,120 @@
               ],
               "type": "table"
             },
-            "attributeName": "project_name"
+            "attributeName": "name"
           },
           {
-            "width": "1",
+            "width": "3",
             "height": "1",
-            "attributeName": "organisation"
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
+            "attributeName": "start_date"
           },
           {
-            "width": "1",
+            "width": "3",
             "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
             "attributeName": "status"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            }
           }
         ],
         [
@@ -290,7 +469,7 @@
       ],
       "metaEntityName": "Project",
       "type": "table",
-      "orderByName": "project_name",
+      "orderByName": "name",
       "orderByDir": "ASC"
     }
   ]

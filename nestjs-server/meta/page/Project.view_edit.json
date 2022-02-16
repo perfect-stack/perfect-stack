@@ -42,7 +42,7 @@
               ],
               "type": "table"
             },
-            "attributeName": "project_name"
+            "attributeName": "name"
           },
           {
             "width": "3",
@@ -252,12 +252,12 @@
                     "attributeName": "member"
                   },
                   {
-                    "width": "1",
+                    "width": "3",
                     "height": "1",
                     "attributeName": "join_date"
                   },
                   {
-                    "width": "1",
+                    "width": "3",
                     "height": "1",
                     "attributeName": "left_date"
                   }

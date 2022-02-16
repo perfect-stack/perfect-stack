@@ -50,6 +50,7 @@ import { RelationshipTypeEditComponent } from './meta/entity/meta-entity-edit/re
 import { ManyToOneControlComponent } from './data/data-edit/form-controls/many-to-one-control/many-to-one-control.component';
 import { TextAreaControlComponent } from './data/data-edit/form-controls/text-area-control/text-area-control.component';
 import { SelectControlComponent } from './data/data-edit/form-controls/select-control/select-control.component';
+import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
 
 
 function initializeApp() {
@@ -119,6 +120,7 @@ function initializeApp() {
     NgbModule,
     HttpClientModule,
     CommonModule,
+    EditorModule,
     NgDragDropModule.forRoot(),
   ],
   providers: [
@@ -140,6 +142,7 @@ function initializeApp() {
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: NgbDateAdapter, useClass: CustomAdapter},
     NgbDropdown,
+    { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' }
   ],
   bootstrap: [AppComponent]
 })

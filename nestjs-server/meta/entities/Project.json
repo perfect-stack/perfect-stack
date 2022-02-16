@@ -13,8 +13,8 @@
       "typeaheadSearch": []
     },
     {
-      "name": "project_name",
-      "label": "Project Name",
+      "name": "name",
+      "label": "Name",
       "description": "",
       "type": "Text",
       "visibility": "Visible",
@@ -23,16 +23,34 @@
       "typeaheadSearch": []
     },
     {
-      "name": "organisation",
-      "label": "Organisation",
+      "name": "description",
+      "label": "Description",
       "description": "",
-      "type": "ManyToOne",
+      "type": "Html",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": "Organisation",
-      "typeaheadSearch": [
-        "organisation_name"
-      ]
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "start_date",
+      "label": "Start Date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "end_date",
+      "label": "End Date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "status",
@@ -47,24 +65,16 @@
       ]
     },
     {
-      "name": "start_date",
-      "label": "Start date",
+      "name": "organisation",
+      "label": "Organisation",
       "description": "",
-      "type": "Date",
+      "type": "ManyToOne",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": []
-    },
-    {
-      "name": "end_date",
-      "label": "End date",
-      "description": "",
-      "type": "Date",
-      "visibility": "Visible",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": []
+      "relationshipTarget": "Organisation",
+      "typeaheadSearch": [
+        "name"
+      ]
     },
     {
       "name": "members",
@@ -74,16 +84,6 @@
       "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "ProjectMember",
-      "typeaheadSearch": []
-    },
-    {
-      "name": "description",
-      "label": "Description",
-      "description": "",
-      "type": "Html",
-      "visibility": "Visible",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
       "typeaheadSearch": []
     }
   ]

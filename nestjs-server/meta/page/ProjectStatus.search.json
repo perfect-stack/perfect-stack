@@ -154,6 +154,82 @@
               "type": "table"
             }
           }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            }
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            }
+          }
         ]
       ],
       "metaEntityName": "ProjectStatus",

@@ -3,20 +3,20 @@
   "type": "Database",
   "attributes": [
     {
-      "name": "organisation_name",
-      "label": "Organisation name",
+      "name": "id",
+      "label": "Id",
       "description": "",
-      "type": "Text",
+      "type": "Identifier",
       "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
-      "name": "id",
-      "label": "Id",
+      "name": "name",
+      "label": "Name",
       "description": "",
-      "type": "Identifier",
+      "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",

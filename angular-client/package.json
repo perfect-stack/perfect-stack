@@ -25,10 +25,12 @@
     "@js-joda/core": "^4.3.1",
     "@nestjs/config": "^1.1.6",
     "@ng-bootstrap/ng-bootstrap": "^11.0.0-rc.0",
+    "@tinymce/tinymce-angular": "^5.0.1",
     "bootstrap": "^4.6.0",
     "firebase": "^9.6.0",
     "ng-drag-drop": "^5.0.0",
     "rxjs": "~7.4.0",
+    "tinymce": "^5.10.3",
     "tslib": "^2.3.0",
     "uuid": "^8.3.2",
     "zone.js": "~0.11.4"

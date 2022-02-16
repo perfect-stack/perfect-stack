@@ -1,13 +1,13 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../domain/meta.entity';
 import {Cell} from '../../../../domain/meta.page';
-import {CellAttribute} from '../../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
   selector: 'app-text-area-control',
   templateUrl: './text-area-control.component.html',
-  styleUrls: ['./text-area-control.component.css']
+  styleUrls: ['./text-area-control.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class TextAreaControlComponent implements OnInit {
 
