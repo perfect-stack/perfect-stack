@@ -26,21 +26,15 @@ export class SelectControlComponent implements OnInit {
   constructor(protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
-    //this.formGroup.controls[this.attribute.name].set = true;
-
     this.options$ = this.dataService.findAll(this.attribute.relationshipTarget).pipe(
-    switchMap(response => {
-
-      const entity = this.formGroup.controls[this.attribute.name].value;
-      console.log(`SelectControlComponent: value = ${JSON.stringify(entity)}`);
-      //this.formGroup.controls[this.attribute.name].setValue(entity);
-
-      return of(response.resultList as Entity[]);
-    }));
+      switchMap(response => {
+        return of(response.resultList as Entity[]);
+      }
+    ));
   }
 
   isReadOnly() {
-    return this.mode === 'view' ? true : false;
+    return this.mode === 'view';
   }
 
   getDisplayText(option: any) {
@@ -53,7 +47,12 @@ export class SelectControlComponent implements OnInit {
   }
 
   byEntityId(entity1: Entity, entity2: Entity) {
-    return entity1.id === entity2.id;
+    if(entity1 && entity2) {
+      return entity1.id === entity2.id;
+    }
+    else {
+      return entity1 === null && entity2 === null;
+    }
   }
 
 }

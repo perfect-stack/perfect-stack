@@ -93,9 +93,11 @@ export class DataSearchComponent implements OnInit {
     if(Object.keys(item).includes(metaAttribute.name)) {
       if(metaAttribute.type === AttributeType.ManyToOne) {
         let displayValue = '';
-        for(const displayAttributeName of metaAttribute.typeaheadSearch) {
-          displayValue += item[metaAttribute.name][displayAttributeName];
-          displayValue += ' ';
+        if(item[metaAttribute.name]) {
+          for(const displayAttributeName of metaAttribute.typeaheadSearch) {
+            displayValue += item[metaAttribute.name][displayAttributeName];
+            displayValue += ' ';
+          }
         }
         return displayValue;
       }

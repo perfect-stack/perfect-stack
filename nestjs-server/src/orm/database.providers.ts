@@ -52,6 +52,7 @@ export const databaseProviders = [
         username: databaseUser,
         password: databasePassword,
         database: 'perfect-stack-demo-db',
+        logQueryParameters: false,
       });
       // sequelize.addModels([]);
       // await sequelize.sync();

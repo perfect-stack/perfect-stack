@@ -140,6 +140,16 @@ export class MetaEntityService {
           modelAttribute = {
             type: DataTypes.DATEONLY,
             allowNull: true,
+
+            // This little bit of ugly is needed to deal with how the FormGroups need to be
+            // initialised with a value (e.g. '') but the current sequelize logic doesn't
+            // convert empty string date values into null.
+            set(value: any) {
+              if (value != null && value.length === 0) {
+                value = null;
+              }
+              this.setDataValue(nextMetaAttribute.name, value);
+            },
           };
         }
 
