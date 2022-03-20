@@ -4,9 +4,9 @@ import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-e
 import {DataService} from '../../data-service/data.service';
 import {Entity} from '../../../domain/entity';
 import {Cell, MetaPage, Template} from '../../../domain/meta.page';
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {of, switchMap} from 'rxjs';
-import {AttributeType, MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
+import {AttributeType, MetaAttribute, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
 
 
 export class FormContext {
@@ -149,10 +149,19 @@ export class FormService {
         }
       }
       else {
+        // WARNING: This has been a bit of a cockroach problem. One of these two lines is "correct" but depending on
+        // the low level sequence of processing elsewhere the "right" answer is either '' or null. If you change this
+        // line you'll probably get subtle bugs elsewhere. Ideally I'd like it to be null but Angular and JS seem to
+        // prefer ''. Don't even get me started on undefined.
         formControl = new FormControlWithAttribute({value: '', disabled: mode === 'view'});
+        //formControl = new FormControlWithAttribute({value: null, disabled: mode === 'view'});
       }
 
       if(formControl) {
+        if(nextAttribute.visibility === VisibilityType.Required) {
+          formControl.addValidators(Validators.required);
+        }
+
         formControl.attribute = nextAttribute;
         controls[nextAttribute.name] = formControl;
       }

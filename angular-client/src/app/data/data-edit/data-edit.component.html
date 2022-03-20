@@ -11,7 +11,7 @@
         </ng-container>
         <ng-container *ngSwitchCase="'edit'">
           <button class="btn btn-outline-secondary mr-2" (click)="onCancel()">Cancel</button>
-          <button type="submit" class="btn btn-primary mr-2" (click)="onSave(ctx)">Save</button>
+          <button type="submit" class="btn btn-primary mr-2" [disabled]="!ctx.entityForm.valid" (click)="onSave(ctx)">Save</button>
         </ng-container>
       </ng-container>
     </app-form>

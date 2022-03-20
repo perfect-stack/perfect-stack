@@ -18,8 +18,10 @@ export enum ComparisonOperator {
 }
 
 export enum VisibilityType {
-  Visible = 'Visible',
   Hidden = 'Hidden',
+  Visible = 'Visible',
+  Optional = 'Optional',
+  Required = 'Required',
 }
 
 export class MetaAttribute {

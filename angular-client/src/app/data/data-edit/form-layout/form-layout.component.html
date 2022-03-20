@@ -6,6 +6,9 @@
 
         <label [for]="nextCell.attribute.name">
           <span placement="right" [ngbTooltip]="nextCell.attribute.description">{{nextCell.attribute.label}}</span>
+          <ng-container *ngIf="mode == 'edit'">
+            <span class="text-danger" *ngIf="nextCell.attribute.visibility == 'Required'">*</span>
+          </ng-container>
         </label>
 
         <app-cell-container [formGroup]="formGroup" [mode]="mode" [cell]="nextCell"></app-cell-container>

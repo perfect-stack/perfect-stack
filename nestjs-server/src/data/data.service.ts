@@ -257,14 +257,22 @@ export class DataService {
 
     for (const nextCriteria of queryRequest.criteria) {
       if (nextCriteria.value) {
-        const op = operatorMap.get(nextCriteria.operator);
-        if (op) {
-          criteria[nextCriteria.name] = {
-            [op]: nextCriteria.value,
-          };
+        if (nextCriteria.operator) {
+          const op = operatorMap.get(nextCriteria.operator);
+          if (op) {
+            criteria[nextCriteria.name] = {
+              [op]: nextCriteria.value,
+            };
+          } else {
+            this.logger.warn(
+              `No SQL operator defined for application level comparison operator of ${JSON.stringify(
+                nextCriteria.operator,
+              )}`,
+            );
+          }
         } else {
           throw new Error(
-            `Unknown operator for criteria ${nextCriteria.operator}`,
+            `Criteria value for "${nextCriteria.name}" of "${nextCriteria.value}" supplied but no Comparison operator has been defined`,
           );
         }
       }

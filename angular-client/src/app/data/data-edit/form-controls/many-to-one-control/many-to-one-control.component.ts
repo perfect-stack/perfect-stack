@@ -86,6 +86,7 @@ export class ManyToOneControlComponent implements OnInit {
 
   onSearchRequested() {
     this.model = null;
+    this.formGroup.reset();
     setTimeout(()=>{ // this will make the execution after the above boolean has changed
       this.searchInput.nativeElement.focus();
     },0);

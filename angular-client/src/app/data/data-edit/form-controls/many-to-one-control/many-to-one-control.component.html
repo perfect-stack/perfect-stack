@@ -4,10 +4,16 @@
 
 <ng-container *ngIf="mode === 'edit'">
   <fieldset class="form-inline">
-    <div class="input-group">
-      <input id="typeahead-http" #searchInput type="text" class="form-control" [class.is-invalid]="searchFailed"
-             [(ngModel)]="model" [ngbTypeahead]="search" (selectItem)="onSelectItem($event)"
-             [inputFormatter]="formatter" [resultTemplate]="rt" placeholder="Search..." />
+    <div class="input-group w-100">
+      <input id="typeahead-http" #searchInput type="text" class="form-control" placeholder="Search..."
+             [required]="attribute.visibility == 'Required'"
+             [class.is-invalid]="searchFailed"
+             [(ngModel)]="model"
+             [ngbTypeahead]="search"
+             [inputFormatter]="formatter"
+             [resultTemplate]="rt"
+             (selectItem)="onSelectItem($event)"
+      />
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
 
@@ -18,15 +24,20 @@
       </div>
     </div>
   </fieldset>
+  <br>
+  {{attribute.visibility}}
 </ng-container>
 
 <ng-container *ngIf="mode === 'view'">
   <div class="input-group">
-    <a [routerLink]="['/data', attribute.relationshipTarget, 'view', model.id]" href="#">{{displayValue}}</a>
+    <ng-container *ngIf="model && model.id">
+      <a [routerLink]="['/data', attribute.relationshipTarget, 'view', model.id]" href="#">{{displayValue}}</a>
+    </ng-container>
   </div>
 </ng-container>
 
 <!--
+     [ngClass]="{'ng-invalid': true, 'ng-touched': true}"
 <br>
 Model: {{model|json}}<br>
 Control: {{formGroup.controls[attribute.name].value|json}}
