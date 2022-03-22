@@ -51,6 +51,9 @@ import { ManyToOneControlComponent } from './data/data-edit/form-controls/many-t
 import { TextAreaControlComponent } from './data/data-edit/form-controls/text-area-control/text-area-control.component';
 import { SelectControlComponent } from './data/data-edit/form-controls/select-control/select-control.component';
 import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
+import { DataSearchEditComponent } from './data/data-search-edit/data-search-edit.component';
+import { RowViewComponent } from './data/data-search-edit/row-view/row-view.component';
+import { RowEditComponent } from './data/data-search-edit/row-edit/row-edit.component';
 
 
 function initializeApp() {
@@ -111,6 +114,9 @@ function initializeApp() {
     ManyToOneControlComponent,
     TextAreaControlComponent,
     SelectControlComponent,
+    DataSearchEditComponent,
+    RowViewComponent,
+    RowEditComponent,
   ],
   imports: [
     BrowserModule,

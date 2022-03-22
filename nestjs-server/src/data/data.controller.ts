@@ -11,6 +11,7 @@ import { DataService } from './data.service';
 import { Entity } from '../domain/entity';
 import { EntityResponse } from '../domain/response/entity.response';
 import { QueryRequest } from './query.request';
+import { UpdateSortIndexRequest } from './update-sort-index.request';
 
 @Controller('data')
 export class DataController {
@@ -44,6 +45,23 @@ export class DataController {
     @Body() entity: Entity,
   ): Promise<EntityResponse> {
     return this.dataService.save(entityName, entity);
+  }
+
+  @Post('/:entityName/:id/sort_index')
+  updateSortIndex(
+    @Param('entityName') entityName: string,
+    @Param('id') id: string,
+    @Body() updateSortIndexRequest: UpdateSortIndexRequest,
+  ): Promise<void> {
+    if (
+      entityName !== updateSortIndexRequest.metaName ||
+      id !== updateSortIndexRequest.id
+    ) {
+      throw new Error(
+        `Invalid request. URL parameters do not match submitted request data`,
+      );
+    }
+    return this.dataService.updateSortIndex(updateSortIndexRequest);
   }
 
   @Delete('/:entityName/:id')

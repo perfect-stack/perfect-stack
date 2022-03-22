@@ -1,7 +1,7 @@
 {
   "name": "ProjectStatus.search",
   "title": "Project Status Search",
-  "type": "search",
+  "type": "search_edit",
   "templates": [
     {
       "cells": [
@@ -275,6 +275,31 @@
               "type": "table"
             },
             "attributeName": "status"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "description"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "start_date"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "end_date"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "sort_index"
           }
         ],
         [

@@ -5,6 +5,7 @@ import {Entity} from '../../domain/entity';
 import {QueryRequest} from './query.request';
 import {QueryResponse} from './query.response';
 import {environment} from '../../../environments/environment';
+import {UpdateSortIndexRequest} from './update-sort-index.request';
 
 @Injectable({
   providedIn: 'root'
@@ -27,5 +28,9 @@ export class DataService {
 
   save(entityName: string, entity: Entity) {
     return this.http.post(`${environment.apiUrl}/data/${entityName}/${entity.id}`, entity);
+  }
+
+  updateSortIndex(updateSortIndexRequest: UpdateSortIndexRequest) {
+    return this.http.post(`${environment.apiUrl}/data/${updateSortIndexRequest.metaName}/${updateSortIndexRequest.id}/sort_index`, updateSortIndexRequest);
   }
 }

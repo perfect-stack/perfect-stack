@@ -1,0 +1,20 @@
+<td>
+  <app-text-field-control [formGroup]="formGroup" [attribute]="findAttribute('name')" [mode]="'edit'"></app-text-field-control>
+</td>
+
+<td>
+  <app-text-field-control [formGroup]="formGroup" [attribute]="findAttribute('description')" [mode]="'edit'"></app-text-field-control>
+</td>
+
+<td>
+  <app-date-picker-control [formGroup]="formGroup" [attribute]="findAttribute('start_date')" [mode]="'edit'"></app-date-picker-control>
+</td>
+
+<td>
+  <app-date-picker-control [formGroup]="formGroup" [attribute]="findAttribute('end_date')" [mode]="'edit'"></app-date-picker-control>
+</td>
+
+<td>
+  <button class="btn btn-sm btn-outline-secondary mr-2" (click)="onCancel()">Cancel</button>
+  <button class="btn btn-sm btn-primary" type="submit" [disabled]="!formGroup.valid" (click)="onSave()">Save</button>
+</td>

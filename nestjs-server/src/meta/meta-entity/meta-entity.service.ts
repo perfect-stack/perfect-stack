@@ -153,6 +153,13 @@ export class MetaEntityService {
           };
         }
 
+        if (nextMetaAttribute.type === AttributeType.Integer) {
+          modelAttribute = {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+          };
+        }
+
         if (modelAttribute) {
           modelAttributeList[nextMetaAttribute.name] = modelAttribute;
         }

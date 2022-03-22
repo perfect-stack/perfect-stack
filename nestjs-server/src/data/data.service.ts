@@ -14,6 +14,7 @@ import {
 } from '../domain/meta.entity';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
 import * as uuid from 'uuid';
+import { UpdateSortIndexRequest } from './update-sort-index.request';
 
 @Injectable()
 export class DataService {
@@ -297,5 +298,83 @@ export class DataService {
     response.totalCount = count;
 
     return response;
+  }
+
+  /**
+   * Some data entities support the idea of human defined sort order. This is a feature where the user can have control
+   * over the sorting order of an entity. This needs a numerical attribute called "sort_index" to be added to the entity
+   * at which point the system can then use this value to determine the displayed order of a list of entities.
+   *
+   * This is used mostly by "Reference" data to control the order of these entities in dropdown lists.
+   *
+   * To update the sort_index value an operation needs to be performed on the server because that's the only place
+   * where we can safely read and update the value from within a transaction.
+   */
+  async updateSortIndex(
+    updateSortIndexRequest: UpdateSortIndexRequest,
+  ): Promise<void> {
+    // read all of this type of entity into memory
+    const queryResponse = await this.findAll(updateSortIndexRequest.metaName);
+    const entityList = queryResponse.resultList;
+    entityList.sort((a, b) => {
+      // TODO: probably should define an interface here and also check incoming entity
+      const aSortable = a as any;
+      const bSortable = b as any;
+      return aSortable.sort_index - bSortable.sort_index;
+    });
+
+    // verify that the current order is correct and throw error if not
+    for (let i = 0; i < entityList.length; i++) {
+      const nextEntity = entityList[i] as any; // TODO: see sortable interface comment above
+      if (nextEntity.sort_index !== i) {
+        // Hopefully this error state never occurs. If it does it might be possible to just have a correction function
+        // that sweeps through and changes the sort_index of every row, but don't want to write that until we know
+        // why the application is getting into that state to start with.
+        throw new Error(
+          `The meta entity type of ${updateSortIndexRequest.metaName} is not in the expected sort order, please correct database state before attempting to use this function`,
+        );
+      }
+    }
+
+    // find the requested entity id
+    const sourceIdx = entityList.findIndex(
+      (x) => x.id === updateSortIndexRequest.id,
+    );
+
+    if (sourceIdx < 0) {
+      throw new Error(
+        `Entity not found error. Unable to find entity ${updateSortIndexRequest.id} of type ${updateSortIndexRequest.metaName}`,
+      );
+    }
+
+    // calculate the new position
+    const targetIdx = sourceIdx + updateSortIndexRequest.direction;
+
+    // is the new position within the array or out of bounds
+    if (targetIdx >= 0 || targetIdx <= entityList.length - 1) {
+      // if inside do the swap in the direction required
+
+      // find the entities
+      const sourceEntity = entityList[sourceIdx] as any;
+      const targetEntity = entityList[targetIdx] as any;
+
+      // swap the selected entity with the target entity
+      const tempIdx = targetEntity.sort_index;
+      targetEntity.sort_index = sourceEntity.sort_index;
+      sourceEntity.sort_index = tempIdx;
+
+      // save both
+      this.logger.log(
+        `Updating sourceEntity ${sourceEntity.name} to ${sourceEntity.sort_index} and targetEntity ${targetEntity.name} to ${targetEntity.sort_index}`,
+      );
+      //      await this.save(updateSortIndexRequest.metaName, sourceEntity);
+      //      await this.save(updateSortIndexRequest.metaName, targetEntity);
+
+      // These entities have just been loaded, we can call save() on them directly
+      sourceEntity.save();
+      targetEntity.save();
+    } else {
+      // Do nothing but don't fail, sorting may silently bump against the ends of the array
+    }
   }
 }

@@ -1,0 +1,34 @@
+<div class="container-fluid mt-3" *ngIf="ctx$ | async as ctx">
+
+  <h2 class="mb-3">Search/Edit {{ctx.name}}</h2>
+
+  <ng-container *ngIf="rowData$ | async as rowData">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Start date</th>
+        <th>End date</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngFor="let nextEntity of rowData.resultList">
+        <ng-container *ngIf="!editSet.has(nextEntity.id)">
+          <tr app-row-view [entity]="nextEntity" [metaEntity]="ctx" (actionEvent)="onActionEvent($event)"></tr>
+        </ng-container>
+
+        <ng-container *ngIf="editSet.has(nextEntity.id)">
+          <tr app-row-edit [entity]="nextEntity" [metaEntity]="ctx" (actionEvent)="onActionEvent($event)"></tr>
+        </ng-container>
+      </ng-container>
+      </tbody>
+    </table>
+
+    <div class="d-flex">
+      <div class="flex-grow-1"></div>
+      <button class="btn btn-outline-success" (click)="onNew(rowData)">New...</button>
+    </div>
+  </ng-container>
+</div>

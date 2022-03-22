@@ -61,7 +61,7 @@
       "comparisonOperator": "",
       "relationshipTarget": "ProjectStatus",
       "typeaheadSearch": [
-        "status"
+        "name"
       ]
     },
     {

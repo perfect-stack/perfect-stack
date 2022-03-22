@@ -2,6 +2,7 @@ export enum AttributeType {
   Text = 'Text',
   Html = 'Html',
   Number = 'Number',
+  Integer = 'Integer',
   Identifier = 'Identifier',
   Date = 'Date',
   OneToMany = 'OneToMany',
@@ -18,8 +19,10 @@ export enum ComparisonOperator {
 }
 
 export enum VisibilityType {
-  Visible = 'Visible',
   Hidden = 'Hidden',
+  Visible = 'Visible',
+  Optional = 'Optional',
+  Required = 'Required',
 }
 
 export class MetaAttribute {

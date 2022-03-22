@@ -2,6 +2,7 @@ export enum AttributeType {
   Text = 'Text',
   Html = 'Html',
   Number = 'Number',
+  Integer = 'Integer',
   Identifier = 'Identifier',
   Date = 'Date',
   OneToMany = 'OneToMany',

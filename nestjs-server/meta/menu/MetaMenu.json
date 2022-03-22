@@ -46,7 +46,7 @@
           "editable": true,
           "roles": [],
           "label": "Project Status",
-          "route": "/data/ProjectStatus/search"
+          "route": "/data/ProjectStatus/search_edit"
         },
         {
           "editable": true,
