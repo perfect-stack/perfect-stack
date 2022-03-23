@@ -54,6 +54,7 @@ import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
 import { DataSearchEditComponent } from './data/data-search-edit/data-search-edit.component';
 import { RowViewComponent } from './data/data-search-edit/row-view/row-view.component';
 import { RowEditComponent } from './data/data-search-edit/row-edit/row-edit.component';
+import { AttributeDeleteDialogComponent } from './meta/entity/attribute-delete-dialog/attribute-delete-dialog.component';
 
 
 function initializeApp() {
@@ -117,6 +118,7 @@ function initializeApp() {
     DataSearchEditComponent,
     RowViewComponent,
     RowEditComponent,
+    AttributeDeleteDialogComponent,
   ],
   imports: [
     BrowserModule,

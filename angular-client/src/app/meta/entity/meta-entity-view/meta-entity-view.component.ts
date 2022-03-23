@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Injector, OnInit} from '@angular/core';
 import {Observable, switchMap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MetaEntity} from '../../../domain/meta.entity';
+import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AttributeDeleteDialogComponent} from '../attribute-delete-dialog/attribute-delete-dialog.component';
 
 @Component({
   selector: 'app-meta-entity-view',
@@ -16,6 +18,7 @@ export class MetaEntityViewComponent implements OnInit {
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
+              protected readonly modalService: NgbModal,
               protected readonly metaEntityService: MetaEntityService) {
   }
 
@@ -36,5 +39,14 @@ export class MetaEntityViewComponent implements OnInit {
 
   onDelete() {
 
+  }
+
+  onDeleteAttribute(attribute: MetaAttribute) {
+    const modalRef = this.modalService.open(AttributeDeleteDialogComponent);
+    modalRef.componentInstance.metaName = this.metaName;
+    modalRef.componentInstance.attributeName = attribute.name;
+    modalRef.closed.subscribe(() => {
+      this.metaEntity$ = this.metaEntityService.findById(this.metaName);
+    });
   }
 }

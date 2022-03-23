@@ -95,6 +95,7 @@ export class CustomAdapter extends NgbDateAdapter<string> {
   readonly DELIMITER = '-';
 
   fromModel(value: string | null): NgbDateStruct | null {
+    console.log(`CustomAdapter: fromModel(): "${value}"`);
     if (value) {
       let date = value.split(this.DELIMITER);
       return {

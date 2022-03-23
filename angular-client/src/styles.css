@@ -19,3 +19,7 @@ editor.ng-invalid.ng-touched {
 select.ng-invalid.ng-touched {
   border-left: 5px solid #a94442; /* red */
 }
+
+.btn-icon {
+  cursor: pointer;
+}

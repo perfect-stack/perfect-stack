@@ -24,6 +24,7 @@
           <th scope="col">Type</th>
           <th scope="col">Visibility</th>
           <th scope="col">Comparison</th>
+          <th scope="col">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -38,6 +39,9 @@
           </td>
           <td>{{attribute.visibility}}</td>
           <td>{{attribute.comparisonOperator}}</td>
+          <td>
+            <span class="btn-icon text-danger material-icons" (click)="onDeleteAttribute(attribute)">remove_circle</span>
+          </td>
         </tr>
         </tbody>
       </table>

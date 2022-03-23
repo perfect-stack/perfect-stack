@@ -148,6 +148,9 @@ export class FormService {
           }
         }
       }
+      else if (nextAttribute.type === AttributeType.Date) {
+        formControl = new FormControlWithAttribute({value: '', disabled: mode === 'view'});
+      }
       else {
         // WARNING: This has been a bit of a cockroach problem. One of these two lines is "correct" but depending on
         // the low level sequence of processing elsewhere the "right" answer is either '' or null. If you change this

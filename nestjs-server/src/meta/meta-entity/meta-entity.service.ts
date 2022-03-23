@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { OrmService } from '../../orm/orm.service';
 import {
   AttributeType,
@@ -10,10 +10,13 @@ import { EntityResponse } from '../../domain/response/entity.response';
 import { DataTypes } from 'sequelize';
 import { FileRepositoryService } from '../../file/file-repository.service';
 import { ModelCtor } from 'sequelize-typescript';
+import { DeleteAttributeRequest } from './delete-attribute.request';
 
 @Injectable()
 export class MetaEntityService {
   static readonly META_ENTITY_DIR = 'meta/entities';
+
+  private readonly logger = new Logger(MetaEntityService.name);
 
   constructor(
     protected readonly ormService: OrmService,
@@ -238,5 +241,53 @@ export class MetaEntityService {
       AttributeType.ManyToOne,
     ];
     return relationShipTypes.includes(type);
+  }
+
+  async deleteAttribute(deleteRequest: DeleteAttributeRequest): Promise<void> {
+    if (
+      deleteRequest &&
+      deleteRequest.metaName &&
+      deleteRequest.attributeName
+    ) {
+      this.logger.log(`deleteAttribute(): ${JSON.stringify(deleteRequest)}`);
+
+      if (deleteRequest.deleteAttribute || deleteRequest.deleteDatabaseCol) {
+        const metaEntity = await this.findOne(deleteRequest.metaName);
+        const attributeIdx = metaEntity.attributes.findIndex(
+          (x) => x.name === deleteRequest.attributeName,
+        );
+
+        if (attributeIdx >= 0) {
+          if (deleteRequest.deleteDatabaseCol) {
+            const sql = `Alter table "${metaEntity.name}" drop column "${deleteRequest.attributeName}";`;
+            await this.ormService.sequelize.query(sql);
+            await this.syncMetaModelWithDatabase(false);
+          }
+
+          if (deleteRequest.deleteAttribute) {
+            metaEntity.attributes.splice(attributeIdx, 1);
+            await this.update(metaEntity);
+          }
+
+          // now reload the ORM config because model definitions may have changed
+          await this.ormService.reload();
+          await this.syncMetaModelWithDatabase(false); // false because we've already deleted the col here
+        } else {
+          // This is an important security check because it defends against the SQL injection we could
+          // otherwise get above. Since the supplied name must match the MetaEntity attribute name we
+          // should be ok against SQL injection.
+          throw new Error(
+            `Unable to find attribute ${deleteRequest.attributeName} in meta entity ${deleteRequest.metaName}`,
+          );
+        }
+      }
+      // else nothing to do so keep calm and carry on
+
+      return;
+    } else {
+      throw new Error(
+        `Invalid delete request of: ${JSON.stringify(deleteRequest)}`,
+      );
+    }
   }
 }

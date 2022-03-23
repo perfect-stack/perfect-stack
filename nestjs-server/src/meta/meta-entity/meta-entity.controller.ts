@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseBoolPipe,
   Post,
   Put,
   Query,
@@ -12,6 +13,7 @@ import { PublicApi } from '../../authentication/public-api';
 import { MetaEntity } from '../../domain/meta.entity';
 import { EntityResponse } from '../../domain/response/entity.response';
 import { MetaEntityService } from './meta-entity.service';
+import { DeleteAttributeRequest } from './delete-attribute.request';
 
 @Controller('meta/entity')
 export class MetaEntityController {
@@ -56,6 +58,21 @@ export class MetaEntityController {
       );
     }
     return this.metaEntityService.update(metaEntity);
+  }
+
+  @Delete('/:metaName/:attributeName')
+  deleteAttribute(
+    @Param('metaName') metaName: string,
+    @Param('attributeName') attributeName: string,
+    @Query('deleteAttribute', ParseBoolPipe) deleteAttribute: boolean,
+    @Query('deleteDatabaseCol', ParseBoolPipe) deleteDatabaseCol: boolean,
+  ): Promise<void> {
+    return this.metaEntityService.deleteAttribute({
+      metaName,
+      attributeName,
+      deleteAttribute,
+      deleteDatabaseCol,
+    });
   }
 
   @Delete('/:metaName')

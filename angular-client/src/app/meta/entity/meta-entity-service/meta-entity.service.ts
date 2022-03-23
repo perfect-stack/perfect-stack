@@ -33,4 +33,8 @@ export class MetaEntityService {
   createFakePeople() {
     return this.http.post(`${environment.apiUrl}/admin/createFakePeople`, null);
   }
+
+  deleteAttribute(metaName: string, attributeName: string, deleteAttribute: boolean, deleteDatabaseCol: boolean) {
+    return this.http.delete(`${environment.apiUrl}/meta/entity/${metaName}/${attributeName}?deleteAttribute=${deleteAttribute}&deleteDatabaseCol=${deleteDatabaseCol}`);
+  }
 }

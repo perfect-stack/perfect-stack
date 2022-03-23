@@ -3,71 +3,61 @@
   "type": "Database",
   "attributes": [
     {
+      "type": "Identifier",
+      "visibility": "Hidden",
       "name": "id",
       "label": "Id",
       "description": "",
-      "type": "Identifier",
-      "visibility": "Hidden",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
-      "name": "status",
-      "label": "Status",
-      "description": "",
       "type": "Text",
       "visibility": "Visible",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": []
-    },
-    {
       "name": "name",
       "label": "Name",
       "description": "",
-      "type": "Text",
-      "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "description",
       "label": "Description",
       "description": "",
-      "type": "Text",
-      "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
+      "type": "Date",
+      "visibility": "Visible",
       "name": "start_date",
       "label": "Start date",
       "description": "",
-      "type": "Date",
-      "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
+      "type": "Date",
+      "visibility": "Visible",
       "name": "end_date",
       "label": "End date",
       "description": "",
-      "type": "Date",
-      "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
+      "type": "Integer",
+      "visibility": "Visible",
       "name": "sort_index",
       "label": "Sort index",
       "description": "",
-      "type": "Integer",
-      "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
