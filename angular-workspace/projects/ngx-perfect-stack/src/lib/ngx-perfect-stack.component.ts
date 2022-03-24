@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
       ngx-perfect-stack works!
     </p>
 
-    <button class="btn btn-primary">Click Me</button>
+    <button class="btn btn-primary" (click)="onClick()" >Click Me</button>
   `,
   styles: [
   ]
@@ -19,4 +19,7 @@ export class NgxPerfectStackComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  onClick() {
+    console.log(`I have been clicked at: ${Date.now()}`);
+  }
 }
