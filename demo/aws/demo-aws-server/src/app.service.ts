@@ -84,6 +84,6 @@ export class AppService implements OnApplicationBootstrap {
       company: row.Company,
     };
 
-    await this.dataService.create('Person', personData);
+    await this.dataService.save('Person', personData);
   }
 }

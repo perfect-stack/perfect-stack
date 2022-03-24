@@ -73,8 +73,37 @@ docker build --platform linux/amd64 -t demo-aws-server .
 docker run -p 9000:8080 demo-aws-server
 curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
 
-docker tag  demo-aws-server:latest 100150877581.dkr.ecr.ap-southeast-2.amazonaws.com/demo-aws-server:latest
-docker push 100150877581.dkr.ecr.ap-southeast-2.amazonaws.com/demo-aws-server:latest
+#docker tag  demo-aws-server:latest 100150877581.dkr.ecr.ap-southeast-2.amazonaws.com/demo-aws-server:latest
+#docker push 100150877581.dkr.ecr.ap-southeast-2.amazonaws.com/demo-aws-server:latest
+
+docker tag  demo-aws-server:latest 100150877581.dkr.ecr.ap-southeast-2.amazonaws.com/demo-aws-server:1.0.4
+docker push 100150877581.dkr.ecr.ap-southeast-2.amazonaws.com/demo-aws-server:1.0.4
 
 
+--
 
+export NESTJS_ENV=/Users/richardperfect/Dev/perfect-stack/demo/aws/demo-aws-cdk/env/test.env
+
+cdk ls
+cdk synth DemoAwsServerStack
+cdk deploy DemoAwsServerStack
+
+Verification:
+https://cu9a7rsyp2.execute-api.ap-southeast-2.amazonaws.com/prod
+Health check ok at: 2022-03-24T01:07:22.139Z
+
+cu9a7rsyp2 comes from "Api Gateway" > Endpoint > Stages > prod > GET > "Invoke URL"
+
+--
+
+# edit version number in package.json
+
+cd angular-client
+npm run build
+npm run publish
+
+--
+
+cdk ls
+cdk synth DemoAwsClientStack
+cdk deploy DemoAwsClientStack

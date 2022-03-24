@@ -1,17 +1,18 @@
 {
-  "name": "angular-client",
-  "version": "0.0.0",
+  "name": "@perfect-stack/angular-client",
+  "version": "0.0.1",
+  "author": "Richard Perfect",
+  "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "start:test": "ng serve --configuration=test",
     "build": "ng build",
     "build:test": "ng build --configuration=test",
-    "publish": "aws s3 cp --recursive ./dist/angular-client/ s3://demo-aws-client-release/0.0.0",
+    "aws:publish": "aws-publish.sh",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "~13.0.0",
     "@angular/common": "~13.0.0",
@@ -49,5 +50,17 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
     "typescript": "~4.4.3"
-  }
+  },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com"
+  },
+  "repository": {
+    "url": "https://github.com/perfect-stack/perfect-stack.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist",
+    "/etc"
+  ]
 }

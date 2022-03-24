@@ -10,8 +10,8 @@ export class DemoAwsClientStack extends Stack {
 
         const releaseBucket = cdk.aws_s3.Bucket.fromBucketName(this, 'ReleaseBucket', 'demo-aws-client-release');
 
-        const origin = new cdk.aws_cloudfront_origins.S3Origin(releaseBucket, {originPath: '/1.0.1'});
-        const distribution = new cdk.aws_cloudfront.Distribution(this, 'MyDist', {
+        const origin = new cdk.aws_cloudfront_origins.S3Origin(releaseBucket, {originPath: '/1.0.3'});
+        const distribution = new cdk.aws_cloudfront.Distribution(this, 'MyCloudFrontDist', {
             defaultBehavior: {
                 origin: origin,
                 allowedMethods: cdk.aws_cloudfront.AllowedMethods.ALLOW_ALL,

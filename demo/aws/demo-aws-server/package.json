@@ -1,7 +1,7 @@
 {
   "name": "@perfect-stack/demo-aws-server",
-  "version": "1.0.2",
-  "description": "",
+  "version": "1.0.5",
+  "description": "Demo of server on AWS",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@perfect-stack/nestjs-server": "^0.0.11"
+    "@perfect-stack/nestjs-server": "^0.0.13"
   },
   "devDependencies": {
     "@types/node": "^17.0.9",
