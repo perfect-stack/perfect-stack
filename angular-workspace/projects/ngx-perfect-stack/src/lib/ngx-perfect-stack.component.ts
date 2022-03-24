@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
     <p>
       ngx-perfect-stack works!
     </p>
+
+    <button class="btn btn-primary">Click Me</button>
   `,
   styles: [
   ]

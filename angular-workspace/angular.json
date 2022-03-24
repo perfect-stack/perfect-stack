@@ -58,6 +58,7 @@
               "projects/demo-client/src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "projects/demo-client/src/styles.css"
             ],
             "scripts": []
