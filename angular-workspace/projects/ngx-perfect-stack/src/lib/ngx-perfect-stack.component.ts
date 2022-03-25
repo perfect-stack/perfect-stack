@@ -8,6 +8,9 @@ import { Component, OnInit } from '@angular/core';
     </p>
 
     <button class="btn btn-primary" (click)="onClick()" >Click Me</button>
+
+    <br>
+    <a [routerLink]="'child-one'">Child One</a> | <a [routerLink]="'child-two'">Child Two</a>
   `,
   styles: [
   ]
