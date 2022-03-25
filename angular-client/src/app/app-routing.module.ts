@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {PersonSearchComponent} from './person/person-search/person-search.component';
-import {PersonViewComponent} from './person/person-view/person-view.component';
-import {PersonEditComponent} from './person/person-edit/person-edit.component';
 import {LandingComponent} from './landing/landing.component';
 import {AuthGuard} from './authentication/auth-guard.service';
 import {DataSearchComponent} from './data/data-search/data-search.component';
@@ -16,10 +13,6 @@ import {MetaPageSearchComponent} from './meta/page/meta-page-search/meta-page-se
 import {DataSearchEditComponent} from './data/data-search-edit/data-search-edit.component';
 
 const routes: Routes = [
-  { path: 'person/search', component: PersonSearchComponent, canActivate: [AuthGuard] },
-  { path: 'person/view/:id', component: PersonViewComponent, canActivate: [AuthGuard] },
-  { path: 'person/edit/:id', component: PersonEditComponent, canActivate: [AuthGuard] },
-
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/search_edit', component: DataSearchEditComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/:mode/:id', component: DataEditComponent, canActivate: [AuthGuard] },

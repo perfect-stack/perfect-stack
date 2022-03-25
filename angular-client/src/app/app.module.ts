@@ -1,13 +1,9 @@
-import {APP_INITIALIZER, inject, Inject, INJECTOR, NgModule} from '@angular/core';
+import {APP_INITIALIZER, inject, INJECTOR, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {NgbDateAdapter, NgbDropdown, NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {PersonViewComponent} from './person/person-view/person-view.component';
-import {PersonSearchComponent} from './person/person-search/person-search.component';
-import {PersonEditComponent} from './person/person-edit/person-edit.component';
-import {PersonService} from './person/person-service/person.service';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
@@ -54,15 +50,13 @@ import { RowViewComponent } from './data/data-search-edit/row-view/row-view.comp
 import { RowEditComponent } from './data/data-search-edit/row-edit/row-edit.component';
 import { AttributeDeleteDialogComponent } from './meta/entity/attribute-delete-dialog/attribute-delete-dialog.component';
 import {initializeAuth} from './authentication/auth-initializer';
+import { MenuBarComponent } from './menu-bar/menu-bar.component';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    PersonViewComponent,
-    PersonSearchComponent,
-    PersonEditComponent,
     LandingComponent,
     DataSearchComponent,
     DataEditComponent,
@@ -99,6 +93,7 @@ import {initializeAuth} from './authentication/auth-initializer';
     RowViewComponent,
     RowEditComponent,
     AttributeDeleteDialogComponent,
+    MenuBarComponent,
   ],
   imports: [
     BrowserModule,
@@ -114,7 +109,6 @@ import {initializeAuth} from './authentication/auth-initializer';
   providers: [
     AuthenticationService,
     ClientConfigService,
-    PersonService,
     MetaMenuService,
     {
       provide: APP_INITIALIZER,
