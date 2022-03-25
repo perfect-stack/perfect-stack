@@ -58,19 +58,6 @@ export class AuthenticationService {
   }
 
   login() {
-    // const auth = getAuth();
-    // setPersistence(auth, browserLocalPersistence)
-    //   .then(() => {
-    //     // New sign-in will be persisted with session persistence.
-    //     return this.signInWithGoogle();
-    //   })
-    //   .catch((error) => {
-    //     // Handle Errors here.
-    //     const errorCode = error.code;
-    //     const errorMessage = error.message;
-    //     console.log(`Login failed: ${errorCode} - ${errorMessage}`);
-    //   });
-
     this.clientConfigService.getConfig().subscribe((config) => {
       if(config && config.AUTH_DISABLE_FOR_DEV === 'true') {
         console.warn('WARNING: authentication DISABLED for local development')

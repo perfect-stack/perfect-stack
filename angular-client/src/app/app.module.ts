@@ -11,9 +11,7 @@ import {PersonService} from './person/person-service/person.service';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {AuthInterceptor} from './auth-interceptor';
-import {getAuth, onAuthStateChanged} from 'firebase/auth';
-import getFirebase from '../firebase';
+import {AuthInterceptor} from './authentication/auth-interceptor';
 import { LandingComponent } from './landing/landing.component';
 import {AuthenticationService} from './authentication/authentication.service';
 import { DataSearchComponent } from './data/data-search/data-search.component';
@@ -55,25 +53,7 @@ import { DataSearchEditComponent } from './data/data-search-edit/data-search-edi
 import { RowViewComponent } from './data/data-search-edit/row-view/row-view.component';
 import { RowEditComponent } from './data/data-search-edit/row-edit/row-edit.component';
 import { AttributeDeleteDialogComponent } from './meta/entity/attribute-delete-dialog/attribute-delete-dialog.component';
-
-
-function initializeApp() {
-  if(!getFirebase()) {
-    throw new Error('Unable to initialise Firebase');
-  }
-
-  return new Promise((resolve, reject) => {
-    onAuthStateChanged(getAuth(), (user) => {
-      if (user) {
-        console.log(`initializeApp: user "${user.displayName}" is signed IN`);
-        resolve(user);
-      } else {
-        console.log('initializeApp: user is signed OUT');
-        resolve(null);
-      }
-    });
-  });
-}
+import {initializeAuth} from './authentication/auth-initializer';
 
 
 
@@ -138,7 +118,7 @@ function initializeApp() {
     MetaMenuService,
     {
       provide: APP_INITIALIZER,
-      useFactory: () => initializeApp,
+      useFactory: () => initializeAuth,
       multi: true
     },
     {
