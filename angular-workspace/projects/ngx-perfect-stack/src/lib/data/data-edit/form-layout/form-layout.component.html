@@ -4,7 +4,9 @@
 
       <div class="form-group" *ngIf="nextCell.attribute">
 
-        <label [for]="nextCell.attribute.name">
+        <!-- CSS: this mt-3 on the label is quite significant, it gives all of the rows in the forms some whitespace
+        above each Cell, otherwise things look a bit squished -->
+        <label class="mt-3" [for]="nextCell.attribute.name">
           <span placement="right" [ngbTooltip]="nextCell.attribute.description">{{nextCell.attribute.label}}</span>
           <ng-container *ngIf="mode == 'edit'">
             <span class="text-danger" *ngIf="nextCell.attribute.visibility == 'Required'">*</span>
