@@ -1,0 +1,47 @@
+<div class="wrapper" *ngIf="menuItem">
+
+  <div>
+    <div>{{menuItem.label}}</div>
+    <div class="small">{{menuItem.route}}</div>
+  </div>
+
+  <div class="overlay" *ngIf="mouseActive">
+    <div class="d-flex">
+      <span class="material-icons" (click)="onMenuMoved(-1)">keyboard_arrow_left</span>
+      <span class="material-icons" (click)="onMove(-1)">keyboard_arrow_up</span>
+      <span class="material-icons" (click)="onMove(+1)">keyboard_arrow_down</span>
+      <span class="material-icons" (click)="onMenuMoved(+1)">keyboard_arrow_right</span>
+    </div>
+    <div class="d-flex justify-content-center">
+      <span class="material-icons" (click)="onAdd()">add</span>
+      <span class="material-icons" (click)="onEditMenuItem(content)">edit</span>
+      <span class="material-icons" (click)="onDelete()">delete</span>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Menu Item</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="menuItemForm" (ngSubmit)="modal.close('Save click')">
+      <div class="form-group">
+        <label for="label">Label</label>
+        <input id="label" class="form-control" [formControlName]="'label'">
+      </div>
+      <div class="form-group">
+        <label for="route">Route</label>
+        <input id="route" class="form-control" [formControlName]="'route'">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="onSave(modal)">Save</button>
+  </div>
+</ng-template>
+

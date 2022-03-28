@@ -10,12 +10,13 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "strictPropertyInitialization": false,
     "sourceMap": true,
     "paths": {
       "ngx-perfect-stack": [
         "dist/ngx-perfect-stack/ngx-perfect-stack",
         "dist/ngx-perfect-stack"
-      ]
+      ],
     },
     "declaration": false,
     "downlevelIteration": true,

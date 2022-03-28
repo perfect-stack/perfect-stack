@@ -48,6 +48,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "preserveSymlinks": true,
             "outputPath": "dist/demo-client",
             "index": "projects/demo-client/src/index.html",
             "main": "projects/demo-client/src/main.ts",
@@ -83,7 +84,8 @@
                   "with": "projects/demo-client/src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "preserveSymlinks": true
             },
             "development": {
               "buildOptimizer": false,
@@ -91,7 +93,8 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "preserveSymlinks": true
             }
           },
           "defaultConfiguration": "production"
