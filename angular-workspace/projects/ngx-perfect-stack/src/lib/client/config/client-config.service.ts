@@ -7,7 +7,7 @@ import {HttpClient} from '@angular/common/http';
 export class ClientConfigService {
 
   environment = {
-    apiUrl: ''
+    apiUrl: 'http://localhost:3080'
   }
 
   constructor(

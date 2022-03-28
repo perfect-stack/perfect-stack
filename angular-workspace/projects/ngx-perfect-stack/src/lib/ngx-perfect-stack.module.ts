@@ -63,8 +63,19 @@ import {TableLayoutComponent} from './data/data-edit/table-layout/table-layout.c
 import {FormComponent} from './data/data-edit/form/form.component';
 import {FormLayoutComponent} from './data/data-edit/form-layout/form-layout.component';
 import {EditorModule} from '@tinymce/tinymce-angular';
+import {DataViewComponent} from './data/data-view/data-view.component';
+import {DataSearchEditComponent} from './data/data-search-edit/data-search-edit.component';
+import {RowViewComponent} from './data/data-search-edit/row-view/row-view.component';
+import {RowEditComponent} from './data/data-search-edit/row-edit/row-edit.component';
+import {DataSearchComponent} from './data/data-search/data-search.component';
+import {DataEditComponent} from './data/data-edit/data-edit.component';
+import {LandingComponent} from './landing/landing.component';
 
 const routes: Routes = [
+  { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
+  { path: 'data/:metaName/search_edit', component: DataSearchEditComponent, canActivate: [AuthGuard] },
+  { path: 'data/:metaName/:mode/:id', component: DataEditComponent, canActivate: [AuthGuard] },
+
   { path: 'meta/entity/search', component: MetaEntitySearchComponent, canActivate: [AuthGuard] },
   { path: 'meta/entity/view/:metaName', component: MetaEntityViewComponent, canActivate: [AuthGuard] },
   { path: 'meta/entity/edit/:metaName', component: MetaEntityEditComponent, canActivate: [AuthGuard] },
@@ -111,6 +122,13 @@ const routes: Routes = [
     TableLayoutComponent,
     FormComponent,
     FormLayoutComponent,
+    DataViewComponent,
+    DataSearchEditComponent,
+    RowViewComponent,
+    RowEditComponent,
+    DataSearchComponent,
+    DataEditComponent,
+    LandingComponent
   ],
   providers: [
     AuthenticationService,
