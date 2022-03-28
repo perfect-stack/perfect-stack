@@ -1,0 +1,85 @@
+<div class="container-fluid mt-3">
+  <h2>Meta Entity Edit</h2>
+
+  <ng-container *ngIf="metaEntity$ | async as metaEntity">
+    <div class="mt-3">
+      <form [formGroup]="metaEntityForm">
+        <div class="row">
+          <div class="col-4">
+            <div class="row mb-2">
+              <div class="col-3">Entity name</div>
+              <div class="col-9">
+                <input class="form-control" type="text" formControlName="name">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-3">Type</div>
+              <div class="col-9">
+                <select class="form-control" formControlName="type">
+                  <option *ngFor="let o of getEntityTypeOptions()" [ngValue]="o">{{o}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <br>
+
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Label</th>
+            <th scope="col">Description</th>
+            <th scope="col">Type</th>
+            <th scope="col">Visibility</th>
+            <th scope="col">Comparison</th>
+          </tr>
+          </thead>
+          <tbody>
+          <ng-container formArrayName="attributes" *ngFor="let formGroup of attributes.controls; let i=index">
+            <tr [formGroupName]="i">
+              <td><input class="form-control" type="text" formControlName="name" readonly></td>
+              <td>
+                <input class="form-control" type="text" formControlName="label" (keyup)="onLabelKeyup(formGroup)">
+                <app-validation-message [control]="getAttributeAt(i).controls['label']" [attributePath]="'label'"></app-validation-message>
+              </td>
+              <td><input class="form-control" type="text" formControlName="description"></td>
+              <td>
+                <select class="form-control" formControlName="type">
+                  <option *ngFor="let o of getAttributeTypeOptions()" [ngValue]="o">{{o}}</option>
+                </select>
+                <ng-container *ngIf="metaEntityOptions$ | async as metaEntityOptions">
+                  <ng-container *ngIf="isRelationshipType(i)">
+                    <app-relationship-type-edit [formGroup]="getAttributeAt(i)"></app-relationship-type-edit>
+                  </ng-container>
+                </ng-container>
+              </td>
+              <td>
+                <select class="form-control" formControlName="visibility">
+                  <option *ngFor="let o of getVisibilityTypeOptions()" [ngValue]="o">{{o}}</option>
+                </select>
+              </td>
+              <td>
+                <select class="form-control" formControlName="comparisonOperator">
+                  <option *ngFor="let o of getComparisonOperatorOptions()" [ngValue]="o">{{o}}</option>
+                </select>
+              </td>
+            </tr>
+          </ng-container>
+          </tbody>
+        </table>
+      </form>
+
+      <div class="d-flex">
+        <button class="btn btn-outline-success mr-2" (click)="onAddAttribute(1)">Add Attribute</button>
+        <button class="btn btn-outline-success mr-2" (click)="onAddAttribute(5)">x5</button>
+        <button class="btn btn-outline-success" (click)="onAddAttribute(10)">x10</button>
+        <div class="flex-grow-1"></div>
+        <button class="btn btn-outline-secondary mr-2" (click)="onCancel()">Cancel</button>
+        <button class="btn btn-primary" [disabled]="!metaEntityForm.valid" (click)="onSave(metaEntity)">Save</button>
+      </div>
+    </div>
+  </ng-container>
+</div>

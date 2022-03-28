@@ -1,0 +1,3 @@
+<ng-container *ngIf="cell && cell.template">
+  <app-table-layout [formGroup]="formGroup" [mode]="mode" [template]="cell.template" [relationshipProperty]="attribute.name"></app-table-layout>
+</ng-container>

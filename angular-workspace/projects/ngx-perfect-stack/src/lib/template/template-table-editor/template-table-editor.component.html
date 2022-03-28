@@ -1,0 +1,27 @@
+
+<ng-container *ngIf="template && metaEntity">
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th class="wrapper hover-highlight" *ngFor="let nextCell of template.cells[0]" droppable (onDrop)="onDropIntoCell($event, nextCell)">
+        <span class="">
+          {{getAttributeLabel(nextCell)}}
+        </span>
+
+        <ng-container *ngIf="mouseActive">
+          <div class="overlay-bottom-right p-1">
+            <span class="material-icons hover-highlight no_selection" (click)="onDeleteCell(nextCell)">highlight_off</span>
+            <span class="material-icons hover-highlight no_selection" (click)="onClearCell(nextCell)">block</span>
+          </div>
+        </ng-container>
+      </th>
+      <th droppable (onDrop)="onDropAddCell($event)" >Add Column...</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td *ngFor="let nextCell of template.cells[0]">{{getDataTypePlaceholder(nextCell)}}</td>
+    </tr>
+    </tbody>
+  </table>
+</ng-container>

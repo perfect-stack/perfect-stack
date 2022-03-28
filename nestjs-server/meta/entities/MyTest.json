@@ -1,0 +1,26 @@
+{
+  "name": "MyTest",
+  "type": "Database",
+  "attributes": [
+    {
+      "type": "Identifier",
+      "visibility": "Visible",
+      "name": "id",
+      "label": "id",
+      "description": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "type": "Text",
+      "visibility": "Visible",
+      "name": "d1",
+      "label": "d1",
+      "description": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}
