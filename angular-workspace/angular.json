@@ -12,7 +12,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/ngx-perfect-stack/ng-package.json"
+            "project": "projects/ngx-perfect-stack/ng-package.json",
           },
           "configurations": {
             "production": {
@@ -37,6 +37,9 @@
     "demo-client": {
       "projectType": "application",
       "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        },
         "@schematics/angular:application": {
           "strict": true
         }
@@ -54,13 +57,14 @@
             "main": "projects/demo-client/src/main.ts",
             "polyfills": "projects/demo-client/src/polyfills.ts",
             "tsConfig": "projects/demo-client/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               "projects/demo-client/src/favicon.ico",
               "projects/demo-client/src/assets"
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/demo-client/src/styles.css"
+              "projects/demo-client/src/styles.scss"
             ],
             "scripts": []
           },
@@ -124,12 +128,13 @@
             "polyfills": "projects/demo-client/src/polyfills.ts",
             "tsConfig": "projects/demo-client/tsconfig.spec.json",
             "karmaConfig": "projects/demo-client/karma.conf.js",
+            "inlineStyleLanguage": "scss",
             "assets": [
               "projects/demo-client/src/favicon.ico",
               "projects/demo-client/src/assets"
             ],
             "styles": [
-              "projects/demo-client/src/styles.css"
+              "projects/demo-client/src/styles.scss"
             ],
             "scripts": []
           }

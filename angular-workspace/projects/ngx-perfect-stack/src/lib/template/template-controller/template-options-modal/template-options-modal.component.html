@@ -8,18 +8,18 @@
 <div class="modal-body">
   <form *ngIf="template && metaEntityOptions$ | async as metaEntityOptions">
     <div class="form-group">
-      <label class="mr-2" for="metaEntityName">Entity</label>
-      <select class="form-control mr-2" id="metaEntityName" name="metaEntityName" [ngModel]="getMetaEntity(template, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
+      <label class="me-2" for="metaEntityName">Entity</label>
+      <select class="form-control me-2" id="metaEntityName" name="metaEntityName" [ngModel]="getMetaEntity(template, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
         <option *ngFor="let o of metaEntityOptions" [ngValue]="o">{{o.name}}</option>
       </select>
 
-      <label class="mr-2" for="templateType">Type</label>
+      <label class="me-2" for="templateType">Type</label>
       <select class="form-control" id="templateType" name="templateType" [(ngModel)]="template.type">
         <option *ngFor="let o of getTemplateTypeOptions()" [ngValue]="o">{{o}}</option>
       </select>
 
       <ng-container *ngIf="template.type === 'table'">
-        <label class="mr-2" for="orderByName">Order by</label>
+        <label class="me-2" for="orderByName">Order by</label>
         <select class="form-control mb-1" id="orderByName" name="orderByName" [(ngModel)]="template.orderByName">
           <option *ngFor="let o of getOrderByNameOptions()" [ngValue]="o">{{o}}</option>
         </select>
