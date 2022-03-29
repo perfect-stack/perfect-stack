@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Template, TemplateType} from '../../../domain/meta.page';
-import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
+import {Template, TemplateType} from '../../../../domain/meta.page';
+import {MetaEntityService} from '../../../../meta/entity/meta-entity-service/meta-entity.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {MetaEntity} from '../../../domain/meta.entity';
+import {MetaEntity} from '../../../../domain/meta.entity';
 import {Observable} from 'rxjs';
 
 @Component({

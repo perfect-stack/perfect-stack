@@ -124,7 +124,11 @@ import { MenuBarComponent } from './menu-bar/menu-bar.component';
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: NgbDateAdapter, useClass: CustomAdapter},
     NgbDropdown,
-    { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' }
+    {provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js'}
+  ],
+  exports: [
+    CellViewComponent,
+    CellContainerComponent
   ],
   bootstrap: [AppComponent]
 })

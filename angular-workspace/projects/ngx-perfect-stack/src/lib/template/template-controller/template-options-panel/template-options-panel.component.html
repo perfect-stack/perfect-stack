@@ -1,0 +1,8 @@
+<div class="alert alert-info">
+  <div class="d-flex justify-content-between">
+          <span>
+            {{template.metaEntityName}}: {{template.type}}<span *ngIf="template.type === 'table'">, order by: {{template.orderByName}}, {{template.orderByDir}}</span>
+          </span>
+    <span class="material-icons" (click)="openTemplateOptions()">settings</span>
+  </div>
+</div>

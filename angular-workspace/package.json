@@ -4,9 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --prod",
     "watch": "ng build --watch --configuration development",
-    "publish:github": "npm-publish-github.sh",
+    "publish:github": "./npm-publish-github.sh",
     "test": "ng test"
   },
   "private": true,

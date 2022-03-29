@@ -16,7 +16,9 @@
       <tr [formGroupName]="i">
         <td *ngFor="let nextCell of cells[0]">
           <ng-container *ngIf="nextCell.attribute">
-            <app-cell-container [formGroup]="getFormGroupForRow(i)" [mode]="mode" [cell]="nextCell"></app-cell-container>
+            <!--<app-cell-container [formGroup]="getFormGroupForRow(i)" [mode]="mode" [cell]="nextCell"></app-cell-container>-->
+            <!--<lib-table-cell-container [formGroup]="getFormGroupForRow(i)" [mode]="mode" [cell]="nextCell"></lib-table-cell-container>-->
+            <lib-child-cell-container [formGroup]="getFormGroupForRow(i)" [mode]="mode" [cell]="nextCell"></lib-child-cell-container>
           </ng-container>
         </td>
       </tr>

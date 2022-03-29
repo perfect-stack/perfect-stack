@@ -21,9 +21,6 @@ import {AuthGuard} from './authentication/auth-guard.service';
 import {TemplateFormEditor} from './template/template-form-editor/template-form-editor.component';
 import {CellViewComponent} from './template/template-form-editor/cell-view/cell-view.component';
 import {TemplateControllerComponent} from './template/template-controller/template-controller.component';
-import {
-  TemplateOptionsModalComponent
-} from './template/template-controller/template-options-modal/template-options-modal.component';
 import {AttributePaletteComponent} from './template/attribute-palette/attribute-palette.component';
 import {MetaPageService} from './meta/page/meta-page-service/meta-page.service';
 import {MetaPageSearchComponent} from './meta/page/meta-page-search/meta-page-search.component';
@@ -70,6 +67,14 @@ import {RowEditComponent} from './data/data-search-edit/row-edit/row-edit.compon
 import {DataSearchComponent} from './data/data-search/data-search.component';
 import {DataEditComponent} from './data/data-edit/data-edit.component';
 import {LandingComponent} from './landing/landing.component';
+import { ChildFormLayoutComponent } from './data/data-edit/form-controls/one-to-one-control/child-form-layout/child-form-layout.component';
+import { ChildCellContainerComponent } from './data/data-edit/form-controls/one-to-one-control/child-form-layout/child-cell-container/child-cell-container.component';
+import { ChildTemplateControllerComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-controller.component';
+import { ChildCellViewComponent } from './template/template-form-editor/cell-view/child-template-controller/child-cell-view/child-cell-view.component';
+import { TemplateOptionsPanelComponent } from './template/template-controller/template-options-panel/template-options-panel.component';
+import {
+  TemplateOptionsModalComponent
+} from './template/template-controller/template-options-panel/template-options-modal/template-options-modal.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -128,7 +133,12 @@ const routes: Routes = [
     RowEditComponent,
     DataSearchComponent,
     DataEditComponent,
-    LandingComponent
+    LandingComponent,
+    ChildFormLayoutComponent,
+    ChildCellContainerComponent,
+    ChildTemplateControllerComponent,
+    ChildCellViewComponent,
+    TemplateOptionsPanelComponent,
   ],
   providers: [
     AuthenticationService,

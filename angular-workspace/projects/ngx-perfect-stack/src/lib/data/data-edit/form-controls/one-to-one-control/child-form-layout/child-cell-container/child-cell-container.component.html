@@ -1,7 +1,7 @@
 
-<!-- REMEMBER: Any changes to this file also need to be replicated into the "ChildCellContainer" too -->
-<!-- REMEMBER: Any changes to this file also need to be replicated into the "ChildCellContainer" too -->
-<!-- REMEMBER: Any changes to this file also need to be replicated into the "ChildCellContainer" too -->
+<!-- REMEMBER: Any changes to this file also need to be replicated into the "CellContainer" too -->
+<!-- REMEMBER: Any changes to this file also need to be replicated into the "CellContainer" too -->
+<!-- REMEMBER: Any changes to this file also need to be replicated into the "CellContainer" too -->
 
 <ng-container *ngIf="formGroup && mode && cell && cell.attribute">
   <ng-container [ngSwitch]="cell.attribute.type">
@@ -22,11 +22,13 @@
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToMany'">
-      <app-one-to-many-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute" [cell]="cell"></app-one-to-many-control>
+      <!--<app-one-to-many-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute" [cell]="cell"></app-one-to-many-control>-->
+      WARNING: Can't nest OneToMany inside of a table
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToOne'">
-      <app-one-to-one-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute" [cell]="cell"></app-one-to-one-control>
+      <!--<app-one-to-one-control [formGroup]="formGroup" [mode]="mode" [attribute]="cell.attribute" [cell]="cell"></app-one-to-one-control>-->
+      WARNING: Can't nest OneToOne inside of a table
     </ng-container>
 
     <ng-container *ngSwitchCase="'ManyToOne'">

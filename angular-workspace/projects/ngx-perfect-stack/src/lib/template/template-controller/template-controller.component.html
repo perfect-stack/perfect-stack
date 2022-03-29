@@ -2,14 +2,7 @@
 
   <div class="row">
     <div class="col-10">
-      <div class="alert alert-info">
-        <div class="d-flex justify-content-between">
-          <span>
-            {{template.metaEntityName}}: {{template.type}}<span *ngIf="template.type === 'table'">, order by: {{template.orderByName}}, {{template.orderByDir}}</span>
-          </span>
-          <span class="material-icons" (click)="openTemplateOptions()">settings</span>
-        </div>
-      </div>
+      <lib-template-options-panel [template]="template"></lib-template-options-panel>
 
       <ng-container [ngSwitch]="template.type">
         <ng-container *ngSwitchCase="'form'">

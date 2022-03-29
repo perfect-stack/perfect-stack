@@ -2,6 +2,7 @@
 <ng-container *ngIf="childCells && childFormGroup">
   <!-- CSS: gives the relationships a border along the top of how it defines the relationship -->
   <div class="border-top">
-    <app-form-layout [mode]="mode" [cells]="childCells" [formGroup]="childFormGroup"></app-form-layout>
+    <!--<app-form-layout [mode]="mode" [cells]="childCells" [formGroup]="childFormGroup"></app-form-layout>-->
+    <lib-child-form-layout [mode]="mode" [cells]="childCells" [formGroup]="childFormGroup"></lib-child-form-layout>
   </div>
 </ng-container>
