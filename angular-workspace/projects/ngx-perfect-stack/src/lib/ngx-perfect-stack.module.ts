@@ -70,11 +70,12 @@ import {LandingComponent} from './landing/landing.component';
 import { ChildFormLayoutComponent } from './data/data-edit/form-controls/one-to-one-control/child-form-layout/child-form-layout.component';
 import { ChildCellContainerComponent } from './data/data-edit/form-controls/one-to-one-control/child-form-layout/child-cell-container/child-cell-container.component';
 import { ChildTemplateControllerComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-controller.component';
-import { ChildCellViewComponent } from './template/template-form-editor/cell-view/child-template-controller/child-cell-view/child-cell-view.component';
 import { TemplateOptionsPanelComponent } from './template/template-controller/template-options-panel/template-options-panel.component';
 import {
   TemplateOptionsModalComponent
 } from './template/template-controller/template-options-panel/template-options-modal/template-options-modal.component';
+import { ChildTemplateFormEditorComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-form-editor/child-template-form-editor.component';
+import { ChildCellViewComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-form-editor/child-cell-view/child-cell-view.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -137,8 +138,9 @@ const routes: Routes = [
     ChildFormLayoutComponent,
     ChildCellContainerComponent,
     ChildTemplateControllerComponent,
-    ChildCellViewComponent,
     TemplateOptionsPanelComponent,
+    ChildTemplateFormEditorComponent,
+    ChildCellViewComponent,
   ],
   providers: [
     AuthenticationService,
