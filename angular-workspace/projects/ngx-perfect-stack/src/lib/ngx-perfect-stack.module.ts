@@ -59,7 +59,7 @@ import {TemplateTableEditorComponent} from './template/template-table-editor/tem
 import {TableLayoutComponent} from './data/data-edit/table-layout/table-layout.component';
 import {FormComponent} from './data/data-edit/form/form.component';
 import {FormLayoutComponent} from './data/data-edit/form-layout/form-layout.component';
-import {EditorModule} from '@tinymce/tinymce-angular';
+import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
 import {DataViewComponent} from './data/data-view/data-view.component';
 import {DataSearchEditComponent} from './data/data-search-edit/data-search-edit.component';
 import {RowViewComponent} from './data/data-search-edit/row-view/row-view.component';
@@ -163,13 +163,13 @@ const routes: Routes = [
     },
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: NgbDateAdapter, useClass: CustomDateAdapterService},
+    {provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js'},
     NgbDropdown,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-//    AppRoutingModule,
     NgbModule,
     HttpClientModule,
     CommonModule,

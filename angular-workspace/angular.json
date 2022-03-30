@@ -60,7 +60,8 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "projects/demo-client/src/favicon.ico",
-              "projects/demo-client/src/assets"
+              "projects/demo-client/src/assets",
+              { "glob": "**/*", "input": "node_modules/tinymce", "output": "/tinymce/" }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
