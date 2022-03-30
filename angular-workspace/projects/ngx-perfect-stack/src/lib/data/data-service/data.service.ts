@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {PageQueryResponse} from '../../domain/response/page-query.response';
 import {Entity} from '../../domain/entity';
@@ -11,11 +11,10 @@ import {UpdateSortIndexRequest} from './update-sort-index.request';
 })
 export class DataService {
 
-  environment = {
-    apiUrl: 'http://localhost:3080'
-  }
-
-  constructor(protected readonly http: HttpClient) { }
+  constructor(
+    @Inject('environment')
+    protected readonly environment: any,
+    protected readonly http: HttpClient) { }
 
   findAll(entityName: string, nameCriteria = "", pageNumber = 1, pageSize = 10) {
     return this.http.get<PageQueryResponse<Entity>>(`${this.environment.apiUrl}/data/${entityName}?nameCriteria=${nameCriteria}&pageNumber=${pageNumber}&pageSize=${pageSize}`);

@@ -1,18 +1,16 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {MetaEntity} from '../../../domain/meta.entity';
-//import {environment} from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MetaEntityService {
 
-  environment = {
-    apiUrl: 'http://localhost:3080'
-  }
-
-  constructor(protected readonly http: HttpClient) { }
+  constructor(
+    @Inject('environment')
+    protected readonly environment: any,
+    protected readonly http: HttpClient) { }
 
   findAll() {
     return this.http.get<MetaEntity[]>(`${this.environment.apiUrl}/meta/entity`);

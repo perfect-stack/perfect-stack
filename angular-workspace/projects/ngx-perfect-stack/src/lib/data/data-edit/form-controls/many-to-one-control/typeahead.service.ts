@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Item} from './typeahead.response';
@@ -10,11 +10,10 @@ import {MetaAttribute} from '../../../../domain/meta.entity';
 })
 export class TypeaheadService {
 
-  environment = {
-    apiUrl: 'http://localhost:3080'
-  }
-
-  constructor(protected readonly http: HttpClient) { }
+  constructor(
+    @Inject('environment')
+    protected readonly environment: any,
+    protected readonly http: HttpClient) { }
 
   search(term: string, metaAttribute: MetaAttribute): Observable<Item[]> {
     const typeaheadRequest: TypeaheadRequest = {

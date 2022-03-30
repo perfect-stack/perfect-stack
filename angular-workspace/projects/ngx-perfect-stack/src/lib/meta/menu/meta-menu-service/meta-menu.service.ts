@@ -6,27 +6,20 @@ import {tap} from 'rxjs';
 @Injectable()
 export class MetaMenuService {
 
-  environment = {
-    apiUrl: 'http://localhost:3080'
-  }
-
   menu: MetaMenu;
 
-  // WARNING: there is some hack code in AuthInterceptor to allow it to bypass
-  // authentication logic when the user is not logged in.
-
   constructor(
-    // @Inject('environment')
-    // protected readonly environment: any,
+    @Inject('environment')
+    protected readonly environment: any,
     protected readonly http: HttpClient) { }
 
   initMenu() {
+    // WARNING: there is some hack code in AuthInterceptor to allow it to bypass
+    // authentication logic when the user is not logged in.
     return () => this.http.get(`${this.environment.apiUrl}/meta/menu`)
-      .pipe(
-        tap((menu) => {
-          this.menu = menu as MetaMenu;
-        })
-      );
+      .pipe( tap((menu) => {
+        this.menu = menu as MetaMenu;
+      }));
   }
 
   find() {

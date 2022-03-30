@@ -1,7 +1,5 @@
-import {APP_INITIALIZER, inject, INJECTOR, NgModule} from '@angular/core';
+import {APP_INITIALIZER, inject, INJECTOR, ModuleWithProviders, NgModule} from '@angular/core';
 import { NgxPerfectStackComponent } from './ngx-perfect-stack.component';
-import { ChildOneComponent } from './child-one/child-one.component';
-import { ChildTwoComponent } from './child-two/child-two.component';
 import {RouterModule, Routes} from '@angular/router';
 import {MenuBarComponent} from './menu-bar/menu-bar.component';
 import {MetaMenuViewComponent} from './meta/menu/meta-menu-view/meta-menu-view.component';
@@ -95,8 +93,6 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     NgxPerfectStackComponent,
-    ChildOneComponent,
-    ChildTwoComponent,
     MenuBarComponent,
     MetaMenuViewComponent,
     MenuItemViewComponent,
@@ -182,4 +178,19 @@ const routes: Routes = [
     NgxPerfectStackComponent
   ]
 })
-export class NgxPerfectStackModule { }
+export class NgxPerfectStackModule {
+
+  public static forRoot(environment: any): ModuleWithProviders<NgxPerfectStackModule> {
+
+    if(!environment.apiUrl) {
+      throw new Error('"apiUrl" not defined in the supplied environment properties');
+    }
+
+    return {
+      ngModule: NgxPerfectStackModule,
+      providers: [
+        {provide: 'environment', useValue: environment}
+      ]
+    }
+  }
+}

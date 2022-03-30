@@ -6,13 +6,9 @@ import {HttpClient} from '@angular/common/http';
 })
 export class ClientConfigService {
 
-  environment = {
-    apiUrl: 'http://localhost:3080'
-  }
-
   constructor(
-    //@Inject('environment')
-    //protected readonly environment: any,
+    @Inject('environment')
+    protected readonly environment: any,
     protected readonly http: HttpClient) { }
 
   getConfig() {

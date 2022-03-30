@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {NgxPerfectStackModule} from '../../../ngx-perfect-stack/src/lib/ngx-perfect-stack.module';
-//import {environment} from '../environments/environment';
+import {environment} from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -14,13 +14,10 @@ import {NgxPerfectStackModule} from '../../../ngx-perfect-stack/src/lib/ngx-perf
   imports: [
       BrowserModule,
       AppRoutingModule,
-      NgxPerfectStackModule,
+      NgxPerfectStackModule.forRoot(environment),
       NgbModule
   ],
-  providers: [
-    // Sets up a provided value for injection into ngx-perfect-stack services
-    //{provide: 'environment', useValue: environment}
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

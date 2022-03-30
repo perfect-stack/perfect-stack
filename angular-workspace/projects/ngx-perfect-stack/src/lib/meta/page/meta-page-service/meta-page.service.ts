@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {MetaPage} from '../../../domain/meta.page';
 import {MetaAttribute} from '../../../domain/meta.entity';
@@ -17,11 +17,10 @@ export class CellAttribute {
 })
 export class MetaPageService {
 
-  environment = {
-    apiUrl: 'http://localhost:3080'
-  }
-
-  constructor(protected readonly http: HttpClient) { }
+  constructor(
+    @Inject('environment')
+    protected readonly environment: any,
+    protected readonly http: HttpClient) { }
 
   findAll() {
     return this.http.get<MetaPage[]>(`${this.environment.apiUrl}/meta/page`);

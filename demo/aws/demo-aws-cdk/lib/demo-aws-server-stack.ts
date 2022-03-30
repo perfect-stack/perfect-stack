@@ -6,12 +6,12 @@ import {MyStackProps} from '../bin/demo-aws-cdk';
 
 
 export class DemoAwsServerStack extends Stack {
-  constructor(scope: Construct, id: string, props?: MyStackProps) {
+  constructor(scope: Construct, id: string, props: MyStackProps) {
     super(scope, id, props);
 
     const repo = cdk.aws_ecr.Repository.fromRepositoryName(this, 'demo-aws-server-repo', 'demo-aws-server');
     const dockerImageFunction = new cdk.aws_lambda.DockerImageFunction(this, 'ProxyFunction', {
-      environment: props?.envMap.parsed,
+      environment: props.envMap.parsed,
       code: cdk.aws_lambda.DockerImageCode.fromEcr(repo, {
         tag: '1.0.4'
       }),
