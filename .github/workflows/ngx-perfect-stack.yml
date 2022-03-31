@@ -25,7 +25,7 @@ jobs:
         run: npm run build
       - name: release
         working-directory: ./angular-workspace
-        run: publish-npm-github.sh
+        run: ./publish-npm-github.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
