@@ -26,14 +26,20 @@ jobs:
       - name: npm run build
         working-directory: ./demo/aws/demo-aws-server
         run: npm run build
+      - name: setup npmrc for docker build
+        run: |
+          rm .npmrc
+          echo "@perfect-stack:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> .npmrc
+          cat .npmrc
       - name: debug
         working-directory: ./demo/aws/demo-aws-server
         run: ls -al
-      - name: publish-docker-aws
-        working-directory: ./demo/aws/demo-aws-server
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-2
-          AWS_DEFAULT_OUTPUT: json
-        run: ./publish-docker-aws.sh
+#      - name: publish-docker-aws
+#        working-directory: ./demo/aws/demo-aws-server
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          AWS_DEFAULT_REGION: ap-southeast-2
+#          AWS_DEFAULT_OUTPUT: json
+#        run: ./publish-docker-aws.sh

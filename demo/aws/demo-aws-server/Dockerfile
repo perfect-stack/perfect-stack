@@ -5,9 +5,10 @@ FROM public.ecr.aws/lambda/nodejs:14
 COPY package*.json /var/task/
 
 # Install NPM dependencies for function
-COPY .npmrc .npmrc
-RUN npm install --only=production
-RUN rm -f .npmrc
+#COPY .npmrc .npmrc
+#RUN npm install --only=production
+#RUN rm -f .npmrc
+RUN --mount=type=secret,id=npm,target=/root/.npmrc npm install --only=production
 
 COPY dist/ .env /var/task/
 
