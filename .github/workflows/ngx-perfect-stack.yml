@@ -1,10 +1,10 @@
-name: nestjs-server-actions
+name: ngx-perfect-stack-actions
 on:
   push:
     branches:
       - 'main'
     paths:
-      - 'nestjs-server/**'
+      - 'angular-workspace/**'
 jobs:
   publish-github:
     runs-on: ubuntu-latest
@@ -18,14 +18,14 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@perfect-stack'
       - name: npm ci
-        working-directory: ./nestjs-server
+        working-directory: ./angular-workspace
         run: npm ci
       - name: npm run build
-        working-directory: ./nestjs-server
+        working-directory: ./angular-workspace
         run: npm run build
-      - name: release
-        working-directory: ./nestjs-server
-        run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: release
+#        working-directory: ./angular-workspace
+#        run: npx semantic-release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
