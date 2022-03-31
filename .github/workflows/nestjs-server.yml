@@ -1,4 +1,4 @@
-name: nestjs-server-actions
+name: nestjs-server
 on:
   push:
     branches:

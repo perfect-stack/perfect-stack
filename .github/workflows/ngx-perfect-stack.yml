@@ -1,4 +1,4 @@
-name: ngx-perfect-stack-actions
+name: ngx-perfect-stack
 on:
   push:
     branches:

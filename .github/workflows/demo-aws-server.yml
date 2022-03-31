@@ -1,0 +1,28 @@
+name: demo-aws-server
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'demo/aws/demo-aws-server/**'
+jobs:
+  publish-github:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@perfect-stack'
+      - name: npm ci
+        working-directory: ./demo/aws/demo-aws-server
+        run: npm ci
+      - name: npm run build
+        working-directory: ./demo/aws/demo-aws-server
+        run: npm run build
+      - name: debug
+        working-directory: ./demo/aws/demo-aws-server
+        run: ls -al
