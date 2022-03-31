@@ -23,6 +23,12 @@ jobs:
       - name: npm run build
         working-directory: ./angular-workspace
         run: npm run build
+      - name: debug
+        working-directory: ./angular-workspace
+        run: ls -al
+      - name: debug2
+        working-directory: ./angular-workspace
+        run: cat ./publish-npm-github.sh
       - name: release
         working-directory: ./angular-workspace
         run: ./publish-npm-github.sh
