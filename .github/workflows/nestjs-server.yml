@@ -1,6 +1,8 @@
 name: nestjs-server-actions
 on:
   push:
+    branches:
+      - 'main'
     paths:
       - 'nestjs-server/**'
 jobs:
@@ -8,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
@@ -19,8 +23,13 @@ jobs:
       - name: npm run build
         working-directory: ./nestjs-server
         run: npm run build
-      - name: npm publish
+      - name: release
         working-directory: ./nestjs-server
-        run: npm publish
+        run: npx semantic-release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: npm publish
+#        working-directory: ./nestjs-server
+#        run: npm publish
+#        env:
+#          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
