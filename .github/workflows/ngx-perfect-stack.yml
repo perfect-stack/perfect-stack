@@ -32,6 +32,10 @@ jobs:
       - name: version
         working-directory: ./angular-workspace/projects/ngx-perfect-stack
         run: npm version patch
+      - name: commit push
+        uses: EndBug/add-and-commit@v9
+        with:
+          default_author: github_actions
       - name: release
         working-directory: ./angular-workspace
         run: ./publish-npm-github.sh
