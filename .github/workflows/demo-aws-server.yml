@@ -34,11 +34,12 @@ jobs:
       - name: debug
         working-directory: ./demo/aws/demo-aws-server
         run: ls -al
-#      - name: publish-docker-aws
-#        working-directory: ./demo/aws/demo-aws-server
-#        env:
-#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          AWS_DEFAULT_REGION: ap-southeast-2
-#          AWS_DEFAULT_OUTPUT: json
-#        run: ./publish-docker-aws.sh
+      - name: publish-docker-aws
+        working-directory: ./demo/aws/demo-aws-server
+        env:
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-2
+          AWS_DEFAULT_OUTPUT: json
+        run: ./publish-docker-aws.sh
