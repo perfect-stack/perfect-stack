@@ -1,0 +1,14 @@
+name: nestjs-server-actions
+on:
+  push:
+    paths:
+      - 'nestjs-server/**'
+jobs:
+  publish-github:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm run build
