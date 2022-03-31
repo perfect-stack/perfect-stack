@@ -11,6 +11,9 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - name: Run Build
+      - name: npm install
+        working-directory: ./nestjs-server
+        run: npm install
+      - name: npm run build
         working-directory: ./nestjs-server
         run: npm run build
