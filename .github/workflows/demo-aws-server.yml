@@ -29,7 +29,7 @@ jobs:
       - name: setup npmrc for docker build
         run: |
           echo "@perfect-stack:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=\${NPM_TOKEN}" >> .npmrc
           cat .npmrc
       - name: debug
         working-directory: ./demo/aws/demo-aws-server
