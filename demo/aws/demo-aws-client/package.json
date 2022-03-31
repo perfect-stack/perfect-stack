@@ -1,6 +1,6 @@
 {
   "name": "demo-aws-client",
-  "version": "0.0.0",
+  "version": "1.0.5",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -30,7 +30,7 @@
     "tslib": "^2.3.0",
     "uuid": "^8.3.2",
     "zone.js": "~0.11.4",
-    "@perfect-stack/ngx-perfect-stack": "^0.0.5"
+    "@perfect-stack/ngx-perfect-stack": "^0.0.6"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.0",
