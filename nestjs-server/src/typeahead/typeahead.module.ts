@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TypeaheadController } from './Typeahead.controller';
-import { TypeaheadService } from './Typeahead.service';
+import { TypeaheadController } from './typeahead.controller';
+import { TypeaheadService } from './typeahead.service';
 import { OrmModule } from '../orm/orm.module';
 
 @Module({

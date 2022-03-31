@@ -9,7 +9,7 @@ import { OrmModule } from './orm/orm.module';
 import { DataModule } from './data/data.module';
 import { ClientConfigModule } from './client/config/client-config.module';
 import { AdminModule } from './admin/admin.module';
-import { TypeaheadModule } from './typeahead/Typeahead.module';
+import { TypeaheadModule } from './typeahead/typeahead.module';
 import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
 import { MetaPageModule } from './meta/meta-page/meta-page.module';
