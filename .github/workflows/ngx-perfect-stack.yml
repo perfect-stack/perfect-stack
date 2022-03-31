@@ -24,8 +24,8 @@ jobs:
         working-directory: ./angular-workspace
         run: npm run build
       - name: release
-        working-directory: ./angular-workspace/dist/ngx-perfect-stack
-        run: npx semantic-release
+        working-directory: ./angular-workspace
+        run: publish-npm-github.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

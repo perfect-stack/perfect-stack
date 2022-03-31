@@ -1,6 +1,6 @@
 {
   "name": "@perfect-stack/ngx-perfect-stack",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Richard Perfect",
   "license": "MIT",
   "peerDependencies": {
@@ -27,9 +27,5 @@
   },
   "repository": {
     "url": "https://github.com/perfect-stack/perfect-stack.git"
-  },
-  "release": {
-    "extends": "semantic-release-monorepo",
-    "branches": ["main"]
   }
 }

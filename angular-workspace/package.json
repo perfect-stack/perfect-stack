@@ -46,8 +46,6 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
     "ng-packagr": "^13.0.0",
-    "semantic-release": "^19.0.2",
-    "semantic-release-monorepo": "^7.0.5",
     "typescript": "~4.4.3"
   },
   "publishConfig": {
@@ -55,9 +53,5 @@
   },
   "repository": {
     "url": "https://github.com/perfect-stack/perfect-stack.git"
-  },
-  "release": {
-    "extends": "semantic-release-monorepo",
-    "branches": ["main"]
   }
 }
