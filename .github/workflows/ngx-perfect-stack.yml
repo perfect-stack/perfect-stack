@@ -29,6 +29,9 @@ jobs:
       - name: debug2
         working-directory: ./angular-workspace
         run: cat ./publish-npm-github.sh
+      - name: version
+        working-directory: ./angular-workspace/projects/ngx-perfect-stack
+        run: npm version patch
       - name: release
         working-directory: ./angular-workspace
         run: ./publish-npm-github.sh
