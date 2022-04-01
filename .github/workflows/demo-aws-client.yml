@@ -39,6 +39,9 @@ jobs:
         with:
           default_author: github_actions
           tag: ${{ env.TAG_NAME }}
+      - name: publish aws
+        working-directory: ./demo/aws/demo-aws-client
+        run: ./publish-aws.sh
       - name: debug
         working-directory: ./demo/aws/demo-aws-client
         run: ls -al
