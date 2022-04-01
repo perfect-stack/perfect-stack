@@ -30,10 +30,10 @@ jobs:
         working-directory: ./demo/aws/demo-aws-client
         run: npm version patch
       - name: get version
-        working-directory: ./nestjs-server
+        working-directory: ./demo/aws/demo-aws-client
         run: |
           export NPM_PKG_VERSION=$(npm pkg get version | sed 's/"//g')
-          echo "TAG_NAME=nestjs-server-$NPM_PKG_VERSION" >> $GITHUB_ENV
+          echo "TAG_NAME=demo-aws-client-$NPM_PKG_VERSION" >> $GITHUB_ENV
       - name: commit push
         uses: EndBug/add-and-commit@v9
         with:
