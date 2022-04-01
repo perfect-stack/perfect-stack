@@ -26,20 +26,19 @@ jobs:
       - name: npm run build
         working-directory: ./demo/aws/demo-aws-client
         run: npm run build
-#      - name: bump version
-#        working-directory: ./demo/aws/demo-aws-client
-#        run: npm version patch
-#      - name: commit push
-#        uses: EndBug/add-and-commit@v9
-#        with:
-#          default_author: github_actions
-#          tag: ${{ env.TAG_NAME }}
-#      - name: setup npmrc for docker build
-#        working-directory: ./demo/aws/demo-aws-client
-#        run: |
-#          echo "@perfect-stack:registry=https://npm.pkg.github.com" >> .npmrc
-#          echo "//npm.pkg.github.com/:_authToken=\${NPM_TOKEN}" >> .npmrc
-#          cat .npmrc
+      - name: bump version
+        working-directory: ./demo/aws/demo-aws-client
+        run: npm version patch
+      - name: get version
+        working-directory: ./nestjs-server
+        run: |
+          export NPM_PKG_VERSION=$(npm pkg get version | sed 's/"//g')
+          echo "TAG_NAME=nestjs-server-$NPM_PKG_VERSION" >> $GITHUB_ENV
+      - name: commit push
+        uses: EndBug/add-and-commit@v9
+        with:
+          default_author: github_actions
+          tag: ${{ env.TAG_NAME }}
       - name: debug
         working-directory: ./demo/aws/demo-aws-client
         run: ls -al
