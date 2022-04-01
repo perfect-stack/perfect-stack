@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import {Duration, Stack, StackProps} from 'aws-cdk-lib';
+import {Duration, Stack} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {Effect} from 'aws-cdk-lib/aws-iam';
 import {MyStackProps} from '../bin/demo-aws-cdk';
@@ -43,7 +43,11 @@ export class DemoAwsServerStack extends Stack {
 
     // defines an API Gateway REST API resource backed by our "hello" function.
     new cdk.aws_apigateway.LambdaRestApi(this, 'Endpoint', {
-      handler: dockerImageFunction
+      handler: dockerImageFunction,
+      // domainName: {
+      //   domainName: '',
+      //   certificate: cdk.aws_certificatemanager.Certificate.fromCertificateArn(this, 'APICertficiate', ''),
+      // }
     });
   }
 }
