@@ -5,6 +5,7 @@ FROM public.ecr.aws/lambda/nodejs:14
 COPY package*.json /var/task/
 
 # Install NPM dependencies for function
+ARG NPM_TOKEN
 COPY .npmrc .npmrc
 RUN npm install --only=production && rm -f .npmrc
 
