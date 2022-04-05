@@ -1,6 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {MetaEntity} from '../../../domain/meta.entity';
+import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
 
 @Injectable({
   providedIn: 'root'
@@ -8,35 +9,35 @@ import {MetaEntity} from '../../../domain/meta.entity';
 export class MetaEntityService {
 
   constructor(
-    @Inject('environment')
-    protected readonly environment: any,
+    @Inject(STACK_CONFIG)
+    protected readonly stackConfig: NgxPerfectStackConfig,
     protected readonly http: HttpClient) { }
 
   findAll() {
-    return this.http.get<MetaEntity[]>(`${this.environment.apiUrl}/meta/entity`);
+    return this.http.get<MetaEntity[]>(`${this.stackConfig.apiUrl}/meta/entity`);
   }
 
   findById(metaName: string | null) {
-    return this.http.get<MetaEntity>(`${this.environment.apiUrl}/meta/entity/${metaName}`);
+    return this.http.get<MetaEntity>(`${this.stackConfig.apiUrl}/meta/entity/${metaName}`);
   }
 
   create(metaEntity: MetaEntity) {
-    return this.http.post(`${this.environment.apiUrl}/meta/entity/${metaEntity.name}`, metaEntity);
+    return this.http.post(`${this.stackConfig.apiUrl}/meta/entity/${metaEntity.name}`, metaEntity);
   }
 
   update(metaEntity: MetaEntity) {
-    return this.http.put(`${this.environment.apiUrl}/meta/entity/${metaEntity.name}`, metaEntity);
+    return this.http.put(`${this.stackConfig.apiUrl}/meta/entity/${metaEntity.name}`, metaEntity);
   }
 
   sync() {
-    return this.http.post(`${this.environment.apiUrl}/meta/entity/database/sync`, null);
+    return this.http.post(`${this.stackConfig.apiUrl}/meta/entity/database/sync`, null);
   }
 
   createFakePeople() {
-    return this.http.post(`${this.environment.apiUrl}/admin/createFakePeople`, null);
+    return this.http.post(`${this.stackConfig.apiUrl}/admin/createFakePeople`, null);
   }
 
   deleteAttribute(metaName: string, attributeName: string, deleteAttribute: boolean, deleteDatabaseCol: boolean) {
-    return this.http.delete(`${this.environment.apiUrl}/meta/entity/${metaName}/${attributeName}?deleteAttribute=${deleteAttribute}&deleteDatabaseCol=${deleteDatabaseCol}`);
+    return this.http.delete(`${this.stackConfig.apiUrl}/meta/entity/${metaName}/${attributeName}?deleteAttribute=${deleteAttribute}&deleteDatabaseCol=${deleteDatabaseCol}`);
   }
 }

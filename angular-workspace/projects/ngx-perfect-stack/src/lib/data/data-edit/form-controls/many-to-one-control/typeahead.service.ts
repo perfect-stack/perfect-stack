@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {Item} from './typeahead.response';
 import {TypeaheadRequest} from './typeahead.request';
 import {MetaAttribute} from '../../../../domain/meta.entity';
+import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../ngx-perfect-stack-config';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,8 @@ import {MetaAttribute} from '../../../../domain/meta.entity';
 export class TypeaheadService {
 
   constructor(
-    @Inject('environment')
-    protected readonly environment: any,
+    @Inject(STACK_CONFIG)
+    protected readonly stackConfig: NgxPerfectStackConfig,
     protected readonly http: HttpClient) { }
 
   search(term: string, metaAttribute: MetaAttribute): Observable<Item[]> {
@@ -21,6 +22,6 @@ export class TypeaheadService {
       metaAttribute: metaAttribute,
       metaEntityName: 'XX'
     }
-    return this.http.post<Item[]>(`${this.environment.apiUrl}/typeahead`, typeaheadRequest);
+    return this.http.post<Item[]>(`${this.stackConfig.apiUrl}/typeahead`, typeaheadRequest);
   }
 }

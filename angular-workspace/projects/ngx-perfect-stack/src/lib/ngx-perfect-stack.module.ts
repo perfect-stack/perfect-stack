@@ -178,19 +178,4 @@ const routes: Routes = [
     NgxPerfectStackComponent
   ]
 })
-export class NgxPerfectStackModule {
-
-  public static forRoot(environment: any): ModuleWithProviders<NgxPerfectStackModule> {
-
-    if(!environment.apiUrl) {
-      throw new Error('apiUrl is not defined in the supplied environment properties');
-    }
-
-    return {
-      ngModule: NgxPerfectStackModule,
-      providers: [
-        {provide: 'environment', useValue: environment}
-      ]
-    }
-  }
-}
+export class NgxPerfectStackModule {}
