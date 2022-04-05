@@ -23,6 +23,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/client.json",
               "src/favicon.ico",
               "src/assets",
               { "glob": "**/*", "input": "node_modules/tinymce", "output": "/tinymce/" }
