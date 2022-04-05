@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import {aws_route53_targets, Duration, Stack} from 'aws-cdk-lib';
+import {Duration, Stack} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {Effect} from 'aws-cdk-lib/aws-iam';
 import {MyStackProps} from '../bin/demo-aws-cdk';
@@ -11,16 +11,16 @@ export class DemoAwsServerStack extends Stack {
 
     const repo = cdk.aws_ecr.Repository.fromRepositoryName(this, 'demo-aws-server-repo', 'demo-aws-server');
     const dockerImageFunction = new cdk.aws_lambda.DockerImageFunction(this, 'ProxyFunction', {
-      environment: props.envMap as any,
+      environment: props.serverEnvMap as any,
       code: cdk.aws_lambda.DockerImageCode.fromEcr(repo, {
-        tag: props.envMap.SERVER_RELEASE
+        tag: props.serverEnvMap.SERVER_RELEASE
       }),
       timeout: Duration.seconds(30),
       functionName: 'ProxyFunction',
     });
 
     if(dockerImageFunction.role) {
-      const dbPassword = props.envMap.DATABASE_PASSWORD;
+      const dbPassword = props.serverEnvMap.DATABASE_PASSWORD;
       if(dbPassword && dbPassword.startsWith('arn:aws:secretsmanager')) {
         dockerImageFunction.addToRolePolicy(new cdk.aws_iam.PolicyStatement({
           effect: Effect.ALLOW,

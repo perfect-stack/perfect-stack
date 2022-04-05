@@ -59,6 +59,7 @@
             "tsConfig": "projects/demo-client/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
+              "projects/demo-client/src/client.json",
               "projects/demo-client/src/favicon.ico",
               "projects/demo-client/src/assets",
               { "glob": "**/*", "input": "node_modules/tinymce", "output": "/tinymce/" }

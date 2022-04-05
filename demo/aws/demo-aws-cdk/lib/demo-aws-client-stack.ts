@@ -5,11 +5,12 @@ import {MyStackProps} from '../bin/demo-aws-cdk';
 
 
 export class DemoAwsClientStack extends Stack {
+
     constructor(scope: Construct, id: string, props: MyStackProps) {
         super(scope, id, props);
 
         const releaseBucket = cdk.aws_s3.Bucket.fromBucketName(this, 'ReleaseBucket', 'demo-aws-client-release');
-        const origin = new cdk.aws_cloudfront_origins.S3Origin(releaseBucket, {originPath: props.envMap.CLIENT_RELEASE});
+        const origin = new cdk.aws_cloudfront_origins.S3Origin(releaseBucket, {originPath: props.clientEnvMap.CLIENT_RELEASE});
         const certificate = cdk.aws_certificatemanager.Certificate.fromCertificateArn(this, 'Certificate', 'arn:aws:acm:us-east-1:100150877581:certificate/813ee628-7e7a-4838-8eb8-7cbc2daa53c0');
 
         const distribution = new cdk.aws_cloudfront.Distribution(this, 'MyCloudFrontDist', {
@@ -25,6 +26,12 @@ export class DemoAwsClientStack extends Stack {
             domainNames: ['demo2.base-stack.net'],
             certificate: certificate,
         });
+
+        // happens to be using the release bucket, but it's really a different bucket, just trying to avoid having
+        // too many buckets.
+        distribution.addBehavior('client.json', new cdk.aws_cloudfront_origins.S3Origin(releaseBucket, {
+            originPath: `env/${process.env.ENV_NAME}`
+        }));
 
         distribution.addBehavior('index.html', origin, {
             cachePolicy: cdk.aws_cloudfront.CachePolicy.CACHING_DISABLED

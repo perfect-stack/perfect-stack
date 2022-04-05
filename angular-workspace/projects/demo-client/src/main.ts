@@ -5,7 +5,7 @@ import { AppModule } from './app/app.module';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack/src/lib/ngx-perfect-stack-config';
 
 
-fetch('/assets/client.json')
+fetch('/client.json')
   .then( (configResponse) => configResponse.json())
   .then( (configJson) => {
 
