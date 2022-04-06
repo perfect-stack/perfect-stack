@@ -33,6 +33,7 @@ jobs:
         working-directory: ./nestjs-server
         run: |
           export NPM_PKG_VERSION=$(npm pkg get version | sed 's/"//g')
+          echo "TAG_NAME=nestjs-server-$NPM_PKG_VERSION"
           echo "TAG_NAME=nestjs-server-$NPM_PKG_VERSION" >> $GITHUB_ENV
       - name: commit push
         uses: EndBug/add-and-commit@v9
