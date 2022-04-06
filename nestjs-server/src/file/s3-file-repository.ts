@@ -14,7 +14,10 @@ export class S3FileRepository implements FileRepositoryInterface {
   readonly client = new S3Client({});
 
   constructor(configService: ConfigService) {
-    this.BUCKET_NAME = configService.get('S3_META_BUCKET');
+    this.BUCKET_NAME = configService.get('META_BUCKET_NAME');
+    if (!this.BUCKET_NAME) {
+      throw new Error('META_BUCKET_NAME is not defined');
+    }
   }
 
   async listFiles(dir: string): Promise<string[]> {
