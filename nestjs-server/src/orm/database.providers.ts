@@ -19,24 +19,22 @@ export const loadOrm = async (configService: ConfigService) => {
   const databaseHost = configService.get<string>('DATABASE_HOST');
   const databasePort = configService.get<number>('DATABASE_PORT');
   const databaseUser = configService.get<string>('DATABASE_USER');
-  const databasePasswordProperty =
-    configService.get<string>('DATABASE_PASSWORD');
+  const passwordProperty = configService.get<string>('DATABASE_PASSWORD');
+  const passwordKey = configService.get<string>('DATABASE_PASSWORD_KEY');
+  const databaseName = configService.get<string>('DATABASE_NAME');
 
   let databasePassword;
-  if (databasePasswordProperty) {
-    if (databasePasswordProperty.startsWith('arn:aws:secretsmanager:')) {
-      const client = new SecretsManagerClient({
-        region: 'ap-southeast-2',
-      });
-
+  if (passwordProperty) {
+    if (passwordProperty.startsWith('arn:aws:secretsmanager:')) {
+      const client = new SecretsManagerClient({});
       const command = new GetSecretValueCommand({
-        SecretId: 'dev/perfect-stack-demo',
+        SecretId: passwordProperty,
       });
       const response = await client.send(command);
       const secret = JSON.parse(response.SecretString);
-      databasePassword = secret['perfect-stack-demo-db'];
+      databasePassword = secret[passwordKey];
     } else {
-      databasePassword = databasePasswordProperty;
+      databasePassword = passwordProperty;
     }
   } else {
     throw new Error('Database properties have not been initialised');
@@ -53,7 +51,7 @@ export const loadOrm = async (configService: ConfigService) => {
     port: databasePort,
     username: databaseUser,
     password: databasePassword,
-    database: 'perfect-stack-demo-db',
+    database: databaseName,
     logQueryParameters: false,
   });
   // sequelize.addModels([]);

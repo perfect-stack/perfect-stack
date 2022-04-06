@@ -9,7 +9,6 @@ import {MyStackProps} from '../bin/demo-aws-cdk';
  * This scripts depends on the following things being setup prior to running it;
  *  - Database
  *  - Secret that contains the database password
- *  - API Gateway Certificate (because Gateway is global and certificate needs to be created in a different region)
  */
 export class DemoAwsServerStack extends Stack {
   constructor(scope: Construct, id: string, props: MyStackProps) {
