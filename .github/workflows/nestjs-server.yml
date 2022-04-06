@@ -32,6 +32,7 @@ jobs:
       - name: get version
         working-directory: ./nestjs-server
         run: |
+          npm --version
           export NPM_PKG_VERSION=$(npm pkg get version | sed 's/"//g')
           echo "TAG_NAME=nestjs-server-$NPM_PKG_VERSION"
           echo "TAG_NAME=nestjs-server-$NPM_PKG_VERSION" >> $GITHUB_ENV

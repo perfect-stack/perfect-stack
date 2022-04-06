@@ -10,7 +10,7 @@ export class DemoAwsServerStack extends Stack {
     super(scope, id, props);
 
     const repo = cdk.aws_ecr.Repository.fromRepositoryName(this, 'demo-aws-server-repo', 'demo-aws-server');
-    const dockerImageFunction = new cdk.aws_lambda.DockerImageFunction(this, 'NestJS_ProxyFunction', {
+    const dockerImageFunction = new cdk.aws_lambda.DockerImageFunction(this, `${props.serverEnvMap.APP_NAME_PREFIX}ProxyFunction`, {
       environment: props.serverEnvMap as any,
       code: cdk.aws_lambda.DockerImageCode.fromEcr(repo, {
         tag: props.serverEnvMap.SERVER_RELEASE

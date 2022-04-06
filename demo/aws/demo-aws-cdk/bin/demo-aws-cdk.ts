@@ -13,6 +13,7 @@ export interface ClientEnvMap {
 
 export interface ServerEnvMap {
     SERVER_RELEASE: string;
+    APP_NAME_PREFIX: string;
     DATABASE_HOST: string;
     DATABASE_PORT: number;
     DATABASE_USER: string;
