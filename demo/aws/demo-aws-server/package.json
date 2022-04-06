@@ -1,6 +1,6 @@
 {
   "name": "@perfect-stack/demo-aws-server",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Demo of server on AWS",
   "main": "index.js",
   "scripts": {
