@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "NPM_TOKEN = ${NPM_TOKEN:0:4}***"
-
 aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 100150877581.dkr.ecr.ap-southeast-2.amazonaws.com
 #docker build --build-arg NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN} --platform linux/amd64 -t demo-aws-server .
 docker build --build-arg NPM_TOKEN=${NPM_TOKEN} --platform linux/amd64 -t demo-aws-server .

@@ -6,14 +6,16 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { FileRepositoryInterface } from './file-repository.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class S3FileRepository implements FileRepositoryInterface {
-  static readonly BUCKET_NAME = 'perfect-stack-demo-meta-s3';
+  readonly BUCKET_NAME;
+  readonly client = new S3Client({});
 
-  client = new S3Client({
-    region: 'ap-southeast-2',
-  });
+  constructor(configService: ConfigService) {
+    this.BUCKET_NAME = configService.get('S3_META_BUCKET');
+  }
 
   async listFiles(dir: string): Promise<string[]> {
     if (!dir.endsWith('/')) {
@@ -21,7 +23,7 @@ export class S3FileRepository implements FileRepositoryInterface {
     }
 
     const command = new ListObjectsCommand({
-      Bucket: S3FileRepository.BUCKET_NAME,
+      Bucket: this.BUCKET_NAME,
     });
 
     const response = await this.client.send(command);
@@ -45,7 +47,7 @@ export class S3FileRepository implements FileRepositoryInterface {
   async readFile(filename: string): Promise<string> {
     const data = await this.client.send(
       new GetObjectCommand({
-        Bucket: S3FileRepository.BUCKET_NAME,
+        Bucket: this.BUCKET_NAME,
         Key: filename,
       }),
     );
@@ -56,7 +58,7 @@ export class S3FileRepository implements FileRepositoryInterface {
   async writeFile(filename: string, content: string): Promise<void> {
     const response = await this.client.send(
       new PutObjectCommand({
-        Bucket: S3FileRepository.BUCKET_NAME,
+        Bucket: this.BUCKET_NAME,
         Key: filename,
         Body: content,
       }),
