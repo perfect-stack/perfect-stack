@@ -18,6 +18,11 @@ export interface ServerEnvMap {
     DATABASE_PORT: number;
     DATABASE_USER: string;
     DATABASE_PASSWORD: string;
+    BASE_DOMAIN_NAME: string;
+    HOSTED_ZONE_ID: string;
+    API_DOMAIN_PREFIX: string;
+    META_BUCKET_NAME: string;
+    ECR_REPOSITORY_NAME: string;
 }
 
 export interface MyStackProps extends cdk.StackProps {

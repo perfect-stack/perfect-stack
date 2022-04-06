@@ -5,18 +5,26 @@ import {Effect} from 'aws-cdk-lib/aws-iam';
 import {MyStackProps} from '../bin/demo-aws-cdk';
 
 
+/**
+ * This scripts depends on the following things being setup prior to running it;
+ *  - Database
+ *  - Secret that contains the database password
+ *  - API Gateway Certificate (because Gateway is global and certificate needs to be created in a different region)
+ */
 export class DemoAwsServerStack extends Stack {
   constructor(scope: Construct, id: string, props: MyStackProps) {
     super(scope, id, props);
 
-    const repo = cdk.aws_ecr.Repository.fromRepositoryName(this, 'demo-aws-server-repo', 'demo-aws-server');
-    const dockerImageFunction = new cdk.aws_lambda.DockerImageFunction(this, `${props.serverEnvMap.APP_NAME_PREFIX}ProxyFunction`, {
+    const lambdaFunctionName = props.serverEnvMap.APP_NAME_PREFIX + 'ProxyFunction';
+
+    const repo = cdk.aws_ecr.Repository.fromRepositoryName(this, props.serverEnvMap.ECR_REPOSITORY_NAME, props.serverEnvMap.ECR_REPOSITORY_NAME);
+    const dockerImageFunction = new cdk.aws_lambda.DockerImageFunction(this, lambdaFunctionName, {
       environment: props.serverEnvMap as any,
       code: cdk.aws_lambda.DockerImageCode.fromEcr(repo, {
         tag: props.serverEnvMap.SERVER_RELEASE
       }),
       timeout: Duration.seconds(30),
-      functionName: 'ProxyFunction',
+      functionName: lambdaFunctionName,
     });
 
     if(dockerImageFunction.role) {
@@ -29,11 +37,13 @@ export class DemoAwsServerStack extends Stack {
         }));
       }
 
+      const metaBucketS3Arn = 'arn:aws:s3:::' + props.serverEnvMap.META_BUCKET_NAME;
+
       dockerImageFunction.addToRolePolicy(new cdk.aws_iam.PolicyStatement({
         effect: Effect.ALLOW,
         resources: [
-          'arn:aws:s3:::perfect-stack-demo-meta-s3',
-          'arn:aws:s3:::perfect-stack-demo-meta-s3/*'
+          metaBucketS3Arn,
+          metaBucketS3Arn + '/*'
         ],
         actions: [
           's3:DeleteObject',
@@ -46,22 +56,24 @@ export class DemoAwsServerStack extends Stack {
 
     // Lookup the zone (assumes this exists already)
     const hostedZone = cdk.aws_route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
-      hostedZoneId: 'ZW901XGFTH3BW',
-      zoneName: 'base-stack.net'
+      hostedZoneId: props.serverEnvMap.HOSTED_ZONE_ID,
+      zoneName: props.serverEnvMap.BASE_DOMAIN_NAME
     });
+
+    const apiDomainName = props.serverEnvMap.API_DOMAIN_PREFIX + '.' + props.serverEnvMap.BASE_DOMAIN_NAME;
 
     // Create a certificate before we have the DNS records setup, but that's ok
     const apiCertificate = new cdk.aws_certificatemanager.Certificate(this, 'ApiCertificate', {
-      domainName: 'api2.base-stack.net',
+      domainName: apiDomainName,
       validation: cdk.aws_certificatemanager.CertificateValidation.fromDns(hostedZone)
     });
 
     // Defines an API Gateway REST API resource backed by our lambda function and link it to both the
     // domain name and the certificate
-    const api = new cdk.aws_apigateway.LambdaRestApi(this, 'Endpoint', {
+    const api = new cdk.aws_apigateway.LambdaRestApi(this, props.serverEnvMap.APP_NAME_PREFIX + 'Endpoint', {
       handler: dockerImageFunction,
       domainName: {
-        domainName: 'api2.base-stack.net',
+        domainName: apiDomainName,
         certificate: apiCertificate,
       }
     });
@@ -70,7 +82,7 @@ export class DemoAwsServerStack extends Stack {
     // recordName is the "short" part of the name and not the whole thing.
     const route53ARecord = new cdk.aws_route53.ARecord(this, 'Route53ARecord', {
       zone: hostedZone,
-      recordName: 'api2',
+      recordName: props.serverEnvMap.API_DOMAIN_PREFIX,
       target: cdk.aws_route53.RecordTarget.fromAlias(new cdk.aws_route53_targets.ApiGateway(api))
     });
   }
