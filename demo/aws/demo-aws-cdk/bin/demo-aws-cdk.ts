@@ -9,6 +9,9 @@ import * as fs from 'fs';
 export interface ClientEnvMap {
     CLIENT_RELEASE: string;
     API_URL: string;
+    CLOUD_FRONT_CERTIFICATE: string;
+    S3_RELEASE_BUCKET: string;
+    APP_DOMAIN_PREFIX: string
 }
 
 export interface ServerEnvMap {

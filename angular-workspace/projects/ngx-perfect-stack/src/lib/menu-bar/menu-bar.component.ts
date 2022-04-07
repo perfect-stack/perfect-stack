@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {AuthenticationService} from '../authentication/authentication.service';
 import {MetaMenuService} from '../meta/menu/meta-menu-service/meta-menu.service';
 
@@ -8,6 +8,9 @@ import {MetaMenuService} from '../meta/menu/meta-menu-service/meta-menu.service'
   styleUrls: ['./menu-bar.component.css']
 })
 export class MenuBarComponent implements OnInit {
+
+  @Input()
+  applicationName = 'App-Name-Here';
 
   public isMenuCollapsed = true;
 

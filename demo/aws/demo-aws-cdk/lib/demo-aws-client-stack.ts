@@ -9,9 +9,11 @@ export class DemoAwsClientStack extends Stack {
     constructor(scope: Construct, id: string, props: MyStackProps) {
         super(scope, id, props);
 
-        const releaseBucket = cdk.aws_s3.Bucket.fromBucketName(this, 'ReleaseBucket', 'demo-aws-client-release');
+        const releaseBucket = cdk.aws_s3.Bucket.fromBucketName(this, 'ReleaseBucket', props.clientEnvMap.S3_RELEASE_BUCKET);
         const origin = new cdk.aws_cloudfront_origins.S3Origin(releaseBucket, {originPath: props.clientEnvMap.CLIENT_RELEASE});
-        const certificate = cdk.aws_certificatemanager.Certificate.fromCertificateArn(this, 'Certificate', 'arn:aws:acm:us-east-1:100150877581:certificate/813ee628-7e7a-4838-8eb8-7cbc2daa53c0');
+        const certificate = cdk.aws_certificatemanager.Certificate.fromCertificateArn(this, 'Certificate', props.clientEnvMap.CLOUD_FRONT_CERTIFICATE);
+
+        const webAppDomainName = props.clientEnvMap.APP_DOMAIN_PREFIX + '.' + props.serverEnvMap.BASE_DOMAIN_NAME;
 
         const distribution = new cdk.aws_cloudfront.Distribution(this, 'MyCloudFrontDist', {
             defaultBehavior: {
@@ -23,7 +25,7 @@ export class DemoAwsClientStack extends Stack {
                 {httpStatus: 403, responseHttpStatus: 200, responsePagePath: '/index.html'},
                 {httpStatus: 404, responseHttpStatus: 200, responsePagePath: '/index.html'}
             ],
-            domainNames: ['demo2.base-stack.net'],
+            domainNames: [webAppDomainName],
             certificate: certificate,
         });
 
@@ -38,12 +40,12 @@ export class DemoAwsClientStack extends Stack {
         });
 
         const hostedZone = cdk.aws_route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
-            hostedZoneId: 'ZW901XGFTH3BW',
-            zoneName: 'base-stack.net'
+            hostedZoneId: props.serverEnvMap.HOSTED_ZONE_ID,
+            zoneName: props.serverEnvMap.BASE_DOMAIN_NAME
         });
 
         const cname = new cdk.aws_route53.CnameRecord(this, 'Cname', {
-            recordName: 'demo2',
+            recordName: props.clientEnvMap.APP_DOMAIN_PREFIX,
             domainName: distribution.domainName,
             zone: hostedZone,
         });

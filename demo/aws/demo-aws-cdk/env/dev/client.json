@@ -1,4 +1,7 @@
 {
   "CLIENT_RELEASE": "1.0.11",
-  "API_URL": "https://api2.base-stack.net"
+  "API_URL": "https://api2.base-stack.net",
+  "CLOUD_FRONT_CERTIFICATE": "arn:aws:acm:us-east-1:100150877581:certificate/813ee628-7e7a-4838-8eb8-7cbc2daa53c0",
+  "S3_RELEASE_BUCKET": "demo-aws-client-release",
+  "APP_DOMAIN_PREFIX": "demo2"
 }
