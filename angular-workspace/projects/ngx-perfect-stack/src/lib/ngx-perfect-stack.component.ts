@@ -9,7 +9,7 @@ import {Component, Input, OnInit} from '@angular/core';
 export class NgxPerfectStackComponent implements OnInit {
 
   @Input()
-  applicationName = 'Perfect-Stack';
+  applicationName: string;
 
   constructor() { }
 
