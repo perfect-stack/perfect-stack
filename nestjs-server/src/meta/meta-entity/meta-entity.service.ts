@@ -24,13 +24,12 @@ export class MetaEntityService {
   ) {}
 
   async findAll(): Promise<MetaEntity[]> {
-    console.log('About to list all files');
     const resultList: MetaEntity[] = [];
     const fileNames = await this.fileRepositoryService.listFiles(
       MetaEntityService.META_ENTITY_DIR,
     );
 
-    console.log(`Found: ${fileNames}`);
+    this.logger.log(`Found meta-data files: ${fileNames}`);
 
     if (fileNames && fileNames.length > 0) {
       for (const nextName of fileNames) {
@@ -193,7 +192,6 @@ export class MetaEntityService {
 
           switch (nextMetaAttribute.type) {
             case AttributeType.OneToMany:
-              console.log(`Adding ${nextMetaAttribute.name}`);
               sourceModel.hasMany(targetModel, {
                 as: nextMetaAttribute.name,
                 onDelete: 'CASCADE',
