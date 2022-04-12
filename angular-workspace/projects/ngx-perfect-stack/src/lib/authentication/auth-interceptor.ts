@@ -1,10 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {getAuth} from 'firebase/auth';
-import {from, switchMap} from 'rxjs';
+import {switchMap} from 'rxjs';
+import {AuthenticationService} from './authentication.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+
+  constructor(protected readonly authenticationService: AuthenticationService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
 
@@ -14,11 +16,8 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    const auth = getAuth();
-    if(auth.currentUser) {
-      const obs = from(auth.currentUser.getIdToken());
-      return obs.pipe(switchMap((token) => {
-
+    if(this.authenticationService.isLoggedIn && this.authenticationService.user) {
+      return this.authenticationService.user.getBearerToken().pipe(switchMap( (token) => {
         // Clone the request and replace the original headers with
         // cloned headers, updated with the authorization.
         const authReq = req.clone({

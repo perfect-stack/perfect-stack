@@ -74,6 +74,7 @@ import {
 } from './template/template-controller/template-options-panel/template-options-modal/template-options-modal.component';
 import { ChildTemplateFormEditorComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-form-editor/child-template-form-editor.component';
 import { ChildCellViewComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-form-editor/child-cell-view/child-cell-view.component';
+import { LoginCallbackComponent } from './authentication/login-callback/login-callback.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -88,6 +89,9 @@ const routes: Routes = [
 
   { path: 'meta/page/search', component: MetaPageSearchComponent, canActivate: [AuthGuard] },
   { path: 'meta/page/edit/:metaPageName', component: MetaPageEditComponent, canActivate: [AuthGuard] },
+
+  // No AuthGuard on these
+  { path: 'login-callback', component: LoginCallbackComponent},
 ];
 
 @NgModule({
@@ -137,6 +141,7 @@ const routes: Routes = [
     TemplateOptionsPanelComponent,
     ChildTemplateFormEditorComponent,
     ChildCellViewComponent,
+    LoginCallbackComponent,
   ],
   providers: [
     AuthenticationService,
