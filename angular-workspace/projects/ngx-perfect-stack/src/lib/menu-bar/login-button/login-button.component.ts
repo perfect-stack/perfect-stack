@@ -28,7 +28,8 @@ export class LoginButtonComponent implements OnInit {
         const durationLeft = Duration.between(ZonedDateTime.now(), this.authenticationService.expiryTime)
         let totalSeconds = durationLeft.seconds();
 
-        if(!this.showTimeLeft && totalSeconds < (3600 - 10)) {
+        // if(!this.showTimeLeft && totalSeconds < (3600 - 10)) {
+        if(!this.showTimeLeft && totalSeconds < (5 * 60)) {
           console.log('Starting warning sequence');
           this.showTimeLeft = true;
           this.warningModalRef = this.modalService.open(MessageDialogComponent);
@@ -38,7 +39,8 @@ export class LoginButtonComponent implements OnInit {
           console.log('Finished warning sequence');
         }
 
-        if(this.authenticationService.isLoggedIn && totalSeconds < (3600 - 30)) {
+        // if(this.authenticationService.isLoggedIn && totalSeconds < (3600 - 30)) {
+        if(this.authenticationService.isLoggedIn && totalSeconds < 30) {
           this.showTimeLeft = false;
           this.warningModalRef.close();
           this.authenticationService.sessionTimeout();
