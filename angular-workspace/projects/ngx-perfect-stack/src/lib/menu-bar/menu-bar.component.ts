@@ -12,7 +12,7 @@ export class MenuBarComponent implements OnInit {
   @Input()
   applicationName = 'App-Name-Here';
 
-  public isMenuCollapsed = true;
+  isMenuCollapsed = true;
 
   constructor(public readonly authenticationService: AuthenticationService,
               public readonly metaMenuService: MetaMenuService) {}
@@ -20,13 +20,4 @@ export class MenuBarComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onLogin() {
-    // TODO: this is going to need to change if there is no Person object to start with.
-    this.authenticationService.redirectUrl = '/data/Person/search';
-    this.authenticationService.login();
-  }
-
-  onLogout() {
-    this.authenticationService.logout();
-  }
 }

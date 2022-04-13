@@ -1,10 +1,12 @@
 import {Inject, Injectable} from '@angular/core';
-import { getAuth } from 'firebase/auth';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
 import {User} from './user/user';
 import {FirebaseUser} from './user/firebase-user';
 import {CognitoUser} from './user/cognito-user';
+import {BehaviorSubject, of, switchMap} from 'rxjs';
+import {nativeJs, ZonedDateTime} from '@js-joda/core';
+import jwt_decode from "jwt-decode";
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +23,9 @@ export class AuthenticationService {
 
   isLoggedIn = false;
   user: User;
+
+  loginExpiry$ = new BehaviorSubject<string>('');
+  expiryTime: ZonedDateTime | null = null;
 
   // store the URL so we can redirect after logging in
   private _redirectUrl: string | null = null;
@@ -51,8 +56,19 @@ export class AuthenticationService {
   }
 
   handleLoginResult(loginSuccessful: boolean): void {
+    console.log(`handleLoginResult: loginSuccessful = ${loginSuccessful}`)
     if(loginSuccessful) {
       this.isLoggedIn = true;
+
+      this.user.getBearerToken().pipe(switchMap(token => {
+        const decodedToken: any = jwt_decode(token);
+        this.expiryTime = ZonedDateTime.from(nativeJs(new Date(decodedToken.exp * 1000)));
+        return of('')
+      })).subscribe(() => {
+        // This subscription might be needed, otherwise the code above won't be executed?
+        console.log('Expiry time has been set');
+      });
+
       this.navigateToFirstPage();
     }
     else {
@@ -81,7 +97,17 @@ export class AuthenticationService {
       this.router.navigate(['/']).then(() => {
         console.log('Logout: completed');
       });
-    })
+    });
+  }
+
+  sessionTimeout() {
+    console.log('SessionTimout: started');
+    this.isLoggedIn = false;
+    this.user.logout().subscribe(() => {
+      this.router.navigate(['session-timeout']).then(() => {
+        console.log('SessionTimout: completed');
+      });
+    });
   }
 }
 

@@ -75,6 +75,9 @@ import {
 import { ChildTemplateFormEditorComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-form-editor/child-template-form-editor.component';
 import { ChildCellViewComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-form-editor/child-cell-view/child-cell-view.component';
 import { LoginCallbackComponent } from './authentication/login-callback/login-callback.component';
+import { SessionTimeOutComponent } from './authentication/session-time-out/session-time-out.component';
+import { MessageDialogComponent } from './utils/message-dialog/message-dialog.component';
+import { LoginButtonComponent } from './menu-bar/login-button/login-button.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -92,6 +95,7 @@ const routes: Routes = [
 
   // No AuthGuard on these
   { path: 'login-callback', component: LoginCallbackComponent},
+  { path: 'session-timeout', component: SessionTimeOutComponent}
 ];
 
 @NgModule({
@@ -142,6 +146,9 @@ const routes: Routes = [
     ChildTemplateFormEditorComponent,
     ChildCellViewComponent,
     LoginCallbackComponent,
+    SessionTimeOutComponent,
+    MessageDialogComponent,
+    LoginButtonComponent,
   ],
   providers: [
     AuthenticationService,
@@ -180,7 +187,8 @@ const routes: Routes = [
     ReactiveFormsModule,
   ],
   exports: [
-    NgxPerfectStackComponent
+    NgxPerfectStackComponent,
+    ToastsComponent,
   ]
 })
 export class NgxPerfectStackModule {}
