@@ -40,11 +40,11 @@ export class LayoutComponent implements OnInit {
 
 
 @Component({
-  selector: 'lib-new-table-layout',
-  templateUrl: './new-table-layout.component.html',
-  styleUrls: ['./new-table-layout.component.css']
+  selector: 'lib-table-layout',
+  templateUrl: './table-layout.component.html',
+  styleUrls: ['./table-layout.component.css']
 })
-export class NewTableLayoutComponent implements OnInit {
+export class TableLayoutComponent implements OnInit {
 
   @Input()
   mode: string | null;
@@ -80,11 +80,11 @@ export class NewTableLayoutComponent implements OnInit {
 }
 
 @Component({
-  selector: 'lib-new-form-layout',
-  templateUrl: './new-form-layout.component.html',
-  styleUrls: ['./new-form-layout.component.css']
+  selector: 'lib-form-layout',
+  templateUrl: './form-layout.component.html',
+  styleUrls: ['./form-layout.component.css']
 })
-export class NewFormLayoutComponent implements OnInit {
+export class FormLayoutComponent implements OnInit {
 
   @Input()
   mode: string | null;

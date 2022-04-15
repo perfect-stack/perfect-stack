@@ -68,8 +68,8 @@ import { ControllerComponent } from './data/controller/controller.component';
 import {
   CellComponent,
   LayoutComponent,
-  NewFormLayoutComponent, NewOneToManyControlComponent, NewOneToOneControlComponent,
-  NewTableLayoutComponent
+  FormLayoutComponent, NewOneToManyControlComponent, NewOneToOneControlComponent,
+  TableLayoutComponent
 } from './data/controller/layout/layout.component';
 import { NewTextFieldControlComponent } from './data/controller/layout/controls/new-text-field-control/new-text-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
@@ -142,8 +142,8 @@ const routes: Routes = [
     CellComponent,
     NewTextFieldControlComponent,
     NewOneToOneControlComponent,
-    NewFormLayoutComponent,
-    NewTableLayoutComponent,
+    FormLayoutComponent,
+    TableLayoutComponent,
     LabelComponent,
     NewOneToManyControlComponent,
   ],
