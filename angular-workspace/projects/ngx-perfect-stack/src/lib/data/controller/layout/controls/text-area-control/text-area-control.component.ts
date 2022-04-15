@@ -1,7 +1,7 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {MetaAttribute} from '../../../../domain/meta.entity';
-import {Cell} from '../../../../domain/meta.page';
+import {MetaAttribute} from '../../../../../domain/meta.entity';
+import {Cell} from '../../../../../domain/meta.page';
 
 @Component({
   selector: 'app-text-area-control',

@@ -3,8 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Item} from './typeahead.response';
 import {TypeaheadRequest} from './typeahead.request';
-import {MetaAttribute} from '../../../../domain/meta.entity';
-import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../ngx-perfect-stack-config';
+import {MetaAttribute} from '../../../../../domain/meta.entity';
+import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
 @Injectable({
   providedIn: 'root'

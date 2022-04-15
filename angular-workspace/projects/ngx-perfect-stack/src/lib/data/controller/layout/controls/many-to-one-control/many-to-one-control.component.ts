@@ -1,11 +1,11 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {MetaAttribute} from '../../../../domain/meta.entity';
+import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {catchError, debounceTime, distinctUntilChanged, Observable, of, OperatorFunction, switchMap, tap} from 'rxjs';
 import {TypeaheadService} from './typeahead.service';
 import {Item} from './typeahead.response';
 import {NgbTypeaheadSelectItemEvent} from '@ng-bootstrap/ng-bootstrap';
-import {DataService} from '../../../data-service/data.service';
+import {DataService} from '../../../../data-service/data.service';
 
 @Component({
   selector: 'app-many-to-one-control',

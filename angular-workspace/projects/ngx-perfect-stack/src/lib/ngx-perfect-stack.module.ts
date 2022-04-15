@@ -38,21 +38,21 @@ import {NgDragDropModule} from 'ng-drag-drop';
 import {CellContainerComponent} from './data/data-edit/form-controls/cell-container/cell-container.component';
 import {
   DatePickerControlComponent
-} from './data/data-edit/form-controls/date-picker-control/date-picker-control.component';
+} from './data/controller/layout/controls/date-picker-control/date-picker-control.component';
 import {
   ManyToOneControlComponent
-} from './data/data-edit/form-controls/many-to-one-control/many-to-one-control.component';
+} from './data/controller/layout/controls/many-to-one-control/many-to-one-control.component';
 import {
   OneToManyControlComponent
 } from './data/data-edit/form-controls/one-to-many-control/one-to-many-control.component';
 import {OneToOneControlComponent} from './data/data-edit/form-controls/one-to-one-control/one-to-one-control.component';
-import {SelectControlComponent} from './data/data-edit/form-controls/select-control/select-control.component';
-import {TextAreaControlComponent} from './data/data-edit/form-controls/text-area-control/text-area-control.component';
+import {SelectControlComponent} from './data/controller/layout/controls/select-control/select-control.component';
+import {TextAreaControlComponent} from './data/controller/layout/controls/text-area-control/text-area-control.component';
 import {
   TextFieldControlComponent
 } from './data/data-edit/form-controls/text-field-control/text-field-control.component';
 import {AuthInterceptor} from './authentication/auth-interceptor';
-import {CustomDateAdapterService} from './data/data-edit/form-controls/custom-date-adapter.service';
+import {CustomDateAdapterService} from './data/controller/layout/controls/date-picker-control/custom-date-adapter.service';
 import {TemplateTableEditorComponent} from './template/template-table-editor/template-table-editor.component';
 import {TableLayoutComponent} from './data/data-edit/table-layout/table-layout.component';
 import {FormComponent} from './data/data-edit/form/form.component';

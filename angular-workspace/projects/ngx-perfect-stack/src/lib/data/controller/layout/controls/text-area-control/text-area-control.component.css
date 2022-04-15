@@ -1,1 +1,5 @@
 @import "../../../../../library-styles.css";
+
+.html-output {
+  overflow: hidden;
+}

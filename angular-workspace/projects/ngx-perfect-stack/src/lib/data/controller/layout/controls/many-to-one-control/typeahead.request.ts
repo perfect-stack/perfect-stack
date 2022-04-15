@@ -1,4 +1,4 @@
-import {MetaAttribute} from '../../../../domain/meta.entity';
+import {MetaAttribute} from '../../../../../domain/meta.entity';
 
 export class TypeaheadRequest {
   metaEntityName: string;

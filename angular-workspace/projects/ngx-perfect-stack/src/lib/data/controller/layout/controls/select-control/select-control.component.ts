@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {MetaAttribute} from '../../../../domain/meta.entity';
-import {DataService} from '../../../data-service/data.service';
+import {MetaAttribute} from '../../../../../domain/meta.entity';
+import {DataService} from '../../../../data-service/data.service';
 import {Observable, of, switchMap} from 'rxjs';
-import {Entity} from '../../../../domain/entity';
+import {Entity} from '../../../../../domain/entity';
 
 @Component({
   selector: 'app-select-control',
