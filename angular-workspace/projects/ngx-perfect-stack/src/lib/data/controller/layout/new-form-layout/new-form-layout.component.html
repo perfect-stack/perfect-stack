@@ -1,0 +1,10 @@
+<ng-container *ngIf="cells$ | async as cells">
+  <div class="row" *ngFor="let row of cells">
+    <div [class]="getCSS(cell)" *ngFor="let cell of row">
+      <ng-container *ngIf="cell.attribute">
+        <lib-label [mode]="mode" [attribute]="cell.attribute"></lib-label>
+        <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,18 @@
+<ng-container *ngIf="mode && template && formGroup">
+  <ng-container [ngSwitch]="template.type">
+    <lib-new-form-layout
+      *ngSwitchCase="'form'"
+      [mode]="mode"
+      [template]="template"
+      [formGroup]="formGroup">
+    </lib-new-form-layout>
+
+    <lib-new-table-layout
+      *ngSwitchCase="'table'"
+      [mode]="mode"
+      [template]="template"
+      [formGroup]="formGroup"
+      [relationshipProperty]="relationshipProperty">
+    </lib-new-table-layout>
+  </ng-container>
+</ng-container>

@@ -78,6 +78,15 @@ import { LoginCallbackComponent } from './authentication/login-callback/login-ca
 import { SessionTimeOutComponent } from './authentication/session-time-out/session-time-out.component';
 import { MessageDialogComponent } from './utils/message-dialog/message-dialog.component';
 import { LoginButtonComponent } from './menu-bar/login-button/login-button.component';
+import { ControllerComponent } from './data/controller/controller.component';
+import { LayoutComponent } from './data/controller/layout/layout.component';
+import { CellComponent } from './data/controller/layout/cell/cell.component';
+import { NewTextFieldControlComponent } from './data/controller/layout/cell/control/new-text-field-control/new-text-field-control.component';
+import { NewOneToOneControlComponent } from './data/controller/layout/cell/control/new-one-to-one-control/new-one-to-one-control.component';
+import { NewFormLayoutComponent } from './data/controller/layout/new-form-layout/new-form-layout.component';
+import { NewTableLayoutComponent } from './data/controller/layout/new-table-layout/new-table-layout.component';
+import { LabelComponent } from './data/controller/layout/label/label.component';
+import { NewOneToManyControlComponent } from './data/controller/layout/cell/control/new-one-to-many-control/new-one-to-many-control.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -95,7 +104,10 @@ const routes: Routes = [
 
   // No AuthGuard on these
   { path: 'login-callback', component: LoginCallbackComponent},
-  { path: 'session-timeout', component: SessionTimeOutComponent}
+  { path: 'session-timeout', component: SessionTimeOutComponent},
+
+  // Just for Controller development purposes
+  { path: 'controller', component: ControllerComponent}
 ];
 
 @NgModule({
@@ -149,6 +161,15 @@ const routes: Routes = [
     SessionTimeOutComponent,
     MessageDialogComponent,
     LoginButtonComponent,
+    ControllerComponent,
+    LayoutComponent,
+    CellComponent,
+    NewTextFieldControlComponent,
+    NewOneToOneControlComponent,
+    NewFormLayoutComponent,
+    NewTableLayoutComponent,
+    LabelComponent,
+    NewOneToManyControlComponent,
   ],
   providers: [
     AuthenticationService,
