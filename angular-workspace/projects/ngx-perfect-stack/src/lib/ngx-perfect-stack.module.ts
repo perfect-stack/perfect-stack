@@ -35,28 +35,17 @@ import {ToastService} from './utils/toast.service';
 import {ValidationMessageComponent} from './utils/validation/validation-message/validation-message.component';
 import {ToastsComponent} from './utils/toasts/toasts.component';
 import {NgDragDropModule} from 'ng-drag-drop';
-import {CellContainerComponent} from './data/data-edit/form-controls/cell-container/cell-container.component';
 import {
   DatePickerControlComponent
 } from './data/controller/layout/controls/date-picker-control/date-picker-control.component';
 import {
   ManyToOneControlComponent
 } from './data/controller/layout/controls/many-to-one-control/many-to-one-control.component';
-import {
-  OneToManyControlComponent
-} from './data/data-edit/form-controls/one-to-many-control/one-to-many-control.component';
-import {OneToOneControlComponent} from './data/data-edit/form-controls/one-to-one-control/one-to-one-control.component';
 import {SelectControlComponent} from './data/controller/layout/controls/select-control/select-control.component';
 import {TextAreaControlComponent} from './data/controller/layout/controls/text-area-control/text-area-control.component';
-import {
-  TextFieldControlComponent
-} from './data/data-edit/form-controls/text-field-control/text-field-control.component';
 import {AuthInterceptor} from './authentication/auth-interceptor';
 import {CustomDateAdapterService} from './data/controller/layout/controls/date-picker-control/custom-date-adapter.service';
 import {TemplateTableEditorComponent} from './template/template-table-editor/template-table-editor.component';
-import {TableLayoutComponent} from './data/data-edit/table-layout/table-layout.component';
-import {FormComponent} from './data/data-edit/form/form.component';
-import {FormLayoutComponent} from './data/data-edit/form-layout/form-layout.component';
 import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
 import {DataSearchEditComponent} from './data/data-search-edit/data-search-edit.component';
 import {RowViewComponent} from './data/data-search-edit/row-view/row-view.component';
@@ -64,8 +53,6 @@ import {RowEditComponent} from './data/data-search-edit/row-edit/row-edit.compon
 import {DataSearchComponent} from './data/data-search/data-search.component';
 import {DataEditComponent} from './data/data-edit/data-edit.component';
 import {LandingComponent} from './landing/landing.component';
-import { ChildFormLayoutComponent } from './data/data-edit/form-controls/one-to-one-control/child-form-layout/child-form-layout.component';
-import { ChildCellContainerComponent } from './data/data-edit/form-controls/one-to-one-control/child-form-layout/child-cell-container/child-cell-container.component';
 import { ChildTemplateControllerComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-controller.component';
 import { TemplateOptionsPanelComponent } from './template/template-controller/template-options-panel/template-options-panel.component';
 import {
@@ -132,25 +119,16 @@ const routes: Routes = [
     AttributeDeleteDialogComponent,
     ValidationMessageComponent,
     ToastsComponent,
-    CellContainerComponent,
     DatePickerControlComponent,
     ManyToOneControlComponent,
-    OneToManyControlComponent,
-    OneToOneControlComponent,
     SelectControlComponent,
     TextAreaControlComponent,
-    TextFieldControlComponent,
-    TableLayoutComponent,
-    FormComponent,
-    FormLayoutComponent,
     DataSearchEditComponent,
     RowViewComponent,
     RowEditComponent,
     DataSearchComponent,
     DataEditComponent,
     LandingComponent,
-    ChildFormLayoutComponent,
-    ChildCellContainerComponent,
     ChildTemplateControllerComponent,
     TemplateOptionsPanelComponent,
     ChildTemplateFormEditorComponent,

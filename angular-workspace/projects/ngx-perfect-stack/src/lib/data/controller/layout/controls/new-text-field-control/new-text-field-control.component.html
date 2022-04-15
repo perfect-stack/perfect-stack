@@ -1,3 +1,8 @@
 <div class="input-group" [formGroup]="formGroup">
-  <input class="form-control" type="text" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
+  <ng-container *ngIf="isReadOnly()">
+    <input class="form-control" type="text" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
+  </ng-container>
+  <ng-container *ngIf="!isReadOnly()">
+    <input class="form-control" type="text" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
+  </ng-container>
 </div>

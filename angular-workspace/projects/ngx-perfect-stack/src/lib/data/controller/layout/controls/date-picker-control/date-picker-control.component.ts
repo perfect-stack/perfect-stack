@@ -13,7 +13,7 @@ export class DatePickerControlComponent implements OnInit {
   formGroup: FormGroup;
 
   @Input()
-  attribute: MetaAttribute;
+  name: string;
 
   @Input()
   mode: string | null;

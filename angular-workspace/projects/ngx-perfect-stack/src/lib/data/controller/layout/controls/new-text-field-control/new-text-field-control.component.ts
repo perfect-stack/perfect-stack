@@ -17,12 +17,15 @@ export class NewTextFieldControlComponent implements OnInit {
   @Input()
   formGroup: FormGroup;
 
+  myReadOnly: boolean;
+
   constructor() { }
 
   ngOnInit(): void {
+    this.myReadOnly = this.mode === 'view';
   }
 
   isReadOnly() {
-    return this.mode === 'view' ? true : null;
+    return this.mode === 'view' ? true : false;
   }
 }

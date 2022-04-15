@@ -9,7 +9,7 @@
 
           <div [ngSwitch]="attribute.type">
             <ng-container *ngSwitchCase="'Date'">
-              <app-date-picker-control [formGroup]="entityForm" [attribute]="attribute"></app-date-picker-control>
+              <app-date-picker-control [formGroup]="entityForm" [name]="attribute.name"></app-date-picker-control>
             </ng-container>
 
             <ng-container *ngSwitchCase="['Text', 'Html'].includes(attribute.type) ? attribute.type : ''">
@@ -19,7 +19,7 @@
                 </ng-container>
 
                 <ng-container *ngSwitchDefault>
-                  <app-text-field-control [formGroup]="entityForm" [attribute]="attribute"></app-text-field-control>
+                  <lib-new-text-field-control [formGroup]="entityForm" [name]="attribute.name"></lib-new-text-field-control>
                 </ng-container>
               </ng-container>
             </ng-container>
