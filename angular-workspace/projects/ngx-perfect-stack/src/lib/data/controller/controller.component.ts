@@ -14,7 +14,7 @@ export class ControllerComponent implements OnInit {
   constructor(protected formService: FormService) { }
 
   ngOnInit(): void {
-    this.ctx$ = this.formService.loadFormContext('Project', 'edit', '24ff597d-728e-4208-8c67-b8f2724d6fcd');
+    this.ctx$ = this.formService.loadFormContext('Project', 'view', '24ff597d-728e-4208-8c67-b8f2724d6fcd');
   }
 
 }

@@ -79,14 +79,15 @@ import { SessionTimeOutComponent } from './authentication/session-time-out/sessi
 import { MessageDialogComponent } from './utils/message-dialog/message-dialog.component';
 import { LoginButtonComponent } from './menu-bar/login-button/login-button.component';
 import { ControllerComponent } from './data/controller/controller.component';
-import { LayoutComponent } from './data/controller/layout/layout.component';
-import { CellComponent } from './data/controller/layout/cell/cell.component';
-import { NewTextFieldControlComponent } from './data/controller/layout/cell/control/new-text-field-control/new-text-field-control.component';
-import { NewOneToOneControlComponent } from './data/controller/layout/cell/control/new-one-to-one-control/new-one-to-one-control.component';
-import { NewFormLayoutComponent } from './data/controller/layout/new-form-layout/new-form-layout.component';
-import { NewTableLayoutComponent } from './data/controller/layout/new-table-layout/new-table-layout.component';
-import { LabelComponent } from './data/controller/layout/label/label.component';
-import { NewOneToManyControlComponent } from './data/controller/layout/cell/control/new-one-to-many-control/new-one-to-many-control.component';
+import {
+  CellComponent,
+  LayoutComponent,
+  NewFormLayoutComponent, NewOneToManyControlComponent,
+  NewTableLayoutComponent
+} from './data/controller/layout/layout.component';
+import { NewTextFieldControlComponent } from './data/controller/layout/controls/new-text-field-control/new-text-field-control.component';
+import { NewOneToOneControlComponent } from './data/controller/layout/controls/new-one-to-one-control/new-one-to-one-control.component';
+import { LabelComponent } from './data/controller/layout/controls/label/label.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },

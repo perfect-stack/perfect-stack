@@ -1,8 +1,5 @@
 <ng-container *ngIf="ctx$ | async as ctx">
 
-  <p>controller works!</p>
-  <br>
-
   <ng-container *ngFor="let template of ctx.metaPage.templates">
     <lib-layout [mode]="ctx.mode" [template]="template" [formGroup]="ctx.entityForm"></lib-layout>
   </ng-container>

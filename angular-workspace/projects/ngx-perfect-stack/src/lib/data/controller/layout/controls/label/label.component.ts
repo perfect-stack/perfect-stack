@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MetaAttribute} from '../../../../domain/meta.entity';
+import {MetaAttribute} from '../../../../../domain/meta.entity';
 
 @Component({
   selector: 'lib-label',
