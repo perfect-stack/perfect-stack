@@ -2,11 +2,11 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'lib-new-text-field-control',
-  templateUrl: './new-text-field-control.component.html',
-  styleUrls: ['./new-text-field-control.component.css']
+  selector: 'lib-text-field-control',
+  templateUrl: './text-field-control.component.html',
+  styleUrls: ['./text-field-control.component.css']
 })
-export class NewTextFieldControlComponent implements OnInit {
+export class TextFieldControlComponent implements OnInit {
 
   @Input()
   mode: string | null;
@@ -17,12 +17,9 @@ export class NewTextFieldControlComponent implements OnInit {
   @Input()
   formGroup: FormGroup;
 
-  myReadOnly: boolean;
-
   constructor() { }
 
   ngOnInit(): void {
-    this.myReadOnly = this.mode === 'view';
   }
 
   isReadOnly() {

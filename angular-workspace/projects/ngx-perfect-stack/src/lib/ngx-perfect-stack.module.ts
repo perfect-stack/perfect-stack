@@ -68,10 +68,10 @@ import { ControllerComponent } from './data/controller/controller.component';
 import {
   CellComponent,
   LayoutComponent,
-  FormLayoutComponent, NewOneToManyControlComponent, NewOneToOneControlComponent,
+  FormLayoutComponent, OneToManyControlComponent, OneToOneControlComponent,
   TableLayoutComponent
 } from './data/controller/layout/layout.component';
-import { NewTextFieldControlComponent } from './data/controller/layout/controls/new-text-field-control/new-text-field-control.component';
+import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
 
 const routes: Routes = [
@@ -140,12 +140,12 @@ const routes: Routes = [
     ControllerComponent,
     LayoutComponent,
     CellComponent,
-    NewTextFieldControlComponent,
-    NewOneToOneControlComponent,
+    TextFieldControlComponent,
+    OneToOneControlComponent,
     FormLayoutComponent,
     TableLayoutComponent,
     LabelComponent,
-    NewOneToManyControlComponent,
+    OneToManyControlComponent,
   ],
   providers: [
     AuthenticationService,

@@ -12,17 +12,17 @@
         </ng-container>
 
         <ng-container *ngSwitchDefault>
-          <lib-new-text-field-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-new-text-field-control>
+          <lib-text-field-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-text-field-control>
         </ng-container>
       </ng-container>
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToMany'">
-      <lib-new-one-to-many-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-new-one-to-many-control>
+      <lib-one-to-many-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToOne'">
-      <lib-new-one-to-one-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-new-one-to-one-control>
+      <lib-one-to-one-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-one-control>
     </ng-container>
 
     <ng-container *ngSwitchCase="'ManyToOne'">

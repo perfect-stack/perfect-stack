@@ -27,9 +27,14 @@ export class DataEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.ctx$ = this.route.paramMap.pipe(switchMap(params => {
+
+      const oldMode = this.mode;
+
       this.metaName = params.get('metaName');
       this.mode = params.get('mode');
       this.entityId = this.toUuid(params.get('id'));
+
+      console.log(`mode changed from ${oldMode} to: ${this.mode}`);
 
       if(this.metaName && this.mode) {
         return this.formService.loadFormContext(this.metaName, this.mode, this.entityId);

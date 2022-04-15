@@ -139,11 +139,11 @@ export class CellComponent implements OnInit {
 
 
 @Component({
-  selector: 'lib-new-one-to-many-control',
-  templateUrl: './new-one-to-many-control.component.html',
-  styleUrls: ['./new-one-to-many-control.component.css']
+  selector: 'lib-one-to-many-control',
+  templateUrl: './one-to-many-control.component.html',
+  styleUrls: ['./one-to-many-control.component.css']
 })
-export class NewOneToManyControlComponent implements OnInit {
+export class OneToManyControlComponent implements OnInit {
 
   @Input()
   mode: string | null;
@@ -161,11 +161,11 @@ export class NewOneToManyControlComponent implements OnInit {
 }
 
 @Component({
-  selector: 'lib-new-one-to-one-control',
-  templateUrl: './new-one-to-one-control.component.html',
-  styleUrls: ['./new-one-to-one-control.component.css']
+  selector: 'lib-one-to-one-control',
+  templateUrl: './one-to-one-control.component.html',
+  styleUrls: ['./one-to-one-control.component.css']
 })
-export class NewOneToOneControlComponent implements OnInit {
+export class OneToOneControlComponent implements OnInit {
 
   @Input()
   mode: string | null;
