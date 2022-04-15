@@ -21,6 +21,10 @@
       <lib-new-one-to-many-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-new-one-to-many-control>
     </ng-container>
 
+    <ng-container *ngSwitchCase="'OneToOne'">
+      <lib-new-one-to-one-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-new-one-to-one-control>
+    </ng-container>
+
     <ng-container *ngSwitchCase="'ManyToOne'">
       <ng-container [ngSwitch]="cell.component">
         <ng-container *ngSwitchCase="'Select'">

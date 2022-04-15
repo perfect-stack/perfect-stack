@@ -1,7 +1,16 @@
-<ng-container *ngIf="ctx$ | async as ctx">
+<ng-container *ngIf="ctx">
 
-  <ng-container *ngFor="let template of ctx.metaPage.templates">
+  <form class="form" #form="ngForm" [formGroup]="ctx.entityForm"> <!-- (ngSubmit)="onSubmit()" -->
+
     <lib-layout [mode]="ctx.mode" [template]="template" [formGroup]="ctx.entityForm"></lib-layout>
-  </ng-container>
+
+    <div class="d-flex">
+      <ng-content select="[BottomLeftActions]"></ng-content>
+      <div class="flex-grow-1"></div>
+      <ng-content select="[BottomRightActions]"></ng-content>
+      <ng-content></ng-content>
+    </div>
+
+  </form>
 
 </ng-container>

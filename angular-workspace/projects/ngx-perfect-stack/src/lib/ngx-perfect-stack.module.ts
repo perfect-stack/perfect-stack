@@ -58,7 +58,6 @@ import {TableLayoutComponent} from './data/data-edit/table-layout/table-layout.c
 import {FormComponent} from './data/data-edit/form/form.component';
 import {FormLayoutComponent} from './data/data-edit/form-layout/form-layout.component';
 import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
-import {DataViewComponent} from './data/data-view/data-view.component';
 import {DataSearchEditComponent} from './data/data-search-edit/data-search-edit.component';
 import {RowViewComponent} from './data/data-search-edit/row-view/row-view.component';
 import {RowEditComponent} from './data/data-search-edit/row-edit/row-edit.component';
@@ -82,11 +81,10 @@ import { ControllerComponent } from './data/controller/controller.component';
 import {
   CellComponent,
   LayoutComponent,
-  NewFormLayoutComponent, NewOneToManyControlComponent,
+  NewFormLayoutComponent, NewOneToManyControlComponent, NewOneToOneControlComponent,
   NewTableLayoutComponent
 } from './data/controller/layout/layout.component';
 import { NewTextFieldControlComponent } from './data/controller/layout/controls/new-text-field-control/new-text-field-control.component';
-import { NewOneToOneControlComponent } from './data/controller/layout/controls/new-one-to-one-control/new-one-to-one-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
 
 const routes: Routes = [
@@ -145,7 +143,6 @@ const routes: Routes = [
     TableLayoutComponent,
     FormComponent,
     FormLayoutComponent,
-    DataViewComponent,
     DataSearchEditComponent,
     RowViewComponent,
     RowEditComponent,

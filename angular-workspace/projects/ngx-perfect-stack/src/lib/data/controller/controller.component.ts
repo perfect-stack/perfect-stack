@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import {FormContext, FormService} from '../data-edit/form-service/form.service';
-import {Observable} from 'rxjs';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormContext} from '../data-edit/form-service/form.service';
+import {Template} from '../../domain/meta.page';
 
 @Component({
   selector: 'lib-controller',
@@ -9,12 +9,15 @@ import {Observable} from 'rxjs';
 })
 export class ControllerComponent implements OnInit {
 
-  ctx$: Observable<FormContext>;
+  @Input()
+  ctx: FormContext;
 
-  constructor(protected formService: FormService) { }
+  @Input()
+  template: Template;
+
+  constructor() { }
 
   ngOnInit(): void {
-    this.ctx$ = this.formService.loadFormContext('Project', 'view', '24ff597d-728e-4208-8c67-b8f2724d6fcd');
   }
 
 }

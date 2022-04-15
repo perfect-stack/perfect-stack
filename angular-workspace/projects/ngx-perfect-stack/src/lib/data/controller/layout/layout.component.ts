@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Cell, Template} from '../../../domain/meta.page';
+import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
+import {Cell, Template, TemplateType} from '../../../domain/meta.page';
 import {FormArray, FormGroup} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {CellAttribute} from '../../../meta/page/meta-page-service/meta-page.service';
@@ -159,3 +159,64 @@ export class NewOneToManyControlComponent implements OnInit {
   ngOnInit(): void {
   }
 }
+
+@Component({
+  selector: 'lib-new-one-to-one-control',
+  templateUrl: './new-one-to-one-control.component.html',
+  styleUrls: ['./new-one-to-one-control.component.css']
+})
+export class NewOneToOneControlComponent implements OnInit {
+
+  @Input()
+  mode: string | null;
+
+  @Input()
+  cell: CellAttribute;
+
+  @Input()
+  formGroup: FormGroup;
+
+  childCells: CellAttribute[][];
+  childFormGroup: FormGroup;
+
+  constructor(protected readonly formService: FormService, protected readonly metaEntityService: MetaEntityService) { }
+
+  ngOnInit(): void {
+    if(this.cell && this.cell.attribute) {
+      const attribute = this.cell.attribute;
+      const childMetaEntityName = attribute.relationshipTarget;
+      const childTemplate = this.cell.template;
+      console.log(`OneToOneControlComponent: childMetaEntityName = ${childMetaEntityName}`);
+      console.log(`OneToOneControlComponent: childTemplate = ${JSON.stringify(this.cell.template)}`);
+      this.metaEntityService.findById(childMetaEntityName).subscribe(metaEntity => {
+        if(childTemplate) {
+          this.childCells = this.formService.toCellAttributeArray(childTemplate, metaEntity);
+          this.childFormGroup = this.formGroup.controls[attribute.name] as FormGroup;
+        }
+      });
+    }
+  }
+
+  isReadOnly() {
+    return this.mode === 'view' ? true : null;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['cell']) {
+      this.onCellChange(changes['cell'].currentValue);
+    }
+  }
+
+  onCellChange(cell: CellAttribute) {
+    if(!cell.template) {
+      if(cell && cell.attribute) {
+        const attribute = cell.attribute;
+        const template = new Template();
+        template.type = TemplateType.table;
+        template.metaEntityName = attribute.relationshipTarget;
+        cell.template = template;
+      }
+    }
+  }
+}
+
