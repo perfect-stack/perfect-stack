@@ -3,10 +3,10 @@
          [id]="name"
          [name]="name"
          [formControlName]="name"
-         [readonly]="isReadOnly()"
-         ngbDatepicker #d="ngbDatepicker">
+         [readonly]="isReadOnly"
+         ngbDatepicker #datePicker="ngbDatepicker">
   <div class="input-group-append">
-    <button class="form-control btn-outline-secondary btn p-0" readonly (click)="isReadOnly() ? null : d.toggle()" type="button">
+    <button class="form-control btn-outline-secondary btn p-0" readonly (click)="isReadOnly ? null : datePicker.toggle()" type="button">
       <span class="material-icons p-1">calendar_month</span>
     </button>
   </div>

@@ -5,6 +5,7 @@ import {Observable, of, switchMap} from 'rxjs';
 import {CellAttribute} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 import {FormService} from '../../data-edit/form-service/form.service';
+import {MetaEntity} from '../../../domain/meta.entity';
 
 
 // This file contains many Components because they have a circular dependency on the top-level component of
@@ -60,10 +61,17 @@ export class TableLayoutComponent implements OnInit {
 
   cells$: Observable<CellAttribute[][]>;
 
+  // we need metaEntityList because of how new rows are added to the table
+  metaEntityList: MetaEntity[];
+
   constructor(private metaEntityService: MetaEntityService,
               private formService: FormService) { }
 
   ngOnInit(): void {
+    this.metaEntityService.findAll().subscribe(metaEntityList => {
+      this.metaEntityList = metaEntityList;
+    });
+
     this.cells$ = this.metaEntityService.findById(this.template.metaEntityName).pipe(switchMap((metaEntity) => {
       const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
       return of(cells);
@@ -77,6 +85,41 @@ export class TableLayoutComponent implements OnInit {
   getFormGroupForRow(rowIdx: number) {
     return this.attributes.at(rowIdx) as FormGroup;
   }
+
+  // onAddRow() {
+  //   if(this.mode === 'edit') {
+  //     if(this.attributes === null) {
+  //       const metaEntity = this.metaEntityList.find( (a) => a.name === this.template.metaEntityName);
+  //       if(metaEntity) {
+  //         const attribute = metaEntity.attributes.find((a) => a.name === this.relationshipProperty);
+  //         if(attribute) {
+  //           const formControl = new FormArrayWithAttribute([]);
+  //           formControl.attribute = attribute;
+  //           this.formGroup.controls[attribute.name] = formControl;
+  //         }
+  //         else {
+  //           console.log(`Unable to find attribute ${this.relationshipProperty} in meta entity;`, metaEntity);
+  //         }
+  //       }
+  //       else {
+  //         console.log(`Unable to find metaEntity ${this.template.metaEntityName} in meta entity list;`, this.metaEntityList);
+  //       }
+  //     }
+  //
+  //     //const fga = ((this.formGroup as unknown) as any).attribute;
+  //     //console.log(`this.formGroup.attribute = ${fga}`);
+  //     const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaEntityList, null);
+  //     this.formGroup.controls[this.relationshipProperty] = formGroup;
+  //   }
+  // }
+
+  onAddRow() {
+    if(this.mode === 'edit') {
+      const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaEntityList, null);
+      this.attributes.push(formGroup);
+    }
+  }
+
 }
 
 @Component({
@@ -186,8 +229,6 @@ export class OneToOneControlComponent implements OnInit {
       const attribute = this.cell.attribute;
       const childMetaEntityName = attribute.relationshipTarget;
       const childTemplate = this.cell.template;
-      console.log(`OneToOneControlComponent: childMetaEntityName = ${childMetaEntityName}`);
-      console.log(`OneToOneControlComponent: childTemplate = ${JSON.stringify(this.cell.template)}`);
       this.metaEntityService.findById(childMetaEntityName).subscribe(metaEntity => {
         if(childTemplate) {
           this.childCells = this.formService.toCellAttributeArray(childTemplate, metaEntity);

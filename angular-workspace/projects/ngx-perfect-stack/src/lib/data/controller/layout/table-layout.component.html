@@ -33,6 +33,9 @@
     </tbody>
   </table>
 
+  <div class="d-flex" *ngIf="mode === 'edit'">
+    <button class="btn btn-outline-success me-2" (click)="onAddRow()">Add Row</button>
+  </div>
 </ng-container>
 
 

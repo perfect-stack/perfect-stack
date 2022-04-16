@@ -23,11 +23,11 @@ export class DatePickerControlComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  isReadOnly() {
+  get isReadOnly() {
     return this.mode === 'view' ? true : null;
   }
 
   get placeholder() {
-    return this.isReadOnly() ? '-' : 'yyy-mm-dd';
+    return this.isReadOnly ? '-' : 'yyy-mm-dd';
   }
 }
