@@ -86,40 +86,12 @@ export class TableLayoutComponent implements OnInit {
     return this.attributes.at(rowIdx) as FormGroup;
   }
 
-  // onAddRow() {
-  //   if(this.mode === 'edit') {
-  //     if(this.attributes === null) {
-  //       const metaEntity = this.metaEntityList.find( (a) => a.name === this.template.metaEntityName);
-  //       if(metaEntity) {
-  //         const attribute = metaEntity.attributes.find((a) => a.name === this.relationshipProperty);
-  //         if(attribute) {
-  //           const formControl = new FormArrayWithAttribute([]);
-  //           formControl.attribute = attribute;
-  //           this.formGroup.controls[attribute.name] = formControl;
-  //         }
-  //         else {
-  //           console.log(`Unable to find attribute ${this.relationshipProperty} in meta entity;`, metaEntity);
-  //         }
-  //       }
-  //       else {
-  //         console.log(`Unable to find metaEntity ${this.template.metaEntityName} in meta entity list;`, this.metaEntityList);
-  //       }
-  //     }
-  //
-  //     //const fga = ((this.formGroup as unknown) as any).attribute;
-  //     //console.log(`this.formGroup.attribute = ${fga}`);
-  //     const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaEntityList, null);
-  //     this.formGroup.controls[this.relationshipProperty] = formGroup;
-  //   }
-  // }
-
   onAddRow() {
     if(this.mode === 'edit') {
       const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaEntityList, null);
       this.attributes.push(formGroup);
     }
   }
-
 }
 
 @Component({
