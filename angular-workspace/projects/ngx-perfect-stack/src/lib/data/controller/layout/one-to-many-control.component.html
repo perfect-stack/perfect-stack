@@ -1,6 +1,6 @@
 <ng-container *ngIf="cell && cell.template">
   <div class="border-top">
-    <ng-container *ngIf="cell && cell.attribute && cell.attribute.relationshipTarget">
+    <ng-container *ngIf="cell && cell.attribute && cell.attribute.name">
       <lib-layout
         [mode]="mode"
         [template]="cell.template"
