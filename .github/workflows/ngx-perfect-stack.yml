@@ -1,4 +1,6 @@
 name: ngx-perfect-stack
+# Concurrency is limited to the main branch because of how two builds can't update their own version numbers at the same time
+concurrency: single_main_branch_build
 on:
   push:
     branches:
