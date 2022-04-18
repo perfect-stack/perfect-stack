@@ -1,0 +1,45 @@
+<ng-container *ngIf="formGroup && mode && cell && cell.attribute">
+  <ng-container [ngSwitch]="cell.attribute.type">
+
+    <ng-container *ngSwitchCase="'Date'">
+      <app-date-picker-control  [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></app-date-picker-control>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="['Text', 'Html'].includes(cell.attribute.type) ? cell.attribute.type : ''">
+      <ng-container [ngSwitch]="cell.component">
+        <ng-container *ngSwitchCase="'TextArea'">
+          <app-text-area-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></app-text-area-control>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <lib-text-field-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-text-field-control>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'OneToMany'">
+      <lib-one-to-many-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'OneToOne'">
+      <lib-one-to-one-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-one-control>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'ManyToOne'">
+      <ng-container [ngSwitch]="cell.component">
+        <ng-container *ngSwitchCase="'Select'">
+          <app-select-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></app-select-control>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <app-many-to-one-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></app-many-to-one-control>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchDefault>
+      ERROR: Missing or unknown attribute type of: "{{cell.attribute.type}}"
+    </ng-container>
+
+  </ng-container>
+</ng-container>

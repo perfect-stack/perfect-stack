@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {MetaPage} from '../../../domain/meta.page';
+import {MetaPage, Template} from '../../../domain/meta.page';
 import {MetaAttribute} from '../../../domain/meta.entity';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
 
@@ -11,6 +11,7 @@ export class CellAttribute {
   attributeName?: string;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   attribute?: MetaAttribute;
+  template?: Template;
 }
 
 @Injectable({

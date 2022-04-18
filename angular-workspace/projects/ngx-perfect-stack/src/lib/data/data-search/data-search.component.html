@@ -3,7 +3,7 @@
   <ng-container>
     <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
       <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
-      <app-form [ctx]="ctx">
+      <lib-controller [ctx]="ctx" [template]="ctx.metaPage.templates[0]">
         <ng-container BottomLeftActions>
           <button type="submit" class="btn btn-outline-success me-2" (click)="onNew(ctx)">New...</button>
         </ng-container>
@@ -11,7 +11,7 @@
           <button class="btn btn-outline-secondary me-2" (click)="onReset()">Reset</button>
           <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)">Search</button>
         </ng-container>
-      </app-form>
+      </lib-controller>
     </div>
   </ng-container>
 

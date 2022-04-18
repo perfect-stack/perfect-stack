@@ -1,8 +1,7 @@
-import {Component, Injectable, OnInit} from '@angular/core';
-import {Observable, switchMap, tap} from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {Observable, switchMap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
-import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {FormContext, FormService} from './form-service/form.service';
 import * as uuid from 'uuid';
 
@@ -85,29 +84,3 @@ export class DataEditComponent implements OnInit {
 
 }
 
-
-/**
- * This Service handles how the date is represented in scripts i.e. ngModel.
- */
-@Injectable()
-export class CustomAdapter extends NgbDateAdapter<string> {
-
-  readonly DELIMITER = '-';
-
-  fromModel(value: string | null): NgbDateStruct | null {
-    console.log(`CustomAdapter: fromModel(): "${value}"`);
-    if (value) {
-      let date = value.split(this.DELIMITER);
-      return {
-        year : parseInt(date[0], 10),
-        month : parseInt(date[1], 10),
-        day : parseInt(date[2], 10),
-      };
-    }
-    return null;
-  }
-
-  toModel(date: NgbDateStruct | null): string | null {
-    return date ? date.year + this.DELIMITER + date.month + this.DELIMITER + date.day : null;
-  }
-}

@@ -1,0 +1,41 @@
+<ng-container *ngIf="cells$ | async as cells">
+
+  <table class="table" [formGroup]="formGroup">
+    <thead>
+    <tr *ngIf="cells">
+      <th *ngFor="let nextCell of cells[0]">
+        <ng-container *ngIf="nextCell.attribute">
+          {{nextCell.attribute.label}}
+        </ng-container>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <ng-container *ngIf="cells && attributes && attributes.length > 0">
+      <ng-container [formArrayName]="relationshipProperty" *ngFor="let group of attributes.controls; let i=index">
+        <tr [formGroupName]="i">
+          <td *ngFor="let nextCell of cells[0]">
+            <ng-container *ngIf="nextCell.attribute">
+              <lib-cell  [mode]="mode" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)"></lib-cell>
+            </ng-container>
+          </td>
+        </tr>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="cells && attributes && attributes.length == 0">
+      <tr>
+        <td class="small" colspan="99">No items</td>
+      </tr>
+    </ng-container>
+
+    </tbody>
+  </table>
+
+  <div class="d-flex" *ngIf="mode === 'edit'">
+    <button class="btn btn-outline-success me-2" (click)="onAddRow()">Add Row</button>
+  </div>
+</ng-container>
+
+

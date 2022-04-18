@@ -1,17 +1,17 @@
 <td>
-  <app-text-field-control [formGroup]="formGroup" [attribute]="findAttribute('name')" [mode]="'edit'"></app-text-field-control>
+  <lib-text-field-control [mode]="'edit'" [name]="'name'" [formGroup]="formGroup" ></lib-text-field-control>
 </td>
 
 <td>
-  <app-text-field-control [formGroup]="formGroup" [attribute]="findAttribute('description')" [mode]="'edit'"></app-text-field-control>
+  <lib-text-field-control [mode]="'edit'" [name]="'description'" [formGroup]="formGroup" ></lib-text-field-control>
 </td>
 
 <td>
-  <app-date-picker-control [formGroup]="formGroup" [attribute]="findAttribute('start_date')" [mode]="'edit'"></app-date-picker-control>
+  <app-date-picker-control [mode]="'edit'" [name]="'start_date'" [formGroup]="formGroup"></app-date-picker-control>
 </td>
 
 <td>
-  <app-date-picker-control [formGroup]="formGroup" [attribute]="findAttribute('end_date')" [mode]="'edit'"></app-date-picker-control>
+  <app-date-picker-control [mode]="'edit'" [name]="'end_date'" [formGroup]="formGroup"></app-date-picker-control>
 </td>
 
 <td>

@@ -1,0 +1,12 @@
+<ng-container *ngIf="cell && cell.template">
+  <div class="border-top">
+    <ng-container *ngIf="cell && cell.attribute && cell.attribute.name">
+      <lib-layout
+        [mode]="mode"
+        [template]="cell.template"
+        [formGroup]="formGroup"
+        [relationshipProperty]="cell.attribute.name">
+      </lib-layout>
+    </ng-container>
+  </div>
+</ng-container>

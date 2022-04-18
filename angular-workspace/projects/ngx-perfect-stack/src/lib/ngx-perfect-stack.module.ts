@@ -35,38 +35,24 @@ import {ToastService} from './utils/toast.service';
 import {ValidationMessageComponent} from './utils/validation/validation-message/validation-message.component';
 import {ToastsComponent} from './utils/toasts/toasts.component';
 import {NgDragDropModule} from 'ng-drag-drop';
-import {CellContainerComponent} from './data/data-edit/form-controls/cell-container/cell-container.component';
 import {
   DatePickerControlComponent
-} from './data/data-edit/form-controls/date-picker-control/date-picker-control.component';
+} from './data/controller/layout/controls/date-picker-control/date-picker-control.component';
 import {
   ManyToOneControlComponent
-} from './data/data-edit/form-controls/many-to-one-control/many-to-one-control.component';
-import {
-  OneToManyControlComponent
-} from './data/data-edit/form-controls/one-to-many-control/one-to-many-control.component';
-import {OneToOneControlComponent} from './data/data-edit/form-controls/one-to-one-control/one-to-one-control.component';
-import {SelectControlComponent} from './data/data-edit/form-controls/select-control/select-control.component';
-import {TextAreaControlComponent} from './data/data-edit/form-controls/text-area-control/text-area-control.component';
-import {
-  TextFieldControlComponent
-} from './data/data-edit/form-controls/text-field-control/text-field-control.component';
+} from './data/controller/layout/controls/many-to-one-control/many-to-one-control.component';
+import {SelectControlComponent} from './data/controller/layout/controls/select-control/select-control.component';
+import {TextAreaControlComponent} from './data/controller/layout/controls/text-area-control/text-area-control.component';
 import {AuthInterceptor} from './authentication/auth-interceptor';
-import {CustomDateAdapterService} from './data/data-edit/form-controls/custom-date-adapter.service';
+import {CustomDateAdapterService} from './data/controller/layout/controls/date-picker-control/custom-date-adapter.service';
 import {TemplateTableEditorComponent} from './template/template-table-editor/template-table-editor.component';
-import {TableLayoutComponent} from './data/data-edit/table-layout/table-layout.component';
-import {FormComponent} from './data/data-edit/form/form.component';
-import {FormLayoutComponent} from './data/data-edit/form-layout/form-layout.component';
 import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
-import {DataViewComponent} from './data/data-view/data-view.component';
 import {DataSearchEditComponent} from './data/data-search-edit/data-search-edit.component';
 import {RowViewComponent} from './data/data-search-edit/row-view/row-view.component';
 import {RowEditComponent} from './data/data-search-edit/row-edit/row-edit.component';
 import {DataSearchComponent} from './data/data-search/data-search.component';
 import {DataEditComponent} from './data/data-edit/data-edit.component';
 import {LandingComponent} from './landing/landing.component';
-import { ChildFormLayoutComponent } from './data/data-edit/form-controls/one-to-one-control/child-form-layout/child-form-layout.component';
-import { ChildCellContainerComponent } from './data/data-edit/form-controls/one-to-one-control/child-form-layout/child-cell-container/child-cell-container.component';
 import { ChildTemplateControllerComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-controller.component';
 import { TemplateOptionsPanelComponent } from './template/template-controller/template-options-panel/template-options-panel.component';
 import {
@@ -78,6 +64,15 @@ import { LoginCallbackComponent } from './authentication/login-callback/login-ca
 import { SessionTimeOutComponent } from './authentication/session-time-out/session-time-out.component';
 import { MessageDialogComponent } from './utils/message-dialog/message-dialog.component';
 import { LoginButtonComponent } from './menu-bar/login-button/login-button.component';
+import { ControllerComponent } from './data/controller/controller.component';
+import {
+  CellComponent,
+  LayoutComponent,
+  FormLayoutComponent, OneToManyControlComponent, OneToOneControlComponent,
+  TableLayoutComponent
+} from './data/controller/layout/layout.component';
+import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
+import { LabelComponent } from './data/controller/layout/controls/label/label.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -95,7 +90,10 @@ const routes: Routes = [
 
   // No AuthGuard on these
   { path: 'login-callback', component: LoginCallbackComponent},
-  { path: 'session-timeout', component: SessionTimeOutComponent}
+  { path: 'session-timeout', component: SessionTimeOutComponent},
+
+  // Just for Controller development purposes
+  { path: 'controller', component: ControllerComponent}
 ];
 
 @NgModule({
@@ -121,26 +119,16 @@ const routes: Routes = [
     AttributeDeleteDialogComponent,
     ValidationMessageComponent,
     ToastsComponent,
-    CellContainerComponent,
     DatePickerControlComponent,
     ManyToOneControlComponent,
-    OneToManyControlComponent,
-    OneToOneControlComponent,
     SelectControlComponent,
     TextAreaControlComponent,
-    TextFieldControlComponent,
-    TableLayoutComponent,
-    FormComponent,
-    FormLayoutComponent,
-    DataViewComponent,
     DataSearchEditComponent,
     RowViewComponent,
     RowEditComponent,
     DataSearchComponent,
     DataEditComponent,
     LandingComponent,
-    ChildFormLayoutComponent,
-    ChildCellContainerComponent,
     ChildTemplateControllerComponent,
     TemplateOptionsPanelComponent,
     ChildTemplateFormEditorComponent,
@@ -149,6 +137,15 @@ const routes: Routes = [
     SessionTimeOutComponent,
     MessageDialogComponent,
     LoginButtonComponent,
+    ControllerComponent,
+    LayoutComponent,
+    CellComponent,
+    TextFieldControlComponent,
+    OneToOneControlComponent,
+    FormLayoutComponent,
+    TableLayoutComponent,
+    LabelComponent,
+    OneToManyControlComponent,
   ],
   providers: [
     AuthenticationService,
