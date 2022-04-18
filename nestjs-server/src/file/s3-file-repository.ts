@@ -4,6 +4,7 @@ import {
   ListObjectsCommand,
   GetObjectCommand,
   PutObjectCommand,
+  DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { FileRepositoryInterface } from './file-repository.interface';
 import { ConfigService } from '@nestjs/config';
@@ -77,4 +78,17 @@ export class S3FileRepository implements FileRepositoryInterface {
       stream.on('error', reject);
       stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
     });
+
+  async deleteFile(filename: string): Promise<void> {
+    return await this.client
+      .send(
+        new DeleteObjectCommand({
+          Bucket: this.BUCKET_NAME,
+          Key: filename,
+        }),
+      )
+      .then(() => {
+        return;
+      });
+  }
 }

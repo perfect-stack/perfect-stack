@@ -31,7 +31,6 @@ export class MetaPageController {
     return this.metaPageService.findOne(metaPageName);
   }
 
-  @PublicApi()
   @Post('/:metaPageName')
   create(
     @Param('metaPageName') metaPageName: string,
@@ -45,7 +44,6 @@ export class MetaPageController {
     return this.metaPageService.create(metaPage);
   }
 
-  @PublicApi()
   @Put('/:metaPageName')
   update(
     @Param('metaPageName') metaPageName: string,
@@ -59,9 +57,8 @@ export class MetaPageController {
     return this.metaPageService.update(metaPage);
   }
 
-  @PublicApi()
   @Delete('/:metaPageName')
-  archive(): Promise<void> {
-    return;
+  delete(@Param('metaPageName') metaPageName: string): Promise<void> {
+    return this.metaPageService.delete(metaPageName);
   }
 }

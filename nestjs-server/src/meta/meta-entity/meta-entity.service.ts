@@ -178,6 +178,13 @@ export class MetaEntityService {
       entityModelMap.set(nextMetaEntity.name, entityModel);
     }
 
+    // If alterDatabase then sync now so the tables are ready before we create their relationships
+    if (alterDatabase) {
+      for (const nextModel of entityModelMap.values()) {
+        await nextModel.sync({ alter: true });
+      }
+    }
+
     // second pass create the relationships
     for (const nextMetaEntity of databaseEntities) {
       for (const nextMetaAttribute of nextMetaEntity.attributes) {

@@ -40,4 +40,8 @@ export class MetaPageService {
     return this.http.put(`${this.stackConfig.apiUrl}/meta/page/${metaPage.name}`, metaPage);
   }
 
+  delete(metaPage: MetaPage) {
+    return this.http.delete(`${this.stackConfig.apiUrl}/meta/page/${metaPage.name}`);
+  }
+
 }

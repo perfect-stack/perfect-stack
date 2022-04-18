@@ -6,5 +6,11 @@
   <p>{{text}}</p>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-primary" ngbAutofocus (click)="activeModal.close('Close')">Ok</button>
+  <button
+    *ngFor="let action of actions"
+    type="button"
+    [ngClass]="action.style"
+    (click)="activeModal.close(action.name)">
+    {{action.name}}
+  </button>
 </div>

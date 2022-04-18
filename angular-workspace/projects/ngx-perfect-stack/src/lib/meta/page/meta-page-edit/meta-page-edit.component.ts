@@ -4,8 +4,9 @@ import {MetaPage, PageType, Template, TemplateType} from '../../../domain/meta.p
 import {ActivatedRoute, Router} from '@angular/router';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
 import {FormControl, FormGroup} from '@angular/forms';
-import {MetaEntity} from '../../../domain/meta.entity';
 import {MetaEntityService} from '../../entity/meta-entity-service/meta-entity.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
 
 @Component({
   selector: 'app-meta-page-edit',
@@ -17,8 +18,6 @@ export class MetaPageEditComponent implements OnInit {
   metaPageName: string | null;
   metaPage$: Observable<MetaPage>;
 
-  //public metaEntityOptions$: Observable<MetaEntity[]>;
-
   templates: Template[];
 
   metaPageForm = new FormGroup({
@@ -29,12 +28,11 @@ export class MetaPageEditComponent implements OnInit {
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
+              private modalService: NgbModal,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly metaPageService: MetaPageService) { }
 
   ngOnInit(): void {
-    //this.metaEntityOptions$ = this.metaEntityService.findAll();
-
     this.metaPage$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaPageName = params.get('metaPageName');
       const obs = this.metaPageName === '**NEW**' ? this.newMetaPage() : this.loadMetaPage();
@@ -85,12 +83,28 @@ export class MetaPageEditComponent implements OnInit {
     }
   }
 
-  onSubmit() {
-
-  }
-
   getPageTypeOptions() {
     return Object.keys(PageType);
   }
 
+  onDelete(metaPage: MetaPage) {
+    console.log(`Delete metaPage: ${metaPage.name}`);
+    const modalRef = this.modalService.open(MessageDialogComponent)
+    const modalComponent: MessageDialogComponent = modalRef.componentInstance;
+    modalComponent.title = 'Delete Meta Page Confirmation';
+    modalComponent.text = `This action will delete the Meta Page ${metaPage.name}. It cannot be undone.`;
+    modalComponent.actions = [
+      {name: 'Cancel', style: 'btn btn-outline-secondary'},
+      {name: 'Delete', style: 'btn btn-danger'},
+    ];
+
+    modalRef.closed.subscribe((closedResult) => {
+      console.log(`Message Dialog closedResult = ${closedResult}`);
+      if(closedResult === 'Delete') {
+        this.metaPageService.delete(metaPage).subscribe(() => {
+          this.onCancel();
+        });
+      }
+    });
+  }
 }

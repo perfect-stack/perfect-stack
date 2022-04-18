@@ -37,4 +37,8 @@ export class FileRepositoryService {
   async writeFile(filename: string, content: string): Promise<void> {
     return this.fileRepository.writeFile(filename, content);
   }
+
+  async deleteFile(filename: string): Promise<void> {
+    return this.fileRepository.deleteFile(filename);
+  }
 }

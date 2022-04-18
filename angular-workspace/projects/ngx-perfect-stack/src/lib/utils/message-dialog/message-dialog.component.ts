@@ -17,9 +17,19 @@ export class MessageDialogComponent implements OnInit {
   title = 'Message Title goes here';
   text = 'Message not defined.';
 
+  actions: Action[] = [{
+    name: 'Ok',
+    style: 'btn btn-outline-primary'
+  }];
+
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
   }
 
+}
+
+export interface Action {
+  name: string;
+  style: string;
 }

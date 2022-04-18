@@ -24,4 +24,8 @@ export class LocalFileRepository implements FileRepositoryInterface {
   async writeFile(filename: string, content: string): Promise<void> {
     return fs.writeFileSync(filename, content);
   }
+
+  async deleteFile(filename: string): Promise<void> {
+    return fs.unlinkSync(filename);
+  }
 }

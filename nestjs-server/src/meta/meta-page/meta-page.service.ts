@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { EntityResponse } from '../../domain/response/entity.response';
 import { MetaPage } from '../../domain/meta.page';
 import { FileRepositoryService } from '../../file/file-repository.service';
@@ -27,22 +27,18 @@ export class MetaPageService {
   }
 
   async findOne(metaPageName: string): Promise<MetaPage> {
-    const metaFileName =
-      MetaPageService.META_PAGE_DIR + '/' + this.toFileName(metaPageName);
-
     const metaPageFromFile = JSON.parse(
-      await this.fileRepositoryService.readFile(metaFileName),
+      await this.fileRepositoryService.readFile(
+        this.toMetaFileName(metaPageName),
+      ),
     );
 
     return Object.assign(new MetaPage(), metaPageFromFile);
   }
 
   async create(metaPage: MetaPage): Promise<void> {
-    const metaFileName =
-      MetaPageService.META_PAGE_DIR + '/' + this.toFileName(metaPage.name);
-
     await this.fileRepositoryService.writeFile(
-      metaFileName,
+      this.toMetaFileName(metaPage.name),
       JSON.stringify(metaPage, null, 2),
     );
 
@@ -50,18 +46,17 @@ export class MetaPageService {
   }
 
   async update(metaPage: MetaPage): Promise<EntityResponse> {
-    const metaFileName =
-      MetaPageService.META_PAGE_DIR + '/' + this.toFileName(metaPage.name);
-
     await this.fileRepositoryService.writeFile(
-      metaFileName,
+      this.toMetaFileName(metaPage.name),
       JSON.stringify(metaPage, null, 2),
     );
     return;
   }
 
-  archive(): Promise<void> {
-    return;
+  async delete(metaPageName: string): Promise<void> {
+    return this.fileRepositoryService.deleteFile(
+      this.toMetaFileName(metaPageName),
+    );
   }
 
   toMetaName(filename: string) {
@@ -72,7 +67,7 @@ export class MetaPageService {
     }
   }
 
-  toFileName(metaPageName: string) {
-    return metaPageName + '.json';
+  toMetaFileName(metaPageName: string) {
+    return MetaPageService.META_PAGE_DIR + '/' + metaPageName + '.json';
   }
 }

@@ -5,7 +5,7 @@
 
     <div class="row">
       <div class="col-4">
-        <form class="form" #form="ngForm" [formGroup]="metaPageForm" (ngSubmit)="onSubmit()">
+        <form class="form" #form="ngForm" [formGroup]="metaPageForm">
           <div class="form-group row">
             <label class="col-2" for="name">Name</label>
             <input class="col-10 form-control" type="text" id="name" formControlName="name">
@@ -31,6 +31,7 @@
     <div class="d-flex my-5">
       <button class="btn btn-outline-success" (click)="onAddTemplate()">Add Template</button>
       <div class="flex-grow-1"></div>
+      <button class="btn btn-danger me-2" (click)="onDelete(metaPage)">Delete</button>
       <button class="btn btn-outline-secondary me-2" (click)="onCancel()">Cancel</button>
       <button class="btn btn-primary" (click)="onSave()">Save</button>
     </div>
