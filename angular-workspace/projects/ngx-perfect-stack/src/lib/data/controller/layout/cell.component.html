@@ -5,7 +5,7 @@
       <app-date-picker-control  [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></app-date-picker-control>
     </ng-container>
 
-    <ng-container *ngSwitchCase="['Text', 'Html'].includes(cell.attribute.type) ? cell.attribute.type : ''">
+    <ng-container *ngSwitchCase="['Text', 'Html', 'Integer'].includes(cell.attribute.type) ? cell.attribute.type : ''">
       <ng-container [ngSwitch]="cell.component">
         <ng-container *ngSwitchCase="'TextArea'">
           <app-text-area-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></app-text-area-control>

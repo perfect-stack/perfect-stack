@@ -12,7 +12,7 @@
               <app-date-picker-control [formGroup]="entityForm" [name]="attribute.name"></app-date-picker-control>
             </ng-container>
 
-            <ng-container *ngSwitchCase="['Text', 'Html'].includes(attribute.type) ? attribute.type : ''">
+            <ng-container *ngSwitchCase="['Text', 'Html', 'Integer'].includes(attribute.type) ? attribute.type : ''">
               <ng-container [ngSwitch]="cell.component">
                 <ng-container *ngSwitchCase="'TextArea'">
                   <app-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>
