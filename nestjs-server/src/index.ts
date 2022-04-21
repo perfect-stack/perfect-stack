@@ -12,6 +12,9 @@ import { OrmModule } from './orm/orm.module';
 import { OrmService } from './orm/orm.service';
 import { TypeaheadService } from './typeahead/typeahead.service';
 import { TypeaheadModule } from './typeahead/typeahead.module';
+import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
+import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
+import { MetaPageModule } from './meta/meta-page/meta-page.module';
 
 export { AuthenticationModule, AuthenticationService, PublicApi, JwtAuthGuard };
 export { ClientConfigModule, ClientConfigService };
@@ -19,3 +22,7 @@ export { DataModule, DataService };
 export { FileRepositoryModule, FileRepositoryService };
 export { OrmModule, OrmService };
 export { TypeaheadModule, TypeaheadService };
+
+export { MetaEntityModule };
+export { MetaMenuModule };
+export { MetaPageModule };
