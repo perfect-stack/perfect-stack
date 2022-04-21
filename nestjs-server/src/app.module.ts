@@ -13,6 +13,7 @@ import { TypeaheadModule } from './typeahead/typeahead.module';
 import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
 import { MetaPageModule } from './meta/meta-page/meta-page.module';
+import { TypeaheadController } from './typeahead/typeahead.controller';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -29,6 +30,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
 
 @Module({
   imports: [
+    TypeaheadModule,
     AdminModule,
     AuthenticationModule,
     ClientConfigModule,
@@ -38,7 +40,6 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     MetaEntityModule,
     MetaPageModule,
     DataModule,
-    TypeaheadModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
