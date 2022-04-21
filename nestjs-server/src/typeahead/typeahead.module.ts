@@ -7,5 +7,6 @@ import { OrmModule } from '../orm/orm.module';
   controllers: [TypeaheadController],
   imports: [OrmModule],
   providers: [TypeaheadService],
+  exports: [TypeaheadService],
 })
 export class TypeaheadModule {}
