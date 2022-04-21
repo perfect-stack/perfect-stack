@@ -10,9 +10,12 @@ import { FileRepositoryModule } from './file/file-repository.module';
 import { FileRepositoryService } from './file/file-repository.service';
 import { OrmModule } from './orm/orm.module';
 import { OrmService } from './orm/orm.service';
+import { TypeaheadService } from './typeahead/typeahead.service';
+import { TypeaheadModule } from './typeahead/typeahead.module';
 
 export { AuthenticationModule, AuthenticationService, PublicApi, JwtAuthGuard };
 export { ClientConfigModule, ClientConfigService };
 export { DataModule, DataService };
 export { FileRepositoryModule, FileRepositoryService };
 export { OrmModule, OrmService };
+export { TypeaheadModule, TypeaheadService };
