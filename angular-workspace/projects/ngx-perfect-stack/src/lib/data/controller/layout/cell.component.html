@@ -37,6 +37,10 @@
       </ng-container>
     </ng-container>
 
+    <ng-container *ngSwitchCase="'OneToPoly'">
+      <lib-one-to-poly-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-poly-control>
+    </ng-container>
+
     <ng-container *ngSwitchDefault>
       ERROR: Missing or unknown attribute type of: "{{cell.attribute.type}}"
     </ng-container>

@@ -69,11 +69,13 @@ import {
   CellComponent,
   LayoutComponent,
   FormLayoutComponent, OneToManyControlComponent, OneToOneControlComponent,
-  TableLayoutComponent
+  TableLayoutComponent, CardLayoutComponent, OneToPolyControlComponent
 } from './data/controller/layout/layout.component';
 import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
 import {CacheInterceptor} from './utils/cache-interceptor';
+import { OneToPolyEditComponent } from './meta/entity/meta-entity-edit/one-to-poly-edit/one-to-poly-edit.component';
+import { CardItemDialogComponent } from './data/controller/layout/controls/card-item-dialog/card-item-dialog.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -147,6 +149,10 @@ const routes: Routes = [
     TableLayoutComponent,
     LabelComponent,
     OneToManyControlComponent,
+    CardLayoutComponent,
+    OneToPolyEditComponent,
+    OneToPolyControlComponent,
+    CardItemDialogComponent,
   ],
   providers: [
     AuthenticationService,

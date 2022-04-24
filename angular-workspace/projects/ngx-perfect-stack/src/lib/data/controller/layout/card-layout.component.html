@@ -1,0 +1,24 @@
+<ng-container *ngIf="metaEntityList">
+
+  <div class="mt-2" *ngFor="let nextItem of attributes.controls; let i=index">
+
+    <h5>{{getHeadingForRow(i)}}</h5>
+
+    <lib-form-layout
+      [mode]="mode"
+      [template]="getTemplateForRow(i)"
+      [formGroup]="getFormGroupForRow(i)">
+    </lib-form-layout>
+
+    <br>
+  </div>
+
+  <button class="btn btn-outline-success mt-2" (click)="onAddItem()">Add Item</button>
+
+  <!--<br>
+  <p>formGroup: {{formGroup.value | json}}</p>
+  <p>metaAttribute: {{ attributes.attribute | json}}</p>
+  <p>Got metaEntityList: {{metaEntityList.length}}</p>-->
+
+
+</ng-container>

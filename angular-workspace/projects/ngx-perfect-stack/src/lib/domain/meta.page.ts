@@ -18,6 +18,7 @@ export class Cell {
 export enum TemplateType {
   form = 'form',
   table = 'table',
+  card = 'card',
   map = 'map',
   chart = 'chart',
 }

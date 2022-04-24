@@ -1,23 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  Validators
-} from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {
-  MetaEntity,
   AttributeType,
-  VisibilityType,
-  EntityType,
   ComparisonOperator,
-  MetaAttribute
+  EntityType,
+  MetaAttribute,
+  MetaEntity,
+  VisibilityType
 } from '../../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
+import {OneToPolyEditComponent} from './one-to-poly-edit/one-to-poly-edit.component';
 
 @Component({
   selector: 'app-meta-entity-edit',
@@ -49,9 +43,27 @@ export class MetaEntityEditComponent implements OnInit {
     }));
 
     this.metaEntity$.subscribe((metaEntity) => {
-      for(let i = 0; i < metaEntity.attributes.length; i++) {
-        this.addBlankRow();
+      for(const metaAttribute of metaEntity.attributes) {
+        const formGroup = this.addBlankRow();
+        if(metaAttribute.type === AttributeType.OneToPoly) {
+          console.log(`Adding discriminator FG`);
+          const discriminatorFormGroup = this.fb.group({
+            discriminatorName: [''],
+            discriminatorType: [''],
+            entityMappingList: this.fb.array([]),
+          });
+
+          formGroup.addControl('discriminator', discriminatorFormGroup);
+          const entityMappingListFormArray = discriminatorFormGroup.controls['entityMappingList'] as FormArray;
+          if(metaAttribute && metaAttribute.discriminator && metaAttribute.discriminator.entityMappingList) {
+            const rowCountNeeded = metaAttribute.discriminator.entityMappingList.length;
+            for(let i = 0; i < rowCountNeeded; i++) {
+              entityMappingListFormArray.push(OneToPolyEditComponent.createTableRow(this.fb));
+            }
+          }
+        }
       }
+
       this.metaEntityForm.patchValue(metaEntity);
     });
 
@@ -66,8 +78,14 @@ export class MetaEntityEditComponent implements OnInit {
     return this.attributes.at(idx) as FormGroup;
   }
 
+  getDiscriminatorGroupAt(idx: number): FormGroup {
+    return this.getAttributeAt(idx).controls['discriminator'] as FormGroup;
+  }
+
   addBlankRow() {
-    this.attributes.push(this.createTableRow());
+    const formGroup = this.createTableRow();
+    this.attributes.push(formGroup);
+    return formGroup;
   }
 
   createTableRow(): FormGroup {
@@ -155,6 +173,12 @@ export class MetaEntityEditComponent implements OnInit {
     const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
     const type = rowFormGroup.controls['type'].value;
     return type === AttributeType.ManyToOne;
+  }
+
+  isOneToPoly(rowIdx: number) {
+    const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
+    const type = rowFormGroup.controls['type'].value;
+    return type === AttributeType.OneToPoly;
   }
 }
 

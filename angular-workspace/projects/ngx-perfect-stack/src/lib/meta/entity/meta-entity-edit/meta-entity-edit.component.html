@@ -54,6 +54,9 @@
                   <ng-container *ngIf="isRelationshipType(i)">
                     <app-relationship-type-edit [formGroup]="getAttributeAt(i)"></app-relationship-type-edit>
                   </ng-container>
+                  <ng-container *ngIf="isOneToPoly(i)">
+                    <lib-one-to-poly-edit [formGroup]="getDiscriminatorGroupAt(i)"></lib-one-to-poly-edit>
+                  </ng-container>
                 </ng-container>
               </td>
               <td>

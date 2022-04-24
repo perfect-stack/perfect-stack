@@ -14,5 +14,12 @@
       [formGroup]="formGroup"
       [relationshipProperty]="relationshipProperty">
     </lib-table-layout>
+
+    <lib-card-layout
+      *ngSwitchCase="'card'"
+      [mode]="mode"
+      [formGroup]="formGroup"
+      [relationshipProperty]="relationshipProperty">
+    </lib-card-layout>
   </ng-container>
 </ng-container>

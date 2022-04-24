@@ -138,6 +138,11 @@ export class FormService {
           }
         }
       }
+      else if(nextAttribute.type == AttributeType.OneToPoly) {
+        formControl = new FormArrayWithAttribute([]);
+
+        // TODO: more here iterating through the children and creating their Form Controls
+      }
       else if (nextAttribute.type === AttributeType.OneToOne) {
         const attributeCell = this.findCellForAttribute(nextAttribute, template);
         if(attributeCell) {
