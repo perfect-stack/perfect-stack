@@ -1,6 +1,6 @@
 {
   "name": "@perfect-stack/ngx-perfect-stack",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "author": "Richard Perfect",
   "license": "MIT",
   "peerDependencies": {
