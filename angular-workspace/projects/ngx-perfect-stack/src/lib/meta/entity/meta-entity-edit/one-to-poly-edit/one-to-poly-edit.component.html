@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-6">
         <label class="form-label">Discriminator type</label>
-        <select class="form-control" formControlName="discriminatorType" (ngModelChange)="onDiscriminatorTypeChange($event)">
+        <select class="form-select" formControlName="discriminatorType" (ngModelChange)="onDiscriminatorTypeChange($event)">
           <option *ngFor="let o of metaEntityOptions" [ngValue]="o.name">{{o.name}}</option>
         </select>
       </div>
@@ -27,13 +27,13 @@
         <tr [formGroupName]="i">
           <td>
             <ng-container *ngIf="discriminatorValueOptions$ | async as discriminatorValueOptions">
-              <select class="form-control" formControlName="discriminatorValue">
+              <select class="form-select" formControlName="discriminatorValue">
                 <option *ngFor="let o of discriminatorValueOptions.resultList" [ngValue]="o.name">{{o.name}}</option>
               </select>
             </ng-container>
           </td>
           <td>
-            <select class="form-control" formControlName="metaEntityName">
+            <select class="form-select" formControlName="metaEntityName">
               <option *ngFor="let o of metaEntityOptions" [ngValue]="o.name">{{o.name}}</option>
             </select>
           </td>

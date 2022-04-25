@@ -9,22 +9,22 @@
   <form *ngIf="template && metaEntityOptions$ | async as metaEntityOptions">
     <div class="form-group">
       <label class="me-2" for="metaEntityName">Entity</label>
-      <select class="form-control me-2" id="metaEntityName" name="metaEntityName" [ngModel]="getMetaEntity(template, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
+      <select class="form-select me-2" id="metaEntityName" name="metaEntityName" [ngModel]="getMetaEntity(template, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
         <option *ngFor="let o of metaEntityOptions" [ngValue]="o">{{o.name}}</option>
       </select>
 
       <label class="me-2" for="templateType">Type</label>
-      <select class="form-control" id="templateType" name="templateType" [(ngModel)]="template.type">
+      <select class="form-select" id="templateType" name="templateType" [(ngModel)]="template.type">
         <option *ngFor="let o of getTemplateTypeOptions()" [ngValue]="o">{{o}}</option>
       </select>
 
       <ng-container *ngIf="template.type === 'table'">
         <label class="me-2" for="orderByName">Order by</label>
-        <select class="form-control mb-1" id="orderByName" name="orderByName" [(ngModel)]="template.orderByName">
+        <select class="form-select mb-1" id="orderByName" name="orderByName" [(ngModel)]="template.orderByName">
           <option *ngFor="let o of getOrderByNameOptions()" [ngValue]="o">{{o}}</option>
         </select>
 
-        <select class="form-control" id="orderByDir" name="orderByDir" [(ngModel)]="template.orderByDir">
+        <select class="form-select" id="orderByDir" name="orderByDir" [(ngModel)]="template.orderByDir">
           <option *ngFor="let o of getOrderByDirOptions()" [ngValue]="o">{{o}}</option>
         </select>
       </ng-container>

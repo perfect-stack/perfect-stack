@@ -16,7 +16,7 @@
             <div class="row">
               <div class="col-3">Type</div>
               <div class="col-9">
-                <select class="form-control" formControlName="type">
+                <select class="form-select" formControlName="type">
                   <option *ngFor="let o of getEntityTypeOptions()" [ngValue]="o">{{o}}</option>
                 </select>
               </div>
@@ -47,7 +47,7 @@
               </td>
               <td><input class="form-control" type="text" formControlName="description"></td>
               <td>
-                <select class="form-control" formControlName="type">
+                <select class="form-select" formControlName="type">
                   <option *ngFor="let o of getAttributeTypeOptions()" [ngValue]="o">{{o}}</option>
                 </select>
                 <ng-container *ngIf="metaEntityOptions$ | async as metaEntityOptions">
@@ -60,12 +60,12 @@
                 </ng-container>
               </td>
               <td>
-                <select class="form-control" formControlName="visibility">
+                <select class="form-select" formControlName="visibility">
                   <option *ngFor="let o of getVisibilityTypeOptions()" [ngValue]="o">{{o}}</option>
                 </select>
               </td>
               <td>
-                <select class="form-control" formControlName="comparisonOperator">
+                <select class="form-select" formControlName="comparisonOperator">
                   <option *ngFor="let o of getComparisonOperatorOptions()" [ngValue]="o">{{o}}</option>
                 </select>
               </td>

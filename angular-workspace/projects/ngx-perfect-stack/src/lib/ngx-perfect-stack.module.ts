@@ -76,6 +76,7 @@ import { LabelComponent } from './data/controller/layout/controls/label/label.co
 import {CacheInterceptor} from './utils/cache-interceptor';
 import { OneToPolyEditComponent } from './meta/entity/meta-entity-edit/one-to-poly-edit/one-to-poly-edit.component';
 import { CardItemDialogComponent } from './data/controller/layout/controls/card-item-dialog/card-item-dialog.component';
+import {LoadingBarHttpClientModule} from '@ngx-loading-bar/http-client';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -190,6 +191,7 @@ const routes: Routes = [
     NgDragDropModule.forRoot(),
     RouterModule.forChild(routes),
     ReactiveFormsModule,
+    LoadingBarHttpClientModule,
   ],
   exports: [
     NgxPerfectStackComponent,

@@ -7,7 +7,7 @@
   <p>Select type of item to add:</p>
   <ng-container *ngIf="metaAttribute">
     <form [formGroup]="itemForm">
-      <select class="form-control" id="itemSelect" formControlName="itemSelect">
+      <select class="form-select" id="itemSelect" formControlName="itemSelect">
         <option *ngFor="let o of metaAttribute.discriminator.entityMappingList" [ngValue]="o.discriminatorValue">{{o.discriminatorValue}}</option>
       </select>
     </form>
