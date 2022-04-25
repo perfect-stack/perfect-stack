@@ -8,6 +8,7 @@ export enum AttributeType {
   OneToMany = 'OneToMany',
   OneToOne = 'OneToOne',
   ManyToOne = 'ManyToOne',
+  OneToPoly = 'OneToPoly',
 }
 
 export enum ComparisonOperator {
@@ -35,6 +36,18 @@ export class MetaAttribute {
   relationshipTarget: string;
   // List of attribute names in the relationshipTarget entity used for Typeahead components
   typeaheadSearch: string[];
+  discriminator: DiscriminatorAttribute;
+}
+
+export class DiscriminatorAttribute {
+  discriminatorName: string;
+  discriminatorType: string;
+  entityMappingList: DiscriminatorEntityMapping[] = [];
+}
+
+export class DiscriminatorEntityMapping {
+  discriminatorValue: string;
+  metaEntityName: string;
 }
 
 export enum EntityType {

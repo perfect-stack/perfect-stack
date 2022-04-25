@@ -50,7 +50,6 @@ export class DiscriminatorEntityMapping {
   metaEntityName: string;
 }
 
-
 export enum EntityType {
   Basic = 'Basic',
   Criteria = 'Criteria',

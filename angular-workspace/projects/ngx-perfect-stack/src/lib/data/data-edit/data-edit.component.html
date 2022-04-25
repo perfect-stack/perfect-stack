@@ -4,14 +4,14 @@
 
       <lib-controller [ctx]="ctx" [template]="ctx.metaPage.templates[0]">
         <ng-container BottomRightActions [ngSwitch]="mode">
-          <ng-container *ngSwitchCase="'view'">
+          <div class="mt-2" *ngSwitchCase="'view'">
             <button class="btn btn-outline-secondary me-2" (click)="onBack()">Back</button>
             <button type="submit" class="btn btn-primary me-2" (click)="onEdit()">Edit</button>
-          </ng-container>
-          <ng-container *ngSwitchCase="'edit'">
+          </div>
+          <div class="mt-2" *ngSwitchCase="'edit'">
             <button class="btn btn-outline-secondary me-2" (click)="onCancel()">Cancel</button>
             <button type="submit" class="btn btn-primary me-2" [disabled]="!ctx.entityForm.valid" (click)="onSave(ctx)">Save</button>
-          </ng-container>
+          </div>
         </ng-container>
       </lib-controller>
 

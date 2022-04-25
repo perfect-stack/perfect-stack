@@ -65,11 +65,11 @@ export class DataController {
   }
 
   @Delete('/:entityName/:id')
-  archive(
+  destroy(
     @Param('entityName') entityName: string,
     @Param('id') id: string,
-  ): Promise<void> {
-    return;
+  ): Promise<any> {
+    return this.dataService.destroy(entityName, id);
   }
 
   purge(): Promise<void> {

@@ -1,24 +1,30 @@
-<ng-container *ngIf="metaEntityList">
+<ng-container *ngIf="metaEntityList$ | async as metaEntityList">
+  <ng-container *ngIf="metaPageMap$ | async as metaPageMap">
 
-  <div class="mt-2" *ngFor="let nextItem of attributes.controls; let i=index">
+    <div class="mt-2" *ngFor="let nextItem of attributes.controls; let i=index">
 
-    <h5>{{getHeadingForRow(i)}}</h5>
+      <div class="d-flex justify-content-between">
+        <h5>{{getHeadingForRow(i, metaPageMap)}}</h5>
+        <span class="btn-icon text-danger material-icons" (click)="onDeleteItem(i)" *ngIf="mode === 'view'">remove_circle</span>
+      </div>
 
-    <lib-form-layout
-      [mode]="mode"
-      [template]="getTemplateForRow(i)"
-      [formGroup]="getFormGroupForRow(i)">
-    </lib-form-layout>
+      <lib-form-layout
+        [mode]="mode"
+        [template]="getTemplateForRow(i, metaPageMap)"
+        [formGroup]="getFormGroupForRow(i)">
+      </lib-form-layout>
 
-    <br>
-  </div>
+      <br>
+    </div>
 
-  <button class="btn btn-outline-success mt-2" (click)="onAddItem()">Add Item</button>
+    <ng-container *ngIf="mode === 'edit'">
+      <button class="btn btn-outline-success mt-2" (click)="onAddItem(metaPageMap, metaEntityList)">Add Item</button>
+    </ng-container>
 
-  <!--<br>
-  <p>formGroup: {{formGroup.value | json}}</p>
-  <p>metaAttribute: {{ attributes.attribute | json}}</p>
-  <p>Got metaEntityList: {{metaEntityList.length}}</p>-->
+    <!--<br>
+    <p>formGroup: {{formGroup.value | json}}</p>
+    <p>metaAttribute: {{ attributes.attribute | json}}</p>
+    <p>Got metaEntityList: {{metaEntityList.length}}</p>-->
 
-
+  </ng-container>
 </ng-container>

@@ -36,4 +36,8 @@ export class DataService {
   updateSortIndex(updateSortIndexRequest: UpdateSortIndexRequest) {
     return this.http.post(`${this.stackConfig.apiUrl}/data/${updateSortIndexRequest.metaName}/${updateSortIndexRequest.id}/sort_index`, updateSortIndexRequest);
   }
+
+  destroy(entityName: string, id: string) {
+    return this.http.delete(`${this.stackConfig.apiUrl}/data/${entityName}/${id}`);
+  }
 }

@@ -188,46 +188,20 @@ export class MetaEntityService {
     // second pass create the relationships
     for (const nextMetaEntity of databaseEntities) {
       for (const nextMetaAttribute of nextMetaEntity.attributes) {
-        if (this.isRelationshipType(nextMetaAttribute.type)) {
-          const sourceModel = entityModelMap.get(
-            nextMetaEntity.name,
-          ) as ModelCtor;
+        if (this.isSimpleRelationship(nextMetaAttribute)) {
+          await this.createSimpleRelationship(
+            entityModelMap,
+            nextMetaEntity,
+            nextMetaAttribute,
+          );
+        }
 
-          const targetModel = entityModelMap.get(
-            nextMetaAttribute.relationshipTarget,
-          ) as ModelCtor;
-
-          switch (nextMetaAttribute.type) {
-            case AttributeType.OneToMany:
-              sourceModel.hasMany(targetModel, {
-                as: nextMetaAttribute.name,
-                onDelete: 'CASCADE',
-                onUpdate: 'CASCADE',
-              });
-              targetModel.belongsTo(sourceModel);
-              break;
-            case AttributeType.OneToOne:
-              sourceModel.belongsTo(targetModel, {
-                as: nextMetaAttribute.name,
-                foreignKey: { name: nextMetaAttribute.name + '_id' },
-                onDelete: 'CASCADE',
-                onUpdate: 'CASCADE',
-              });
-              //targetModel.belongsTo(sourceModel);
-              break;
-            case AttributeType.ManyToOne:
-              sourceModel.belongsTo(targetModel, {
-                as: nextMetaAttribute.name,
-                foreignKey: { name: nextMetaAttribute.name + '_id' },
-                // don't cascade updates into target model
-              });
-              // targetModel doesn't care about source model
-              break;
-            default:
-              throw new Error(
-                `Attribute ${nextMetaAttribute.name} has an unknown relationship type of ${nextMetaAttribute.type}`,
-              );
-          }
+        if (this.isPolyRelationship(nextMetaAttribute)) {
+          await this.createPolyRelationship(
+            entityModelMap,
+            nextMetaEntity,
+            nextMetaAttribute,
+          );
         }
       }
     }
@@ -239,13 +213,92 @@ export class MetaEntityService {
     }
   }
 
-  isRelationshipType(type: AttributeType) {
+  async createSimpleRelationship(
+    entityModelMap: Map<string, any>,
+    metaEntity: MetaEntity,
+    metaAttribute: MetaAttribute,
+  ) {
+    const sourceModel = entityModelMap.get(metaEntity.name) as ModelCtor;
+
+    const targetModel = entityModelMap.get(
+      metaAttribute.relationshipTarget,
+    ) as ModelCtor;
+
+    switch (metaAttribute.type) {
+      case AttributeType.OneToMany:
+        sourceModel.hasMany(targetModel, {
+          as: metaAttribute.name,
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE',
+        });
+        targetModel.belongsTo(sourceModel);
+        break;
+      case AttributeType.OneToOne:
+        sourceModel.belongsTo(targetModel, {
+          as: metaAttribute.name,
+          foreignKey: { name: metaAttribute.name + '_id' },
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE',
+        });
+        //targetModel.belongsTo(sourceModel);
+        break;
+      case AttributeType.ManyToOne:
+        sourceModel.belongsTo(targetModel, {
+          as: metaAttribute.name,
+          foreignKey: { name: metaAttribute.name + '_id' },
+          // don't cascade updates into target model
+        });
+        // targetModel doesn't care about source model
+        break;
+      default:
+        throw new Error(
+          `Attribute ${metaAttribute.name} has an unknown relationship type of ${metaAttribute.type}`,
+        );
+    }
+
+    return;
+  }
+
+  async createPolyRelationship(
+    entityModelMap: Map<string, any>,
+    metaEntity: MetaEntity,
+    metaAttribute: MetaAttribute,
+  ) {
+    const sourceModel = entityModelMap.get(metaEntity.name) as ModelCtor;
+    const discriminator = metaAttribute.discriminator;
+    if (discriminator) {
+      const entityMappingList = discriminator.entityMappingList;
+      for (const entityMapping of entityMappingList) {
+        const targetModel = entityModelMap.get(entityMapping.metaEntityName);
+        if (targetModel) {
+          targetModel.belongsTo(sourceModel, {
+            foreignKey: { name: metaEntity.name.toLowerCase() + '_id' },
+          });
+        } else {
+          throw new Error(
+            `Unable to find targetModel for entityMapping with name ${entityMapping.metaEntityName} while mapping attribute ${metaAttribute.name} of entity ${metaEntity.name}`,
+          );
+        }
+      }
+    } else {
+      throw new Error(
+        `Attribute ${metaAttribute.name} of entity ${metaEntity.name} is defined as a OneToPoly but unable to find the discriminator meta data`,
+      );
+    }
+    return;
+  }
+
+  isSimpleRelationship(metaAttribute: MetaAttribute) {
     const relationShipTypes = [
       AttributeType.OneToMany,
       AttributeType.OneToOne,
       AttributeType.ManyToOne,
     ];
-    return relationShipTypes.includes(type);
+    return relationShipTypes.includes(metaAttribute.type);
+  }
+
+  isPolyRelationship(metaAttribute: MetaAttribute) {
+    return AttributeType.OneToPoly === metaAttribute.type;
   }
 
   async deleteAttribute(deleteRequest: DeleteAttributeRequest): Promise<void> {

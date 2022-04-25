@@ -14,6 +14,7 @@ export class FormContext {
   mode: string;
   id: string | null;
   metaPage: MetaPage;
+  metaPageMap: Map<string, MetaPage>;
   metaEntity: MetaEntity;
   entity: Entity;
   entityForm: FormGroup;
@@ -48,8 +49,11 @@ export class FormService {
     ctx.mode = mode;
     ctx.id = id;
 
-    return this.metaPageService.findById(metaPageName).pipe(switchMap((metaPage) => {
-      ctx.metaPage = metaPage as MetaPage;
+    return this.metaPageService.findAll().pipe(switchMap((metaPageList) => {
+      ctx.metaPageMap = new Map<string, MetaPage>();
+      metaPageList.forEach(a => ctx.metaPageMap.set(a.name, a));
+
+      ctx.metaPage = ctx.metaPageMap.get(metaPageName) as MetaPage;
 
       const template = ctx.metaPage.templates[0];
       const metaEntityName = template.metaEntityName
@@ -65,12 +69,12 @@ export class FormService {
         if (id) {
           return this.dataService.findById(ctx.metaEntity.name, id).pipe(switchMap((entity) => {
             ctx.entity = entity as Entity;
-            ctx.entityForm = this.createFormGroup(mode, template, metaEntityList, ctx.entity);
+            ctx.entityForm = this.createFormGroup(mode, template, ctx.metaPageMap, metaEntityList, ctx.entity);
             ctx.entityForm.patchValue(ctx.entity);
             return of(ctx);
           }));
         } else {
-          ctx.entityForm = this.createFormGroup(mode, template, metaEntityList, null);
+          ctx.entityForm = this.createFormGroup(mode, template, ctx.metaPageMap, metaEntityList, null);
           return of(ctx);
         }
       }));
@@ -107,7 +111,11 @@ export class FormService {
   }
 
 
-  createFormGroup(mode: string, template: Template, metaEntityList: MetaEntity[], entity: Entity | null) {
+  createFormGroup(mode: string,
+                  template: Template,
+                  metaPageMap: Map<string, MetaPage>,
+                  metaEntityList: MetaEntity[],
+                  entity: Entity | null) {
     const controls: {
       [key: string]: AbstractControl;
     } = {};
@@ -132,7 +140,7 @@ export class FormService {
             if (childTemplate) {
               for (let i = 0; i < itemCount; i++) {
                 const childEntity = itemArray[i];
-                formControl.push(this.createFormGroup(mode, childTemplate, metaEntityList, childEntity))
+                formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityList, childEntity))
               }
             }
           }
@@ -142,6 +150,25 @@ export class FormService {
         formControl = new FormArrayWithAttribute([]);
 
         // TODO: more here iterating through the children and creating their Form Controls
+        const itemArray = entity ? (entity as any)[nextAttribute.name] as [] : null;
+        let itemCount = itemArray ? itemArray.length : 0;
+        if (itemArray && itemCount > 0) {
+          for (let i = 0; i < itemCount; i++) {
+            const childEntity = itemArray[i];
+            const discriminator = nextAttribute.discriminator;
+            const childDiscriminatorValue = childEntity[discriminator.discriminatorName];
+            const childEntityMapping = discriminator.entityMappingList.find(a => a.discriminatorValue === childDiscriminatorValue);
+            if(childEntityMapping) {
+              const childPageName = childEntityMapping.metaEntityName + ".view_edit"
+              const childPage = metaPageMap.get(childPageName);
+              if(childPage) {
+                const childTemplate = childPage.templates[0];
+                console.log(`Adding formGroup for; ${nextAttribute.name}, ${childDiscriminatorValue}, ${childPageName}`);
+                formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityList, childEntity))
+              }
+            }
+          }
+        }
       }
       else if (nextAttribute.type === AttributeType.OneToOne) {
         const attributeCell = this.findCellForAttribute(nextAttribute, template);
@@ -149,7 +176,7 @@ export class FormService {
           const childTemplate = attributeCell.template;
           if (childTemplate) {
             const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
-            formControl = this.createFormGroup(mode, childTemplate, metaEntityList, childEntity);
+            formControl = this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityList, childEntity);
           }
         }
       }

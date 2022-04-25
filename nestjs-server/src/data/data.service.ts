@@ -68,9 +68,49 @@ export class DataService {
 
   async findOne(entityName: string, id: string): Promise<Entity> {
     const model = this.ormService.sequelize.model(entityName);
-    return (await model.findByPk(id, {
+    const entityModel = await model.findByPk(id, {
       include: { all: true, nested: true },
-    })) as unknown as Entity;
+    });
+
+    const entity = entityModel.toJSON();
+
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    for (const attribute of metaEntity.attributes) {
+      if (attribute.type === AttributeType.OneToPoly) {
+        await this.loadOneToPoly(metaEntity, entity, attribute);
+      }
+    }
+
+    return entity;
+  }
+
+  private async loadOneToPoly(
+    metaEntity: MetaEntity,
+    entity: Entity,
+    attribute: MetaAttribute,
+  ) {
+    const entityFk = metaEntity.name.toLowerCase() + '_id';
+    if (!entity[attribute.name]) {
+      entity[attribute.name] = [];
+    }
+
+    const discriminator = attribute.discriminator;
+    for (const entityMapping of discriminator.entityMappingList) {
+      const queryRequest = new QueryRequest();
+      queryRequest.metaEntityName = entityMapping.metaEntityName;
+      queryRequest.criteria = [
+        {
+          name: entityFk,
+          value: entity.id,
+          operator: ComparisonOperator.Equals,
+        },
+      ];
+      const queryResponse = await this.findByCriteria(queryRequest);
+
+      if (queryResponse.resultList.length > 0) {
+        entity[attribute.name].push(...queryResponse.resultList);
+      }
+    }
   }
 
   validateUuid(value: string) {
@@ -93,9 +133,6 @@ export class DataService {
       entity.id = uuid.v4();
     }
 
-    // recursively save all the children
-    await this.saveTheChildren(entityName, entity);
-
     if (!entityModel) {
       // if entityModel was not found, or entity did not arrive with id
       entityModel = await model.create(entity);
@@ -104,6 +141,9 @@ export class DataService {
       entityModel.set(entity);
       await entityModel.save();
     }
+
+    // recursively save all the children
+    await this.saveTheChildren(entityName, entity);
 
     return entityModel;
   }
@@ -132,12 +172,60 @@ export class DataService {
           case AttributeType.ManyToOne:
             await this.saveManyToOne(parentEntity, attribute);
             break;
+          case AttributeType.OneToPoly:
+            await this.saveOneToPoly(parentEntity, parentMetaEntity, attribute);
+            break;
           default:
           // Do nothing
         }
       }
     } else {
       throw new Error(`Unable to find MetaEntity ${parentEntityName}`);
+    }
+  }
+
+  private async saveOneToPoly(
+    parentEntity: Entity,
+    parentMetaEntity: MetaEntity,
+    attribute: MetaAttribute,
+  ) {
+    const discriminator = attribute.discriminator;
+    if (!discriminator) {
+      throw new Error(
+        `Unable to find discriminator for attribute ${attribute.name} in entity ${parentMetaEntity.name}`,
+      );
+    }
+
+    const discriminatorName = discriminator.discriminatorName;
+    if (!discriminatorName) {
+      `Unable to find discriminator attribute name for attribute ${attribute.name} in entity ${parentMetaEntity.name}`;
+    }
+
+    const listOfChildren = parentEntity[attribute.name] as [];
+    for (let i = 0; i < listOfChildren.length; i++) {
+      const childEntity: any = listOfChildren[i];
+      const discriminatorValue = childEntity[discriminatorName];
+      if (discriminatorValue) {
+        const childEntityMapping = discriminator.entityMappingList.find(
+          (a) => a.discriminatorValue === discriminatorValue,
+        );
+        if (childEntityMapping) {
+          const childFk = parentMetaEntity.name.toLowerCase() + '_id';
+          childEntity[childFk] = parentEntity.id;
+          const childEntityName = childEntityMapping.metaEntityName;
+          await this.save(childEntityName, childEntity);
+        } else {
+          throw new Error(
+            `Unable to find entity mapping for discriminator value ${discriminatorValue} in entity mapping of ${JSON.stringify(
+              discriminator.entityMappingList,
+            )}`,
+          );
+        }
+      } else {
+        throw new Error(
+          `Attribute ${attribute.name} in entity ${parentMetaEntity.name} has child at position ${i} that has no discriminator value for the discriminator attribute of ${discriminatorName}`,
+        );
+      }
     }
   }
 
@@ -376,5 +464,14 @@ export class DataService {
     } else {
       // Do nothing but don't fail, sorting may silently bump against the ends of the array
     }
+  }
+
+  async destroy(entityName: string, id: string) {
+    const model = this.ormService.sequelize.model(entityName);
+    return model.destroy({
+      where: {
+        id: id,
+      },
+    });
   }
 }

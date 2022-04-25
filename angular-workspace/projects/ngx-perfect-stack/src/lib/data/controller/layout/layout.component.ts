@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
 import {Cell, ComponentType, MetaPage, Template, TemplateType} from '../../../domain/meta.page';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
@@ -8,6 +8,8 @@ import {FormArrayWithAttribute, FormControlWithAttribute, FormService} from '../
 import {MetaEntity} from '../../../domain/meta.entity';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CardItemDialogComponent} from './controls/card-item-dialog/card-item-dialog.component';
+import {DataService} from '../../data-service/data.service';
+import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
 
 
 // This file contains many Components because they have a circular dependency on the top-level component of
@@ -65,6 +67,7 @@ export class TableLayoutComponent implements OnInit {
 
   // we need metaEntityList because of how new rows are added to the table
   metaEntityList: MetaEntity[];
+  metaPageMap: Map<string, MetaPage>;
 
   constructor(private metaEntityService: MetaEntityService,
               private formService: FormService) { }
@@ -90,7 +93,7 @@ export class TableLayoutComponent implements OnInit {
 
   onAddRow() {
     if(this.mode === 'edit') {
-      const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaEntityList, null);
+      const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaPageMap, this.metaEntityList, null);
       this.attributes.push(formGroup);
     }
   }
@@ -122,57 +125,54 @@ export class CardLayoutComponent implements OnInit {
   relationshipProperty: string;
 
   // we need metaEntityList because of how new rows are added to the table
-  metaEntityList: MetaEntity[];
+  metaEntityList$: Observable<MetaEntity[]>;
 
   // a map of MetaPages, probably should only fetch the ones we need
-  metaPageMap = new Map<string, MetaPage>();
+  metaPageMap$: Observable<Map<string, MetaPage>>;
 
   cardItemMap = new Map<string, CardItem>();
 
   constructor(private modalService: NgbModal,
               private metaEntityService: MetaEntityService,
               private metaPageService: MetaPageService,
+              private dataService: DataService,
               private fb: FormBuilder,
-              private formService: FormService) {
-
-    // TODO: make this more dynamic and allow the user to define it themselves
-    // this.template = new Template();
-    // this.template.metaEntityName = 'Activity';
-    // this.template.type = TemplateType.card;
-    // this.template.cells = [];
-    // this.template.cells.push([
-    //   //{attributeName: 'activity_type', component: ComponentType.Select, width: '3', height: '2'}
-    // ]);
-
-    this.cardItemMap.set('Health', {
-      discriminatorValue: 'Health',
-      metaEntityName: 'HealthActivity',
-      metaPageName: 'HealthActivity.view_edit'
-    });
-
-    this.cardItemMap.set('Measurement', {
-      discriminatorValue: 'Measurement',
-      metaEntityName: 'MeasurementActivity',
-      metaPageName: 'MeasurementActivity.view_edit'
-    });
-
-    this.cardItemMap.set('Weight', {
-      discriminatorValue: 'Weight',
-      metaEntityName: 'WeightActivity',
-      metaPageName: 'WeightActivity.view_edit'
-    });
-  }
+              private formService: FormService) {}
 
   ngOnInit(): void {
-    this.metaEntityService.findAll().subscribe(metaEntityList => {
-      this.metaEntityList = metaEntityList;
-    });
+    this.metaEntityList$ = this.metaEntityService.findAll();
 
-    this.metaPageService.findAll().subscribe(metaPageList => {
+    this.metaPageMap$ = this.metaPageService.findAll().pipe(switchMap((metaPageList: MetaPage[]) => {
+
+      // TODO: make this more dynamic and allow the user to define it themselves
+      // HACK: this is only here to help with an initialisation race condition
+
+      this.cardItemMap.set('Health', {
+        discriminatorValue: 'Health',
+        metaEntityName: 'HealthActivity',
+        metaPageName: 'HealthActivity.view_edit'
+      });
+
+      this.cardItemMap.set('Measurement', {
+        discriminatorValue: 'Measurement',
+        metaEntityName: 'MeasurementActivity',
+        metaPageName: 'MeasurementActivity.view_edit'
+      });
+
+      this.cardItemMap.set('Weight', {
+        discriminatorValue: 'Weight',
+        metaEntityName: 'WeightActivity',
+        metaPageName: 'WeightActivity.view_edit'
+      });
+
+
+      const metaPageMap = new Map<string, MetaPage>();
       for(const metaPage of metaPageList) {
-        this.metaPageMap.set(metaPage.name, metaPage);
+        metaPageMap.set(metaPage.name, metaPage);
       }
-    });
+
+      return of(metaPageMap);
+    }));
   }
 
   get attributes() {
@@ -183,29 +183,47 @@ export class CardLayoutComponent implements OnInit {
     return this.attributes.at(rowIdx) as FormGroup;
   }
 
-  getMetaPageForRow(rowIdx: number): MetaPage {
+  getCardItem(rowIdx: number) {
     const formControlWithAttribute = (this.getFormGroupForRow(rowIdx) as unknown) as FormControlWithAttribute;
     const item = formControlWithAttribute.value;
-    const discriminatorValue = item.activity_type;
-    const cardItem = this.cardItemMap.get(discriminatorValue);
-    if(cardItem) {
-      const metaPage = this.metaPageMap.get(cardItem.metaPageName);
-      if(metaPage) {
-        return metaPage;
+
+    const attribute = this.attributes.attribute;
+    const discriminator = attribute.discriminator;
+    if(discriminator) {
+      const discriminatorValue = item[attribute.discriminator.discriminatorName];
+      const cardItem = this.cardItemMap.get(discriminatorValue);
+      if(cardItem) {
+        return cardItem;
+      }
+      else {
+        throw new Error(`Unable to find cardItem for rowIdx ${rowIdx}`);
       }
     }
-    throw new Error(`Unable to find MetaPage for rowIdx ${rowIdx}`);
+    else {
+      throw new Error(`No discriminator defined for attribute ${attribute.name}`);
+    }
   }
 
-  getHeadingForRow(rowIdx: number): string {
-    return this.getMetaPageForRow(rowIdx)?.title;
+  getMetaPageForRow(rowIdx: number, metaPageMap: Map<string, MetaPage>): MetaPage {
+    const cardItem = this.getCardItem(rowIdx)
+    const metaPage = metaPageMap.get(cardItem.metaPageName);
+    if(metaPage) {
+      return metaPage;
+    }
+    else {
+      throw new Error(`Unable to find MetaPage for rowIdx ${rowIdx}`);
+    }
   }
 
-  getTemplateForRow(rowIdx: number): Template {
-    return this.getMetaPageForRow(rowIdx).templates[0];
+  getHeadingForRow(rowIdx: number, metaPageMap: Map<string, MetaPage>): string {
+    return this.getMetaPageForRow(rowIdx, metaPageMap)?.title;
   }
 
-  onAddItem() {
+  getTemplateForRow(rowIdx: number, metaPageMap: Map<string, MetaPage>): Template {
+    return this.getMetaPageForRow(rowIdx, metaPageMap).templates[0];
+  }
+
+  onAddItem(metaPageMap: Map<string, MetaPage>, metaEntityList: MetaEntity[]) {
     if(this.mode === 'edit') {
       const modalRef = this.modalService.open(CardItemDialogComponent);
       const cardItemDialog = modalRef.componentInstance as CardItemDialogComponent;
@@ -220,12 +238,12 @@ export class CardLayoutComponent implements OnInit {
         console.log(`CardItem`, cardItem);
 
         if(cardItem && cardItem.metaPageName) {
-          const metaPage = this.metaPageMap.get(cardItem.metaPageName);
+          const metaPage = metaPageMap.get(cardItem.metaPageName);
           if(metaPage && metaPage.templates.length > 0) {
             const template = metaPage.templates[0];
 
             if(self.mode) {
-              const formGroup = this.formService.createFormGroup(self.mode, template, self.metaEntityList, null);
+              const formGroup = this.formService.createFormGroup(self.mode, template, metaPageMap, metaEntityList, null);
               formGroup.addControl('activity_type', this.fb.control(''));
               this.attributes.push(formGroup);
 
@@ -239,6 +257,33 @@ export class CardLayoutComponent implements OnInit {
         }
       });
     }
+  }
+
+  onDeleteItem(rowIdx: number) {
+    const modalRef = this.modalService.open(MessageDialogComponent)
+    const modalComponent: MessageDialogComponent = modalRef.componentInstance;
+    modalComponent.title = 'Delete Entity Confirmation';
+    modalComponent.text = `This action will delete the selected entity. It cannot be undone.`;
+    modalComponent.actions = [
+      {name: 'Cancel', style: 'btn btn-outline-secondary'},
+      {name: 'Delete', style: 'btn btn-danger'},
+    ];
+
+    modalRef.closed.subscribe((closedResult) => {
+      console.log(`Message Dialog closedResult = ${closedResult}`);
+      if(closedResult === 'Delete') {
+        const formGroup = this.getFormGroupForRow(rowIdx);
+        const childEntity = formGroup.value;
+        const childEntityId = childEntity.id;
+
+        const cardItem = this.getCardItem(rowIdx);
+        const childEntityName = cardItem.metaEntityName
+
+        this.dataService.destroy(childEntityName, childEntityId).subscribe(() => {
+          this.attributes.removeAt(rowIdx);
+        });
+      }
+    });
   }
 }
 
