@@ -19,7 +19,7 @@ export class VersionComponent implements OnInit {
   ngOnInit(): void {
     this.clientVersion = this.stackConfig.clientRelease;
 
-    this.http.get(`${this.stackConfig.apiUrl}/version`).subscribe((a: any) => {
+    this.http.get(`${this.stackConfig.apiUrl}/meta/menu/version`).subscribe((a: any) => {
       this.serverVersion = a.serverRelease;
     });
   }
