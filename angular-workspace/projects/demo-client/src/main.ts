@@ -16,7 +16,8 @@ fetch('/client.json')
     console.log('Downloaded configJson: ', configJson);
     const stackConfig: NgxPerfectStackConfig = {
       apiUrl: configJson.API_URL,
-      authenticationProvider: configJson.AUTHENTICATION_PROVIDER
+      authenticationProvider: configJson.AUTHENTICATION_PROVIDER,
+      clientRelease: configJson.CLIENT_RELEASE,
     };
 
     platformBrowserDynamic([

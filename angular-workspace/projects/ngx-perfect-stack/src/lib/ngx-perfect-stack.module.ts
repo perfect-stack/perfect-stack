@@ -77,6 +77,7 @@ import {CacheInterceptor} from './utils/cache-interceptor';
 import { OneToPolyEditComponent } from './meta/entity/meta-entity-edit/one-to-poly-edit/one-to-poly-edit.component';
 import { CardItemDialogComponent } from './data/controller/layout/controls/card-item-dialog/card-item-dialog.component';
 import {LoadingBarHttpClientModule} from '@ngx-loading-bar/http-client';
+import { VersionComponent } from './meta/version/version.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -91,6 +92,8 @@ const routes: Routes = [
 
   { path: 'meta/page/search', component: MetaPageSearchComponent, canActivate: [AuthGuard] },
   { path: 'meta/page/edit/:metaPageName', component: MetaPageEditComponent, canActivate: [AuthGuard] },
+
+  { path: 'meta/version', component: VersionComponent, canActivate: [AuthGuard] },
 
   // No AuthGuard on these
   { path: 'login-callback', component: LoginCallbackComponent},
@@ -154,6 +157,7 @@ const routes: Routes = [
     OneToPolyEditComponent,
     OneToPolyControlComponent,
     CardItemDialogComponent,
+    VersionComponent,
   ],
   providers: [
     AuthenticationService,
