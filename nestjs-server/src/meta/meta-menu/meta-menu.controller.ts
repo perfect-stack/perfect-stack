@@ -17,4 +17,10 @@ export class MetaMenuController {
   update(@Body() metaMenu: MetaMenu) {
     return this.metaMenuService.update(metaMenu);
   }
+
+  @Get('/version')
+  @PublicApi()
+  getVersion(): string {
+    return this.metaMenuService.getVersion();
+  }
 }

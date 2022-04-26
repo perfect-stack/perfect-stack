@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { MetaMenu } from '../../domain/meta.menu';
 import { FileRepositoryService } from '../../file/file-repository.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MetaMenuService {
   static readonly META_MENU_DIR = 'meta/menu';
 
   constructor(
+    protected readonly configService: ConfigService,
     protected readonly fileRepositoryService: FileRepositoryService,
   ) {}
 
@@ -17,11 +19,6 @@ export class MetaMenuService {
     );
 
     const metaMenu: MetaMenu = Object.assign(new MetaMenu(), metaMenuFromFile);
-
-    // for (let i = 0; i < metaMenu.menuList.length; i++) {
-    //   const nextMenu = metaMenu.menuList[i];
-    // }
-
     return metaMenu;
   }
 
@@ -34,5 +31,12 @@ export class MetaMenuService {
     );
 
     return;
+  }
+
+  getVersion(): any {
+    const serverRelease = this.configService.get('SERVER_RELEASE', 'Unknown');
+    return {
+      serverRelease: serverRelease,
+    };
   }
 }
