@@ -1,5 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {
@@ -46,21 +53,7 @@ export class MetaEntityEditComponent implements OnInit {
       for(const metaAttribute of metaEntity.attributes) {
         const formGroup = this.addBlankRow();
         if(metaAttribute.type === AttributeType.OneToPoly) {
-          console.log(`Adding discriminator FG`);
-          const discriminatorFormGroup = this.fb.group({
-            discriminatorName: [''],
-            discriminatorType: [''],
-            entityMappingList: this.fb.array([]),
-          });
-
-          formGroup.addControl('discriminator', discriminatorFormGroup);
-          const entityMappingListFormArray = discriminatorFormGroup.controls['entityMappingList'] as FormArray;
-          if(metaAttribute && metaAttribute.discriminator && metaAttribute.discriminator.entityMappingList) {
-            const rowCountNeeded = metaAttribute.discriminator.entityMappingList.length;
-            for(let i = 0; i < rowCountNeeded; i++) {
-              entityMappingListFormArray.push(OneToPolyEditComponent.createTableRow(this.fb));
-            }
-          }
+          OneToPolyEditComponent.addDiscriminatorFormGroup(this.fb, formGroup, metaAttribute);
         }
       }
 
@@ -74,12 +67,8 @@ export class MetaEntityEditComponent implements OnInit {
     return this.metaEntityForm.get('attributes') as FormArray;
   }
 
-  getAttributeAt(idx: number) {
+  getAttributeFormGroupAt(idx: number) {
     return this.attributes.at(idx) as FormGroup;
-  }
-
-  getDiscriminatorGroupAt(idx: number): FormGroup {
-    return this.getAttributeAt(idx).controls['discriminator'] as FormGroup;
   }
 
   addBlankRow() {
@@ -98,6 +87,7 @@ export class MetaEntityEditComponent implements OnInit {
       comparisonOperator: [''],
       relationshipTarget: [''],
       typeaheadSearch: [[]],
+      // discriminator: [{}]  // Don't add this one here, the way the ngOnInit() in OneToPolyEditComponent works means this will be done when it is needed
     });
   }
 

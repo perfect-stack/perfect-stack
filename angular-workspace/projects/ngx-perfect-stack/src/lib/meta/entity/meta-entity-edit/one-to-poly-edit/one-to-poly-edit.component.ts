@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
-import {DiscriminatorAttribute, MetaEntity} from '../../../../domain/meta.entity';
+import {MetaAttribute, MetaEntity} from '../../../../domain/meta.entity';
 import {MetaEntityService} from '../../meta-entity-service/meta-entity.service';
 import {DataService} from '../../../../data/data-service/data.service';
 
@@ -15,6 +15,8 @@ export class OneToPolyEditComponent implements OnInit {
   @Input()
   formGroup: FormGroup;
 
+  discriminatorFormGroup: FormGroup;
+
   metaEntityOptions$: Observable<MetaEntity[]>;
   discriminatorValueOptions$: Observable<any>;
 
@@ -24,15 +26,21 @@ export class OneToPolyEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.metaEntityOptions$ = this.metaEntityService.findAll();
-    if(this.formGroup.value) {
-      const discriminator = this.formGroup.value as DiscriminatorAttribute;
-      console.log(`ngOnInit with ${discriminator.discriminatorType}`);
-      this.onDiscriminatorTypeChange(discriminator.discriminatorType);
+
+    if(this.formGroup) {
+      const metaAttribute: MetaAttribute = this.formGroup.value;
+      OneToPolyEditComponent.addDiscriminatorFormGroup(this.fb, this.formGroup, metaAttribute);
+
+      this.discriminatorFormGroup = this.formGroup.get('discriminator') as FormGroup;
+
+      if(metaAttribute.discriminator && metaAttribute.discriminator.discriminatorType) {
+        this.onDiscriminatorTypeChange(metaAttribute.discriminator.discriminatorType);
+      }
     }
   }
 
   get mappings(): FormArray {
-    return this.formGroup.controls['entityMappingList'] as FormArray;
+    return this.discriminatorFormGroup.controls['entityMappingList'] as FormArray;
   }
 
   getMappingAt(idx: number) {
@@ -41,6 +49,24 @@ export class OneToPolyEditComponent implements OnInit {
 
   onAddEntityMapping() {
     this.mappings.push(OneToPolyEditComponent.createTableRow(this.fb));
+  }
+
+  static addDiscriminatorFormGroup(fb: FormBuilder, formGroup: FormGroup, metaAttribute: MetaAttribute) {
+    const discriminatorFormGroup = fb.group({
+      discriminatorName: [''],
+      discriminatorType: [''],
+      entityMappingList: fb.array([]),
+    });
+
+    const entityMappingListFormArray = discriminatorFormGroup.controls['entityMappingList'] as FormArray;
+    if(metaAttribute && metaAttribute.discriminator && metaAttribute.discriminator.entityMappingList) {
+      const rowCountNeeded = metaAttribute.discriminator.entityMappingList.length;
+      for(let i = 0; i < rowCountNeeded; i++) {
+        entityMappingListFormArray.push(OneToPolyEditComponent.createTableRow(fb));
+      }
+    }
+
+    formGroup.addControl('discriminator', discriminatorFormGroup);
   }
 
   static createTableRow(fb: FormBuilder): FormGroup {
@@ -55,7 +81,8 @@ export class OneToPolyEditComponent implements OnInit {
   }
 
   onDiscriminatorTypeChange(discriminatorType: string) {
-    console.log(`onDiscriminatorTypeChange() - ${discriminatorType}`);
-    this.discriminatorValueOptions$ = this.dataService.findAll(discriminatorType, '', 1, 100);
+    if(discriminatorType) {
+      this.discriminatorValueOptions$ = this.dataService.findAll(discriminatorType, '', 1, 100);
+    }
   }
 }

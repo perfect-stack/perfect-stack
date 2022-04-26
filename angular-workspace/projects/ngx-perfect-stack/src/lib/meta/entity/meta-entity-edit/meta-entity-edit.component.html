@@ -43,7 +43,7 @@
               <td><input class="form-control" type="text" formControlName="name" readonly></td>
               <td>
                 <input class="form-control" type="text" formControlName="label" (keyup)="onLabelKeyup(formGroup)">
-                <app-validation-message [control]="getAttributeAt(i).controls['label']" [attributePath]="'label'"></app-validation-message>
+                <app-validation-message [control]="getAttributeFormGroupAt(i).controls['label']" [attributePath]="'label'"></app-validation-message>
               </td>
               <td><input class="form-control" type="text" formControlName="description"></td>
               <td>
@@ -52,10 +52,10 @@
                 </select>
                 <ng-container *ngIf="metaEntityOptions$ | async as metaEntityOptions">
                   <ng-container *ngIf="isRelationshipType(i)">
-                    <app-relationship-type-edit [formGroup]="getAttributeAt(i)"></app-relationship-type-edit>
+                    <app-relationship-type-edit [formGroup]="getAttributeFormGroupAt(i)"></app-relationship-type-edit>
                   </ng-container>
                   <ng-container *ngIf="isOneToPoly(i)">
-                    <lib-one-to-poly-edit [formGroup]="getDiscriminatorGroupAt(i)"></lib-one-to-poly-edit>
+                    <lib-one-to-poly-edit [formGroup]="getAttributeFormGroupAt(i)"></lib-one-to-poly-edit>
                   </ng-container>
                 </ng-container>
               </td>

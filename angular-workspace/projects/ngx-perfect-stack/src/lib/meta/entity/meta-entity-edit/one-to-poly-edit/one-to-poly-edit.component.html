@@ -1,7 +1,7 @@
 
 <ng-container *ngIf="metaEntityOptions$ | async as metaEntityOptions">
 
-  <div class="mt-3" [formGroup]="formGroup">
+  <div class="mt-3" [formGroup]="discriminatorFormGroup">
     <div class="row">
       <div class="col-6">
         <label class="form-label">Discriminator type</label>
@@ -16,37 +16,36 @@
       </div>
     </div>
 
-    <table class="table table-striped mt-3">
-      <thead>
+    <ng-container *ngIf="discriminatorValueOptions$ | async as discriminatorValueOptions">
+      <table class="table table-striped mt-3">
+        <thead>
         <th>Discriminator Value</th>
         <th>Meta Entity</th>
         <th></th>
-      </thead>
-      <tbody>
-      <ng-container formArrayName="entityMappingList" *ngFor="let formGroup of mappings.controls; let i=index">
-        <tr [formGroupName]="i">
-          <td>
-            <ng-container *ngIf="discriminatorValueOptions$ | async as discriminatorValueOptions">
+        </thead>
+        <tbody>
+        <ng-container formArrayName="entityMappingList" *ngFor="let formGroup of mappings.controls; let i=index">
+          <tr [formGroupName]="i">
+            <td>
               <select class="form-select" formControlName="discriminatorValue">
                 <option *ngFor="let o of discriminatorValueOptions.resultList" [ngValue]="o.name">{{o.name}}</option>
               </select>
-            </ng-container>
-          </td>
-          <td>
-            <select class="form-select" formControlName="metaEntityName">
-              <option *ngFor="let o of metaEntityOptions" [ngValue]="o.name">{{o.name}}</option>
-            </select>
-          </td>
-          <td>
-            <span class="btn-icon text-danger material-icons" (click)="onDeleteEntityMapping(i)">remove_circle</span>
-          </td>
-        </tr>
-      </ng-container>
-      </tbody>
-    </table>
+            </td>
+            <td>
+              <select class="form-select" formControlName="metaEntityName">
+                <option *ngFor="let o of metaEntityOptions" [ngValue]="o.name">{{o.name}}</option>
+              </select>
+            </td>
+            <td>
+              <span class="btn-icon text-danger material-icons" (click)="onDeleteEntityMapping(i)">remove_circle</span>
+            </td>
+          </tr>
+        </ng-container>
+        </tbody>
+      </table>
 
-    <button class="btn btn-outline-success" (click)="onAddEntityMapping()">Add</button>
-
+      <button class="btn btn-outline-success" (click)="onAddEntityMapping()">Add</button>
+    </ng-container>
   </div>
 
 
