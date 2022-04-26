@@ -1,0 +1,48 @@
+{
+  "name": "WeightActivity",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "weight",
+      "label": "Weight",
+      "description": "Measured in (g)",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "method",
+      "label": "Method",
+      "description": "Method of measurement",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "WeightMethod",
+      "typeaheadSearch": [
+        "name"
+      ]
+    },
+    {
+      "name": "activity_type",
+      "label": "Activity type",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}

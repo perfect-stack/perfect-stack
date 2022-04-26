@@ -3,24 +3,34 @@
   "type": "Database",
   "attributes": [
     {
-      "type": "Identifier",
-      "visibility": "Visible",
       "name": "id",
       "label": "id",
       "description": "",
+      "type": "Identifier",
+      "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
-      "type": "Text",
-      "visibility": "Visible",
       "name": "d1",
       "label": "d1",
       "description": "",
+      "type": "OneToPoly",
+      "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "discriminator": {
+        "discriminatorName": "activity_type",
+        "discriminatorType": "ActivityType",
+        "entityMappingList": [
+          {
+            "discriminatorValue": "Measurement",
+            "metaEntityName": "MeasurementActivity"
+          }
+        ]
+      }
     }
   ]
 }

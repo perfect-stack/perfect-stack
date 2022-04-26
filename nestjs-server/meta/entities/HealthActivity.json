@@ -1,0 +1,56 @@
+{
+  "name": "HealthActivity",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "condition",
+      "label": "Condition",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "lice",
+      "label": "Lice",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "whisker_fungus",
+      "label": "Whisker fungus",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "activity_type",
+      "label": "Activity type",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}

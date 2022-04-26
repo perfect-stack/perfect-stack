@@ -1,0 +1,129 @@
+{
+  "name": "WeightActivity.view_edit",
+  "title": "Weight",
+  "type": "view_edit",
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
+            "attributeName": "weight"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
+            "attributeName": "method",
+            "component": "Select"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "WeightActivity",
+      "type": "form"
+    }
+  ]
+}

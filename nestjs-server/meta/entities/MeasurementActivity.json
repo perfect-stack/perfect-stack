@@ -1,0 +1,66 @@
+{
+  "name": "MeasurementActivity",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "bill_length",
+      "label": "Bill length",
+      "description": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "tarsus_length",
+      "label": "Tarsus length",
+      "description": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "tarsus_width",
+      "label": "Tarsus width",
+      "description": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "tarsus_depth",
+      "label": "Tarsus depth",
+      "description": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "activity_type",
+      "label": "Activity type",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "name": "Event",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "date",
+      "label": "Date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "comments",
+      "label": "Comments",
+      "description": "",
+      "type": "Html",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "activities",
+      "label": "Activities",
+      "description": "",
+      "type": "OneToPoly",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Activity",
+      "typeaheadSearch": [],
+      "discriminator": {
+        "discriminatorName": "activity_type",
+        "discriminatorType": "ActivityType",
+        "entityMappingList": [
+          {
+            "discriminatorValue": "Health",
+            "metaEntityName": "HealthActivity"
+          },
+          {
+            "discriminatorValue": "Measurement",
+            "metaEntityName": "MeasurementActivity"
+          },
+          {
+            "discriminatorValue": "Weight",
+            "metaEntityName": "WeightActivity"
+          }
+        ]
+      }
+    }
+  ]
+}
