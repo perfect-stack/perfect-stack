@@ -18,7 +18,12 @@ export class MetaEntityService {
   }
 
   findById(metaName: string | null) {
-    return this.http.get<MetaEntity>(`${this.stackConfig.apiUrl}/meta/entity/${metaName}`);
+    if(metaName) {
+      return this.http.get<MetaEntity>(`${this.stackConfig.apiUrl}/meta/entity/${metaName}`);
+    }
+    else {
+      throw new Error(`MetaEntityService.findById() got invalid metaName. Check your config`);
+    }
   }
 
   create(metaEntity: MetaEntity) {

@@ -77,6 +77,10 @@ export class TableLayoutComponent implements OnInit {
       this.metaEntityList = metaEntityList;
     });
 
+    if(!this.template.metaEntityName) {
+      throw new Error(`The template; ${JSON.stringify(this.template)} has no metaEntityName`);
+    }
+
     this.cells$ = this.metaEntityService.findById(this.template.metaEntityName).pipe(switchMap((metaEntity) => {
       const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
       return of(cells);

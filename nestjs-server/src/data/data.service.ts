@@ -133,6 +133,14 @@ export class DataService {
       entity.id = uuid.v4();
     }
 
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    if (!metaEntity) {
+      throw new Error(`Unable to find MetaEntity ${entityName}`);
+    }
+
+    // recursively save all the children (excluding the Poly ones)
+    await this.saveTheChildren(metaEntity, entity);
+
     if (!entityModel) {
       // if entityModel was not found, or entity did not arrive with id
       entityModel = await model.create(entity);
@@ -142,45 +150,48 @@ export class DataService {
       await entityModel.save();
     }
 
-    // recursively save all the children
-    await this.saveTheChildren(entityName, entity);
+    // recursively save all Poly relationships
+    await this.saveAllPolys(metaEntity, entity);
 
     return entityModel;
   }
 
   private async saveTheChildren(
-    parentEntityName: string,
+    parentMetaEntity: MetaEntity,
     parentEntity: Entity,
   ) {
-    const parentMetaEntity = await this.metaEntityService.findOne(
-      parentEntityName,
-    );
-
-    if (parentMetaEntity) {
-      for (const attribute of parentMetaEntity.attributes) {
-        switch (attribute.type) {
-          case AttributeType.OneToMany:
-            await this.saveListOfChildren(
-              parentEntity,
-              parentMetaEntity,
-              attribute,
-            );
-            break;
-          case AttributeType.OneToOne:
-            await this.saveOneChild(parentEntity, attribute);
-            break;
-          case AttributeType.ManyToOne:
-            await this.saveManyToOne(parentEntity, attribute);
-            break;
-          case AttributeType.OneToPoly:
-            await this.saveOneToPoly(parentEntity, parentMetaEntity, attribute);
-            break;
-          default:
-          // Do nothing
-        }
+    for (const attribute of parentMetaEntity.attributes) {
+      switch (attribute.type) {
+        case AttributeType.OneToMany:
+          await this.saveListOfChildren(
+            parentEntity,
+            parentMetaEntity,
+            attribute,
+          );
+          break;
+        case AttributeType.OneToOne:
+          await this.saveOneToOne(parentEntity, attribute);
+          break;
+        case AttributeType.ManyToOne:
+          await this.saveManyToOne(parentEntity, attribute);
+          break;
+        // case AttributeType.OneToPoly:
+        //   await this.saveOneToPoly(parentEntity, parentMetaEntity, attribute);
+        //   break;
+        default:
+        // Do nothing
       }
-    } else {
-      throw new Error(`Unable to find MetaEntity ${parentEntityName}`);
+    }
+  }
+
+  private async saveAllPolys(
+    parentMetaEntity: MetaEntity,
+    parentEntity: Entity,
+  ) {
+    for (const attribute of parentMetaEntity.attributes) {
+      if (attribute.type === AttributeType.OneToPoly) {
+        await this.saveOneToPoly(parentEntity, parentMetaEntity, attribute);
+      }
     }
   }
 
@@ -192,7 +203,7 @@ export class DataService {
     const discriminator = attribute.discriminator;
     if (!discriminator) {
       throw new Error(
-        `Unable to find discriminator for attribute ${attribute.name} in entity ${parentMetaEntity.name}`,
+        `Unable to find discriminator for attribute "${attribute.name}" in entity "${parentMetaEntity.name}"`,
       );
     }
 
@@ -255,10 +266,16 @@ export class DataService {
           childEntityModel = await childModel.create(childEntity);
         }
 
-        await this.saveTheChildren(
+        const metaEntity = await this.metaEntityService.findOne(
           relationshipAttribute.relationshipTarget,
-          childEntity,
         );
+        if (!metaEntity) {
+          throw new Error(
+            `Unable to find MetaEntity ${relationshipAttribute.relationshipTarget}`,
+          );
+        }
+
+        await this.saveTheChildren(metaEntity, childEntity);
 
         childEntityModel.set(childEntity);
         childEntityModel[parentMetaEntity.name + 'Id'] = parentEntity.id;
@@ -267,7 +284,7 @@ export class DataService {
     }
   }
 
-  private async saveOneChild(
+  private async saveOneToOne(
     parentEntity: Entity,
     relationshipAttribute: MetaAttribute,
   ) {
@@ -292,11 +309,17 @@ export class DataService {
       childEntityModel = await childModel.create(childEntity);
     }
 
-    // recurse down into the children of this child (if needed)
-    await this.saveTheChildren(
+    const metaEntity = await this.metaEntityService.findOne(
       relationshipAttribute.relationshipTarget,
-      childEntity,
     );
+    if (!metaEntity) {
+      throw new Error(
+        `Unable to find MetaEntity ${relationshipAttribute.relationshipTarget}`,
+      );
+    }
+
+    // recurse down into the children of this child (if needed)
+    await this.saveTheChildren(metaEntity, childEntity);
 
     childEntityModel.set(childEntity);
     childEntityModel.save();

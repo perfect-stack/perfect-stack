@@ -240,7 +240,9 @@ export class MetaEntityService {
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE',
         });
-        //targetModel.belongsTo(sourceModel);
+        targetModel.hasOne(sourceModel, {
+          foreignKey: { name: metaAttribute.name + '_id' },
+        });
         break;
       case AttributeType.ManyToOne:
         sourceModel.belongsTo(targetModel, {

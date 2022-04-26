@@ -13,7 +13,6 @@ import { TypeaheadModule } from './typeahead/typeahead.module';
 import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
 import { MetaPageModule } from './meta/meta-page/meta-page.module';
-import { TypeaheadController } from './typeahead/typeahead.controller';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0

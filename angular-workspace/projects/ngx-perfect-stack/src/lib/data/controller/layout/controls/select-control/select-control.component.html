@@ -1,5 +1,5 @@
 <ng-container [formGroup]="formGroup" *ngIf="options$ | async as options">
-  <select class="form-select" [id]="attribute.name"
+  <select [ngClass]="getCSSClass()" [id]="attribute.name"
           [formControlName]="attribute.name" [compareWith]="byEntityId" >
     <option *ngFor="let o of options" [ngValue]="o">{{getDisplayText(o)}}</option>
   </select>

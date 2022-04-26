@@ -37,6 +37,11 @@ export class SelectControlComponent implements OnInit {
     return this.mode === 'view';
   }
 
+  getCSSClass() {
+    return this.isReadOnly() ? 'form-control': 'form-select';
+  }
+
+
   getDisplayText(option: any) {
     let displayValue = '';
     for(const displayAttributeName of this.attribute.typeaheadSearch) {
