@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { Sequelize } from 'sequelize';
 import { ConfigService } from '@nestjs/config';
-import { loadOrm } from './database.providers';
+import { databaseProviders } from './database.providers';
 
 export class OrmService {
   constructor(
@@ -10,6 +10,6 @@ export class OrmService {
   ) {}
 
   async reload() {
-    this.sequelize = await loadOrm(this.configService);
+    this.sequelize = await databaseProviders[0].useFactory(this.configService);
   }
 }

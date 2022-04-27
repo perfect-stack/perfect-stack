@@ -122,6 +122,14 @@ export class DataService {
   }
 
   async save(entityName: string, entity: Entity): Promise<EntityResponse> {
+    console.log(`save(${entityName}) ${JSON.stringify(entity)}`);
+
+    const metaEntityList = await this.metaEntityService.findAll();
+    const metaEntityMap = new Map<string, MetaEntity>();
+    for (const nextMetaEntity of metaEntityList) {
+      metaEntityMap.set(nextMetaEntity.name, nextMetaEntity);
+    }
+
     const model = this.ormService.sequelize.model(entityName);
 
     // entity may arrive with or without an id, and may exist or not exist in the database
@@ -133,13 +141,13 @@ export class DataService {
       entity.id = uuid.v4();
     }
 
-    const metaEntity = await this.metaEntityService.findOne(entityName);
+    const metaEntity = metaEntityMap.get(entityName);
     if (!metaEntity) {
       throw new Error(`Unable to find MetaEntity ${entityName}`);
     }
 
     // recursively save all the children (excluding the Poly ones)
-    await this.saveTheChildren(metaEntity, entity);
+    await this.saveTheChildren(metaEntityMap, metaEntity, entity);
 
     if (!entityModel) {
       // if entityModel was not found, or entity did not arrive with id
@@ -151,12 +159,13 @@ export class DataService {
     }
 
     // recursively save all Poly relationships
-    await this.saveAllPolys(metaEntity, entity);
+    await this.saveAllPolys(metaEntityMap, metaEntity, entity);
 
     return entityModel;
   }
 
   private async saveTheChildren(
+    metaEntityMap: Map<string, MetaEntity>,
     parentMetaEntity: MetaEntity,
     parentEntity: Entity,
   ) {
@@ -164,16 +173,17 @@ export class DataService {
       switch (attribute.type) {
         case AttributeType.OneToMany:
           await this.saveListOfChildren(
+            metaEntityMap,
             parentEntity,
             parentMetaEntity,
             attribute,
           );
           break;
         case AttributeType.OneToOne:
-          await this.saveOneToOne(parentEntity, attribute);
+          await this.saveOneToOne(metaEntityMap, parentEntity, attribute);
           break;
         case AttributeType.ManyToOne:
-          await this.saveManyToOne(parentEntity, attribute);
+          await this.saveManyToOne(metaEntityMap, parentEntity, attribute);
           break;
         // case AttributeType.OneToPoly:
         //   await this.saveOneToPoly(parentEntity, parentMetaEntity, attribute);
@@ -185,17 +195,24 @@ export class DataService {
   }
 
   private async saveAllPolys(
+    metaEntityMap: Map<string, MetaEntity>,
     parentMetaEntity: MetaEntity,
     parentEntity: Entity,
   ) {
     for (const attribute of parentMetaEntity.attributes) {
       if (attribute.type === AttributeType.OneToPoly) {
-        await this.saveOneToPoly(parentEntity, parentMetaEntity, attribute);
+        await this.saveOneToPoly(
+          metaEntityMap,
+          parentEntity,
+          parentMetaEntity,
+          attribute,
+        );
       }
     }
   }
 
   private async saveOneToPoly(
+    metaEntityMap: Map<string, MetaEntity>,
     parentEntity: Entity,
     parentMetaEntity: MetaEntity,
     attribute: MetaAttribute,
@@ -241,6 +258,7 @@ export class DataService {
   }
 
   private async saveListOfChildren(
+    metaEntityMap: Map<string, MetaEntity>,
     parentEntity: Entity,
     parentMetaEntity: MetaEntity,
     relationshipAttribute: MetaAttribute,
@@ -251,6 +269,10 @@ export class DataService {
 
     const childList = parentEntity[relationshipAttribute.name] as [];
     if (childList) {
+      console.log(
+        `saveListOfChildren(${relationshipAttribute.name}) with ${childList.length} items`,
+      );
+
       for (const nextChild of childList) {
         const childEntity = nextChild as Entity;
 
@@ -266,7 +288,7 @@ export class DataService {
           childEntityModel = await childModel.create(childEntity);
         }
 
-        const metaEntity = await this.metaEntityService.findOne(
+        const metaEntity = metaEntityMap.get(
           relationshipAttribute.relationshipTarget,
         );
         if (!metaEntity) {
@@ -275,7 +297,7 @@ export class DataService {
           );
         }
 
-        await this.saveTheChildren(metaEntity, childEntity);
+        await this.saveTheChildren(metaEntityMap, metaEntity, childEntity);
 
         childEntityModel.set(childEntity);
         childEntityModel[parentMetaEntity.name + 'Id'] = parentEntity.id;
@@ -285,31 +307,11 @@ export class DataService {
   }
 
   private async saveOneToOne(
+    metaEntityMap: Map<string, MetaEntity>,
     parentEntity: Entity,
     relationshipAttribute: MetaAttribute,
   ) {
-    const childEntity = parentEntity[relationshipAttribute.name] as Entity;
-    if (!childEntity) {
-      return;
-    }
-
-    let childEntityModel;
-    const childModel = await this.ormService.sequelize.model(
-      relationshipAttribute.relationshipTarget,
-    );
-
-    if (childEntity.id) {
-      this.validateUuid(childEntity.id);
-      childEntityModel = await childModel.findByPk(childEntity.id);
-    } else {
-      childEntity.id = uuid.v4();
-    }
-
-    if (!childEntityModel) {
-      childEntityModel = await childModel.create(childEntity);
-    }
-
-    const metaEntity = await this.metaEntityService.findOne(
+    const metaEntity = await metaEntityMap.get(
       relationshipAttribute.relationshipTarget,
     );
     if (!metaEntity) {
@@ -318,8 +320,32 @@ export class DataService {
       );
     }
 
+    const childEntity = parentEntity[relationshipAttribute.name] as Entity;
+    if (!childEntity) {
+      return;
+    }
+
+    let childEntityModel;
+
+    if (childEntity.id) {
+      this.validateUuid(childEntity.id);
+      const childModel = await this.ormService.sequelize.model(
+        relationshipAttribute.relationshipTarget,
+      );
+      childEntityModel = await childModel.findByPk(childEntity.id);
+    } else {
+      childEntity.id = uuid.v4();
+    }
+
+    if (!childEntityModel) {
+      const childModel = await this.ormService.sequelize.model(
+        relationshipAttribute.relationshipTarget,
+      );
+      childEntityModel = await childModel.create(childEntity);
+    }
+
     // recurse down into the children of this child (if needed)
-    await this.saveTheChildren(metaEntity, childEntity);
+    await this.saveTheChildren(metaEntityMap, metaEntity, childEntity);
 
     childEntityModel.set(childEntity);
     childEntityModel.save();
@@ -327,6 +353,7 @@ export class DataService {
   }
 
   private async saveManyToOne(
+    metaEntityMap: Map<string, MetaEntity>,
     parentEntity: Entity,
     relationshipAttribute: MetaAttribute,
   ) {

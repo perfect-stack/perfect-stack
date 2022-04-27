@@ -16,6 +16,7 @@ export class FormContext {
   metaPage: MetaPage;
   metaPageMap: Map<string, MetaPage>;
   metaEntity: MetaEntity;
+  metaEntityMap: Map<string, MetaEntity>;
   entity: Entity;
   entityForm: FormGroup;
   cells: CellAttribute[][];
@@ -59,7 +60,14 @@ export class FormService {
       const metaEntityName = template.metaEntityName
 
       return this.metaEntityService.findAll().pipe(switchMap((metaEntityList) => {
-        const me = metaEntityList.find((m) => m.name === metaEntityName);
+
+        ctx.metaEntityMap = new Map<string, MetaEntity>();
+        for(const nextMetaEntity of metaEntityList) {
+          ctx.metaEntityMap.set(nextMetaEntity.name, nextMetaEntity);
+        }
+
+        //const me = metaEntityList.find((m) => m.name === metaEntityName);
+        const me = ctx.metaEntityMap.get(metaEntityName);
         if (!me) {
           throw new Error(`Unable to find MetaEntity for ${metaName}`);
         }
