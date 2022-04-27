@@ -2,16 +2,36 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {MetaEntity} from '../../../domain/meta.entity';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
+import {Observable, of, shareReplay, switchMap} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MetaEntityService {
 
+  private metaEntityMapCache$: Observable<Map<string, MetaEntity>>;
+
   constructor(
     @Inject(STACK_CONFIG)
     protected readonly stackConfig: NgxPerfectStackConfig,
     protected readonly http: HttpClient) { }
+
+  get metaEntityMap$() {
+    if(!this.metaEntityMapCache$) {
+      this.metaEntityMapCache$ = this.requestMetaEntityMap().pipe(shareReplay(1));
+    }
+    return this.metaEntityMapCache$;
+  }
+
+  private requestMetaEntityMap() {
+    return this.findAll().pipe(switchMap(list => {
+      return of(new Map(
+        list.map((a) => {
+          return [a.name, a];
+        })
+      ));
+    }));
+  }
 
   findAll() {
     return this.http.get<MetaEntity[]>(`${this.stackConfig.apiUrl}/meta/entity`);

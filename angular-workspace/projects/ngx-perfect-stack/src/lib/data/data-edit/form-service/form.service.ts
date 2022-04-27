@@ -50,23 +50,15 @@ export class FormService {
     ctx.mode = mode;
     ctx.id = id;
 
-    return this.metaPageService.findAll().pipe(switchMap((metaPageList) => {
-      ctx.metaPageMap = new Map<string, MetaPage>();
-      metaPageList.forEach(a => ctx.metaPageMap.set(a.name, a));
-
+    return this.metaPageService.metaPageMap$.pipe(switchMap((metaPageMap) => {
+      ctx.metaPageMap = metaPageMap;
       ctx.metaPage = ctx.metaPageMap.get(metaPageName) as MetaPage;
 
       const template = ctx.metaPage.templates[0];
       const metaEntityName = template.metaEntityName
 
-      return this.metaEntityService.findAll().pipe(switchMap((metaEntityList) => {
-
-        ctx.metaEntityMap = new Map<string, MetaEntity>();
-        for(const nextMetaEntity of metaEntityList) {
-          ctx.metaEntityMap.set(nextMetaEntity.name, nextMetaEntity);
-        }
-
-        //const me = metaEntityList.find((m) => m.name === metaEntityName);
+      return this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
+        ctx.metaEntityMap = metaEntityMap;
         const me = ctx.metaEntityMap.get(metaEntityName);
         if (!me) {
           throw new Error(`Unable to find MetaEntity for ${metaName}`);
@@ -77,12 +69,12 @@ export class FormService {
         if (id) {
           return this.dataService.findById(ctx.metaEntity.name, id).pipe(switchMap((entity) => {
             ctx.entity = entity as Entity;
-            ctx.entityForm = this.createFormGroup(mode, template, ctx.metaPageMap, metaEntityList, ctx.entity);
+            ctx.entityForm = this.createFormGroup(mode, template, ctx.metaPageMap, metaEntityMap, ctx.entity);
             ctx.entityForm.patchValue(ctx.entity);
             return of(ctx);
           }));
         } else {
-          ctx.entityForm = this.createFormGroup(mode, template, ctx.metaPageMap, metaEntityList, null);
+          ctx.entityForm = this.createFormGroup(mode, template, ctx.metaPageMap, metaEntityMap, null);
           return of(ctx);
         }
       }));
@@ -122,13 +114,13 @@ export class FormService {
   createFormGroup(mode: string,
                   template: Template,
                   metaPageMap: Map<string, MetaPage>,
-                  metaEntityList: MetaEntity[],
+                  metaEntityMap: Map<string, MetaEntity>,
                   entity: Entity | null) {
     const controls: {
       [key: string]: AbstractControl;
     } = {};
 
-    const templateMetaEntity = metaEntityList.find(m => m.name === template.metaEntityName);
+    const templateMetaEntity = metaEntityMap.get(template.metaEntityName);
     if (!templateMetaEntity) {
       throw new Error(`Unable to find template MetaEntity of ${template.metaEntityName}`)
     }
@@ -148,7 +140,7 @@ export class FormService {
             if (childTemplate) {
               for (let i = 0; i < itemCount; i++) {
                 const childEntity = itemArray[i];
-                formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityList, childEntity))
+                formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityMap, childEntity))
               }
             }
           }
@@ -172,7 +164,7 @@ export class FormService {
               if(childPage) {
                 const childTemplate = childPage.templates[0];
                 console.log(`Adding formGroup for; ${nextAttribute.name}, ${childDiscriminatorValue}, ${childPageName}`);
-                formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityList, childEntity))
+                formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityMap, childEntity))
               }
             }
           }
@@ -184,7 +176,7 @@ export class FormService {
           const childTemplate = attributeCell.template;
           if (childTemplate) {
             const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
-            formControl = this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityList, childEntity);
+            formControl = this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityMap, childEntity);
           }
         }
       }

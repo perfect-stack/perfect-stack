@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {MetaPage, Template} from '../../../domain/meta.page';
 import {MetaAttribute} from '../../../domain/meta.entity';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
+import {Observable, of, shareReplay, switchMap} from 'rxjs';
 
 
 export class CellAttribute {
@@ -19,10 +20,30 @@ export class CellAttribute {
 })
 export class MetaPageService {
 
+  // Caching strategy followed is here; https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
+  private metaPageMapCache$: Observable<Map<string, MetaPage>>;
+
   constructor(
     @Inject(STACK_CONFIG)
     protected readonly stackConfig: NgxPerfectStackConfig,
     protected readonly http: HttpClient) { }
+
+  get metaPageMap$() {
+    if(!this.metaPageMapCache$) {
+      this.metaPageMapCache$ = this.requestMetaPageMap().pipe(shareReplay(1));
+    }
+    return this.metaPageMapCache$;
+  }
+
+  private requestMetaPageMap() {
+    return this.findAll().pipe(switchMap(list => {
+      return of(new Map(
+        list.map((a) => {
+          return [a.name, a];
+        })
+      ));
+    }));
+  }
 
   findAll() {
     return this.http.get<MetaPage[]>(`${this.stackConfig.apiUrl}/meta/page`);

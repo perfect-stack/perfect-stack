@@ -65,17 +65,16 @@ export class TableLayoutComponent implements OnInit {
 
   cells$: Observable<CellAttribute[][]>;
 
-  // we need metaEntityList because of how new rows are added to the table
-  metaEntityList: MetaEntity[];
+  metaEntityMap: Map<string, MetaEntity>;
   metaPageMap: Map<string, MetaPage>;
 
   constructor(private metaEntityService: MetaEntityService,
               private formService: FormService) { }
 
   ngOnInit(): void {
-    this.metaEntityService.findAll().subscribe(metaEntityList => {
-      this.metaEntityList = metaEntityList;
-    });
+    this.metaEntityService.metaEntityMap$.subscribe(map => {
+      this.metaEntityMap = map;
+    })
 
     if(!this.template.metaEntityName) {
       throw new Error(`The template; ${JSON.stringify(this.template)} has no metaEntityName`);
@@ -97,7 +96,7 @@ export class TableLayoutComponent implements OnInit {
 
   onAddRow() {
     if(this.mode === 'edit') {
-      const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaPageMap, this.metaEntityList, null);
+      const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaPageMap, this.metaEntityMap, null);
       this.attributes.push(formGroup);
     }
   }
@@ -128,10 +127,7 @@ export class CardLayoutComponent implements OnInit {
   @Input()
   relationshipProperty: string;
 
-  // we need metaEntityList because of how new rows are added to the table
-  metaEntityList$: Observable<MetaEntity[]>;
-
-  // a map of MetaPages, probably should only fetch the ones we need
+  metaEntityMap$: Observable<Map<string, MetaEntity>>;
   metaPageMap$: Observable<Map<string, MetaPage>>;
 
   cardItemMap = new Map<string, CardItem>();
@@ -144,7 +140,7 @@ export class CardLayoutComponent implements OnInit {
               private formService: FormService) {}
 
   ngOnInit(): void {
-    this.metaEntityList$ = this.metaEntityService.findAll();
+    this.metaEntityMap$ = this.metaEntityService.metaEntityMap$;
 
     this.metaPageMap$ = this.metaPageService.findAll().pipe(switchMap((metaPageList: MetaPage[]) => {
 
@@ -227,7 +223,7 @@ export class CardLayoutComponent implements OnInit {
     return this.getMetaPageForRow(rowIdx, metaPageMap).templates[0];
   }
 
-  onAddItem(metaPageMap: Map<string, MetaPage>, metaEntityList: MetaEntity[]) {
+  onAddItem(metaPageMap: Map<string, MetaPage>, metaEntityMap: Map<string, MetaEntity>) {
     if(this.mode === 'edit') {
       const modalRef = this.modalService.open(CardItemDialogComponent);
       const cardItemDialog = modalRef.componentInstance as CardItemDialogComponent;
@@ -247,7 +243,7 @@ export class CardLayoutComponent implements OnInit {
             const template = metaPage.templates[0];
 
             if(self.mode) {
-              const formGroup = this.formService.createFormGroup(self.mode, template, metaPageMap, metaEntityList, null);
+              const formGroup = this.formService.createFormGroup(self.mode, template, metaPageMap, metaEntityMap, null);
               formGroup.addControl('activity_type', this.fb.control(''));
               this.attributes.push(formGroup);
 
