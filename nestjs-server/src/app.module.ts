@@ -20,7 +20,7 @@ const envFile =
     : './env/local.env';
 
 const logger = new Logger('Global');
-logger.log(`envFile = ${envFile}`);
+logger.log(`Loading envFile = ${envFile}`);
 
 export const CONFIG_MODULE = ConfigModule.forRoot({
   isGlobal: true,
