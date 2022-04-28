@@ -80,9 +80,16 @@ export class TableLayoutComponent implements OnInit {
       throw new Error(`The template; ${JSON.stringify(this.template)} has no metaEntityName`);
     }
 
-    this.cells$ = this.metaEntityService.findById(this.template.metaEntityName).pipe(switchMap((metaEntity) => {
-      const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
-      return of(cells);
+    //this.cells$ = this.metaEntityService.findById(this.template.metaEntityName).pipe(switchMap((metaEntity) => {
+    this.cells$ = this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
+      const metaEntity = metaEntityMap.get(this.template.metaEntityName);
+      if(metaEntity) {
+        const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
+        return of(cells);
+      }
+      else {
+        throw new Error(`Unable to find metaEntity for; ${this.template.metaEntityName}`);
+      }
     }));
   }
 
@@ -141,38 +148,26 @@ export class CardLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.metaEntityMap$ = this.metaEntityService.metaEntityMap$;
+    this.metaPageMap$ = this.metaPageService.metaPageMap$;
 
-    this.metaPageMap$ = this.metaPageService.findAll().pipe(switchMap((metaPageList: MetaPage[]) => {
+    // TODO: make this more dynamic and allow the user to define it themselves
+    this.cardItemMap.set('Health', {
+      discriminatorValue: 'Health',
+      metaEntityName: 'HealthActivity',
+      metaPageName: 'HealthActivity.view_edit'
+    });
 
-      // TODO: make this more dynamic and allow the user to define it themselves
-      // HACK: this is only here to help with an initialisation race condition
+    this.cardItemMap.set('Measurement', {
+      discriminatorValue: 'Measurement',
+      metaEntityName: 'MeasurementActivity',
+      metaPageName: 'MeasurementActivity.view_edit'
+    });
 
-      this.cardItemMap.set('Health', {
-        discriminatorValue: 'Health',
-        metaEntityName: 'HealthActivity',
-        metaPageName: 'HealthActivity.view_edit'
-      });
-
-      this.cardItemMap.set('Measurement', {
-        discriminatorValue: 'Measurement',
-        metaEntityName: 'MeasurementActivity',
-        metaPageName: 'MeasurementActivity.view_edit'
-      });
-
-      this.cardItemMap.set('Weight', {
-        discriminatorValue: 'Weight',
-        metaEntityName: 'WeightActivity',
-        metaPageName: 'WeightActivity.view_edit'
-      });
-
-
-      const metaPageMap = new Map<string, MetaPage>();
-      for(const metaPage of metaPageList) {
-        metaPageMap.set(metaPage.name, metaPage);
-      }
-
-      return of(metaPageMap);
-    }));
+    this.cardItemMap.set('Weight', {
+      discriminatorValue: 'Weight',
+      metaEntityName: 'WeightActivity',
+      metaPageName: 'WeightActivity.view_edit'
+    });
   }
 
   get attributes() {
@@ -311,9 +306,15 @@ export class FormLayoutComponent implements OnInit {
               private formService: FormService) { }
 
   ngOnInit(): void {
-    this.cells$ = this.metaEntityService.findById(this.template.metaEntityName).pipe(switchMap((metaEntity) => {
-      const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
-      return of(cells);
+    this.cells$ = this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
+      const metaEntity = metaEntityMap.get(this.template.metaEntityName);
+      if(metaEntity) {
+        const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
+        return of(cells);
+      }
+      else {
+        throw new Error(`Unable to find metaEntity for: ${this.template.metaEntityName}`);
+      }
     }));
   }
 
@@ -420,8 +421,9 @@ export class OneToOneControlComponent implements OnInit {
       const attribute = this.cell.attribute;
       const childMetaEntityName = attribute.relationshipTarget;
       const childTemplate = this.cell.template;
-      this.metaEntityService.findById(childMetaEntityName).subscribe(metaEntity => {
-        if(childTemplate) {
+      this.metaEntityService.metaEntityMap$.subscribe((metaEntityMap) => {
+        const metaEntity = metaEntityMap.get(childMetaEntityName);
+        if(childTemplate && metaEntity) {
           this.childCells = this.formService.toCellAttributeArray(childTemplate, metaEntity);
           this.childFormGroup = this.formGroup.controls[attribute.name] as FormGroup;
         }
