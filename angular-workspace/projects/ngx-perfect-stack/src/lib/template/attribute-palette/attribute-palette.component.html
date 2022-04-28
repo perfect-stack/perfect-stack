@@ -1,6 +1,6 @@
 <h5>Attributes</h5>
 
-<div class="small mb-2">Drag and drop these onto the form...</div>
+<div class="small mb-2">Drag these...</div>
 
 <ul class="list-group" *ngIf="metaEntity && metaEntity.attributes">
   <li draggable *ngFor="let attribute of metaEntity.attributes" [dragData]="attribute" class="list-group-item">{{attribute.label}}</li>

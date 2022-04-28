@@ -1,6 +1,6 @@
-<div class="container-fluid mt-3" *ngIf="ctx$ | async as ctx">
+<div class="container-fluid mt-3" *ngIf="metaEntity$ | async as metaEntity">
 
-  <h2 class="mb-3">Search/Edit {{ctx.name}}</h2>
+  <h2 class="mb-3">Search/Edit {{metaEntity.name}}</h2>
 
   <ng-container *ngIf="rowData$ | async as rowData">
     <table class="table table-striped">
@@ -16,11 +16,11 @@
       <tbody>
       <ng-container *ngFor="let nextEntity of rowData.resultList">
         <ng-container *ngIf="!editSet.has(nextEntity.id)">
-          <tr app-row-view [entity]="nextEntity" [metaEntity]="ctx" (actionEvent)="onActionEvent($event)"></tr>
+          <tr app-row-view [entity]="nextEntity" [metaEntity]="metaEntity" (actionEvent)="onActionEvent($event)"></tr>
         </ng-container>
 
         <ng-container *ngIf="editSet.has(nextEntity.id)">
-          <tr app-row-edit [entity]="nextEntity" [metaEntity]="ctx" (actionEvent)="onActionEvent($event)"></tr>
+          <tr app-row-edit [entity]="nextEntity" [metaEntity]="metaEntity" (actionEvent)="onActionEvent($event)"></tr>
         </ng-container>
       </ng-container>
       </tbody>

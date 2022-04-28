@@ -22,7 +22,7 @@ export class DataSearchEditComponent implements OnInit {
   public metaName: string;
   public mode = 'search';
 
-  ctx$: Observable<MetaEntity>;
+  metaEntity$: Observable<MetaEntity>;
   rowData$: Observable<QueryResponse<Entity>>;
 
   editSet = new Set();
@@ -33,7 +33,7 @@ export class DataSearchEditComponent implements OnInit {
               protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
-    this.ctx$ = this.route.paramMap.pipe(switchMap(params => {
+    this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
       const metaName = params.get('metaName');
       if (metaName) {
         this.metaName = metaName

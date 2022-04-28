@@ -3,6 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {DataSearchActionEvent} from '../data-search-action-event';
 import {DataService} from '../../data-service/data.service';
+import {FormControlWithAttribute} from '../../data-edit/form-service/form.service';
 
 @Component({
   selector: '[app-row-edit]',  // NOTE: using [] syntax here so cells are nested inside "tr" correctly
@@ -21,19 +22,24 @@ export class RowEditComponent implements OnInit {
   actionEvent = new EventEmitter<DataSearchActionEvent>();
 
   formGroup = new FormGroup({
-    id: new FormControl(''),
-    status: new FormControl(''),
-    name: new FormControl('', Validators.required),
-    description: new FormControl(''),
-    start_date: new FormControl(null),
-    end_date: new FormControl(null),
-    sort_index: new FormControl(''),
+    id: new FormControlWithAttribute(''),
+    status: new FormControlWithAttribute(''),
+    name: new FormControlWithAttribute('', Validators.required),
+    description: new FormControlWithAttribute(''),
+    start_date: new FormControlWithAttribute(null),
+    end_date: new FormControlWithAttribute(null),
+    sort_index: new FormControlWithAttribute(''),
   });
 
   constructor(protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
     this.formGroup.patchValue(this.entity);
+
+    this.metaEntity.attributes.forEach((attribute) => {
+      const formControlWithAttribute = this.formGroup.get(attribute.name) as FormControlWithAttribute;
+      formControlWithAttribute.attribute = attribute;
+    });
   }
 
   findAttribute(name: string): MetaAttribute {

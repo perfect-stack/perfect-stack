@@ -1,28 +1,31 @@
 <div class="container-fluid mt-3">
-  <ng-container *ngIf="metaPage$ | async as metaPage">
+  <div class="bg-light shadow-sm border py-3 px-2" *ngIf="metaPage$ | async as metaPage">
 
     <h2>Page Edit</h2>
 
-    <div class="row">
-      <div class="col-4">
-        <form class="form" #form="ngForm" [formGroup]="metaPageForm">
-          <div class="form-group row">
-            <label class="col-2" for="name">Name</label>
-            <input class="col-10 form-control" type="text" id="name" formControlName="name">
+    <form class="form" #form="ngForm" [formGroup]="metaPageForm">
+      <div class="row mb-2">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-4">
+              <label class="form-label" for="name">Name</label>
+              <input class="form-control" type="text" id="name" formControlName="name">
+            </div>
+
+            <div class="col-4">
+              <label class="form-label" for="title">Title</label>
+              <input class="form-control" type="text" id="title" formControlName="title">
+            </div>
+            <div class="col-4">
+              <label class="form-label" for="type">Type</label>
+              <select class="form-select" id="type" formControlName="type">
+                <option *ngFor="let o of getPageTypeOptions()" [ngValue]="o">{{o}}</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group row">
-            <label class="col-2" for="title">Title</label>
-            <input class="col-10 form-control" type="text" id="title" formControlName="title">
-          </div>
-          <div class="form-group row">
-            <label class="col-2" for="type">Type</label>
-            <select class="col-10 form-control" id="type" formControlName="type">
-              <option *ngFor="let o of getPageTypeOptions()" [ngValue]="o">{{o}}</option>
-            </select>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
+    </form>
 
     <ng-container *ngFor="let nextTemplate of templates">
       <app-template-controller [template]="nextTemplate"></app-template-controller>
@@ -36,5 +39,5 @@
       <button class="btn btn-primary" (click)="onSave()">Save</button>
     </div>
 
-  </ng-container>
+  </div>
 </div>

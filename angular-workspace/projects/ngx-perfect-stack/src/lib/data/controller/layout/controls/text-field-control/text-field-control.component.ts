@@ -31,6 +31,6 @@ export class TextFieldControlComponent implements OnInit {
   get inputType() {
     const formControlWithAttribute = this.formGroup.controls[this.name] as FormControlWithAttribute;
     const attribute = formControlWithAttribute.attribute;
-    return attribute.type === AttributeType.Integer ? 'number' : 'text;'
+    return attribute.type === AttributeType.Integer ? 'number' : 'text';
   }
 }
