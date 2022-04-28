@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {DataService} from '../data-service/data.service';
-import {Observable, switchMap, tap} from 'rxjs';
+import {Observable, of, switchMap, tap} from 'rxjs';
 import {QueryRequest} from '../data-service/query.request';
 import {QueryResponse} from '../data-service/query.response';
 import {Entity} from '../../domain/entity';
@@ -34,11 +34,19 @@ export class DataSearchEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.ctx$ = this.route.paramMap.pipe(switchMap(params => {
-      const metaNameOrNull = params.get('metaName');
-      if (metaNameOrNull) {
-        this.metaName = metaNameOrNull
+      const metaName = params.get('metaName');
+      if (metaName) {
+        this.metaName = metaName
         this.onSearch();
-        return this.metaEntityService.findById(this.metaName)
+        return this.metaEntityService.metaEntityMap$.pipe(switchMap( (metaEntityMap) => {
+          const metaEntity = metaEntityMap.get(this.metaName);
+          if(metaEntity) {
+            return of(metaEntity);
+          }
+          else {
+            throw new Error(`Unable to find metaEntity for; ${this.metaName}`);
+          }
+        }));
       }
       else {
         throw new Error(`Invalid input parameters: no metaName supplied`);

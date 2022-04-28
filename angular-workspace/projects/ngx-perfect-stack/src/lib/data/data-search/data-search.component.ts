@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {map, Observable, switchMap} from 'rxjs';
+import {Observable, of, switchMap} from 'rxjs';
 import {AttributeType, MetaAttribute} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
@@ -42,11 +42,15 @@ export class DataSearchComponent implements OnInit {
         return this.formService.loadFormContext(this.metaName, this.mode, null).pipe(switchMap( (ctx) => {
           const resultTableTemplate = ctx.metaPage.templates[1];
           const resultTableMetaEntityName = resultTableTemplate.metaEntityName;
-          return this.metaEntityService.findById(resultTableMetaEntityName).pipe(map(rtme => {
+          const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
+          if(rtme) {
             this.resultTableCells = this.formService.toCellAttributeArray(resultTableTemplate, rtme);
             this.onSearch(ctx);
-            return ctx;
-          }));
+            return of(ctx);
+          }
+          else {
+            throw new Error(`Unable to find metaEntity of; ${resultTableMetaEntityName}`);
+          }
         }));
       }
       else {
