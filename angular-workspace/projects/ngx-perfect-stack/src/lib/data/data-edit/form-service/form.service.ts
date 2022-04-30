@@ -181,22 +181,22 @@ export class FormService {
         }
       }
       else if (nextAttribute.type === AttributeType.Date) {
-        formControl = new FormControlWithAttribute({value: '', disabled: mode === 'view'});
+        // See WARNING below: Date does need to be null, otherwise empty string is treated as an invalid Date and prevents
+        // "no value" optional dates from allowing the form validation to be valid
+        formControl = new FormControlWithAttribute({value: null, disabled: mode === 'view'});
       }
       else {
         // WARNING: This has been a bit of a cockroach problem. One of these two lines is "correct" but depending on
         // the low level sequence of processing elsewhere the "right" answer is either '' or null. If you change this
         // line you'll probably get subtle bugs elsewhere. Ideally I'd like it to be null but Angular and JS seem to
         // prefer ''. Don't even get me started on undefined.
-        formControl = new FormControlWithAttribute({value: '', disabled: mode === 'view'});
         //formControl = new FormControlWithAttribute({value: null, disabled: mode === 'view'});
+        formControl = new FormControlWithAttribute({value: '', disabled: mode === 'view'});
       }
 
       if(formControl) {
         if(nextAttribute.visibility === VisibilityType.Required) {
-          if(nextAttribute.type !== AttributeType.Date) {
-            formControl.addValidators(Validators.required);
-          }
+          formControl.addValidators(Validators.required);
         }
 
         formControl.attribute = nextAttribute;
