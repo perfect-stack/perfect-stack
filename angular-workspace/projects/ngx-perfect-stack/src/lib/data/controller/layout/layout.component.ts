@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Cell, ComponentType, MetaPage, Template, TemplateType} from '../../../domain/meta.page';
 import {AbstractControl, FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
@@ -288,7 +288,7 @@ export class CardLayoutComponent implements OnInit {
   templateUrl: './form-layout.component.html',
   styleUrls: ['./form-layout.component.css']
 })
-export class FormLayoutComponent implements OnInit {
+export class FormLayoutComponent implements OnInit, OnChanges {
 
   @Input()
   mode: string | null;
@@ -306,16 +306,27 @@ export class FormLayoutComponent implements OnInit {
               private formService: FormService) { }
 
   ngOnInit(): void {
-    this.cells$ = this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
-      const metaEntity = metaEntityMap.get(this.template.metaEntityName);
-      if(metaEntity) {
-        const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
-        return of(cells);
-      }
-      else {
-        throw new Error(`Unable to find metaEntity for: ${this.template.metaEntityName}`);
-      }
-    }));
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['template']) {
+      this.updateCells$();
+    }
+  }
+
+  updateCells$() {
+    if(this.template) {
+      this.cells$ = this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
+        const metaEntity = metaEntityMap.get(this.template.metaEntityName);
+        if(metaEntity) {
+          const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
+          return of(cells);
+        }
+        else {
+          throw new Error(`Unable to find metaEntity for: ${this.template.metaEntityName}`);
+        }
+      }));
+    }
   }
 
   getCSS(cell: Cell): string[] {

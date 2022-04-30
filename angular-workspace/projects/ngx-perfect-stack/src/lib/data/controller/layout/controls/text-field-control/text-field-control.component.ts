@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
-import {AttributeType} from '../../../../../domain/meta.entity';
+import {AttributeType, MetaAttribute} from '../../../../../domain/meta.entity';
 
 @Component({
   selector: 'lib-text-field-control',
@@ -28,9 +28,12 @@ export class TextFieldControlComponent implements OnInit {
     return this.mode === 'view' ? true : false;
   }
 
-  get inputType() {
+  get attribute(): MetaAttribute | null {
     const formControlWithAttribute = this.formGroup.controls[this.name] as FormControlWithAttribute;
-    const attribute = formControlWithAttribute.attribute;
-    return attribute.type === AttributeType.Integer ? 'number' : 'text';
+    return formControlWithAttribute ? formControlWithAttribute.attribute : null;
+  }
+
+  get inputType() {
+    return this.attribute && this.attribute.type === AttributeType.Integer ? 'number' : 'text';
   }
 }

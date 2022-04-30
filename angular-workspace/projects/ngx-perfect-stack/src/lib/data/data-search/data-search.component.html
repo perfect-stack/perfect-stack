@@ -1,14 +1,14 @@
 <div class="container-fluid mt-3" *ngIf="ctx$ | async as ctx">
 
-  <ng-container>
+  <ng-container *ngIf="searchCriteriaTemplate">
     <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
       <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
-      <lib-controller [ctx]="ctx" [template]="ctx.metaPage.templates[0]">
+      <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate">
         <ng-container BottomLeftActions>
           <button type="submit" class="btn btn-outline-success me-2" (click)="onNew(ctx)">New...</button>
         </ng-container>
         <ng-container BottomRightActions>
-          <button class="btn btn-outline-secondary me-2" (click)="onReset()">Reset</button>
+          <button class="btn btn-outline-secondary me-2" (click)="onReset(ctx)">Reset</button>
           <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)">Search</button>
         </ng-container>
       </lib-controller>

@@ -395,7 +395,7 @@ export class DataService {
     operatorMap.set(ComparisonOperator.StartsWith, Op.startsWith);
 
     for (const nextCriteria of queryRequest.criteria) {
-      if (nextCriteria.value) {
+      if (nextCriteria.value && nextCriteria.value !== 'null') {
         if (nextCriteria.operator) {
           const op = operatorMap.get(nextCriteria.operator);
           if (op) {

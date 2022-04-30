@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable, of, switchMap} from 'rxjs';
+import {Component, EventEmitter, OnInit} from '@angular/core';
+import {Observable, of, Subject, switchMap} from 'rxjs';
 import {AttributeType, MetaAttribute} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
@@ -8,6 +8,7 @@ import {CellAttribute} from '../../meta/page/meta-page-service/meta-page.service
 import {FormContext, FormControlWithAttribute, FormService} from '../data-edit/form-service/form.service';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {Criteria, QueryRequest} from '../data-service/query.request';
+import {Template} from '../../domain/meta.page';
 
 @Component({
   selector: 'app-data-search',
@@ -28,6 +29,8 @@ export class DataSearchComponent implements OnInit {
 
   ctx$: Observable<FormContext>;
 
+  searchCriteriaTemplate: Template;
+
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly formService: FormService,
@@ -37,9 +40,9 @@ export class DataSearchComponent implements OnInit {
   ngOnInit(): void {
     this.ctx$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
-
       if(this.metaName) {
         return this.formService.loadFormContext(this.metaName, this.mode, null).pipe(switchMap( (ctx) => {
+          this.searchCriteriaTemplate = ctx.metaPage.templates[0];
           const resultTableTemplate = ctx.metaPage.templates[1];
           const resultTableMetaEntityName = resultTableTemplate.metaEntityName;
           const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
@@ -118,8 +121,9 @@ export class DataSearchComponent implements OnInit {
     this.router.navigate([`/data/${this.metaName}/view/${id}`]);
   }
 
-  onReset() {
-
+  onReset(ctx: FormContext) {
+    ctx.entityForm.reset();
+    this.onSearch(ctx);
   }
 
   onNew(ctx: FormContext) {

@@ -1,7 +1,7 @@
 @import "../../../../../library-styles.css";
 
 .ngb-dp-weekday {
-  color: deeppink !important;
+  color: deeppink;
   font-weight: bold;
   font-size: larger;
 }

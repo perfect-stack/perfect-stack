@@ -194,7 +194,9 @@ export class FormService {
 
       if(formControl) {
         if(nextAttribute.visibility === VisibilityType.Required) {
-          formControl.addValidators(Validators.required);
+          if(nextAttribute.type !== AttributeType.Date) {
+            formControl.addValidators(Validators.required);
+          }
         }
 
         formControl.attribute = nextAttribute;
