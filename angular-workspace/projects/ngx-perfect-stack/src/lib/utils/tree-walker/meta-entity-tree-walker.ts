@@ -129,21 +129,19 @@ export interface Visitor {
   visit(node: any, value: any, metaEntity: MetaEntity, attribute: MetaAttribute): void;
 }
 
+/**
+ * For each AttributeType.Integer, look at the value and if it is a string convert it to a number, "1" => 1
+ */
 export class IntegerVisitor implements Visitor {
-
-  /**
-   * For each AttributeType.Integer, look at the value and if it is a string convert it to a number, "1" => 1
-   */
   visit(node: any, value: number, metaEntity: MetaEntity, attribute: MetaAttribute): void {
     node[attribute.name] = value ? Number(value) : null;
   }
 }
 
+/**
+ * For each AttributeType.Identifier, convert empty strings and other falsy values into nulls
+ */
 export class IdentifierVisitor implements Visitor {
-
-  /**
-   * For each AttributeType.Identifier, convert empty strings and other falsy values into nulls
-   */
   visit(node: any, value: number, metaEntity: MetaEntity, attribute: MetaAttribute): void {
     node[attribute.name] = value ? value : null;
   }

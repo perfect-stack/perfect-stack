@@ -1,5 +1,6 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import {IAngularMyDpOptions} from 'angular-mydatepicker';
 
 @Component({
   selector: 'app-date-picker-control',
@@ -17,6 +18,13 @@ export class DatePickerControlComponent implements OnInit {
 
   @Input()
   mode: string | null;
+
+  myOptions: IAngularMyDpOptions = {
+    dateRange: false,
+    dateFormat: 'yyyy-mm-dd',
+    
+    // other options...
+  };
 
   constructor() { }
 

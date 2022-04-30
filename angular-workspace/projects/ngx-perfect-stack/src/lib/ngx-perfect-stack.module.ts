@@ -78,6 +78,7 @@ import { OneToPolyEditComponent } from './meta/entity/meta-entity-edit/one-to-po
 import { CardItemDialogComponent } from './data/controller/layout/controls/card-item-dialog/card-item-dialog.component';
 import {LoadingBarHttpClientModule} from '@ngx-loading-bar/http-client';
 import { VersionComponent } from './meta/version/version.component';
+import {AngularMyDatePickerModule} from 'angular-mydatepicker';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -166,7 +167,7 @@ const routes: Routes = [
     MetaPageService,
     MetaEntityService,
     ToastService,
-    CustomDateAdapterService,
+    // CustomDateAdapterService,
     {
       provide: APP_INITIALIZER,
       useFactory: () => initializeAuth,
@@ -180,7 +181,7 @@ const routes: Routes = [
     },
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true},
-    {provide: NgbDateAdapter, useClass: CustomDateAdapterService},
+    // {provide: NgbDateAdapter, useClass: CustomDateAdapterService},
     {provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js'},
     NgbDropdown,
   ],
@@ -196,6 +197,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ReactiveFormsModule,
     LoadingBarHttpClientModule,
+    AngularMyDatePickerModule,
   ],
   exports: [
     NgxPerfectStackComponent,
