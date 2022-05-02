@@ -1,12 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  Validators
-} from '@angular/forms';
+import {AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {
@@ -19,6 +12,7 @@ import {
 } from '../../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {OneToPolyEditComponent} from './one-to-poly-edit/one-to-poly-edit.component';
+import {EnumeratonEditComponent} from './enumeraton-edit/enumeraton-edit.component';
 
 @Component({
   selector: 'app-meta-entity-edit',
@@ -54,6 +48,10 @@ export class MetaEntityEditComponent implements OnInit {
         const formGroup = this.addBlankRow();
         if(metaAttribute.type === AttributeType.OneToPoly) {
           OneToPolyEditComponent.addDiscriminatorFormGroup(this.fb, formGroup, metaAttribute);
+        }
+
+        if(metaAttribute.type === AttributeType.Enumeration) {
+          EnumeratonEditComponent.addEnumerationFormControl(this.fb, formGroup, metaAttribute);
         }
       }
 
@@ -169,6 +167,12 @@ export class MetaEntityEditComponent implements OnInit {
     const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
     const type = rowFormGroup.controls['type'].value;
     return type === AttributeType.OneToPoly;
+  }
+
+  isEnumeration(rowIdx: number) {
+    const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
+    const type = rowFormGroup.controls['type'].value;
+    return type === AttributeType.Enumeration;
   }
 }
 

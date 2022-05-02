@@ -15,9 +15,10 @@ export class OneToPolyEditComponent implements OnInit {
   @Input()
   formGroup: FormGroup;
 
-  discriminatorFormGroup: FormGroup;
+  @Input()
+  metaEntityOptions: MetaEntity[];
 
-  metaEntityOptions$: Observable<MetaEntity[]>;
+  discriminatorFormGroup: FormGroup;
   discriminatorValueOptions$: Observable<any>;
 
   constructor(private fb: FormBuilder,
@@ -25,8 +26,6 @@ export class OneToPolyEditComponent implements OnInit {
               protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
-    this.metaEntityOptions$ = this.metaEntityService.findAll();
-
     if(this.formGroup) {
       const metaAttribute: MetaAttribute = this.formGroup.value;
       OneToPolyEditComponent.addDiscriminatorFormGroup(this.fb, this.formGroup, metaAttribute);

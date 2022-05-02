@@ -1,0 +1,10 @@
+<form class="d-flex align-items-baseline mt-2" [formGroup]="nextValueFormGroup">
+  <label for="nextValueLbl" class="form-label text-nowrap me-2">Add value</label>
+  <input type="text" class="form-control justify-content-around me-2" id="nextValueLbl" formControlName="nextValue">
+  <button class="btn btn-outline-success" (click)="onAdd(nextValueFormGroup.value.nextValue)">Add</button>
+</form>
+
+<span class="badge bg-secondary me-1" *ngFor="let value of formGroup.value.enumeration; let i = index;">
+  <span>{{value}}</span><span class="material-icons small" (click)="removeValue(i)">close</span>
+</span>
+

@@ -55,7 +55,10 @@
                   <app-relationship-type-edit [metaEntityOptions]="metaEntityOptions" [formGroup]="getAttributeFormGroupAt(i)"></app-relationship-type-edit>
                 </ng-container>
                 <ng-container *ngIf="isOneToPoly(i)">
-                  <lib-one-to-poly-edit [formGroup]="getAttributeFormGroupAt(i)"></lib-one-to-poly-edit>
+                  <lib-one-to-poly-edit [metaEntityOptions]="metaEntityOptions" [formGroup]="getAttributeFormGroupAt(i)"></lib-one-to-poly-edit>
+                </ng-container>
+                <ng-container *ngIf="isEnumeration(i)">
+                  <lib-enumeraton-edit [formGroup]="getAttributeFormGroupAt(i)"></lib-enumeraton-edit>
                 </ng-container>
               </td>
               <td>

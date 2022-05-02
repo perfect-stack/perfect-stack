@@ -17,6 +17,10 @@
       </ng-container>
     </ng-container>
 
+    <ng-container *ngSwitchCase="'Enumeration'">
+      <lib-enumeration-control [mode]="mode" [cell]="cell" [attribute]="cell.attribute" [formGroup]="formGroup"></lib-enumeration-control>
+    </ng-container>
+
     <ng-container *ngSwitchCase="'OneToMany'">
       <lib-one-to-many-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
     </ng-container>

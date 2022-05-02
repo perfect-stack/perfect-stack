@@ -2,19 +2,18 @@
   <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
     <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
 
-      <lib-controller [ctx]="ctx" [template]="ctx.metaPage.templates[0]">
-        <ng-container BottomRightActions [ngSwitch]="mode">
-          <div class="mt-2" *ngSwitchCase="'view'">
-            <button class="btn btn-outline-secondary me-2" (click)="onBack()">Back</button>
-            <button type="submit" class="btn btn-primary me-2" (click)="onEdit()">Edit</button>
-          </div>
-          <div class="mt-2" *ngSwitchCase="'edit'">
-            <button class="btn btn-outline-secondary me-2" (click)="onCancel()">Cancel</button>
-            <button type="submit" class="btn btn-primary me-2" [disabled]="!ctx.entityForm.valid" (click)="onSave(ctx)">Save</button>
-          </div>
-        </ng-container>
-      </lib-controller>
-
+    <lib-controller [ctx]="ctx" [template]="ctx.metaPage.templates[0]">
+      <ng-container BottomRightActions [ngSwitch]="mode">
+        <div class="mt-2" *ngSwitchCase="'view'">
+          <button class="btn btn-outline-secondary me-2" (click)="onBack()">Back</button>
+          <button type="submit" class="btn btn-primary me-2" (click)="onEdit()">Edit</button>
+        </div>
+        <div class="mt-2" *ngSwitchCase="'edit'">
+          <button class="btn btn-outline-secondary me-2" (click)="onCancel()">Cancel</button>
+          <button type="submit" class="btn btn-primary me-2" [disabled]="!ctx.entityForm.valid" (click)="onSave(ctx)">Save</button>
+        </div>
+      </ng-container>
+    </lib-controller>
   </div>
 </div>
 

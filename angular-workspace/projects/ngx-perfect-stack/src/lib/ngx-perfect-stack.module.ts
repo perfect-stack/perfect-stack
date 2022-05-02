@@ -78,6 +78,8 @@ import { OneToPolyEditComponent } from './meta/entity/meta-entity-edit/one-to-po
 import { CardItemDialogComponent } from './data/controller/layout/controls/card-item-dialog/card-item-dialog.component';
 import {LoadingBarHttpClientModule} from '@ngx-loading-bar/http-client';
 import { VersionComponent } from './meta/version/version.component';
+import { EnumeratonEditComponent } from './meta/entity/meta-entity-edit/enumeraton-edit/enumeraton-edit.component';
+import { EnumerationControlComponent } from './data/controller/layout/controls/enumeration-control/enumeration-control.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -158,6 +160,8 @@ const routes: Routes = [
     OneToPolyControlComponent,
     CardItemDialogComponent,
     VersionComponent,
+    EnumeratonEditComponent,
+    EnumerationControlComponent,
   ],
   providers: [
     AuthenticationService,

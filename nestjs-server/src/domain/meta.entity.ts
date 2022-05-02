@@ -5,6 +5,7 @@ export enum AttributeType {
   Integer = 'Integer',
   Identifier = 'Identifier',
   Date = 'Date',
+  Enumeration = 'Enumeration',
   OneToMany = 'OneToMany',
   OneToOne = 'OneToOne',
   ManyToOne = 'ManyToOne',
@@ -37,6 +38,8 @@ export class MetaAttribute {
   // List of attribute names in the relationshipTarget entity used for Typeahead components
   typeaheadSearch: string[];
   discriminator: DiscriminatorAttribute;
+  // List of the enumerated values (if attribute type === enumeration)
+  enumeration: string[];
 }
 
 export class DiscriminatorAttribute {
