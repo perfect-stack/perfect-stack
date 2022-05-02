@@ -1,4 +1,4 @@
-<ng-container [formGroup]="formGroup" *ngIf="targetMetaEntity && metaEntityOptions$ | async as metaEntityOptions">
+<ng-container [formGroup]="formGroup">
   <div class="d-flex align-items-baseline">
     <div class="text-nowrap me-2">Entity target</div>
     <select class="form-select mt-1" formControlName="relationshipTarget">
@@ -20,7 +20,6 @@
     </div>
 
     <div class="d-flex align-items-baseline mt-2">
-      <!--<div class="text-nowrap me-2">Typeahead search</div>-->
       <div *ngIf="typeaheadSearchControl">
         <span class="badge bg-secondary mr-1" *ngFor="let searchTerm of typeaheadSearchControl.value; let i = index;">
           <span>{{toAttributeLabel(searchTerm)}}</span><span class="material-icons small" (click)="removeSearchTerm(i)">close</span>
