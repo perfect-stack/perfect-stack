@@ -1,8 +1,8 @@
 import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {DropEvent} from 'ng-drag-drop';
-import {MetaAttribute} from '../../../domain/meta.entity';
+import {AttributeType, MetaAttribute} from '../../../domain/meta.entity';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Cell, ComponentType, Template, TemplateType} from '../../../domain/meta.page';
+import {Cell, ComponentType, TemplateType} from '../../../domain/meta.page';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -56,17 +56,18 @@ export class CellViewComponent implements OnInit, OnChanges {
   }
 
   onCellChange(cell: Cell) {
-    if(!cell.template) {
-      const template = new Template();
-      template.type = TemplateType.table;
-      if(this.attribute) {
-        template.metaEntityName = this.attribute.relationshipTarget;
-      }
-      else {
-        console.warn('UNABLE to set template metaEntityName since attribute is unknown');
-      }
-      cell.template = template;
-    }
+    console.log(`onCellChange() attribute type = ${this.attribute?.type}`);
+    // if(!cell.template) {
+    //   const template = new Template();
+    //   template.type = TemplateType.table;
+    //   if(this.attribute) {
+    //     template.metaEntityName = this.attribute.relationshipTarget;
+    //   }
+    //   else {
+    //     console.warn('UNABLE to set template metaEntityName since attribute is unknown');
+    //   }
+    //   cell.template = template;
+    // }
   }
 
   @HostListener('mouseenter')
@@ -104,15 +105,35 @@ export class CellViewComponent implements OnInit, OnChanges {
   }
 
   onClearCell() {
-    this.cell.attributeName = undefined;
+    delete this.cell.attributeName;
+    delete this.cell.template;
     this.attribute = undefined;
     this.entityForm = new FormGroup([] as any);
   }
 
   onItemDrop($event: DropEvent) {
-    const attribute = $event.dragData;
+    const attribute: MetaAttribute = $event.dragData;
     this._attribute = attribute;
     this.cell.attributeName = attribute.name;
+
+    if(attribute.type === AttributeType.OneToMany) {
+      this.cell.template = {
+        type: TemplateType.table,
+        metaEntityName: attribute.relationshipTarget,
+        orderByName: 'UNKNOWN',
+        orderByDir: 'ASC',
+        cells: [[
+          {
+            width: '3',
+            height: '1',
+          },
+          {
+            width: '3',
+            height: '1',
+          }
+        ]]
+      };
+    }
   }
 
   onSettings(settingsTemplate: any) {
