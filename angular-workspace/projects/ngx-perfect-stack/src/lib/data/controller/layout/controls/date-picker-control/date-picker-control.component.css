@@ -1,4 +1,4 @@
-@import "../../../../../library-styles.css";
+@import "../../../../../library-styles.scss";
 
 .ngb-dp-weekday {
   color: deeppink;

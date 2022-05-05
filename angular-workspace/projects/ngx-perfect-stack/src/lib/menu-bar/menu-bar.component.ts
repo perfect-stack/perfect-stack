@@ -10,9 +10,14 @@ import {MetaMenuService} from '../meta/menu/meta-menu-service/meta-menu.service'
 export class MenuBarComponent implements OnInit {
 
   @Input()
-  applicationName = 'App-Name-Here';
+  applicationTitle = 'Title';
 
-  isMenuCollapsed = true;
+  @Input()
+  applicationTitleFont = 'Serif';
+
+  @Input()
+  applicationLogo: string;
+
 
   constructor(public readonly authenticationService: AuthenticationService,
               public readonly metaMenuService: MetaMenuService) {}

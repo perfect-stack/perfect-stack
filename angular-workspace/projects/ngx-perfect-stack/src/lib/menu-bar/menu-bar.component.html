@@ -1,43 +1,37 @@
+
 <ngx-loading-bar [includeSpinner]="false"></ngx-loading-bar>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand ms-2" href="#">{{applicationName}}</a>
 
-  <button class="navbar-toggler" type="button"
-          data-target="#navbarSupportedContent"
-          (click)="isMenuCollapsed = !isMenuCollapsed"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" [routerLink]="'/'">Home</a>
-      </li>
-
-      <ng-container *ngIf="authenticationService.isLoggedIn">
-        <li class="nav-item" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
-          <ng-container *ngIf="nextMenu.items.length > 1">
-            <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown" role="button">
-              {{nextMenu.label}}
-            </a>
-            <div class="dropdown-menu" ngbDropdownMenu>
-              <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" (click)="isMenuCollapsed = true">
-                {{menuItem.label}}
-              </a>
-            </div>
-          </ng-container>
-
-          <ng-container *ngIf="nextMenu.items.length === 1">
-            <a class="nav-link" [routerLink]="nextMenu.items[0].route">
-              {{nextMenu.items[0].label}}
-            </a>
-          </ng-container>
-        </li>
-      </ng-container>
-    </ul>
-
-    <lib-login-button></lib-login-button>
-
+<div class="menu-bar d-flex justify-content-between" id="ngxMenuBar">
+  <div class="menu-heading">
+    <img class="menu-heading-logo" [src]="applicationLogo" width="100" *ngIf="applicationLogo">
+    <a class="menu-heading-title" [ngStyle]="{'font-style': applicationTitleFont}" href="#">{{applicationTitle}}</a>
   </div>
-</nav>
+
+  <div class="d-flex justify-content-between w-50" *ngIf="authenticationService.isLoggedIn">
+    <div class="" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
+      <ng-container *ngIf="nextMenu.items.length > 1">
+        <a class="menu-title" tabindex="0" ngbDropdownToggle id="navbarDropdown" role="button">
+          {{nextMenu.label}}
+        </a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items">
+            {{menuItem.label}}
+          </a>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="nextMenu.items.length === 1">
+        <a class="menu-title"
+           routerLinkActive="active-link"
+           [routerLink]="nextMenu.items[0].route">
+          {{nextMenu.items[0].label}}
+        </a>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="menu-profile">
+    <lib-login-button></lib-login-button>
+  </div>
+
+</div>

@@ -2,14 +2,20 @@ import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'lib-ngx-perfect-stack',
-  template: `<lib-menu-bar [applicationName]="applicationName"></lib-menu-bar>`,
+  template: `<lib-menu-bar [applicationTitle]="applicationTitle" [applicationTitleFont]="applicationTitleFont" [applicationLogo]="applicationLogo"></lib-menu-bar>`,
   styles: [
   ]
 })
 export class NgxPerfectStackComponent implements OnInit {
 
   @Input()
-  applicationName: string;
+  applicationTitle: string;
+
+  @Input()
+  applicationTitleFont: string;
+
+  @Input()
+  applicationLogo: string;
 
   constructor() { }
 
