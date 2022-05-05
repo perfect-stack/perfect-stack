@@ -18,7 +18,6 @@
 }
 
 .menu-heading-title {
-  font-family: Rokkitt, Serif;
   font-size: 24px;
   font-weight: bold;
   text-transform: uppercase;
@@ -50,7 +49,6 @@
 
 
 .menu-profile {
-  border-left: #ffffff solid thin;
   padding-left: 16px;
   padding-right: 16px;
 }

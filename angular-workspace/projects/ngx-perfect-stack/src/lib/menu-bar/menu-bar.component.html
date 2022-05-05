@@ -1,10 +1,14 @@
 
 <ngx-loading-bar [includeSpinner]="false"></ngx-loading-bar>
 
-<div class="menu-bar d-flex justify-content-between" id="ngxMenuBar">
+<div class="menu-bar d-flex justify-content-between" [ngStyle]="{'background-color': menuBarBackgroundColor}" id="ngxMenuBar">
   <div class="menu-heading">
     <img class="menu-heading-logo" [src]="applicationLogo" [width]="applicationLogoWidth" *ngIf="applicationLogo">
-    <a class="menu-heading-title" [ngStyle]="{'font-family': applicationTitleFont}" href="#">{{applicationTitle}}</a>
+    <a class="menu-heading-title"
+        [ngStyle]="{
+          'font-family': applicationTitleFont,
+          'border-left': menuBarDividerColor
+        }" href="#">{{applicationTitle}}</a>
   </div>
 
   <div class="d-flex justify-content-between w-50" *ngIf="authenticationService.isLoggedIn">
@@ -30,7 +34,7 @@
     </div>
   </div>
 
-  <div class="menu-profile">
+  <div class="menu-profile" [ngStyle]="{'border-left': menuBarDividerColor}" >
     <lib-login-button></lib-login-button>
   </div>
 

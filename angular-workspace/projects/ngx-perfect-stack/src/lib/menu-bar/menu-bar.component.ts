@@ -21,6 +21,12 @@ export class MenuBarComponent implements OnInit {
   @Input()
   applicationLogoWidth: string;
 
+  @Input()
+  menuBarDividerColor: string;
+
+  @Input()
+  menuBarBackgroundColor: string;
+
 
   constructor(public readonly authenticationService: AuthenticationService,
               public readonly metaMenuService: MetaMenuService) {}
