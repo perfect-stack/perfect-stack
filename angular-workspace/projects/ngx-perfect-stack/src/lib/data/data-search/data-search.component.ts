@@ -13,7 +13,7 @@ import {Template} from '../../domain/meta.page';
 @Component({
   selector: 'app-data-search',
   templateUrl: './data-search.component.html',
-  styleUrls: ['./data-search.component.css']
+  styleUrls: ['./data-search.component.scss']
 })
 export class DataSearchComponent implements OnInit {
 
@@ -60,6 +60,10 @@ export class DataSearchComponent implements OnInit {
         throw new Error('Invalid input parameters; ');
       }
     }));
+  }
+
+  get newButtonLbl() {
+    return this.metaName ? `New ${this.metaName.toLowerCase()}` : 'New';
   }
 
   onSearch(ctx: FormContext) {

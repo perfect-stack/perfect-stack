@@ -1,22 +1,38 @@
-<div class="container-fluid mt-3" *ngIf="ctx$ | async as ctx">
+<div class="container-fluid container-page" *ngIf="ctx$ | async as ctx">
 
   <ng-container *ngIf="searchCriteriaTemplate">
-    <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
-      <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
+    <div class="d-flex justify-content-between">
+      <div>
+        <h3>{{ctx.metaPage.title}}</h3>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-success" (click)="onNew(ctx)">{{newButtonLbl}}</button>
+      </div>
+    </div>
+
+    <div class="container-fluid container-form">
       <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate">
         <ng-container BottomLeftActions>
-          <button type="submit" class="btn btn-outline-success me-2" (click)="onNew(ctx)">New...</button>
         </ng-container>
         <ng-container BottomRightActions>
           <button class="btn btn-outline-secondary me-2" (click)="onReset(ctx)">Reset</button>
-          <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)">Search</button>
+          <button type="submit" class="btn btn-primary" (click)="onSearch(ctx)">Search</button>
         </ng-container>
       </lib-controller>
     </div>
   </ng-container>
 
-  <ng-container *ngIf="resultTableCells">
-    <table class="table table-striped table-hover">
+  <!-- Hack for now -->
+  <br>
+  <br>
+
+  <div class="bg-light" *ngIf="resultTableCells">
+
+    <div class="collection-size-found">
+      {{collectionSize}} found
+    </div>
+
+    <table class="table table-hover">
       <thead>
       <tr>
         <th scope="col" *ngFor="let nextCell of resultTableCells[0]">
@@ -37,7 +53,14 @@
       </tbody>
     </table>
 
-    <ngb-pagination [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx)"></ngb-pagination>
-  </ng-container>
+    <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx)">
+      <ng-template ngbPaginationFirst>First</ng-template>
+      <ng-template ngbPaginationLast>Last</ng-template>
+      <ng-template ngbPaginationPrevious>Previous</ng-template>
+      <ng-template ngbPaginationNext>Next</ng-template>
+      <ng-template ngbPaginationEllipsis>...</ng-template>
+      <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+    </ngb-pagination>
+  </div>
 
 </div>
