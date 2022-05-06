@@ -15,21 +15,17 @@
         <ng-container BottomLeftActions>
         </ng-container>
         <ng-container BottomRightActions>
-          <button class="btn btn-outline-secondary me-2" (click)="onReset(ctx)">Reset</button>
+          <button class="btn btn-outline-primary me-2" (click)="onReset(ctx)">Reset</button>
           <button type="submit" class="btn btn-primary" (click)="onSearch(ctx)">Search</button>
         </ng-container>
       </lib-controller>
     </div>
   </ng-container>
 
-  <!-- Hack for now -->
-  <br>
-  <br>
-
-  <div class="bg-light" *ngIf="resultTableCells">
+  <div class="container-table" *ngIf="resultTableCells">
 
     <div class="collection-size-found">
-      {{collectionSize}} found
+      {{collectionSize}} #todo found
     </div>
 
     <table class="table table-hover">
