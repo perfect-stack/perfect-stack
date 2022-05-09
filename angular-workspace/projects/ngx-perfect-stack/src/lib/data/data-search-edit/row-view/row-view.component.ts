@@ -39,6 +39,9 @@ export class RowViewComponent implements OnInit {
   }
 
   onDelete() {
-
+    this.actionEvent.next({
+      action: 'delete',
+      id: this.entity.id
+    });
   }
 }

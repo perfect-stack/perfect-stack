@@ -28,7 +28,7 @@ export class MetaPageEditComponent implements OnInit {
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
-              private modalService: NgbModal,
+              protected modalService: NgbModal,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly metaPageService: MetaPageService) { }
 

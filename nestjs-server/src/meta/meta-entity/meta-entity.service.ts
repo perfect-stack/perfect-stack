@@ -114,6 +114,10 @@ export class MetaEntityService {
 
     const entityModelMap = new Map<string, any>();
     for (const nextMetaEntity of databaseEntities) {
+      // If timestamps is defined then use that value, otherwise fallback to true
+      const timestamps =
+        'timestamps' in nextMetaEntity ? nextMetaEntity.timestamps : true;
+
       const modelAttributeList = {};
       for (const nextMetaAttribute of nextMetaEntity.attributes) {
         let modelAttribute;
@@ -162,6 +166,23 @@ export class MetaEntityService {
           };
         }
 
+        if (nextMetaAttribute.type === AttributeType.DateTime) {
+          modelAttribute = {
+            type: DataTypes.DATE,
+            allowNull: true,
+
+            // This little bit of ugly is needed to deal with how the FormGroups need to be
+            // initialised with a value (e.g. '') but the current sequelize logic doesn't
+            // convert empty string date values into null.
+            set(value: any) {
+              if (value != null && value.length === 0) {
+                value = null;
+              }
+              this.setDataValue(nextMetaAttribute.name, value);
+            },
+          };
+        }
+
         if (nextMetaAttribute.type === AttributeType.Integer) {
           modelAttribute = {
             type: DataTypes.INTEGER,
@@ -179,6 +200,7 @@ export class MetaEntityService {
         modelAttributeList,
         {
           freezeTableName: true,
+          timestamps: timestamps,
         },
       );
 

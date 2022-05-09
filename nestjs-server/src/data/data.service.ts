@@ -15,6 +15,7 @@ import {
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
 import * as uuid from 'uuid';
 import { UpdateSortIndexRequest } from './update-sort-index.request';
+import { AuditAction } from '../domain/audit';
 
 @Injectable()
 export class DataService {
@@ -149,11 +150,14 @@ export class DataService {
     // recursively save all the children (excluding the Poly ones)
     await this.saveTheChildren(metaEntityMap, metaEntity, entity);
 
+    let action;
     if (!entityModel) {
       // if entityModel was not found, or entity did not arrive with id
+      action = AuditAction.Create;
       entityModel = await model.create(entity);
     } else {
       // else entityModel was found
+      action = AuditAction.Update;
       entityModel.set(entity);
       await entityModel.save();
     }
@@ -161,7 +165,10 @@ export class DataService {
     // recursively save all Poly relationships
     await this.saveAllPolys(metaEntityMap, metaEntity, entity);
 
-    return entityModel;
+    return {
+      action: action,
+      entity: entityModel,
+    };
   }
 
   private async saveTheChildren(

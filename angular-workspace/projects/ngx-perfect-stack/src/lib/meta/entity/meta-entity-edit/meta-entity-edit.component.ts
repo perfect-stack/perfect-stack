@@ -27,6 +27,7 @@ export class MetaEntityEditComponent implements OnInit {
   metaEntityForm = this.fb.group({
     name: ['', Validators.required],
     type: ['', Validators.required],
+    timestamps: [true, Validators.required],
     attributes: this.fb.array([]),
   }, {validators: [uniqueNameValidator]});
 
@@ -40,7 +41,7 @@ export class MetaEntityEditComponent implements OnInit {
   ngOnInit(): void {
     this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
-      return this.metaName === '**NEW**' ? of(new MetaEntity()) : this.metaEntityService.findById(this.metaName);
+      return this.metaName === '**NEW**' ? of(this.createNewMetaEntity()) : this.metaEntityService.findById(this.metaName);
     }));
 
     this.metaEntity$.subscribe((metaEntity) => {
@@ -59,6 +60,12 @@ export class MetaEntityEditComponent implements OnInit {
     });
 
     this.metaEntityOptions$ = this.metaEntityService.findAll();
+  }
+
+  createNewMetaEntity() {
+    const metaEntity = new MetaEntity();
+    metaEntity.timestamps = true;
+    return metaEntity;
   }
 
   get attributes() {

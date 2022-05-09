@@ -6,16 +6,23 @@ import {
   Param,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import { DataService } from './data.service';
 import { Entity } from '../domain/entity';
 import { EntityResponse } from '../domain/response/entity.response';
 import { QueryRequest } from './query.request';
 import { UpdateSortIndexRequest } from './update-sort-index.request';
+import { Request } from 'express';
+import { AuditService } from '../audit/audit.service';
+import { AuditAction } from '../domain/audit';
 
 @Controller('data')
 export class DataController {
-  constructor(protected readonly dataService: DataService) {}
+  constructor(
+    protected readonly auditService: AuditService,
+    protected readonly dataService: DataService,
+  ) {}
 
   @Get('/:entityName')
   findAll(
@@ -40,19 +47,35 @@ export class DataController {
   }
 
   @Post('/:entityName/:id')
-  save(
+  async save(
+    @Req() request: Request,
     @Param('entityName') entityName: string,
     @Body() entity: Entity,
   ): Promise<EntityResponse> {
-    return this.dataService.save(entityName, entity);
+    const startTime = Date.now();
+
+    const entityResponse = await this.dataService.save(entityName, entity);
+
+    await this.auditService.audit(
+      request,
+      entityName,
+      entity.id,
+      entityResponse.action,
+      Date.now() - startTime,
+    );
+
+    return entityResponse;
   }
 
   @Post('/:entityName/:id/sort_index')
-  updateSortIndex(
+  async updateSortIndex(
+    @Req() request: Request,
     @Param('entityName') entityName: string,
     @Param('id') id: string,
     @Body() updateSortIndexRequest: UpdateSortIndexRequest,
   ): Promise<void> {
+    const startTime = Date.now();
+
     if (
       entityName !== updateSortIndexRequest.metaName ||
       id !== updateSortIndexRequest.id
@@ -61,15 +84,38 @@ export class DataController {
         `Invalid request. URL parameters do not match submitted request data`,
       );
     }
-    return this.dataService.updateSortIndex(updateSortIndexRequest);
+    const response = this.dataService.updateSortIndex(updateSortIndexRequest);
+
+    await this.auditService.audit(
+      request,
+      entityName,
+      id,
+      AuditAction.Update,
+      Date.now() - startTime,
+    );
+
+    return response;
   }
 
   @Delete('/:entityName/:id')
-  destroy(
+  async destroy(
+    @Req() request: Request,
     @Param('entityName') entityName: string,
     @Param('id') id: string,
   ): Promise<any> {
-    return this.dataService.destroy(entityName, id);
+    const startTime = Date.now();
+
+    const response = this.dataService.destroy(entityName, id);
+
+    await this.auditService.audit(
+      request,
+      entityName,
+      id,
+      AuditAction.Delete,
+      Date.now() - startTime,
+    );
+
+    return response;
   }
 
   purge(): Promise<void> {

@@ -70,7 +70,7 @@ export class SelectTwoControlComponent implements OnInit {
 
   onEntityChange(primaryEntity: any) {
     console.log(`onEntityChange: `, primaryEntity);
-    if(this.secondaryAttributeName) {
+    if(primaryEntity && this.secondaryAttributeName) {
       const secondaryValues: string = primaryEntity[this.secondaryAttributeName];
       if(secondaryValues) {
         this.secondaryOptions = secondaryValues.split(',').map(value => value.trim());

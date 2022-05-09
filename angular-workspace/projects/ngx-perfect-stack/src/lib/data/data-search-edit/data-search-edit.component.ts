@@ -11,6 +11,8 @@ import {DataSearchActionEvent} from './data-search-action-event';
 
 //import * as uuid from 'uuid';
 import {v4 as uuidv4} from 'uuid';
+import {MessageDialogComponent} from '../../utils/message-dialog/message-dialog.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-data-search-edit',
@@ -30,6 +32,7 @@ export class DataSearchEditComponent implements OnInit {
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly metaEntityService: MetaEntityService,
+              protected modalService: NgbModal,
               protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
@@ -84,6 +87,9 @@ export class DataSearchEditComponent implements OnInit {
       case 'edit':
         this.onStartEdit(event.id)
         break;
+      case 'delete':
+        this.onStartDelete(event.id)
+        break;
       case 'cancel':
         this.onStopEdit(event.id);
         break;
@@ -102,6 +108,26 @@ export class DataSearchEditComponent implements OnInit {
   onStopEdit(id: string) {
     this.editSet.delete(id);
     this.onSearch();
+  }
+
+  onStartDelete(id: string) {
+    const modalRef = this.modalService.open(MessageDialogComponent)
+    const modalComponent: MessageDialogComponent = modalRef.componentInstance;
+    modalComponent.title = `Delete ${this.metaName} Confirmation`;
+    modalComponent.text = `This action will delete the ${this.metaName}. It cannot be undone.`;
+    modalComponent.actions = [
+      {name: 'Cancel', style: 'btn btn-outline-secondary'},
+      {name: 'Delete', style: 'btn btn-danger'},
+    ];
+
+    modalRef.closed.subscribe((closedResult) => {
+      console.log(`Message Dialog closedResult = ${closedResult}`);
+      if(closedResult === 'Delete') {
+        this.dataService.destroy(this.metaName, id).subscribe(() => {
+          this.onSearch();
+        });
+      }
+    });
   }
 
   onNew(rowData: QueryResponse<Entity>) {

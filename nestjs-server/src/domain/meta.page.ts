@@ -1,13 +1,30 @@
+export enum ComponentType {
+  TextInput = 'TextInput',
+  TextArea = 'TextArea',
+  DatePicker = 'DatePicker',
+  Select = 'Select',
+  SelectTwo = 'SelectTwo',
+}
+
 export class Cell {
   width: string;
   height: string;
   attributeName?: string;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
+  componentData?: ComponentData;
+  template?: Template;
+}
+
+export class ComponentData {}
+
+export class SelectTwoComponentData implements ComponentData {
+  secondaryAttributeName: string;
 }
 
 export enum TemplateType {
   form = 'form',
   table = 'table',
+  card = 'card',
   map = 'map',
   chart = 'chart',
 }
@@ -27,6 +44,8 @@ export class Template {
       { width: '6', height: '1' },
     ],
   ];
+  orderByName: string; // Only for search result tables
+  orderByDir: string; // Only for search result tables
 }
 
 export type TemplateMap = {
@@ -35,8 +54,8 @@ export type TemplateMap = {
 
 export enum PageType {
   search = 'search',
-  view = 'view',
-  edit = 'edit',
+  search_edit = 'search_edit',
+  view_edit = 'view_edit',
   map = 'map',
   content = 'content',
   composite = 'composite',

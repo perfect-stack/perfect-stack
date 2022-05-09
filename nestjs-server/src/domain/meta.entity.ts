@@ -5,6 +5,7 @@ export enum AttributeType {
   Integer = 'Integer',
   Identifier = 'Identifier',
   Date = 'Date',
+  DateTime = 'DateTime',
   Enumeration = 'Enumeration',
   OneToMany = 'OneToMany',
   OneToOne = 'OneToOne',
@@ -62,5 +63,6 @@ export enum EntityType {
 export class MetaEntity {
   name: string;
   type: EntityType;
+  timestamps: boolean; // Controls if Sequelize will add createdAt and updatedAt timestamps to each record (if undefined defaults to true)
   attributes: MetaAttribute[];
 }
