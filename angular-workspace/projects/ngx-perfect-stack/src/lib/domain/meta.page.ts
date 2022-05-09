@@ -5,6 +5,7 @@ export enum ComponentType {
   TextArea = 'TextArea',
   DatePicker = 'DatePicker',
   Select = 'Select',
+  SelectTwo = 'SelectTwo',
 }
 
 export class Cell {
@@ -12,7 +13,14 @@ export class Cell {
   height: string;
   attributeName?: string;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
+  componentData?: ComponentData;
   template?: Template;
+}
+
+export class ComponentData {}
+
+export class SelectTwoComponentData implements ComponentData {
+  secondaryAttributeName: string;
 }
 
 export enum TemplateType {

@@ -3,6 +3,7 @@
     <div class="row" *ngFor="let nextRow of template.cells">
       <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
         <app-cell-view
+          [metaEntity]="metaEntity"
           [cell]="nextCell"
           [attribute]="getAttribute(nextCell.attributeName, metaEntity)"
           (changeWidth)="onChangeWidth($event, nextRow, nextCell)"

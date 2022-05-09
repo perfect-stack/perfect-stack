@@ -1,0 +1,12 @@
+<ng-container [formGroup]="formGroup" *ngIf="secondaryOptions && options$ | async as options">
+  <div class="d-flex">
+    <select [ngClass]="getCSSClass('me-1')" [formControlName]="attribute.name" [compareWith]="byEntityId" (ngModelChange)="onEntityChange($event)">
+      <option [ngValue]="null"></option>
+      <option *ngFor="let o of options" [ngValue]="o">{{getDisplayValue(o)}}</option>
+    </select>
+    <select [ngClass]="getCSSClass('ms-1')" [formControlName]="secondaryAttributeName" [id]="secondaryAttributeName">
+      <option [ngValue]="null"></option>
+      <option *ngFor="let s of secondaryOptions" [ngValue]="s">{{s}}</option>
+    </select>
+  </div>
+</ng-container>

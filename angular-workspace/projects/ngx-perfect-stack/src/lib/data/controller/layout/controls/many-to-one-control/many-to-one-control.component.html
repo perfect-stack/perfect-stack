@@ -31,6 +31,9 @@
     <ng-container *ngIf="model && model.id">
       <a [routerLink]="['/data', attribute.relationshipTarget, 'view', model.id]" href="#">{{displayValue}}</a>
     </ng-container>
+    <ng-container *ngIf="!model || !model.id">
+      <input class="form-control" disabled>
+    </ng-container>
   </div>
 </ng-container>
 

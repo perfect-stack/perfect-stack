@@ -80,6 +80,8 @@ import {LoadingBarHttpClientModule} from '@ngx-loading-bar/http-client';
 import { VersionComponent } from './meta/version/version.component';
 import { EnumeratonEditComponent } from './meta/entity/meta-entity-edit/enumeraton-edit/enumeraton-edit.component';
 import { EnumerationControlComponent } from './data/controller/layout/controls/enumeration-control/enumeration-control.component';
+import { SelectTwoControlComponent } from './data/controller/layout/controls/select-two-control/select-two-control.component';
+import { CellSettingsComponent } from './template/template-form-editor/cell-view/cell-settings/cell-settings.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -162,6 +164,8 @@ const routes: Routes = [
     VersionComponent,
     EnumeratonEditComponent,
     EnumerationControlComponent,
+    SelectTwoControlComponent,
+    CellSettingsComponent,
   ],
   providers: [
     AuthenticationService,

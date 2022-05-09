@@ -35,6 +35,10 @@
           <app-select-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></app-select-control>
         </ng-container>
 
+        <ng-container *ngSwitchCase="'SelectTwo'">
+          <lib-select-two-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-select-two-control>
+        </ng-container>
+
         <ng-container *ngSwitchDefault>
           <app-many-to-one-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></app-many-to-one-control>
         </ng-container>

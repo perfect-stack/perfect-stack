@@ -37,6 +37,9 @@ export class LayoutComponent implements OnInit {
   @Input()
   relationshipProperty: string;
 
+  @Input()
+  metaEntity: MetaEntity;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -299,6 +302,8 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   @Input()
   formGroup: FormGroup;
 
+  @Input()
+  metaEntity: MetaEntity;
 
   cells$: Observable<CellAttribute[][]>;
 

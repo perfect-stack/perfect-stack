@@ -1,9 +1,10 @@
 import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {DropEvent} from 'ng-drag-drop';
-import {AttributeType, MetaAttribute} from '../../../domain/meta.entity';
+import {AttributeType, MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Cell, ComponentType, TemplateType} from '../../../domain/meta.page';
+import {Cell, ComponentType, SelectTwoComponentData, TemplateType} from '../../../domain/meta.page';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {CellSettingsComponent, CellSettingsResult} from './cell-settings/cell-settings.component';
 
 @Component({
   selector: 'app-cell-view',
@@ -23,6 +24,9 @@ export class CellViewComponent implements OnInit, OnChanges {
       this.entityForm.addControl(value.name, new FormControl(''));
     }
   }
+
+  @Input()
+  metaEntity: MetaEntity | undefined;
 
   @Input()
   cell: Cell;
@@ -136,19 +140,25 @@ export class CellViewComponent implements OnInit, OnChanges {
     }
   }
 
-  onSettings(settingsTemplate: any) {
-    this.modalService.open(settingsTemplate, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-    }, (reason) => {
-      this.closeResult = `Dismissed`;
-    });
+  onSettings() {
+    if(this.cell && this.attribute && this.metaEntity) {
+      const modalRef = this.modalService.open(CellSettingsComponent, {ariaLabelledBy: 'modal-basic-title'});
+
+      const cellSettingsComponent = modalRef.componentInstance as CellSettingsComponent;
+      cellSettingsComponent.init(this.metaEntity, this.attribute, this.cell.component, this.cell.componentData);
+
+      modalRef.closed.subscribe((result: CellSettingsResult) => {
+        this.cell.component = result.componentType;
+        if(result.componentType === 'SelectTwo') {
+          this.cell.componentData = {
+            secondaryAttributeName: result.secondaryAttributeName
+          } as SelectTwoComponentData;
+        }
+        else {
+          delete this.cell.componentData;
+        }
+      });
+    }
   }
 
-  getComponentTypeOptions() {
-    return Object.keys(ComponentType);
-  }
-
-  onComponentTypeChange(value: any) {
-    console.log(`onComponentTypeChange = ${value}`);
-  }
 }
