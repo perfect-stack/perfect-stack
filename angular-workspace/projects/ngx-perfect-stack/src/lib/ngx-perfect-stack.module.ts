@@ -82,6 +82,7 @@ import { EnumeratonEditComponent } from './meta/entity/meta-entity-edit/enumerat
 import { EnumerationControlComponent } from './data/controller/layout/controls/enumeration-control/enumeration-control.component';
 import { SelectTwoControlComponent } from './data/controller/layout/controls/select-two-control/select-two-control.component';
 import { CellSettingsComponent } from './template/template-form-editor/cell-view/cell-settings/cell-settings.component';
+import { AuditViewComponent } from './audit/audit-view/audit-view.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -166,6 +167,7 @@ const routes: Routes = [
     EnumerationControlComponent,
     SelectTwoControlComponent,
     CellSettingsComponent,
+    AuditViewComponent,
   ],
   providers: [
     AuthenticationService,

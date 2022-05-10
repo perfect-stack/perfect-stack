@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Param } from '@nestjs/common';
 import { OrmService } from '../orm/orm.service';
 import { Audit, AuditAction } from '../domain/audit';
 import { Request } from 'express';
@@ -57,12 +57,28 @@ export class AuditService {
         person_id: personId,
         duration: duration,
       } as Audit);
+
+      return;
     } else {
       throw new Error(
         'Unable to find the Audit meta entity. Have you created it yet?',
       );
     }
+  }
 
-    return;
+  async findAll(id: string) {
+    const model = this.ormService.sequelize.model('Audit');
+    if (model) {
+      return await model.findAll({
+        where: {
+          entity_id: id,
+        },
+        order: ['date_time'],
+      });
+    } else {
+      throw new Error(
+        'Unable to find the Audit meta entity. Have you created it yet?',
+      );
+    }
   }
 }
