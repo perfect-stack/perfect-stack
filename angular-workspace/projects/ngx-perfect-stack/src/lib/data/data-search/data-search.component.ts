@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {Observable, of, Subject, switchMap} from 'rxjs';
-import {AttributeType, MetaAttribute} from '../../domain/meta.entity';
+import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {Entity} from '../../domain/entity';
@@ -20,6 +20,7 @@ export class DataSearchComponent implements OnInit {
   public metaName: string | null;
   public mode = 'search';
 
+  resultTableMetaEntity: MetaEntity;
   resultTableCells: CellAttribute[][];
 
   public pageNumber = 1;
@@ -47,6 +48,7 @@ export class DataSearchComponent implements OnInit {
           const resultTableMetaEntityName = resultTableTemplate.metaEntityName;
           const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
           if(rtme) {
+            this.resultTableMetaEntity = rtme;
             this.resultTableCells = this.formService.toCellAttributeArray(resultTableTemplate, rtme);
             this.onSearch(ctx);
             return of(ctx);

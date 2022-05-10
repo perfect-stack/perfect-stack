@@ -62,6 +62,7 @@ export enum EntityType {
 
 export class MetaEntity {
   name: string;
+  pluralName: string;
   type: EntityType;
   timestamps: boolean; // Controls if Sequelize will add createdAt and updatedAt timestamps to each record (if undefined defaults to true)
   attributes: MetaAttribute[];
