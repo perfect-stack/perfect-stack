@@ -29,7 +29,7 @@ export class SelectTwoControlComponent implements OnInit {
   options$: Observable<Entity[]>
 
   secondaryAttributeName: string;
-  secondaryOptions: string[];
+  secondaryOptions: string[] = [];
 
 
   constructor(protected readonly dataService: DataService) { }

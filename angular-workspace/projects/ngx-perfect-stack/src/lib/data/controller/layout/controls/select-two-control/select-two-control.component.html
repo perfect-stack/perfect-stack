@@ -1,4 +1,4 @@
-<ng-container [formGroup]="formGroup" *ngIf="secondaryOptions && options$ | async as options">
+<ng-container [formGroup]="formGroup" *ngIf="options$ | async as options">
   <div class="d-flex">
     <select [ngClass]="getCSSClass('me-1')" [formControlName]="attribute.name" [compareWith]="byEntityId" (ngModelChange)="onEntityChange($event)">
       <option [ngValue]="null"></option>
