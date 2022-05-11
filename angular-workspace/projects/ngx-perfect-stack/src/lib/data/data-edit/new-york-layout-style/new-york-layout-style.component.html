@@ -1,0 +1,18 @@
+<div class="container-fluid mt-3" *ngIf="ctx">
+  <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
+    <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
+
+    <ng-container *ngFor="let template of ctx.metaPage.templates">
+      <lib-controller [ctx]="ctx" [template]="template">
+        <ng-container BottomRightActions [ngSwitch]="ctx.mode">
+          <ng-content select="[BottomRightActions]"></ng-content>
+        </ng-container>
+      </lib-controller>
+    </ng-container>
+  </div>
+
+  <ng-container *ngIf="ctx.mode === 'view'">
+    <lib-audit-view [entityId]="ctx.id"></lib-audit-view>
+  </ng-container>
+</div>
+

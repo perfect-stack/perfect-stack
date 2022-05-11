@@ -5,7 +5,7 @@ import {DataService} from '../../data-service/data.service';
 import {Entity} from '../../../domain/entity';
 import {Cell, MetaPage, Template} from '../../../domain/meta.page';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {of, switchMap} from 'rxjs';
+import {Observable, of, switchMap} from 'rxjs';
 import {AttributeType, MetaAttribute, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
 
 
@@ -40,7 +40,7 @@ export class FormService {
               protected readonly dataService: DataService) {
   }
 
-  loadFormContext(metaName: string, mode: string, id: string | null) {
+  loadFormContext(metaName: string, mode: string, id: string | null): Observable<FormContext> {
 
     const pageKey = mode === 'view' || mode === 'edit' ? 'view_edit' : mode;
 
@@ -54,31 +54,55 @@ export class FormService {
       ctx.metaPageMap = metaPageMap;
       ctx.metaPage = ctx.metaPageMap.get(metaPageName) as MetaPage;
 
-      const template = ctx.metaPage.templates[0];
-      const metaEntityName = template.metaEntityName
-
       return this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
+
         ctx.metaEntityMap = metaEntityMap;
+
+        const rootTemplate = ctx.metaPage.templates[0];
+        const metaEntityName = rootTemplate.metaEntityName
+
         const me = ctx.metaEntityMap.get(metaEntityName);
         if (!me) {
           throw new Error(`Unable to find MetaEntity for ${metaName}`);
         }
         ctx.metaEntity = me;
-        ctx.cells = this.toCellAttributeArray(template, ctx.metaEntity);
+        ctx.cells = this.toCellAttributeArray(rootTemplate, ctx.metaEntity);
 
         if (id) {
           return this.dataService.findById(ctx.metaEntity.name, id).pipe(switchMap((entity) => {
-            ctx.entity = entity as Entity;
-            ctx.entityForm = this.createFormGroup(mode, template, ctx.metaPageMap, metaEntityMap, ctx.entity);
-            ctx.entityForm.patchValue(ctx.entity);
-            return of(ctx);
+            return this.createRootFormGroupForMultipleTemplates(ctx, ctx.metaPage.templates, entity);
           }));
         } else {
-          ctx.entityForm = this.createFormGroup(mode, template, ctx.metaPageMap, metaEntityMap, null);
-          return of(ctx);
+          return this.createRootFormGroupForMultipleTemplates(ctx, ctx.metaPage.templates, null);
         }
       }));
     }));
+  }
+
+  private createRootFormGroupForMultipleTemplates(
+    ctx: FormContext,
+    templateList: Template[],
+    entity: Entity | null): Observable<FormContext> {
+
+    const rootTemplate = templateList[0];
+    ctx.entityForm = this.createFormGroup(ctx.mode, rootTemplate, ctx.metaPageMap, ctx.metaEntityMap, entity);
+
+    if(templateList.length > 1) {
+      for(let i = 1; i < templateList.length; i++) {
+        const nextTemplate = templateList[i];
+        if(nextTemplate.binding) {
+          const nextFormGroup = this.createFormGroup(ctx.mode, nextTemplate, ctx.metaPageMap, ctx.metaEntityMap, entity);
+          ctx.entityForm.addControl(nextTemplate.binding, nextFormGroup);
+        }
+      }
+    }
+
+    if(entity) {
+      ctx.entity = entity as Entity;
+      ctx.entityForm.patchValue(ctx.entity);
+    }
+
+    return of(ctx);
   }
 
   public toCellAttributeArray(template: Template, metaEntity: MetaEntity) {
@@ -125,7 +149,7 @@ export class FormService {
       throw new Error(`Unable to find template MetaEntity of ${template.metaEntityName}`)
     }
 
-    // loop through cells and add FormControls for Cell attributes
+    // loop through all MetaAttributes and add FormControls for each attribute
     for (const nextAttribute of templateMetaEntity.attributes) {
       let formControl: any;
       if (nextAttribute.type === AttributeType.OneToMany) {

@@ -4,7 +4,7 @@
       *ngSwitchCase="'form'"
       [mode]="mode"
       [template]="template"
-      [formGroup]="formGroup"
+      [formGroup]="getFormGroupForTemplate(template)"
       [metaEntity]="metaEntity">
     </lib-form-layout>
 

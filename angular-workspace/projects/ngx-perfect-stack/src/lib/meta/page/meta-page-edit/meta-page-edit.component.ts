@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, of, switchMap, tap} from 'rxjs';
-import {MetaPage, PageType, Template, TemplateType} from '../../../domain/meta.page';
+import {LayoutStyle, MetaPage, PageType, Template, TemplateType} from '../../../domain/meta.page';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
 import {FormControl, FormGroup} from '@angular/forms';
@@ -24,6 +24,7 @@ export class MetaPageEditComponent implements OnInit {
     name: new FormControl(''),
     title: new FormControl(''),
     type: new FormControl(''),
+    layoutStyle: new FormControl(''),
   });
 
   constructor(protected readonly route: ActivatedRoute,
@@ -83,10 +84,6 @@ export class MetaPageEditComponent implements OnInit {
     }
   }
 
-  getPageTypeOptions() {
-    return Object.keys(PageType);
-  }
-
   onDelete(metaPage: MetaPage) {
     console.log(`Delete metaPage: ${metaPage.name}`);
     const modalRef = this.modalService.open(MessageDialogComponent)
@@ -107,4 +104,13 @@ export class MetaPageEditComponent implements OnInit {
       }
     });
   }
+
+  getPageTypeOptions() {
+    return Object.keys(PageType);
+  }
+
+  getLayoutStyleOptions() {
+    return Object.keys(LayoutStyle);
+  }
+
 }

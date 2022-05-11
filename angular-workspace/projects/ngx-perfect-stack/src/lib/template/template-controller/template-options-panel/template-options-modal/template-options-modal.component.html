@@ -7,28 +7,29 @@
 
 <div class="modal-body">
   <form *ngIf="template && metaEntityOptions$ | async as metaEntityOptions">
-    <div class="form-group">
-      <label class="me-2" for="metaEntityName">Entity</label>
-      <select class="form-select me-2" id="metaEntityName" name="metaEntityName" [ngModel]="getMetaEntity(template, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
-        <option *ngFor="let o of metaEntityOptions" [ngValue]="o">{{o.name}}</option>
+    <label class="me-2" for="binding">Binding</label>
+    <input class="form-control me-2" id="binding" name="binding" [(ngModel)]="template.binding">
+
+    <label class="me-2" for="metaEntityName">Entity</label>
+    <select class="form-select me-2" id="metaEntityName" name="metaEntityName" [ngModel]="getMetaEntity(template, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
+      <option *ngFor="let o of metaEntityOptions" [ngValue]="o">{{o.name}}</option>
+    </select>
+
+    <label class="me-2" for="templateType">Type</label>
+    <select class="form-select" id="templateType" name="templateType" [(ngModel)]="template.type">
+      <option *ngFor="let o of getTemplateTypeOptions()" [ngValue]="o">{{o}}</option>
+    </select>
+
+    <ng-container *ngIf="template.type === 'table'">
+      <label class="me-2" for="orderByName">Order by</label>
+      <select class="form-select mb-1" id="orderByName" name="orderByName" [(ngModel)]="template.orderByName">
+        <option *ngFor="let o of getOrderByNameOptions()" [ngValue]="o">{{o}}</option>
       </select>
 
-      <label class="me-2" for="templateType">Type</label>
-      <select class="form-select" id="templateType" name="templateType" [(ngModel)]="template.type">
-        <option *ngFor="let o of getTemplateTypeOptions()" [ngValue]="o">{{o}}</option>
+      <select class="form-select" id="orderByDir" name="orderByDir" [(ngModel)]="template.orderByDir">
+        <option *ngFor="let o of getOrderByDirOptions()" [ngValue]="o">{{o}}</option>
       </select>
-
-      <ng-container *ngIf="template.type === 'table'">
-        <label class="me-2" for="orderByName">Order by</label>
-        <select class="form-select mb-1" id="orderByName" name="orderByName" [(ngModel)]="template.orderByName">
-          <option *ngFor="let o of getOrderByNameOptions()" [ngValue]="o">{{o}}</option>
-        </select>
-
-        <select class="form-select" id="orderByDir" name="orderByDir" [(ngModel)]="template.orderByDir">
-          <option *ngFor="let o of getOrderByDirOptions()" [ngValue]="o">{{o}}</option>
-        </select>
-      </ng-container>
-    </div>
+    </ng-container>
   </form>
 </div>
 

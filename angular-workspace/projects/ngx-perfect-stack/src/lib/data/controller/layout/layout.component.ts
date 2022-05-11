@@ -44,6 +44,21 @@ export class LayoutComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  getFormGroupForTemplate(template: Template): FormGroup {
+    if(template.binding) {
+      const fg = this.formGroup.get(template.binding);
+      if(fg) {
+        return fg as FormGroup;
+      }
+      else {
+        throw new Error(`Unable to find formGroup for binding ${template.binding} in controls ${Object.keys(this.formGroup.controls)}`);
+      }
+    }
+    else {
+      return this.formGroup;
+    }
+  }
 }
 
 

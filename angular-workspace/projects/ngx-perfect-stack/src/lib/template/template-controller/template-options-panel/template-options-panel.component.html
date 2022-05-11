@@ -1,8 +1,12 @@
 <div class="alert alert-info">
   <div class="d-flex justify-content-between">
-          <span>
-            {{template.metaEntityName}}: {{template.type}}<span *ngIf="template.type === 'table'">, order by: {{template.orderByName}}, {{template.orderByDir}}</span>
-          </span>
-    <span class="material-icons" (click)="openTemplateOptions()">settings</span>
+    <div class="d-flex">
+      <label class="form-label me-2">Heading</label>
+      <input class="form-control me-2" type="text" [(ngModel)]="template.templateHeading">
+      <div>
+        {{template.binding}}:{{template.metaEntityName}}&nbsp;-&nbsp;{{template.type}}<ng-container *ngIf="template.type === 'table'">, order by: {{template.orderByName}}, {{template.orderByDir}}</ng-container>
+      </div>
+    </div>
+    <div class="material-icons" (click)="openTemplateOptions()">settings</div>
   </div>
 </div>

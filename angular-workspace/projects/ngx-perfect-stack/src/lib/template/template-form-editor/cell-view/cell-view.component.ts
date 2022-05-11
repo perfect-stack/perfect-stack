@@ -122,6 +122,8 @@ export class CellViewComponent implements OnInit, OnChanges {
 
     if(attribute.type === AttributeType.OneToMany) {
       this.cell.template = {
+        binding: '',
+        templateHeading: '',
         type: TemplateType.table,
         metaEntityName: attribute.relationshipTarget,
         orderByName: 'UNKNOWN',

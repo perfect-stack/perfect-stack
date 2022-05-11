@@ -3,26 +3,30 @@
 
     <h2>Page Edit</h2>
 
-    <form class="form" #form="ngForm" [formGroup]="metaPageForm">
-      <div class="row mb-2">
-        <div class="col-6">
-          <div class="row">
-            <div class="col-4">
-              <label class="form-label" for="name">Name</label>
-              <input class="form-control" type="text" id="name" formControlName="name">
-            </div>
+    <form class="form mb-2" #form="ngForm" [formGroup]="metaPageForm">
+      <div class="row">
+        <div class="col-2">
+          <label class="form-label" for="name">Name</label>
+          <input class="form-control" type="text" id="name" formControlName="name">
+        </div>
 
-            <div class="col-4">
-              <label class="form-label" for="title">Title</label>
-              <input class="form-control" type="text" id="title" formControlName="title">
-            </div>
-            <div class="col-4">
-              <label class="form-label" for="type">Type</label>
-              <select class="form-select" id="type" formControlName="type">
-                <option *ngFor="let o of getPageTypeOptions()" [ngValue]="o">{{o}}</option>
-              </select>
-            </div>
-          </div>
+        <div class="col-2">
+          <label class="form-label" for="title">Title</label>
+          <input class="form-control" type="text" id="title" formControlName="title">
+        </div>
+
+        <div class="col-2">
+          <label class="form-label" for="type">Type</label>
+          <select class="form-select" id="type" formControlName="type">
+            <option *ngFor="let o of getPageTypeOptions()" [ngValue]="o">{{o}}</option>
+          </select>
+        </div>
+
+        <div class="col-2">
+          <label class="form-label" for="layoutStyle">Layout style</label>
+          <select class="form-select" id="layoutStyle" formControlName="layoutStyle">
+            <option *ngFor="let o of getLayoutStyleOptions()" [ngValue]="o">{{o}}</option>
+          </select>
         </div>
       </div>
     </form>

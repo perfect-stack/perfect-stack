@@ -83,6 +83,8 @@ import { EnumerationControlComponent } from './data/controller/layout/controls/e
 import { SelectTwoControlComponent } from './data/controller/layout/controls/select-two-control/select-two-control.component';
 import { CellSettingsComponent } from './template/template-form-editor/cell-view/cell-settings/cell-settings.component';
 import { AuditViewComponent } from './audit/audit-view/audit-view.component';
+import { NewYorkLayoutStyleComponent } from './data/data-edit/new-york-layout-style/new-york-layout-style.component';
+import { ParisLayoutStyleComponent } from './data/data-edit/paris-layout-style/paris-layout-style.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -168,6 +170,8 @@ const routes: Routes = [
     SelectTwoControlComponent,
     CellSettingsComponent,
     AuditViewComponent,
+    NewYorkLayoutStyleComponent,
+    ParisLayoutStyleComponent,
   ],
   providers: [
     AuthenticationService,

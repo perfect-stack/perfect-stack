@@ -32,6 +32,8 @@ export enum TemplateType {
 }
 
 export class Template {
+  templateHeading: string;
+  binding: string;
   metaEntityName: string;
   type: TemplateType;
   cells: Cell[][] = [
@@ -63,9 +65,15 @@ export enum PageType {
   composite = 'composite',
 }
 
+export enum LayoutStyle {
+  NewYork = 'New York',
+  Paris = 'Paris'
+}
+
 export class MetaPage {
   name: string;
   title: string;
   type: PageType;
+  layoutStyle: LayoutStyle;
   templates: Template[] = [];
 }
