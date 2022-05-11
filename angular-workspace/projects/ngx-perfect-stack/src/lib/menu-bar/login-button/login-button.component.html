@@ -1,13 +1,13 @@
 <div class="parent">
   <ng-container *ngIf="authenticationService.isLoggedIn">
-    <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogout()">Logout</button>
+    <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogout()" id="logoutBtn">Logout</button>
   </ng-container>
   <ng-container *ngIf="!authenticationService.isLoggedIn">
-    <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogin()">Login</button>
+    <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogin()" id="loginBtn">Login</button>
   </ng-container>
   <ng-container *ngIf="loginExpiryTime$ | async as loginExpiryTime">
     <ng-container *ngIf="showTimeLeft">
-      <div class="child ms-2 p-1 bg-warning">
+      <div class="child ms-2 p-1 bg-warning" id="sessionTimeout">
         <div class="small">Logout in...</div>
         <div class="small">{{loginExpiryTime}}</div>
       </div>

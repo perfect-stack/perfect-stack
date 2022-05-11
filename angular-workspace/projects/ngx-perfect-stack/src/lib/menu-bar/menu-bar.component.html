@@ -3,22 +3,23 @@
 
 <div class="menu-bar d-flex justify-content-between" [ngStyle]="{'background-color': menuBarBackgroundColor}" id="ngxMenuBar">
   <div class="menu-heading">
-    <img class="menu-heading-logo" [src]="applicationLogo" [width]="applicationLogoWidth" *ngIf="applicationLogo">
+    <img class="menu-heading-logo" [src]="applicationLogo" [width]="applicationLogoWidth" *ngIf="applicationLogo" id="logoImage">
     <a class="menu-heading-title"
-        [ngStyle]="{
+       id="applicationTitle"
+       [ngStyle]="{
           'font-family': applicationTitleFont,
           'border-left': menuBarDividerColor
-        }" href="#">{{applicationTitle}}</a>
+       }" href="#">{{applicationTitle}}</a>
   </div>
 
   <div class="d-flex justify-content-between w-50" *ngIf="authenticationService.isLoggedIn">
     <div class="" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
       <ng-container *ngIf="nextMenu.items.length > 1">
-        <a class="menu-title" tabindex="0" ngbDropdownToggle id="navbarDropdown" role="button">
+        <a class="menu-title" tabindex="0" ngbDropdownToggle id="{{nextMenu.label}}Menu" role="button">
           {{nextMenu.label}}
         </a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items">
+          <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" id="{{menuItem.label}}MenuItem">
             {{menuItem.label}}
           </a>
         </div>
@@ -27,6 +28,7 @@
       <ng-container *ngIf="nextMenu.items.length === 1">
         <a class="menu-title"
            routerLinkActive="active-link"
+           id="{{nextMenu.label}}Menu"
            [routerLink]="nextMenu.items[0].route">
           {{nextMenu.items[0].label}}
         </a>

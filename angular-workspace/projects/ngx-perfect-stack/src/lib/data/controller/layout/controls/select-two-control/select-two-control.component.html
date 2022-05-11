@@ -1,6 +1,6 @@
 <ng-container [formGroup]="formGroup" *ngIf="options$ | async as options">
   <div class="d-flex">
-    <select [ngClass]="getCSSClass('me-1')" [formControlName]="attribute.name" [compareWith]="byEntityId" (ngModelChange)="onEntityChange($event)">
+    <select [ngClass]="getCSSClass('me-1')" [formControlName]="attribute.name" [compareWith]="byEntityId" (ngModelChange)="onEntityChange($event)" [id]="attribute.name">
       <option [ngValue]="null"></option>
       <option *ngFor="let o of options" [ngValue]="o">{{getDisplayValue(o)}}</option>
     </select>

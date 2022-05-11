@@ -1,9 +1,9 @@
 
-<div class="link-primary mt-3" (click)="toggleShowRecords()" *ngIf="!showRecords">Show audit records</div>
+<div class="link-primary mt-3" (click)="toggleShowRecords()" id="showAuditRecords" *ngIf="!showRecords">Show audit records</div>
 
 <ng-container *ngIf="showRecords">
 
-  <div class="link-primary mt-3" (click)="toggleShowRecords()">Hide audit records</div>
+  <div class="link-primary mt-3" (click)="toggleShowRecords()" id="hideAuditRecords">Hide audit records</div>
 
   <ng-container *ngIf="auditRecords$ | async as auditRecords">
     <table class="table table-sm mt-3" style="width: 24em;">

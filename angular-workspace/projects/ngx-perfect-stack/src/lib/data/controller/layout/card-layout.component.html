@@ -4,8 +4,8 @@
     <div class="mt-2" *ngFor="let nextItem of attributes.controls; let i=index">
 
       <div class="d-flex justify-content-between">
-        <h5>{{getHeadingForRow(i, metaPageMap)}}</h5>
-        <span class="btn-icon text-danger material-icons" (click)="onDeleteItem(i)" *ngIf="mode === 'view'">remove_circle</span>
+        <h5 id="cards[{{i}}].cardHdg">{{getHeadingForRow(i, metaPageMap)}}</h5>
+        <span class="btn-icon text-danger material-icons" (click)="onDeleteItem(i)" *ngIf="mode === 'view'" id="cards[{{i}}].deleteBtn">remove_circle</span>
       </div>
 
       <lib-form-layout
@@ -18,7 +18,7 @@
     </div>
 
     <ng-container *ngIf="mode === 'edit'">
-      <button class="btn btn-outline-success mt-2" (click)="onAddItem(metaPageMap, metaEntityMap)">Add Item</button>
+      <button class="btn btn-outline-success mt-2" (click)="onAddItem(metaPageMap, metaEntityMap)" id="cardAddItemBtn">Add Item</button>
     </ng-container>
 
     <!--<br>

@@ -1,13 +1,13 @@
 <!-- CSS: this mt-3 on the label is quite significant, it gives all of the rows in the forms some whitespace
 above each Cell, otherwise things look a bit squished -->
 <div class="row">
-  <label class="col mt-3" [for]="attribute.name">
+  <label class="col mt-3" [for]="attribute.name" id="{{attribute.name}}Lbl">
     <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
     <ng-container *ngIf="mode == 'edit'">
       <span class="text-danger" *ngIf="attribute.visibility == 'Required'">*</span>
     </ng-container>
   </label>
-  <label class="col mt-3 ps-0" *ngIf="secondaryAttribute">
+  <label class="col mt-3 ps-0" *ngIf="secondaryAttribute" id="{{attribute.name}}Lbl">
     <span placement="right" [ngbTooltip]="secondaryAttribute.description">{{secondaryAttribute.label}}</span>
     <ng-container *ngIf="mode == 'edit'">
       <span class="text-danger" *ngIf="secondaryAttribute.visibility == 'Required'">*</span>

@@ -5,20 +5,21 @@
 <ng-container *ngIf="mode === 'edit'">
   <fieldset class="form-inline">
     <div class="input-group w-100">
-      <input id="typeahead-http" #searchInput type="text" class="form-control" placeholder="Search..."
+      <input #searchInput type="text" class="form-control" placeholder="Search..."
              [required]="attribute.visibility == 'Required'"
              [class.is-invalid]="searchFailed"
-             [(ngModel)]="model"
              [ngbTypeahead]="search"
              [inputFormatter]="formatter"
              [resultTemplate]="rt"
+             [(ngModel)]="model"
              (selectItem)="onSelectItem($event)"
+             [id]="attribute.name"
       />
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
 
       <div class="input-group-append">
-        <button class="form-control btn-outline-secondary btn p-0" readonly (click)="onSearchRequested()" type="button">
+        <button class="form-control btn-outline-secondary btn p-0" readonly (click)="onSearchRequested()" type="button" id="{{attribute.name}}SearchBtn">
           <span class="material-icons p-1">search</span>
         </button>
       </div>
@@ -29,10 +30,10 @@
 <ng-container *ngIf="mode === 'view'">
   <div class="input-group">
     <ng-container *ngIf="model && model.id">
-      <a [routerLink]="['/data', attribute.relationshipTarget, 'view', model.id]" href="#">{{displayValue}}</a>
+      <a [routerLink]="['/data', attribute.relationshipTarget, 'view', model.id]" href="#" [id]="attribute.name">{{displayValue}}</a>
     </ng-container>
     <ng-container *ngIf="!model || !model.id">
-      <input class="form-control" disabled>
+      <input class="form-control" disabled [id]="attribute.name">
     </ng-container>
   </div>
 </ng-container>

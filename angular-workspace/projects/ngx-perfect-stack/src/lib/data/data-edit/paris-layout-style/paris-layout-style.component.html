@@ -2,9 +2,9 @@
   <h2 class="mb-3">{{ctx.metaPage.title}}</h2>
   <div class="container-fluid mt-3 bg-light shadow-sm border">
 
-    <div class="row template" *ngFor="let template of ctx.metaPage.templates">
+    <div class="row template" *ngFor="let template of ctx.metaPage.templates; index as i">
       <div class="col-4">
-        <h4 class="mt-3">{{template.templateHeading}}</h4>
+        <h4 class="mt-3" id="template[{{i}}].sectionHdg">{{template.templateHeading}}</h4>
       </div>
       <div class="col-8">
         <lib-controller [ctx]="ctx" [template]="template">

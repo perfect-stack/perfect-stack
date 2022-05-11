@@ -6,7 +6,7 @@
         <h3>{{ctx.metaPage.title}}</h3>
       </div>
       <div>
-        <button type="submit" class="btn btn-success" (click)="onNew(ctx)">{{newButtonLbl}}</button>
+        <button type="submit" class="btn btn-success" (click)="onNew(ctx)" id="newBtn">{{newButtonLbl}}</button>
       </div>
     </div>
 
@@ -15,8 +15,8 @@
         <ng-container BottomLeftActions>
         </ng-container>
         <ng-container BottomRightActions>
-          <button class="btn btn-outline-primary me-2" (click)="onReset(ctx)">Reset</button>
-          <button type="submit" class="btn btn-primary" (click)="onSearch(ctx)">Search</button>
+          <button class="btn btn-outline-primary me-2" (click)="onReset(ctx)" id="resetBtn">Reset</button>
+          <button type="submit" class="btn btn-primary" (click)="onSearch(ctx)" id="searchBtn">Search</button>
         </ng-container>
       </lib-controller>
     </div>

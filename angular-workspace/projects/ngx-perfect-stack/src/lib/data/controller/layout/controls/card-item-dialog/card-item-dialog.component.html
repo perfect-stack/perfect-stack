@@ -7,7 +7,7 @@
   <p>Select type of item to add:</p>
   <ng-container *ngIf="metaAttribute">
     <form [formGroup]="itemForm">
-      <select class="form-select" id="itemSelect" formControlName="itemSelect">
+      <select class="form-select" formControlName="itemSelect" id="itemSelect">
         <option *ngFor="let o of metaAttribute.discriminator.entityMappingList" [ngValue]="o.discriminatorValue">{{o.discriminatorValue}}</option>
       </select>
     </form>
@@ -15,6 +15,6 @@
 </div>
 
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close('Cancel')">Cancel</button>
-  <button type="button" class="btn btn-outline-primary" (click)="activeModal.close(itemForm.value)">Add</button>
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close('Cancel')" id="cancelBtn">Cancel</button>
+  <button type="button" class="btn btn-outline-primary" (click)="activeModal.close(itemForm.value)" id="addBtn">Add</button>
 </div>
