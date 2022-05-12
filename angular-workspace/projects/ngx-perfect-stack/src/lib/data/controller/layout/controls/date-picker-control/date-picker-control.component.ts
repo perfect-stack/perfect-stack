@@ -28,6 +28,6 @@ export class DatePickerControlComponent implements OnInit {
   }
 
   get placeholder() {
-    return this.isReadOnly ? '-' : 'yyy-mm-dd';
+    return this.isReadOnly ? '-' : 'yyyy-mm-dd';
   }
 }

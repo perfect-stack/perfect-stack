@@ -3,7 +3,7 @@
     <div>
       <a [routerLink]="['/data', ctx.metaEntity.name, 'search']">
         <span class="material-icons align-middle">arrow_back</span>
-        <span class="align-middle">Search {{ctx.metaEntity.name}}</span>
+        <span class="align-middle">Search {{ctx.metaEntity.name.toLowerCase()}}</span>
       </a>
 
       <h2 class="my-3">
