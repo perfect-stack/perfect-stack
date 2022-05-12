@@ -11,7 +11,7 @@ import {AttributeType, MetaAttribute} from '../../../../../domain/meta.entity';
 export class TextFieldControlComponent implements OnInit {
 
   @Input()
-  mode: string | null;
+  mode: string;
 
   @Input()
   name: string;

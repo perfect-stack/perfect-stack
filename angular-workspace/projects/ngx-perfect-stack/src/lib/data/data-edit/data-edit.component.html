@@ -2,14 +2,17 @@
 <ng-container *ngIf="ctx$ | async as ctx">
 
   <ng-container [ngSwitch]="ctx.metaPage.layoutStyle">
+
+    <!-- Paris layout style -->
     <ng-container *ngSwitchCase="'Paris'">
       <lib-paris-layout-style [ctx]="ctx">
-        <ng-container BottomRightActions [ngSwitch]="mode">
-          <div class="mt-2" *ngSwitchCase="'view'">
-            <button class="btn btn-outline-secondary me-2" (click)="onBack()" id="backBtn">Back</button>
-            <button type="submit" class="btn btn-primary me-2" (click)="onEdit()" id="editBtn">Edit</button>
+        <ng-container TopRightActions>
+          <div class="h-100 d-flex align-items-center" *ngIf="mode === 'view'" >
+            <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">Edit {{ctx.metaEntity.name.toLowerCase()}}</button>
           </div>
-          <div class="mt-2" *ngSwitchCase="'edit'">
+        </ng-container>
+        <ng-container BottomRightActions>
+          <div class="mt-2" *ngIf="mode === 'edit'">
             <button class="btn btn-outline-secondary me-2" (click)="onCancel()" id="cancelBtn">Cancel</button>
             <button type="submit" class="btn btn-primary me-2" [disabled]="!ctx.entityForm.valid" (click)="onSave(ctx)" id="saveBtn">Save</button>
           </div>

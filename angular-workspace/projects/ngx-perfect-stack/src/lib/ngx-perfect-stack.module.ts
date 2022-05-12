@@ -85,6 +85,7 @@ import { CellSettingsComponent } from './template/template-form-editor/cell-view
 import { AuditViewComponent } from './audit/audit-view/audit-view.component';
 import { NewYorkLayoutStyleComponent } from './data/data-edit/new-york-layout-style/new-york-layout-style.component';
 import { ParisLayoutStyleComponent } from './data/data-edit/paris-layout-style/paris-layout-style.component';
+import { ExpressionControlComponent } from './data/controller/layout/controls/expression-control/expression-control.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -172,6 +173,7 @@ const routes: Routes = [
     AuditViewComponent,
     NewYorkLayoutStyleComponent,
     ParisLayoutStyleComponent,
+    ExpressionControlComponent,
   ],
   providers: [
     AuthenticationService,

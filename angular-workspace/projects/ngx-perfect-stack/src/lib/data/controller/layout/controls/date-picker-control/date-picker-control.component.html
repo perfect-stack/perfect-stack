@@ -6,7 +6,7 @@
          [readonly]="isReadOnly"
          ngbDatepicker #datePicker="ngbDatepicker">
   <div class="input-group-append">
-    <button class="form-control btn-outline-secondary btn p-0" readonly (click)="isReadOnly ? null : datePicker.toggle()" type="button" id="{{name}}Btn">
+    <button class="form-control btn-outline-secondary btn p-0" (click)="isReadOnly ? null : datePicker.toggle()" type="button" id="{{name}}Btn">
       <span class="material-icons p-1">calendar_month</span>
     </button>
   </div>
