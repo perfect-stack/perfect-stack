@@ -1,6 +1,7 @@
 import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
+import {ExpressionService} from './expression.service';
 
 @Component({
   selector: 'lib-expression-control',
@@ -10,15 +11,18 @@ import {Subscription} from 'rxjs';
 export class ExpressionControlComponent implements OnChanges, OnDestroy {
 
   @Input()
-  expression: string;
+  mode: string;
 
   @Input()
   formGroup: FormGroup;
 
+  @Input()
+  expression: string;
+
   controlExpressionListenerList: ControlExpressionListener[] = [];
   expressionValue: any;
 
-  constructor() { }
+  constructor(protected expressionService: ExpressionService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.update();
@@ -55,11 +59,32 @@ export class ExpressionControlComponent implements OnChanges, OnDestroy {
   }
 
   private updateExpressionValue() {
+    if(this.expression.startsWith('?')) {
+      this.invokeServiceMethod();
+    }
+    else {
+      this.searchAndReplace();
+    }
+  }
+
+  invokeServiceMethod() {
+    const params = []
+
+    for(const nextControlExpression of this.controlExpressionListenerList) {
+      params.push(nextControlExpression.control.value);
+    }
+
+    this.expressionValue = this.expressionService.updateOrView(this.mode, params)
+  }
+
+  searchAndReplace() {
     let nextExpressionValue = this.expression;
     for(const nextControlExpression of this.controlExpressionListenerList) {
       const search = nextControlExpression.expressionMatch[0];
-      const replace = nextControlExpression.control.value;
-      nextExpressionValue = nextExpressionValue.replace(search, replace);
+      let replace = String(nextControlExpression.control.value);
+      if(replace) {
+        nextExpressionValue = nextExpressionValue.replace(search, replace.trim());
+      }
     }
     this.expressionValue = nextExpressionValue;
   }
@@ -77,3 +102,4 @@ interface ControlExpressionListener {
   control: AbstractControl;
   subscription: Subscription;
 }
+

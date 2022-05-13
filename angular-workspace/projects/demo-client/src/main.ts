@@ -18,6 +18,9 @@ fetch('/client.json')
       apiUrl: configJson.API_URL,
       authenticationProvider: configJson.AUTHENTICATION_PROVIDER,
       clientRelease: configJson.CLIENT_RELEASE,
+      dateFormat: configJson.DATE_FORMAT,
+      dateTimeFormat: configJson.DATE_TIME_FORMAT,
+      timeFormat: configJson.TIME_FORMAT,
     };
 
     platformBrowserDynamic([

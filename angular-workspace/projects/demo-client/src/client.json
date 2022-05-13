@@ -1,5 +1,8 @@
 {
   "CLIENT_RELEASE": "1.0.10",
   "API_URL": "http://localhost:3080",
-  "AUTHENTICATION_PROVIDER": "FIREBASE"
+  "AUTHENTICATION_PROVIDER": "FIREBASE",
+  "DATE_FORMAT": "dd-MM-yyyy",
+  "DATE_TIME_FORMAT": "dd-MM-yyyy HH:mm",
+  "TIME_FORMAT": "HH:mm"
 }

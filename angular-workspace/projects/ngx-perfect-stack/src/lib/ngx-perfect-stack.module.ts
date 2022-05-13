@@ -7,7 +7,7 @@ import {MenuItemViewComponent} from './meta/menu/meta-menu-view/menu-item-view/m
 import {MenuItemEditComponent} from './meta/menu/meta-menu-view/menu-item-edit/menu-item-edit.component';
 import {MenuHeaderViewComponent} from './meta/menu/meta-menu-view/menu-header-view/menu-header-view.component';
 import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
-import {NgbDateAdapter, NgbDropdown, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateAdapter, NgbDateParserFormatter, NgbDropdown, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
@@ -86,6 +86,9 @@ import { AuditViewComponent } from './audit/audit-view/audit-view.component';
 import { NewYorkLayoutStyleComponent } from './data/data-edit/new-york-layout-style/new-york-layout-style.component';
 import { ParisLayoutStyleComponent } from './data/data-edit/paris-layout-style/paris-layout-style.component';
 import { ExpressionControlComponent } from './data/controller/layout/controls/expression-control/expression-control.component';
+import {
+  CustomDateParserFormatter
+} from './data/controller/layout/controls/date-picker-control/custom-date-parser-formatter';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -197,6 +200,7 @@ const routes: Routes = [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true},
     {provide: NgbDateAdapter, useClass: CustomDateAdapterService},
+    {provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter},
     {provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js'},
     NgbDropdown,
   ],

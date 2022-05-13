@@ -6,4 +6,7 @@ export interface NgxPerfectStackConfig {
   apiUrl: string;
   authenticationProvider: string; // FIREBASE, COGNITO
   clientRelease: string;
+  dateFormat: string;
+  dateTimeFormat: string;
+  timeFormat: string;
 }
