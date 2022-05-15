@@ -186,6 +186,7 @@ const routes: Routes = [
     MetaEntityService,
     ToastService,
     CustomDateAdapterService,
+    CustomDateParserFormatter,
     {
       provide: APP_INITIALIZER,
       useFactory: () => initializeAuth,

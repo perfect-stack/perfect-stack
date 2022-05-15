@@ -1,5 +1,5 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
-import {Observable, of, Subject, switchMap} from 'rxjs';
+import {Component, Inject, OnInit} from '@angular/core';
+import {Observable, of, switchMap} from 'rxjs';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
@@ -9,6 +9,9 @@ import {FormContext, FormControlWithAttribute, FormService} from '../data-edit/f
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {Criteria, QueryRequest} from '../data-service/query.request';
 import {Template} from '../../domain/meta.page';
+import {
+  CustomDateParserFormatter
+} from '../controller/layout/controls/date-picker-control/custom-date-parser-formatter';
 
 @Component({
   selector: 'app-data-search',
@@ -32,7 +35,8 @@ export class DataSearchComponent implements OnInit {
 
   searchCriteriaTemplate: Template;
 
-  constructor(protected readonly route: ActivatedRoute,
+  constructor(protected readonly customDateParserFormatter: CustomDateParserFormatter,
+              protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly formService: FormService,
               protected readonly metaEntityService: MetaEntityService,
@@ -113,6 +117,10 @@ export class DataSearchComponent implements OnInit {
           }
         }
         return displayValue;
+      }
+      if(metaAttribute.type === AttributeType.Date) {
+        const dateValue = item[metaAttribute.name];
+        return dateValue ? this.customDateParserFormatter.formatDatabaseValue(dateValue) : '-';
       }
       else {
         return item[metaAttribute.name];

@@ -1,12 +1,15 @@
 <div class="input-group" [formGroup]="formGroup">
-  <input class="form-control" [placeholder]="placeholder"
+  <input class="form-control"
+         [placeholder]="placeholder"
          [id]="name"
          [name]="name"
          [formControlName]="name"
          [readonly]="isReadOnly"
+         [autoClose]="true"
+         (click)="toggle(datePicker)"
          ngbDatepicker #datePicker="ngbDatepicker">
   <div class="input-group-append">
-    <button class="form-control btn-outline-secondary btn p-0" [ngClass]="{'view': isReadOnly}" (click)="isReadOnly ? null : datePicker.toggle()" type="button" id="{{name}}Btn">
+    <button class="form-control btn-outline-secondary btn p-0" [ngClass]="{'view': isReadOnly}" (click)="toggle(datePicker)" type="button" id="{{name}}Btn">
       <span class="material-icons p-1">calendar_month</span>
     </button>
   </div>

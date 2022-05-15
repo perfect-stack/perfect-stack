@@ -1,5 +1,7 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, Inject, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import {NgbInputDatepicker} from '@ng-bootstrap/ng-bootstrap';
+import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
 @Component({
   selector: 'app-date-picker-control',
@@ -18,7 +20,7 @@ export class DatePickerControlComponent implements OnInit {
   @Input()
   mode: string | null;
 
-  constructor() { }
+  constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) { }
 
   ngOnInit(): void {
   }
@@ -28,6 +30,12 @@ export class DatePickerControlComponent implements OnInit {
   }
 
   get placeholder() {
-    return this.isReadOnly ? '-' : 'yyyy-mm-dd';
+    return this.isReadOnly ? '-' : this.stackConfig.dateFormat.toLowerCase();
+  }
+
+  toggle(datePicker: NgbInputDatepicker) {
+    if(!this.isReadOnly) {
+      datePicker.toggle();
+    }
   }
 }

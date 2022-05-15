@@ -36,4 +36,9 @@ export class CustomDateParserFormatter extends NgbDateParserFormatter {
   format(date: NgbDateStruct | null): string {
     return date ? this.dateFormatter.format(LocalDate.of(date.year, date.month, date.day)) : '';
   }
+
+  formatDatabaseValue(databaseValue: string) {
+    const isoDate = LocalDate.parse(databaseValue);
+    return this.dateFormatter.format(isoDate);
+  }
 }
