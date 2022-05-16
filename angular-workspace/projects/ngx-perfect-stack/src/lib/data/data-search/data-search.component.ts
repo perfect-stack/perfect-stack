@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Observable, of, switchMap} from 'rxjs';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -88,14 +88,8 @@ export class DataSearchComponent implements OnInit {
 
       for (let controlsKey in entityForm.controls) {
         const control = entityForm.controls[controlsKey];
-        if(control instanceof FormControlWithAttribute) {
-          const attribute = control.attribute;
-          const criteria = new Criteria();
-          criteria.name = attribute.name;
-          criteria.operator = attribute.comparisonOperator;
-          criteria.value = String(control.value);
-
-          queryRequest.criteria.push(criteria);
+        if(control.value && control instanceof FormControlWithAttribute) {
+          queryRequest.criteria.push(this.toCriteria(control));
         }
       }
 
@@ -105,6 +99,25 @@ export class DataSearchComponent implements OnInit {
       });
     }
   }
+
+  toCriteria(control: FormControlWithAttribute) {
+    const attribute = control.attribute;
+    const criteria = new Criteria();
+    criteria.operator = attribute.comparisonOperator;
+
+    const byId = attribute.type === AttributeType.ManyToOne;
+    if(byId) {
+      criteria.name = attribute.name + '_id';
+      criteria.value = control.value['id'];
+    }
+    else {
+      criteria.name = attribute.name;
+      criteria.value = String(control.value);
+    }
+
+    return criteria;
+  }
+
 
   displayValue(metaAttribute: MetaAttribute, item: any) {
     if(Object.keys(item).includes(metaAttribute.name)) {

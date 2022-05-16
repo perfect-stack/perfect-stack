@@ -1,6 +1,6 @@
 <ng-container *ngIf="ctx">
 
-  <form class="form" #form="ngForm" [formGroup]="ctx.entityForm"> <!-- (ngSubmit)="onSubmit()" -->
+  <div class="form" [formGroup]="ctx.entityForm"> <!-- (ngSubmit)="onSubmit()" -->
 
     <!-- These two ng-containers here are a workaround for a problem where the readonly attribute is not updating
      when the user flips between view and edit mode. I think it's something to do with changing a value in the code
@@ -21,6 +21,6 @@
       <ng-content></ng-content>
     </div>
 
-  </form>
+  </div>
 
 </ng-container>
