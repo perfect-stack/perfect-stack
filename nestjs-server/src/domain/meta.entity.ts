@@ -16,6 +16,8 @@ export enum AttributeType {
 export enum ComparisonOperator {
   Equals = 'Equals',
   StartsWith = 'StartsWith',
+  InsensitiveStartsWith = 'InsensitiveStartsWith',
+  InsensitiveLike = 'InsensitiveLike',
   Includes = 'Includes',
   GreaterThan = 'GreaterThan',
   LessThan = 'LessThan',
@@ -62,6 +64,7 @@ export enum EntityType {
 
 export class MetaEntity {
   name: string;
+  pluralName: string;
   type: EntityType;
   timestamps: boolean; // Controls if Sequelize will add createdAt and updatedAt timestamps to each record (if undefined defaults to true)
   attributes: MetaAttribute[];

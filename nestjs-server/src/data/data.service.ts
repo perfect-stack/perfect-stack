@@ -399,14 +399,24 @@ export class DataService {
     const operatorMap = new Map<string, symbol>();
     operatorMap.set(ComparisonOperator.Equals, Op.eq);
     operatorMap.set(ComparisonOperator.StartsWith, Op.startsWith);
+    operatorMap.set(ComparisonOperator.InsensitiveStartsWith, Op.iLike);
 
     for (const nextCriteria of queryRequest.criteria) {
+      let value = nextCriteria.value;
+      if (nextCriteria.operator === ComparisonOperator.InsensitiveStartsWith) {
+        value = this.appendWildcard(value);
+      }
+
+      if (nextCriteria.operator === ComparisonOperator.InsensitiveLike) {
+        value = this.wrapWithWildcards(value);
+      }
+
       if (nextCriteria.value && nextCriteria.value !== 'null') {
         if (nextCriteria.operator) {
           const op = operatorMap.get(nextCriteria.operator);
           if (op) {
             criteria[nextCriteria.name] = {
-              [op]: nextCriteria.value,
+              [op]: value,
             };
           } else {
             this.logger.warn(
@@ -529,5 +539,20 @@ export class DataService {
         id: id,
       },
     });
+  }
+
+  private wrapWithWildcards(value: string) {
+    if (value) {
+      value = value.startsWith('%') ? value : `%${value}`;
+      value = value.endsWith('%') ? value : `${value}%`;
+    }
+    return value;
+  }
+
+  private appendWildcard(value: string) {
+    if (value) {
+      value = value.endsWith('%') ? value : `${value}%`;
+    }
+    return value;
   }
 }

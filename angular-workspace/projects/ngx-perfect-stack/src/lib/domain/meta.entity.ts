@@ -16,6 +16,8 @@ export enum AttributeType {
 export enum ComparisonOperator {
   Equals = 'Equals',
   StartsWith = 'StartsWith',
+  InsensitiveStartsWith = 'InsensitiveStartsWith',
+  InsensitiveLike = 'InsensitiveLike',
   Includes = 'Includes',
   GreaterThan = 'GreaterThan',
   LessThan = 'LessThan',
