@@ -25,11 +25,11 @@
       <lib-new-york-layout-style [ctx]="ctx">
         <ng-container BottomRightActions [ngSwitch]="mode">
           <div class="mt-2" *ngSwitchCase="'view'">
-            <button type="button" class="btn btn-outline-secondary me-2" (click)="onBack()" id="backBtn">Back</button>
+            <button type="button" class="btn btn-outline-primary me-2" (click)="onBack()" id="backBtn">Back</button>
             <button type="submit" class="btn btn-primary me-2" (click)="onEdit()" id="editBtn">Edit</button>
           </div>
           <div class="mt-2" *ngSwitchCase="'edit'">
-            <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()" id="cancelBtn">Cancel</button>
+            <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel()" id="cancelBtn">Cancel</button>
             <button type="submit" class="btn btn-primary me-2" [disabled]="!ctx.entityForm.valid" (click)="onSave(ctx)" id="saveBtn">Save</button>
           </div>
         </ng-container>
