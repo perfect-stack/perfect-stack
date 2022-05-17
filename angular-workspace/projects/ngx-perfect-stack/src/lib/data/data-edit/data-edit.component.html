@@ -8,7 +8,7 @@
       <lib-paris-layout-style [ctx]="ctx">
         <ng-container TopRightActions>
           <div class="h-100 d-flex align-items-center" *ngIf="mode === 'view'" >
-            <button type="submit" class="btn btn-outline-primary bg-transparent" (click)="onEdit()" id="editBtn">Edit {{ctx.metaEntity.name.toLowerCase()}}</button>
+            <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">Edit {{ctx.metaEntity.name.toLowerCase()}}</button>
           </div>
         </ng-container>
         <ng-container BottomRightActions>
