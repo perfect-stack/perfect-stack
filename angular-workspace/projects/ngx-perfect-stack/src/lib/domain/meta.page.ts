@@ -67,7 +67,30 @@ export enum PageType {
 
 export enum LayoutStyle {
   NewYork = 'New York',
-  Paris = 'Paris'
+  Paris = 'Paris',
+  Stockholm = 'Stockholm'
+}
+
+export enum ResultCardinalityType {
+  QueryOne = 'QueryOne',
+  QueryMany = 'QueryMany',
+}
+
+export enum QueryType {
+  Entity = 'Entity',
+  Custom = 'Custom'
+}
+
+export class DataQuery {
+  resultCardinality: ResultCardinalityType;
+  queryType: QueryType;
+  queryName: string;
+  fieldName: string;
+  parameter: string;
+}
+
+export class DataQueryMap {
+  [key: string]: DataQuery;
 }
 
 export class MetaPage {

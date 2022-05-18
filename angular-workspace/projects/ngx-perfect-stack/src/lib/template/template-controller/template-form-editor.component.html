@@ -2,20 +2,14 @@
   <ng-container *ngIf="metaEntity">
     <div class="row" *ngFor="let nextRow of template.cells">
       <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
-        <!--<app-cell-view
+        <lib-cell-view
+          [metaEntity]="metaEntity"
           [cell]="nextCell"
           [attribute]="getAttribute(nextCell.attributeName, metaEntity)"
           (changeWidth)="onChangeWidth($event, nextRow, nextCell)"
           (changeHeight)="onChangeHeight($event, nextRow, nextCell)"
           (deleteCell)="onDeleteCell($event, nextRow)">
-        </app-cell-view>-->
-        <lib-child-cell-view
-          [cell]="nextCell"
-          [attribute]="getAttribute(nextCell.attributeName, metaEntity)"
-          (changeWidth)="onChangeWidth($event, nextRow, nextCell)"
-          (changeHeight)="onChangeHeight($event, nextRow, nextCell)"
-          (deleteCell)="onDeleteCell($event, nextRow)">
-        </lib-child-cell-view>
+        </lib-cell-view>
       </div>
       <ng-container *ngIf="getTotalWidth(nextRow) < 12">
         <div class="bg-light">

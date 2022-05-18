@@ -1,10 +1,10 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {Cell, Template} from '../../domain/meta.page';
-import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
+import {Cell, Template} from '../../../domain/meta.page';
+import {AttributeType, MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {DropEvent} from 'ng-drag-drop';
 
 @Component({
-  selector: 'app-template-table-editor',
+  selector: 'lib-template-table-editor',
   templateUrl: './template-table-editor.component.html',
   styleUrls: ['./template-table-editor.component.css']
 })

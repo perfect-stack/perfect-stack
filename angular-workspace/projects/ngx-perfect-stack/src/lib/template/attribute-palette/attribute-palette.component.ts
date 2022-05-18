@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {MetaEntity} from '../../domain/meta.entity';
 
 @Component({
-  selector: 'app-attribute-palette',
+  selector: 'lib-attribute-palette',
   templateUrl: './attribute-palette.component.html',
   styleUrls: ['./attribute-palette.component.css']
 })

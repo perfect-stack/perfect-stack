@@ -1,9 +1,8 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Cell, ComponentData, ComponentType, SelectTwoComponentData} from '../../../../domain/meta.page';
-import {MetaAttribute, MetaEntity} from '../../../../domain/meta.entity';
+import {ComponentType} from '../../../domain/meta.page';
+import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {FormBuilder} from '@angular/forms';
-import {Entity} from '../../../../domain/entity';
 
 @Component({
   selector: 'lib-cell-settings',

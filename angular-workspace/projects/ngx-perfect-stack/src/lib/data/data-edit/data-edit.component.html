@@ -20,6 +20,11 @@
       </lib-paris-layout-style>
     </ng-container>
 
+    <!-- Stockholm layout style -->
+    <ng-container *ngSwitchCase="'Stockholm'">
+      <lib-stockholm-layout-style></lib-stockholm-layout-style>
+    </ng-container>
+
     <!-- New York is the default layout style -->
     <ng-container *ngSwitchDefault>
       <lib-new-york-layout-style [ctx]="ctx">

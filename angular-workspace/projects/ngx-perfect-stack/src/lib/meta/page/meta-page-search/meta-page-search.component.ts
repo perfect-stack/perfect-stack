@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MetaEntity} from '../../../domain/meta.entity';
 import {Router} from '@angular/router';
-import {MetaEntityService} from '../../entity/meta-entity-service/meta-entity.service';
 import {MetaPage} from '../../../domain/meta.page';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
 

@@ -16,9 +16,11 @@ import {AuthenticationService} from './authentication/authentication.service';
 import {ClientConfigService} from './client/config/client-config.service';
 import {initializeAuth} from './authentication/auth-initializer';
 import {AuthGuard} from './authentication/auth-guard.service';
-import {TemplateFormEditor} from './template/template-form-editor/template-form-editor.component';
-import {CellViewComponent} from './template/template-form-editor/cell-view/cell-view.component';
-import {TemplateControllerComponent} from './template/template-controller/template-controller.component';
+import {
+  CellViewComponent,
+  TemplateControllerComponent,
+  TemplateFormEditor
+} from './template/template-controller/template-controller.component';
 import {AttributePaletteComponent} from './template/attribute-palette/attribute-palette.component';
 import {MetaPageService} from './meta/page/meta-page-service/meta-page.service';
 import {MetaPageSearchComponent} from './meta/page/meta-page-search/meta-page-search.component';
@@ -45,7 +47,6 @@ import {SelectControlComponent} from './data/controller/layout/controls/select-c
 import {TextAreaControlComponent} from './data/controller/layout/controls/text-area-control/text-area-control.component';
 import {AuthInterceptor} from './authentication/auth-interceptor';
 import {CustomDateAdapterService} from './data/controller/layout/controls/date-picker-control/custom-date-adapter.service';
-import {TemplateTableEditorComponent} from './template/template-table-editor/template-table-editor.component';
 import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
 import {DataSearchEditComponent} from './data/data-search-edit/data-search-edit.component';
 import {RowViewComponent} from './data/data-search-edit/row-view/row-view.component';
@@ -53,13 +54,10 @@ import {RowEditComponent} from './data/data-search-edit/row-edit/row-edit.compon
 import {DataSearchComponent} from './data/data-search/data-search.component';
 import {DataEditComponent} from './data/data-edit/data-edit.component';
 import {LandingComponent} from './landing/landing.component';
-import { ChildTemplateControllerComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-controller.component';
 import { TemplateOptionsPanelComponent } from './template/template-controller/template-options-panel/template-options-panel.component';
 import {
   TemplateOptionsModalComponent
 } from './template/template-controller/template-options-panel/template-options-modal/template-options-modal.component';
-import { ChildTemplateFormEditorComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-form-editor/child-template-form-editor.component';
-import { ChildCellViewComponent } from './template/template-form-editor/cell-view/child-template-controller/child-template-form-editor/child-cell-view/child-cell-view.component';
 import { LoginCallbackComponent } from './authentication/login-callback/login-callback.component';
 import { SessionTimeOutComponent } from './authentication/session-time-out/session-time-out.component';
 import { MessageDialogComponent } from './utils/message-dialog/message-dialog.component';
@@ -81,7 +79,6 @@ import { VersionComponent } from './meta/version/version.component';
 import { EnumeratonEditComponent } from './meta/entity/meta-entity-edit/enumeraton-edit/enumeraton-edit.component';
 import { EnumerationControlComponent } from './data/controller/layout/controls/enumeration-control/enumeration-control.component';
 import { SelectTwoControlComponent } from './data/controller/layout/controls/select-two-control/select-two-control.component';
-import { CellSettingsComponent } from './template/template-form-editor/cell-view/cell-settings/cell-settings.component';
 import { AuditViewComponent } from './audit/audit-view/audit-view.component';
 import { NewYorkLayoutStyleComponent } from './data/data-edit/new-york-layout-style/new-york-layout-style.component';
 import { ParisLayoutStyleComponent } from './data/data-edit/paris-layout-style/paris-layout-style.component';
@@ -89,6 +86,11 @@ import { ExpressionControlComponent } from './data/controller/layout/controls/ex
 import {
   CustomDateParserFormatter
 } from './data/controller/layout/controls/date-picker-control/custom-date-parser-formatter';
+import { StockholmLayoutStyleComponent } from './data/data-edit/stockholm-layout-style/stockholm-layout-style.component';
+import {CellSettingsComponent} from './template/template-controller/cell-settings/cell-settings.component';
+import {
+  TemplateTableEditorComponent
+} from './template/template-controller/template-table-editor/template-table-editor.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -147,10 +149,7 @@ const routes: Routes = [
     DataSearchComponent,
     DataEditComponent,
     LandingComponent,
-    ChildTemplateControllerComponent,
     TemplateOptionsPanelComponent,
-    ChildTemplateFormEditorComponent,
-    ChildCellViewComponent,
     LoginCallbackComponent,
     SessionTimeOutComponent,
     MessageDialogComponent,
@@ -177,6 +176,7 @@ const routes: Routes = [
     NewYorkLayoutStyleComponent,
     ParisLayoutStyleComponent,
     ExpressionControlComponent,
+    StockholmLayoutStyleComponent,
   ],
   providers: [
     AuthenticationService,

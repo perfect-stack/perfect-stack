@@ -6,11 +6,11 @@
 
       <ng-container [ngSwitch]="template.type">
         <ng-container *ngSwitchCase="'form'">
-          <app-template-form-editor [template]="template" [metaEntity]="getMetaEntity(template, metaEntityOptions)"></app-template-form-editor>
+          <lib-template-form-editor [template]="template" [metaEntity]="getMetaEntity(template, metaEntityOptions)"></lib-template-form-editor>
         </ng-container>
 
         <ng-container *ngSwitchCase="'table'">
-          <app-template-table-editor [template]="template" [metaEntity]="getMetaEntity(template, metaEntityOptions)"></app-template-table-editor>
+          <lib-template-table-editor [template]="template" [metaEntity]="getMetaEntity(template, metaEntityOptions)"></lib-template-table-editor>
         </ng-container>
 
         <ng-container *ngSwitchDefault>
@@ -20,7 +20,7 @@
     </div>
 
     <div class="col-2 border-left border-dark">
-      <app-attribute-palette [metaEntity]="getMetaEntity(template, metaEntityOptions)"></app-attribute-palette>
+      <lib-attribute-palette [metaEntity]="getMetaEntity(template, metaEntityOptions)"></lib-attribute-palette>
     </div>
   </div>
 </ng-container>
