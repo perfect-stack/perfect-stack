@@ -40,7 +40,7 @@ export class AuthenticationService {
         this.user = new FirebaseUser();
         break;
       case 'COGNITO':
-        this.user = new CognitoUser();
+        this.user = new CognitoUser(this.stackConfig);
         break;
       default:
         throw new Error(`Unknown authenticationProvider of ${this.stackConfig.authenticationProvider}`);
