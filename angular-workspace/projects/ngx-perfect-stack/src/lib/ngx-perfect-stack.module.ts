@@ -91,6 +91,7 @@ import {CellSettingsComponent} from './template/template-controller/cell-setting
 import {
   TemplateTableEditorComponent
 } from './template/template-controller/template-table-editor/template-table-editor.component';
+import { DataQueryMapComponent } from './meta/page/meta-page-edit/data-query-map/data-query-map.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -177,6 +178,7 @@ const routes: Routes = [
     ParisLayoutStyleComponent,
     ExpressionControlComponent,
     StockholmLayoutStyleComponent,
+    DataQueryMapComponent,
   ],
   providers: [
     AuthenticationService,

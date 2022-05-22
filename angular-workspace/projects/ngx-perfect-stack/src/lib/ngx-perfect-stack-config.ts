@@ -5,6 +5,7 @@ export const STACK_CONFIG = new InjectionToken<NgxPerfectStackConfig>('NgxPerfec
 export interface NgxPerfectStackConfig {
   apiUrl: string;
   authenticationProvider: string; // FIREBASE, COGNITO
+  cognitoLoginUrl: string;
   clientRelease: string;
   dateFormat: string;
   dateTimeFormat: string;

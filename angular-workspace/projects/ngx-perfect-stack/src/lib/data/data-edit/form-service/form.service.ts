@@ -7,6 +7,7 @@ import {Cell, MetaPage, Template} from '../../../domain/meta.page';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {AttributeType, MetaAttribute, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
+import {DataMapService} from './data-map.service';
 
 
 export class FormContext {
@@ -17,6 +18,7 @@ export class FormContext {
   metaPageMap: Map<string, MetaPage>;
   metaEntity: MetaEntity;
   metaEntityMap: Map<string, MetaEntity>;
+  dataMap: Map<string, any>;
   entity: Entity;
   entityForm: FormGroup;
   cells: CellAttribute[][];
@@ -37,12 +39,15 @@ export class FormService {
 
   constructor(protected readonly metaPageService: MetaPageService,
               protected readonly metaEntityService: MetaEntityService,
+              protected readonly dataMapService: DataMapService,
               protected readonly dataService: DataService) {
   }
 
   loadFormContext(metaName: string, mode: string, id: string | null): Observable<FormContext> {
 
+    // TODO: DON't COMMITT THIS!!! - hack for DataQueryMap feature
     const pageKey = mode === 'view' || mode === 'edit' ? 'view_edit' : mode;
+    //const pageKey = mode === 'view' || mode === 'edit' ? 'view' : mode;
 
     const metaPageName = `${metaName}.${pageKey}`;
     const ctx = new FormContext();
@@ -68,7 +73,13 @@ export class FormService {
         ctx.metaEntity = me;
         ctx.cells = this.toCellAttributeArray(rootTemplate, ctx.metaEntity);
 
-        if (id) {
+        if(ctx.metaPage.dataQueryList?.length > 0) {
+          return this.dataMapService.toDataMap(ctx.metaPage.dataQueryList, {id: id}).pipe(switchMap((dataMap: Map<string, any>) => {
+            console.log('DataMap: ', dataMap);
+            ctx.dataMap = dataMap;
+            return of(ctx);
+          }));
+        } else if (id) {
           return this.dataService.findById(ctx.metaEntity.name, id).pipe(switchMap((entity) => {
             return this.createRootFormGroupForMultipleTemplates(ctx, ctx.metaPage.templates, entity);
           }));

@@ -1,1 +1,6 @@
 <p>stockholm-layout-style works!</p>
+
+<ng-container *ngIf="ctx">
+
+  DataMap: {{ctx.dataMap.get('events') | json}}
+</ng-container>

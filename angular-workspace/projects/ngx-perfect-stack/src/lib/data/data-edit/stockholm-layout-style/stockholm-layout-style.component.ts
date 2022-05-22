@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormContext} from '../form-service/form.service';
 
 @Component({
   selector: 'lib-stockholm-layout-style',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class StockholmLayoutStyleComponent implements OnInit {
 
+  @Input()
+  ctx: FormContext;
+
   constructor() { }
 
   ngOnInit(): void {
+    this.dumpDataMap();
+  }
+
+  dumpDataMap() {
+    console.log('DumpDataMap: ', this.ctx.dataMap);
   }
 
 }

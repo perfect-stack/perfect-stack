@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, of, switchMap, tap} from 'rxjs';
-import {LayoutStyle, MetaPage, PageType, Template, TemplateType} from '../../../domain/meta.page';
+import {DataQuery, LayoutStyle, MetaPage, PageType, Template, TemplateType} from '../../../domain/meta.page';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
 import {FormControl, FormGroup} from '@angular/forms';
@@ -18,6 +18,7 @@ export class MetaPageEditComponent implements OnInit {
   metaPageName: string | null;
   metaPage$: Observable<MetaPage>;
 
+  dataQueryList: DataQuery[];
   templates: Template[];
 
   metaPageForm = new FormGroup({
@@ -39,6 +40,7 @@ export class MetaPageEditComponent implements OnInit {
       const obs = this.metaPageName === '**NEW**' ? this.newMetaPage() : this.loadMetaPage();
       return obs.pipe(tap(metaPage => {
         this.templates = metaPage.templates;
+        this.dataQueryList = metaPage.dataQueryList ? metaPage.dataQueryList : [];
         this.metaPageForm.patchValue(metaPage);
       }));
     }));
@@ -67,6 +69,7 @@ export class MetaPageEditComponent implements OnInit {
   onSave() {
     const metaPage = this.metaPageForm.value;
     metaPage.templates = this.templates;
+    metaPage.dataQueryList = this.dataQueryList;
 
     console.log('onSave()', metaPage);
 

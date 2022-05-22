@@ -43,7 +43,6 @@
             <ng-container *ngSwitchCase="'ManyToOne'">
               <ng-container [ngSwitch]="cell.component">
                 <ng-container *ngSwitchCase="'Select'">
-                  <!--<app-select-control [formGroup]="entityForm" [attribute]="attribute"></app-select-control>-->
                   <select class="form-select"></select>
                 </ng-container>
 
@@ -69,6 +68,10 @@
             </ng-container>
           </div>
         </ng-container>
+
+        <ng-container *ngIf="!attribute && cell.template">
+          <lib-template-controller [template]="cell.template"></lib-template-controller>
+        </ng-container>
       </div>
     </div>
   </div>
@@ -85,6 +88,7 @@
       <span class="material-icons hover-highlight no_selection" (click)="onSettings()">settings</span>
       <span class="material-icons hover-highlight no_selection" (click)="onDeleteCell()">highlight_off</span>
       <span class="material-icons hover-highlight no_selection" (click)="onClearCell()">block</span>
+      <span class="material-icons hover-highlight no_selection" (click)="onAddTemplate()">view_quilt</span>
     </div>
   </ng-container>
 

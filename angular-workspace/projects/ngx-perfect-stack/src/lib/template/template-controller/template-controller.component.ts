@@ -321,4 +321,21 @@ export class CellViewComponent implements OnInit, OnChanges {
     }
   }
 
+  onAddTemplate() {
+    console.log(`onAddTemplate()`);
+    this.cell.template = {
+      binding: '',
+      templateHeading: '',
+      type: TemplateType.table,
+      metaEntityName: '',
+      orderByName: '',
+      orderByDir: '',
+      cells: [[
+        {
+          width: '6',
+          height: '1',
+        },
+      ]]
+    };
+  }
 }

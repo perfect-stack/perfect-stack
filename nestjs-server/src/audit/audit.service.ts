@@ -24,8 +24,17 @@ export class AuditService {
     if (request) {
       const user = request.user as any;
       if (user) {
-        personName = user.name; // TODO: This is probably Authentication provider specific
-        personId = user.user_id; // TODO: This is probably Authentication provider specific
+        // TODO: Firebase
+        if (user.name && user.user_id) {
+          personName = user.name; // TODO: This is probably Authentication provider specific
+          personId = user.user_id; // TODO: This is probably Authentication provider specific
+        }
+
+        // TODO: Cognito
+        if ((user.given_name || user.family_name) && user.name) {
+          personName = `${user.given_name} ${user.family_name}`;
+          personId = user.name;
+        }
 
         if (!personName) {
           throw new Error(`Unable to find user name in request`);

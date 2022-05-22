@@ -82,6 +82,7 @@ export enum QueryType {
 }
 
 export class DataQuery {
+  dataName: string;
   resultCardinality: ResultCardinalityType;
   queryType: QueryType;
   queryName: string;
@@ -89,14 +90,12 @@ export class DataQuery {
   parameter: string;
 }
 
-export class DataQueryMap {
-  [key: string]: DataQuery;
-}
 
 export class MetaPage {
   name: string;
   title: string;
   type: PageType;
   layoutStyle: LayoutStyle;
+  dataQueryList: DataQuery[] = [];
   templates: Template[] = [];
 }

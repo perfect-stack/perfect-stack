@@ -31,7 +31,10 @@
       </div>
     </form>
 
+    <lib-data-query-map [dataQueryList]="dataQueryList"></lib-data-query-map>
+
     <ng-container *ngFor="let nextTemplate of templates">
+      <h3>Template</h3>
       <lib-template-controller [template]="nextTemplate"></lib-template-controller>
     </ng-container>
 

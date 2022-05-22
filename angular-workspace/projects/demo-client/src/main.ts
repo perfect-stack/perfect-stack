@@ -17,6 +17,7 @@ fetch('/client.json')
     const stackConfig: NgxPerfectStackConfig = {
       apiUrl: configJson.API_URL,
       authenticationProvider: configJson.AUTHENTICATION_PROVIDER,
+      cognitoLoginUrl: configJson.COGNITO_LOGIN_URL,
       clientRelease: configJson.CLIENT_RELEASE,
       dateFormat: configJson.DATE_FORMAT,
       dateTimeFormat: configJson.DATE_TIME_FORMAT,
