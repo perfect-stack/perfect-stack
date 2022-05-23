@@ -2,5 +2,14 @@
 
 <ng-container *ngIf="ctx">
 
+  <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
+    <!--<h2 class="mb-3" id="sectionHdg">{{ctx.metaPage.title}}</h2>-->
+
+    <ng-container *ngFor="let template of ctx.metaPage.templates; index as i">
+      <lib-controller [ctx]="ctx" [template]="template"></lib-controller>
+    </ng-container>
+  </div>
+
+
   DataMap: {{ctx.dataMap.get('events') | json}}
 </ng-container>

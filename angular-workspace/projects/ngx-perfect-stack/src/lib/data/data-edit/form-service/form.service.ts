@@ -45,8 +45,9 @@ export class FormService {
 
   loadFormContext(metaName: string, mode: string, id: string | null): Observable<FormContext> {
 
-    // TODO: DON't COMMITT THIS!!! - hack for DataQueryMap feature
     const pageKey = mode === 'view' || mode === 'edit' ? 'view_edit' : mode;
+
+    // TODO: DON't COMMIT THIS!!! - hack for DataQueryMap feature
     //const pageKey = mode === 'view' || mode === 'edit' ? 'view' : mode;
 
     const metaPageName = `${metaName}.${pageKey}`;
@@ -88,6 +89,10 @@ export class FormService {
         }
       }));
     }));
+  }
+
+  private createRootFormGroupFromDataMap(ctx: FormContext, templateList: Template[], dataMap: Map<string, any>) {
+
   }
 
   private createRootFormGroupForMultipleTemplates(

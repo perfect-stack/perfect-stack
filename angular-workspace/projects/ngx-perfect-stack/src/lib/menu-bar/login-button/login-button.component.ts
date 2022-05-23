@@ -30,7 +30,7 @@ export class LoginButtonComponent implements OnInit {
 
         // // if(!this.showTimeLeft && totalSeconds < (3600 - 10)) {
         if(!this.showTimeLeft && totalSeconds < (5 * 60)) {
-          console.log('Starting warning sequence');
+          console.log(`Starting warning sequence. totalSeconds left = ${totalSeconds}`);
           this.showTimeLeft = true;
           this.warningModalRef = this.modalService.open(MessageDialogComponent);
           this.warningModalRef.componentInstance.title = 'Session Timeout'

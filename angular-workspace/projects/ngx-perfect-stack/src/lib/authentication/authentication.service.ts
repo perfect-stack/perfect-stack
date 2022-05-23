@@ -66,7 +66,7 @@ export class AuthenticationService {
         return of('')
       })).subscribe(() => {
         // This subscription might be needed, otherwise the code above won't be executed?
-        console.log('Expiry time has been set');
+        console.log(`Expiry time has been set: ${this.expiryTime}`);
       });
 
       this.navigateToFirstPage();
