@@ -43,9 +43,14 @@ export class DataMapService {
   private observeEntityQuery(dataQuery: DataQuery, parameterMap: any) {
     switch (dataQuery.resultCardinality) {
       case ResultCardinalityType.QueryOne:
-        return this.dataService.findById(dataQuery.queryName, parameterMap[dataQuery.parameter]).pipe(switchMap(value => {
-          return of({dataName: dataQuery.dataName, result: value});
-        }));
+        if(parameterMap[dataQuery.parameter]) {
+          return this.dataService.findById(dataQuery.queryName, parameterMap[dataQuery.parameter]).pipe(switchMap(value => {
+            return of({dataName: dataQuery.dataName, result: value});
+          }));
+        }
+        else {
+          return of({dataName: dataQuery.dataName, result: null});
+        }
       case ResultCardinalityType.QueryMany:
         const queryRequest = new QueryRequest();
         queryRequest.metaEntityName = dataQuery.queryName;

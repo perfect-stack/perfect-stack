@@ -19,7 +19,8 @@ export class CellSettingsComponent implements OnInit {
 
   settingsForm = this.fb.group({
     componentType: [''],
-    secondaryAttributeName: ['']
+    secondaryAttributeName: [''],
+    assetUrl: [''],
   });
 
   constructor(public fb: FormBuilder,
@@ -71,6 +72,10 @@ export class CellSettingsComponent implements OnInit {
 
   get isSelectTwoComponentType() {
     return this.componentType === 'SelectTwo';
+  }
+
+  get isStaticImageComponentType() {
+    return this.componentType === 'StaticImage';
   }
 
 }

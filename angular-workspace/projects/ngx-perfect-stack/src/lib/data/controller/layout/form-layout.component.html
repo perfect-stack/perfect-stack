@@ -4,17 +4,25 @@
   <ng-container *ngIf="!(ctx && ctx.formMap && !template.binding)">
     <div [formGroup]="formGroup">
       <div class="row" *ngFor="let row of cells">
-        <div [class]="getCSS(cell)" *ngFor="let cell of row">
+        <div [class]="getCSS(cell)" class="mt-3" *ngFor="let cell of row">
 
           <ng-container *ngIf="template.templateHeading === '${name}'">
             <ng-container *ngIf="cell.attribute">
               <div class="row">
-                <div class="col-3">
-                  <lib-label [mode]="mode" [metaEntity]="metaEntity" [cell]="cell" [attribute]="cell.attribute"></lib-label>
-                </div>
-                <div class="col-9">
-                  <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
-                </div>
+                <ng-container *ngIf="cell.component !== 'StaticImage'">
+                  <div class="col-3">
+                    <lib-label [mode]="mode" [metaEntity]="metaEntity" [cell]="cell" [attribute]="cell.attribute"></lib-label>
+                  </div>
+                  <div class="col-9">
+                    <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="cell.component === 'StaticImage'">
+                  <div class="col-12 text-center">
+                    <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+                  </div>
+                </ng-container>
               </div>
             </ng-container>
           </ng-container>

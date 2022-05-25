@@ -1,6 +1,5 @@
 <ng-container *ngIf="formGroup && mode && cell && cell.attribute">
   <ng-container [ngSwitch]="cell.attribute.type">
-
     <ng-container *ngSwitchCase="'Date'">
       <app-date-picker-control  [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></app-date-picker-control>
     </ng-container>
@@ -39,6 +38,11 @@
           <lib-select-two-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-select-two-control>
         </ng-container>
 
+        <!-- This isn't ideal, it means StaticImage only work if the attribute type equals ManyToOne, but will do for now -->
+        <ng-container *ngSwitchCase="'StaticImage'">
+          <lib-static-image-control></lib-static-image-control>
+        </ng-container>
+
         <ng-container *ngSwitchDefault>
           <app-many-to-one-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></app-many-to-one-control>
         </ng-container>
@@ -52,6 +56,5 @@
     <ng-container *ngSwitchDefault>
       ERROR: Missing or unknown attribute type of: "{{cell.attribute.type}}"
     </ng-container>
-
   </ng-container>
 </ng-container>

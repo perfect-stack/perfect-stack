@@ -92,6 +92,7 @@ import {
   TemplateTableEditorComponent
 } from './template/template-controller/template-table-editor/template-table-editor.component';
 import { DataQueryMapComponent } from './meta/page/meta-page-edit/data-query-map/data-query-map.component';
+import { StaticImageControlComponent } from './data/controller/layout/controls/static-image-control/static-image-control.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -179,6 +180,7 @@ const routes: Routes = [
     ExpressionControlComponent,
     StockholmLayoutStyleComponent,
     DataQueryMapComponent,
+    StaticImageControlComponent,
   ],
   providers: [
     AuthenticationService,

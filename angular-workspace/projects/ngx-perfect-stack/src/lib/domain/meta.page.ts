@@ -6,6 +6,7 @@ export enum ComponentType {
   DatePicker = 'DatePicker',
   Select = 'Select',
   SelectTwo = 'SelectTwo',
+  StaticImage = 'StaticImage',
 }
 
 export class Cell {
@@ -21,6 +22,10 @@ export class ComponentData {}
 
 export class SelectTwoComponentData implements ComponentData {
   secondaryAttributeName: string;
+}
+
+export class StaticImageComponentData implements ComponentData {
+  assetUrl: string;
 }
 
 export enum TemplateType {

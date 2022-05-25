@@ -1,9 +1,16 @@
 <ng-container *ngIf="ctx && template">
 
   <ng-container *ngIf="showTemplateHeadings && template.templateHeading && mode">
-    <h3>
-      <lib-expression-control [mode]="mode" [formGroup]="formGroup" [expression]="template.templateHeading"></lib-expression-control>
-    </h3>
+    <ng-container *ngIf="template.templateHeading === '${name}'">
+      <h3 class="text-center">
+        <lib-expression-control [mode]="mode" [formGroup]="formGroup" [expression]="template.templateHeading"></lib-expression-control>
+      </h3>
+    </ng-container>
+    <ng-container *ngIf="template.templateHeading !== '${name}'">
+      <h3>
+        <lib-expression-control [mode]="mode" [formGroup]="formGroup" [expression]="template.templateHeading"></lib-expression-control>
+      </h3>
+    </ng-container>
   </ng-container>
 
   <ng-container *ngIf="debugService.ON">
