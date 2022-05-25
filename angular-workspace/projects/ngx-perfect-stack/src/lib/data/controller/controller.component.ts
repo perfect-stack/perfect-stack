@@ -15,9 +15,11 @@ export class ControllerComponent implements OnInit {
   @Input()
   template: Template;
 
+  @Input()
+  showTemplateHeadings = true;
+
   constructor() { }
 
   ngOnInit(): void {
   }
-
 }

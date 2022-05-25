@@ -6,6 +6,7 @@ import {FormContext, FormService} from './form-service/form.service';
 import * as uuid from 'uuid';
 import {AttributeType} from '../../domain/meta.entity';
 import {IdentifierVisitor, IntegerVisitor, MetaEntityTreeWalker} from '../../utils/tree-walker/meta-entity-tree-walker';
+import {DebugService} from '../../utils/debug/debug.service';
 
 
 @Component({
@@ -21,7 +22,8 @@ export class DataEditComponent implements OnInit {
 
   ctx$: Observable<FormContext>;
 
-  constructor(protected readonly route: ActivatedRoute,
+  constructor(public readonly debugService: DebugService,
+              protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly formService: FormService,
               protected readonly dataService: DataService) {
@@ -75,10 +77,12 @@ export class DataEditComponent implements OnInit {
     treeWalker.byType(AttributeType.Integer, new IntegerVisitor());
     treeWalker.byType(AttributeType.Identifier, new IdentifierVisitor());
 
+    // TODO: this is wrong since it now depends on entityForm
     const entityData = ctx.entityForm.value;
-    treeWalker.walk(entityData, ctx.metaEntity);
+    console.log(`DataEdit: form value:`, entityData);
 
-    console.log(`Save Form Value:`, entityData);
+    treeWalker.walk(entityData, ctx.metaEntity);
+    console.log(`DataEdit: save value:`, entityData);
 
     if(this.metaName) {
       this.dataService.save(this.metaName, entityData).subscribe(() => {

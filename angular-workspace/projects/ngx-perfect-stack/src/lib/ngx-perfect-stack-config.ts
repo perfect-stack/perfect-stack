@@ -10,4 +10,5 @@ export interface NgxPerfectStackConfig {
   dateFormat: string;
   dateTimeFormat: string;
   timeFormat: string;
+  debug: boolean;
 }

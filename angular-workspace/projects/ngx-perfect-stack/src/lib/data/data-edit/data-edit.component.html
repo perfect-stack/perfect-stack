@@ -1,6 +1,10 @@
 <!--suppress XmlDuplicatedId -->
 <ng-container *ngIf="ctx$ | async as ctx">
 
+  <ng-container *ngIf="debugService.ON">
+    <p class="small">layoutStyle: {{ctx.metaPage.layoutStyle}}, mode: {{mode}}</p>
+  </ng-container>
+
   <ng-container [ngSwitch]="ctx.metaPage.layoutStyle">
 
     <!-- Paris layout style -->
@@ -14,7 +18,8 @@
         <ng-container BottomRightActions>
           <div class="mt-2" *ngIf="mode === 'edit'">
             <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel()" id="cancelBtn">Cancel</button>
-            <button type="submit" class="btn btn-primary me-2" [disabled]="!ctx.entityForm.valid" (click)="onSave(ctx)" id="saveBtn">Save details</button>
+            <!--<button type="submit" class="btn btn-primary me-2" [disabled]="!ctx.entityForm.valid" (click)="onSave(ctx)" id="saveBtn">Save details</button>-->
+            <button type="submit" class="btn btn-primary me-2" (click)="onSave(ctx)" id="saveBtn">Save details</button>
           </div>
         </ng-container>
       </lib-paris-layout-style>

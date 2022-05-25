@@ -22,6 +22,7 @@ fetch('/client.json')
       dateFormat: configJson.DATE_FORMAT,
       dateTimeFormat: configJson.DATE_TIME_FORMAT,
       timeFormat: configJson.TIME_FORMAT,
+      debug: configJson.DEBUG,
     };
 
     platformBrowserDynamic([

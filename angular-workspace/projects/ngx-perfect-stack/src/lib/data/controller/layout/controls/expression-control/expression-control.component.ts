@@ -37,21 +37,23 @@ export class ExpressionControlComponent implements OnChanges, OnDestroy {
     }
 
     // Create a list of control expressions
-    const matches: RegExpMatchArray[] = Array.from(this.expression.matchAll(/\${(\w+)}/gm));
-    for(const nextMatch of matches) {
-      const control = this.formGroup.get(nextMatch[1]);
-      if(control) {
+    if(this.formGroup) {
+      console.log('ExpressionControlComponent: formGroup:', this.formGroup);
+      const matches: RegExpMatchArray[] = Array.from(this.expression.matchAll(/\${(\w+)}/gm));
+      for(const nextMatch of matches) {
+        const control = this.formGroup.controls[nextMatch[1]];
+        if(control) {
+          const subscription = control.valueChanges.subscribe(() => {
+            this.updateExpressionValue();
+          });
 
-        const subscription = control.valueChanges.subscribe(() => {
-          this.updateExpressionValue();
-        });
-
-        // Listen to their value change listeners
-        this.controlExpressionListenerList.push({
-          expressionMatch: nextMatch,
-          control: control,
-          subscription: subscription,
-        });
+          // Listen to their value change listeners
+          this.controlExpressionListenerList.push({
+            expressionMatch: nextMatch,
+            control: control,
+            subscription: subscription,
+          });
+        }
       }
     }
 

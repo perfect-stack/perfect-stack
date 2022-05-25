@@ -1,17 +1,27 @@
-<ng-container *ngIf="mode && template && formGroup">
+<ng-container *ngIf="ctx && template">
+
+  <ng-container *ngIf="showTemplateHeadings && template.templateHeading && mode">
+    <h3>
+      <lib-expression-control [mode]="mode" [formGroup]="formGroup" [expression]="template.templateHeading"></lib-expression-control>
+    </h3>
+  </ng-container>
+
+  <ng-container *ngIf="debugService.ON">
+    <p class="small">LayoutComponent: {{template.type}} - {{template.binding}}</p>
+  </ng-container>
+
   <ng-container [ngSwitch]="template.type">
     <lib-form-layout
       *ngSwitchCase="'form'"
-      [mode]="mode"
-      [template]="template"
-      [formGroup]="getFormGroupForTemplate(template)"
-      [metaEntity]="metaEntity">
+      [ctx]="ctx"
+      [template]="template">
     </lib-form-layout>
 
     <lib-table-layout
       *ngSwitchCase="'table'"
-      [mode]="mode"
+      [ctx]="ctx"
       [template]="template"
+      [mode]="mode"
       [formGroup]="formGroup"
       [relationshipProperty]="relationshipProperty">
     </lib-table-layout>

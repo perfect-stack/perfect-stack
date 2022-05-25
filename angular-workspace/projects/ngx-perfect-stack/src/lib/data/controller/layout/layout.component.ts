@@ -1,15 +1,21 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Cell, ComponentType, MetaPage, Template, TemplateType} from '../../../domain/meta.page';
-import {AbstractControl, FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {AbstractControl, Form, FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
-import {FormArrayWithAttribute, FormControlWithAttribute, FormService} from '../../data-edit/form-service/form.service';
+import {
+  FormArrayWithAttribute,
+  FormContext,
+  FormControlWithAttribute,
+  FormService
+} from '../../data-edit/form-service/form.service';
 import {MetaEntity} from '../../../domain/meta.entity';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CardItemDialogComponent} from './controls/card-item-dialog/card-item-dialog.component';
 import {DataService} from '../../data-service/data.service';
 import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
+import {DebugService} from '../../../utils/debug/debug.service';
 
 
 // This file contains many Components because they have a circular dependency on the top-level component of
@@ -40,13 +46,28 @@ export class LayoutComponent implements OnInit {
   @Input()
   metaEntity: MetaEntity;
 
-  constructor() { }
+  @Input()
+  ctx: FormContext | null;
+
+  @Input()
+  showTemplateHeadings = true;
+
+  constructor(public readonly debugService: DebugService) { }
 
   ngOnInit(): void {
+    if(this.ctx) {
+      this.mode = this.ctx.mode;
+      if(this.ctx.formMap) {
+        this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
+      }
+    }
   }
 
   getFormGroupForTemplate(template: Template): FormGroup {
-    if(template.binding) {
+    if(this.ctx && this.ctx.formMap && template.binding) {
+      return this.ctx.formMap.get(template.binding) as unknown as FormGroup;
+    }
+    else if(template.binding) {
       const fg = this.formGroup.get(template.binding);
       if(fg) {
         return fg as FormGroup;
@@ -57,6 +78,15 @@ export class LayoutComponent implements OnInit {
     }
     else {
       return this.formGroup;
+    }
+  }
+
+  getMetaEntity(template: Template): MetaEntity {
+    if(this.ctx && this.ctx.formMap && template.metaEntityName) {
+      return this.ctx.metaEntityMap.get(template.metaEntityName) as MetaEntity;
+    }
+    else {
+      return this.metaEntity;
     }
   }
 }
@@ -71,6 +101,9 @@ export class TableLayoutComponent implements OnInit {
 
   @Input()
   mode: string | null;
+
+  @Input()
+  ctx: FormContext;
 
   @Input()
   template: Template;
@@ -90,6 +123,22 @@ export class TableLayoutComponent implements OnInit {
               private formService: FormService) { }
 
   ngOnInit(): void {
+
+    //[mode]="mode"
+    //[formGroup]="formGroup"
+    //[relationshipProperty]="relationshipProperty"
+    this.mode = this.ctx.mode;
+    if(this.ctx.formMap) {
+      this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
+      this.relationshipProperty = this.template.binding;
+    }
+    else {
+      this.formGroup = this.ctx.entityForm;
+      //this.relationshipProperty =
+    }
+
+    console.log('TableLayoutComponent: found formGroup: ', this.formGroup);
+
     this.metaEntityService.metaEntityMap$.subscribe(map => {
       this.metaEntityMap = map;
     })
@@ -147,6 +196,9 @@ export class CardLayoutComponent implements OnInit {
   //template: Template;
 
   @Input()
+  ctx: FormContext;
+
+  @Input()
   formGroup: FormGroup;
 
   @Input()
@@ -165,6 +217,10 @@ export class CardLayoutComponent implements OnInit {
               private formService: FormService) {}
 
   ngOnInit(): void {
+
+    console.log('CardLayout: ngOnInit(): formGroup', this.formGroup);
+    console.log('CardLayout: ngOnInit(): relationshipProperty', this.relationshipProperty);
+
     this.metaEntityMap$ = this.metaEntityService.metaEntityMap$;
     this.metaPageMap$ = this.metaPageService.metaPageMap$;
 
@@ -256,15 +312,20 @@ export class CardLayoutComponent implements OnInit {
             const template = metaPage.templates[0];
 
             if(self.mode) {
-              const formGroup = this.formService.createFormGroup(self.mode, template, metaPageMap, metaEntityMap, null);
-              formGroup.addControl('activity_type', this.fb.control(''));
-              this.attributes.push(formGroup);
+              // create the new item formGroup
+              const itemFormGroup = this.formService.createFormGroup(self.mode, template, metaPageMap, metaEntityMap, null);
+              itemFormGroup.addControl('activity_type', this.fb.control(''));
 
+              // create the new mostly empty item
               const item = {
                 activity_type: discriminatorValue
               };
 
-              formGroup.patchValue(item);
+              // update the item formGroup
+              itemFormGroup.patchValue(item);
+
+              // add the populated item formGroup to our parent form based on the relationshipTarget "attributes"
+              this.attributes.push(itemFormGroup);
             }
           }
         }
@@ -312,6 +373,9 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   mode: string | null;
 
   @Input()
+  ctx: FormContext;
+
+  @Input()
   template: Template;
 
   @Input()
@@ -322,10 +386,54 @@ export class FormLayoutComponent implements OnInit, OnChanges {
 
   cells$: Observable<CellAttribute[][]>;
 
-  constructor(private metaEntityService: MetaEntityService,
+  constructor(public readonly debugService: DebugService,
+              private metaEntityService: MetaEntityService,
               private formService: FormService) { }
 
   ngOnInit(): void {
+    if(this.ctx && this.ctx.formMap) {
+      console.log('FormLayoutComponent: initialising things the new way');
+      this.mode = this.ctx.mode;
+
+      let formLookupKey;
+      let form;
+      const binding = this.template.binding;
+      if(binding) {
+        if(binding.indexOf('.') >= 0) {
+          formLookupKey = binding.substring(0, binding.indexOf('.'));
+          const childFormGroup = binding.substring(binding.indexOf('.') + 1);
+          console.log(`Binding NESTED for: ${binding}, formLookupKey = "${formLookupKey}", childFormGroup = "${childFormGroup}"`);
+          form = this.ctx.formMap.get(formLookupKey) as FormGroup;
+          form = form.controls[childFormGroup] as FormGroup;
+        }
+        else {
+          formLookupKey = binding;
+          console.log(`Binding ROOT - ${binding}`)
+          form = this.ctx.formMap.get(formLookupKey) as FormGroup;
+        }
+
+        console.log(`Found form: ${this.template.binding}: `, form);
+        this.formGroup = form;
+      }
+      else {
+        console.log('Binding - Not found. Keep calm and carry on 🙂');
+      }
+    }
+    else if(this.ctx && this.ctx.entityForm) {
+      console.log('FormLayoutComponent: initialising things the old way');
+      this.mode = this.ctx.mode;
+      this.formGroup = this.ctx.entityForm;
+      this.metaEntity = this.ctx.metaEntity;
+
+      console.log('FormLayoutComponent: mode', this.mode);
+      console.log('FormLayoutComponent: formGroup', this.formGroup);
+      console.log('FormLayoutComponent: metaEntity', this.metaEntity);
+    }
+    else {
+      console.warn('UNABLE to initialise FormLayoutComponent sensibly');
+    }
+
+    this.updateCells$();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

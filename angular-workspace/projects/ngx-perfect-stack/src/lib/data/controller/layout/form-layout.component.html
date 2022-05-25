@@ -1,10 +1,48 @@
 <ng-container *ngIf="cells$ | async as cells">
-  <div class="row" *ngFor="let row of cells">
-    <div [class]="getCSS(cell)" *ngFor="let cell of row">
-      <ng-container *ngIf="cell.attribute">
-        <lib-label [mode]="mode" [metaEntity]="metaEntity" [cell]="cell" [attribute]="cell.attribute"></lib-label>
-        <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
-      </ng-container>
+
+  <!-- If "old" way, OR "new" way and template has a binding to the form -->
+  <ng-container *ngIf="!(ctx && ctx.formMap && !template.binding)">
+    <div [formGroup]="formGroup">
+      <div class="row" *ngFor="let row of cells">
+        <div [class]="getCSS(cell)" *ngFor="let cell of row">
+
+          <ng-container *ngIf="template.templateHeading === '${name}'">
+            <ng-container *ngIf="cell.attribute">
+              <div class="row">
+                <div class="col-3">
+                  <lib-label [mode]="mode" [metaEntity]="metaEntity" [cell]="cell" [attribute]="cell.attribute"></lib-label>
+                </div>
+                <div class="col-9">
+                  <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngIf="template.templateHeading !== '${name}'">
+            <ng-container *ngIf="cell.attribute">
+              <lib-label [mode]="mode" [metaEntity]="metaEntity" [cell]="cell" [attribute]="cell.attribute"></lib-label>
+              <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+            </ng-container>
+          </ng-container>
+
+        </div>
+      </div>
     </div>
-  </div>
+  </ng-container>
+
+  <!-- If "new" way and this template doesn't have a binding (normally this means it's a root level template with nested child templates, so no binding means no form group) -->
+  <ng-container *ngIf="ctx && ctx.formMap && !template.binding">
+    <div [formGroup]="formGroup">
+      <div class="row" *ngFor="let row of cells">
+        <div [class]="getCSS(cell)" *ngFor="let cell of row">
+          <div class="p-3 bg-light shadow-sm border" *ngIf="cell.template">
+            <lib-layout [ctx]="ctx" [template]="cell.template"></lib-layout>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+
 </ng-container>
