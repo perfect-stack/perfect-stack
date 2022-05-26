@@ -4,6 +4,7 @@ import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {Observable, of, switchMap, timer} from 'rxjs';
 import {Duration, ZonedDateTime} from '@js-joda/core';
 import {MessageDialogComponent} from '../../utils/message-dialog/message-dialog.component';
+import {MetaMenuService} from '../../meta/menu/meta-menu-service/meta-menu.service';
 
 @Component({
   selector: 'lib-login-button',
@@ -17,6 +18,7 @@ export class LoginButtonComponent implements OnInit {
   warningModalRef: NgbModalRef;
 
   constructor(public readonly authenticationService: AuthenticationService,
+              protected readonly metaMenuService: MetaMenuService,
               private modalService: NgbModal,
               private changeDetectorRef: ChangeDetectorRef) { }
 
@@ -28,8 +30,8 @@ export class LoginButtonComponent implements OnInit {
         const durationLeft = Duration.between(ZonedDateTime.now(), this.authenticationService.expiryTime)
         let totalSeconds = durationLeft.seconds();
 
-        // // if(!this.showTimeLeft && totalSeconds < (3600 - 10)) {
-        if(!this.showTimeLeft && totalSeconds < (5 * 60)) {
+        if(!this.showTimeLeft && totalSeconds < (3600 - 10)) {
+        //if(!this.showTimeLeft && totalSeconds < (5 * 60)) {
           console.log(`Starting warning sequence. totalSeconds left = ${totalSeconds}`);
           this.showTimeLeft = true;
           this.warningModalRef = this.modalService.open(MessageDialogComponent);
@@ -39,8 +41,8 @@ export class LoginButtonComponent implements OnInit {
           console.log('Finished warning sequence');
         }
 
-        // if(this.authenticationService.isLoggedIn && totalSeconds < (3600 - 30)) {
-        if(this.authenticationService.isLoggedIn && totalSeconds < 30) {
+        if(this.authenticationService.isLoggedIn && totalSeconds < (3600 - 30)) {
+        //if(this.authenticationService.isLoggedIn && totalSeconds < 30) {
           this.showTimeLeft = false;
           this.warningModalRef.close();
           this.authenticationService.sessionTimeout();
@@ -64,8 +66,14 @@ export class LoginButtonComponent implements OnInit {
   }
 
   onLogin() {
-    // TODO: this is going to need to change if there is no Person object to start with.
-    this.authenticationService.redirectUrl = '/data/Person/search';
+    const menuItem = this.metaMenuService.getFirstLoginMenuItem();
+    if(menuItem) {
+      console.log(`LoginButton setting up first login menu item`);
+      this.authenticationService.redirectUrl = menuItem.route;
+    }
+    else {
+      console.log(`LoginButton unable to determine first login page`);
+    }
     this.authenticationService.login();
   }
 

@@ -27,9 +27,7 @@ export class LoginCallbackComponent implements OnInit {
           const cognitoUser = this.authenticationService.user;
           cognitoUser.idToken = idToken;
           cognitoUser.accessToken = accessToken;
-
-          // TODO: this should be loaded from local storage, hard-coding for now
-          this.authenticationService.redirectUrl = '/data/Person/search';
+          cognitoUser.saveTokens();
           this.authenticationService.handleLoginResult(true);
         }
       }

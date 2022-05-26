@@ -11,10 +11,7 @@ export class AuthGuard implements CanActivate {
   constructor(protected readonly router: Router,
               protected readonly authenticationService: AuthenticationService) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if(this.authenticationService.isLoggedIn) {
       console.log(`canActivate: TRUE ${state.url}`);
       return true;
@@ -27,5 +24,4 @@ export class AuthGuard implements CanActivate {
       return this.router.navigate(['/']);
     }
   }
-
 }

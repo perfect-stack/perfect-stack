@@ -1,35 +1,54 @@
 import {User} from './user';
 import {Observable, of} from 'rxjs';
 import {LoginResultListener} from '../authentication.service';
-import {Inject} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-config';
 
 export class CognitoUser  implements User {
 
   loginResultListener: LoginResultListener;
 
-  idToken: string;
-  accessToken: string;
+  idToken: string | null;
+  accessToken: string | null;
 
-  constructor(protected readonly stackConfig: NgxPerfectStackConfig) {}
+  constructor(protected readonly stackConfig: NgxPerfectStackConfig) {
+    this.loadTokens();
+  }
+
+  loadTokens() {
+    this.idToken = localStorage.getItem('idToken');
+    this.accessToken = localStorage.getItem('accessToken');
+  }
+
+  saveTokens() {
+    if(this.idToken && this.accessToken) {
+      localStorage.setItem('idToken', this.idToken);
+      localStorage.setItem('accessToken', this.accessToken);
+    }
+  }
+
+  clearTokens() {
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('accessToken');
+  }
 
   login(): void {
-    //const url = 'https://nz-doc-kims-dev.auth.ap-southeast-2.amazoncognito.com/login?client_id=60q4cnpktar4r69mrib5rmfpb1&response_type=token&scope=openid&redirect_uri=http://localhost:4200/login-callback';
-    //           https://nz-doc-kims-dev.auth.ap-southeast-2.amazoncognito.com/login?client_id=60q4cnpktar4r69mrib5rmfpb1&response_type=code&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:4200/login-callback
-    //           https://nz-doc-kims-dev.auth.ap-southeast-2.amazoncognito.com/login?client_id=60q4cnpktar4r69mrib5rmfpb1&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:4200/login-callback
-    //           https://nz-doc-kims-dev.auth.ap-southeast-2.amazoncognito.com/login?client_id=60q4cnpktar4r69mrib5rmfpb1&response_type=token&scope=openid&redirect_uri=https://app.dev.kims.doc.govt.nz/login-callback
     const url = this.stackConfig.cognitoLoginUrl;
     window.open(url, "_self");
   }
 
   logout(): Observable<void> {
-    // Ok so this is a crazy bit of JS, just needed to fulfill the interface contract and will probably go away soon
-    // once Cognito tokens are stored in local storage. Need to Google it for an explanation.
+    this.clearTokens();
+    // Ok so this is a crazy bit of JS, just needed to fulfill the interface contract. Need to Google for an explanation of it.
     return of(void 0);
   }
 
   getBearerToken(): Observable<string> {
-    return of(this.idToken);
+    if(this.idToken) {
+      return of(this.idToken);
+    }
+    else {
+      throw new Error('No Bearer token is available');
+    }
   }
 
   getName(): Observable<string> {
@@ -38,5 +57,10 @@ export class CognitoUser  implements User {
 
   setLoginResultListener(listener: LoginResultListener): void {
     this.loginResultListener = listener;
+
+    // TODO: this isn't correct should check expiry first
+    if(this.idToken && this.accessToken) {
+      this.loginResultListener.handleLoginResult(true);
+    }
   }
 }

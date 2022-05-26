@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {MetaMenu} from '../../../domain/meta.menu';
+import {MenuItem, MetaMenu} from '../../../domain/meta.menu';
 import {HttpClient} from '@angular/common/http';
 import {tap} from 'rxjs';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
@@ -21,6 +21,14 @@ export class MetaMenuService {
       .pipe( tap((menu) => {
         this.menu = menu as MetaMenu;
       }));
+  }
+
+  getFirstLoginMenuItem(): MenuItem | null {
+    const menu = this?.menu?.menuList[0];
+    if(menu && menu.items && menu.items.length > 0) {
+      return menu.items[0];
+    }
+    return null;
   }
 
   find() {

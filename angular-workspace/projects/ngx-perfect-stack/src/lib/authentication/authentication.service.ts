@@ -18,6 +18,12 @@ export class AuthenticationService {
 
   set redirectUrl(value: string | null) {
     console.log(`set redirectUrl = ${value}`);
+    if(value) {
+      localStorage.setItem('redirectUrl', value);
+    }
+    else {
+      localStorage.removeItem('redirectUrl');
+    }
     this._redirectUrl = value;
   }
 
@@ -34,6 +40,8 @@ export class AuthenticationService {
               protected readonly route: ActivatedRoute,
               @Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig) {
+
+    this._redirectUrl = localStorage.getItem('redirectUrl');
 
     switch (this.stackConfig.authenticationProvider) {
       case 'FIREBASE':
@@ -80,7 +88,7 @@ export class AuthenticationService {
     if(this._redirectUrl) {
       console.log(`navigateToFirstPage: by redirectUrl ${this._redirectUrl} `);
       this.router.navigateByUrl(this._redirectUrl);
-      this._redirectUrl = null;
+      this.redirectUrl = null;
     }
     else {
       // TODO: needs to support query parameters once the app starts using them
