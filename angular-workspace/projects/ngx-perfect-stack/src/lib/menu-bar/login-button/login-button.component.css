@@ -1,7 +1,3 @@
-.parent {
-  white-space: nowrap;
-}
-
-.child {
-  display: inline-block;
+.session-timeout {
+  line-height: normal;
 }
