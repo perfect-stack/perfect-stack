@@ -25,18 +25,9 @@ export class TemplateControllerComponent implements OnInit { //, OnChanges {
   @Input()
   public template: Template;
 
-  public metaEntityOptions$: Observable<MetaEntity[]>;
+  constructor() { }
 
-  constructor(protected readonly metaEntityService: MetaEntityService) { }
-
-  ngOnInit(): void {
-    this.metaEntityOptions$ = this.metaEntityService.findAll();
-  }
-
-  getMetaEntity(template: Template, metaEntityOptions: MetaEntity[]) {
-    return metaEntityOptions.find(me => me.name === template.metaEntityName);
-  }
-
+  ngOnInit(): void {}
 }
 
 
@@ -50,13 +41,11 @@ export class TemplateFormEditor implements OnInit {
   @Input()
   public template: Template;
 
-  @Input()
-  public metaEntity: MetaEntity | undefined;
+  metaEntityMap$: Observable<Map<string, MetaEntity>> = this.metaEntityService.metaEntityMap$;
 
   constructor(protected readonly metaEntityService: MetaEntityService) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getCSS(cell: Cell): string[] {
     return [
@@ -64,8 +53,14 @@ export class TemplateFormEditor implements OnInit {
     ];
   }
 
-  getAttribute(name: string | undefined, metaEntity: MetaEntity): MetaAttribute | undefined {
-    return name ? metaEntity.attributes.find(a => name === a.name) : undefined;
+  getAttribute(name: string | undefined, metaEntityMap: Map<string, MetaEntity>, metaEntityName: string): MetaAttribute | undefined {
+    if(name && metaEntityMap && metaEntityName) {
+      const metaEntity = metaEntityMap.get(metaEntityName)
+      if(metaEntity) {
+        return metaEntity.attributes.find(a => a.name === name);
+      }
+    }
+    return undefined;
   }
 
   onChangeWidth(value: number, row: Cell[], cell: Cell) {
@@ -159,6 +154,10 @@ export class TemplateFormEditor implements OnInit {
 
   clearOneCell(cell: Cell) {
     cell.attributeName = undefined;
+  }
+
+  getMetaEntity(metaEntityMap: Map<string, MetaEntity>, metaEntityName: string) {
+    return metaEntityMap?.get(metaEntityName);
   }
 }
 

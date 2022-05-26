@@ -1,7 +1,9 @@
-<h5>Attributes</h5>
+<ng-container *ngIf="metaEntity$ | async as metaEntity">
+  <h5>{{metaEntity.name}} attributes</h5>
 
-<div class="small mb-2">Drag these...</div>
+  <div class="small mb-2">Drag these...</div>
 
-<ul class="list-group" *ngIf="metaEntity && metaEntity.attributes">
-  <li draggable *ngFor="let attribute of metaEntity.attributes" [dragData]="attribute" class="list-group-item">{{attribute.label}}</li>
-</ul>
+  <ul class="list-group" *ngIf="metaEntity && metaEntity.attributes">
+    <li draggable *ngFor="let attribute of metaEntity.attributes" [dragData]="attribute" class="list-group-item">{{attribute.label}}</li>
+  </ul>
+</ng-container>

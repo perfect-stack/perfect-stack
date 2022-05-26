@@ -2,6 +2,8 @@ import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {Cell, Template} from '../../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {DropEvent} from 'ng-drag-drop';
+import {Observable} from 'rxjs';
+import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 
 @Component({
   selector: 'lib-template-table-editor',
@@ -13,15 +15,13 @@ export class TemplateTableEditorComponent implements OnInit {
   @Input()
   template: Template;
 
-  @Input()
-  public metaEntity: MetaEntity | undefined;
+  metaEntityMap$: Observable<Map<string, MetaEntity>> = this.metaEntityService.metaEntityMap$;
 
   mouseActive = false;
 
-  constructor() { }
+  constructor(protected readonly metaEntityService: MetaEntityService) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   @HostListener('mouseenter')
   onMouseEnter() {
@@ -33,17 +33,20 @@ export class TemplateTableEditorComponent implements OnInit {
     this.mouseActive = false;
   }
 
-  getAttribute(cell: Cell) {
-    if(this.metaEntity && this.metaEntity.attributes) {
-      return this.metaEntity?.attributes.find(a => a.name == cell.attributeName);
-    }
-    else {
-      return undefined;
-    }
+  getMetaEntity(metaEntityMap: Map<string, MetaEntity>, metaEntityName: string): MetaEntity | undefined {
+    return metaEntityMap?.get(metaEntityName);
   }
 
-  getAttributeLabel(cell: Cell) {
-    const attribute = this.getAttribute(cell);
+  getAttribute(cell: Cell, metaEntityMap: Map<string, MetaEntity>) {
+    const metaEntity = this.getMetaEntity(metaEntityMap, this.template.metaEntityName);
+    if(metaEntity && metaEntity.attributes) {
+      return metaEntity.attributes.find(a => a.name == cell.attributeName);
+    }
+    return undefined;
+  }
+
+  getAttributeLabel(cell: Cell, metaEntityMap: Map<string, MetaEntity>) {
+    const attribute = this.getAttribute(cell, metaEntityMap);
     return attribute ? attribute.label : '';
   }
 
@@ -65,8 +68,8 @@ export class TemplateTableEditorComponent implements OnInit {
     cell.attributeName = attribute.name;
   }
 
-  getDataTypePlaceholder(cell: Cell) {
-    const attribute = this.getAttribute(cell);
+  getDataTypePlaceholder(cell: Cell, metaEntityMap: Map<string, MetaEntity>) {
+    const attribute = this.getAttribute(cell, metaEntityMap);
     if(attribute) {
       switch (attribute.type) {
         case AttributeType.Date:

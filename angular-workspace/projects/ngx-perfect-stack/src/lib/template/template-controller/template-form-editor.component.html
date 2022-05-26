@@ -1,11 +1,11 @@
 <ng-container *ngIf="template">
-  <ng-container *ngIf="metaEntity">
+  <ng-container *ngIf="metaEntityMap$ | async as metaEntityMap">
     <div class="row" *ngFor="let nextRow of template.cells">
       <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
         <lib-cell-view
-          [metaEntity]="metaEntity"
+          [metaEntity]="getMetaEntity(metaEntityMap, template.metaEntityName)"
           [cell]="nextCell"
-          [attribute]="getAttribute(nextCell.attributeName, metaEntity)"
+          [attribute]="getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName)"
           (changeWidth)="onChangeWidth($event, nextRow, nextCell)"
           (changeHeight)="onChangeHeight($event, nextRow, nextCell)"
           (deleteCell)="onDeleteCell($event, nextRow)">

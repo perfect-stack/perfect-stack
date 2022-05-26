@@ -1,27 +1,18 @@
-<ng-container *ngIf="template && metaEntityOptions$ | async as metaEntityOptions">
+<div>
+  <lib-template-options-panel [template]="template"></lib-template-options-panel>
 
-  <div class="row">
-    <div class="col-10">
-      <lib-template-options-panel [template]="template"></lib-template-options-panel>
+  <ng-container [ngSwitch]="template.type">
+    <ng-container *ngSwitchCase="'form'">
+      <lib-template-form-editor [template]="template"></lib-template-form-editor>
+    </ng-container>
 
-      <ng-container [ngSwitch]="template.type">
-        <ng-container *ngSwitchCase="'form'">
-          <lib-template-form-editor [template]="template" [metaEntity]="getMetaEntity(template, metaEntityOptions)"></lib-template-form-editor>
-        </ng-container>
+    <ng-container *ngSwitchCase="'table'">
+      <lib-template-table-editor [template]="template"></lib-template-table-editor>
+    </ng-container>
 
-        <ng-container *ngSwitchCase="'table'">
-          <lib-template-table-editor [template]="template" [metaEntity]="getMetaEntity(template, metaEntityOptions)"></lib-template-table-editor>
-        </ng-container>
-
-        <ng-container *ngSwitchDefault>
-          <div>UNKNOWN template type of {{template.type}}</div>
-        </ng-container>
-      </ng-container>
-    </div>
-
-    <div class="col-2 border-left border-dark">
-      <lib-attribute-palette [metaEntity]="getMetaEntity(template, metaEntityOptions)"></lib-attribute-palette>
-    </div>
-  </div>
-</ng-container>
+    <ng-container *ngSwitchDefault>
+      <div>UNKNOWN template type of {{template.type}}</div>
+    </ng-container>
+  </ng-container>
+</div>
 

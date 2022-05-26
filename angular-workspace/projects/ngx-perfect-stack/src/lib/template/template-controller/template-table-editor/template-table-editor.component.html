@@ -1,27 +1,28 @@
-
-<ng-container *ngIf="template && metaEntity">
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th class="wrapper hover-highlight" *ngFor="let nextCell of template.cells[0]" droppable (onDrop)="onDropIntoCell($event, nextCell)">
+<ng-container *ngIf="template">
+  <ng-container *ngIf="metaEntityMap$ | async as metaEntityMap">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th class="wrapper hover-highlight" *ngFor="let nextCell of template.cells[0]" droppable (onDrop)="onDropIntoCell($event, nextCell)">
         <span class="">
-          {{getAttributeLabel(nextCell)}}
+          {{getAttributeLabel(nextCell, metaEntityMap)}}
         </span>
 
-        <ng-container *ngIf="mouseActive">
-          <div class="overlay-bottom-right p-1">
-            <span class="material-icons hover-highlight no_selection" (click)="onDeleteCell(nextCell)">highlight_off</span>
-            <span class="material-icons hover-highlight no_selection" (click)="onClearCell(nextCell)">block</span>
-          </div>
-        </ng-container>
-      </th>
-      <th droppable (onDrop)="onDropAddCell($event)" >Add...</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td *ngFor="let nextCell of template.cells[0]">{{getDataTypePlaceholder(nextCell)}}</td>
-    </tr>
-    </tbody>
-  </table>
+          <ng-container *ngIf="mouseActive">
+            <div class="overlay-bottom-right p-1">
+              <span class="material-icons hover-highlight no_selection" (click)="onDeleteCell(nextCell)">highlight_off</span>
+              <span class="material-icons hover-highlight no_selection" (click)="onClearCell(nextCell)">block</span>
+            </div>
+          </ng-container>
+        </th>
+        <th droppable (onDrop)="onDropAddCell($event)" >Add...</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td *ngFor="let nextCell of template.cells[0]">{{getDataTypePlaceholder(nextCell, metaEntityMap)}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </ng-container>
 </ng-container>

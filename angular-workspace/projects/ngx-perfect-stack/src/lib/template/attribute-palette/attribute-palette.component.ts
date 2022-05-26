@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {MetaEntity} from '../../domain/meta.entity';
+import {Component, OnInit} from '@angular/core';
+import {AttributePaletteService} from './attribute-palette.service';
 
 @Component({
   selector: 'lib-attribute-palette',
@@ -8,10 +8,9 @@ import {MetaEntity} from '../../domain/meta.entity';
 })
 export class AttributePaletteComponent implements OnInit {
 
-  @Input()
-  metaEntity: MetaEntity | undefined;
+  metaEntity$ = this.attributePaletteService.metaEntity$;
 
-  constructor() { }
+  constructor(protected readonly attributePaletteService: AttributePaletteService) { }
 
   ngOnInit(): void {
   }

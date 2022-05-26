@@ -1,49 +1,50 @@
-<div class="container-fluid bg-light my-3 p-3">
-
+<div class="bg-light my-3 py-3">
   <h4>Data queries</h4>
 
   <table class="table table-striped">
     <thead>
-      <th>Data Name</th>
-      <th>Result Cardinality</th>
-      <th>Query Type</th>
-      <th>Query Name</th>
-      <th>Field Name</th>
-      <th>Parameter</th>
-      <th></th>
-      <th></th>
+    <th>Data Name</th>
+    <th>Result Cardinality</th>
+    <th>Query Type</th>
+    <th>Query Name</th>
+    <th>Field Name</th>
+    <th>Parameter</th>
+    <th></th>
+    <th></th>
     </thead>
     <tbody>
-      <tr *ngFor="let dataQuery of dataQueryList; index as i">
-        <td>
-          <input class="form-control" [(ngModel)]="dataQuery.dataName">
-        </td>
-        <td>
-          <select class="form-select" [(ngModel)]="dataQuery.resultCardinality">
-            <option *ngFor="let o of getResultCardinalityOptions()" [ngValue]="o">{{o}}</option>
-          </select>
-        </td>
-        <td>
-          <select class="form-select" [(ngModel)]="dataQuery.queryType">
-            <option *ngFor="let o of getQueryTypeOptions()" [ngValue]="o">{{o}}</option>
-          </select>
-        </td>
-        <td>
-          <input class="form-control" [(ngModel)]="dataQuery.queryName">
-        </td>
-        <td>
-          <input class="form-control" [(ngModel)]="dataQuery.fieldName">
-        </td>
-        <td>
-          <input class="form-control" [(ngModel)]="dataQuery.parameter">
-        </td>
-        <td>
-          <span class="btn-icon text-danger material-icons" (click)="onDelete(i)">remove_circle</span>
-        </td>
-      </tr>
+    <tr *ngFor="let dataQuery of dataQueryList; index as i">
+      <td>
+        <input class="form-control" [(ngModel)]="dataQuery.dataName">
+      </td>
+      <td>
+        <select class="form-select" [(ngModel)]="dataQuery.resultCardinality">
+          <option *ngFor="let o of getResultCardinalityOptions()" [ngValue]="o">{{o}}</option>
+        </select>
+      </td>
+      <td>
+        <select class="form-select" [(ngModel)]="dataQuery.queryType">
+          <option *ngFor="let o of getQueryTypeOptions()" [ngValue]="o">{{o}}</option>
+        </select>
+      </td>
+      <td>
+        <input class="form-control" [(ngModel)]="dataQuery.queryName">
+      </td>
+      <td>
+        <input class="form-control" [(ngModel)]="dataQuery.fieldName">
+      </td>
+      <td>
+        <input class="form-control" [(ngModel)]="dataQuery.parameter">
+      </td>
+      <td>
+        <span class="btn-icon text-danger material-icons" (click)="onDelete(i)">remove_circle</span>
+      </td>
+    </tr>
     </tbody>
   </table>
 
-  <button class="btn btn-outline-success" (click)="onAddDataQuery()">Add data query</button>
+  <div class="d-flex">
+    <button class="btn btn-outline-success" (click)="onAddDataQuery()">Add data query</button>
+  </div>
 </div>
 
