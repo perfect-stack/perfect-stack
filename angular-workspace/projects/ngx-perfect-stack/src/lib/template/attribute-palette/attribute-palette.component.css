@@ -1,0 +1,8 @@
+@import "../../library-styles.scss";
+
+.draggable-attribute {
+  padding: 4px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border: gray solid 1px;
+}

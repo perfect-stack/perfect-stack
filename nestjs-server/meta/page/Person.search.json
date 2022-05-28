@@ -1,6 +1,6 @@
 {
   "name": "Person.search",
-  "title": "Person Search",
+  "title": "Search person",
   "type": "search",
   "templates": [
     {
@@ -19,7 +19,7 @@
             "attributeName": "family_name"
           },
           {
-            "width": "3",
+            "width": "4",
             "height": "1",
             "attributeName": "gender"
           }

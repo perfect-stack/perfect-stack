@@ -312,7 +312,7 @@
               ],
               "type": "table"
             },
-            "attributeName": "comments"
+            "attributeName": "location"
           },
           {
             "width": "3",
@@ -469,7 +469,7 @@
       "metaEntityName": "Event",
       "type": "table",
       "orderByName": "date",
-      "orderByDir": "DESC"
+      "orderByDir": "ASC"
     }
   ]
 }

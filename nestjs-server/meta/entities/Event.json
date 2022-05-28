@@ -1,6 +1,8 @@
 {
   "name": "Event",
+  "pluralName": "Events",
   "type": "Database",
+  "timestamps": true,
   "attributes": [
     {
       "name": "id",
@@ -33,13 +35,35 @@
       "typeaheadSearch": []
     },
     {
+      "name": "observers",
+      "label": "Observers",
+      "description": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "EventObserver",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "location",
+      "label": "Location",
+      "description": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Location",
+      "typeaheadSearch": [
+        "name"
+      ]
+    },
+    {
       "name": "activities",
       "label": "Activities",
       "description": "",
       "type": "OneToPoly",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": "Activity",
+      "relationshipTarget": "",
       "typeaheadSearch": [],
       "discriminator": {
         "discriminatorName": "activity_type",
@@ -59,6 +83,38 @@
           }
         ]
       }
+    },
+    {
+      "name": "northing",
+      "label": "Northing",
+      "description": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "easting",
+      "label": "Easting",
+      "description": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "bird",
+      "label": "Bird",
+      "description": "The bird (optional) that this event is for",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Bird",
+      "typeaheadSearch": [
+        "name"
+      ]
     }
   ]
 }

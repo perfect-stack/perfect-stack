@@ -1,75 +1,77 @@
 {
   "name": "Project",
+  "pluralName": "Projects",
   "type": "Database",
+  "timestamps": true,
   "attributes": [
     {
-      "type": "Identifier",
-      "visibility": "Hidden",
       "name": "id",
       "label": "Id",
       "description": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
-      "type": "Text",
-      "visibility": "Required",
       "name": "name",
       "label": "Name",
       "description": "",
-      "comparisonOperator": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonOperator": "StartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
-      "type": "Html",
-      "visibility": "Required",
       "name": "description",
       "label": "Description",
       "description": "",
+      "type": "Html",
+      "visibility": "Required",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
-      "type": "Date",
-      "visibility": "Required",
       "name": "start_date",
       "label": "Start Date",
       "description": "",
+      "type": "Date",
+      "visibility": "Required",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
-      "type": "Date",
-      "visibility": "Optional",
       "name": "end_date",
       "label": "End Date",
       "description": "",
+      "type": "Date",
+      "visibility": "Optional",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
-      "type": "ManyToOne",
-      "visibility": "Required",
       "name": "status",
       "label": "Status",
       "description": "",
-      "comparisonOperator": "",
+      "type": "ManyToOne",
+      "visibility": "Required",
+      "comparisonOperator": "Equals",
       "relationshipTarget": "ProjectStatus",
       "typeaheadSearch": [
         "name"
       ]
     },
     {
-      "type": "ManyToOne",
-      "visibility": "Optional",
       "name": "organisation",
       "label": "Organisation",
       "description": "",
+      "type": "ManyToOne",
+      "visibility": "Optional",
       "comparisonOperator": "",
       "relationshipTarget": "Organisation",
       "typeaheadSearch": [
@@ -77,11 +79,11 @@
       ]
     },
     {
-      "type": "OneToMany",
-      "visibility": "Visible",
       "name": "members",
       "label": "Members",
       "description": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "ProjectMember",
       "typeaheadSearch": []

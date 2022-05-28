@@ -1,7 +1,6 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {Cell, Template} from '../../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
-import {DropEvent} from 'ng-drag-drop';
 import {Observable} from 'rxjs';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 
@@ -50,21 +49,22 @@ export class TemplateTableEditorComponent implements OnInit {
     return attribute ? attribute.label : '';
   }
 
-  onDropIntoCell($event: DropEvent, cell: Cell) {
-    console.log(`onDropIntoCell(): ${JSON.stringify($event.dragData)}`);
-    const attribute = $event.dragData as MetaAttribute;
+  onDropIntoCell($event: any, cell: Cell) {
+    console.log(`onDropIntoCell():`, $event);
+    const attribute = $event as MetaAttribute;
     cell.attributeName = attribute.name;
   }
 
-  onDropAddCell($event: DropEvent) {
+  onDropAddCell($event: any) {
 
+    console.log('onDropAddCell:', $event)
     const cell = new Cell();
     cell.width = '1';
     cell.height = '1';
     const firstRow = this.template.cells[0];
     firstRow.push(cell);
 
-    const attribute = $event.dragData as MetaAttribute;
+    const attribute = $event as MetaAttribute;
     cell.attributeName = attribute.name;
   }
 

@@ -1,4 +1,4 @@
-import {APP_INITIALIZER, inject, INJECTOR, ModuleWithProviders, NgModule} from '@angular/core';
+import {APP_INITIALIZER, inject, INJECTOR, NgModule} from '@angular/core';
 import { NgxPerfectStackComponent } from './ngx-perfect-stack.component';
 import {RouterModule, Routes} from '@angular/router';
 import {MenuBarComponent} from './menu-bar/menu-bar.component';
@@ -36,7 +36,6 @@ import {AttributeDeleteDialogComponent} from './meta/entity/attribute-delete-dia
 import {ToastService} from './utils/toast.service';
 import {ValidationMessageComponent} from './utils/validation/validation-message/validation-message.component';
 import {ToastsComponent} from './utils/toasts/toasts.component';
-import {NgDragDropModule} from 'ng-drag-drop';
 import {
   DatePickerControlComponent
 } from './data/controller/layout/controls/date-picker-control/date-picker-control.component';
@@ -93,6 +92,8 @@ import {
 } from './template/template-controller/template-table-editor/template-table-editor.component';
 import { DataQueryMapComponent } from './meta/page/meta-page-edit/data-query-map/data-query-map.component';
 import { StaticImageControlComponent } from './data/controller/layout/controls/static-image-control/static-image-control.component';
+import { DraggableDirective } from './utils/dragdrop/draggable.directive';
+import { DropzoneDirective } from './utils/dragdrop/dropzone.directive';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -181,6 +182,8 @@ const routes: Routes = [
     StockholmLayoutStyleComponent,
     DataQueryMapComponent,
     StaticImageControlComponent,
+    DraggableDirective,
+    DropzoneDirective,
   ],
   providers: [
     AuthenticationService,
@@ -217,7 +220,6 @@ const routes: Routes = [
     HttpClientModule,
     CommonModule,
     EditorModule,
-    NgDragDropModule.forRoot(),
     RouterModule.forChild(routes),
     ReactiveFormsModule,
     LoadingBarHttpClientModule,

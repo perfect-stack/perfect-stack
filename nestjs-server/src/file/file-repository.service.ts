@@ -10,7 +10,7 @@ export enum FileLocationType {
 
 @Injectable()
 export class FileRepositoryService {
-  fileLocation = FileLocationType.s3;
+  fileLocation = FileLocationType.local;
   fileRepository: FileRepositoryInterface;
 
   constructor(

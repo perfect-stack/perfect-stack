@@ -3,7 +3,10 @@
 
   <div class="small mb-2">Drag these...</div>
 
-  <ul class="list-group" *ngIf="metaEntity && metaEntity.attributes">
-    <li draggable *ngFor="let attribute of metaEntity.attributes" [dragData]="attribute" class="list-group-item">{{attribute.label}}</li>
-  </ul>
+  <ng-container *ngIf="metaEntity && metaEntity.attributes">
+    <div class="draggable-attribute drag-handle" *ngFor="let attribute of metaEntity.attributes" my-draggable [drag-data]="attribute">
+      <span class="material-icons align-middle">drag_indicator</span>
+      {{attribute.label}}
+    </div>
+  </ng-container>
 </ng-container>

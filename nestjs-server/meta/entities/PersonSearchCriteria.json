@@ -1,6 +1,8 @@
 {
   "name": "PersonSearchCriteria",
+  "pluralName": "persons",
   "type": "Criteria",
+  "timestamps": true,
   "attributes": [
     {
       "name": "given_name",
@@ -8,7 +10,9 @@
       "description": "Person where name starts with this value",
       "type": "Text",
       "visibility": "Visible",
-      "comparisonOperator": "StartsWith"
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "family_name",
@@ -16,7 +20,9 @@
       "description": "",
       "type": "Text",
       "visibility": "Visible",
-      "comparisonOperator": "StartsWith"
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "gender",
@@ -24,7 +30,9 @@
       "description": "",
       "type": "Text",
       "visibility": "Visible",
-      "comparisonOperator": "Equals"
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     }
   ]
 }

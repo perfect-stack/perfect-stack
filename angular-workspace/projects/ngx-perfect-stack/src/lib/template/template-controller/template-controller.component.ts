@@ -2,11 +2,10 @@ import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output,
 import {Cell, SelectTwoComponentData, Template, TemplateType} from '../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
-import {Observable} from 'rxjs';
 import {FormControl, FormGroup} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {DropEvent} from 'ng-drag-drop';
 import {CellSettingsComponent, CellSettingsResult} from './cell-settings/cell-settings.component';
+import {Observable} from 'rxjs';
 
 // This file contains many Components because they have a circular dependency on the top-level component of
 // TemplateControllerComponent. When Angular builds this as a library it doesn't allow this sort of circular dependency to
@@ -254,15 +253,15 @@ export class CellViewComponent implements OnInit, OnChanges {
   }
 
   onChangeWidth(value: number, $event: MouseEvent) {
-    this.changeWidth.next(value);
+    this.changeWidth.emit(value);
   }
 
   onChangeHeight(value: number) {
-    this.changeHeight.next(value);
+    this.changeHeight.emit(value);
   }
 
   onDeleteCell() {
-    this.deleteCell.next(this.cell);
+    this.deleteCell.emit(this.cell);
   }
 
   onClearCell() {
@@ -272,8 +271,13 @@ export class CellViewComponent implements OnInit, OnChanges {
     this.entityForm = new FormGroup([] as any);
   }
 
-  onItemDrop($event: DropEvent) {
-    const attribute: MetaAttribute = $event.dragData;
+  isDropDisabled() {
+    return this.cell.template !== undefined;
+  }
+
+  onItemDrop($event: DragEvent) {
+    console.log(`onItemDrop()`, $event);
+/*    const attribute: MetaAttribute = $event.dragData;
     this._attribute = attribute;
     this.cell.attributeName = attribute.name;
 
@@ -296,7 +300,7 @@ export class CellViewComponent implements OnInit, OnChanges {
           }
         ]]
       };
-    }
+    }*/
   }
 
   onSettings() {
@@ -336,5 +340,33 @@ export class CellViewComponent implements OnInit, OnChanges {
         },
       ]]
     };
+  }
+
+  onDropzoneDropped($event: any) {
+    console.log('onDropzoneDropped()', $event);
+    const attribute: MetaAttribute = $event as MetaAttribute;
+    this._attribute = attribute;
+    this.cell.attributeName = attribute.name;
+
+    if(attribute.type === AttributeType.OneToMany) {
+      this.cell.template = {
+        binding: '',
+        templateHeading: '',
+        type: TemplateType.table,
+        metaEntityName: attribute.relationshipTarget,
+        orderByName: 'UNKNOWN',
+        orderByDir: 'ASC',
+        cells: [[
+          {
+            width: '3',
+            height: '1',
+          },
+          {
+            width: '3',
+            height: '1',
+          }
+        ]]
+      };
+    }
   }
 }

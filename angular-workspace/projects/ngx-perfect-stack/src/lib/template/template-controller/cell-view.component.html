@@ -1,77 +1,83 @@
 <div class="wrapper">
-  <div class="p-2 cell-highlight hover-highlight" draggable droppable (onDrop)="onItemDrop($event)">
+  <div class="p-2 cell-highlight hover-highlight">
     <div class="row">
-      <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}">
-        <ng-container *ngIf="attribute">
-          <label [for]="attribute.name">
-            <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
-          </label>
+      <div class="col-12"
+           my-dropzone (myDropZoneDroppedEvent)="onDropzoneDropped($event)"
+           [ngStyle]="{'min-height': getCSSHeight(cell)}"
+           *ngIf="!attribute && !cell.template">
+      </div>
 
-          <div [ngSwitch]="attribute.type">
-            <ng-container *ngSwitchCase="'Date'">
-              <app-date-picker-control [formGroup]="entityForm" [name]="attribute.name"></app-date-picker-control>
-            </ng-container>
+      <div class="col-12"
+           [ngStyle]="{'min-height': getCSSHeight(cell)}"
+           *ngIf="attribute && !cell.template">
+        <label [for]="attribute.name">
+          <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
+        </label>
 
-            <ng-container *ngSwitchCase="['Text', 'Html', 'Integer'].includes(attribute.type) ? attribute.type : ''">
-              <ng-container [ngSwitch]="cell.component">
-                <ng-container *ngSwitchCase="'TextArea'">
-                  <app-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>
-                </ng-container>
+        <div [ngSwitch]="attribute.type">
+          <ng-container *ngSwitchCase="'Date'">
+            <app-date-picker-control [formGroup]="entityForm" [name]="attribute.name"></app-date-picker-control>
+          </ng-container>
 
-                <ng-container *ngSwitchDefault>
-                  <lib-text-field-control [formGroup]="entityForm" [name]="attribute.name"></lib-text-field-control>
-                </ng-container>
+          <ng-container *ngSwitchCase="['Text', 'Html', 'Integer'].includes(attribute.type) ? attribute.type : ''">
+            <ng-container [ngSwitch]="cell.component">
+              <ng-container *ngSwitchCase="'TextArea'">
+                <app-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>
+              </ng-container>
+
+              <ng-container *ngSwitchDefault>
+                <lib-text-field-control [formGroup]="entityForm" [name]="attribute.name"></lib-text-field-control>
               </ng-container>
             </ng-container>
+          </ng-container>
 
-            <ng-container *ngSwitchCase="'Enumeration'">
-              <select class="form-select"></select>
+          <ng-container *ngSwitchCase="'Enumeration'">
+            <select class="form-select"></select>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'OneToMany'">
+            <ng-container *ngIf="cell.template">
+              <lib-template-controller [template]="cell.template"></lib-template-controller>
             </ng-container>
+          </ng-container>
 
-            <ng-container *ngSwitchCase="'OneToMany'">
-              <ng-container *ngIf="cell.template">
-                <lib-template-controller [template]="cell.template"></lib-template-controller>
+          <ng-container *ngSwitchCase="'OneToOne'">
+            <ng-container *ngIf="cell.template">
+              <lib-template-controller [template]="cell.template"></lib-template-controller>
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'ManyToOne'">
+            <ng-container [ngSwitch]="cell.component">
+              <ng-container *ngSwitchCase="'Select'">
+                <select class="form-select"></select>
               </ng-container>
-            </ng-container>
 
-            <ng-container *ngSwitchCase="'OneToOne'">
-              <ng-container *ngIf="cell.template">
-                <lib-template-controller [template]="cell.template"></lib-template-controller>
-              </ng-container>
-            </ng-container>
-
-            <ng-container *ngSwitchCase="'ManyToOne'">
-              <ng-container [ngSwitch]="cell.component">
-                <ng-container *ngSwitchCase="'Select'">
+              <ng-container *ngSwitchCase="'SelectTwo'">
+                <div class="d-flex">
                   <select class="form-select"></select>
-                </ng-container>
+                  <select class="form-select"></select>
+                </div>
+              </ng-container>
 
-                <ng-container *ngSwitchCase="'SelectTwo'">
-                  <div class="d-flex">
-                    <select class="form-select"></select>
-                    <select class="form-select"></select>
-                  </div>
-                </ng-container>
-
-                <ng-container *ngSwitchDefault>
-                  <app-many-to-one-control [formGroup]="entityForm" [mode]="'edit'" [attribute]="attribute"></app-many-to-one-control>
-                </ng-container>
+              <ng-container *ngSwitchDefault>
+                <app-many-to-one-control [formGroup]="entityForm" [mode]="'edit'" [attribute]="attribute"></app-many-to-one-control>
               </ng-container>
             </ng-container>
+          </ng-container>
 
-            <ng-container *ngSwitchCase="'OneToPoly'">
-              <p>CardLayout for OneToPoly goes here...</p>
-            </ng-container>
+          <ng-container *ngSwitchCase="'OneToPoly'">
+            <p>CardLayout for OneToPoly goes here...</p>
+          </ng-container>
 
-            <ng-container *ngSwitchDefault>
-              ERROR: Missing or unknown attribute type of: "{{attribute.type}}"
-            </ng-container>
-          </div>
-        </ng-container>
+          <ng-container *ngSwitchDefault>
+            ERROR: Missing or unknown attribute type of: "{{attribute.type}}"
+          </ng-container>
+        </div>
+      </div>
 
-        <ng-container *ngIf="!attribute && cell.template">
-          <lib-template-controller [template]="cell.template"></lib-template-controller>
-        </ng-container>
+      <div class="col-12" *ngIf="!attribute && cell.template">
+        <lib-template-controller [template]="cell.template"></lib-template-controller>
       </div>
     </div>
   </div>
@@ -100,4 +106,3 @@
   </ng-container>
 
 </div>
-

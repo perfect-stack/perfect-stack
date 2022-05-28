@@ -1,6 +1,8 @@
 {
   "name": "Address",
+  "pluralName": "Addresses",
   "type": "Database",
+  "timestamps": true,
   "attributes": [
     {
       "name": "id",
@@ -9,7 +11,8 @@
       "type": "Identifier",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "street_address",
@@ -18,7 +21,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "city",
@@ -27,7 +31,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     },
     {
       "name": "postcode",
@@ -36,7 +41,8 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonOperator": "",
-      "relationshipTarget": ""
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     }
   ]
 }
