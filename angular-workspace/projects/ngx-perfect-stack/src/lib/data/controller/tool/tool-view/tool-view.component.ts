@@ -11,6 +11,9 @@ export class ToolViewComponent implements OnInit {
   @Input()
   tool: Tool;
 
+  @Input()
+  editorMode = false;
+
   constructor() { }
 
   ngOnInit(): void {

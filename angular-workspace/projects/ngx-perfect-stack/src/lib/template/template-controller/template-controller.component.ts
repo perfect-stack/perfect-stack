@@ -1,5 +1,5 @@
 import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Cell, SelectTwoComponentData, Template, TemplateType} from '../../domain/meta.page';
+import {Cell, SelectTwoComponentData, Template, TemplateType, Tool} from '../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {FormControl, FormGroup} from '@angular/forms';
@@ -7,6 +7,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CellSettingsComponent, CellSettingsResult} from './cell-settings/cell-settings.component';
 import {Observable} from 'rxjs';
 import {TemplateLocationType} from '../../domain/meta.page';
+import {PropertySheetService} from '../property-sheet/property-sheet.service';
 
 // This file contains many Components because they have a circular dependency on the top-level component of
 // TemplateControllerComponent. When Angular builds this as a library it doesn't allow this sort of circular dependency to
@@ -209,7 +210,8 @@ export class CellViewComponent implements OnInit, OnChanges {
 
   closeResult = '';
 
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: NgbModal,
+              protected readonly propertySheetService: PropertySheetService) { }
 
   ngOnInit(): void {
   }
@@ -272,6 +274,7 @@ export class CellViewComponent implements OnInit, OnChanges {
   onClearCell() {
     delete this.cell.attributeName;
     delete this.cell.template;
+    delete this.cell.tool;
     this.attribute = undefined;
     this.entityForm = new FormGroup([] as any);
   }
@@ -331,6 +334,8 @@ export class CellViewComponent implements OnInit, OnChanges {
 
   onAddTemplate() {
     console.log(`onAddTemplate()`);
+    this.onClearCell()
+
     this.cell.template = {
       binding: '',
       templateHeading: '',
@@ -350,10 +355,23 @@ export class CellViewComponent implements OnInit, OnChanges {
 
   onDropzoneDropped($event: any) {
     console.log('onDropzoneDropped()', $event);
-    const attribute: MetaAttribute = $event as MetaAttribute;
+    if(MetaAttribute.isMetaAttribute($event)) {
+      this.addAttribute($event as MetaAttribute)
+    }
+    else if(Tool.isTool($event)) {
+      this.addTool($event as Tool);
+    }
+    else {
+      console.warn('onDropzoneDropped but supplied object is not a MetaAttribute or Tool');
+    }
+  }
+
+  private addAttribute(attribute: MetaAttribute) {
+
+    this.onClearCell();
+
     this._attribute = attribute;
     this.cell.attributeName = attribute.name;
-
     if(attribute.type === AttributeType.OneToMany) {
       this.cell.template = {
         binding: '',
@@ -375,5 +393,13 @@ export class CellViewComponent implements OnInit, OnChanges {
         locations: {},
       };
     }
+  }
+
+  private addTool(toolPrototype: Tool) {
+    console.log('addTool', toolPrototype);
+    this.onClearCell();
+
+    this.cell.tool = Object.assign({}, toolPrototype);
+    this.propertySheetService.edit(this.cell.tool);
   }
 }

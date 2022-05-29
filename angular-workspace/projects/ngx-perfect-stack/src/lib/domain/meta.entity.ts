@@ -43,6 +43,10 @@ export class MetaAttribute {
   discriminator: DiscriminatorAttribute;
   // List of the enumerated values (if attribute type === enumeration)
   enumeration: string[];
+
+  static isMetaAttribute(something: any) {
+    return something.type && Object.values(AttributeType).indexOf(something.type) >= 0;
+  }
 }
 
 export class DiscriminatorAttribute {

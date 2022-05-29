@@ -15,6 +15,9 @@ export class ToolDropZoneComponent implements OnInit {
   @Input()
   templateLocationType: TemplateLocationType
 
+  @Input()
+  editorMode = false;
+
   tool: Tool;
 
   constructor(protected propertySheetService: PropertySheetService) { }
@@ -39,13 +42,8 @@ export class ToolDropZoneComponent implements OnInit {
     if(toolPrototype) {
       this.tool = Object.assign({}, toolPrototype);
 
-      const propertyList = PropertyListMap[this.tool.type];
-      if(propertyList) {
-        this.propertySheetService.edit(this.tool, propertyList);
-      }
-      else {
-        throw new Error(`Unable to find property list for tool type of ${this.tool.type}`)
-      }
+      // trigger the PropertySheetService to start editing it
+      this.propertySheetService.edit(this.tool);
 
       // just in time, create the map if needed
       if(!this.template.locations) {

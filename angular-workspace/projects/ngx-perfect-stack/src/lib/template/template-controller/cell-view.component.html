@@ -1,12 +1,15 @@
 <div class="wrapper">
   <div class="p-2 cell-highlight hover-highlight">
     <div class="row">
+
+      <!-- Empty Cell -->
       <div class="col-12"
            my-dropzone (myDropZoneDroppedEvent)="onDropzoneDropped($event)"
            [ngStyle]="{'min-height': getCSSHeight(cell)}"
-           *ngIf="!attribute && !cell.template">
+           *ngIf="!attribute && !cell.template && !cell.tool">
       </div>
 
+      <!-- MetaAttribute Cell -->
       <div class="col-12"
            [ngStyle]="{'min-height': getCSSHeight(cell)}"
            *ngIf="attribute && !cell.template">
@@ -76,8 +79,14 @@
         </div>
       </div>
 
+      <!-- Cell with a nested Template -->
       <div class="col-12" *ngIf="!attribute && cell.template">
         <lib-template-controller [template]="cell.template"></lib-template-controller>
+      </div>
+
+      <!-- Cell with a Tool -->
+      <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}" *ngIf="!attribute && cell.tool">
+        <lib-tool-view [tool]="cell.tool" [editorMode]="true"></lib-tool-view>
       </div>
     </div>
   </div>

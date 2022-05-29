@@ -1,2 +1,8 @@
 
-<span class="material-icons align-middle">image</span>
+<ng-container *ngIf="isDefaultImageUrl()">
+  <span class="material-icons align-middle" (click)="onClick()">image</span>
+</ng-container>
+
+<ng-container *ngIf="!isDefaultImageUrl()">
+  <img [src]="imageTool.imageUrl" [ngClass]="imageTool.styles" (click)="onClick()">
+</ng-container>

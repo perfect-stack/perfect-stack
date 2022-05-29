@@ -8,15 +8,17 @@ import {ButtonTool, ImageTool, ToolType} from '../../domain/meta.page';
 })
 export class ToolPaletteComponent implements OnInit {
 
-  buttonPrototype: ButtonTool = {
+  static readonly buttonPrototype: ButtonTool = {
     type: ToolType.Button,
+    containerStyles: '',
     styles: 'btn btn-primary',
     label: 'Button',
     route: '/route/go/here'
   };
 
-  imagePrototype: ImageTool = {
+  static readonly imagePrototype: ImageTool = {
     type: ToolType.Image,
+    containerStyles: '',
     styles: '',
     imageUrl: '/assets/images/image.png'
   }
@@ -26,4 +28,7 @@ export class ToolPaletteComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  get ToolPaletteComponent() {
+    return ToolPaletteComponent;
+  }
 }

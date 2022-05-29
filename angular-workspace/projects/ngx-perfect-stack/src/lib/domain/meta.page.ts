@@ -6,7 +6,6 @@ export enum ComponentType {
   DatePicker = 'DatePicker',
   Select = 'Select',
   SelectTwo = 'SelectTwo',
-  StaticImage = 'StaticImage',
 }
 
 export class Cell {
@@ -15,6 +14,7 @@ export class Cell {
   attributeName?: string;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   componentData?: ComponentData;
+  tool?: Tool;
   template?: Template;
 }
 
@@ -22,10 +22,6 @@ export class ComponentData {}
 
 export class SelectTwoComponentData implements ComponentData {
   secondaryAttributeName: string;
-}
-
-export class StaticImageComponentData implements ComponentData {
-  assetUrl: string;
 }
 
 export enum TemplateType {
@@ -53,7 +49,12 @@ export enum ToolType {
 
 export class Tool {
   type: ToolType;
+  containerStyles: string;
   styles: string;
+
+  static isTool(something: any) {
+    return something.type && Object.values(ToolType).indexOf(something.type) >= 0;
+  }
 }
 
 export class ButtonTool extends Tool {

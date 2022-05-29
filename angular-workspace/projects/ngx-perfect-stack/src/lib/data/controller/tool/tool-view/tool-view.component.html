@@ -1,15 +1,17 @@
 <ng-container *ngIf="tool">
-  <ng-container [ngSwitch]="tool.type">
-    <ng-container *ngSwitchCase="'Button'">
-      <lib-button-tool [buttonTool]="asButtonTool()"></lib-button-tool>
-    </ng-container>
+  <div [ngClass]="tool.containerStyles">
+    <ng-container [ngSwitch]="tool.type">
+      <ng-container *ngSwitchCase="'Button'">
+        <lib-button-tool [buttonTool]="asButtonTool()" [editorMode]="editorMode"></lib-button-tool>
+      </ng-container>
 
-    <ng-container *ngSwitchCase="'Image'">
-      <lib-image-tool [imageTool]="asImageTool()"></lib-image-tool>
-    </ng-container>
+      <ng-container *ngSwitchCase="'Image'">
+        <lib-image-tool [imageTool]="asImageTool()" [editorMode]="editorMode"></lib-image-tool>
+      </ng-container>
 
-    <ng-container *ngSwitchDefault>
-      <div>UNKNOWN tool type of {{tool.type}}</div>
+      <ng-container *ngSwitchDefault>
+        <div>UNKNOWN tool type of {{tool.type}}</div>
+      </ng-container>
     </ng-container>
-  </ng-container>
+  </div>
 </ng-container>

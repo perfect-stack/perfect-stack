@@ -93,5 +93,6 @@
       "type": "form",
       "templateHeading": "Kiwi details"
     }
-  ]
+  ],
+  "dataQueryList": []
 }

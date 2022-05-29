@@ -22,8 +22,12 @@
                   {
                     "width": "12",
                     "height": "1",
-                    "attributeName": "species",
-                    "component": "StaticImage"
+                    "tool": {
+                      "type": "Image",
+                      "styles": "rounded-circle w-50",
+                      "imageUrl": "/assets/Kiwi.png",
+                      "containerStyles": "w-100 text-center"
+                    }
                   }
                 ],
                 [
@@ -124,7 +128,7 @@
           "type": "Button",
           "styles": "btn btn-primary",
           "label": "Record Event",
-          "route": "/route/go/here"
+          "route": "data/Event/edit/**NEW**"
         },
         "TopRight": {
           "type": "Image",
