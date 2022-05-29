@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { FileRepositoryInterface } from './file-repository.interface';
 import { LocalFileRepository } from './local-file-respository';
 import { S3FileRepository } from './s3-file-repository';
+import { ConfigService } from '@nestjs/config';
 
 export enum FileLocationType {
   local = 'local',
@@ -10,20 +11,25 @@ export enum FileLocationType {
 
 @Injectable()
 export class FileRepositoryService {
-  fileLocation = FileLocationType.local;
+  private readonly logger = new Logger(FileRepositoryService.name);
+
   fileRepository: FileRepositoryInterface;
 
   constructor(
+    protected configService: ConfigService,
     protected local: LocalFileRepository,
     protected s3: S3FileRepository,
   ) {
-    if (this.fileLocation === FileLocationType.local) {
+    const sourceLocation = configService.get('META_SOURCE_LOCATION', 's3');
+    if (sourceLocation === FileLocationType.local) {
       this.fileRepository = local;
-    } else if (this.fileLocation === FileLocationType.s3) {
+    } else if (sourceLocation === FileLocationType.s3) {
       this.fileRepository = s3;
     } else {
-      throw new Error(`Unknown fileLocationType of ${this.fileLocation}`);
+      throw new Error(`Unknown fileLocationType of ${sourceLocation}`);
     }
+
+    this.logger.log(`sourceLocation = ${sourceLocation}`);
   }
 
   async listFiles(dir: string): Promise<string[]> {
