@@ -94,6 +94,7 @@ import { DataQueryMapComponent } from './meta/page/meta-page-edit/data-query-map
 import { StaticImageControlComponent } from './data/controller/layout/controls/static-image-control/static-image-control.component';
 import { DraggableDirective } from './utils/dragdrop/draggable.directive';
 import { DropzoneDirective } from './utils/dragdrop/dropzone.directive';
+import { ToolPaletteComponent } from './template/tool-palette/tool-palette.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -184,6 +185,7 @@ const routes: Routes = [
     StaticImageControlComponent,
     DraggableDirective,
     DropzoneDirective,
+    ToolPaletteComponent,
   ],
   providers: [
     AuthenticationService,

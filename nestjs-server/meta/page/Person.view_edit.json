@@ -12,80 +12,12 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "given_name",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table",
-              "metaEntityName": ""
-            }
+            "attributeName": "given_name"
           },
           {
             "width": "6",
             "height": "1",
-            "attributeName": "family_name",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table",
-              "metaEntityName": ""
-            }
+            "attributeName": "family_name"
           }
         ],
         [
@@ -95,7 +27,7 @@
             "attributeName": "email_address"
           },
           {
-            "width": "3",
+            "width": "4",
             "height": "1",
             "attributeName": "birthday"
           }
@@ -110,34 +42,6 @@
             "width": "6",
             "height": "1",
             "attributeName": "company"
-          }
-        ],
-        [
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "phone_numbers",
-            "template": {
-              "templateHeading": "",
-              "type": "table",
-              "metaEntityName": "PhoneNumber",
-              "orderByName": "UNKNOWN",
-              "orderByDir": "ASC",
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1",
-                    "attributeName": "country"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1",
-                    "attributeName": "number"
-                  }
-                ]
-              ]
-            }
           }
         ]
       ],
