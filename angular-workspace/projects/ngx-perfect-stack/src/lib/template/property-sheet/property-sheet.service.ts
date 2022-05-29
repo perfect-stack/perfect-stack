@@ -1,4 +1,5 @@
 import {EventEmitter, Injectable} from '@angular/core';
+import {Template, TemplateNavigationType, TemplateType} from '../../domain/meta.page';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,16 @@ export class PropertySheetService {
   constructor() { }
 
   edit(source: any) {
-    const propertyList = PropertyListMap[source.type];
+    if(source.type) {
+      this.editWithType(source, source.type);
+    }
+    else {
+      throw new Error(`The supplied source object has no "type" attribute defined: ${JSON.stringify(source)}`);
+    }
+  }
+
+  editWithType(source: any, type: string) {
+    const propertyList = PropertyListMap[type];
     if(propertyList) {
       this.editEvent$.emit({
         source: source,
@@ -18,7 +28,7 @@ export class PropertySheetService {
       });
     }
     else {
-      throw new Error(`Unable to find property list for tool type of ${source.type}`)
+      throw new Error(`Unable to find property list for tool type of ${type}`)
     }
   }
 }
@@ -39,6 +49,7 @@ export enum PropertyType {
 export class Property {
   name: string;
   type: PropertyType;
+  options?: any;
 }
 
 
@@ -55,6 +66,18 @@ export const ImagePropertyList = [
   { name: 'imageUrl', type: PropertyType.string},
 ];
 
+// Not all the properties, just the ones we wanted to edit via the property sheet
+export const TemplatePropertyList = [
+  { name: 'binding', type: PropertyType.string},
+  { name: 'metaEntityName', type: PropertyType.metaEntity},
+  { name: 'type', type: PropertyType.string, options: TemplateType},
+  { name: 'orderByName', type: PropertyType.string},
+  { name: 'orderByDir', type: PropertyType.string, options: ['ASC', 'DESC']},
+  { name: 'navigation', type: PropertyType.string, options: TemplateNavigationType},
+  { name: 'route', type: PropertyType.string},
+];
+
+
 export type PropertyListMapType = {
   [key: string]: Property[]
 };
@@ -62,4 +85,5 @@ export type PropertyListMapType = {
 export const PropertyListMap: PropertyListMapType = {
   'Button': ButtonPropertyList,
   'Image': ImagePropertyList,
+  'Template': TemplatePropertyList,
 };

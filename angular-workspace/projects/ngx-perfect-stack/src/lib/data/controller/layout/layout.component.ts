@@ -16,6 +16,7 @@ import {CardItemDialogComponent} from './controls/card-item-dialog/card-item-dia
 import {DataService} from '../../data-service/data.service';
 import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
 import {DebugService} from '../../../utils/debug/debug.service';
+import {Router} from '@angular/router';
 
 
 // This file contains many Components because they have a circular dependency on the top-level component of
@@ -120,6 +121,7 @@ export class TableLayoutComponent implements OnInit {
   metaPageMap: Map<string, MetaPage>;
 
   constructor(private metaEntityService: MetaEntityService,
+              protected readonly router: Router,
               private formService: FormService) { }
 
   ngOnInit(): void {
@@ -172,6 +174,41 @@ export class TableLayoutComponent implements OnInit {
     if(this.mode === 'edit') {
       const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaPageMap, this.metaEntityMap, null);
       this.attributes.push(formGroup);
+    }
+  }
+
+  onRowClicked(rowIdx: number) {
+    console.log(`row clicked: ${rowIdx}`);
+    if(this.template.navigation === 'Enabled') {
+      const route = this.template.route;
+      if(route) {
+        const rowData = this.getFormGroupForRow(rowIdx);
+
+        // TODO: this needs to be made more generic and not just hunt for the id, but allow the route to do parameter
+        // substitution on any any attribute value. Also don't understand why I wasn't able to jut get "id" from the
+        // formGroup value.
+        if(rowData) {
+          console.log('got rowData: ', rowData);
+          const idControl = rowData.controls['id'];
+          console.log('got idControl: ', idControl);
+          const id = idControl.value;
+          console.log('got id value: ', id);
+          if(id) {
+            const r = route.replace('${id}', id);
+            console.log(`Navigating to route: ${r}`);
+            this.router.navigate([r]);
+          }
+          else {
+            console.warn(`Unable to find id for row ${rowIdx} in rowData ${JSON.stringify(this.formGroup.value)}`)
+          }
+        }
+        else {
+          console.warn(`Unable to find row data for row ${rowIdx}`);
+        }
+      }
+      else {
+        console.warn(`Template navigation is enabled but no route has been supplied`, this.template);
+      }
     }
   }
 }

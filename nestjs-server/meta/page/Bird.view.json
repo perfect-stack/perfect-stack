@@ -116,7 +116,9 @@
                     "attributeName": "date"
                   }
                 ]
-              ]
+              ],
+              "route": "/data/Event/view/${id}",
+              "navigation": "Enabled"
             }
           }
         ]

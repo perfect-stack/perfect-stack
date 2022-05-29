@@ -5,6 +5,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MetaEntity} from '../../../domain/meta.entity';
 import {AttributePaletteService} from '../../attribute-palette/attribute-palette.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
+import {PropertySheetService} from '../../property-sheet/property-sheet.service';
 
 @Component({
   selector: 'lib-template-options-panel',
@@ -22,6 +23,7 @@ export class TemplateOptionsPanelComponent implements OnInit {
 
   constructor(protected readonly modalService: NgbModal,
               protected readonly metaEntityService: MetaEntityService,
+              protected readonly propertySheetService: PropertySheetService,
               protected readonly attributePaletteService: AttributePaletteService) { }
 
   ngOnInit(): void {
@@ -40,6 +42,8 @@ export class TemplateOptionsPanelComponent implements OnInit {
         this.attributePaletteService.metaEntity$.next(metaEntity);
         TemplateOptionsPanelComponent.switchSelected(this);
       }
+
+      this.propertySheetService.editWithType(this.template, 'Template');
     }
   }
 

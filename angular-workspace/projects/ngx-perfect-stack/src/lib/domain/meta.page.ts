@@ -90,6 +90,15 @@ export class Template {
   locations: TemplateLocationMap;
   orderByName: string; // Only for search result tables
   orderByDir: string; // Only for search result tables
+
+  // for table rows
+  navigation?: TemplateNavigationType;
+  route?: string;
+}
+
+export enum TemplateNavigationType {
+  Disabled = 'Disabled',
+  Enabled = 'Enabled'
 }
 
 export type TemplateMap = {
