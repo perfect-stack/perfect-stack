@@ -7,6 +7,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {MetaEntityService} from '../../entity/meta-entity-service/meta-entity.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
+import {TemplateLocationType} from '../../../domain/meta.page';
 
 @Component({
   selector: 'app-meta-page-edit',
@@ -114,6 +115,10 @@ export class MetaPageEditComponent implements OnInit {
 
   getLayoutStyleOptions() {
     return Object.keys(LayoutStyle);
+  }
+
+  get TemplateLocationType() {
+    return TemplateLocationType;
   }
 
 }

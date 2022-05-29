@@ -3,7 +3,7 @@
 
   <div class="d-flex justify-content-between">
     <div></div>
-    <lib-tool-drop-zone></lib-tool-drop-zone>
+    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.TopRight"></lib-tool-drop-zone>
   </div>
 
   <ng-container [ngSwitch]="template.type">
@@ -21,9 +21,9 @@
   </ng-container>
 
   <div class="d-flex justify-content-between">
-    <lib-tool-drop-zone></lib-tool-drop-zone>
-    <lib-tool-drop-zone></lib-tool-drop-zone>
-    <lib-tool-drop-zone></lib-tool-drop-zone>
+    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomLeft"></lib-tool-drop-zone>
+    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomMiddle"></lib-tool-drop-zone>
+    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomRight"></lib-tool-drop-zone>
   </div>
 </div>
 

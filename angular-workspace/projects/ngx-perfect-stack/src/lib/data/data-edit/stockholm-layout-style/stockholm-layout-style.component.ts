@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormContext} from '../form-service/form.service';
+import {TemplateLocationType} from '../../../domain/meta.page';
 
 @Component({
   selector: 'lib-stockholm-layout-style',
@@ -21,4 +22,7 @@ export class StockholmLayoutStyleComponent implements OnInit {
     console.log('DumpDataMap: ', this.ctx.dataMap);
   }
 
+  get TemplateLocationType() {
+    return TemplateLocationType;
+  }
 }

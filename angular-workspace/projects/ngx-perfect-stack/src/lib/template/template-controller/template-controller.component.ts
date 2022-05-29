@@ -6,6 +6,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CellSettingsComponent, CellSettingsResult} from './cell-settings/cell-settings.component';
 import {Observable} from 'rxjs';
+import {TemplateLocationType} from '../../domain/meta.page';
 
 // This file contains many Components because they have a circular dependency on the top-level component of
 // TemplateControllerComponent. When Angular builds this as a library it doesn't allow this sort of circular dependency to
@@ -27,6 +28,10 @@ export class TemplateControllerComponent implements OnInit { //, OnChanges {
   constructor() { }
 
   ngOnInit(): void {}
+
+  get TemplateLocationType() {
+    return TemplateLocationType;
+  }
 }
 
 
