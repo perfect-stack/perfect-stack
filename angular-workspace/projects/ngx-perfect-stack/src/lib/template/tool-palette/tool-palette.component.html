@@ -1,7 +1,7 @@
 <div>
   <div class="row">
     <div class="col-6">
-      <button class="btn btn-primary text-start w-100 drag-handle" my-draggable>
+      <button class="btn btn-primary text-start w-100 drag-handle" my-draggable [drag-data]="buttonPrototype">
         <span class="material-icons align-middle">drag_indicator</span>
         Button
       </button>
@@ -16,7 +16,7 @@
 
   <div class="row">
     <div class="col-6">
-      <div class="form-control drag-handle" my-draggable>
+      <div class="form-control drag-handle" my-draggable [drag-data]="imagePrototype">
         <span class="material-icons align-middle">drag_indicator</span>
         <span class="material-icons align-middle">image</span>
         Image

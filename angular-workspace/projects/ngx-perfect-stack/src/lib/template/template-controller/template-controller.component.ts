@@ -338,7 +338,8 @@ export class CellViewComponent implements OnInit, OnChanges {
           width: '6',
           height: '1',
         },
-      ]]
+      ]],
+      locations: {},
     };
   }
 
@@ -365,7 +366,8 @@ export class CellViewComponent implements OnInit, OnChanges {
             width: '3',
             height: '1',
           }
-        ]]
+        ]],
+        locations: {},
       };
     }
   }

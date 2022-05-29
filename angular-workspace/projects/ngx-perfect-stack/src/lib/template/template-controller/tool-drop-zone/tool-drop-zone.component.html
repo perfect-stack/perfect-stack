@@ -1,0 +1,10 @@
+
+<div class="tool-component-drop-zone drag-border" my-dropzone (myDropZoneDroppedEvent)="onDropEvent($event)">
+  <ng-container *ngIf="!tool">
+    <span class="small text-secondary"><i>add tool here...</i></span>
+  </ng-container>
+
+  <ng-container *ngIf="tool">
+    <lib-tool-view [tool]="tool"></lib-tool-view>
+  </ng-container>
+</div>

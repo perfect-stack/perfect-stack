@@ -95,6 +95,10 @@ import { StaticImageControlComponent } from './data/controller/layout/controls/s
 import { DraggableDirective } from './utils/dragdrop/draggable.directive';
 import { DropzoneDirective } from './utils/dragdrop/dropzone.directive';
 import { ToolPaletteComponent } from './template/tool-palette/tool-palette.component';
+import { ToolDropZoneComponent } from './template/template-controller/tool-drop-zone/tool-drop-zone.component';
+import { ToolViewComponent } from './data/controller/tool/tool-view/tool-view.component';
+import {ButtonToolComponent} from './data/controller/tool/tool-view/button-tool/button-tool.component';
+import {ImageToolComponent} from './data/controller/tool/tool-view/image-tool/image-tool.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -186,6 +190,10 @@ const routes: Routes = [
     DraggableDirective,
     DropzoneDirective,
     ToolPaletteComponent,
+    ToolDropZoneComponent,
+    ButtonToolComponent,
+    ImageToolComponent,
+    ToolViewComponent,
   ],
   providers: [
     AuthenticationService,

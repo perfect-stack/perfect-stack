@@ -36,6 +36,39 @@ export enum TemplateType {
   chart = 'chart',
 }
 
+export enum TemplateLocationType {
+  OuterTopRight = 'OuterTopRight',
+  TopRight = 'TopRight',
+  BottomLeft = 'BottomLeft',
+  BottomMiddle = 'BottomMiddle',
+  BottomRight = 'BottomRight'
+}
+
+export enum ToolType {
+  Button = 'Button',
+  Text = 'Text',
+  Image = 'Image',
+  Select = 'Select'
+}
+
+export class Tool {
+  type: ToolType;
+  styles: string[];
+}
+
+export class ButtonTool extends Tool {
+  label: string;
+  route: string;
+}
+
+export class ImageTool extends Tool {
+  imageUrl: string;
+}
+
+export class TemplateLocationMap {
+  [key: string] : Tool;
+}
+
 export class Template {
   templateHeading: string;
   binding: string;
@@ -53,6 +86,7 @@ export class Template {
       { width: '6', height: '1' },
     ],
   ];
+  locations: {}
   orderByName: string; // Only for search result tables
   orderByDir: string; // Only for search result tables
 }
