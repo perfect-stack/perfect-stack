@@ -1,0 +1,97 @@
+{
+  "name": "Bird.view_edit",
+  "title": "?updateOrView(${name})",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "sex"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "age_class"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "alive_status"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "species",
+            "component": "SelectTwo",
+            "componentData": {
+              "secondaryAttributeName": "form"
+            }
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "mother"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "father"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "first_found_date"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "lay_date"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "hatch_date"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "demise_date"
+          },
+          {
+            "width": "9",
+            "height": "1",
+            "attributeName": "fate"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "3",
+            "attributeName": "comments",
+            "component": "TextArea"
+          }
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "form",
+      "templateHeading": "Kiwi details"
+    }
+  ]
+}

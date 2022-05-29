@@ -1,0 +1,96 @@
+{
+  "name": "Species",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "name",
+      "label": "Name",
+      "description": "The primary name we want to use from Common or Māori",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "description",
+      "label": "Description",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "start_date",
+      "label": "Start date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "end_date",
+      "label": "End date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "sort_index",
+      "label": "Sort index",
+      "description": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "form",
+      "label": "Form",
+      "description": "The informal sub-type within each species",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "scientific_name",
+      "label": "Scientific name",
+      "description": "The formal scientific species name",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "māori_name",
+      "label": "Māori name",
+      "description": "Any additional Māori names if not already defined in the common name",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}

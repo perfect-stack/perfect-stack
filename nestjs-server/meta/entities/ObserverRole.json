@@ -1,0 +1,66 @@
+{
+  "name": "ObserverRole",
+  "type": "Database",
+  "attributes": [
+    {
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "type": "Text",
+      "visibility": "Visible",
+      "name": "name",
+      "label": "Name",
+      "description": "The role name this person played during the event",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "type": "Text",
+      "visibility": "Visible",
+      "name": "description",
+      "label": "Description",
+      "description": "Description of the role",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "type": "Date",
+      "visibility": "Visible",
+      "name": "start_date",
+      "label": "Start date",
+      "description": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "type": "Date",
+      "visibility": "Visible",
+      "name": "end_date",
+      "label": "End date",
+      "description": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "type": "Integer",
+      "visibility": "Visible",
+      "name": "sort_index",
+      "label": "Sort index",
+      "description": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}

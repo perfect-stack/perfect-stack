@@ -1,0 +1,39 @@
+{
+  "name": "EventObserver",
+  "type": "Database",
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "person",
+      "label": "Person",
+      "description": "Each Person associated with the event",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Person",
+      "typeaheadSearch": [
+        "given_name",
+        "family_name"
+      ]
+    },
+    {
+      "name": "roles",
+      "label": "Roles",
+      "description": "A list of the many different Roles they had during the event",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "ObserverRole",
+      "typeaheadSearch": []
+    }
+  ]
+}

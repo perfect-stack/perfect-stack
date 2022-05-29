@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Template, TemplateLocationType, Tool} from '../../../domain/meta.page';
+import {PropertyListMap, PropertySheetService} from '../../property-sheet/property-sheet.service';
 
 @Component({
   selector: 'lib-tool-drop-zone',
@@ -20,7 +21,7 @@ export class ToolDropZoneComponent implements OnInit {
   @Output()
   toolComponentChange = new EventEmitter<Tool>();
 
-  constructor() { }
+  constructor(protected propertySheetService: PropertySheetService) { }
 
   ngOnInit(): void {
   }
@@ -28,6 +29,16 @@ export class ToolDropZoneComponent implements OnInit {
   onDropEvent($event: any) {
     console.log('ToolDropZoneComponent.onDropEvent()', $event)
     const toolPrototype = $event as Tool;
-    this.tool = Object.assign({}, toolPrototype);
+    if(toolPrototype) {
+      this.tool = Object.assign({}, toolPrototype);
+
+      const propertyList = PropertyListMap[this.tool.type];
+      if(propertyList) {
+        this.propertySheetService.edit(this.tool, propertyList);
+      }
+      else {
+        throw new Error(`Unable to find property list for tool type of ${this.tool.type}`)
+      }
+    }
   }
 }

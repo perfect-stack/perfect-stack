@@ -1,0 +1,70 @@
+{
+  "name": "Location",
+  "pluralName": "Locations",
+  "type": "Database",
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "name",
+      "label": "Name",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "StartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "location_type",
+      "label": "Location type",
+      "description": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "LocationType",
+      "typeaheadSearch": [
+        "name"
+      ]
+    },
+    {
+      "name": "description",
+      "label": "Description",
+      "description": "",
+      "type": "Html",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "easting",
+      "label": "Easting",
+      "description": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "northing",
+      "label": "Northing",
+      "description": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}

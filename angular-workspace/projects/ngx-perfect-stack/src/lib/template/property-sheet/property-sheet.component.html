@@ -1,0 +1,10 @@
+<table *ngIf="editEvent">
+  <tbody>
+    <tr *ngFor="let property of editEvent.propertyList">
+      <td class="bg-secondary text-light px-2 border-light border-1">{{property.name}}</td>
+      <td>
+        <input type="text" [(ngModel)]="editEvent.source[property.name]">
+      </td>
+    </tr>
+  </tbody>
+</table>

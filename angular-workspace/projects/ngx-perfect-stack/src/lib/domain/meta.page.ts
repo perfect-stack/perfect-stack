@@ -53,7 +53,7 @@ export enum ToolType {
 
 export class Tool {
   type: ToolType;
-  styles: string[];
+  styles: string;
 }
 
 export class ButtonTool extends Tool {

@@ -1,0 +1,179 @@
+{
+  "name": "Bird",
+  "pluralName": "Birds",
+  "type": "Database",
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "name",
+      "label": "Name",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "description": "Male, Female, Unknown",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Male",
+        "Female",
+        "Unknown"
+      ]
+    },
+    {
+      "name": "lay_date",
+      "label": "Lay date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "hatch_date",
+      "label": "Hatch date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "demise_date",
+      "label": "Demise date",
+      "description": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "alive_status",
+      "label": "Alive status",
+      "description": "Alive, Dead",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Alive",
+        "Dead"
+      ]
+    },
+    {
+      "name": "species",
+      "label": "Species",
+      "description": "The species of the bird",
+      "type": "ManyToOne",
+      "visibility": "Required",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "Species",
+      "typeaheadSearch": [
+        "name"
+      ]
+    },
+    {
+      "name": "mother",
+      "label": "Mother",
+      "description": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Bird",
+      "typeaheadSearch": [
+        "name"
+      ]
+    },
+    {
+      "name": "father",
+      "label": "Father",
+      "description": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Bird",
+      "typeaheadSearch": [
+        "name"
+      ]
+    },
+    {
+      "name": "first_found_date",
+      "label": "First found date",
+      "description": "Date that the bird was first found in the wild",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "comments",
+      "label": "Comments",
+      "description": "",
+      "type": "Html",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "age_class",
+      "label": "Age class",
+      "description": "Adult, Sub adult, Chick, Egg",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Adult",
+        "Sub adult",
+        "Chick",
+        "Egg"
+      ]
+    },
+    {
+      "name": "fate",
+      "label": "Fate",
+      "description": "Code values for how the bird died",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "form",
+      "label": "Form",
+      "description": "The taxa within the Species",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}

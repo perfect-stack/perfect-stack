@@ -1,0 +1,318 @@
+{
+  "name": "Bird.search",
+  "title": "Bird Search",
+  "type": "search",
+  "layoutStyle": "",
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
+            "attributeName": "name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "alive_status"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "sex"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "species",
+            "component": "Select"
+          }
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
+            "attributeName": "name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
+            "attributeName": "alive_status"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
+            "attributeName": "species"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            },
+            "attributeName": "form"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "first_found_date"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "sex"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            }
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "template": {
+              "cells": [
+                [
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  },
+                  {
+                    "width": "3",
+                    "height": "1"
+                  }
+                ],
+                [
+                  {
+                    "width": "6",
+                    "height": "1"
+                  },
+                  {
+                    "width": "6",
+                    "height": "1"
+                  }
+                ]
+              ],
+              "type": "table"
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "table",
+      "orderByName": "name",
+      "orderByDir": "ASC"
+    }
+  ]
+}

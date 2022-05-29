@@ -2,6 +2,8 @@ import {User} from './user';
 import {Observable, of} from 'rxjs';
 import {LoginResultListener} from '../authentication.service';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-config';
+import jwt_decode from 'jwt-decode';
+import {DateTimeFormatter, nativeJs, ZonedDateTime} from '@js-joda/core';
 
 export class CognitoUser  implements User {
 
@@ -12,6 +14,16 @@ export class CognitoUser  implements User {
 
   constructor(protected readonly stackConfig: NgxPerfectStackConfig) {
     this.loadTokens();
+
+    // if(this.idToken) {
+    //   const decodedToken: any = jwt_decode(this.idToken);
+    //   const expiryTime = ZonedDateTime.from(nativeJs(new Date(decodedToken.exp * 1000)));
+    //   console.log(`CognitoUser: expiryTime: `, DateTimeFormatter.ISO_ZONED_DATE_TIME.format(expiryTime));
+    //   if(expiryTime.isBefore(ZonedDateTime.now())) {
+    //     this.clearTokens();
+    //   }
+    // }
+
   }
 
   loadTokens() {

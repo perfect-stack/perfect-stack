@@ -99,6 +99,7 @@ import { ToolDropZoneComponent } from './template/template-controller/tool-drop-
 import { ToolViewComponent } from './data/controller/tool/tool-view/tool-view.component';
 import {ButtonToolComponent} from './data/controller/tool/tool-view/button-tool/button-tool.component';
 import {ImageToolComponent} from './data/controller/tool/tool-view/image-tool/image-tool.component';
+import { PropertySheetComponent } from './template/property-sheet/property-sheet.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -194,6 +195,7 @@ const routes: Routes = [
     ButtonToolComponent,
     ImageToolComponent,
     ToolViewComponent,
+    PropertySheetComponent,
   ],
   providers: [
     AuthenticationService,

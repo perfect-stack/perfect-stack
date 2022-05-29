@@ -10,14 +10,14 @@ export class ToolPaletteComponent implements OnInit {
 
   buttonPrototype: ButtonTool = {
     type: ToolType.Button,
-    styles: [],
+    styles: 'btn btn-primary',
     label: 'Button',
     route: '/route/go/here'
   };
 
   imagePrototype: ImageTool = {
     type: ToolType.Image,
-    styles: [],
+    styles: '',
     imageUrl: '/assets/images/image.png'
   }
 

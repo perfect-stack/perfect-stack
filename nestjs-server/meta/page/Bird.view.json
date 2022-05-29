@@ -1,0 +1,142 @@
+{
+  "name": "Bird.view",
+  "title": "",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "template": {
+              "binding": "bird",
+              "templateHeading": "${name}",
+              "type": "form",
+              "metaEntityName": "Bird",
+              "orderByName": "",
+              "orderByDir": "",
+              "cells": [
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "species",
+                    "component": "StaticImage"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "alive_status"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "species"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "age_class"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "first_found_date"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "lay_date"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "hatch_date"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "demise_date"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "component": "TextInput",
+                    "attributeName": "fate"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "comments",
+                    "component": "TextArea"
+                  }
+                ]
+              ]
+            }
+          },
+          {
+            "width": "8",
+            "height": "1",
+            "template": {
+              "binding": "events",
+              "templateHeading": "Events",
+              "type": "table",
+              "metaEntityName": "Event",
+              "orderByName": "date",
+              "orderByDir": "DESC",
+              "cells": [
+                [
+                  {
+                    "width": "6",
+                    "height": "1",
+                    "attributeName": "date"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "form"
+    }
+  ],
+  "dataQueryList": [
+    {
+      "dataName": "bird",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Bird",
+      "fieldName": "id",
+      "parameter": "id"
+    },
+    {
+      "dataName": "events",
+      "resultCardinality": "QueryMany",
+      "queryType": "Entity",
+      "queryName": "Event",
+      "fieldName": "bird_id",
+      "parameter": "id"
+    }
+  ]
+}
