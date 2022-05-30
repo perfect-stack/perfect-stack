@@ -112,7 +112,7 @@ export const databaseProviders = [
           databaseName: configService.get<string>('DATABASE_NAME'),
         };
 
-        return loadOrm(databaseSettings);
+        return await loadOrm(databaseSettings);
       }
     },
   },
