@@ -1,0 +1,27 @@
+<ng-container *ngIf="ctx">
+
+  <div class="container-fluid stockholm-layout-style">
+    <div class="d-flex justify-content-between my-2">
+      <a [routerLink]="['/data', ctx.metaEntity.name, 'search']">
+        <span class="material-icons align-middle">keyboard_backspace</span>
+        <span class="align-middle">All {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
+      </a>
+
+      <!-- Remember: there are different titles at different levels, so this may or may not appear depending on page meta data -->
+      <h2 id="sectionHdg" *ngIf="ctx.metaPage.title">{{ctx.metaPage.title}}</h2>
+
+      <ng-container *ngIf="ctx.metaPage && ctx.metaPage.templates">
+        <lib-tool-view [tool]="ctx.metaPage.templates[0].locations[TemplateLocationType.OuterTopRight]"></lib-tool-view>
+      </ng-container>
+    </div>
+
+    <ng-container *ngFor="let template of ctx.metaPage.templates; index as i">
+      <lib-controller [ctx]="ctx" [template]="template"></lib-controller>
+    </ng-container>
+
+    <ng-container *ngIf="ctx.mode === 'view'">
+      <lib-audit-view [entityId]="ctx.id"></lib-audit-view>
+    </ng-container>
+  </div>
+
+</ng-container>

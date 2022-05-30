@@ -117,7 +117,8 @@ export enum PageType {
 export enum LayoutStyle {
   NewYork = 'New York',
   Paris = 'Paris',
-  Stockholm = 'Stockholm'
+  Stockholm = 'Stockholm',
+  Venice = 'Venice'
 }
 
 export enum ResultCardinalityType {

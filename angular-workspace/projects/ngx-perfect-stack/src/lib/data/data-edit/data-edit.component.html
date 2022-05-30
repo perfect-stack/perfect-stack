@@ -30,6 +30,12 @@
       <lib-stockholm-layout-style [ctx]="ctx"></lib-stockholm-layout-style>
     </ng-container>
 
+    <!-- Venice layout style -->
+    <ng-container *ngSwitchCase="'Venice'">
+      <lib-venice-layout-style [ctx]="ctx"></lib-venice-layout-style>
+    </ng-container>
+
+
     <!-- New York is the default layout style -->
     <ng-container *ngSwitchDefault>
       <lib-new-york-layout-style [ctx]="ctx">

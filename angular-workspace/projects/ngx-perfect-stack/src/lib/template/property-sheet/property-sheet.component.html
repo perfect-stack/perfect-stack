@@ -1,23 +1,23 @@
 <div *ngIf="editEvent && metaEntityOptions$ | async as metaEntityOptions">
   <div class="row" *ngFor="let property of editEvent.propertyList">
-    <div class="col-5 bg-secondary text-light px-2 border-light border-1">{{property.name}}</div>
+    <div class="property-name col-5 px-2 mb-1">{{property.name}}</div>
     <div class="col-7">
       <ng-container [ngSwitch]="property.type">
         <ng-container *ngSwitchCase="PropertyType.string">
           <ng-container *ngIf="property.options">
-            <select class="w-100" [(ngModel)]="editEvent.source[property.name]">
+            <select class="property-editor w-100" [(ngModel)]="editEvent.source[property.name]">
               <option *ngFor="let o of getOptions(property.options)" [ngValue]="o">{{o}}</option>
             </select>
           </ng-container>
           <ng-container *ngIf="!property.options">
-            <input class="w-100" type="text" [(ngModel)]="editEvent.source[property.name]">
+            <input class="property-editor w-100" type="text" [(ngModel)]="editEvent.source[property.name]">
           </ng-container>
         </ng-container>
         <ng-container *ngSwitchCase="PropertyType.route">
 
         </ng-container>
         <ng-container *ngSwitchCase="PropertyType.metaEntity">
-          <select class="w-100" [ngModel]="getMetaEntity(editEvent.source, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
+          <select class="property-editor w-100" [ngModel]="getMetaEntity(editEvent.source, metaEntityOptions)"  (ngModelChange)="onEntityChange($event)">
             <option *ngFor="let me of metaEntityOptions" [ngValue]="me">{{me.name}}</option>
           </select>
         </ng-container>
