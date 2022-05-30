@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ImageTool} from '../../../../../domain/meta.page';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
 import {ToolPaletteComponent} from '../../../../../template/tool-palette/tool-palette.component';
+import {FormContext} from '../../../../data-edit/form-service/form.service';
 
 @Component({
   selector: 'lib-image-tool',
@@ -12,6 +13,9 @@ export class ImageToolComponent implements OnInit {
 
   @Input()
   imageTool: ImageTool;
+
+  @Input()
+  ctx: FormContext;
 
   @Input()
   editorMode = false;

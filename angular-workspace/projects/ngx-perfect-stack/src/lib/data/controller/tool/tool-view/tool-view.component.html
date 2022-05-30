@@ -2,11 +2,11 @@
   <div [ngClass]="tool.containerStyles">
     <ng-container [ngSwitch]="tool.type">
       <ng-container *ngSwitchCase="'Button'">
-        <lib-button-tool [buttonTool]="asButtonTool()" [editorMode]="editorMode"></lib-button-tool>
+        <lib-button-tool [buttonTool]="asButtonTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-button-tool>
       </ng-container>
 
       <ng-container *ngSwitchCase="'Image'">
-        <lib-image-tool [imageTool]="asImageTool()" [editorMode]="editorMode"></lib-image-tool>
+        <lib-image-tool [imageTool]="asImageTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-image-tool>
       </ng-container>
 
       <ng-container *ngSwitchDefault>

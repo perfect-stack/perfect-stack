@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Cell, ComponentType, MetaPage, Template, TemplateType} from '../../../domain/meta.page';
-import {AbstractControl, Form, FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {Cell, MetaPage, Template, TemplateType} from '../../../domain/meta.page';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
@@ -17,6 +17,7 @@ import {DataService} from '../../data-service/data.service';
 import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
 import {DebugService} from '../../../utils/debug/debug.service';
 import {Router} from '@angular/router';
+import {TemplateLocationType} from '../../../domain/meta.page';
 
 
 // This file contains many Components because they have a circular dependency on the top-level component of
@@ -89,6 +90,10 @@ export class LayoutComponent implements OnInit {
     else {
       return this.metaEntity;
     }
+  }
+
+  get TemplateLocationType() {
+    return TemplateLocationType;
   }
 }
 

@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ButtonTool, ImageTool, Tool} from '../../../../domain/meta.page';
+import {FormContext} from '../../../data-edit/form-service/form.service';
 
 @Component({
   selector: 'lib-tool-view',
@@ -10,6 +11,9 @@ export class ToolViewComponent implements OnInit {
 
   @Input()
   tool: Tool;
+
+  @Input()
+  ctx: FormContext;
 
   @Input()
   editorMode = false;
