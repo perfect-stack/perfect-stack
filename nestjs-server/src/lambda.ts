@@ -9,6 +9,7 @@ import { AppModule, CONFIG_MODULE } from './app.module';
 import { DatabaseSettings, loadOrm } from './orm/database.providers';
 import { Sequelize } from 'sequelize';
 import { Logger } from '@nestjs/common';
+import { OrmService } from './orm/orm.service';
 
 const express = require('express');
 
@@ -30,6 +31,10 @@ async function bootstrapServer(): Promise<Server> {
     nestApp.enableCors();
     nestApp.use(eventContext());
     await nestApp.init();
+
+    // const ormService = nestApp.get(OrmService);
+    // ormService.sequelize = globalSequelize;
+
     cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
   }
   return cachedServer;
@@ -45,31 +50,31 @@ const databaseSettings: DatabaseSettings = {
 };
 
 // See: https://sequelize.org/docs/v6/other-topics/aws-lambda/
-export let globalSequelize: Sequelize = null;
+export const globalSequelize: Sequelize = null;
 const logger = new Logger('Lambda');
 
 export const handler: Handler = async (event: any, context: Context) => {
-  if (!globalSequelize) {
-    logger.log('Lambda Handler: no globalSequelize', databaseSettings);
-    globalSequelize = await loadOrm(databaseSettings);
-    logger.log('Lambda Handler: globalSequelize loaded ok');
-  } else {
-    logger.log('Lambda Handler: found globalSequelize');
-    globalSequelize.connectionManager.initPools();
-    logger.log('Lambda Handler: initPools ok');
-
-    if (globalSequelize.connectionManager.hasOwnProperty('getConnection')) {
-      delete globalSequelize.connectionManager.getConnection;
-    }
-    logger.log('Lambda Handler: globalSequelize ready');
-  }
+  // if (!globalSequelize) {
+  //   logger.log('Lambda Handler: no globalSequelize', databaseSettings);
+  //   globalSequelize = await loadOrm(databaseSettings);
+  //   logger.log('Lambda Handler: globalSequelize loaded ok');
+  // } else {
+  //   logger.log('Lambda Handler: found globalSequelize');
+  //   globalSequelize.connectionManager.initPools();
+  //   logger.log('Lambda Handler: initPools ok');
+  //
+  //   if (globalSequelize.connectionManager.hasOwnProperty('getConnection')) {
+  //     delete globalSequelize.connectionManager.getConnection;
+  //   }
+  //   logger.log('Lambda Handler: globalSequelize ready');
+  // }
 
   try {
     cachedServer = await bootstrapServer();
     return await proxy(cachedServer, event, context, 'PROMISE').promise;
   } finally {
-    logger.log('Lambda Handler: globalSequelize close()');
-    await globalSequelize.connectionManager.close();
-    logger.log('Lambda Handler: globalSequelize closed ok');
+    // logger.log('Lambda Handler: globalSequelize close()');
+    // await globalSequelize.connectionManager.close();
+    // logger.log('Lambda Handler: globalSequelize closed ok');
   }
 };
