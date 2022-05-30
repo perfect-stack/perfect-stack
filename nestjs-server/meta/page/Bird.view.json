@@ -2,7 +2,7 @@
   "name": "Bird.view",
   "title": "",
   "type": "view_edit",
-  "layoutStyle": "Stockholm",
+  "layoutStyle": "Venice",
   "templates": [
     {
       "cells": [
@@ -24,7 +24,7 @@
                     "height": "1",
                     "tool": {
                       "type": "Image",
-                      "styles": "rounded-circle w-50",
+                      "styles": "rounded-circle bird-profile-image-width",
                       "imageUrl": "/assets/Kiwi.png",
                       "containerStyles": "w-100 text-center"
                     }
@@ -95,7 +95,16 @@
                     "component": "TextArea"
                   }
                 ]
-              ]
+              ],
+              "locations": {
+                "BottomMiddle": {
+                  "type": "Button",
+                  "containerStyles": "flex-grow-1",
+                  "styles": "btn btn-outline-primary w-100",
+                  "label": "Edit Bird",
+                  "route": "/data/Bird/edit/${bird.id}"
+                }
+              }
             }
           },
           {
