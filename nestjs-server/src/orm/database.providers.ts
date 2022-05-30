@@ -5,6 +5,7 @@ import {
 } from '@aws-sdk/client-secrets-manager';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
+import { globalSequelize } from '../lambda';
 
 const logger = new Logger('OrmService');
 
@@ -22,7 +23,9 @@ export interface DatabaseSettings {
  * factory below but also a "reload()" method in the OrmService so that model definitions can be redefined at
  * runtime.
  */
-export const loadOrm = async (databaseSettings: DatabaseSettings) => {
+export const loadOrm = async (
+  databaseSettings: DatabaseSettings,
+): Promise<Sequelize> => {
   let databasePassword;
   if (databaseSettings.passwordProperty) {
     if (
@@ -97,16 +100,20 @@ export const databaseProviders = [
     provide: 'SEQUELIZE',
     inject: [ConfigService],
     useFactory: async (configService: ConfigService) => {
-      const databaseSettings: DatabaseSettings = {
-        databaseHost: configService.get<string>('DATABASE_HOST'),
-        databasePort: configService.get<number>('DATABASE_PORT'),
-        databaseUser: configService.get<string>('DATABASE_USER'),
-        passwordProperty: configService.get<string>('DATABASE_PASSWORD'),
-        passwordKey: configService.get<string>('DATABASE_PASSWORD_KEY'),
-        databaseName: configService.get<string>('DATABASE_NAME'),
-      };
+      if (globalSequelize) {
+        return globalSequelize;
+      } else {
+        const databaseSettings: DatabaseSettings = {
+          databaseHost: configService.get<string>('DATABASE_HOST'),
+          databasePort: configService.get<number>('DATABASE_PORT'),
+          databaseUser: configService.get<string>('DATABASE_USER'),
+          passwordProperty: configService.get<string>('DATABASE_PASSWORD'),
+          passwordKey: configService.get<string>('DATABASE_PASSWORD_KEY'),
+          databaseName: configService.get<string>('DATABASE_NAME'),
+        };
 
-      return loadOrm(databaseSettings);
+        return loadOrm(databaseSettings);
+      }
     },
   },
 ];
