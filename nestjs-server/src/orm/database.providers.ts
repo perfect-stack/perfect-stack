@@ -5,7 +5,6 @@ import {
 } from '@aws-sdk/client-secrets-manager';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
-import { globalSequelize } from '../lambda';
 
 const logger = new Logger('OrmService');
 
@@ -95,28 +94,36 @@ export const loadOrm = async (
   return sequelize;
 };
 
+let globalProviderSequelize: Sequelize = null;
+
 export const databaseProviders = [
   {
     provide: 'SEQUELIZE',
     inject: [ConfigService],
     useFactory: async (configService: ConfigService): Promise<Sequelize> => {
-      console.log('SEQUELIZE factory: started');
-      // if (globalSequelize) {
-      //   console.log('SEQUELIZE factory: detected globalSequelize, using that');
-      //   return globalSequelize as Sequelize;
-      // } else {
-      console.log('SEQUELIZE factory: no globalSequelize, will loadOrm()');
-      const databaseSettings: DatabaseSettings = {
-        databaseHost: configService.get<string>('DATABASE_HOST'),
-        databasePort: configService.get<number>('DATABASE_PORT'),
-        databaseUser: configService.get<string>('DATABASE_USER'),
-        passwordProperty: configService.get<string>('DATABASE_PASSWORD'),
-        passwordKey: configService.get<string>('DATABASE_PASSWORD_KEY'),
-        databaseName: configService.get<string>('DATABASE_NAME'),
-      };
+      logger.log('SEQUELIZE factory: started');
+      if (globalProviderSequelize) {
+        logger.log(
+          'SEQUELIZE factory: detected globalProviderSequelize, using that',
+        );
+        return globalProviderSequelize;
+      } else {
+        logger.log(
+          'SEQUELIZE factory: no globalProviderSequelize, will loadOrm()',
+        );
+        const databaseSettings: DatabaseSettings = {
+          databaseHost: configService.get<string>('DATABASE_HOST'),
+          databasePort: configService.get<number>('DATABASE_PORT'),
+          databaseUser: configService.get<string>('DATABASE_USER'),
+          passwordProperty: configService.get<string>('DATABASE_PASSWORD'),
+          passwordKey: configService.get<string>('DATABASE_PASSWORD_KEY'),
+          databaseName: configService.get<string>('DATABASE_NAME'),
+        };
 
-      return await loadOrm(databaseSettings);
-      // }
+        globalProviderSequelize = await loadOrm(databaseSettings);
+      }
+
+      return globalProviderSequelize;
     },
   },
 ];
