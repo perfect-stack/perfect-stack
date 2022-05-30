@@ -44,23 +44,23 @@ const databaseSettings: DatabaseSettings = {
 };
 
 // See: https://sequelize.org/docs/v6/other-topics/aws-lambda/
-export const globalSequelize: Sequelize = null;
+export let globalSequelize: Sequelize = null;
 
 export const handler: Handler = async (event: any, context: Context) => {
-  // if (!globalSequelize) {
-  //   console.log('Lambda Handler: no globalSequelize', databaseSettings);
-  //   globalSequelize = await loadOrm(databaseSettings);
-  //   console.log('Lambda Handler: globalSequelize loaded ok');
-  // } else {
-  //   console.log('Lambda Handler: found globalSequelize');
-  //   globalSequelize.connectionManager.initPools();
-  //   console.log('Lambda Handler: initPools ok');
-  //
-  //   if (globalSequelize.connectionManager.hasOwnProperty('getConnection')) {
-  //     delete globalSequelize.connectionManager.getConnection;
-  //   }
-  //   console.log('Lambda Handler: globalSequelize ready');
-  // }
+  if (!globalSequelize) {
+    console.log('Lambda Handler: no globalSequelize', databaseSettings);
+    globalSequelize = await loadOrm(databaseSettings);
+    console.log('Lambda Handler: globalSequelize loaded ok');
+  } else {
+    console.log('Lambda Handler: found globalSequelize');
+    globalSequelize.connectionManager.initPools();
+    console.log('Lambda Handler: initPools ok');
+
+    if (globalSequelize.connectionManager.hasOwnProperty('getConnection')) {
+      delete globalSequelize.connectionManager.getConnection;
+    }
+    console.log('Lambda Handler: globalSequelize ready');
+  }
 
   try {
     cachedServer = await bootstrapServer();
