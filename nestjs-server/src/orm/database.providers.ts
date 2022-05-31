@@ -91,6 +91,10 @@ export const loadOrm = async (
   });
   // sequelize.addModels([]);
   // await sequelize.sync();
+
+  // or sequalize.sync()
+  await sequelize.authenticate();
+
   return sequelize;
 };
 

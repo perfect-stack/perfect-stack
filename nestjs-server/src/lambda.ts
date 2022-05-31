@@ -5,8 +5,7 @@ import { eventContext } from 'aws-serverless-express/middleware';
 
 import { NestApplication, NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { AppModule, CONFIG_MODULE } from './app.module';
-import { DatabaseSettings, loadOrm } from './orm/database.providers';
+import { AppModule } from './app.module';
 import sequelize, { Sequelize } from 'sequelize';
 import { Logger } from '@nestjs/common';
 import { OrmService } from './orm/orm.service';
@@ -50,16 +49,9 @@ async function bootstrapServer(): Promise<any> {
   };
 }
 
-const databaseSettings: DatabaseSettings = {
-  databaseHost: process.env.DATABASE_HOST,
-  databasePort: Number(process.env.DATABASE_PORT),
-  databaseUser: process.env.DATABASE_USER,
-  passwordProperty: process.env.DATABASE_PASSWORD,
-  passwordKey: process.env.DATABASE_PASSWORD_KEY,
-  databaseName: process.env.DATABASE_NAME,
-};
-
 const logger = new Logger('Lambda');
+
+// WARNING: This is example code, but the real code is up in the Application that imports this library
 
 export const handler: Handler = async (event: any, context: Context) => {
   try {
