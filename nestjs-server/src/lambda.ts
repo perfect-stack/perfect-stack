@@ -3,11 +3,11 @@ import { Server } from 'http';
 import { createServer, proxy } from 'aws-serverless-express';
 import { eventContext } from 'aws-serverless-express/middleware';
 
-import { NestFactory } from '@nestjs/core';
+import { NestApplication, NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { AppModule, CONFIG_MODULE } from './app.module';
 import { DatabaseSettings, loadOrm } from './orm/database.providers';
-import { Sequelize } from 'sequelize';
+import sequelize, { Sequelize } from 'sequelize';
 import { Logger } from '@nestjs/common';
 import { OrmService } from './orm/orm.service';
 
@@ -20,11 +20,15 @@ const express = require('express');
 const binaryMimeTypes: string[] = [];
 
 let cachedServer: Server;
+let nestApp: NestApplication;
 
-async function bootstrapServer(): Promise<Server> {
+async function bootstrapServer(): Promise<any> {
+  let initNeeded = false;
+  logger.log('bootstrapServer: started');
   if (!cachedServer) {
+    logger.log('bootstrapServer: no cachedServer');
     const expressApp = express();
-    const nestApp = await NestFactory.create(
+    nestApp = await NestFactory.create(
       AppModule,
       new ExpressAdapter(expressApp),
     );
@@ -32,12 +36,18 @@ async function bootstrapServer(): Promise<Server> {
     nestApp.use(eventContext());
     await nestApp.init();
 
-    // const ormService = nestApp.get(OrmService);
-    // ormService.sequelize = globalSequelize;
-
     cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
+    initNeeded = true;
+  } else {
+    logger.log('bootstrapServer: cachedServer found');
   }
-  return cachedServer;
+
+  logger.log('bootstrapServer: finished');
+  return {
+    nestApp,
+    cachedServer,
+    initNeeded,
+  };
 }
 
 const databaseSettings: DatabaseSettings = {
@@ -49,32 +59,30 @@ const databaseSettings: DatabaseSettings = {
   databaseName: process.env.DATABASE_NAME,
 };
 
-// See: https://sequelize.org/docs/v6/other-topics/aws-lambda/
-export const globalSequelize: Sequelize = null;
 const logger = new Logger('Lambda');
 
 export const handler: Handler = async (event: any, context: Context) => {
-  // if (!globalSequelize) {
-  //   logger.log('Lambda Handler: no globalSequelize', databaseSettings);
-  //   globalSequelize = await loadOrm(databaseSettings);
-  //   logger.log('Lambda Handler: globalSequelize loaded ok');
-  // } else {
-  //   logger.log('Lambda Handler: found globalSequelize');
-  //   globalSequelize.connectionManager.initPools();
-  //   logger.log('Lambda Handler: initPools ok');
-  //
-  //   if (globalSequelize.connectionManager.hasOwnProperty('getConnection')) {
-  //     delete globalSequelize.connectionManager.getConnection;
-  //   }
-  //   logger.log('Lambda Handler: globalSequelize ready');
-  // }
-
   try {
-    cachedServer = await bootstrapServer();
+    const { nestApp, cachedServer, initNeeded } = await bootstrapServer();
+
+    const ormService = nestApp.get(OrmService) as OrmService;
+    const sequelize = ormService.sequelize as Sequelize;
+
+    // See: https://sequelize.org/docs/v6/other-topics/aws-lambda/
+    if (!initNeeded) {
+      logger.log('Lambda Handler: found sequelize');
+      sequelize.connectionManager.initPools();
+      logger.log('Lambda Handler: initPools ok');
+
+      if (sequelize.connectionManager.hasOwnProperty('getConnection')) {
+        delete sequelize.connectionManager.getConnection;
+      }
+    }
+
     return await proxy(cachedServer, event, context, 'PROMISE').promise;
   } finally {
-    // logger.log('Lambda Handler: globalSequelize close()');
-    // await globalSequelize.connectionManager.close();
-    // logger.log('Lambda Handler: globalSequelize closed ok');
+    logger.log('Lambda Handler: sequelize close()');
+    await (sequelize as any).connectionManager.close();
+    logger.log('Lambda Handler: sequelize closed ok');
   }
 };
