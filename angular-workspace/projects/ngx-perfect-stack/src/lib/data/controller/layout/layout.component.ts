@@ -381,7 +381,7 @@ export class CardLayoutComponent implements OnInit {
     modalComponent.title = 'Delete Entity Confirmation';
     modalComponent.text = `This action will delete the selected entity. It cannot be undone.`;
     modalComponent.actions = [
-      {name: 'Cancel', style: 'btn btn-outline-secondary'},
+      {name: 'Cancel', style: 'btn btn-outline-primary'},
       {name: 'Delete', style: 'btn btn-danger'},
     ];
 

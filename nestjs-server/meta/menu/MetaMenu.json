@@ -122,12 +122,6 @@
           "roles": [],
           "label": "Version",
           "route": "/meta/version"
-        },
-        {
-          "editable": true,
-          "roles": [],
-          "label": "IGNORE_ME",
-          "route": "/data/Bird/edit/30567e2e-62f3-44ab-897b-48992f59b5e9"
         }
       ]
     }

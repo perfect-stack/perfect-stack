@@ -116,7 +116,7 @@ export class DataSearchEditComponent implements OnInit {
     modalComponent.title = `Delete ${this.metaName} Confirmation`;
     modalComponent.text = `This action will delete the ${this.metaName}. It cannot be undone.`;
     modalComponent.actions = [
-      {name: 'Cancel', style: 'btn btn-outline-secondary'},
+      {name: 'Cancel', style: 'btn btn-outline-primary'},
       {name: 'Delete', style: 'btn btn-danger'},
     ];
 

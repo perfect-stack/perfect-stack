@@ -95,7 +95,7 @@ export class MetaPageEditComponent implements OnInit {
     modalComponent.title = 'Delete Meta Page Confirmation';
     modalComponent.text = `This action will delete the Meta Page ${metaPage.name}. It cannot be undone.`;
     modalComponent.actions = [
-      {name: 'Cancel', style: 'btn btn-outline-secondary'},
+      {name: 'Cancel', style: 'btn btn-outline-primary'},
       {name: 'Delete', style: 'btn btn-danger'},
     ];
 
