@@ -1,6 +1,6 @@
 {
   "name": "Bird.search",
-  "title": "Bird Search",
+  "title": "Search Birds",
   "type": "search",
   "layoutStyle": "",
   "templates": [
@@ -8,58 +8,34 @@
       "cells": [
         [
           {
-            "width": "3",
+            "width": "4",
             "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            },
             "attributeName": "name"
           },
           {
-            "width": "3",
+            "width": "2",
             "height": "1",
             "attributeName": "alive_status"
           },
           {
-            "width": "3",
+            "width": "2",
             "height": "1",
             "attributeName": "sex"
           },
           {
-            "width": "3",
+            "width": "4",
+            "height": "1"
+          }
+        ],
+        [
+          {
+            "width": "4",
             "height": "1",
             "attributeName": "species",
-            "component": "Select"
+            "component": "SelectTwo",
+            "componentData": {
+              "secondaryAttributeName": "form"
+            }
           }
         ]
       ],
@@ -143,44 +119,6 @@
               ],
               "type": "table"
             },
-            "attributeName": "alive_status"
-          },
-          {
-            "width": "3",
-            "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            },
             "attributeName": "species"
           },
           {
@@ -224,7 +162,7 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "first_found_date"
+            "attributeName": "alive_status"
           },
           {
             "width": "1",
@@ -314,5 +252,6 @@
       "orderByName": "name",
       "orderByDir": "ASC"
     }
-  ]
+  ],
+  "dataQueryList": []
 }

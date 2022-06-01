@@ -69,7 +69,7 @@ export class DataSearchComponent implements OnInit {
   }
 
   get newButtonLbl() {
-    return this.metaName ? `New ${this.metaName.toLowerCase()}` : 'New';
+    return this.metaName ? `Add ${this.metaName.toLowerCase()}` : 'Add';
   }
 
   onSearch(ctx: FormContext) {

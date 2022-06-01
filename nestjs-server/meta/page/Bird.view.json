@@ -41,7 +41,11 @@
                   {
                     "width": "12",
                     "height": "1",
-                    "attributeName": "species"
+                    "attributeName": "species",
+                    "component": "SelectTwo",
+                    "componentData": {
+                      "secondaryAttributeName": "form"
+                    }
                   }
                 ],
                 [
@@ -84,7 +88,22 @@
                     "width": "12",
                     "height": "1",
                     "component": "TextInput",
-                    "attributeName": "fate"
+                    "attributeName": "sex"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "component": "TextArea",
+                    "attributeName": "mother"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "father"
                   }
                 ],
                 [

@@ -80,7 +80,9 @@
       "typeaheadSearch": [],
       "enumeration": [
         "Alive",
-        "Dead"
+        "Dead",
+        "Unknown",
+        "Presumed Dead"
       ]
     },
     {
@@ -135,7 +137,7 @@
       "description": "",
       "type": "Html",
       "visibility": "Visible",
-      "comparisonOperator": "",
+      "comparisonOperator": "InsensitiveLike",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
@@ -145,7 +147,7 @@
       "description": "Adult, Sub adult, Chick, Egg",
       "type": "Enumeration",
       "visibility": "Visible",
-      "comparisonOperator": "",
+      "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "enumeration": [
@@ -171,7 +173,7 @@
       "description": "The taxa within the Species",
       "type": "Text",
       "visibility": "Required",
-      "comparisonOperator": "",
+      "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": []
     }
