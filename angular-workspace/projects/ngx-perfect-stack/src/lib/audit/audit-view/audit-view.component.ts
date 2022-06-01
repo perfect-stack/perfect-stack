@@ -12,6 +12,9 @@ import {DateTimeFormatter, ZonedDateTime} from '@js-joda/core';
 export class AuditViewComponent implements OnInit {
 
   @Input()
+  mode: string;
+
+  @Input()
   entityId: string | null;
 
   showRecords = false;

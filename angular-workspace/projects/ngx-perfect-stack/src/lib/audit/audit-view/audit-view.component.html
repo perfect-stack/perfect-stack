@@ -1,31 +1,32 @@
+<ng-container *ngIf="mode == 'view'">
+  <div class="link-primary mt-3" (click)="toggleShowRecords()" id="showAuditRecords" *ngIf="!showRecords">Show audit records</div>
 
-<div class="link-primary mt-3" (click)="toggleShowRecords()" id="showAuditRecords" *ngIf="!showRecords">Show audit records</div>
+  <ng-container *ngIf="showRecords">
 
-<ng-container *ngIf="showRecords">
+    <div class="link-primary mt-3" (click)="toggleShowRecords()" id="hideAuditRecords">Hide audit records</div>
 
-  <div class="link-primary mt-3" (click)="toggleShowRecords()" id="hideAuditRecords">Hide audit records</div>
+    <ng-container *ngIf="auditRecords$ | async as auditRecords">
+      <table class="table table-sm mt-3" style="width: 24em;">
+        <thead>
+        <th>Datetime</th>
+        <th>Action</th>
+        <th>Person</th>
+        </thead>
+        <tbody *ngIf="auditRecords && auditRecords.length > 0">
+        <tr *ngFor="let record of auditRecords">
+          <td>{{toDisplayTime(record.date_time)}}</td>
+          <td>{{record.action}}</td>
+          <td>{{record.person_name}}</td>
+        </tr>
+        </tbody>
 
-  <ng-container *ngIf="auditRecords$ | async as auditRecords">
-    <table class="table table-sm mt-3" style="width: 24em;">
-      <thead>
-      <th>Datetime</th>
-      <th>Action</th>
-      <th>Person</th>
-      </thead>
-      <tbody *ngIf="auditRecords && auditRecords.length > 0">
-      <tr *ngFor="let record of auditRecords">
-        <td>{{toDisplayTime(record.date_time)}}</td>
-        <td>{{record.action}}</td>
-        <td>{{record.person_name}}</td>
-      </tr>
-      </tbody>
+        <tbody *ngIf="auditRecords && auditRecords.length === 0">
+        <tr>
+          <td colspan="3">No records found.</td>
+        </tr>
+        </tbody>
+      </table>
+    </ng-container>
 
-      <tbody *ngIf="auditRecords && auditRecords.length === 0">
-      <tr>
-        <td colspan="3">No records found.</td>
-      </tr>
-      </tbody>
-    </table>
   </ng-container>
-
 </ng-container>

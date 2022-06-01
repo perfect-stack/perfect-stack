@@ -35,8 +35,6 @@
     </div>
   </div>
 
-  <ng-container *ngIf="ctx.mode === 'view'">
-    <lib-audit-view [entityId]="ctx.id"></lib-audit-view>
-  </ng-container>
+  <lib-audit-view [mode]="'view'" [entityId]="ctx.id"></lib-audit-view>
 </div>
 

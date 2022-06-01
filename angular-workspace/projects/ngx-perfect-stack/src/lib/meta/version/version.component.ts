@@ -13,6 +13,8 @@ export class VersionComponent implements OnInit {
   clientVersion = '';
   serverVersion = '';
 
+  style: 'Page' | 'Footer' = 'Page';
+
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
               public readonly debugService: DebugService,

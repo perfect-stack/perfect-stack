@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" *ngIf="style === 'Page'">
   <h3 class="mt-3">About...</h3>
 
   <p>Client version: {{clientVersion}}</p>
@@ -8,4 +8,8 @@
     Debug Mode: {{debugService.ON}}
     <button class="btn btn-sm btn-outline-secondary ms-2" (click)="onToggleDebug()">Toggle</button>
   </div>
+</div>
+
+<div class="container-fluid" *ngIf="style === 'Footer'">
+  <span>Client: {{clientVersion}}</span> <span>Server: {{serverVersion}}</span>
 </div>

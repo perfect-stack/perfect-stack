@@ -19,9 +19,7 @@
       <lib-controller [ctx]="ctx" [template]="template"></lib-controller>
     </ng-container>
 
-    <ng-container *ngIf="ctx.mode === 'view'">
-      <lib-audit-view [entityId]="ctx.id"></lib-audit-view>
-    </ng-container>
+    <lib-audit-view [mode]="'view'" [entityId]="ctx.id"></lib-audit-view>
   </div>
 
 </ng-container>
