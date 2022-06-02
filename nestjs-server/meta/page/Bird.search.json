@@ -15,7 +15,7 @@
           {
             "width": "2",
             "height": "1",
-            "attributeName": "alive_status"
+            "attributeName": "status"
           },
           {
             "width": "2",
@@ -162,7 +162,7 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "alive_status"
+            "attributeName": "status"
           },
           {
             "width": "1",

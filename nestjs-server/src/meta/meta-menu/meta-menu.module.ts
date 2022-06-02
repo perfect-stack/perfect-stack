@@ -7,5 +7,6 @@ import { FileRepositoryModule } from '../../file/file-repository.module';
   controllers: [MetaMenuController],
   providers: [MetaMenuService],
   imports: [FileRepositoryModule],
+  exports: [MetaMenuService],
 })
 export class MetaMenuModule {}

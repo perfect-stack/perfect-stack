@@ -34,7 +34,7 @@
                   {
                     "width": "12",
                     "height": "1",
-                    "attributeName": "alive_status"
+                    "attributeName": "status"
                   }
                 ],
                 [

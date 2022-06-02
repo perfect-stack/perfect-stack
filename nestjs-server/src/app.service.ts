@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { DataService } from './data/data.service';
 import { MetaEntityService } from './meta/meta-entity/meta-entity.service';
+import { MetaMenuService } from './meta/meta-menu/meta-menu.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -8,12 +9,15 @@ export class AppService implements OnApplicationBootstrap {
 
   constructor(
     protected readonly metaEntityService: MetaEntityService,
+    protected readonly metaMenuService: MetaMenuService,
     protected readonly dataService: DataService,
   ) {}
 
   get(): string {
     this.logger.log('Health check is ok.');
-    return `Health check ok at: ${new Date().toISOString()}`;
+    return `Health check ok at: ${new Date().toISOString()}. The version is: ${
+      this.metaMenuService.getVersion().serverRelease
+    }`;
   }
 
   async onApplicationBootstrap(): Promise<any> {

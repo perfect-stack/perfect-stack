@@ -70,9 +70,9 @@
       "typeaheadSearch": []
     },
     {
-      "name": "alive_status",
-      "label": "Alive status",
-      "description": "Alive, Dead",
+      "name": "status",
+      "label": "Status",
+      "description": "Status of the bird (alive or otherwise)",
       "type": "Enumeration",
       "visibility": "Visible",
       "comparisonOperator": "Equals",
