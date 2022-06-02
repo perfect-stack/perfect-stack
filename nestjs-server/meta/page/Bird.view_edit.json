@@ -35,7 +35,8 @@
           },
           {
             "width": "3",
-            "height": "1"
+            "height": "1",
+            "attributeName": "band"
           },
           {
             "width": "3",

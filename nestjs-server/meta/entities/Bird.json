@@ -176,6 +176,16 @@
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": []
+    },
+    {
+      "name": "band",
+      "label": "Band",
+      "description": "The latest Band# for this bird",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     }
   ]
 }

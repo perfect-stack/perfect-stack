@@ -34,6 +34,13 @@
                   {
                     "width": "12",
                     "height": "1",
+                    "attributeName": "band"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
                     "attributeName": "status"
                   }
                 ],
