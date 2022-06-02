@@ -59,6 +59,7 @@ export class LayoutComponent implements OnInit {
   ngOnInit(): void {
     if(this.ctx) {
       this.mode = this.ctx.mode;
+      this.metaEntity = this.ctx.metaEntityMap.get(this.template.metaEntityName) as MetaEntity;
       if(this.ctx.formMap) {
         this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
       }

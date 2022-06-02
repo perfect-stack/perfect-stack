@@ -3,6 +3,7 @@ import {ButtonTool} from '../../../../../domain/meta.page';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
 import {Router} from '@angular/router';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
+import {ExpressionService} from '../../../layout/controls/expression-control/expression.service';
 
 @Component({
   selector: 'lib-button-tool',
@@ -21,6 +22,7 @@ export class ButtonToolComponent implements OnInit {
   editorMode = false;
 
   constructor(protected readonly propertySheetService: PropertySheetService,
+              protected readonly expressionService: ExpressionService,
               protected readonly router: Router) { }
 
   ngOnInit(): void {
@@ -46,23 +48,11 @@ export class ButtonToolComponent implements OnInit {
 
       let route = this.buttonTool.route;
 
-      // TODO: just for now we're going to hack out the Bird Id for "Edit Bird" button, but need to come back and fix this later
-      console.log('route = ', route);
-      console.log('ctx', this.ctx);
-      if(this.ctx && route.indexOf('${bird.id}') >= 0) {
-        const birdData = this.ctx.dataMap.get('bird');
-        console.log('got birdData', birdData);
-        if(birdData) {
-          const id = birdData.result.id;
-          console.log('got id', id);
-          if(id) {
-            route = route.replace('${bird.id}', id);
-            console.log('route is now', route);
-          }
-        }
-      }
+      console.log('route before evaluate()', route);
+      route = this.expressionService.evaluate(route, this.ctx.dataMap);
+      console.log('route after evaluate()', route);
 
-      this.router.navigate([route]);
+      this.router.navigateByUrl(route);
     }
   }
 

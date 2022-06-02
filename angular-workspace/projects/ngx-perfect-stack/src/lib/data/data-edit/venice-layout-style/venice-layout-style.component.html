@@ -11,7 +11,7 @@
       <h2 id="sectionHdg" *ngIf="ctx.metaPage.title">{{ctx.metaPage.title}}</h2>
 
       <ng-container *ngIf="ctx.metaPage && ctx.metaPage.templates">
-        <lib-tool-view [tool]="ctx.metaPage.templates[0].locations[TemplateLocationType.OuterTopRight]"></lib-tool-view>
+        <lib-tool-view [ctx]="ctx" [tool]="ctx.metaPage.templates[0].locations[TemplateLocationType.OuterTopRight]"></lib-tool-view>
       </ng-container>
     </div>
 

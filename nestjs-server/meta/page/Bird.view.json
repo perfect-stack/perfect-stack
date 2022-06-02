@@ -165,7 +165,7 @@
           "type": "Button",
           "styles": "btn btn-primary",
           "label": "Record Event",
-          "route": "data/Event/edit/**NEW**"
+          "route": "data/Event/edit/**NEW**?bird_id=${bird.id}"
         },
         "TopRight": {
           "type": "Image",
