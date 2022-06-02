@@ -36,7 +36,6 @@ export class SelectTwoControlComponent implements OnInit {
 
   ngOnInit(): void {
     this.secondaryAttributeName = (this.cell.componentData as any).secondaryAttributeName;
-    //this.formGroup.addControl(this.secondaryAttributeName, new FormControl(''));
 
     this.options$ = this.dataService.findAll(this.attribute.relationshipTarget).pipe(
       switchMap((response) => {
@@ -78,6 +77,16 @@ export class SelectTwoControlComponent implements OnInit {
       else {
         this.secondaryOptions = [];
       }
+
+      this.formGroup.controls[this.secondaryAttributeName].enable({
+        onlySelf: true
+      });
+    }
+    else {
+      this.secondaryOptions = [];
+      this.formGroup.controls[this.secondaryAttributeName].disable({
+        onlySelf: true
+      });
     }
 
     console.log(`onEntityChange: secondaryOptions = `, this.secondaryOptions);
