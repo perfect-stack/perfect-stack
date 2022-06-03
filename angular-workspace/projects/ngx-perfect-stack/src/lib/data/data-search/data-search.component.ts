@@ -1,9 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable, of, switchMap, withLatestFrom} from 'rxjs';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AttributeType, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
-import {CellAttribute} from '../../meta/page/meta-page-service/meta-page.service';
 import {FormContext, FormControlWithAttribute, FormService} from '../data-edit/form-service/form.service';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {Criteria, QueryRequest} from '../data-service/query.request';
@@ -11,7 +9,8 @@ import {ResultCardinalityType, Template, TemplateNavigationType} from '../../dom
 import {
   CustomDateParserFormatter
 } from '../controller/layout/controls/date-picker-control/custom-date-parser-formatter';
-import {FormArray, FormGroup} from '@angular/forms';
+import {AbstractControl, FormGroup} from '@angular/forms';
+import {Observable, of, switchMap} from 'rxjs';
 
 @Component({
   selector: 'app-data-search',
@@ -29,14 +28,10 @@ export class DataSearchComponent implements OnInit {
   public pageSize = 50;
   public collectionSize = 0;
 
-
   searchCriteriaTemplate: Template;
-
   resultTableTemplate: Template;
   resultTableMetaEntity: MetaEntity;
-  resultTableCells: CellAttribute[][];
-
-  searchResultsFormGroup: FormGroup;
+  searchResultsFormGroup: FormGroup | null;
 
   constructor(protected readonly customDateParserFormatter: CustomDateParserFormatter,
               protected readonly route: ActivatedRoute,
@@ -46,15 +41,17 @@ export class DataSearchComponent implements OnInit {
               protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
-    this.ctx$ = this.route.paramMap.pipe(switchMap(params => {
-
+    this.ctx$ = this.route.paramMap.pipe(switchMap((params) => {
       this.metaName = params.get('metaName');
       if(this.metaName) {
-        console.log(`XXXXX NEW SEARCH ${this.metaName} XXXXX`);
-
-        return this.formService.loadFormContext(this.metaName, this.mode, null).pipe(switchMap( (ctx) => {
+        return this.formService.loadFormContext(this.metaName, this.mode, null).pipe(switchMap((ctx) => {
 
           this.searchCriteriaTemplate = ctx.metaPage.templates[0];
+          this.searchCriteriaTemplate.binding = 'criteria';
+          if(!ctx.formMap) {
+            ctx.formMap = new Map<string, AbstractControl>();
+          }
+          ctx.formMap.set('criteria', ctx.entityForm);
 
           // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff
           // can be more consistent
@@ -62,14 +59,13 @@ export class DataSearchComponent implements OnInit {
           if(!this.resultTableTemplate.binding) {
             this.resultTableTemplate.binding = 'results';
             this.resultTableTemplate.navigation = TemplateNavigationType.Enabled;
-            this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}';  // the ${id} parameter is being passed in as an expression
+            this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}';  // the ${id} parameter is being passed in as an expression to be resolved later
           }
 
           const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName;
           const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
           if(rtme) {
             this.resultTableMetaEntity = rtme;
-            this.resultTableCells = this.formService.toCellAttributeArray(this.resultTableTemplate, rtme);
             this.onSearch(ctx);
             return of(ctx);
           }
@@ -84,12 +80,9 @@ export class DataSearchComponent implements OnInit {
     }));
   }
 
-  get newButtonLbl() {
-    return this.metaName ? `Add ${this.metaName.toLowerCase()}` : 'Add';
-  }
-
   onSearch(ctx: FormContext) {
     if(this.metaName) {
+      this.searchResultsFormGroup = null;
 
       const queryRequest = new QueryRequest();
       queryRequest.metaEntityName = this.metaName;
@@ -98,9 +91,9 @@ export class DataSearchComponent implements OnInit {
       queryRequest.pageNumber = this.pageNumber;
       queryRequest.pageSize = this.pageSize;
 
-      const entityForm = ctx.entityForm;
-      for (let controlsKey in entityForm.controls) {
-        const control = entityForm.controls[controlsKey];
+      const criteriaForm = ctx.formMap.get('criteria') as FormGroup;
+      for (let controlsKey in criteriaForm.controls) {
+        const control = criteriaForm.controls[controlsKey];
         if(control.value && control instanceof FormControlWithAttribute) {
           queryRequest.criteria.push(this.toCriteria(control));
         }
@@ -109,6 +102,10 @@ export class DataSearchComponent implements OnInit {
       this.dataService.findByCriteria(queryRequest).subscribe((response) => {
         this.collectionSize = response.totalCount;
         this.searchResultsFormGroup = this.formService.createFormGroupForDataMapItem(ctx, null, ResultCardinalityType.QueryMany, this.resultTableTemplate, response.resultList);
+        if(!ctx.formMap) {
+          ctx.formMap = new Map<string, AbstractControl>()
+        }
+        ctx.formMap.set('results', this.searchResultsFormGroup);
       });
     }
   }
@@ -131,25 +128,21 @@ export class DataSearchComponent implements OnInit {
     return criteria;
   }
 
-  onSelectRow(id: string) {
-    this.router.navigate([`/data/${this.metaName}/view/${id}`]);
+  onReset(ctx: FormContext) {
+    const criteriaForm = ctx.formMap.get('criteria');
+    console.log('onReset()', criteriaForm);
+    if(criteriaForm) {
+      criteriaForm.reset();
+      this.onSearch(ctx);
+    }
   }
 
-  onReset(ctx: FormContext) {
-    ctx.entityForm.reset();
-    this.onSearch(ctx);
+  get newButtonLbl() {
+    return this.metaName ? `Add ${this.metaName.toLowerCase()}` : 'Add';
   }
 
   onNew(ctx: FormContext) {
     this.router.navigate([`/data/${this.metaName}/edit/**NEW**`]);
-  }
-
-  getFormArray(formGroup: FormGroup): FormArray {
-    return formGroup.controls['results'] as FormArray;
-  }
-
-  getFormGroupForRow(formGroup: FormGroup, rowIdx: number): FormGroup {
-    return this.getFormArray(formGroup).at(rowIdx) as FormGroup;
   }
 
 }

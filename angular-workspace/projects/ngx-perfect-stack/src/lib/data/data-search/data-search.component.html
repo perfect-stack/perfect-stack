@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <form class="container-fluid container-form">
+    <form class="container-fluid container-form" *ngIf="searchResultsFormGroup">
       <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate">
         <ng-container BottomLeftActions>
         </ng-container>
@@ -22,54 +22,20 @@
     </form>
   </ng-container>
 
-  <div class="container-table" *ngIf="resultTableCells">
+  <div class="container-table" *ngIf="searchResultsFormGroup">
 
     <div class="collection-size-found">
       {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found
     </div>
 
-    <!--<table class="table table-hover">
-      <thead>
-      <tr>
-        <th scope="col" *ngFor="let nextCell of resultTableCells[0]">
-          <ng-container *ngIf="nextCell.attribute">
-            {{nextCell.attribute.label}}
-          </ng-container>
-        </th>
-      </tr>
-      </thead>
-      <tbody>
-      &lt;!&ndash;<tr *ngFor="let row of searchResults.controls; index as i" (click)="onSelectRow(row['id'].value)">
-        <td *ngFor="let nextCell of resultTableCells[0]">
-          &lt;!&ndash;<ng-container *ngIf="nextCell.attribute">
-            {{displayValue(nextCell.attribute, item)}}
-          </ng-container>&ndash;&gt;
-
-          &lt;!&ndash; Have changed search results to use our Cell class for rendering &ndash;&gt;
-          <lib-cell [mode]="'view'" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)"></lib-cell>
-        </td>
-      </tr>&ndash;&gt;
-
-      <ng-container [formArrayName]="'results'" *ngFor="let group of searchResults.controls; let i=index">
-        <tr [formGroupName]="i" (click)="onRowClicked(i)">
-          <td *ngFor="let nextCell of resultTableCells[0]">
-            <ng-container *ngIf="nextCell.attribute">
-              <lib-cell [mode]="mode" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)"></lib-cell>
-            </ng-container>
-          </td>
-        </tr>
-      </ng-container>
-
-      </tbody>
-    </table>-->
-
-    <lib-table-layout
-      [ctx]="ctx"
-      [template]="resultTableTemplate"
-      [mode]="'view'"
-      [formGroup]="searchResultsFormGroup"
-      [relationshipProperty]="'results'">
-    </lib-table-layout>
+    <ng-container *ngIf="searchResultsFormGroup">
+      <lib-table-layout
+        [ctx]="ctx"
+        [template]="resultTableTemplate"
+        [mode]="'view'"
+        [relationshipProperty]="'results'">
+      </lib-table-layout>
+    </ng-container>
 
 
     <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx)">
@@ -81,9 +47,6 @@
       <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
     </ngb-pagination>
   </div>
-
-  <!-- whitespace padding at bottom of page -->
-  <div class="my-5 py-5"></div>
 
 </div>
 

@@ -23,7 +23,6 @@ export class FormContext {
   formMap: Map<string, AbstractControl>;
   entity: Entity;
   entityForm: FormGroup;
-  cells: CellAttribute[][];
 }
 
 export class FormControlWithAttribute extends FormControl {
@@ -78,12 +77,10 @@ export class FormService {
           throw new Error(`Unable to find MetaEntity for ${metaName}`);
         }
         ctx.metaEntity = me;
-        ctx.cells = this.toCellAttributeArray(rootTemplate, ctx.metaEntity);
 
         if(ctx.metaPage.dataQueryList?.length > 0) {
           console.log('FormService: load dataQueryList:', ctx.metaPage.dataQueryList);
           return this.dataMapService.toDataMap(ctx.metaPage.dataQueryList, {id: id}).pipe(switchMap((dataMap: Map<string, any>) => {
-            console.log('DataMap: ', dataMap);
             ctx.dataMap = dataMap;
             ctx.formMap = this.createFormMap(ctx, ctx.metaPage.templates, ctx.metaPage.dataQueryList, dataMap);
 
@@ -91,7 +88,6 @@ export class FormService {
             if(ctx.formMap.size === 1) {
               const rootForm = ctx.formMap.values().next().value as FormGroup;
               ctx.entityForm = rootForm;
-              console.log('FormService: loadFormContext() entityForm:', ctx.entityForm);
             }
 
             return of(ctx);
