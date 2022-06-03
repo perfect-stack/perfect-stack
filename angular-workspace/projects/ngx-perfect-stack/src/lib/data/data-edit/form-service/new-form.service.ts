@@ -47,30 +47,26 @@ export class NewFormService {
       else if(nextAttribute.type == AttributeType.OneToPoly) {
         formControl = new FormArrayWithAttribute([]);
 
-        if(true) {
-          throw new Error('TODO');
-        }
-
         // TODO: more here iterating through the children and creating their Form Controls
-        // const itemArray = entity ? (entity as any)[nextAttribute.name] as [] : null;
-        // let itemCount = itemArray ? itemArray.length : 0;
-        // if (itemArray && itemCount > 0) {
-        //   for (let i = 0; i < itemCount; i++) {
-        //     const childEntity = itemArray[i];
-        //     const discriminator = nextAttribute.discriminator;
-        //     const childDiscriminatorValue = childEntity[discriminator.discriminatorName];
-        //     const childEntityMapping = discriminator.entityMappingList.find(a => a.discriminatorValue === childDiscriminatorValue);
-        //     if(childEntityMapping) {
-        //       const childPageName = childEntityMapping.metaEntityName + ".view_edit"
-        //       const childPage = metaPageMap.get(childPageName);
-        //       if(childPage) {
-        //         const childTemplate = childPage.templates[0];
-        //         console.log(`Adding formGroup for; ${nextAttribute.name}, ${childDiscriminatorValue}, ${childPageName}`);
-        //         formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityMap, childEntity))
-        //       }
-        //     }
-        //   }
-        // }
+        const itemArray = entity ? (entity as any)[nextAttribute.name] as [] : null;
+        let itemCount = itemArray ? itemArray.length : 0;
+        if (itemArray && itemCount > 0) {
+          for (let i = 0; i < itemCount; i++) {
+            const childEntity = itemArray[i];
+            const discriminator = nextAttribute.discriminator;
+            const childDiscriminatorValue = childEntity[discriminator.discriminatorName];
+            const childEntityMapping = discriminator.entityMappingList.find(a => a.discriminatorValue === childDiscriminatorValue);
+            if(childEntityMapping) {
+              const childPageName = childEntityMapping.metaEntityName + ".view_edit"
+              const childPage = metaPageMap.get(childPageName);
+              if(childPage) {
+                // const childTemplate = childPage.templates[0];
+                console.log(`Adding formGroup for; ${nextAttribute.name}, ${childDiscriminatorValue}, ${childPageName}`);
+                formControl.push(this.createFormGroup(mode, nextAttribute.relationshipTarget, metaPageMap, metaEntityMap, childEntity))
+              }
+            }
+          }
+        }
       }
       else if (nextAttribute.type === AttributeType.OneToOne) {
         // Remember: if the OneToOne is not showing up in the FormGroup is it because the template has no cell/attribute for it (attributeCell is null)

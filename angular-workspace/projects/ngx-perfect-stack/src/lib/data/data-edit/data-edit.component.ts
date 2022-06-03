@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable, switchMap, withLatestFrom} from 'rxjs';
+import {Observable, withLatestFrom} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {FormContext, FormService} from './form-service/form.service';
@@ -30,19 +30,6 @@ export class DataEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.ctx$ = this.route.paramMap.pipe(switchMap(params => {
-    //   this.metaName = params.get('metaName');
-    //   this.mode = params.get('mode');
-    //   this.entityId = this.toUuid(params.get('id'));
-    //
-    //   if(this.metaName && this.mode) {
-    //     return this.formService.loadFormContext(this.metaName, this.mode, this.entityId);
-    //   }
-    //   else {
-    //     throw new Error('Invalid input parameters; ');
-    //   }
-    // }));
-
     this.route.url.pipe(
       withLatestFrom(this.route.paramMap, this.route.queryParamMap)
     ).subscribe(([url, paramMap,  queryParamMap]) => {
@@ -60,7 +47,6 @@ export class DataEditComponent implements OnInit {
         throw new Error('Invalid input parameters; ');
       }
     });
-
   }
 
   toUuid(value: string | null) {

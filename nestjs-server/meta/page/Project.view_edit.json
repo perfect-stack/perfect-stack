@@ -77,8 +77,18 @@
         ]
       ],
       "metaEntityName": "Project",
-      "type": "form"
+      "type": "form",
+      "binding": "project"
     }
   ],
-  "dataQueryList": []
+  "dataQueryList": [
+    {
+      "dataName": "project",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Project",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ]
 }

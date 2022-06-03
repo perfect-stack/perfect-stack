@@ -85,7 +85,18 @@
         ]
       ],
       "metaEntityName": "Event",
-      "type": "form"
+      "type": "form",
+      "binding": "event"
+    }
+  ],
+  "dataQueryList": [
+    {
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Event",
+      "fieldName": "id",
+      "parameter": "id",
+      "dataName": "event"
     }
   ]
 }

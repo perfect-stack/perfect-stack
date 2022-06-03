@@ -10,6 +10,8 @@
       </div>
     </div>
 
+    <!-- The *ngIf here is important because it triggers the redisplay of the criteria when the route changes. There's
+    an indirect dependency here between the route changing, the search criteria form changing and a new search being done -->
     <form class="container-fluid container-form" *ngIf="searchResultsFormGroup">
       <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate">
         <ng-container BottomLeftActions>

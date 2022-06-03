@@ -53,8 +53,7 @@ export class DataSearchComponent implements OnInit {
           }
           ctx.formMap.set('criteria', ctx.entityForm);
 
-          // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff
-          // can be more consistent
+          // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
           this.resultTableTemplate = ctx.metaPage.templates[1];
           if(!this.resultTableTemplate.binding) {
             this.resultTableTemplate.binding = 'results';

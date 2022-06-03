@@ -260,68 +260,21 @@ export class FormService {
     // loop through all MetaAttributes and add FormControls for each attribute
     for (const nextAttribute of templateMetaEntity.attributes) {
       let formControl: any;
-      if (nextAttribute.type === AttributeType.OneToMany) {
-        formControl = new FormArrayWithAttribute([]);
 
-        const itemArray = entity ? (entity as any)[nextAttribute.name] as [] : null;
-        let itemCount = itemArray ? itemArray.length : 0;
-        if (itemArray && itemCount > 0) {
-          const attributeCell = this.findCellForAttribute(nextAttribute, template);
-          if(attributeCell) {
-            const childTemplate = attributeCell.template;
-            if (childTemplate) {
-              for (let i = 0; i < itemCount; i++) {
-                const childEntity = itemArray[i];
-                formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityMap, childEntity))
-              }
-            }
-          }
-        }
+      if (nextAttribute.type === AttributeType.OneToMany) {
+        formControl = this.formControlForOneToMany(nextAttribute, mode, metaPageMap, metaEntityMap, entity);
       }
       else if(nextAttribute.type == AttributeType.OneToPoly) {
-        formControl = new FormArrayWithAttribute([]);
-
-        // TODO: more here iterating through the children and creating their Form Controls
-        const itemArray = entity ? (entity as any)[nextAttribute.name] as [] : null;
-        let itemCount = itemArray ? itemArray.length : 0;
-        if (itemArray && itemCount > 0) {
-          for (let i = 0; i < itemCount; i++) {
-            const childEntity = itemArray[i];
-            const discriminator = nextAttribute.discriminator;
-            const childDiscriminatorValue = childEntity[discriminator.discriminatorName];
-            const childEntityMapping = discriminator.entityMappingList.find(a => a.discriminatorValue === childDiscriminatorValue);
-            if(childEntityMapping) {
-              const childPageName = childEntityMapping.metaEntityName + ".view_edit"
-              const childPage = metaPageMap.get(childPageName);
-              if(childPage) {
-                const childTemplate = childPage.templates[0];
-                console.log(`Adding formGroup for; ${nextAttribute.name}, ${childDiscriminatorValue}, ${childPageName}`);
-                formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityMap, childEntity))
-              }
-            }
-          }
-        }
+        formControl = this.formControlForOneToPoly(nextAttribute, mode, metaPageMap, metaEntityMap, entity);
       }
       else if(nextAttribute.type === AttributeType.ManyToOne) {
-        const childEntityName = nextAttribute.relationshipTarget;
-        const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
-        formControl = this.newFormService.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity);
+        formControl = this.formControlForManyToOne(nextAttribute, mode, metaPageMap, metaEntityMap, entity);
       }
       else if (nextAttribute.type === AttributeType.OneToOne) {
-        // Remember: if the OneToOne is not showing up in the FormGroup is it because the template has no cell/attribute for it (attributeCell is null)
-        const attributeCell = this.findCellForAttribute(nextAttribute, template);
-        if(attributeCell) {
-          const childTemplate = attributeCell.template;
-          if (childTemplate) {
-            const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
-            formControl = this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityMap, childEntity);
-          }
-        }
+        formControl = this.formControlForOneToOne(nextAttribute, mode, metaPageMap, metaEntityMap, entity)
       }
       else if (nextAttribute.type === AttributeType.Date) {
-        // See WARNING below: Date does need to be null, otherwise empty string is treated as an invalid Date and prevents
-        // "no value" optional dates from allowing the form validation to be valid
-        formControl = new FormControlWithAttribute({value: null, disabled: mode === 'view'});
+        formControl = this.formControlForDate(mode);
       }
       else {
         // WARNING: This has been a bit of a cockroach problem. One of these two lines is "correct" but depending on
@@ -340,9 +293,89 @@ export class FormService {
         formControl.attribute = nextAttribute;
         controls[nextAttribute.name] = formControl;
       }
+      else {
+        console.warn(`No formControl created for:`, nextAttribute);
+      }
     }
 
     return new FormGroup(controls);
+  }
+
+  private formControlForOneToMany(attribute: MetaAttribute,
+                                  mode: string,
+                                  metaPageMap: Map<string, MetaPage>,
+                                  metaEntityMap: Map<string, MetaEntity>,
+                                  entity: any) {
+    const formControl = new FormArrayWithAttribute([]);
+
+    const itemArray = entity ? (entity as any)[attribute.name] as [] : null;
+    let itemCount = itemArray ? itemArray.length : 0;
+    if (itemArray && itemCount > 0) {
+      const childEntityName = attribute.relationshipTarget;
+      for (let i = 0; i < itemCount; i++) {
+        const childEntity = itemArray[i];
+        formControl.push(this.newFormService.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity))
+      }
+    }
+    return formControl;
+  }
+
+  private formControlForOneToPoly(attribute: MetaAttribute,
+                                  mode: string,
+                                  metaPageMap: Map<string, MetaPage>,
+                                  metaEntityMap: Map<string, MetaEntity>,
+                                  entity: any) {
+    const formControl = new FormArrayWithAttribute([]);
+
+    // TODO: more here iterating through the children and creating their Form Controls
+    const itemArray = entity ? (entity as any)[attribute.name] as [] : null;
+    let itemCount = itemArray ? itemArray.length : 0;
+    if (itemArray && itemCount > 0) {
+      for (let i = 0; i < itemCount; i++) {
+        const childEntity = itemArray[i];
+        const discriminator = attribute.discriminator;
+        const childDiscriminatorValue = childEntity[discriminator.discriminatorName];
+        const childEntityMapping = discriminator.entityMappingList.find(a => a.discriminatorValue === childDiscriminatorValue);
+        if(childEntityMapping) {
+          const childPageName = childEntityMapping.metaEntityName + ".view_edit"
+          const childPage = metaPageMap.get(childPageName);
+          if(childPage) {
+            const childTemplate = childPage.templates[0];
+            console.log(`Adding formGroup for; ${attribute.name}, ${childDiscriminatorValue}, ${childPageName}`);
+            formControl.push(this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityMap, childEntity))
+          }
+        }
+      }
+    }
+
+    return formControl;
+  }
+
+  private formControlForManyToOne(attribute: MetaAttribute,
+                                  mode: string,
+                                  metaPageMap: Map<string, MetaPage>,
+                                  metaEntityMap: Map<string, MetaEntity>,
+                                  entity: any) {
+    const childEntityName = attribute.relationshipTarget;
+    const childEntity = entity ? (entity as any)[attribute.name] : null;
+    return this.newFormService.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity);
+  }
+
+  private formControlForOneToOne(attribute: MetaAttribute,
+                                 mode: string,
+                                 metaPageMap: Map<string, MetaPage>,
+                                 metaEntityMap: Map<string, MetaEntity>,
+                                 entity: any): FormGroup | null {
+
+    const childEntityName = attribute.relationshipTarget;
+    const childEntity = entity ? (entity as any)[attribute.name] : null;
+    return this.newFormService.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity);
+  }
+
+  private formControlForDate(mode: string): FormControl {
+    // See WARNING below: Date does need to be null, otherwise empty string is treated as an invalid Date and prevents
+    // "no value" optional dates from allowing the form validation to be valid
+    return new FormControlWithAttribute({value: null, disabled: mode === 'view'});
   }
 
   findCellForAttribute(attribute: MetaAttribute, template: Template): Cell | null {
