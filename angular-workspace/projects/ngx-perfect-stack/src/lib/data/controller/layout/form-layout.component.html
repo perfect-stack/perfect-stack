@@ -7,12 +7,12 @@
         <div [class]="getCSS(cell)" class="mt-3" *ngFor="let cell of row">
           <ng-container *ngIf="cell.attribute">
             <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
-            <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
           </ng-container>
+          <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
 
-          <ng-container *ngIf="cell.tool">
+          <!--<ng-container *ngIf="cell.tool">
             <lib-tool-view [tool]="cell.tool"></lib-tool-view>
-          </ng-container>
+          </ng-container>-->
         </div>
       </div>
     </div>

@@ -126,15 +126,11 @@ export class TableLayoutComponent implements OnInit {
   metaEntityMap: Map<string, MetaEntity>;
   metaPageMap: Map<string, MetaPage>;
 
-  constructor(private metaEntityService: MetaEntityService,
-              protected readonly router: Router,
-              private formService: FormService) { }
+  constructor(private readonly metaEntityService: MetaEntityService,
+              private readonly router: Router,
+              private readonly formService: FormService) { }
 
   ngOnInit(): void {
-
-    //[mode]="mode"
-    //[formGroup]="formGroup"
-    //[relationshipProperty]="relationshipProperty"
     this.mode = this.ctx.mode;
     if(this.ctx.formMap) {
       this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
@@ -142,22 +138,17 @@ export class TableLayoutComponent implements OnInit {
     }
     else {
       this.formGroup = this.ctx.entityForm;
-      //this.relationshipProperty =
     }
 
     console.log('TableLayoutComponent: found formGroup: ', this.formGroup);
-
-    this.metaEntityService.metaEntityMap$.subscribe(map => {
-      this.metaEntityMap = map;
-    })
 
     if(!this.template.metaEntityName) {
       throw new Error(`The template; ${JSON.stringify(this.template)} has no metaEntityName`);
     }
 
-    //this.cells$ = this.metaEntityService.findById(this.template.metaEntityName).pipe(switchMap((metaEntity) => {
     this.cells$ = this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
-      const metaEntity = metaEntityMap.get(this.template.metaEntityName);
+      this.metaEntityMap = metaEntityMap;
+      const metaEntity = this.metaEntityMap.get(this.template.metaEntityName);
       if(metaEntity) {
         const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
         return of(cells);

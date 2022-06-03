@@ -1,8 +1,9 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {Cell, Template} from '../../../domain/meta.page';
+import {Cell, Template, Tool} from '../../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {Observable} from 'rxjs';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
+import {PropertySheetService} from '../../property-sheet/property-sheet.service';
 
 @Component({
   selector: 'lib-template-table-editor',
@@ -18,7 +19,8 @@ export class TemplateTableEditorComponent implements OnInit {
 
   mouseActive = false;
 
-  constructor(protected readonly metaEntityService: MetaEntityService) { }
+  constructor(protected readonly metaEntityService: MetaEntityService,
+              protected readonly propertySheetService: PropertySheetService) { }
 
   ngOnInit(): void {}
 
@@ -49,12 +51,6 @@ export class TemplateTableEditorComponent implements OnInit {
     return attribute ? attribute.label : '';
   }
 
-  onDropIntoCell($event: any, cell: Cell) {
-    console.log(`onDropIntoCell():`, $event);
-    const attribute = $event as MetaAttribute;
-    cell.attributeName = attribute.name;
-  }
-
   onDropAddCell($event: any) {
 
     console.log('onDropAddCell:', $event)
@@ -64,26 +60,57 @@ export class TemplateTableEditorComponent implements OnInit {
     const firstRow = this.template.cells[0];
     firstRow.push(cell);
 
-    const attribute = $event as MetaAttribute;
+    this.onDropIntoCell($event, cell);
+  }
+
+  onDropIntoCell($event: any, cell: Cell) {
+    console.log(`onDropIntoCell():`, $event);
+    if(MetaAttribute.isMetaAttribute($event)) {
+      this.addAttribute($event as MetaAttribute, cell)
+    }
+    else if(Tool.isTool($event)) {
+      this.addTool($event as Tool, cell);
+    }
+    else {
+      console.warn('onDropzoneDropped but supplied object is not a MetaAttribute or Tool');
+    }
+  }
+
+  addAttribute(attribute: MetaAttribute, cell: Cell) {
+    this.onClearCell(cell);
     cell.attributeName = attribute.name;
   }
 
+  addTool(toolPrototype: Tool, cell: Cell) {
+    this.onClearCell(cell);
+    cell.tool = Object.assign({}, toolPrototype);
+    this.propertySheetService.edit(cell.tool);
+  }
+
   getDataTypePlaceholder(cell: Cell, metaEntityMap: Map<string, MetaEntity>) {
-    const attribute = this.getAttribute(cell, metaEntityMap);
-    if(attribute) {
-      switch (attribute.type) {
-        case AttributeType.Date:
-          return 'yyyy-mm-dd';
-        case AttributeType.Text:
-          return 'Abc...';
-        case AttributeType.Number:
-        case AttributeType.Integer:
-          return '123.0';
-        case AttributeType.ManyToOne:
-          return 'Search...';
-        default:
-          return `UNKNOWN: data type ${attribute.type}`;
+    if(cell.attributeName) {
+      const attribute = this.getAttribute(cell, metaEntityMap);
+      if(attribute) {
+        switch (attribute.type) {
+          case AttributeType.Date:
+            return 'yyyy-mm-dd';
+          case AttributeType.Text:
+            return 'Abc...';
+          case AttributeType.Number:
+          case AttributeType.Integer:
+            return '123.0';
+          case AttributeType.ManyToOne:
+            return 'Search...';
+          default:
+            return `UNKNOWN: data type ${attribute.type}`;
+        }
       }
+      else {
+        return '';
+      }
+    }
+    else if(cell.tool) {
+      return cell.tool.type;
     }
     else {
       return '';

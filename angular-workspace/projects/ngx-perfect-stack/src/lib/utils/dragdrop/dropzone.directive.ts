@@ -12,7 +12,6 @@ export class DropzoneDirective implements OnInit, OnDestroy {
   private _dropDisabled = false;
 
   dragInProgressSubscription = this.dragService.dragInProgress$.subscribe((value: string) => {
-    console.log(`this.dropDisabled: `, this.dropDisabled);
     const el = this._elementRef.nativeElement;
     if(value === 'started') {
       el.classList.add('drag-hint-border')

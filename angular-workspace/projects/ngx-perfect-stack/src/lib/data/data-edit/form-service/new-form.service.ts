@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {MetaPage, Template} from '../../../domain/meta.page';
+import {MetaPage} from '../../../domain/meta.page';
 import {AttributeType, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
 import {Entity} from '../../../domain/entity';
 import {AbstractControl, FormGroup, Validators} from '@angular/forms';
@@ -29,6 +29,7 @@ export class NewFormService {
 
     // loop through all MetaAttributes and add FormControls for each attribute
     for (const nextAttribute of metaEntity.attributes) {
+
       let formControl: any;
       if (nextAttribute.type === AttributeType.OneToMany) {
         formControl = new FormArrayWithAttribute([]);
@@ -36,17 +37,11 @@ export class NewFormService {
         const itemArray = entity ? (entity as any)[nextAttribute.name] as [] : null;
         let itemCount = itemArray ? itemArray.length : 0;
         if (itemArray && itemCount > 0) {
-          //const attributeCell = this.findCellForAttribute(nextAttribute, template);
-          //if(attributeCell) {
-            //const childTemplate = attributeCell.template;
-            //if (childTemplate) {
-              const childMetaEntityName = nextAttribute.relationshipTarget;
-              for (let i = 0; i < itemCount; i++) {
-                const childEntity = itemArray[i];
-                formControl.push(this.createFormGroup(mode, childMetaEntityName, metaPageMap, metaEntityMap, childEntity))
-              }
-            //}
-          //}
+          const childMetaEntityName = nextAttribute.relationshipTarget;
+          for (let i = 0; i < itemCount; i++) {
+            const childEntity = itemArray[i];
+            formControl.push(this.createFormGroup(mode, childMetaEntityName, metaPageMap, metaEntityMap, childEntity))
+          }
         }
       }
       else if(nextAttribute.type == AttributeType.OneToPoly) {
@@ -79,15 +74,6 @@ export class NewFormService {
       }
       else if (nextAttribute.type === AttributeType.OneToOne) {
         // Remember: if the OneToOne is not showing up in the FormGroup is it because the template has no cell/attribute for it (attributeCell is null)
-        // const attributeCell = this.findCellForAttribute(nextAttribute, template);
-        // if(attributeCell) {
-        //   const childTemplate = attributeCell.template;
-        //   if (childTemplate) {
-        //     const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
-        //     formControl = this.createFormGroup(mode, childTemplate, metaPageMap, metaEntityMap, childEntity);
-        //   }
-        // }
-
         const childMetaEntityName = nextAttribute.relationshipTarget;
         const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
         formControl = this.createFormGroup(mode, childMetaEntityName, metaPageMap, metaEntityMap, childEntity);

@@ -28,7 +28,7 @@
       {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found
     </div>
 
-    <table class="table table-hover">
+    <!--<table class="table table-hover">
       <thead>
       <tr>
         <th scope="col" *ngFor="let nextCell of resultTableCells[0]">
@@ -39,15 +39,38 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let item of searchResults" (click)="onSelectRow(item.id)">
+      &lt;!&ndash;<tr *ngFor="let row of searchResults.controls; index as i" (click)="onSelectRow(row['id'].value)">
         <td *ngFor="let nextCell of resultTableCells[0]">
-          <ng-container *ngIf="nextCell.attribute">
+          &lt;!&ndash;<ng-container *ngIf="nextCell.attribute">
             {{displayValue(nextCell.attribute, item)}}
-          </ng-container>
+          </ng-container>&ndash;&gt;
+
+          &lt;!&ndash; Have changed search results to use our Cell class for rendering &ndash;&gt;
+          <lib-cell [mode]="'view'" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)"></lib-cell>
         </td>
-      </tr>
+      </tr>&ndash;&gt;
+
+      <ng-container [formArrayName]="'results'" *ngFor="let group of searchResults.controls; let i=index">
+        <tr [formGroupName]="i" (click)="onRowClicked(i)">
+          <td *ngFor="let nextCell of resultTableCells[0]">
+            <ng-container *ngIf="nextCell.attribute">
+              <lib-cell [mode]="mode" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)"></lib-cell>
+            </ng-container>
+          </td>
+        </tr>
+      </ng-container>
+
       </tbody>
-    </table>
+    </table>-->
+
+    <lib-table-layout
+      [ctx]="ctx"
+      [template]="resultTableTemplate"
+      [mode]="'view'"
+      [formGroup]="searchResultsFormGroup"
+      [relationshipProperty]="'results'">
+    </lib-table-layout>
+
 
     <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx)">
       <ng-template ngbPaginationFirst>First</ng-template>
@@ -63,3 +86,4 @@
   <div class="my-5 py-5"></div>
 
 </div>
+
