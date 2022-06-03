@@ -15,14 +15,6 @@
       <ng-container *ngIf="ctx.mode !== 'view'">
         <lib-layout [ctx]="ctx" [template]="template" [showTemplateHeadings]="showTemplateHeadings"></lib-layout>
       </ng-container>
-
-      <div class="d-flex my-2">
-        <ng-content select="[BottomLeftActions]"></ng-content>
-        <div class="flex-grow-1"></div>
-        <ng-content select="[BottomRightActions]"></ng-content>
-        <ng-content></ng-content>
-      </div>
-
     </div>
   </ng-container>
 
@@ -40,4 +32,11 @@
       <lib-layout [ctx]="ctx" [template]="template" [showTemplateHeadings]="showTemplateHeadings"></lib-layout>
     </ng-container>
   </ng-container>
+
+  <div class="d-flex my-2">
+    <ng-content select="[BottomLeftActions]"></ng-content>
+    <div class="flex-grow-1"></div>
+    <ng-content select="[BottomRightActions]"></ng-content>
+  </div>
+
 </ng-container>

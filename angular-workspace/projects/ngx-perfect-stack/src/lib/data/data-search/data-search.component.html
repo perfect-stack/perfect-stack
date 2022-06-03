@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <form class="container-fluid container-form">
+    <form class="container-fluid container-form" *ngIf="searchResultsFormGroup">
       <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate">
         <ng-container BottomLeftActions>
         </ng-container>
@@ -22,32 +22,21 @@
     </form>
   </ng-container>
 
-  <div class="container-table" *ngIf="resultTableCells">
+  <div class="container-table" *ngIf="searchResultsFormGroup">
 
     <div class="collection-size-found">
       {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found
     </div>
 
-    <table class="table table-hover">
-      <thead>
-      <tr>
-        <th scope="col" *ngFor="let nextCell of resultTableCells[0]">
-          <ng-container *ngIf="nextCell.attribute">
-            {{nextCell.attribute.label}}
-          </ng-container>
-        </th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let item of searchResults" (click)="onSelectRow(item.id)">
-        <td *ngFor="let nextCell of resultTableCells[0]">
-          <ng-container *ngIf="nextCell.attribute">
-            {{displayValue(nextCell.attribute, item)}}
-          </ng-container>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+    <ng-container *ngIf="searchResultsFormGroup">
+      <lib-table-layout
+        [ctx]="ctx"
+        [template]="resultTableTemplate"
+        [mode]="'view'"
+        [relationshipProperty]="'results'">
+      </lib-table-layout>
+    </ng-container>
+
 
     <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx)">
       <ng-template ngbPaginationFirst>First</ng-template>
@@ -58,8 +47,5 @@
       <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
     </ngb-pagination>
   </div>
-
-  <!-- whitespace padding at bottom of page -->
-  <div class="my-5 py-5"></div>
 
 </div>

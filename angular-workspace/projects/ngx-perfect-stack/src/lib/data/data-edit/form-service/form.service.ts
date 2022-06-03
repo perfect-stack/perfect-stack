@@ -23,7 +23,6 @@ export class FormContext {
   formMap: Map<string, AbstractControl>;
   entity: Entity;
   entityForm: FormGroup;
-  cells: CellAttribute[][];
 }
 
 export class FormControlWithAttribute extends FormControl {
@@ -78,12 +77,10 @@ export class FormService {
           throw new Error(`Unable to find MetaEntity for ${metaName}`);
         }
         ctx.metaEntity = me;
-        ctx.cells = this.toCellAttributeArray(rootTemplate, ctx.metaEntity);
 
         if(ctx.metaPage.dataQueryList?.length > 0) {
           console.log('FormService: load dataQueryList:', ctx.metaPage.dataQueryList);
           return this.dataMapService.toDataMap(ctx.metaPage.dataQueryList, {id: id}).pipe(switchMap((dataMap: Map<string, any>) => {
-            console.log('DataMap: ', dataMap);
             ctx.dataMap = dataMap;
             ctx.formMap = this.createFormMap(ctx, ctx.metaPage.templates, ctx.metaPage.dataQueryList, dataMap);
 
@@ -91,7 +88,6 @@ export class FormService {
             if(ctx.formMap.size === 1) {
               const rootForm = ctx.formMap.values().next().value as FormGroup;
               ctx.entityForm = rootForm;
-              console.log('FormService: loadFormContext() entityForm:', ctx.entityForm);
             }
 
             return of(ctx);
@@ -109,7 +105,7 @@ export class FormService {
     }));
   }
 
-  private createFormMap(ctx: FormContext, templateList: Template[], dataQueryList: DataQuery[], dataMap: Map<string, any>) {
+  public createFormMap(ctx: FormContext, templateList: Template[], dataQueryList: DataQuery[], dataMap: Map<string, any>) {
     const formMap = new Map<string, AbstractControl>();
     for(const nextTemplate of templateList) {
       this.createFormMapForOneTemplate(ctx, nextTemplate, formMap, dataQueryList, dataMap);
@@ -117,52 +113,19 @@ export class FormService {
     return formMap;
   }
 
-  private createFormMapForOneTemplate(ctx: FormContext, template: Template, formMap: Map<string, AbstractControl>, dataQueryList: DataQuery[], dataMap: Map<string, any>) {
+  private createFormMapForOneTemplate(ctx: FormContext,
+                                      template: Template,
+                                      formMap: Map<string, AbstractControl>,
+                                      dataQueryList: DataQuery[],
+                                      dataMap: Map<string, any>) {
     if(template.binding) {
-
       const dataQuery = dataQueryList.find(a => a.dataName === template.binding);
       if(dataQuery) {
-        let form;
-
         // This is the data value we need to bind into the data
-        const dataValue = dataMap.get(template.binding);
-
-        switch (dataQuery.resultCardinality) {
-          case ResultCardinalityType.QueryOne:
-            // The dataValue result is a single object we only need one form
-            const metaEntityName = dataQuery.queryName
-            form = this.newFormService.createFormGroup(ctx.mode, metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, dataValue.result);
-
-            if(dataValue) {
-              console.log('createFormMapForOneTemplate() - got form for dataValue', dataValue);
-              // TODO: 'result' doesn't feel very type safe here
-              form.patchValue(dataValue.result);
-            }
-
-            break;
-          case ResultCardinalityType.QueryMany:
-            // The dataValue result is an array so create the same number of form rows
-            const rowCount = dataValue.result.length;
-            const formArray = new FormArray([]);
-            for(let i = 0; i < rowCount; i++) {
-              const formRow = this.createFormGroup(ctx.mode, template, ctx.metaPageMap, ctx.metaEntityMap, null);
-              formArray.push(formRow);
-            }
-
-            form = new FormGroup({});
-            form.addControl(template.binding, formArray);
-
-            if(dataValue) {
-              formArray.patchValue(dataValue.result);
-            }
-
-            break;
-          default:
-            throw new Error(`Unknown ResultCardinality: ${dataQuery.resultCardinality}`);
-        }
-
+        const metaEntityName = dataQuery.queryName
+        const dataMapItem = dataMap.get(template.binding);
+        let form = this.createFormGroupForDataMapItem(ctx, metaEntityName, dataQuery.resultCardinality, template, dataMapItem.result);
         formMap.set(template.binding, form);
-
       }
     }
 
@@ -176,6 +139,51 @@ export class FormService {
       }
     }
   }
+
+  public createFormGroupForDataMapItem(ctx: FormContext,
+                                       metaEntityName:string | null,
+                                       resultCardinality: ResultCardinalityType,
+                                       template: Template,
+                                       objectOrArray: any | any[]) {
+    let form: FormGroup;
+    switch (resultCardinality) {
+      case ResultCardinalityType.QueryOne:
+        // The dataValue result is a single object we only need one form
+        if(metaEntityName) {
+          form = this.newFormService.createFormGroup(ctx.mode, metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, objectOrArray);
+
+          if(objectOrArray) {
+            form.patchValue(objectOrArray);
+          }
+        }
+        else {
+          throw new Error(`If ResultCardinalityType.QueryOne then metaEntityName must be supplied but has not been`);
+        }
+        break;
+      case ResultCardinalityType.QueryMany:
+        // The dataValue result is an array so create the same number of form rows
+        const rowCount = objectOrArray.length;
+        const formArray = new FormArray([]);
+        for(let i = 0; i < rowCount; i++) {
+          const formRow = this.createFormGroup(ctx.mode, template, ctx.metaPageMap, ctx.metaEntityMap, null);
+          formArray.push(formRow);
+        }
+
+        form = new FormGroup({});
+        form.addControl(template.binding, formArray);
+
+        if(objectOrArray) {
+          formArray.patchValue(objectOrArray);
+        }
+
+        break;
+      default:
+        throw new Error(`Unknown ResultCardinality: ${resultCardinality}`);
+    }
+
+    return form;
+  }
+
 
   private createRootFormGroupForMultipleTemplates(
     ctx: FormContext,
@@ -293,6 +301,11 @@ export class FormService {
             }
           }
         }
+      }
+      else if(nextAttribute.type === AttributeType.ManyToOne) {
+        const childEntityName = nextAttribute.relationshipTarget;
+        const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
+        formControl = this.newFormService.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity);
       }
       else if (nextAttribute.type === AttributeType.OneToOne) {
         // Remember: if the OneToOne is not showing up in the FormGroup is it because the template has no cell/attribute for it (attributeCell is null)

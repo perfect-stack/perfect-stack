@@ -79,6 +79,17 @@
             "width": "1",
             "height": "1",
             "attributeName": "sex"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "tool": {
+              "type": "Button",
+              "containerStyles": "",
+              "styles": "btn btn-primary",
+              "label": "Button",
+              "route": "/route/go/here"
+            }
           }
         ],
         [

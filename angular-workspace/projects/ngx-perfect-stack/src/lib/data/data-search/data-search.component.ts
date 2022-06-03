@@ -1,17 +1,16 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable, of, switchMap} from 'rxjs';
-import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {AttributeType, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
-import {Entity} from '../../domain/entity';
-import {CellAttribute} from '../../meta/page/meta-page-service/meta-page.service';
 import {FormContext, FormControlWithAttribute, FormService} from '../data-edit/form-service/form.service';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {Criteria, QueryRequest} from '../data-service/query.request';
-import {Template} from '../../domain/meta.page';
+import {ResultCardinalityType, Template, TemplateNavigationType} from '../../domain/meta.page';
 import {
   CustomDateParserFormatter
 } from '../controller/layout/controls/date-picker-control/custom-date-parser-formatter';
+import {AbstractControl, FormGroup} from '@angular/forms';
+import {Observable, of, switchMap} from 'rxjs';
 
 @Component({
   selector: 'app-data-search',
@@ -23,17 +22,16 @@ export class DataSearchComponent implements OnInit {
   public metaName: string | null;
   public mode = 'search';
 
-  resultTableMetaEntity: MetaEntity;
-  resultTableCells: CellAttribute[][];
+  ctx$: Observable<FormContext>;
 
   public pageNumber = 1;
   public pageSize = 50;
   public collectionSize = 0;
-  public searchResults: Entity[] = [];
-
-  ctx$: Observable<FormContext>;
 
   searchCriteriaTemplate: Template;
+  resultTableTemplate: Template;
+  resultTableMetaEntity: MetaEntity;
+  searchResultsFormGroup: FormGroup | null;
 
   constructor(protected readonly customDateParserFormatter: CustomDateParserFormatter,
               protected readonly route: ActivatedRoute,
@@ -43,17 +41,31 @@ export class DataSearchComponent implements OnInit {
               protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
-    this.ctx$ = this.route.paramMap.pipe(switchMap(params => {
+    this.ctx$ = this.route.paramMap.pipe(switchMap((params) => {
       this.metaName = params.get('metaName');
       if(this.metaName) {
-        return this.formService.loadFormContext(this.metaName, this.mode, null).pipe(switchMap( (ctx) => {
+        return this.formService.loadFormContext(this.metaName, this.mode, null).pipe(switchMap((ctx) => {
+
           this.searchCriteriaTemplate = ctx.metaPage.templates[0];
-          const resultTableTemplate = ctx.metaPage.templates[1];
-          const resultTableMetaEntityName = resultTableTemplate.metaEntityName;
+          this.searchCriteriaTemplate.binding = 'criteria';
+          if(!ctx.formMap) {
+            ctx.formMap = new Map<string, AbstractControl>();
+          }
+          ctx.formMap.set('criteria', ctx.entityForm);
+
+          // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff
+          // can be more consistent
+          this.resultTableTemplate = ctx.metaPage.templates[1];
+          if(!this.resultTableTemplate.binding) {
+            this.resultTableTemplate.binding = 'results';
+            this.resultTableTemplate.navigation = TemplateNavigationType.Enabled;
+            this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}';  // the ${id} parameter is being passed in as an expression to be resolved later
+          }
+
+          const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName;
           const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
           if(rtme) {
             this.resultTableMetaEntity = rtme;
-            this.resultTableCells = this.formService.toCellAttributeArray(resultTableTemplate, rtme);
             this.onSearch(ctx);
             return of(ctx);
           }
@@ -68,34 +80,32 @@ export class DataSearchComponent implements OnInit {
     }));
   }
 
-  get newButtonLbl() {
-    return this.metaName ? `Add ${this.metaName.toLowerCase()}` : 'Add';
-  }
-
   onSearch(ctx: FormContext) {
     if(this.metaName) {
-      const entityForm = ctx.entityForm;
-      const resultTableTemplate = ctx.metaPage.templates[1];
-      const orderByName = resultTableTemplate.orderByName;
-      const orderByDir = resultTableTemplate.orderByDir;
+      this.searchResultsFormGroup = null;
 
       const queryRequest = new QueryRequest();
       queryRequest.metaEntityName = this.metaName;
-      queryRequest.orderByName = orderByName;
-      queryRequest.orderByDir = orderByDir;
+      queryRequest.orderByName = this.resultTableTemplate.orderByName;
+      queryRequest.orderByDir = this.resultTableTemplate.orderByDir;
       queryRequest.pageNumber = this.pageNumber;
       queryRequest.pageSize = this.pageSize;
 
-      for (let controlsKey in entityForm.controls) {
-        const control = entityForm.controls[controlsKey];
+      const criteriaForm = ctx.formMap.get('criteria') as FormGroup;
+      for (let controlsKey in criteriaForm.controls) {
+        const control = criteriaForm.controls[controlsKey];
         if(control.value && control instanceof FormControlWithAttribute) {
           queryRequest.criteria.push(this.toCriteria(control));
         }
       }
 
-      this.dataService.findByCriteria(queryRequest).subscribe(response => {
-        this.searchResults = response.resultList;
+      this.dataService.findByCriteria(queryRequest).subscribe((response) => {
         this.collectionSize = response.totalCount;
+        this.searchResultsFormGroup = this.formService.createFormGroupForDataMapItem(ctx, null, ResultCardinalityType.QueryMany, this.resultTableTemplate, response.resultList);
+        if(!ctx.formMap) {
+          ctx.formMap = new Map<string, AbstractControl>()
+        }
+        ctx.formMap.set('results', this.searchResultsFormGroup);
       });
     }
   }
@@ -118,42 +128,21 @@ export class DataSearchComponent implements OnInit {
     return criteria;
   }
 
-
-  displayValue(metaAttribute: MetaAttribute, item: any) {
-    if(Object.keys(item).includes(metaAttribute.name)) {
-      if(metaAttribute.type === AttributeType.ManyToOne) {
-        let displayValue = '';
-        if(item[metaAttribute.name]) {
-          for(const displayAttributeName of metaAttribute.typeaheadSearch) {
-            displayValue += item[metaAttribute.name][displayAttributeName];
-            displayValue += ' ';
-          }
-        }
-        return displayValue;
-      }
-      if(metaAttribute.type === AttributeType.Date) {
-        const dateValue = item[metaAttribute.name];
-        return dateValue ? this.customDateParserFormatter.formatDatabaseValue(dateValue) : '-';
-      }
-      else {
-        return item[metaAttribute.name];
-      }
-    }
-    else {
-      return `Unknown attribute name of ${metaAttribute.name} in row data of ${JSON.stringify(item)}`
-    }
-  }
-
-  onSelectRow(id: string) {
-    this.router.navigate([`/data/${this.metaName}/view/${id}`]);
-  }
-
   onReset(ctx: FormContext) {
-    ctx.entityForm.reset();
-    this.onSearch(ctx);
+    const criteriaForm = ctx.formMap.get('criteria');
+    console.log('onReset()', criteriaForm);
+    if(criteriaForm) {
+      criteriaForm.reset();
+      this.onSearch(ctx);
+    }
+  }
+
+  get newButtonLbl() {
+    return this.metaName ? `Add ${this.metaName.toLowerCase()}` : 'Add';
   }
 
   onNew(ctx: FormContext) {
     this.router.navigate([`/data/${this.metaName}/edit/**NEW**`]);
   }
+
 }

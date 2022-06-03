@@ -5,6 +5,12 @@ import {DataService} from '../../data-service/data.service';
 import {QueryRequest} from '../../data-service/query.request';
 import {ComparisonOperator} from '../../../domain/meta.entity';
 
+
+export interface DataMapItem {
+  dataName: string,
+  result: any
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,7 +35,7 @@ export class DataMapService {
     }));
   }
 
-  observeQuery(dataQuery: DataQuery, parameterMap: any): Observable<{ dataName: string, result: any }> {
+  observeQuery(dataQuery: DataQuery, parameterMap: any): Observable<DataMapItem> {
     switch (dataQuery.queryType) {
       case QueryType.Entity:
         return this.observeEntityQuery(dataQuery, parameterMap);
@@ -40,7 +46,7 @@ export class DataMapService {
     }
   }
 
-  private observeEntityQuery(dataQuery: DataQuery, parameterMap: any) {
+  private observeEntityQuery(dataQuery: DataQuery, parameterMap: any): Observable<DataMapItem> {
     switch (dataQuery.resultCardinality) {
       case ResultCardinalityType.QueryOne:
         if(parameterMap[dataQuery.parameter]) {
