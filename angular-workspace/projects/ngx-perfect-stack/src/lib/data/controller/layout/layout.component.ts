@@ -131,7 +131,7 @@ export class TableLayoutComponent implements OnInit {
               private readonly formService: FormService) { }
 
   ngOnInit(): void {
-    this.mode = this.ctx.mode;
+    this.mode = this.mode ? this.mode : this.ctx.mode;
     if(this.ctx.formMap) {
       this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
       this.relationshipProperty = this.template.binding;

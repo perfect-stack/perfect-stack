@@ -4,7 +4,7 @@ import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-e
 import {DataService} from '../../data-service/data.service';
 import {Entity} from '../../../domain/entity';
 import {Cell, DataQuery, MetaPage, ResultCardinalityType, Template} from '../../../domain/meta.page';
-import {AbstractControl, Form, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {AttributeType, MetaAttribute, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
 import {DataMapService} from './data-map.service';
@@ -301,6 +301,11 @@ export class FormService {
             }
           }
         }
+      }
+      else if(nextAttribute.type === AttributeType.ManyToOne) {
+        const childEntityName = nextAttribute.relationshipTarget;
+        const childEntity = entity ? (entity as any)[nextAttribute.name] : null;
+        formControl = this.newFormService.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity);
       }
       else if (nextAttribute.type === AttributeType.OneToOne) {
         // Remember: if the OneToOne is not showing up in the FormGroup is it because the template has no cell/attribute for it (attributeCell is null)
