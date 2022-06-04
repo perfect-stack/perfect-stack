@@ -62,7 +62,7 @@ export class NewFormService {
               if(childPage) {
                 // const childTemplate = childPage.templates[0];
                 console.log(`Adding formGroup for; ${nextAttribute.name}, ${childDiscriminatorValue}, ${childPageName}`);
-                formControl.push(this.createFormGroup(mode, nextAttribute.relationshipTarget, metaPageMap, metaEntityMap, childEntity))
+                formControl.push(this.createFormGroup(mode, childEntityMapping.metaEntityName, metaPageMap, metaEntityMap, childEntity))
               }
             }
           }

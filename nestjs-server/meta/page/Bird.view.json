@@ -12,7 +12,7 @@
             "height": "1",
             "template": {
               "binding": "bird",
-              "templateHeading": "${name}",
+              "templateHeading": "${bird.name}",
               "type": "form",
               "metaEntityName": "Bird",
               "orderByName": "",

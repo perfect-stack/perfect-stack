@@ -1,6 +1,6 @@
 {
   "name": "Bird.view_edit",
-  "title": "?updateOrView(${name})",
+  "title": "?updateOrView(${bird.name})",
   "type": "view_edit",
   "layoutStyle": "Paris",
   "templates": [
@@ -89,8 +89,18 @@
       ],
       "metaEntityName": "Bird",
       "type": "form",
-      "templateHeading": "Kiwi details"
+      "templateHeading": "Kiwi details",
+      "binding": "bird"
     }
   ],
-  "dataQueryList": []
+  "dataQueryList": [
+    {
+      "dataName": "bird",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Bird",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ]
 }

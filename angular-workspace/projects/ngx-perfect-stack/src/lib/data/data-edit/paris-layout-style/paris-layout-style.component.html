@@ -6,8 +6,8 @@
         <span class="align-middle">Search {{ctx.metaEntity.name.toLowerCase()}}</span>
       </a>
 
-      <h2 class="my-3" *ngIf="ctx.entityForm">
-        <lib-expression-control [mode]="ctx.mode" [formGroup]="ctx.entityForm" [expression]="ctx.metaPage.title" ></lib-expression-control>
+      <h2 class="my-3" *ngIf="ctx.formMap">
+        <lib-expression-control [mode]="ctx.mode" [formMap]="ctx.formMap" [expression]="ctx.metaPage.title" ></lib-expression-control>
       </h2>
     </div>
     <div>

@@ -77,15 +77,28 @@ export class DataEditComponent implements OnInit {
     }
   }
 
+  getDataForm(ctx: FormContext) {
+    // TODO: so that entityForm could be removed from FOrmContext we are going to use a rule that says an edit page
+    // only has one form and so we can get the one and only form out of the formMap. Once this changes to some sort
+    // of template approach then the template binding will be needed here to find the form to get the entityData
+    return ctx.formMap.values().next().value;
+  }
+
+
   onSave(ctx: FormContext) {
+
+    // TODO: this is wrong since it now depends on entityForm
+    //const entityData = ctx.entityForm.value;
+
+    // TODO: so that entityForm could be removed from FOrmContext we are going to use a rule that says an edit page
+    // only has one form and so we can get the one and only form out of the formMap. Once this changes to some sort
+    // of template approach then the template binding will be needed here to find the form to get the entityData
+    const entityData = this.getDataForm(ctx).value;
+    console.log(`DataEdit: form value:`, entityData);
+
     const treeWalker = new MetaEntityTreeWalker(ctx.metaEntityMap);
     treeWalker.byType(AttributeType.Integer, new IntegerVisitor());
     treeWalker.byType(AttributeType.Identifier, new IdentifierVisitor());
-
-    // TODO: this is wrong since it now depends on entityForm
-    const entityData = ctx.entityForm.value;
-    console.log(`DataEdit: form value:`, entityData);
-
     treeWalker.walk(entityData, ctx.metaEntity);
     console.log(`DataEdit: save value:`, entityData);
 

@@ -2,6 +2,7 @@
   "name": "Organisation.view_edit",
   "title": "Organisation View/Edit",
   "type": "view_edit",
+  "layoutStyle": "",
   "templates": [
     {
       "cells": [
@@ -9,121 +10,23 @@
           {
             "width": "6",
             "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            },
             "attributeName": "name"
-          }
-        ],
-        [
-          {
-            "width": "6",
-            "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            }
-          },
-          {
-            "width": "6",
-            "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            }
           }
         ]
       ],
       "metaEntityName": "Organisation",
-      "type": "form"
+      "type": "form",
+      "binding": "organisation"
+    }
+  ],
+  "dataQueryList": [
+    {
+      "dataName": "organisation",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Organisation",
+      "fieldName": "id",
+      "parameter": "id"
     }
   ]
 }

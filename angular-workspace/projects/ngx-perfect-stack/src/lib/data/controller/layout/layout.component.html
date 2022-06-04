@@ -1,14 +1,15 @@
 <ng-container *ngIf="ctx && template">
 
   <ng-container *ngIf="showTemplateHeadings && template.templateHeading && mode">
-    <ng-container *ngIf="template.templateHeading === '${name}'">
+    <ng-container *ngIf="template.templateHeading === '${bird.name}'">
       <h3 class="text-center">
-        <lib-expression-control [mode]="mode" [formGroup]="formGroup" [expression]="template.templateHeading"></lib-expression-control>
+        <!-- TODO: this one is here to center the Bird view heading, needs to be removed and turned into something like a Text Tool with meta data styles for text-center -->
+        <lib-expression-control [mode]="mode" [formMap]="ctx.formMap" [expression]="template.templateHeading"></lib-expression-control>
       </h3>
     </ng-container>
-    <ng-container *ngIf="template.templateHeading !== '${name}'">
+    <ng-container *ngIf="template.templateHeading !== '${bird.name}'">
       <h3>
-        <lib-expression-control [mode]="mode" [formGroup]="formGroup" [expression]="template.templateHeading"></lib-expression-control>
+        <lib-expression-control [mode]="mode" [formMap]="ctx.formMap" [expression]="template.templateHeading"></lib-expression-control>
       </h3>
     </ng-container>
   </ng-container>

@@ -137,7 +137,7 @@ export class TableLayoutComponent implements OnInit {
       this.relationshipProperty = this.template.binding;
     }
     else {
-      this.formGroup = this.ctx.entityForm;
+      throw new Error('TODO: TableLayout is being used without a formMap');
     }
 
     console.log('TableLayoutComponent: found formGroup: ', this.formGroup);
@@ -452,16 +452,6 @@ export class FormLayoutComponent implements OnInit, OnChanges {
       else {
         console.log('Binding - Not found. Keep calm and carry on 🙂');
       }
-    }
-    else if(this.ctx && this.ctx.entityForm) {
-      console.log('FormLayoutComponent: initialising things the old way');
-      this.mode = this.ctx.mode;
-      this.formGroup = this.ctx.entityForm;
-      this.metaEntity = this.ctx.metaEntity;
-
-      console.log('FormLayoutComponent: mode', this.mode);
-      console.log('FormLayoutComponent: formGroup', this.formGroup);
-      console.log('FormLayoutComponent: metaEntity', this.metaEntity);
     }
     else {
       console.warn('UNABLE to initialise FormLayoutComponent sensibly');

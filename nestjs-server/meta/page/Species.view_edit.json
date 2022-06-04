@@ -2,6 +2,7 @@
   "name": "Species.view_edit",
   "title": "Species View/Edit",
   "type": "view_edit",
+  "layoutStyle": "",
   "templates": [
     {
       "cells": [
@@ -39,7 +40,18 @@
         ]
       ],
       "metaEntityName": "Species",
-      "type": "form"
+      "type": "form",
+      "binding": "species"
+    }
+  ],
+  "dataQueryList": [
+    {
+      "dataName": "species",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Species",
+      "fieldName": "id",
+      "parameter": "id"
     }
   ]
 }

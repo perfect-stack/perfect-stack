@@ -1,6 +1,6 @@
 {
   "name": "Person.view_edit",
-  "title": "?updateOrView(${given_name}, ${family_name})",
+  "title": "?updateOrView(${person.given_name}, ${person.family_name})",
   "type": "view_edit",
   "layoutStyle": "Paris",
   "templates": [

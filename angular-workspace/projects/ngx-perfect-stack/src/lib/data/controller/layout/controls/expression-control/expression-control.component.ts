@@ -14,7 +14,7 @@ export class ExpressionControlComponent implements OnChanges, OnDestroy {
   mode: string;
 
   @Input()
-  formGroup: FormGroup;
+  formMap: Map<string, AbstractControl>;
 
   @Input()
   expression: string;
@@ -37,11 +37,11 @@ export class ExpressionControlComponent implements OnChanges, OnDestroy {
     }
 
     // Create a list of control expressions
-    if(this.formGroup) {
-      console.log('ExpressionControlComponent: formGroup:', this.formGroup);
-      const matches: RegExpMatchArray[] = Array.from(this.expression.matchAll(/\${(\w+)}/gm));
+    if(this.formMap) {
+      console.log('ExpressionControlComponent: formGroup:', this.formMap);
+      const matches: RegExpMatchArray[] = Array.from(this.expression.matchAll(/\${([a-zA-Z0-9_\\.]+)}/gm));
       for(const nextMatch of matches) {
-        const control = this.formGroup.controls[nextMatch[1]];
+        const control = this.findControl(nextMatch[1], this.formMap);
         if(control) {
           const subscription = control.valueChanges.subscribe(() => {
             this.updateExpressionValue();
@@ -58,6 +58,44 @@ export class ExpressionControlComponent implements OnChanges, OnDestroy {
     }
 
     this.updateExpressionValue();
+  }
+
+  /**
+   * @param nakedExpression - the expression without the ${} around it so; "bird.name" instead of ${bird.name}. The
+   * regex code gives it to us nicely.
+   */
+  findControl(nakedExpression: string, formMap: Map<string, AbstractControl>): AbstractControl {
+    if(nakedExpression) {
+      if(formMap && formMap.size > 0) {
+        const tokens = nakedExpression.split('.');
+        if(tokens.length == 2) {
+          const binding = tokens[0];
+          const attributeName = tokens[1];
+          const formGroup = formMap.get(binding) as FormGroup;
+          if(formGroup) {
+            const control = formGroup.controls[attributeName];
+            if(control) {
+              return control;
+            }
+            else {
+              throw new Error(`Unable to findControl ${attributeName} with binding ${binding}`);
+            }
+          }
+          else {
+            throw new Error(`Unable to formGroup for binding ${binding}`);
+          }
+        }
+        else {
+          throw new Error(`Unable to split expression ${nakedExpression} into exactly two tokens`);
+        }
+      }
+      else {
+        throw new Error(`No formMap has been supplied or is empty`);
+      }
+    }
+    else {
+      throw new Error(`No expression has been supplied`);
+    }
   }
 
   private updateExpressionValue() {
