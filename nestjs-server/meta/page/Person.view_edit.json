@@ -43,6 +43,35 @@
             "height": "1",
             "attributeName": "company"
           }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "template": {
+              "binding": "phone_numbers",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "PhoneNumber",
+              "orderByName": "UNKNOWN",
+              "orderByDir": "ASC",
+              "cells": [
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "type"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "number"
+                  }
+                ]
+              ],
+              "locations": {}
+            }
+          }
         ]
       ],
       "templateHeading": "Personal details",

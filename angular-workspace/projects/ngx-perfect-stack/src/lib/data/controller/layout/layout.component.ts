@@ -60,7 +60,7 @@ export class LayoutComponent implements OnInit {
     if(this.ctx) {
       this.mode = this.ctx.mode;
       this.metaEntity = this.ctx.metaEntityMap.get(this.template.metaEntityName) as MetaEntity;
-      if(this.ctx.formMap) {
+      if(!this.formGroup && this.ctx.formMap && this.template.binding) {
         this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
       }
     }
@@ -132,12 +132,9 @@ export class TableLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.mode = this.mode ? this.mode : this.ctx.mode;
-    if(this.ctx.formMap) {
+    if(!this.formGroup && this.ctx.formMap && this.template.binding) {
       this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
       this.relationshipProperty = this.template.binding;
-    }
-    else {
-      throw new Error('TODO: TableLayout is being used without a formMap');
     }
 
     console.log('TableLayoutComponent: found formGroup: ', this.formGroup);

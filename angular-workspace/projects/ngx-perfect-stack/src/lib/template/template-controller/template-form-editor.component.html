@@ -2,6 +2,8 @@
   <ng-container *ngIf="metaEntityMap$ | async as metaEntityMap">
     <div class="row" *ngFor="let nextRow of template.cells">
       <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
+        <!--{{nextCell.attributeName}}: {{getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName) | json}}-->
+        <!--{{getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName) | json}}-->
         <lib-cell-view
           [metaEntity]="getMetaEntity(metaEntityMap, template.metaEntityName)"
           [cell]="nextCell"

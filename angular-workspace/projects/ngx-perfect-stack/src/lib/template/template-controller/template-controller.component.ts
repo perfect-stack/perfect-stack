@@ -370,11 +370,9 @@ export class CellViewComponent implements OnInit, OnChanges {
 
     this.onClearCell();
 
-    this._attribute = attribute;
-    this.cell.attributeName = attribute.name;
     if(attribute.type === AttributeType.OneToMany) {
       this.cell.template = {
-        binding: '',
+        binding: attribute.name,
         templateHeading: '',
         type: TemplateType.table,
         metaEntityName: attribute.relationshipTarget,
@@ -382,16 +380,17 @@ export class CellViewComponent implements OnInit, OnChanges {
         orderByDir: 'ASC',
         cells: [[
           {
-            width: '3',
+            width: '12',
             height: '1',
+            attributeName: attribute.name,
           },
-          {
-            width: '3',
-            height: '1',
-          }
         ]],
         locations: {},
       };
+    }
+    else {
+      this._attribute = attribute;
+      this.cell.attributeName = attribute.name;
     }
   }
 

@@ -1,7 +1,7 @@
 <ng-container *ngIf="cells$ | async as cells">
 
-  <!-- If "old" way, OR "new" way and template has a binding to the form -->
-  <ng-container *ngIf="!(ctx && ctx.formMap && !template.binding)">
+  <!-- If template has a binding to the form -->
+  <ng-container *ngIf="template && template.binding">
     <div [formGroup]="formGroup">
       <div class="row" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" class="mt-3" *ngFor="let cell of row">
@@ -10,16 +10,22 @@
           </ng-container>
           <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
 
-          <!--<ng-container *ngIf="cell.tool">
+          <ng-container *ngIf="cell.tool">
             <lib-tool-view [tool]="cell.tool"></lib-tool-view>
-          </ng-container>-->
+          </ng-container>
+
+          <!-- If the cell has it's own template then we recursively nest the template inside of the cell. Which means
+           we need to pass down the formGroup of the cell and name of the property for that formGroup -->
+          <ng-container *ngIf="cell.template && cell.template.binding">
+            <lib-layout [ctx]="ctx" [template]="cell.template" [formGroup]="formGroup" [relationshipProperty]="cell.template.binding"></lib-layout>
+          </ng-container>
         </div>
       </div>
     </div>
   </ng-container>
 
-  <!-- If "new" way and this template doesn't have a binding (normally this means it's a root level template with nested child templates, so no binding means no form group) -->
-  <ng-container *ngIf="ctx && ctx.formMap && !template.binding">
+  <!-- If this template doesn't have a binding (normally this means it's a root level template with nested child templates, so no binding means no form group) -->
+  <ng-container *ngIf="template && !template.binding">
     <div [formGroup]="formGroup">
       <div class="row" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
@@ -30,6 +36,5 @@
       </div>
     </div>
   </ng-container>
-
 
 </ng-container>

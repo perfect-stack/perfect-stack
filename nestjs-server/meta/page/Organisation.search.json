@@ -2,157 +2,15 @@
   "name": "Organisation.search",
   "title": "Organisation Search",
   "type": "search",
+  "layoutStyle": "",
   "templates": [
     {
       "cells": [
         [
           {
-            "width": "3",
+            "width": "4",
             "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            }
-          },
-          {
-            "width": "3",
-            "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            }
-          },
-          {
-            "width": "3",
-            "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            }
-          },
-          {
-            "width": "3",
-            "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            }
+            "attributeName": "name"
           }
         ]
       ],
@@ -163,41 +21,8 @@
       "cells": [
         [
           {
-            "width": "3",
+            "width": "1",
             "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            },
             "attributeName": "name"
           }
         ],
@@ -283,5 +108,6 @@
       "orderByName": "name",
       "orderByDir": "ASC"
     }
-  ]
+  ],
+  "dataQueryList": []
 }

@@ -16,7 +16,7 @@
       <ng-container [formArrayName]="relationshipProperty" *ngFor="let group of attributes.controls; let i=index">
         <tr [formGroupName]="i" (click)="onRowClicked(i)">
           <td *ngFor="let nextCell of cells[0]">
-            <ng-container *ngIf="nextCell.attribute">
+            <ng-container *ngIf="nextCell.attribute || nextCell.tool">
               <lib-cell [mode]="mode" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)"></lib-cell>
             </ng-container>
           </td>

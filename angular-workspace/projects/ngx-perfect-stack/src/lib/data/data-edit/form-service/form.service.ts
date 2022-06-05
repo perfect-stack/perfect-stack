@@ -83,24 +83,13 @@ export class FormService {
           return this.dataMapService.toDataMap(ctx.metaPage.dataQueryList, {id: id}).pipe(switchMap((dataMap: Map<string, any>) => {
             ctx.dataMap = dataMap;
             ctx.formMap = this.createFormMap(ctx, ctx.metaPage.templates, ctx.metaPage.dataQueryList, dataMap);
-
-            // TODO: Hack for now if only one form then use that as the entityForm (back fill old code wile change is in-progress)
-            // if(ctx.formMap.size === 1) {
-            //   const rootForm = ctx.formMap.values().next().value as FormGroup;
-            //   ctx.entityForm = rootForm;
-            // }
-
             return of(ctx);
           }));
         } else if (id) {
-          // console.log('FormService: load single entity:', id);
-          // return this.dataService.findById(ctx.metaEntity.name, id).pipe(switchMap((entity) => {
-          //   return this.createRootFormGroupForMultipleTemplates(ctx, ctx.metaPage.templates, entity);
-          // }));
           throw new Error('TODO: anything with an "id" should be doing a dataQuery now');
         } else {
-          console.log('FormService: load form with NULL:');
-          //return this.createRootFormGroupForMultipleTemplates(ctx, ctx.metaPage.templates, null);
+          // No data to load, but that's ok various forms get created without any data loading
+          console.log('FormService: load form with no data loaded:');
           return of(ctx);
         }
       }));
@@ -121,9 +110,10 @@ export class FormService {
                                       dataQueryList: DataQuery[],
                                       dataMap: Map<string, any>) {
     if(template.binding) {
+      // Use the Template to find the data it is bound to...
       const dataQuery = dataQueryList.find(a => a.dataName === template.binding);
       if(dataQuery) {
-        // This is the data value we need to bind into the data
+        // ...but the data type of the data determines the FormGroup not the template
         const metaEntityName = dataQuery.queryName
         const dataMapItem = dataMap.get(template.binding);
         let form = this.createFormGroupForDataMapItem(ctx, metaEntityName, dataQuery.resultCardinality, template, dataMapItem.result);
@@ -184,35 +174,6 @@ export class FormService {
     }
 
     return form;
-  }
-
-
-  private createRootFormGroupForMultipleTemplates(
-    ctx: FormContext,
-    templateList: Template[],
-    entity: Entity | null): Observable<FormContext> {
-
-    // const rootTemplate = templateList[0];
-    // ctx.entityForm = this.createFormGroup(ctx.mode, rootTemplate, ctx.metaPageMap, ctx.metaEntityMap, entity);
-    //
-    // if(templateList.length > 1) {
-    //   for(let i = 1; i < templateList.length; i++) {
-    //     const nextTemplate = templateList[i];
-    //     if(nextTemplate.binding) {
-    //       const nextFormGroup = this.createFormGroup(ctx.mode, nextTemplate, ctx.metaPageMap, ctx.metaEntityMap, entity);
-    //       ctx.entityForm.addControl(nextTemplate.binding, nextFormGroup);
-    //     }
-    //   }
-    // }
-    //
-    // if(entity) {
-    //   ctx.entity = entity as Entity;
-    //   ctx.entityForm.patchValue(ctx.entity);
-    // }
-    //
-    // console.log('FormService: createRootFormGroupForMultipleTemplates() ctx:', ctx);
-    // return of(ctx);
-   throw new Error('TODO - remove me');
   }
 
   public toCellAttributeArray(template: Template, metaEntity: MetaEntity) {
