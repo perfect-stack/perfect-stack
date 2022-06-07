@@ -20,7 +20,7 @@
       </thead>
       <tbody>
       <tr>
-        <td *ngFor="let nextCell of template.cells[0]">{{getDataTypePlaceholder(nextCell, metaEntityMap)}}</td>
+        <td *ngFor="let nextCell of template.cells[0]" (click)="onCellClicked(nextCell)">{{getDataTypePlaceholder(nextCell, metaEntityMap)}}</td>
       </tr>
       </tbody>
     </table>

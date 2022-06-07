@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ButtonTool, ImageTool, ToolType} from '../../domain/meta.page';
+import {ButtonTool, ImageTool, TextTool, ToolType} from '../../domain/meta.page';
 
 @Component({
   selector: 'lib-tool-palette',
@@ -21,6 +21,13 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: '',
     imageUrl: '/assets/images/image.png'
+  }
+
+  static readonly textPrototype: TextTool = {
+    type: ToolType.TextTool,
+    containerStyles: '',
+    styles: '',
+    text: ''
   }
 
   constructor() { }

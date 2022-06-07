@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ButtonTool, ImageTool, Tool} from '../../../../domain/meta.page';
+import {ButtonTool, ImageTool, TextTool, Tool} from '../../../../domain/meta.page';
 import {FormContext} from '../../../data-edit/form-service/form.service';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'lib-tool-view',
@@ -18,6 +19,9 @@ export class ToolViewComponent implements OnInit {
   @Input()
   editorMode = false;
 
+  @Input()
+  formGroup: FormGroup;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -29,6 +33,10 @@ export class ToolViewComponent implements OnInit {
 
   asImageTool() {
     return this.tool as ImageTool;
+  }
+
+  asTextTool() {
+    return this.tool as TextTool;
   }
 
 }

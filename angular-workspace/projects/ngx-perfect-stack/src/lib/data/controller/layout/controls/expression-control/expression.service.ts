@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {FormGroup} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,8 @@ export class ExpressionService {
 
   evaluate(expression: string, dataMap: Map<string, any>): string {
     const controlExpressionMatchList = this.buildControlExpressionMatchList(expression, dataMap);
-    return this.searchAndReplace(controlExpressionMatchList, expression);
+    return this.searchAndReplace(expression, controlExpressionMatchList);
   }
-
 
   private buildControlExpressionMatchList(expression: string, dataMap: Map<string, any>): ControlExpressionMatch[] {
     const controlExpressionMatchList: ControlExpressionMatch[] = [];
@@ -32,7 +32,7 @@ export class ExpressionService {
     return controlExpressionMatchList;
   }
 
-  private searchAndReplace(controlExpressionMatchList: ControlExpressionMatch[], expression: string): string {
+  private searchAndReplace(expression: string, controlExpressionMatchList: ControlExpressionMatch[]): string {
     let expressionResult = expression;
     for(const nextControlExpression of controlExpressionMatchList) {
       const search = nextControlExpression.expressionMatch[0];
@@ -70,6 +70,44 @@ export class ExpressionService {
       throw new Error(`Unable to find attribute using the path ${path}`);
     }
   }
+
+
+  evaluateFormGroup(expression: string, formGroup: FormGroup): string {
+    console.log('evaluateFormGroup', expression);
+    const controlExpressionMatchList = this.buildFromFormGroup(expression, formGroup);
+    return this.searchAndReplace(expression, controlExpressionMatchList);
+  }
+
+  buildFromFormGroup(expression: string, formGroup: FormGroup) {
+    const controlExpressionMatchList: ControlExpressionMatch[] = [];
+    const matches: RegExpMatchArray[] = Array.from(expression.matchAll(/\${([a-zA-Z0-9_\\.]+)}/gm));
+    for(const nextMatch of matches) {
+      const control = this.findControlInFormGroup(nextMatch[1], formGroup);
+      if(control) {
+        controlExpressionMatchList.push({
+          expressionMatch: nextMatch,
+          value: control.value,
+        });
+      }
+    }
+    return controlExpressionMatchList;
+  }
+
+  findControlInFormGroup(attributeName: string, formGroup: FormGroup) {
+    if(formGroup) {
+      const control = formGroup.controls[attributeName];
+      if (control) {
+        return control;
+      }
+      else {
+        throw new Error(`Unable to find attribute ${attributeName} in formGroup`);
+      }
+    }
+    else {
+      throw new Error(`No formGroup supplied`);
+    }
+  }
+
 }
 
 

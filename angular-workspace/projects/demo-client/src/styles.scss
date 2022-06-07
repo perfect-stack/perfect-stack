@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
+
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+
+
 @font-face {
   font-family: 'Roboto';
   src: url('assets/fonts/roboto/Roboto-BoldItalic.woff2') format('woff2'),
@@ -190,6 +194,57 @@ button[readonly] {
 
 .drag-transit {
   border: #3500FF dashed 2px;
+}
+
+
+/*********** Status badge **********/
+
+@mixin badge-mixin {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-grow: 0;
+  align-items: center;
+  height: 24px;
+  border-radius: 16px;
+}
+
+.status-badge-Alive {
+  @include badge-mixin;
+  background: #ECFDF3;
+  color: $success;
+}
+
+.status-badge-Dead {
+  @include badge-mixin;
+  background: #FEF3F2;
+  color: $danger;
+}
+
+.status-badge-Unknown {
+  @include badge-mixin;
+  background: #EFF8FF;
+  color: $primary;
+}
+
+/*********** Sex symbol **********/
+
+.sex-symbol-Male {
+  @include badge-mixin;
+  background: #EFF8FF;
+  color: $primary;
+}
+
+.sex-symbol-Female {
+  @include badge-mixin;
+  background: #FEF3F2;
+  color: $danger;
+}
+
+.sex-symbol-Unknown {
+  @include badge-mixin;
+  background: #EAECF0;
+  color: #667085;
 }
 
 

@@ -101,6 +101,7 @@ import {ButtonToolComponent} from './data/controller/tool/tool-view/button-tool/
 import {ImageToolComponent} from './data/controller/tool/tool-view/image-tool/image-tool.component';
 import { PropertySheetComponent } from './template/property-sheet/property-sheet.component';
 import { VeniceLayoutStyleComponent } from './data/data-edit/venice-layout-style/venice-layout-style.component';
+import { TextToolComponent } from './data/controller/tool/tool-view/text-tool/text-tool.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -198,6 +199,7 @@ const routes: Routes = [
     ToolViewComponent,
     PropertySheetComponent,
     VeniceLayoutStyleComponent,
+    TextToolComponent,
   ],
   providers: [
     AuthenticationService,

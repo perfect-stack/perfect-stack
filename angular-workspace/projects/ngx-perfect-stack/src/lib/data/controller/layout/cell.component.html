@@ -1,5 +1,5 @@
 <ng-container *ngIf="cell && cell.tool">
-  <lib-tool-view [tool]="cell.tool"></lib-tool-view>
+  <lib-tool-view [tool]="cell.tool" [formGroup]="formGroup"></lib-tool-view>
 </ng-container>
 
 <ng-container *ngIf="formGroup && mode && cell && cell.attribute && !cell.tool">

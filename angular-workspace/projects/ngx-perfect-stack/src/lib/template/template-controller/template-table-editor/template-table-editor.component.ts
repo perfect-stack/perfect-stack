@@ -66,9 +66,11 @@ export class TemplateTableEditorComponent implements OnInit {
   onDropIntoCell($event: any, cell: Cell) {
     console.log(`onDropIntoCell():`, $event);
     if(MetaAttribute.isMetaAttribute($event)) {
+      console.log(`onDropIntoCell(): isMetaAttribute()`);
       this.addAttribute($event as MetaAttribute, cell)
     }
     else if(Tool.isTool($event)) {
+      console.log(`onDropIntoCell(): isTool()`);
       this.addTool($event as Tool, cell);
     }
     else {
@@ -101,6 +103,8 @@ export class TemplateTableEditorComponent implements OnInit {
             return '123.0';
           case AttributeType.ManyToOne:
             return 'Search...';
+          case AttributeType.Enumeration:
+            return 'Enumeration';
           default:
             return `UNKNOWN: data type ${attribute.type}`;
         }
@@ -128,6 +132,12 @@ export class TemplateTableEditorComponent implements OnInit {
     cell.attributeName = undefined;
     if(cell.component) {
       cell.component = undefined;
+    }
+  }
+
+  onCellClicked(cell: Cell) {
+    if(cell.tool) {
+      this.propertySheetService.edit(cell.tool);
     }
   }
 }

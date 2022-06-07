@@ -38,7 +38,7 @@ export class ExpressionControlComponent implements OnChanges, OnDestroy {
 
     // Create a list of control expressions
     if(this.formMap) {
-      console.log('ExpressionControlComponent: formGroup:', this.formMap);
+      console.log('ExpressionControlComponent: formMap:', this.formMap);
       const matches: RegExpMatchArray[] = Array.from(this.expression.matchAll(/\${([a-zA-Z0-9_\\.]+)}/gm));
       for(const nextMatch of matches) {
         const control = this.findControl(nextMatch[1], this.formMap);

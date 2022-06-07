@@ -66,6 +66,12 @@ export const ImagePropertyList = [
   { name: 'imageUrl', type: PropertyType.string},
 ];
 
+export const TextToolPropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'text', type: PropertyType.string},
+];
+
 // Not all the properties, just the ones we wanted to edit via the property sheet
 export const TemplatePropertyList = [
   { name: 'binding', type: PropertyType.string},
@@ -85,5 +91,6 @@ export type PropertyListMapType = {
 export const PropertyListMap: PropertyListMapType = {
   'Button': ButtonPropertyList,
   'Image': ImagePropertyList,
+  'TextTool': TextToolPropertyList,
   'Template': TemplatePropertyList,
 };
