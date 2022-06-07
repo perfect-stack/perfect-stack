@@ -3,7 +3,7 @@
     <table class="table table-striped">
       <thead>
       <tr>
-        <th class="wrapper hover-highlight" *ngFor="let nextCell of template.cells[0]" my-dropzone (myDropZoneDroppedEvent)="onDropIntoCell($event, nextCell)">
+        <th class="wrapper hover-highlight" *ngFor="let nextCell of template.cells[0]" my-dropzone (myDropZoneDroppedEvent)="onDropIntoTableHeader($event, nextCell)">
         <span class="">
           {{getAttributeLabel(nextCell, metaEntityMap)}}
         </span>
@@ -20,7 +20,15 @@
       </thead>
       <tbody>
       <tr>
-        <td *ngFor="let nextCell of template.cells[0]" (click)="onCellClicked(nextCell)">{{getDataTypePlaceholder(nextCell, metaEntityMap)}}</td>
+        <td *ngFor="let nextCell of template.cells[0]"
+            (click)="onCellClicked(nextCell)">
+          {{getDataTypePlaceholder(nextCell, metaEntityMap)}}
+        </td>
+        <!--<td *ngFor="let nextCell of template.cells[0]"
+            (click)="onCellClicked(nextCell)"
+            my-dropzone (myDropZoneDroppedEvent)="onDropIntoTableCell($event, nextCell)">
+          {{getDataTypePlaceholder(nextCell, metaEntityMap)}}
+        </td>-->
       </tr>
       </tbody>
     </table>

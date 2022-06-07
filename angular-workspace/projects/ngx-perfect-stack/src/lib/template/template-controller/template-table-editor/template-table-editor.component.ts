@@ -60,10 +60,10 @@ export class TemplateTableEditorComponent implements OnInit {
     const firstRow = this.template.cells[0];
     firstRow.push(cell);
 
-    this.onDropIntoCell($event, cell);
+    this.onDropIntoTableHeader($event, cell);
   }
 
-  onDropIntoCell($event: any, cell: Cell) {
+  onDropIntoTableHeader($event: any, cell: Cell) {
     console.log(`onDropIntoCell():`, $event);
     if(MetaAttribute.isMetaAttribute($event)) {
       console.log(`onDropIntoCell(): isMetaAttribute()`);
@@ -76,6 +76,10 @@ export class TemplateTableEditorComponent implements OnInit {
     else {
       console.warn('onDropzoneDropped but supplied object is not a MetaAttribute or Tool');
     }
+  }
+
+  onDropIntoTableCell($event: any, nextCell: Cell) {
+
   }
 
   addAttribute(attribute: MetaAttribute, cell: Cell) {
@@ -140,4 +144,5 @@ export class TemplateTableEditorComponent implements OnInit {
       this.propertySheetService.edit(cell.tool);
     }
   }
+
 }
