@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Cell, MetaPage, Template, TemplateType} from '../../../domain/meta.page';
+import {Cell, MetaPage, Template, TemplateLocationType, TemplateType} from '../../../domain/meta.page';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
@@ -17,7 +17,6 @@ import {DataService} from '../../data-service/data.service';
 import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
 import {DebugService} from '../../../utils/debug/debug.service';
 import {Router} from '@angular/router';
-import {TemplateLocationType} from '../../../domain/meta.page';
 
 
 // This file contains many Components because they have a circular dependency on the top-level component of
@@ -62,6 +61,7 @@ export class LayoutComponent implements OnInit {
       this.metaEntity = this.ctx.metaEntityMap.get(this.template.metaEntityName) as MetaEntity;
       if(!this.formGroup && this.ctx.formMap && this.template.binding) {
         this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
+        this.relationshipProperty = this.template.binding;
       }
     }
   }

@@ -73,16 +73,6 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "status"
-          },
-          {
-            "width": "1",
-            "height": "1",
-            "attributeName": "sex"
-          },
-          {
-            "width": "1",
-            "height": "1",
             "tool": {
               "type": "TextTool",
               "containerStyles": "",

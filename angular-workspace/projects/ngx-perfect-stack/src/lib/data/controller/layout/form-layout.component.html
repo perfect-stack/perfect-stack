@@ -10,9 +10,9 @@
           </ng-container>
           <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
 
-          <ng-container *ngIf="cell.tool">
+          <!--<ng-container *ngIf="cell.tool">
             <lib-tool-view [tool]="cell.tool"></lib-tool-view>
-          </ng-container>
+          </ng-container>-->
 
           <!-- If the cell has it's own template then we recursively nest the template inside of the cell. Which means
            we need to pass down the formGroup of the cell and name of the property for that formGroup -->

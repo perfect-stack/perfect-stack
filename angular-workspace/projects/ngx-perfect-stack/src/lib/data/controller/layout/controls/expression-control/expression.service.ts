@@ -73,7 +73,6 @@ export class ExpressionService {
 
 
   evaluateFormGroup(expression: string, formGroup: FormGroup): string {
-    console.log('evaluateFormGroup', expression);
     const controlExpressionMatchList = this.buildFromFormGroup(expression, formGroup);
     return this.searchAndReplace(expression, controlExpressionMatchList);
   }
