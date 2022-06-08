@@ -149,19 +149,16 @@ body {
 }
 
 
-/*.form-control[readonly] {
-  background: unset;
-  padding-left: 0;
-  border: 0;
-  font-weight: 400;
-}*/
+/********  Footer **********************/
 
-/*
-button[readonly] {
-  background: #a94442;
+.text-footer {
+  color: $secondary;
 }
-*/
 
+// This one is actually used by the Audit View because it's only needed to appear at the bottom of that
+.border-footer {
+  border-bottom: solid $secondary 2px;
+}
 
 /********  Draggable classes ***********/
 

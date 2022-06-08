@@ -1,5 +1,5 @@
 <div class="d-flex flex-column h-100">
-  <div class="flex-grow-1 border-bottom border-secondary border-2 pb-4" *ngIf="mode == 'view'">
+  <div class="flex-grow-1 border-footer pb-4" *ngIf="mode == 'view'">
     <div class="link-primary mt-3" (click)="toggleShowRecords()" id="showAuditRecords" *ngIf="!showRecords">Show audit records</div>
 
     <ng-container *ngIf="showRecords">
