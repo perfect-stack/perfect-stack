@@ -1,13 +1,19 @@
-<lib-ngx-perfect-stack
-  applicationTitle="Demo"
-  applicationTitleFont="Rokkitt"
-  applicationLogo="/assets/White logo - no background.svg"
-  applicationLogoWidth="100"
-  menuBarBackgroundColor="orange"
-  menuBarDividerColor="#ffffff thin solid"
->
-</lib-ngx-perfect-stack>
+<div class="vh-100">
+  <div class="d-flex flex-column h-100">
+    <lib-ngx-perfect-stack
+      applicationTitle="Demo"
+      applicationTitleFont="Rokkitt"
+      applicationLogo="/assets/White logo - no background.svg"
+      applicationLogoWidth="100"
+      menuBarBackgroundColor="orange"
+      menuBarDividerColor="#ffffff thin solid"
+    >
+    </lib-ngx-perfect-stack>
 
-<router-outlet></router-outlet>
+    <div class="flex-grow-1">
+      <router-outlet></router-outlet>
+    </div>
 
-<app-toasts></app-toasts>
+    <app-toasts></app-toasts>
+  </div>
+</div>

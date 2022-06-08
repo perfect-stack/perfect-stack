@@ -11,6 +11,7 @@ import {
 } from '../controller/layout/controls/date-picker-control/custom-date-parser-formatter';
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
+import {NewFormService} from '../data-edit/form-service/new-form.service';
 
 @Component({
   selector: 'app-data-search',
@@ -37,6 +38,7 @@ export class DataSearchComponent implements OnInit {
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly formService: FormService,
+              protected readonly newFormService: NewFormService,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly dataService: DataService) { }
 
@@ -51,8 +53,9 @@ export class DataSearchComponent implements OnInit {
           if(!ctx.formMap) {
             ctx.formMap = new Map<string, AbstractControl>();
           }
-          const criteriaForm = this.formService.createFormGroup(ctx.mode, this.searchCriteriaTemplate, ctx.metaPageMap, ctx.metaEntityMap, null)
+          const criteriaForm = this.newFormService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null)
           ctx.formMap.set('criteria', criteriaForm);
+          console.log('Criteria form:', criteriaForm);
 
           // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
           this.resultTableTemplate = ctx.metaPage.templates[1];

@@ -10,6 +10,9 @@
   </div>
 </div>
 
-<div class="container-fluid" *ngIf="style === 'Footer'">
-  <span>Client: {{clientVersion}}</span> <span>Server: {{serverVersion}}</span>
+<div *ngIf="style === 'Footer'">
+  <div class="d-flex justify-content-between small text-secondary py-3">
+    <div>Version: {{clientVersion}} / {{serverVersion}}</div>
+    <div>Copyright ©2022 Department of Conservation</div>
+  </div>
 </div>

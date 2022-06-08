@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-config';
 import {HttpClient} from '@angular/common/http';
 import {DebugService} from '../../utils/debug/debug.service';
@@ -13,6 +13,7 @@ export class VersionComponent implements OnInit {
   clientVersion = '';
   serverVersion = '';
 
+  @Input()
   style: 'Page' | 'Footer' = 'Page';
 
   constructor(@Inject(STACK_CONFIG)

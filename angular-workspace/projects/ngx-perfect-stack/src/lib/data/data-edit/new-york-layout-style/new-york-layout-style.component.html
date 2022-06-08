@@ -1,16 +1,25 @@
-<div class="container-fluid new-york-layout-style" *ngIf="ctx">
-  <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
-    <h2 class="mb-3" id="sectionHdg">{{ctx.metaPage.title}}</h2>
+<div class="d-flex flex-column h-100">
+  <div class="container-fluid new-york-layout-style" *ngIf="ctx">
+    <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
+      <h2 class="mb-3" id="sectionHdg">{{ctx.metaPage.title}}</h2>
 
-    <ng-container *ngFor="let template of ctx.metaPage.templates; index as i">
-      <lib-controller [ctx]="ctx" [template]="template">
-        <ng-container BottomRightActions [ngSwitch]="ctx.mode">
-          <ng-content select="[BottomRightActions]"></ng-content>
-        </ng-container>
-      </lib-controller>
-    </ng-container>
+      <ng-container *ngFor="let template of ctx.metaPage.templates; index as i">
+        <lib-controller [ctx]="ctx" [template]="template">
+          <ng-container BottomRightActions [ngSwitch]="ctx.mode">
+            <ng-content select="[BottomRightActions]"></ng-content>
+          </ng-container>
+        </lib-controller>
+      </ng-container>
+    </div>
+
   </div>
 
-  <lib-audit-view [mode]="'view'" [entityId]="ctx.id"></lib-audit-view>
+  <div class="container-fluid flex-grow-1">
+    <lib-audit-view [mode]="'view'" [entityId]="ctx.id"></lib-audit-view>
+  </div>
+
+  <div class="container-fluid">
+    <lib-version [style]="'Footer'"></lib-version>
+  </div>
 </div>
 
