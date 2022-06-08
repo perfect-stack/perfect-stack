@@ -29,16 +29,13 @@ export class TextToolComponent implements OnInit {
   constructor(protected readonly expressionService: ExpressionService) { }
 
   ngOnInit(): void {
-    //this.textValue = this.expressionService.evaluate(this.textTool.text, this.ctx.dataMap);
-    //this.textValue = this.expressionService.evaluate(this.textTool.text, {});
-    //this.textValue = this.textTool.text;
     if(this.formGroup) {
       this.textValue = this.expressionService.evaluateFormGroup(this.textTool.text, this.formGroup);
-      this.stylesValue = this.expressionService.evaluateFormGroup(this.textTool.styles, this.formGroup);
+      this.stylesValue = this.expressionService.replaceSpaces(this.expressionService.evaluateFormGroup(this.textTool.styles, this.formGroup), '-');
     }
     else if(this.ctx && this.ctx.dataMap) {
       this.textValue = this.expressionService.evaluate(this.textTool.text, this.ctx.dataMap);
-      this.stylesValue = this.expressionService.evaluate(this.textTool.styles, this.ctx.dataMap);
+      this.stylesValue = this.expressionService.replaceSpaces(this.expressionService.evaluate(this.textTool.styles, this.ctx.dataMap), '-');
     }
   }
 

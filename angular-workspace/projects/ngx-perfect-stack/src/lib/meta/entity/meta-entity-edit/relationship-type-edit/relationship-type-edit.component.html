@@ -21,7 +21,7 @@
 
     <div class="d-flex align-items-baseline mt-2">
       <div *ngIf="typeaheadSearchControl">
-        <span class="badge bg-secondary me-1" *ngFor="let searchTerm of typeaheadSearchControl.value; let i = index;">
+        <span class="badge bg-success me-1" *ngFor="let searchTerm of typeaheadSearchControl.value; let i = index;">
           <span>{{toAttributeLabel(searchTerm)}}</span><span class="material-icons small" (click)="removeSearchTerm(i)">close</span>
         </span>
       </div>

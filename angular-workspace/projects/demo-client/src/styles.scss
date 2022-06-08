@@ -221,6 +221,12 @@ button[readonly] {
   color: $danger;
 }
 
+.status-badge-Presumed-Dead {
+  @include badge-mixin;
+  background: #FFFAEB;
+  color: $warning;
+}
+
 .status-badge-Unknown {
   @include badge-mixin;
   background: #EFF8FF;

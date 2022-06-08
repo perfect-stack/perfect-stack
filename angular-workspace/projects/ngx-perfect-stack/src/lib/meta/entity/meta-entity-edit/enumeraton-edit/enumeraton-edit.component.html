@@ -4,7 +4,7 @@
   <button class="btn btn-outline-success" (click)="onAdd(nextValueFormGroup.value.nextValue)">Add</button>
 </form>
 
-<span class="badge bg-secondary me-1" *ngFor="let value of formGroup.value.enumeration; let i = index;">
+<span class="badge bg-success me-1" *ngFor="let value of formGroup.value.enumeration; let i = index;">
   <span>{{value}}</span><span class="material-icons small" (click)="removeValue(i)">close</span>
 </span>
 

@@ -107,6 +107,14 @@ export class ExpressionService {
     }
   }
 
+  /**
+   * This is potentially the start of a more complex "escaping" mechanism where certain expressions have special
+   * characters replaced so they become "code" friendly. For example spaces replaced by dashes for CSS styles.
+   */
+  replaceSpaces(value: string, replaceValue: string) {
+    return value.replace(' ', replaceValue);
+  }
+
 }
 
 
