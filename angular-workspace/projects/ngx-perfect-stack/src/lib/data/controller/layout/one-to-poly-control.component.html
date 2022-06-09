@@ -1,11 +1,9 @@
 <ng-container *ngIf="cell && cell.attribute">
-  <div class="border-top">
-    <ng-container *ngIf="cell && cell.attribute && cell.attribute.name">
-      <lib-card-layout
-        [mode]="mode"
-        [formGroup]="formGroup"
-        [relationshipProperty]="cell.attribute.name">
-      </lib-card-layout>
-    </ng-container>
-  </div>
+  <ng-container *ngIf="cell && cell.attribute && cell.attribute.name">
+    <lib-card-layout
+      [mode]="mode"
+      [formGroup]="formGroup"
+      [relationshipProperty]="cell.attribute.name">
+    </lib-card-layout>
+  </ng-container>
 </ng-container>

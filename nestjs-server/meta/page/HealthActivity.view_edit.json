@@ -2,6 +2,7 @@
   "name": "HealthActivity.view_edit",
   "title": "Health",
   "type": "view_edit",
+  "layoutStyle": "Paris",
   "templates": [
     {
       "cells": [
@@ -9,121 +10,24 @@
           {
             "width": "4",
             "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            },
             "attributeName": "condition"
           },
           {
             "width": "4",
             "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            },
             "attributeName": "lice"
           },
           {
             "width": "4",
             "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            },
             "attributeName": "whisker_fungus"
           }
         ]
       ],
       "metaEntityName": "HealthActivity",
-      "type": "form"
+      "type": "form",
+      "templateHeading": "Health"
     }
-  ]
+  ],
+  "dataQueryList": []
 }

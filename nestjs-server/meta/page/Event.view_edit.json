@@ -2,11 +2,17 @@
   "name": "Event.view_edit",
   "title": "Event View/Edit",
   "type": "view_edit",
-  "layoutStyle": "",
+  "layoutStyle": "Paris",
   "templates": [
     {
       "cells": [
         [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "event_type",
+            "component": "Select"
+          },
           {
             "width": "3",
             "height": "1",
@@ -14,68 +20,119 @@
           },
           {
             "width": "3",
-            "height": "1",
-            "attributeName": "bird"
-          },
-          {
-            "width": "3",
             "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1",
-            "attributeName": "location"
           }
         ],
         [
           {
             "width": "6",
-            "height": "1"
-          },
-          {
-            "width": "3",
             "height": "1",
-            "attributeName": "northing"
+            "attributeName": "location"
           },
           {
             "width": "3",
             "height": "1",
             "attributeName": "easting"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "northing"
+          }
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "form",
+      "binding": "event",
+      "templateHeading": "Event details"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "bird"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "status"
           }
         ],
         [
           {
             "width": "6",
-            "height": "4",
-            "attributeName": "comments",
-            "component": "TextArea"
+            "height": "1",
+            "attributeName": "species",
+            "component": "SelectTwo",
+            "componentData": {
+              "secondaryAttributeName": "form"
+            }
           },
           {
-            "width": "6",
-            "height": "4",
-            "attributeName": "observers",
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "age_class"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "3",
+            "attributeName": "comments",
+            "component": "TextArea"
+          }
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "form",
+      "templateHeading": "Bird details",
+      "binding": "event"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
             "template": {
+              "binding": "observers",
+              "templateHeading": "",
               "type": "table",
               "metaEntityName": "EventObserver",
-              "orderByName": "person",
+              "orderByName": "UNKNOWN",
               "orderByDir": "ASC",
               "cells": [
                 [
                   {
-                    "width": "3",
+                    "width": "12",
                     "height": "1",
                     "attributeName": "person"
                   },
                   {
-                    "width": "3",
+                    "width": "1",
                     "height": "1",
                     "attributeName": "roles"
                   }
                 ]
-              ]
+              ],
+              "locations": {}
             }
           }
-        ],
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "form",
+      "templateHeading": "Observers",
+      "binding": "event"
+    },
+    {
+      "cells": [
         [
           {
             "width": "12",
@@ -86,6 +143,7 @@
       ],
       "metaEntityName": "Event",
       "type": "form",
+      "templateHeading": "Activities",
       "binding": "event"
     }
   ],

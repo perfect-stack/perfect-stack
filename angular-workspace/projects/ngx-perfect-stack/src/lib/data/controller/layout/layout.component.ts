@@ -10,7 +10,7 @@ import {
   FormControlWithAttribute,
   FormService
 } from '../../data-edit/form-service/form.service';
-import {MetaEntity} from '../../../domain/meta.entity';
+import {AttributeType, MetaEntity} from '../../../domain/meta.entity';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CardItemDialogComponent} from './controls/card-item-dialog/card-item-dialog.component';
 import {DataService} from '../../data-service/data.service';
@@ -482,6 +482,10 @@ export class FormLayoutComponent implements OnInit, OnChanges {
     return [
       `col-${cell.width}`
     ];
+  }
+
+  get AttributeType() {
+    return AttributeType;
   }
 }
 

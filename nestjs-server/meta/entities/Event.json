@@ -115,6 +115,78 @@
       "typeaheadSearch": [
         "name"
       ]
+    },
+    {
+      "name": "event_type",
+      "label": "Event type",
+      "description": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Capture",
+        "Sighting",
+        "Audio",
+        "Transmitter",
+        "Electronic"
+      ]
+    },
+    {
+      "name": "species",
+      "label": "Species",
+      "description": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "Species",
+      "typeaheadSearch": [
+        "name"
+      ]
+    },
+    {
+      "name": "form",
+      "label": "Form",
+      "description": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "description": "The status of this Bird at the time of the Event",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Alive",
+        "Dead",
+        "Unknown",
+        "Presumed Dead"
+      ]
+    },
+    {
+      "name": "age_class",
+      "label": "Age class",
+      "description": "The age class of the Bird at the time of the Event",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Adult",
+        "Sub adult",
+        "Juvenile",
+        "Chick",
+        "Egg"
+      ]
     }
   ]
 }
