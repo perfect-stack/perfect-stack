@@ -3,7 +3,7 @@ import {PageListener} from './page-listener';
 import {FormContext} from '../data/data-edit/form-service/form.service';
 import {ParamMap} from '@angular/router';
 import {MetaAttribute} from '../domain/meta.entity';
-import {EventListener} from './event-listener';
+import {PerfectStackEventListener} from './perfect-stack-event-listener';
 
 enum ListenerType {
   PageListener = 'PageListener'
@@ -14,11 +14,11 @@ enum ListenerType {
 })
 export class EventService {
 
-  listenerMap = new Map<ListenerType, Map<string, EventListener[]>>();
+  listenerMap = new Map<ListenerType, Map<string, PerfectStackEventListener[]>>();
 
   constructor() { }
 
-  getListenerList(listenerType: ListenerType, name: string) {
+  getListenerList(listenerType: ListenerType, name: string): PerfectStackEventListener[] {
     if(!listenerType) {
       throw new Error(`ListenerType must be supplied but is ${JSON.stringify(listenerType)}`);
     }
@@ -29,7 +29,7 @@ export class EventService {
 
     let listenerMap = this.listenerMap.get(listenerType);
     if(!listenerMap) {
-      listenerMap = new Map<string, EventListener[]>();
+      listenerMap = new Map<string, PerfectStackEventListener[]>();
       this.listenerMap.set(listenerType, listenerMap);
     }
 

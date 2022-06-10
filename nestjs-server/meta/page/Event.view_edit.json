@@ -39,6 +39,14 @@
             "height": "1",
             "attributeName": "northing"
           }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "3",
+            "attributeName": "comments",
+            "component": "TextArea"
+          }
         ]
       ],
       "metaEntityName": "Event",
@@ -79,14 +87,6 @@
             "width": "3",
             "height": "1",
             "attributeName": "age_class"
-          }
-        ],
-        [
-          {
-            "width": "12",
-            "height": "3",
-            "attributeName": "comments",
-            "component": "TextArea"
           }
         ]
       ],

@@ -37,8 +37,12 @@ export class ManyToOneControlComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.model = this.formGroup.controls[this.attribute.name].value;
-    this.updateDisplayValue();
+    // pump it once at the start to init
+    this.updateDisplayValue(this.formGroup.controls[this.attribute.name].value);
+
+    this.formGroup.controls[this.attribute.name].valueChanges.subscribe((dataValue) => {
+      this.updateDisplayValue(dataValue);
+    });
   }
 
   search: OperatorFunction<string, readonly Item[]> = (text$: Observable<string>) =>
@@ -67,19 +71,18 @@ export class ManyToOneControlComponent implements OnInit {
     const item = event.item;
     this.dataService.findById(this.attribute.relationshipTarget, item.id).subscribe(entity => {
       this.formGroup.controls[this.attribute.name].setValue(entity);
-      this.updateDisplayValue();
     });
   }
 
-  updateDisplayValue() {
-    if(this.model) {
-      this.displayValue = '';
+  updateDisplayValue(dataValue: any) {
+    this.displayValue = '';
+    if(dataValue) {
       for(const displayAttributeName of this.attribute.typeaheadSearch) {
-        this.displayValue += this.formGroup.controls[this.attribute.name].value[displayAttributeName];
+        this.displayValue += dataValue[displayAttributeName];
         this.displayValue += ' ';
       }
 
-      //this.formGroup.controls[this.attribute.name].value.displayText = this.displayValue;
+      this.model = dataValue;
       this.model.displayText = this.displayValue;
     }
   }

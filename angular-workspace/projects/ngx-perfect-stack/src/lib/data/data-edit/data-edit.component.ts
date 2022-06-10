@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable, withLatestFrom} from 'rxjs';
+import {Observable, tap, withLatestFrom} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {FormContext, FormService} from './form-service/form.service';
@@ -7,6 +7,7 @@ import * as uuid from 'uuid';
 import {AttributeType} from '../../domain/meta.entity';
 import {IdentifierVisitor, IntegerVisitor, MetaEntityTreeWalker} from '../../utils/tree-walker/meta-entity-tree-walker';
 import {DebugService} from '../../utils/debug/debug.service';
+import {EventService} from '../../event/event.service';
 
 
 @Component({
@@ -26,7 +27,8 @@ export class DataEditComponent implements OnInit {
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly formService: FormService,
-              protected readonly dataService: DataService) {
+              protected readonly dataService: DataService,
+              protected readonly eventService: EventService) {
   }
 
   ngOnInit(): void {
@@ -41,7 +43,9 @@ export class DataEditComponent implements OnInit {
       console.log('queryParamMap', queryParamMap.keys);
 
       if(this.metaName && this.mode) {
-        this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, this.entityId);
+        this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, this.entityId).pipe(tap((ctx) => {
+          this.eventService.dispatchOnPageLoad('Event.view_edit', ctx, paramMap, queryParamMap);
+        }));
       }
       else {
         throw new Error('Invalid input parameters; ');
