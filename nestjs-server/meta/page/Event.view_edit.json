@@ -72,7 +72,8 @@
           },
           {
             "width": "3",
-            "height": "1"
+            "height": "1",
+            "attributeName": "sex"
           },
           {
             "width": "3",

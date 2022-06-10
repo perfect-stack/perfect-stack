@@ -187,6 +187,21 @@
         "Chick",
         "Egg"
       ]
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "description": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Male",
+        "Female",
+        "Unknown"
+      ]
     }
   ]
 }
