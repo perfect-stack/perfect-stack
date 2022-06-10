@@ -1,5 +1,5 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {Template, TemplateNavigationType, TemplateType} from '../../domain/meta.page';
+import {TemplateNavigationType, TemplateType} from '../../domain/meta.page';
 
 @Injectable({
   providedIn: 'root'
@@ -72,6 +72,12 @@ export const TextToolPropertyList = [
   { name: 'text', type: PropertyType.string},
 ];
 
+export const IconPropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'iconName', type: PropertyType.string},
+];
+
 // Not all the properties, just the ones we wanted to edit via the property sheet
 export const TemplatePropertyList = [
   { name: 'binding', type: PropertyType.string},
@@ -90,6 +96,7 @@ export type PropertyListMapType = {
 
 export const PropertyListMap: PropertyListMapType = {
   'Button': ButtonPropertyList,
+  'Icon': IconPropertyList,
   'Image': ImagePropertyList,
   'TextTool': TextToolPropertyList,
   'Template': TemplatePropertyList,

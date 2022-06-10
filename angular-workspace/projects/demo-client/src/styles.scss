@@ -250,6 +250,31 @@ body {
   color: #667085;
 }
 
+// The first group of three above us can be removed once we fully cut over to symbols and stop using badges for sex symbols
+
+.sex-symbol-male {
+  @include badge-mixin;
+  background: #EFF8FF;
+  color: $primary;
+}
+
+.sex-symbol-female {
+  @include badge-mixin;
+  background: #FEF3F2;
+  color: $danger;
+}
+
+.sex-symbol-question_mark {
+  @include badge-mixin;
+  background: #EAECF0;
+  color: #667085;
+}
+
+.sex-symbol-error {
+  @include badge-mixin;
+  background: #EAECF0;
+  color: #667085;
+}
 
 /*********** Miscellaneous **********/
 .bird-profile-image-width {

@@ -1,3 +1,10 @@
 .row {
   margin-bottom: 12px;
 }
+
+
+.tool {
+  padding: 6px;
+  white-space: nowrap;
+  overflow: clip;
+}

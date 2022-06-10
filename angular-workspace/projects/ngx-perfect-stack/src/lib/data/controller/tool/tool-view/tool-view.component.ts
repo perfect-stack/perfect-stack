@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ButtonTool, ImageTool, TextTool, Tool} from '../../../../domain/meta.page';
+import {ButtonTool, IconTool, ImageTool, TextTool, Tool} from '../../../../domain/meta.page';
 import {FormContext} from '../../../data-edit/form-service/form.service';
 import {FormGroup} from '@angular/forms';
 
@@ -39,4 +39,7 @@ export class ToolViewComponent implements OnInit {
     return this.tool as TextTool;
   }
 
+  asIconTool() {
+    return this.tool as IconTool;
+  }
 }

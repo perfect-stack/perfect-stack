@@ -89,6 +89,16 @@
               "styles": "sex-symbol-${sex}",
               "text": "${sex}"
             }
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "tool": {
+              "type": "Icon",
+              "containerStyles": "",
+              "styles": "?mapSexSymbolToIconStyle(${sex})",
+              "iconName": "?mapSexSymbolToIcon(${sex})"
+            }
           }
         ],
         [

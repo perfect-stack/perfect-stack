@@ -1,13 +1,13 @@
 <div>
   <div class="row">
     <div class="col-6">
-      <button class="btn btn-primary text-start w-100 drag-handle" my-draggable [drag-data]="ToolPaletteComponent.buttonPrototype">
+      <button class="btn btn-primary tool text-start w-100 drag-handle" my-draggable [drag-data]="ToolPaletteComponent.buttonPrototype">
         <span class="material-icons align-middle">drag_indicator</span>
         Button
       </button>
     </div>
     <div class="col-6">
-      <div class="form-control drag-handle" my-draggable [drag-data]="ToolPaletteComponent.textPrototype">
+      <div class="form-control tool drag-handle" my-draggable [drag-data]="ToolPaletteComponent.textPrototype">
         <span class="material-icons align-middle">drag_indicator</span>
         Text
       </div>
@@ -16,17 +16,29 @@
 
   <div class="row">
     <div class="col-6">
-      <div class="form-control drag-handle" my-draggable [drag-data]="ToolPaletteComponent.imagePrototype">
+      <div class="form-control tool drag-handle" my-draggable [drag-data]="ToolPaletteComponent.imagePrototype">
         <span class="material-icons align-middle">drag_indicator</span>
         <span class="material-icons align-middle">image</span>
         Image
       </div>
     </div>
     <div class="col-6">
-      <div class="form-select drag-handle" my-draggable>
+      <div class="form-select tool drag-handle" my-draggable>
         <span class="material-icons align-middle">drag_indicator</span>
         Select
       </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="form-control tool drag-handle" my-draggable [drag-data]="ToolPaletteComponent.iconPrototype">
+        <span class="material-icons align-middle">drag_indicator</span>
+        <span class="material-icons align-middle">interests</span>
+        Icon
+      </div>
+    </div>
+    <div class="col-6">
     </div>
   </div>
 </div>

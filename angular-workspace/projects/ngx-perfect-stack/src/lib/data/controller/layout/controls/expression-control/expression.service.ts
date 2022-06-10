@@ -12,9 +12,44 @@ export class ExpressionService {
     return mode === 'view' ? params.join(' ') : 'Update ' + params.join(' ');
   }
 
+  mapSexSymbolToIcon(controlExpressionMatchList: ControlExpressionMatch[]): string {
+    if(controlExpressionMatchList.length === 1) {
+      const sex = controlExpressionMatchList[0].value;
+      if(sex) {
+        const sexSymbolMap = new Map<string, string>();
+        sexSymbolMap.set('Male', 'male');
+        sexSymbolMap.set('Female', 'female');
+        sexSymbolMap.set('Unknown', 'question_mark');
+        const iconName = sexSymbolMap.get(sex);
+        if(iconName) {
+          return iconName
+        }
+        else {
+          return 'error'; // If not found then convert the icon into an error
+        }
+      }
+      else {
+        return ''; // No sex value so just return an empty name
+      }
+    }
+    else {
+      throw new Error('Must supply exactly one parameter value to this method');
+    }
+  }
+
+  mapSexSymbolToIconStyle(controlExpressionMatchList: ControlExpressionMatch[]): string {
+    return `sex-symbol-${this.mapSexSymbolToIcon(controlExpressionMatchList)}`;
+  }
+
   evaluate(expression: string, dataMap: Map<string, any>): string {
     const controlExpressionMatchList = this.buildControlExpressionMatchList(expression, dataMap);
-    return this.searchAndReplace(expression, controlExpressionMatchList);
+    if(expression.startsWith('?')) {
+      const methodName = this.resolveMethodName(expression);
+      return this.invokeMethod(methodName, controlExpressionMatchList);
+    }
+    else {
+      return this.searchAndReplace(expression, controlExpressionMatchList);
+    }
   }
 
   private buildControlExpressionMatchList(expression: string, dataMap: Map<string, any>): ControlExpressionMatch[] {
@@ -30,6 +65,34 @@ export class ExpressionService {
       });
     }
     return controlExpressionMatchList;
+  }
+
+  private resolveMethodName(expression: string): string {
+    if(expression.startsWith('?')) {
+      const idx = expression.indexOf('(');
+      if(idx >= 0) {
+        const methodName = expression.substring(1, idx);
+        return methodName;
+      }
+      else {
+        throw new Error('Expression Syntax Error. If method invocation is specified with a starting ? then end of method name must be marked with a (');
+      }
+    }
+    else {
+      throw new Error('Expression does not start with the method invocation symbol of ?');
+    }
+  }
+
+  private invokeMethod(methodName: string, controlExpressionMatchList: ControlExpressionMatch[]): string {
+    if(methodName === 'mapSexSymbolToIcon') {
+      return this.mapSexSymbolToIcon(controlExpressionMatchList)
+    }
+    if(methodName === 'mapSexSymbolToIconStyle') {
+      return this.mapSexSymbolToIconStyle(controlExpressionMatchList)
+    }
+    else {
+      throw new Error(`Unknown method name of ${methodName}`);
+    }
   }
 
   private searchAndReplace(expression: string, controlExpressionMatchList: ControlExpressionMatch[]): string {
@@ -74,7 +137,13 @@ export class ExpressionService {
 
   evaluateFormGroup(expression: string, formGroup: FormGroup): string {
     const controlExpressionMatchList = this.buildFromFormGroup(expression, formGroup);
-    return this.searchAndReplace(expression, controlExpressionMatchList);
+    if(expression.startsWith('?')) {
+      const methodName = this.resolveMethodName(expression);
+      return this.invokeMethod(methodName, controlExpressionMatchList);
+    }
+    else {
+      return this.searchAndReplace(expression, controlExpressionMatchList);
+    }
   }
 
   buildFromFormGroup(expression: string, formGroup: FormGroup) {

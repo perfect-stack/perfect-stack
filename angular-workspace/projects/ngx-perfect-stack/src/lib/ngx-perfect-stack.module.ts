@@ -102,6 +102,7 @@ import {ImageToolComponent} from './data/controller/tool/tool-view/image-tool/im
 import { PropertySheetComponent } from './template/property-sheet/property-sheet.component';
 import { VeniceLayoutStyleComponent } from './data/data-edit/venice-layout-style/venice-layout-style.component';
 import { TextToolComponent } from './data/controller/tool/tool-view/text-tool/text-tool.component';
+import { IconToolComponent } from './data/controller/tool/tool-view/icon-tool/icon-tool.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -200,6 +201,7 @@ const routes: Routes = [
     PropertySheetComponent,
     VeniceLayoutStyleComponent,
     TextToolComponent,
+    IconToolComponent,
   ],
   providers: [
     AuthenticationService,

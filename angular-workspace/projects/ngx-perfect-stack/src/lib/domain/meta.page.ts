@@ -44,7 +44,8 @@ export enum ToolType {
   Button = 'Button',
   TextTool = 'TextTool',
   Image = 'Image',
-  Select = 'Select'
+  Select = 'Select',
+  Icon = 'Icon'
 }
 
 export class Tool {
@@ -68,6 +69,10 @@ export class ImageTool extends Tool {
 
 export class TextTool extends Tool {
   text: string;
+}
+
+export class IconTool extends Tool {
+  iconName: string;
 }
 
 export class TemplateLocationMap {
