@@ -23,4 +23,3 @@ Run `ng test ngx-perfect-stack` to execute the unit tests via [Karma](https://ka
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
 
-
