@@ -20,7 +20,7 @@ export class EventPageListenerService implements PageListener {
   onBeforeSave(ctx: FormContext): void {
   }
 
-  onManyToOneItemSelected(ctx: FormContext, attribute: MetaAttribute, itemSelected: any): void {
+  onManyToOneItemSelected(formGroup: FormGroup, attribute: MetaAttribute, itemSelected: any): void {
   }
 
   onPageLoad(ctx: FormContext, params: ParamMap, queryParams: ParamMap): void {

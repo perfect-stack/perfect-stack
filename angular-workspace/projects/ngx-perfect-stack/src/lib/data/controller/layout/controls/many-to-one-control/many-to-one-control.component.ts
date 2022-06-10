@@ -6,6 +6,7 @@ import {TypeaheadService} from './typeahead.service';
 import {Item} from './typeahead.response';
 import {NgbTypeaheadSelectItemEvent} from '@ng-bootstrap/ng-bootstrap';
 import {DataService} from '../../../../data-service/data.service';
+import {EventService} from '../../../../../event/event.service';
 
 @Component({
   selector: 'app-many-to-one-control',
@@ -33,6 +34,7 @@ export class ManyToOneControlComponent implements OnInit {
   displayValue: string;
 
   constructor(protected readonly dataService: DataService,
+              protected readonly eventService: EventService,
               protected readonly typeaheadService: TypeaheadService) {
   }
 
@@ -42,6 +44,7 @@ export class ManyToOneControlComponent implements OnInit {
 
     this.formGroup.controls[this.attribute.name].valueChanges.subscribe((dataValue) => {
       this.updateDisplayValue(dataValue);
+      //this.eventService.dispatchOnManyToOneItemSelected(this.formGroup, this.attribute, dataValue);
     });
   }
 
