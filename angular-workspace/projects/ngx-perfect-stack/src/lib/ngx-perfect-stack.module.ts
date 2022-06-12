@@ -103,6 +103,10 @@ import { PropertySheetComponent } from './template/property-sheet/property-sheet
 import { VeniceLayoutStyleComponent } from './data/data-edit/venice-layout-style/venice-layout-style.component';
 import { TextToolComponent } from './data/controller/tool/tool-view/text-tool/text-tool.component';
 import { IconToolComponent } from './data/controller/tool/tool-view/icon-tool/icon-tool.component';
+import { DateTimeControlComponent } from './data/controller/layout/controls/date-time-control/date-time-control.component';
+import { TimeControlComponent } from './data/controller/layout/controls/time-control/time-control.component';
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -202,6 +206,8 @@ const routes: Routes = [
     VeniceLayoutStyleComponent,
     TextToolComponent,
     IconToolComponent,
+    DateTimeControlComponent,
+    TimeControlComponent,
   ],
   providers: [
     AuthenticationService,

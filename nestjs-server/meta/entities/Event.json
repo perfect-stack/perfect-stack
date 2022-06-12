@@ -202,6 +202,16 @@
         "Female",
         "Unknown"
       ]
+    },
+    {
+      "name": "date_time",
+      "label": "Date time",
+      "description": "The date and time of the event",
+      "type": "DateTime",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     }
   ]
 }

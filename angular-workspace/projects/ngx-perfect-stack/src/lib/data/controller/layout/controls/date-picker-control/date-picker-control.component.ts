@@ -12,13 +12,14 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-st
 export class DatePickerControlComponent implements OnInit {
 
   @Input()
+  mode: string | null;
+
+  @Input()
   formGroup: FormGroup;
 
   @Input()
   name: string;
 
-  @Input()
-  mode: string | null;
 
   constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) { }
 
