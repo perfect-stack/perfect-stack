@@ -30,15 +30,18 @@ export class DateTimeControlComponent implements OnInit {
       const formControl = this.formGroup.controls[this.name];
       const databaseValue = formControl.value;
       if(databaseValue) {
-        console.log(`DateTimeControlComponent: databaseValue = ${databaseValue}`);
+        console.log(`DateTimeControlComponent-1: databaseValue = ${databaseValue}`);
         let zonedDateTime = ZonedDateTime.parse(databaseValue);
-        console.log(`DateTimeControlComponent: zonedDateTime`, zonedDateTime );
+        console.log(`DateTimeControlComponent-2: zonedDateTime`, zonedDateTime );
         const zoneId = ZoneId.of('Pacific/Auckland');
-        console.log(`DateTimeControlComponent: zoneId`, zoneId );
+        console.log(`DateTimeControlComponent-3: zoneId`, zoneId );
         if(zoneId) {
           zonedDateTime = zonedDateTime.withZoneSameInstant(zoneId);
-          this.dateTimeValue = DateTimeFormatter.ofPattern(this.stackConfig.dateTimeFormat).format(zonedDateTime);
-          console.log(`DateTimeControlComponent: dateTimeValue`, this.dateTimeValue );
+          console.log(`DateTimeControlComponent-4: zonedDateTime`, zonedDateTime );
+          const dateTimeFormat = this.stackConfig.dateTimeFormat;
+          console.log(`DateTimeControlComponent-5: dateTimeFormat`, dateTimeFormat );
+          this.dateTimeValue = DateTimeFormatter.ofPattern(dateTimeFormat).format(zonedDateTime);
+          console.log(`DateTimeControlComponent-6: dateTimeValue`, this.dateTimeValue );
         }
         else {
           console.error('Unable to load timezone - check that Timezone library has been imported');
