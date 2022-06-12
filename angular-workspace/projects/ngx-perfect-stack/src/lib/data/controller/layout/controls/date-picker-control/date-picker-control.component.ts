@@ -4,6 +4,9 @@ import {NgbDate, NgbInputDatepicker} from '@ng-bootstrap/ng-bootstrap';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 import {DateTimeFormatter, Instant, LocalDate, ZonedDateTime, ZoneId} from '@js-joda/core';
 
+import {Locale} from '@js-joda/locale_en-us';
+import '@js-joda/timezone';
+
 @Component({
   selector: 'app-date-picker-control',
   templateUrl: './date-picker-control.component.html',

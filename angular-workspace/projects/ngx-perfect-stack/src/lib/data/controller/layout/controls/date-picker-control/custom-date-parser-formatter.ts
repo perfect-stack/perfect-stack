@@ -1,6 +1,6 @@
 import {NgbDateParserFormatter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {Inject, Injectable} from '@angular/core';
-import { Locale } from '@js-joda/locale_en' // Get `Locale` from the prebuilt package of your choice
+import { Locale } from '@js-joda/locale_en-us' // Get `Locale` from the prebuilt package of your choice
 import {DateTimeFormatter, LocalDate, LocalDateTime} from '@js-joda/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
