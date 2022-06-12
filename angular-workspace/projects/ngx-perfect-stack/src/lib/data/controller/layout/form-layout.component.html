@@ -8,7 +8,7 @@
           <ng-container *ngIf="cell.attribute && cell.attribute.type !== AttributeType.OneToPoly">
             <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
           </ng-container>
-          <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+          <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
 
           <!--<ng-container *ngIf="cell.tool">
             <lib-tool-view [tool]="cell.tool"></lib-tool-view>
@@ -39,7 +39,7 @@
             <ng-container *ngIf="cell.attribute">
               <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
             </ng-container>
-            <lib-cell [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+            <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
           </ng-container>
 
           <!-- TODO: there's probably a tool one here, and in fact these have probably evolved into being just one block (same as above) -->

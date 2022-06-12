@@ -7,6 +7,7 @@ import {Item} from './typeahead.response';
 import {NgbTypeaheadSelectItemEvent} from '@ng-bootstrap/ng-bootstrap';
 import {DataService} from '../../../../data-service/data.service';
 import {EventService} from '../../../../../event/event.service';
+import {FormContext} from '../../../../data-edit/form-service/form.service';
 
 @Component({
   selector: 'app-many-to-one-control',
@@ -16,13 +17,16 @@ import {EventService} from '../../../../../event/event.service';
 export class ManyToOneControlComponent implements OnInit {
 
   @Input()
+  mode: string | null;
+
+  @Input()
+  ctx: FormContext;
+
+  @Input()
   formGroup: FormGroup;
 
   @Input()
   attribute: MetaAttribute;
-
-  @Input()
-  mode: string | null;
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
@@ -44,7 +48,10 @@ export class ManyToOneControlComponent implements OnInit {
 
     this.formGroup.controls[this.attribute.name].valueChanges.subscribe((dataValue) => {
       this.updateDisplayValue(dataValue);
-      //this.eventService.dispatchOnManyToOneItemSelected(this.formGroup, this.attribute, dataValue);
+
+      if(this.ctx) {
+        this.eventService.dispatchOnManyToOneItemSelected(this.ctx.metaPage.name, this.formGroup, this.attribute, dataValue);
+      }
     });
   }
 

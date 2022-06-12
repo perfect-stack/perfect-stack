@@ -57,6 +57,7 @@ export class EventService {
   }
 
   dispatchOnManyToOneItemSelected(pageName: string, formGroup: FormGroup, attribute: MetaAttribute, itemSelected: any): void {
+    console.log(`Dispatch event , {emitEvent: false} to meta page listeners: ${pageName}`);
     const listenerList = this.getListenerList(ListenerType.PageListener, pageName);
     for(const listener of listenerList) {
       const pageListener = listener as PageListener;

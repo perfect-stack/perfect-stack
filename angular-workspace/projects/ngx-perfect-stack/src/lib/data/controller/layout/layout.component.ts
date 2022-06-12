@@ -505,6 +505,9 @@ export class CellComponent implements OnInit {
   @Input()
   formGroup: FormGroup;
 
+  @Input()
+  ctx: FormContext;
+
   constructor() { }
 
   ngOnInit(): void {
