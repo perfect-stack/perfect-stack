@@ -26,7 +26,9 @@ export class DateTimeControlComponent implements OnInit {
 
   dateTimeValue: string;
 
-  constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) { }
+  constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) {
+    Locale.getAvailableLocales();
+  }
 
   ngOnInit(): void {
     if(this.mode !== 'edit') {
@@ -43,6 +45,7 @@ export class DateTimeControlComponent implements OnInit {
           console.log(`DateTimeControlComponent-4: zonedDateTime`, zonedDateTime );
           const dateTimeFormat = this.stackConfig.dateTimeFormat;
           console.log(`DateTimeControlComponent-5: dateTimeFormat`, dateTimeFormat );
+
           this.dateTimeValue = DateTimeFormatter.ofPattern(dateTimeFormat).format(zonedDateTime);
           console.log(`DateTimeControlComponent-6: dateTimeValue`, this.dateTimeValue );
         }
