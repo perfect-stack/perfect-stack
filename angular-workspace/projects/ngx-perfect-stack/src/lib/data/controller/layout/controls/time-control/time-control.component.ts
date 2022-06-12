@@ -2,7 +2,7 @@ import {Component, Inject, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {DateTimeFormatter, Instant, LocalDateTime, LocalTime, ZonedDateTime, ZoneId, ZoneOffset} from '@js-joda/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
-import {Locale} from '@js-joda/locale_en';
+import '@js-joda/locale_en';
 import '@js-joda/timezone';
 
 
