@@ -1,10 +1,16 @@
-<div class="row">
+<div class="row" *ngIf="mode === 'edit'">
   <div class="col-6">
-    <app-date-picker-control [mode]="mode" [formGroup]="formGroup" [name]="name"></app-date-picker-control>
+    <app-date-picker-control [mode]="mode" [formGroup]="formGroup" [name]="name" [includesTimeValue]="true"></app-date-picker-control>
   </div>
   <div class="col-6">
     <lib-time-control [mode]="mode" [formGroup]="formGroup" [name]="name"></lib-time-control>
   </div>
 </div>
 
-{{formGroup.controls[name].value}}
+<div class="row" *ngIf="mode !== 'edit'">
+  <div class="col-12">
+    <div class="form-control" readonly>
+      {{dateTimeValue}}
+    </div>
+  </div>
+</div>

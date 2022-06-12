@@ -1,2 +1,6 @@
 
-<input class="form-control" type="time">
+<input class="form-control"
+       [readonly]="isReadOnly"
+       (change)="onTimeChanged($event)"
+       [ngModel]="timeModel"
+       type="time">
