@@ -63,18 +63,21 @@ export const ButtonPropertyList = [
 export const ImagePropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
   { name: 'imageUrl', type: PropertyType.string},
 ];
 
 export const TextToolPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
   { name: 'text', type: PropertyType.string},
 ];
 
 export const IconPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
   { name: 'iconName', type: PropertyType.string},
 ];
 

@@ -52,6 +52,7 @@ export class Tool {
   type: ToolType;
   containerStyles: string;
   styles: string;
+  label: string;
 
   static isTool(something: any) {
     return something.type && Object.values(ToolType).indexOf(something.type) >= 0;
@@ -59,7 +60,6 @@ export class Tool {
 }
 
 export class ButtonTool extends Tool {
-  label: string;
   route: string;
 }
 

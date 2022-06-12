@@ -20,6 +20,7 @@ export class ToolPaletteComponent implements OnInit {
     type: ToolType.Image,
     containerStyles: '',
     styles: '',
+    label: '',
     imageUrl: '/assets/images/image.png'
   }
 
@@ -27,6 +28,7 @@ export class ToolPaletteComponent implements OnInit {
     type: ToolType.TextTool,
     containerStyles: '',
     styles: '',
+    label: '',
     text: ''
   }
 
@@ -34,6 +36,7 @@ export class ToolPaletteComponent implements OnInit {
     type: ToolType.Icon,
     containerStyles: '',
     styles: '',
+    label: '',
     iconName: 'icon_name'
   }
 
