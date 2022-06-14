@@ -88,20 +88,22 @@ export class ManyToOneControlComponent implements OnInit {
     this.displayValue = '';
     if(dataValue) {
       for(const displayAttributeName of this.attribute.typeaheadSearch) {
-        this.displayValue += dataValue[displayAttributeName];
-        this.displayValue += ' ';
+        if(dataValue[displayAttributeName]) {
+          this.displayValue += dataValue[displayAttributeName];
+          this.displayValue += ' ';
+        }
       }
 
       this.model = dataValue;
-      this.model.displayText = this.displayValue;
+      this.model.displayText = this.displayValue.trim();
     }
   }
 
-  onSearchRequested() {
+  /*onSearchRequested() {
     this.model = null;
     this.formGroup.reset();
     setTimeout(()=>{ // this will make the execution after the above boolean has changed
       this.searchInput.nativeElement.focus();
     },0);
-  }
+  }*/
 }

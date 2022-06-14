@@ -30,35 +30,37 @@ export class LoginButtonComponent implements OnInit {
         const durationLeft = Duration.between(ZonedDateTime.now(), this.authenticationService.expiryTime)
         let totalSeconds = durationLeft.seconds();
 
-        //if(!this.showTimeLeft && totalSeconds < (3600 - 10)) {
-        if(!this.showTimeLeft && totalSeconds < (5 * 60)) {
-          console.log(`Starting warning sequence. totalSeconds left = ${totalSeconds}`);
-          this.showTimeLeft = true;
-          this.warningModalRef = this.modalService.open(MessageDialogComponent);
-          this.warningModalRef.componentInstance.title = 'Session Timeout'
-          this.warningModalRef.componentInstance.text = 'Your login session is about to expire. Please save any outstanding work and login again.';
-          this.changeDetectorRef.detectChanges();
-          console.log('Finished warning sequence');
-        }
-
-        //if(this.authenticationService.isLoggedIn && totalSeconds < (3600 - 60)) {
-        if(this.authenticationService.isLoggedIn && totalSeconds < 30) {
-          this.showTimeLeft = false;
-          this.warningModalRef.close();
-          this.authenticationService.sessionTimeout();
-        }
-
-        const hours = Math.floor(totalSeconds / (60 * 60));
-        totalSeconds = totalSeconds - (hours * 60 * 60);
-        const mins = Math.floor(totalSeconds / 60);
-        totalSeconds = totalSeconds - (mins * 60);
-        const seconds = totalSeconds;
+        let remainingSeconds = totalSeconds;
+        const hours = Math.floor(remainingSeconds / (60 * 60));
+        remainingSeconds = remainingSeconds - (hours * 60 * 60);
+        const mins = Math.floor(remainingSeconds / 60);
+        remainingSeconds = remainingSeconds - (mins * 60);
+        const seconds = remainingSeconds;
 
         const hoursStr = String(hours).padStart(2, '0');
         const minsStr = String(mins).padStart(2, '0');
         const secondsStr = String(seconds).padStart(2, '0');
 
         displayValue = `${hoursStr}:${minsStr}:${secondsStr}`;
+
+        if(!this.showTimeLeft && totalSeconds < ((3600 * 10) - 10)) {
+//        if(!this.showTimeLeft && totalSeconds < (5 * 60)) {
+          console.log(`Starting warning sequence. totalSeconds left = ${totalSeconds}`);
+          this.showTimeLeft = true;
+          this.warningModalRef = this.modalService.open(MessageDialogComponent);
+          this.warningModalRef.componentInstance.title = 'Session Timeout Warning'
+          this.warningModalRef.componentInstance.text = `Your login session is about to expire in ${displayValue} (hh:mm:ss) minutes. After closing this message please save any outstanding work and login again from the menu bar button above.`;
+          this.changeDetectorRef.detectChanges();
+          console.log('Finished warning sequence');
+        }
+
+        if(this.authenticationService.isLoggedIn && totalSeconds < ((3600 * 10) - 60)) {
+//        if(this.authenticationService.isLoggedIn && totalSeconds < 30) {
+          this.showTimeLeft = false;
+          this.warningModalRef.close();
+          this.authenticationService.sessionTimeout();
+        }
+
       }
 
       return of(displayValue);

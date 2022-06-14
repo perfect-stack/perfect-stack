@@ -19,7 +19,7 @@
       "label": "Name",
       "description": "",
       "type": "Text",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": []
@@ -29,7 +29,7 @@
       "label": "Sex",
       "description": "Male, Female, Unknown",
       "type": "Enumeration",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
@@ -106,7 +106,8 @@
       "comparisonOperator": "",
       "relationshipTarget": "Bird",
       "typeaheadSearch": [
-        "name"
+        "name",
+        "band"
       ]
     },
     {
@@ -118,7 +119,8 @@
       "comparisonOperator": "",
       "relationshipTarget": "Bird",
       "typeaheadSearch": [
-        "name"
+        "name",
+        "band"
       ]
     },
     {
@@ -154,7 +156,8 @@
         "Adult",
         "Sub adult",
         "Chick",
-        "Egg"
+        "Egg",
+        "Juvenile"
       ]
     },
     {
@@ -172,7 +175,7 @@
       "label": "Form",
       "description": "The taxa within the Species",
       "type": "Text",
-      "visibility": "Required",
+      "visibility": "Visible",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": []

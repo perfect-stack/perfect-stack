@@ -37,6 +37,14 @@ export class SelectTwoControlComponent implements OnInit {
   ngOnInit(): void {
     this.secondaryAttributeName = (this.cell.componentData as any).secondaryAttributeName;
 
+    if(this.secondaryAttributeName) {
+      const secondaryAttributeControl = this.formGroup.controls[this.secondaryAttributeName];
+      if(secondaryAttributeControl && this.isReadOnly()) {
+        console.log('GOT secondaryAttributeControl && isReadOnly() ')
+        secondaryAttributeControl.disable({onlySelf: false, emitEvent: true});
+      }
+    }
+
     this.options$ = this.dataService.findAll(this.attribute.relationshipTarget).pipe(
       switchMap((response) => {
         return of(response.resultList);
@@ -78,9 +86,12 @@ export class SelectTwoControlComponent implements OnInit {
         this.secondaryOptions = [];
       }
 
-      this.formGroup.controls[this.secondaryAttributeName].enable({
-        onlySelf: true
-      });
+      // This bit is important and was the cause of a bug. Only enable the form control if we are not isReadOnly()
+      if(!this.isReadOnly()) {
+        this.formGroup.controls[this.secondaryAttributeName].enable({
+          onlySelf: true
+        });
+      }
     }
     else {
       this.secondaryOptions = [];

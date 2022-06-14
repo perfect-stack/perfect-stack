@@ -18,7 +18,7 @@ export class TypeaheadService {
 
     const whereClause = {};
     whereClause[attribute.typeaheadSearch[0]] = {
-      [Op.like]: request.searchText + '%',
+      [Op.iLike]: request.searchText + '%',
     };
 
     const orderClause = [];
@@ -47,9 +47,11 @@ export class TypeaheadService {
   toDisplayText(row: Model<any, any>, metaAttribute: MetaAttribute) {
     let displayText = '';
     for (const nextDisplayAttribute of metaAttribute.typeaheadSearch) {
-      displayText += row[nextDisplayAttribute];
-      displayText += ' ';
+      if (row[nextDisplayAttribute]) {
+        displayText += row[nextDisplayAttribute];
+        displayText += ' ';
+      }
     }
-    return displayText;
+    return displayText.trim();
   }
 }
