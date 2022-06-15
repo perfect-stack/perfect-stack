@@ -13,6 +13,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: 'btn btn-primary',
     label: 'Button',
+    action: '',
     route: '/route/go/here'
   };
 

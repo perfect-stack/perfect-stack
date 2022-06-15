@@ -56,6 +56,15 @@ export class EventService {
     }
   }
 
+  dispatchOnAction(pageName: string, ctx: FormContext, action: string): void {
+    console.log(`Dispatch onAction to page listeners: ${pageName}`);
+    const listenerList = this.getListenerList(ListenerType.PageListener, pageName);
+    for(const listener of listenerList) {
+      const pageListener = listener as PageListener;
+      pageListener.onAction(ctx, action);
+    }
+  }
+
   dispatchOnManyToOneItemSelected(pageName: string, formGroup: FormGroup, attribute: MetaAttribute, itemSelected: any): void {
     console.log(`Dispatch event , {emitEvent: false} to meta page listeners: ${pageName}`);
     const listenerList = this.getListenerList(ListenerType.PageListener, pageName);

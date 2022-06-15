@@ -4,16 +4,18 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {NgxPerfectStackModule} from '../../../ngx-perfect-stack/src/lib/ngx-perfect-stack.module';
+import { AddEventDialogComponent } from './pages/add-event-dialog/add-event-dialog.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AddEventDialogComponent
   ],
   imports: [
-      BrowserModule,
-      AppRoutingModule,
-      NgxPerfectStackModule,
-      NgbModule
+    BrowserModule,
+    AppRoutingModule,
+    NgxPerfectStackModule,
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

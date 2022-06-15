@@ -105,6 +105,8 @@ import { TextToolComponent } from './data/controller/tool/tool-view/text-tool/te
 import { IconToolComponent } from './data/controller/tool/tool-view/icon-tool/icon-tool.component';
 import { DateTimeControlComponent } from './data/controller/layout/controls/date-time-control/date-time-control.component';
 import { TimeControlComponent } from './data/controller/layout/controls/time-control/time-control.component';
+import { TileButtonPanelComponent } from './utils/tile-button-panel/tile-button-panel.component';
+import { RadioTileButtonPanelComponent } from './utils/radio-tile-button-panel/radio-tile-button-panel.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -206,6 +208,8 @@ const routes: Routes = [
     IconToolComponent,
     DateTimeControlComponent,
     TimeControlComponent,
+    TileButtonPanelComponent,
+    RadioTileButtonPanelComponent,
   ],
   providers: [
     AuthenticationService,
@@ -249,6 +253,8 @@ const routes: Routes = [
   exports: [
     NgxPerfectStackComponent,
     ToastsComponent,
+    TileButtonPanelComponent,
+    RadioTileButtonPanelComponent
   ]
 })
 export class NgxPerfectStackModule {}

@@ -4,6 +4,7 @@ import {PropertySheetService} from '../../../../../template/property-sheet/prope
 import {Router} from '@angular/router';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {ExpressionService} from '../../../layout/controls/expression-control/expression.service';
+import {EventService} from '../../../../../event/event.service';
 
 @Component({
   selector: 'lib-button-tool',
@@ -23,6 +24,7 @@ export class ButtonToolComponent implements OnInit {
 
   constructor(protected readonly propertySheetService: PropertySheetService,
               protected readonly expressionService: ExpressionService,
+              protected readonly eventService: EventService,
               protected readonly router: Router) { }
 
   ngOnInit(): void {
@@ -43,8 +45,10 @@ export class ButtonToolComponent implements OnInit {
   }
 
   doApplicationAction() {
-    console.log('doAction()');
-    if(this.buttonTool.route) {
+    if(this.buttonTool.action) {
+      this.eventService.dispatchOnAction(this.ctx.metaPage.name, this.ctx, this.buttonTool.action);
+    }
+    else if(this.buttonTool.route) {
 
       let route = this.buttonTool.route;
 

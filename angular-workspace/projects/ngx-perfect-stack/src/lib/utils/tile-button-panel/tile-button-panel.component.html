@@ -1,0 +1,9 @@
+<div class="row g-0" *ngFor="let rowItem of [].constructor(rowCount); let rowIdx = index">
+  <div class="col" *ngFor="let colItem of [].constructor(width)l let colIdx = index">
+    <ng-container *ngIf="doesButtonExist(colIdx, rowIdx)">
+      <button class="btn btn-outline-secondary tile-btn w-100" (click)="onButtonClicked(getButtonName(colIdx, rowIdx))">
+        {{getButtonName(colIdx, rowIdx)}}
+      </button>
+    </ng-container>
+  </div>
+</div>

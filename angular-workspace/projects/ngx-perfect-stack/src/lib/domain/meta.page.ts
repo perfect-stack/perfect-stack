@@ -60,6 +60,7 @@ export class Tool {
 }
 
 export class ButtonTool extends Tool {
+  action: string;
   route: string;
 }
 

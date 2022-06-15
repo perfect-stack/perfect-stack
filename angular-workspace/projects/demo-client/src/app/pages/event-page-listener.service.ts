@@ -20,6 +20,9 @@ export class EventPageListenerService implements PageListener {
   onBeforeSave(ctx: FormContext): void {
   }
 
+  onAction(ctx: FormContext, action: string): void {
+  }
+
   onManyToOneItemSelected(formGroup: FormGroup, attribute: MetaAttribute, itemSelected: any): void {
     console.log(`onManyToOneItemSelected for ${attribute.name}`, itemSelected);
     if(attribute.name === 'bird') {
@@ -32,14 +35,23 @@ export class EventPageListenerService implements PageListener {
 
   onPageLoad(ctx: FormContext, params: ParamMap, queryParams: ParamMap): void {
     const birdId = queryParams.get('bird_id');
-    console.log(`onPageLoad. birdId = ${birdId}`);
     if(birdId) {
+      console.log(`onPageLoad. birdId = ${birdId}`);
       const eventFormGroup = ctx.formMap.get('event') as FormGroup;
       if(eventFormGroup) {
         this.loadBird(birdId, eventFormGroup, true);
       }
       else {
         console.warn('Unable to find event form');
+      }
+    }
+
+    const eventType = queryParams.get('event_type');
+    if(eventType) {
+      console.log(`onPageLoad. eventType = ${birdId}`);
+      const eventFormGroup = ctx.formMap.get('event') as FormGroup;
+      if(eventFormGroup) {
+        eventFormGroup.controls['event_type'].setValue(eventType);
       }
     }
   }

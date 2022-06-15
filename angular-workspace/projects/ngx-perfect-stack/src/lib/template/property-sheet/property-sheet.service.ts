@@ -57,6 +57,7 @@ export const ButtonPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
+  { name: 'action', type: PropertyType.string},
   { name: 'route', type: PropertyType.route},
 ];
 
