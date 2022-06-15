@@ -1,8 +1,9 @@
 <div class="row g-0" *ngFor="let rowItem of [].constructor(rowCount); let rowIdx = index">
   <div class="col" *ngFor="let colItem of [].constructor(width)l let colIdx = index">
     <div class="p-1" *ngIf="doesButtonExist(colIdx, rowIdx)">
-      <button class="btn btn-outline-primary tile-btn w-100" (click)="onButtonClicked(getButtonName(colIdx, rowIdx))">
-        {{getButtonName(colIdx, rowIdx)}}
+      <button class="btn btn-outline-secondary tile-btn w-100" (click)="onButtonClicked(colIdx, rowIdx)">
+        <div class="btn-icon material-icons text-primary">{{getButton(colIdx, rowIdx).icon}}</div>
+        <div>{{getButton(colIdx, rowIdx).name}}</div>
         <span class="btn-icon btn-radio material-icons" *ngIf="isSelected(colIdx, rowIdx)">radio_button_checked</span>
         <span class="btn-icon btn-radio material-icons" *ngIf="!isSelected(colIdx, rowIdx)">radio_button_unchecked</span>
       </button>

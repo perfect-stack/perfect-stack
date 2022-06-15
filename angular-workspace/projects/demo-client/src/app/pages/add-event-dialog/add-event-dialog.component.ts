@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {
+  ButtonDefinition
+} from '../../../../../ngx-perfect-stack/src/lib/utils/radio-tile-button-panel/radio-tile-button-panel.component';
 
 @Component({
   selector: 'app-add-event-dialog',
@@ -8,12 +11,12 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 })
 export class AddEventDialogComponent implements OnInit {
 
-  buttonList = [
-    'Capture',
-    'Sighting',
-    'Audio',
-    'Transmitter',
-    'Electronic',
+  buttonList: ButtonDefinition[] = [
+    {name: 'Capture', icon: 'back_hand'},
+    {name: 'Sighting', icon: 'visibility'},
+    {name: 'Audio', icon: 'hearing'},
+    {name: 'Transmitter', icon: 'sensors'},
+    {name: 'Electronic', icon: 'monitor_heart'},
   ]
 
   eventType: string | null = null;
@@ -34,5 +37,9 @@ export class AddEventDialogComponent implements OnInit {
 
   onCancel() {
     this.activeModal.dismiss();
+  }
+
+  isContinueEnabled() {
+    return this.eventType !== null;
   }
 }

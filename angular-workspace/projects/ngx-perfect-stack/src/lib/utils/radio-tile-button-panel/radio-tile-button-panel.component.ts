@@ -8,7 +8,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 export class RadioTileButtonPanelComponent implements OnInit {
 
   @Input()
-  buttonList: string[];
+  buttonList: ButtonDefinition[];
 
   @Input()
   width: number = 0;
@@ -33,21 +33,25 @@ export class RadioTileButtonPanelComponent implements OnInit {
   }
 
   isSelected(colIdx: number, rowIdx: number) {
-    return this.getButtonName(colIdx, rowIdx) === this.selectedButton;
+    return this.getButton(colIdx, rowIdx).name === this.selectedButton;
   }
 
-  onButtonClicked(buttonName: string) {
-    this.selectedButton = buttonName;
-    this.buttonClicked.emit(buttonName);
+  onButtonClicked(colIdx: number, rowIdx: number) {
+    this.selectedButton = this.getButton(colIdx, rowIdx).name;
+    this.buttonClicked.emit(this.selectedButton);
   }
 
   doesButtonExist(colIdx: number, rowIdx: number) {
     return (rowIdx * this.width) + colIdx < this.buttonList.length;
   }
 
-  getButtonName(colIdx: number, rowIdx: number) {
+  getButton(colIdx: number, rowIdx: number): ButtonDefinition {
     const arrayIdx = (rowIdx * this.width) + colIdx;
     return this.buttonList[arrayIdx];
   }
+}
 
+export interface ButtonDefinition {
+  name: string;
+  icon: string;
 }

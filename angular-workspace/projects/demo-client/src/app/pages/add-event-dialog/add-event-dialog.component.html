@@ -1,12 +1,11 @@
 <div class="modal-header">
-  <h4 class="modal-title">Add Event</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+  <h4 class="modal-title text-uppercase">Choose Event Type</h4>
 </div>
 <div class="modal-body">
-  <p>Hello, World!</p>
+  <p>Before we start lets choose the event type</p>
   <lib-radio-tile-button-panel [buttonList]="buttonList" [width]="3" (buttonClicked)="onButtonClicked($event)"></lib-radio-tile-button-panel>
 </div>
 <div class="modal-footer d-flex justify-content-between">
   <button class="btn btn-outline-primary" (click)="onCancel()">Cancel</button>
-  <button class="btn btn-outline-primary" (click)="onContinue()">Continue</button>
+  <button class="btn btn-outline-primary" (click)="onContinue()" [disabled]="!isContinueEnabled()">Continue</button>
 </div>
