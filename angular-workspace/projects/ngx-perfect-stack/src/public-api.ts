@@ -11,3 +11,4 @@ export * from './lib/utils/toasts/toasts.component';
 export * from './lib/event/event.service';
 export * from './lib/event/page-listener';
 export * from './lib/utils/tile-button-panel/tile-button-panel.component';
+export * from './lib/utils/radio-tile-button-panel/radio-tile-button-panel.component';
