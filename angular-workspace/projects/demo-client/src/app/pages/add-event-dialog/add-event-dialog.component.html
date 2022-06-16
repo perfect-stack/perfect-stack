@@ -3,7 +3,7 @@
 </div>
 <div class="modal-body">
   <p>Before we start lets choose the event type</p>
-  <lib-radio-tile-button-panel [buttonList]="buttonList" [width]="3" (buttonClicked)="onButtonClicked($event)"></lib-radio-tile-button-panel>
+  <lib-tile-button-panel [buttonList]="buttonList" [width]="3" (buttonClicked)="onButtonClicked($event)"></lib-tile-button-panel>
 </div>
 <div class="modal-footer d-flex justify-content-between">
   <button class="btn btn-outline-primary" (click)="onCancel()">Cancel</button>

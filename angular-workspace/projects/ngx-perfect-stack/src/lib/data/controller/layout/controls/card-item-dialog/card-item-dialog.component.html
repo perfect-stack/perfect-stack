@@ -4,7 +4,7 @@
 
 <div class="modal-body">
   <p>Select one or more {{metaAttribute.name.toLowerCase()}} to add</p>
-  <lib-radio-tile-button-panel [buttonList]="buttonList" [width]="3" [selectionMode]="'multiple'" (buttonClicked)="onButtonClicked($event)"></lib-radio-tile-button-panel>
+  <lib-tile-button-panel [buttonList]="buttonList" [width]="3" [selectionMode]="'multiple'" (buttonClicked)="onButtonClicked($event)"></lib-tile-button-panel>
 </div>
 
 <div class="modal-footer d-flex justify-content-between">

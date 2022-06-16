@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {
   ButtonDefinition
-} from '../../../../../ngx-perfect-stack/src/lib/utils/radio-tile-button-panel/radio-tile-button-panel.component';
+} from '../../../../../ngx-perfect-stack/src/lib/utils/tile-button-panel/tile-button-panel.component';
 
 @Component({
   selector: 'app-add-event-dialog',

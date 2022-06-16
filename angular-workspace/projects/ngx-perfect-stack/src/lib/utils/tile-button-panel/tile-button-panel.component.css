@@ -1,4 +1,44 @@
 
 .tile-btn {
-  height: 4rem;
+  height: 8rem;
+  position: relative;
+  border: 2px solid #D0D5DD;
+  border-radius: 8px;
+}
+
+.tile-btn:hover {
+  color: unset;
+}
+
+.tile-btn:disabled {
+  background: #EAECF0;
+  color: #D0D5DD;
+}
+
+.btn-icon-disabled {
+  color: #D0D5DD !important;
+}
+
+.tile-btn-selected {
+  border: 2px solid #056EBA;
+  background: #F7FBFF;
+  color: #056EBA;
+}
+
+
+.btn-radio-selected {
+  color: #056EBA;
+}
+
+.btn-radio {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.btn-check-selected {
+  color: #056EBA;
+  position: absolute;
+  top: 0px;
+  right: 0px;
 }
