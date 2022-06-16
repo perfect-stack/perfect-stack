@@ -9,7 +9,15 @@ export class ExpressionService {
   constructor() { }
 
   updateOrView(mode: string, params: any[]): string {
-    return mode === 'view' ? params.join(' ') : 'Update ' + params.join(' ');
+    console.log(`updateOrView: mode = ${mode}, params = ${JSON.stringify(params)}`);
+    if(params && params.length === 2) {
+      const name = params[0];
+      const id = params[1]; // if there is an id, then call it "Update", if no id then call it "Add"
+      return mode === 'view' ? name : id ? 'Update ' + name : 'Add ' + name;
+    }
+    else {
+      throw new Error(`Incorrect number of parameters supplied. Expected 2, but got ${JSON.stringify(params)}`);
+    }
   }
 
   mapSexSymbolToIcon(controlExpressionMatchList: ControlExpressionMatch[]): string {

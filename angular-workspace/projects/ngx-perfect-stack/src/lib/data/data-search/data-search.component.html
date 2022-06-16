@@ -6,7 +6,12 @@
         <h3>{{ctx.metaPage.title}}</h3>
       </div>
       <div>
-        <button type="button" class="btn btn-success" (click)="onNew(ctx)" id="newBtn">{{newButtonLbl}}</button>
+        <ng-container *ngIf="!(searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['OuterTopRight'])">
+          <button type="button" class="btn btn-success" (click)="onNew(ctx)" id="newBtn">{{newButtonLbl}}</button>
+        </ng-container>
+        <ng-container *ngIf="searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['OuterTopRight']">
+          <lib-tool-view [ctx]="ctx" [tool]="searchCriteriaTemplate.locations['OuterTopRight']"></lib-tool-view>
+        </ng-container>
       </div>
     </div>
 

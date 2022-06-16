@@ -1,6 +1,6 @@
 {
   "name": "Bird.view_edit",
-  "title": "?updateOrView(${bird.name})",
+  "title": "?updateOrView(${bird.name}, ${bird.id})",
   "type": "view_edit",
   "layoutStyle": "Paris",
   "templates": [

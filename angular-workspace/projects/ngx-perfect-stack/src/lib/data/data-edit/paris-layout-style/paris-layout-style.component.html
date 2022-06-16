@@ -3,7 +3,7 @@
     <div>
       <a [routerLink]="['/data', ctx.metaEntity.name, 'search']">
         <span class="material-icons align-middle">keyboard_backspace</span>
-        <span class="align-middle">Search {{ctx.metaEntity.name.toLowerCase()}}</span>
+        <span class="align-middle">Search {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
       </a>
 
       <h2 class="my-3" *ngIf="ctx.formMap">

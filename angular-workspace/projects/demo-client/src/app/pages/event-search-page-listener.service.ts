@@ -4,29 +4,23 @@ import {FormContext} from '../../../../ngx-perfect-stack/src/lib/data/data-edit/
 import {FormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../ngx-perfect-stack/src/lib/domain/meta.entity';
 import {ParamMap, Router} from '@angular/router';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddEventDialogComponent} from './add-event-dialog/add-event-dialog.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BirdViewPageListenerService implements PageListener {
+export class EventSearchPageListenerService implements PageListener {
 
   constructor(private modalService: NgbModal,
               protected readonly router: Router) { }
 
   onAction(ctx: FormContext, action: string): void {
-    // TODO: probably need to switch based on the name of the action
-    console.log(`GOT action: ${action}`);
+    console.log(`EventSearchPageListenerService got action ${action}`);
     const modalRef = this.modalService.open(AddEventDialogComponent).closed.subscribe((eventType) => {
-      console.log(`BirdViewPageListenerService: eventType = ${eventType}`);
-      if(ctx.dataMap.get('bird')) {
-        const bird = ctx.dataMap.get('bird');
-        if(bird) {
-          const route = `/data/Event/edit/**NEW**?bird_id=${bird.result.id}&event_type=${eventType}`;
-          this.router.navigateByUrl(route);
-        }
-      }
+      console.log(`EventSearchPageListenerService: eventType = ${eventType}`);
+      const route = `/data/Event/edit/**NEW**?event_type=${eventType}`;
+      this.router.navigateByUrl(route);
     });
   }
 

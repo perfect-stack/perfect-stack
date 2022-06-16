@@ -7,7 +7,17 @@
     {
       "cells": [],
       "metaEntityName": "Event",
-      "type": "form"
+      "type": "form",
+      "locations": {
+        "OuterTopRight": {
+          "type": "Button",
+          "containerStyles": "",
+          "styles": "btn btn-success",
+          "label": "Add event",
+          "action": "addEvent",
+          "route": "/route/go/here"
+        }
+      }
     },
     {
       "cells": [
