@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {FormBuilder} from '@angular/forms';
+import {ButtonDefinition} from '../../../../../utils/radio-tile-button-panel/radio-tile-button-panel.component';
+import {MetaEntityService} from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
 
 @Component({
   selector: 'lib-card-item-dialog',
@@ -9,33 +11,51 @@ import {FormBuilder} from '@angular/forms';
   styleUrls: ['./card-item-dialog.component.css']
 })
 export class CardItemDialogComponent implements OnInit {
-  get metaAttribute(): MetaAttribute {
-    return this._metaAttribute;
-  }
 
-  set metaAttribute(value: MetaAttribute) {
-    this._metaAttribute = value;
-    if(this._metaAttribute && this._metaAttribute.discriminator) {
-      const discriminator = this._metaAttribute.discriminator;
-      if(discriminator.entityMappingList && discriminator.entityMappingList.length > 0) {
-        this.itemForm.patchValue({
-          itemSelect: discriminator.entityMappingList[0].discriminatorValue
-        });
-      }
-    }
-  }
 
-  // Set by calling component via modalRef.instance
-  private _metaAttribute: MetaAttribute;
+  // Set by the calling component via modalRef.instance
+  public metaAttribute: MetaAttribute;
 
-  itemForm =  this.fb.group({
-    itemSelect: ['']
-  });
+  // Set by the calling component via modalRef.instance
+  public disabledList: string[] = [];
+
+  buttonList: ButtonDefinition[] = [];
+  itemsSelected: string[] | null = null;
 
   constructor(protected readonly fb: FormBuilder,
+              protected readonly metaEntityService: MetaEntityService,
               public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
+    this.metaEntityService.metaEntityMap$.subscribe((metaEntityMap) => {
+      if(this.metaAttribute) {
+        for(const entityMapping of this.metaAttribute.discriminator.entityMappingList) {
+          const metaEntity = metaEntityMap.get(entityMapping.metaEntityName);
+          this.buttonList.push({
+            name: entityMapping.discriminatorValue,
+            icon: metaEntity ? metaEntity.icon : 'error',
+            enabled: this.disabledList.indexOf(entityMapping.discriminatorValue) < 0
+          });
+        }
+      }
+    })
   }
 
+
+  onButtonClicked(itemsSelected: string[]) {
+    this.itemsSelected = itemsSelected;
+  }
+
+  onCancel() {
+    this.activeModal.dismiss();
+  }
+
+  onAdd() {
+    console.log(`Add these cards now: ${this.itemsSelected}`);
+    this.activeModal.close(this.itemsSelected);
+  }
+
+  isAddEnabled() {
+    return this.itemsSelected !== null && this.itemsSelected.length > 0;
+  }
 }

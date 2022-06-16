@@ -325,42 +325,59 @@ export class CardLayoutComponent implements OnInit {
 
   onAddItem(metaPageMap: Map<string, MetaPage>, metaEntityMap: Map<string, MetaEntity>) {
     if(this.mode === 'edit') {
+
+      const disabledList: string[] = [];
+      for(const formGroupRow of this.attributes.controls) {
+        if(formGroupRow instanceof FormGroup) {
+          disabledList.push(formGroupRow.controls['activity_type'].value);
+        }
+      }
+
+      console.log(`Dialog should disable the following list: ${disabledList}`);
+
       const modalRef = this.modalService.open(CardItemDialogComponent);
       const cardItemDialog = modalRef.componentInstance as CardItemDialogComponent;
       cardItemDialog.metaAttribute = this.attributes.attribute;
+      cardItemDialog.disabledList = disabledList;
 
       const self = this;
-      modalRef.closed.subscribe((a) => {
-
-        const discriminatorValue = a.itemSelect;
-        console.log(`Modal closed: discriminatorValue = ${JSON.stringify(discriminatorValue)}`);
-        const cardItem = this.cardItemMap.get(discriminatorValue);
-        console.log(`CardItem`, cardItem);
-
-        if(cardItem && cardItem.metaPageName) {
-          const metaPage = metaPageMap.get(cardItem.metaPageName);
-          if(metaPage && metaPage.templates.length > 0) {
-            const template = metaPage.templates[0];
-
-            if(self.mode) {
-              // create the new item formGroup
-              const itemFormGroup = this.formService.createFormGroup(self.mode, template, metaPageMap, metaEntityMap, null);
-              itemFormGroup.addControl('activity_type', this.fb.control(''));
-
-              // create the new mostly empty item
-              const item = {
-                activity_type: discriminatorValue
-              };
-
-              // update the item formGroup
-              itemFormGroup.patchValue(item);
-
-              // add the populated item formGroup to our parent form based on the relationshipTarget "attributes"
-              this.attributes.push(itemFormGroup);
-            }
+      modalRef.closed.subscribe((cardItems) => {
+        console.log(`Adding card items; ${cardItems}`);
+        if(cardItems) {
+          for(const nextItemName of cardItems) {
+            this.addOneItem(self.mode, nextItemName, metaPageMap, metaEntityMap);
           }
         }
       });
+    }
+  }
+
+  addOneItem(mode: string | null, discriminatorValue: string, metaPageMap: Map<string, MetaPage>, metaEntityMap: Map<string, MetaEntity>) {
+    const cardItem = this.cardItemMap.get(discriminatorValue);
+    console.log(`CardItem`, cardItem);
+
+    if(cardItem && cardItem.metaPageName) {
+      const metaPage = metaPageMap.get(cardItem.metaPageName);
+      if(metaPage && metaPage.templates.length > 0) {
+        const template = metaPage.templates[0];
+
+        if(mode) {
+          // create the new item formGroup
+          const itemFormGroup = this.formService.createFormGroup(mode, template, metaPageMap, metaEntityMap, null);
+          itemFormGroup.addControl('activity_type', this.fb.control(''));
+
+          // create the new mostly empty item
+          const item = {
+            activity_type: discriminatorValue
+          };
+
+          // update the item formGroup
+          itemFormGroup.patchValue(item);
+
+          // add the populated item formGroup to our parent form based on the relationshipTarget "attributes"
+          this.attributes.push(itemFormGroup);
+        }
+      }
     }
   }
 

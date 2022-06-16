@@ -22,6 +22,16 @@
             </div>
 
             <div class="row mt-2">
+              <div class="col-3">Icon</div>
+              <div class="col-7">
+                <input class="form-control" type="text" formControlName="icon">
+              </div>
+              <div class="col-2">
+                <span class="btn-icon material-icons" *ngIf="metaEntityForm.controls['icon']">{{metaEntityForm.controls['icon'].value}}</span>
+              </div>
+            </div>
+
+            <div class="row mt-2">
               <div class="col-3">Type</div>
               <div class="col-9">
                 <select class="form-select" formControlName="type">

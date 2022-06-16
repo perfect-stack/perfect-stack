@@ -1,6 +1,9 @@
 {
   "name": "WeightActivity",
+  "pluralName": "Weights",
+  "icon": "scale",
   "type": "Database",
+  "timestamps": true,
   "attributes": [
     {
       "name": "id",

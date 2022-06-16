@@ -1,6 +1,9 @@
 {
   "name": "HealthActivity",
+  "pluralName": "Health checks",
+  "icon": "favorite",
   "type": "Database",
+  "timestamps": true,
   "attributes": [
     {
       "name": "id",

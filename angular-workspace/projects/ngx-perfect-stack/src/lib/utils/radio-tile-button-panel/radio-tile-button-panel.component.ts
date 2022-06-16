@@ -13,10 +13,13 @@ export class RadioTileButtonPanelComponent implements OnInit {
   @Input()
   width: number = 0;
 
-  @Output()
-  buttonClicked = new EventEmitter<string>();
+  @Input()
+  selectionMode: 'single' | 'multiple' = 'single';
 
-  selectedButton: string | null = null;
+  @Output()
+  buttonClicked = new EventEmitter<string[]>();
+
+  selectedButtons: string[] = [];
 
   constructor() { }
 
@@ -33,12 +36,28 @@ export class RadioTileButtonPanelComponent implements OnInit {
   }
 
   isSelected(colIdx: number, rowIdx: number) {
-    return this.getButton(colIdx, rowIdx).name === this.selectedButton;
+    return this.selectedButtons.indexOf(this.getButton(colIdx, rowIdx).name) >= 0;
   }
 
   onButtonClicked(colIdx: number, rowIdx: number) {
-    this.selectedButton = this.getButton(colIdx, rowIdx).name;
-    this.buttonClicked.emit(this.selectedButton);
+    const selectedButtonName = this.getButton(colIdx, rowIdx).name;
+    const idx = this.selectedButtons.indexOf(selectedButtonName);
+    if(idx >= 0) {
+      // remove it
+      this.selectedButtons.splice(idx, 1);
+    }
+    else {
+      // if multiple selections allowed add it
+      if(this.selectionMode === 'multiple') {
+        this.selectedButtons.push(selectedButtonName);
+      }
+      else {
+        // if only a single selection the rest the array with one thing only
+        this.selectedButtons = [selectedButtonName];
+      }
+    }
+
+    this.buttonClicked.emit(this.selectedButtons);
   }
 
   doesButtonExist(colIdx: number, rowIdx: number) {
@@ -49,9 +68,14 @@ export class RadioTileButtonPanelComponent implements OnInit {
     const arrayIdx = (rowIdx * this.width) + colIdx;
     return this.buttonList[arrayIdx];
   }
+
+  isEnabled(colIdx: number, rowIdx: number) {
+    return this.getButton(colIdx, rowIdx).enabled;
+  }
 }
 
 export interface ButtonDefinition {
   name: string;
   icon: string;
+  enabled: boolean;
 }

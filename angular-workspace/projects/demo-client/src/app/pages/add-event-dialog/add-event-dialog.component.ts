@@ -12,11 +12,11 @@ import {
 export class AddEventDialogComponent implements OnInit {
 
   buttonList: ButtonDefinition[] = [
-    {name: 'Capture', icon: 'back_hand'},
-    {name: 'Sighting', icon: 'visibility'},
-    {name: 'Audio', icon: 'hearing'},
-    {name: 'Transmitter', icon: 'sensors'},
-    {name: 'Electronic', icon: 'monitor_heart'},
+    {name: 'Capture', icon: 'back_hand', enabled: true},
+    {name: 'Sighting', icon: 'visibility', enabled: true},
+    {name: 'Audio', icon: 'hearing', enabled: true},
+    {name: 'Transmitter', icon: 'sensors', enabled: true},
+    {name: 'Electronic', icon: 'monitor_heart', enabled: true},
   ]
 
   eventType: string | null = null;
@@ -26,9 +26,9 @@ export class AddEventDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onButtonClicked(eventType: string) {
-    console.log(`Event type selected: ${eventType}`);
-    this.eventType = eventType;
+  onButtonClicked(itemsSelected: string[]) {
+    console.log(`Event type selected: ${itemsSelected[0]}`);
+    this.eventType = itemsSelected[0];
   }
 
   onContinue() {

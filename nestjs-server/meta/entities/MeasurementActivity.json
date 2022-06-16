@@ -1,6 +1,9 @@
 {
   "name": "MeasurementActivity",
+  "pluralName": "Measurements",
+  "icon": "straighten",
   "type": "Database",
+  "timestamps": true,
   "attributes": [
     {
       "name": "id",

@@ -27,6 +27,7 @@ export class MetaEntityEditComponent implements OnInit {
   metaEntityForm = this.fb.group({
     name: ['', Validators.required],
     pluralName: ['', Validators.required],
+    icon: [''],
     type: ['', Validators.required],
     timestamps: [true, Validators.required],
     attributes: this.fb.array([]),

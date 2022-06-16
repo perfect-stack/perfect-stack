@@ -1,20 +1,13 @@
 <div class="modal-header">
-  <h4 class="modal-title">Add Item</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+  <h4 class="modal-title">Add {{metaAttribute.name.toLowerCase()}}</h4>
 </div>
 
 <div class="modal-body">
-  <p>Select type of item to add:</p>
-  <ng-container *ngIf="metaAttribute">
-    <form [formGroup]="itemForm">
-      <select class="form-select" formControlName="itemSelect" id="itemSelect">
-        <option *ngFor="let o of metaAttribute.discriminator.entityMappingList" [ngValue]="o.discriminatorValue">{{o.discriminatorValue}}</option>
-      </select>
-    </form>
-  </ng-container>
+  <p>Select one or more {{metaAttribute.name.toLowerCase()}} to add</p>
+  <lib-radio-tile-button-panel [buttonList]="buttonList" [width]="3" [selectionMode]="'multiple'" (buttonClicked)="onButtonClicked($event)"></lib-radio-tile-button-panel>
 </div>
 
-<div class="modal-footer">
-  <button type="button" class="btn btn-outline-primary" (click)="activeModal.close('Cancel')" id="cancelBtn">Cancel</button>
-  <button type="button" class="btn btn-outline-primary" (click)="activeModal.close(itemForm.value)" id="addBtn">Add</button>
+<div class="modal-footer d-flex justify-content-between">
+  <button type="button" class="btn btn-outline-primary" (click)="onCancel()" id="cancelBtn">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onAdd()" [disabled]="!isAddEnabled()" id="addBtn">Add</button>
 </div>
