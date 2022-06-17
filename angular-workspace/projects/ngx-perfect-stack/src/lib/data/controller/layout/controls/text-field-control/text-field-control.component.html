@@ -1,3 +1,14 @@
-<div class="input-group" [formGroup]="formGroup">
-  <input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
-</div>
+<ng-container *ngIf="mode === 'edit'">
+  <div class="input-group" [formGroup]="formGroup">
+    <input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
+  </div>
+</ng-container>
+
+<ng-container *ngIf="mode !== 'edit'">
+  <ng-container *ngIf="formGroup.controls[name].value">
+    <input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
+  </ng-container>
+  <ng-container *ngIf="!formGroup.controls[name].value">
+    <input class="form-control empty-value" readonly [id]="name" value="&mdash;">
+  </ng-container>
+</ng-container>
