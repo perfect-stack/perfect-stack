@@ -43,7 +43,7 @@ export class TemplateOptionsPanelComponent implements OnInit {
         TemplateOptionsPanelComponent.switchSelected(this);
       }
 
-      this.propertySheetService.editWithType(this.template, 'Template');
+      this.propertySheetService.editWithType('Template', this.template, 'Template');
     }
   }
 

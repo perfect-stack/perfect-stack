@@ -15,10 +15,13 @@
   </div>
 
   <div class="form-check">
-    <input class="form-check-input" type="checkbox" value="" id="deleteDatabaseCol" [(ngModel)]="deleteDatabaseCol">
+    <input class="form-check-input" type="checkbox" value="" id="deleteDatabaseCol" [(ngModel)]="deleteDatabaseCol" [disabled]="databaseColDeleteDisabled">
+    <span [ngClass]="{'bg-warning': databaseColDeleteDisabled, 'px-2': databaseColDeleteDisabled}">
     <label class="form-check-label" for="deleteDatabaseCol">
       Delete database column
     </label>
+    <span class="small" *ngIf="databaseColDeleteReason"> - {{databaseColDeleteReason}}</span>
+    </span>
   </div>
 
 </div>

@@ -10,6 +10,7 @@
 
           <ng-container *ngIf="mouseActive">
             <div class="overlay-bottom-right p-1">
+              <span class="material-icons hover-highlight no_selection" (click)="onSettings(nextCell)">settings</span>
               <span class="material-icons hover-highlight no_selection" (click)="onDeleteCell(nextCell)">highlight_off</span>
               <span class="material-icons hover-highlight no_selection" (click)="onClearCell(nextCell)">block</span>
             </div>

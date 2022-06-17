@@ -85,17 +85,6 @@
             "width": "1",
             "height": "1",
             "tool": {
-              "type": "TextTool",
-              "containerStyles": "",
-              "styles": "sex-symbol-${sex}",
-              "text": "${sex}",
-              "label": "Sex"
-            }
-          },
-          {
-            "width": "1",
-            "height": "1",
-            "tool": {
               "type": "Icon",
               "containerStyles": "",
               "styles": "?mapSexSymbolToIconStyle(${sex})",

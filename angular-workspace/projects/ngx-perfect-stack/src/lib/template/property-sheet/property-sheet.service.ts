@@ -1,5 +1,5 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {TemplateNavigationType, TemplateType} from '../../domain/meta.page';
+import {ComponentType, TemplateNavigationType, TemplateType} from '../../domain/meta.page';
 
 @Injectable({
   providedIn: 'root'
@@ -10,19 +10,20 @@ export class PropertySheetService {
 
   constructor() { }
 
-  edit(source: any) {
+  edit(title: string, source: any) {
     if(source.type) {
-      this.editWithType(source, source.type);
+      this.editWithType(title, source, source.type);
     }
     else {
       throw new Error(`The supplied source object has no "type" attribute defined: ${JSON.stringify(source)}`);
     }
   }
 
-  editWithType(source: any, type: string) {
+  editWithType(title: string, source: any, type: string) {
     const propertyList = PropertyListMap[type];
     if(propertyList) {
       this.editEvent$.emit({
+        title: title,
         source: source,
         propertyList: propertyList
       });
@@ -34,8 +35,9 @@ export class PropertySheetService {
 }
 
 export interface PropertyEditEvent {
+  title: string;
   source: any;
-  propertyList: Property[]
+  propertyList: Property[];
 }
 
 export enum PropertyType {
@@ -93,6 +95,12 @@ export const TemplatePropertyList = [
   { name: 'route', type: PropertyType.string},
 ];
 
+// Cell Properties
+export const CellPropertyList = [
+  { name: 'component', type: PropertyType.string, options: ComponentType},
+  { name: 'secondaryAttributeName', type: PropertyType.string},
+]
+
 
 export type PropertyListMapType = {
   [key: string]: Property[]
@@ -104,4 +112,5 @@ export const PropertyListMap: PropertyListMapType = {
   'Image': ImagePropertyList,
   'TextTool': TextToolPropertyList,
   'Template': TemplatePropertyList,
+  'Cell': CellPropertyList,
 };

@@ -43,7 +43,7 @@ export class ToolDropZoneComponent implements OnInit {
       this.tool = Object.assign({}, toolPrototype);
 
       // trigger the PropertySheetService to start editing it
-      this.propertySheetService.edit(this.tool);
+      this.propertySheetService.edit(this.tool.type, this.tool);
 
       // just in time, create the map if needed
       if(!this.template.locations) {

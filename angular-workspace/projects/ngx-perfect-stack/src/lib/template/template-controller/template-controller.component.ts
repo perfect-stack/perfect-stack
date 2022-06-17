@@ -313,7 +313,7 @@ export class CellViewComponent implements OnInit, OnChanges {
 
   onSettings() {
     if(this.cell && this.attribute && this.metaEntity) {
-      const modalRef = this.modalService.open(CellSettingsComponent, {ariaLabelledBy: 'modal-basic-title'});
+      /*const modalRef = this.modalService.open(CellSettingsComponent, {ariaLabelledBy: 'modal-basic-title'});
 
       const cellSettingsComponent = modalRef.componentInstance as CellSettingsComponent;
       cellSettingsComponent.init(this.metaEntity, this.attribute, this.cell.component, this.cell.componentData);
@@ -328,7 +328,9 @@ export class CellViewComponent implements OnInit, OnChanges {
         else {
           delete this.cell.componentData;
         }
-      });
+      });*/
+
+      this.propertySheetService.editWithType('Cell', this.cell, 'Cell');
     }
   }
 
@@ -399,6 +401,6 @@ export class CellViewComponent implements OnInit, OnChanges {
     this.onClearCell();
 
     this.cell.tool = Object.assign({}, toolPrototype);
-    this.propertySheetService.edit(this.cell.tool);
+    this.propertySheetService.edit(this.cell.tool.type, this.cell.tool);
   }
 }

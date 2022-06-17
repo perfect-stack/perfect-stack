@@ -45,7 +45,7 @@ export class IconToolComponent implements OnInit {
   onClick() {
     if(this.editorMode) {
       // trigger the PropertySheetService to start editing it
-      this.propertySheetService.edit(this.iconTool);
+      this.propertySheetService.edit('Icon', this.iconTool);
     }
   }
 

@@ -28,7 +28,7 @@ export class ImageToolComponent implements OnInit {
   onClick() {
     if(this.editorMode) {
       // trigger the PropertySheetService to start editing it
-      this.propertySheetService.edit(this.imageTool);
+      this.propertySheetService.edit('Image', this.imageTool);
     }
   }
 

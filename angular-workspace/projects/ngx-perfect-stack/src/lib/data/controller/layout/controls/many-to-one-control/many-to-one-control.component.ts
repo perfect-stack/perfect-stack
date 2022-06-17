@@ -80,7 +80,7 @@ export class ManyToOneControlComponent implements OnInit {
   onSelectItem(event: NgbTypeaheadSelectItemEvent<Item>) {
     const item = event.item;
     this.dataService.findById(this.attribute.relationshipTarget, item.id).subscribe(entity => {
-      this.formGroup.controls[this.attribute.name].setValue(entity);
+      this.formGroup.controls[this.attribute.name].patchValue(entity);
     });
   }
 

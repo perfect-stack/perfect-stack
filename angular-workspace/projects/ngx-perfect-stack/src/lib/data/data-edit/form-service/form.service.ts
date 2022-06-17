@@ -262,6 +262,12 @@ export class FormService {
       }
     }
 
+    // Experimental: For each form add two extra for createdAt and updatedAt fields so that setValue() doesn't barf with
+    // NG01001: Cannot find form control with name: 'createdAt'
+    controls['createdAt'] = this.formControlForDate(mode);
+    controls['updatedAt'] = this.formControlForDate(mode);
+
+
     return new FormGroup(controls);
   }
 

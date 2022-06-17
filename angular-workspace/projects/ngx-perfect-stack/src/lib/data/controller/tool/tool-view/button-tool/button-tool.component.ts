@@ -41,7 +41,7 @@ export class ButtonToolComponent implements OnInit {
 
   doEditorAction() {
     // trigger the PropertySheetService to start editing it
-    this.propertySheetService.edit(this.buttonTool);
+    this.propertySheetService.edit('Button', this.buttonTool);
   }
 
   doApplicationAction() {

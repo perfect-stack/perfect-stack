@@ -1,6 +1,9 @@
 {
   "name": "EventObserver",
+  "pluralName": "Event observers",
+  "icon": "",
   "type": "Database",
+  "timestamps": true,
   "attributes": [
     {
       "name": "id",
@@ -26,14 +29,16 @@
       ]
     },
     {
-      "name": "roles",
-      "label": "Roles",
-      "description": "A list of the many different Roles they had during the event",
-      "type": "OneToMany",
+      "name": "role",
+      "label": "Role",
+      "description": "The role that this person placed during this event",
+      "type": "ManyToOne",
       "visibility": "Visible",
-      "comparisonOperator": "",
+      "comparisonOperator": "Equals",
       "relationshipTarget": "ObserverRole",
-      "typeaheadSearch": []
+      "typeaheadSearch": [
+        "name"
+      ]
     }
   ]
 }

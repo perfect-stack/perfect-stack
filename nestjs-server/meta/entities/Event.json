@@ -1,6 +1,7 @@
 {
   "name": "Event",
   "pluralName": "Events",
+  "icon": "",
   "type": "Database",
   "timestamps": true,
   "attributes": [
@@ -121,7 +122,7 @@
       "label": "Event type",
       "description": "",
       "type": "Enumeration",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],

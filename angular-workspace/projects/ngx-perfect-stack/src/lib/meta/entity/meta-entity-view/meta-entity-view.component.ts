@@ -42,11 +42,14 @@ export class MetaEntityViewComponent implements OnInit {
   }
 
   onDeleteAttribute(attribute: MetaAttribute) {
-    const modalRef = this.modalService.open(AttributeDeleteDialogComponent);
-    modalRef.componentInstance.metaName = this.metaName;
-    modalRef.componentInstance.attributeName = attribute.name;
-    modalRef.closed.subscribe(() => {
-      this.metaEntity$ = this.metaEntityService.findById(this.metaName);
-    });
+    if(this.metaName) {
+      const modalRef = this.modalService.open(AttributeDeleteDialogComponent);
+      const attributeDeleteDialog = modalRef.componentInstance as AttributeDeleteDialogComponent;
+      attributeDeleteDialog.metaName = this.metaName;
+      attributeDeleteDialog.attribute = attribute;
+      modalRef.closed.subscribe(() => {
+        this.metaEntity$ = this.metaEntityService.findById(this.metaName);
+      });
+    }
   }
 }

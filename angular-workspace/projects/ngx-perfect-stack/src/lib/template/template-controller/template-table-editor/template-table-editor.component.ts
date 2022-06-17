@@ -90,7 +90,7 @@ export class TemplateTableEditorComponent implements OnInit {
   addTool(toolPrototype: Tool, cell: Cell) {
     this.onClearCell(cell);
     cell.tool = Object.assign({}, toolPrototype);
-    this.propertySheetService.edit(cell.tool);
+    this.propertySheetService.edit(cell.tool.type, cell.tool);
   }
 
   getDataTypePlaceholder(cell: Cell, metaEntityMap: Map<string, MetaEntity>) {
@@ -141,8 +141,11 @@ export class TemplateTableEditorComponent implements OnInit {
 
   onCellClicked(cell: Cell) {
     if(cell.tool) {
-      this.propertySheetService.edit(cell.tool);
+      this.propertySheetService.edit(cell.tool.type, cell.tool);
     }
   }
 
+  onSettings(cell: Cell) {
+    this.propertySheetService.editWithType('Cell', cell, 'Cell');
+  }
 }
