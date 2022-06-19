@@ -3,8 +3,8 @@
   <!-- If template has a binding to the form -->
   <ng-container *ngIf="template && template.binding">
     <div [formGroup]="formGroup">
-      <div class="row" *ngFor="let row of cells">
-        <div [class]="getCSS(cell)" class="mt-3" *ngFor="let cell of row">
+      <div class="row form-row" *ngFor="let row of cells">
+        <div [class]="getCSS(cell)" *ngFor="let cell of row">
           <ng-container *ngIf="cell.attribute && cell.attribute.type !== AttributeType.OneToPoly">
             <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
           </ng-container>
