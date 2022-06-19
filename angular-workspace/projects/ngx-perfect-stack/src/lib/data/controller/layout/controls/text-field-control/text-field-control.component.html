@@ -1,10 +1,10 @@
-<ng-container *ngIf="mode === 'edit'">
+<ng-container *ngIf="mode !== 'view'">
   <div class="input-group" [formGroup]="formGroup">
     <input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
   </div>
 </ng-container>
 
-<ng-container *ngIf="mode !== 'edit'">
+<ng-container *ngIf="mode === 'view'">
   <ng-container *ngIf="formGroup.controls[name].value">
     <div class="input-group" [formGroup]="formGroup">
       <input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
