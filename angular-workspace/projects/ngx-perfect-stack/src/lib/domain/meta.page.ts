@@ -101,6 +101,8 @@ export class Template {
   orderByName: string; // Only for search result tables
   orderByDir: string; // Only for search result tables
 
+  styles: string; // CSS style classes
+
   // for table rows
   navigation?: TemplateNavigationType;
   route?: string;

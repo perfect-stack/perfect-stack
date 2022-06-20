@@ -210,6 +210,19 @@ export class TableLayoutComponent implements OnInit {
     console.log(`delete row: ${i}`);
     this.attributes.removeAt(i);
   }
+
+  getStyleClasses() {
+    let styleClasses = '';
+    if(this.template.styles) {
+      styleClasses += this.template.styles;
+    }
+
+    if(this.template.navigation === 'Enabled') {
+      styleClasses += ' table-hover';
+    }
+
+    return styleClasses;
+  }
 }
 
 export interface CardItem {

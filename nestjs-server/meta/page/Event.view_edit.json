@@ -120,7 +120,8 @@
                   }
                 ]
               ],
-              "locations": {}
+              "locations": {},
+              "styles": "table-borderless"
             }
           }
         ]

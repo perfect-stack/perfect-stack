@@ -20,7 +20,7 @@
       "label": "Person",
       "description": "Each Person associated with the event",
       "type": "ManyToOne",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonOperator": "",
       "relationshipTarget": "Person",
       "typeaheadSearch": [
@@ -33,7 +33,7 @@
       "label": "Role",
       "description": "The role that this person placed during this event",
       "type": "ManyToOne",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonOperator": "Equals",
       "relationshipTarget": "ObserverRole",
       "typeaheadSearch": [

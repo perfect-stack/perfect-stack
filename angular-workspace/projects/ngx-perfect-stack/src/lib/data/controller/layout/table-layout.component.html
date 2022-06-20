@@ -1,6 +1,6 @@
 <ng-container *ngIf="cells$ | async as cells">
 
-  <table class="table" [ngClass]="{'table-hover': template.navigation === 'Enabled'}" [formGroup]="formGroup">
+  <table class="table" [ngClass]="getStyleClasses()" [formGroup]="formGroup">
     <thead>
     <tr *ngIf="cells">
       <th *ngFor="let nextCell of cells[0]">
@@ -24,7 +24,7 @@
             </ng-container>
           </td>
           <td *ngIf="mode === 'edit'">
-            <span class="btn-icon text-danger material-icons mater" (click)="onDeleteRow(i)">delete</span>
+            <span class="btn-icon text-danger material-icons" (click)="onDeleteRow(i)">delete</span>
           </td>
         </tr>
       </ng-container>
@@ -40,7 +40,10 @@
   </table>
 
   <div class="d-flex" *ngIf="mode === 'edit'">
-    <button class="btn btn-outline-success me-2" (click)="onAddRow()" id="addRowBtn">Add Row</button>
+    <a class="text-primary" (click)="onAddRow()" id="addRowBtn" role="button">
+      <span class="material-icons align-middle">add_circle</span>
+      Add another
+    </a>
   </div>
 </ng-container>
 

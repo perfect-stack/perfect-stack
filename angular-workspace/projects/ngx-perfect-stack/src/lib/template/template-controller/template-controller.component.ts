@@ -343,14 +343,15 @@ export class CellViewComponent implements OnInit, OnChanges {
       templateHeading: '',
       type: TemplateType.table,
       metaEntityName: '',
-      orderByName: '',
-      orderByDir: '',
       cells: [[
         {
           width: '6',
           height: '1',
         },
       ]],
+      styles: '',
+      orderByName: '',
+      orderByDir: '',
       locations: {},
     };
   }
@@ -378,8 +379,6 @@ export class CellViewComponent implements OnInit, OnChanges {
         templateHeading: '',
         type: TemplateType.table,
         metaEntityName: attribute.relationshipTarget,
-        orderByName: 'UNKNOWN',
-        orderByDir: 'ASC',
         cells: [[
           {
             width: '12',
@@ -387,6 +386,9 @@ export class CellViewComponent implements OnInit, OnChanges {
             attributeName: attribute.name,
           },
         ]],
+        styles: '',
+        orderByName: 'UNKNOWN',
+        orderByDir: 'ASC',
         locations: {},
       };
     }
