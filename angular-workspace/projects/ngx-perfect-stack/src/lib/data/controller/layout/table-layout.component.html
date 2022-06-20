@@ -23,6 +23,9 @@
               <lib-cell [mode]="mode" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)"></lib-cell>
             </ng-container>
           </td>
+          <td *ngIf="mode === 'edit'">
+            <span class="btn-icon text-danger material-icons mater" (click)="onDeleteRow(i)">delete</span>
+          </td>
         </tr>
       </ng-container>
     </ng-container>

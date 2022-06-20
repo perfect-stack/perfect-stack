@@ -39,16 +39,17 @@ describe('DataService-CRUD', () => {
       },
     };
 
-    const person2 = await dataService.save(
+    const person2EntityResponse = await dataService.save(
       'Person',
       person1 as unknown as Entity,
     );
 
     // extract the id from the result of the create request
-    const personId = (person2 as unknown as any).id;
+    const personId = person2EntityResponse.entity.id;
 
     // now find the entity, expecting eager loading of all children
     const person3 = (await dataService.findOne('Person', personId)) as any;
+
     expect(personId).toEqual(person3.id);
     expect(person1.family_name).toEqual(person3.family_name);
     expect(person3.physical_address.street_address).toEqual(
@@ -64,7 +65,7 @@ describe('DataService-CRUD', () => {
       },
     ];
 
-    const person4 = await dataService.save('Person', person3);
+    const person4EntityResponse = await dataService.save('Person', person3);
     const person5 = (await dataService.findOne('Person', personId)) as any;
     expect(personId).toEqual(person5.id);
     expect(person5.physical_address.street_address).toEqual(

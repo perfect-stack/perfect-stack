@@ -205,6 +205,11 @@ export class TableLayoutComponent implements OnInit {
       }
     }
   }
+
+  onDeleteRow(i: number) {
+    console.log(`delete row: ${i}`);
+    this.attributes.removeAt(i);
+  }
 }
 
 export interface CardItem {

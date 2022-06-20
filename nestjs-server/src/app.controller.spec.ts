@@ -4,13 +4,14 @@ import { AppService } from './app.service';
 import { AppModule } from './app.module';
 import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
 import { DataModule } from './data/data.module';
+import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 
 describe('AppController', () => {
   let appController: AppController;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, MetaEntityModule, DataModule],
+      imports: [AppModule, MetaEntityModule, MetaMenuModule, DataModule],
       controllers: [AppController],
       providers: [AppService],
     }).compile();

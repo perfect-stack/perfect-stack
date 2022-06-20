@@ -273,10 +273,24 @@ export class DataService {
       relationshipAttribute.relationshipTarget,
     );
 
-    const childList = parentEntity[relationshipAttribute.name] as [];
+    const childList = parentEntity[relationshipAttribute.name] as any[];
     if (childList) {
       console.log(
         `saveListOfChildren(${relationshipAttribute.name}) with ${childList.length} items`,
+      );
+
+      const existingChildren: Map<string, any> =
+        await this.findExistingChildren(
+          parentEntity,
+          parentMetaEntity,
+          relationshipAttribute,
+        );
+
+      await this.deleteMissingChildren(
+        parentEntity,
+        parentMetaEntity,
+        relationshipAttribute,
+        existingChildren,
       );
 
       for (const nextChild of childList) {
@@ -285,7 +299,8 @@ export class DataService {
         let childEntityModel = null;
         if (childEntity.id) {
           this.validateUuid(childEntity.id);
-          childEntityModel = await childModel.findByPk(childEntity.id);
+          //childEntityModel = await childModel.findByPk(childEntity.id);
+          childEntityModel = existingChildren.get(childEntity.id);
         } else {
           childEntity.id = uuid.v4();
         }
@@ -308,6 +323,50 @@ export class DataService {
         childEntityModel.set(childEntity);
         childEntityModel[parentMetaEntity.name + 'Id'] = parentEntity.id;
         childEntityModel.save();
+      }
+    }
+  }
+
+  private async findExistingChildren(
+    parentEntity: Entity,
+    parentMetaEntity: MetaEntity,
+    relationshipAttribute: MetaAttribute,
+  ): Promise<Map<string, any>> {
+    // create a criteria search that will look for the children of this entity
+    const queryRequest = new QueryRequest();
+    queryRequest.metaEntityName = relationshipAttribute.relationshipTarget;
+    queryRequest.criteria = [
+      {
+        name: parentMetaEntity.name + 'Id',
+        operator: ComparisonOperator.Equals,
+        value: parentEntity.id,
+      },
+    ];
+
+    // execute the search and get a list of children back
+    const childListResults = await this.findByCriteria(queryRequest);
+
+    // convert into a map for later consumption
+    const childrenMap = new Map<string, any>();
+    childListResults.resultList.forEach((e) => childrenMap.set(e.id, e));
+
+    return childrenMap;
+  }
+
+  private async deleteMissingChildren(
+    parentEntity: Entity,
+    parentMetaEntity: MetaEntity,
+    relationshipAttribute: MetaAttribute,
+    existingChildren: Map<string, any>,
+  ) {
+    // for each existing child, if it doesn't exist in the new parent's list of child then we now need to delete it from the database and the map
+    const incomingChildList = parentEntity[relationshipAttribute.name] as any[];
+    for (const childKey of existingChildren.keys()) {
+      const incomingChild = incomingChildList.find((x) => x.id === childKey);
+      if (!incomingChild) {
+        const existingChild = existingChildren.get(childKey);
+        existingChildren.delete(childKey);
+        existingChild.destroy();
       }
     }
   }
