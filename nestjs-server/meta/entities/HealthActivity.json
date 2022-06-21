@@ -19,11 +19,21 @@
       "name": "condition",
       "label": "Condition",
       "description": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Poor",
+        "Good",
+        "Gravid",
+        "Poor-moderate",
+        "Moderate",
+        "Moderate-good",
+        "Excellent",
+        "Dead"
+      ]
     },
     {
       "name": "lice",

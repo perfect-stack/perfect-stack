@@ -130,7 +130,8 @@
                   "label": "Edit Bird",
                   "route": "/data/Bird/edit/${bird.id}"
                 }
-              }
+              },
+              "styles": "bird-view"
             }
           },
           {

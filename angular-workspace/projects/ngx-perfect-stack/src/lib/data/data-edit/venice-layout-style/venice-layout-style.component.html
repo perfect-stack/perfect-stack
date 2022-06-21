@@ -2,9 +2,9 @@
 
   <div class="container-fluid stockholm-layout-style">
     <div class="d-flex justify-content-between my-2">
-      <a [routerLink]="['/data', ctx.metaEntity.name, 'search']">
+      <a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
         <span class="material-icons align-middle">keyboard_backspace</span>
-        <span class="align-middle">All {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
+        <span class="align-middle">Search {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
       </a>
 
       <!-- Remember: there are different titles at different levels, so this may or may not appear depending on page meta data -->

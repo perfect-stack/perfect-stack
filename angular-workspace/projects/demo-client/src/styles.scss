@@ -148,8 +148,16 @@ body {
   background: #F2F4F7;
 }
 
+a {
+  text-decoration: none;
+}
+
 .paris-layout-style .form-row {
-  margin-bottom: 40px;
+  margin-bottom: 32px;
+}
+
+.bird-view .form-row {
+  margin-bottom: 24px;
 }
 
 
@@ -287,4 +295,8 @@ body {
 
 .empty-value {
   color: dimgray;
+}
+
+.back-link {
+  font-size: $font-md;
 }

@@ -2,7 +2,7 @@
 
   <!-- If template has a binding to the form -->
   <ng-container *ngIf="template && template.binding">
-    <div [formGroup]="formGroup">
+    <div [ngClass]="template.styles" [formGroup]="formGroup">
       <div class="row form-row" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
           <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
@@ -26,7 +26,7 @@
 
   <!-- If this template doesn't have a binding (normally this means it's a root level template with nested child templates, so no binding means no form group) -->
   <ng-container *ngIf="template && !template.binding">
-    <div [formGroup]="formGroup">
+    <div [ngClass]="template.styles" [formGroup]="formGroup">
       <div class="row" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
 

@@ -1,7 +1,7 @@
 <div class="container-fluid paris-layout-style" *ngIf="ctx">
   <div class="d-flex justify-content-between">
     <div>
-      <a [routerLink]="['/data', ctx.metaEntity.name, 'search']">
+      <a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
         <span class="material-icons align-middle">keyboard_backspace</span>
         <span class="align-middle">Search {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
       </a>

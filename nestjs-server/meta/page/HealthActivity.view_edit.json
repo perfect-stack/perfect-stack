@@ -10,7 +10,8 @@
           {
             "width": "4",
             "height": "1",
-            "attributeName": "condition"
+            "attributeName": "condition",
+            "component": "Select"
           }
         ],
         [
