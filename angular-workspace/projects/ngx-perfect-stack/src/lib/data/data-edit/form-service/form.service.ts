@@ -245,6 +245,9 @@ export class FormService {
       else if (nextAttribute.type === AttributeType.Date) {
         formControl = this.formControlForDate(mode);
       }
+      else if (nextAttribute.type === AttributeType.Boolean) {
+        formControl = this.formControlForBoolean();
+      }
       else {
         // WARNING: This has been a bit of a cockroach problem. One of these two lines is "correct" but depending on
         // the low level sequence of processing elsewhere the "right" answer is either '' or null. If you change this
@@ -351,6 +354,11 @@ export class FormService {
     // See WARNING below: Date does need to be null, otherwise empty string is treated as an invalid Date and prevents
     // "no value" optional dates from allowing the form validation to be valid
     return new FormControlWithAttribute({value: null, disabled: mode === 'view'});
+  }
+
+  private formControlForBoolean(): FormControl {
+    // It's important to set this to false as the default value because otherwise the database will reject the default value of ''
+    return new FormControlWithAttribute(false);
   }
 
 }

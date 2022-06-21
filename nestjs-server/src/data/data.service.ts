@@ -122,52 +122,60 @@ export class DataService {
   }
 
   async save(entityName: string, entity: Entity): Promise<EntityResponse> {
-    console.log(`save(${entityName}) ${JSON.stringify(entity)}`);
+    try {
+      console.log(`save(${entityName}) ${JSON.stringify(entity)}`);
 
-    const metaEntityList = await this.metaEntityService.findAll();
-    const metaEntityMap = new Map<string, MetaEntity>();
-    for (const nextMetaEntity of metaEntityList) {
-      metaEntityMap.set(nextMetaEntity.name, nextMetaEntity);
+      const result = await this.ormService.sequelize.transaction(async () => {
+        const metaEntityList = await this.metaEntityService.findAll();
+        const metaEntityMap = new Map<string, MetaEntity>();
+        for (const nextMetaEntity of metaEntityList) {
+          metaEntityMap.set(nextMetaEntity.name, nextMetaEntity);
+        }
+
+        const model = this.ormService.sequelize.model(entityName);
+
+        // entity may arrive with or without an id, and may exist or not exist in the database
+        let entityModel;
+        if (entity.id) {
+          this.validateUuid(entity.id);
+          entityModel = await model.findByPk(entity.id);
+        } else {
+          entity.id = uuid.v4();
+        }
+
+        const metaEntity = metaEntityMap.get(entityName);
+        if (!metaEntity) {
+          throw new Error(`Unable to find MetaEntity ${entityName}`);
+        }
+
+        // recursively save all the children (excluding the Poly ones)
+        await this.saveTheChildren(metaEntityMap, metaEntity, entity);
+
+        let action;
+        if (!entityModel) {
+          // if entityModel was not found, or entity did not arrive with id
+          action = AuditAction.Create;
+          entityModel = await model.create(entity);
+        } else {
+          // else entityModel was found
+          action = AuditAction.Update;
+          entityModel.set(entity);
+          await entityModel.save();
+        }
+
+        // recursively save all Poly relationships
+        await this.saveAllPolys(metaEntityMap, metaEntity, entity);
+
+        return {
+          action: action,
+          entity: entityModel,
+        };
+      });
+
+      return result;
+    } catch (error) {
+      console.error('save() failed:', error);
     }
-
-    const model = this.ormService.sequelize.model(entityName);
-
-    // entity may arrive with or without an id, and may exist or not exist in the database
-    let entityModel;
-    if (entity.id) {
-      this.validateUuid(entity.id);
-      entityModel = await model.findByPk(entity.id);
-    } else {
-      entity.id = uuid.v4();
-    }
-
-    const metaEntity = metaEntityMap.get(entityName);
-    if (!metaEntity) {
-      throw new Error(`Unable to find MetaEntity ${entityName}`);
-    }
-
-    // recursively save all the children (excluding the Poly ones)
-    await this.saveTheChildren(metaEntityMap, metaEntity, entity);
-
-    let action;
-    if (!entityModel) {
-      // if entityModel was not found, or entity did not arrive with id
-      action = AuditAction.Create;
-      entityModel = await model.create(entity);
-    } else {
-      // else entityModel was found
-      action = AuditAction.Update;
-      entityModel.set(entity);
-      await entityModel.save();
-    }
-
-    // recursively save all Poly relationships
-    await this.saveAllPolys(metaEntityMap, metaEntity, entity);
-
-    return {
-      action: action,
-      entity: entityModel,
-    };
   }
 
   private async saveTheChildren(
