@@ -3,6 +3,7 @@ import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {TextTool} from '../../../../../domain/meta.page';
 import {ExpressionService} from '../../../layout/controls/expression-control/expression.service';
 import {FormGroup} from '@angular/forms';
+import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
 
 @Component({
   selector: 'lib-text-tool',
@@ -26,7 +27,8 @@ export class TextToolComponent implements OnInit {
   textValue: string
   stylesValue: string;
 
-  constructor(protected readonly expressionService: ExpressionService) { }
+  constructor(protected readonly expressionService: ExpressionService,
+              protected readonly propertySheetService: PropertySheetService) { }
 
   ngOnInit(): void {
     if(this.formGroup) {
@@ -37,6 +39,19 @@ export class TextToolComponent implements OnInit {
       this.textValue = this.expressionService.evaluate(this.textTool.text, this.ctx.dataMap);
       this.stylesValue = this.expressionService.replaceSpaces(this.expressionService.evaluate(this.textTool.styles, this.ctx.dataMap), '-');
     }
+    else {
+      this.textValue = this.textTool.text;
+    }
   }
 
+  onClick() {
+    if (this.editorMode) {
+      this.doEditorAction();
+    }
+  }
+
+  doEditorAction() {
+    // trigger the PropertySheetService to start editing it
+    this.propertySheetService.edit('Text', this.textTool);
+  }
 }

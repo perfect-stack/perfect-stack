@@ -1,12 +1,10 @@
 import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Cell, SelectTwoComponentData, Template, TemplateType, Tool} from '../../domain/meta.page';
+import {Cell, Template, TemplateLocationType, TemplateType, Tool} from '../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {CellSettingsComponent, CellSettingsResult} from './cell-settings/cell-settings.component';
 import {Observable} from 'rxjs';
-import {TemplateLocationType} from '../../domain/meta.page';
 import {PropertySheetService} from '../property-sheet/property-sheet.service';
 
 // This file contains many Components because they have a circular dependency on the top-level component of
@@ -404,5 +402,9 @@ export class CellViewComponent implements OnInit, OnChanges {
 
     this.cell.tool = Object.assign({}, toolPrototype);
     this.propertySheetService.edit(this.cell.tool.type, this.cell.tool);
+  }
+
+  isShowLabel(attribute: MetaAttribute) {
+    return attribute && attribute.type !== AttributeType.Boolean;
   }
 }

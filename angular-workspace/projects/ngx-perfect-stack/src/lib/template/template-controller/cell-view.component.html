@@ -13,7 +13,7 @@
       <div class="col-12"
            [ngStyle]="{'min-height': getCSSHeight(cell)}"
            *ngIf="attribute && !cell.template">
-        <label [for]="attribute.name">
+        <label [for]="attribute.name" *ngIf="isShowLabel(attribute)">
           <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
         </label>
 
@@ -32,6 +32,10 @@
                 <lib-text-field-control [formGroup]="entityForm" [name]="attribute.name"></lib-text-field-control>
               </ng-container>
             </ng-container>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'Boolean'">
+            <lib-boolean-check-box-control [formGroup]="entityForm" [attribute]="attribute"></lib-boolean-check-box-control>
           </ng-container>
 
           <ng-container *ngSwitchCase="'Enumeration'">

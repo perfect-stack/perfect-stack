@@ -47,10 +47,10 @@ export class DataSearchComponent implements OnInit {
       withLatestFrom(this.route.paramMap, this.route.queryParamMap)
     ).subscribe(([url, paramMap,  queryParamMap]) => {
 
-      this.ctx$ = this.route.paramMap.pipe(switchMap((params) => {
-        this.metaName = params.get('metaName');
+      //this.ctx$ = this.route.paramMap.pipe(switchMap((params) => {
+        this.metaName = paramMap.get('metaName');
         if (this.metaName) {
-          return this.formService.loadFormContext(this.metaName, this.mode, null, paramMap, queryParamMap).pipe(switchMap((ctx) => {
+          this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, null, paramMap, queryParamMap).pipe(switchMap((ctx) => {
 
             this.searchCriteriaTemplate = ctx.metaPage.templates[0];
             this.searchCriteriaTemplate.binding = 'criteria';
@@ -82,7 +82,7 @@ export class DataSearchComponent implements OnInit {
         } else {
           throw new Error('Invalid input parameters; ');
         }
-      }));
+      //}));
     });
   }
 

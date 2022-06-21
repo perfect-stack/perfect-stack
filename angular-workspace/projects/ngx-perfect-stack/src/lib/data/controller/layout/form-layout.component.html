@@ -29,18 +29,18 @@
     <div [formGroup]="formGroup">
       <div class="row" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
+
           <ng-container *ngIf="cell.template">
             <div class="p-3 bg-light shadow-sm border" *ngIf="cell.template">
               <lib-layout [ctx]="ctx" [template]="cell.template"></lib-layout>
             </div>
           </ng-container>
 
-          <ng-container *ngIf="cell.attribute">
-            <ng-container *ngIf="cell.attribute && isShowLabel(cell)">
-              <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
-            </ng-container>
-            <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+          <ng-container *ngIf="cell.attribute && isShowLabel(cell)">
+            <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
           </ng-container>
+
+          <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
 
           <!-- TODO: there's probably a tool one here, and in fact these have probably evolved into being just one block (same as above) -->
         </div>

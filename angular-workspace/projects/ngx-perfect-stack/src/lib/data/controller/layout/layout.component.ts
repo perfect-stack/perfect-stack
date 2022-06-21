@@ -156,18 +156,20 @@ export class TableLayoutComponent implements OnInit {
     }));
   }
 
-  get attributes() {
-    return this.formGroup.get(this.relationshipProperty) as FormArray;
+  get attributes(): FormArray | null {
+    return this.formGroup && this.relationshipProperty ? this.formGroup.get(this.relationshipProperty) as FormArray : null;
   }
 
-  getFormGroupForRow(rowIdx: number) {
-    return this.attributes.at(rowIdx) as FormGroup;
+  getFormGroupForRow(rowIdx: number): FormGroup | null {
+    return this.attributes ? this.attributes.at(rowIdx) as FormGroup : null;
   }
 
   onAddRow() {
     if(this.mode === 'edit') {
       const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaPageMap, this.metaEntityMap, null);
-      this.attributes.push(formGroup);
+      if(this.attributes) {
+        this.attributes.push(formGroup);
+      }
     }
   }
 
@@ -208,7 +210,9 @@ export class TableLayoutComponent implements OnInit {
 
   onDeleteRow(i: number) {
     console.log(`delete row: ${i}`);
-    this.attributes.removeAt(i);
+    if(this.attributes) {
+      this.attributes.removeAt(i);
+    }
   }
 
   getStyleClasses() {

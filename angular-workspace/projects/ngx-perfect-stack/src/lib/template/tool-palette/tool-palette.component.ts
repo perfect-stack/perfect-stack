@@ -30,7 +30,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: '',
     label: '',
-    text: ''
+    text: 'Text'
   }
 
   static readonly iconPrototype: IconTool = {
