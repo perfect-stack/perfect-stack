@@ -1,8 +1,13 @@
+<ng-container *ngIf="mode !== 'view'">
+  <div class="form-check" [formGroup]="formGroup" *ngIf="attribute">
+    <input class="form-check-input" type="checkbox" [id]="attribute.name" [formControlName]="attribute.name">
+    <label class="form-check-label" [for]="attribute.name">
+      {{attribute.label}}
+    </label>
+  </div>
+</ng-container>
 
-
-<div class="form-check" [formGroup]="formGroup" *ngIf="attribute">
-  <input class="form-check-input" type="checkbox" [id]="attribute.name" [formControlName]="attribute.name">
-  <label class="form-check-label" [for]="attribute.name">
-    {{attribute.label}}
-  </label>
-</div>
+<ng-container *ngIf="mode === 'view'">
+  <label [for]="attribute.name">{{attribute.label}}</label>
+  <div [id]="attribute.name">{{getDisplayValue()}}</div>
+</ng-container>

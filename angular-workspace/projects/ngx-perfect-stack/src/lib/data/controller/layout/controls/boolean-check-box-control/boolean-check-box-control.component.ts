@@ -23,4 +23,8 @@ export class BooleanCheckBoxControlComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  getDisplayValue() {
+    const value = this.formGroup.controls[this.attribute.name].value;
+    return value ? 'Yes' : 'No';
+  }
 }
