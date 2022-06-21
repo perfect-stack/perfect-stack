@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {PageListener} from '../../../../ngx-perfect-stack/src/lib/event/page-listener';
+import {CompletionResult, PageListener} from '../../../../ngx-perfect-stack/src/lib/event/page-listener';
 import {FormContext} from '../../../../ngx-perfect-stack/src/lib/data/data-edit/form-service/form.service';
-import {ParamMap} from '@angular/router';
+import {ParamMap, Router} from '@angular/router';
 import {MetaAttribute} from '../../../../ngx-perfect-stack/src/lib/domain/meta.entity';
 import {DataService} from '../../../../ngx-perfect-stack/src/lib/data/data-service/data.service';
 import {FormGroup} from '@angular/forms';
@@ -11,7 +11,8 @@ import {FormGroup} from '@angular/forms';
 })
 export class EventPageListenerService implements PageListener {
 
-  constructor(protected readonly dataService: DataService) {
+  constructor(protected readonly dataService: DataService,
+              protected readonly router: Router) {
   }
 
   onAfterSave(ctx: FormContext): void {
@@ -89,4 +90,30 @@ export class EventPageListenerService implements PageListener {
     });
   }
 
+  onCompletion(ctx: FormContext): string {
+    console.log('Got onCompletionEvent() queryParams:', ctx.queryParamMap);
+    const queryParamMap = ctx.queryParamMap;
+    if(queryParamMap) {
+      const birdId = queryParamMap.get('bird_id');
+      let route = 'NONE';
+      if(birdId) {
+        route = `/data/Bird/view/${birdId}`
+      }
+      else {
+        const paramMap = ctx.paramMap;
+        if(paramMap) {
+          const eventId = paramMap.get('id');
+          if(eventId === '**NEW**') {
+            route = `/data/Event/search`;
+          }
+          else {
+            route = `/data/Event/view/${eventId}`;
+          }
+        }
+      }
+      this.router.navigateByUrl(route);
+    }
+
+    return CompletionResult.Stop;
+  }
 }

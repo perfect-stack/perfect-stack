@@ -106,6 +106,7 @@ import { IconToolComponent } from './data/controller/tool/tool-view/icon-tool/ic
 import { DateTimeControlComponent } from './data/controller/layout/controls/date-time-control/date-time-control.component';
 import { TimeControlComponent } from './data/controller/layout/controls/time-control/time-control.component';
 import { TileButtonPanelComponent } from './utils/tile-button-panel/tile-button-panel.component';
+import { BooleanCheckBoxControlComponent } from './data/controller/layout/controls/boolean-check-box-control/boolean-check-box-control.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -208,6 +209,7 @@ const routes: Routes = [
     DateTimeControlComponent,
     TimeControlComponent,
     TileButtonPanelComponent,
+    BooleanCheckBoxControlComponent,
   ],
   providers: [
     AuthenticationService,

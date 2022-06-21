@@ -11,16 +11,31 @@
             "width": "4",
             "height": "1",
             "attributeName": "condition"
+          }
+        ],
+        [
+          {
+            "width": "8",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "text": "What body checks did you perform?"
+            }
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "eyes_checked"
           },
           {
             "width": "4",
             "height": "1",
-            "attributeName": "lice"
-          },
-          {
-            "width": "4",
-            "height": "1",
-            "attributeName": "whisker_fungus"
+            "attributeName": "legs_checked"
           }
         ]
       ],

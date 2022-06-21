@@ -519,6 +519,11 @@ export class FormLayoutComponent implements OnInit, OnChanges {
     ];
   }
 
+  isShowLabel(cell: CellAttribute) {
+    const hideLabelsSet = new Set<AttributeType>([AttributeType.OneToPoly, AttributeType.Boolean]);
+    return cell && cell.attribute ? !hideLabelsSet.has(cell.attribute.type) : true;
+  }
+
   get AttributeType() {
     return AttributeType;
   }

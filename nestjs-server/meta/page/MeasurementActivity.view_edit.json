@@ -28,6 +28,10 @@
             "width": "4",
             "height": "1",
             "attributeName": "bill_length"
+          },
+          {
+            "width": "4",
+            "height": "1"
           }
         ]
       ],

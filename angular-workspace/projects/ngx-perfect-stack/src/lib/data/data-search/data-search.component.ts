@@ -10,7 +10,7 @@ import {
   CustomDateParserFormatter
 } from '../controller/layout/controls/date-picker-control/custom-date-parser-formatter';
 import {AbstractControl, FormGroup} from '@angular/forms';
-import {Observable, of, switchMap} from 'rxjs';
+import {Observable, of, switchMap, withLatestFrom} from 'rxjs';
 import {NewFormService} from '../data-edit/form-service/new-form.service';
 
 @Component({
@@ -43,44 +43,47 @@ export class DataSearchComponent implements OnInit {
               protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
-    this.ctx$ = this.route.paramMap.pipe(switchMap((params) => {
-      this.metaName = params.get('metaName');
-      if(this.metaName) {
-        return this.formService.loadFormContext(this.metaName, this.mode, null).pipe(switchMap((ctx) => {
+    this.route.url.pipe(
+      withLatestFrom(this.route.paramMap, this.route.queryParamMap)
+    ).subscribe(([url, paramMap,  queryParamMap]) => {
 
-          this.searchCriteriaTemplate = ctx.metaPage.templates[0];
-          this.searchCriteriaTemplate.binding = 'criteria';
-          if(!ctx.formMap) {
-            ctx.formMap = new Map<string, AbstractControl>();
-          }
-          const criteriaForm = this.newFormService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null)
-          ctx.formMap.set('criteria', criteriaForm);
-          console.log('Criteria form:', criteriaForm);
+      this.ctx$ = this.route.paramMap.pipe(switchMap((params) => {
+        this.metaName = params.get('metaName');
+        if (this.metaName) {
+          return this.formService.loadFormContext(this.metaName, this.mode, null, paramMap, queryParamMap).pipe(switchMap((ctx) => {
 
-          // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
-          this.resultTableTemplate = ctx.metaPage.templates[1];
-          if(!this.resultTableTemplate.binding) {
-            this.resultTableTemplate.binding = 'results';
-            this.resultTableTemplate.navigation = TemplateNavigationType.Enabled;
-            this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}';  // the ${id} parameter is being passed in as an expression to be resolved later
-          }
+            this.searchCriteriaTemplate = ctx.metaPage.templates[0];
+            this.searchCriteriaTemplate.binding = 'criteria';
+            if (!ctx.formMap) {
+              ctx.formMap = new Map<string, AbstractControl>();
+            }
+            const criteriaForm = this.newFormService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null)
+            ctx.formMap.set('criteria', criteriaForm);
+            console.log('Criteria form:', criteriaForm);
 
-          const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName;
-          const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
-          if(rtme) {
-            this.resultTableMetaEntity = rtme;
-            this.onSearch(ctx);
-            return of(ctx);
-          }
-          else {
-            throw new Error(`Unable to find metaEntity of; ${resultTableMetaEntityName}`);
-          }
-        }));
-      }
-      else {
-        throw new Error('Invalid input parameters; ');
-      }
-    }));
+            // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
+            this.resultTableTemplate = ctx.metaPage.templates[1];
+            if (!this.resultTableTemplate.binding) {
+              this.resultTableTemplate.binding = 'results';
+              this.resultTableTemplate.navigation = TemplateNavigationType.Enabled;
+              this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}';  // the ${id} parameter is being passed in as an expression to be resolved later
+            }
+
+            const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName;
+            const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
+            if (rtme) {
+              this.resultTableMetaEntity = rtme;
+              this.onSearch(ctx);
+              return of(ctx);
+            } else {
+              throw new Error(`Unable to find metaEntity of; ${resultTableMetaEntityName}`);
+            }
+          }));
+        } else {
+          throw new Error('Invalid input parameters; ');
+        }
+      }));
+    });
   }
 
   onSearch(ctx: FormContext) {

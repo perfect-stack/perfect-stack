@@ -1,5 +1,3 @@
-
-
 export enum ComponentType {
   TextInput = 'TextInput',
   TextArea = 'TextArea',

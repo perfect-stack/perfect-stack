@@ -1,6 +1,7 @@
 export enum AttributeType {
   Text = 'Text',
   Html = 'Html',
+  Boolean = 'Boolean',
   Number = 'Number',
   Integer = 'Integer',
   Identifier = 'Identifier',
@@ -43,6 +44,13 @@ export class MetaAttribute {
   discriminator: DiscriminatorAttribute;
   // List of the enumerated values (if attribute type === enumeration)
   enumeration: string[];
+
+  static isMetaAttribute(something: any) {
+    return (
+      something.type &&
+      Object.values(AttributeType).indexOf(something.type) >= 0
+    );
+  }
 }
 
 export class DiscriminatorAttribute {
@@ -66,6 +74,7 @@ export class MetaEntity {
   name: string;
   pluralName: string;
   type: EntityType;
+  icon: string; // icon name for this MetaEntity
   timestamps: boolean; // Controls if Sequelize will add createdAt and updatedAt timestamps to each record (if undefined defaults to true)
   attributes: MetaAttribute[];
 }

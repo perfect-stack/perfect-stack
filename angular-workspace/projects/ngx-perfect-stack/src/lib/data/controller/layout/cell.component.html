@@ -24,6 +24,10 @@
       </ng-container>
     </ng-container>
 
+    <ng-container *ngSwitchCase="'Boolean'">
+      <lib-boolean-check-box-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-boolean-check-box-control>
+    </ng-container>
+
     <ng-container *ngSwitchCase="'Enumeration'">
       <lib-enumeration-control [mode]="mode" [cell]="cell" [attribute]="cell.attribute" [formGroup]="formGroup"></lib-enumeration-control>
     </ng-container>

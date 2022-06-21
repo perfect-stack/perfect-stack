@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {PageListener} from '../../../../ngx-perfect-stack/src/lib/event/page-listener';
+import {CompletionResult, PageListener} from '../../../../ngx-perfect-stack/src/lib/event/page-listener';
 import {FormContext} from '../../../../ngx-perfect-stack/src/lib/data/data-edit/form-service/form.service';
 import {FormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../ngx-perfect-stack/src/lib/domain/meta.entity';
@@ -42,5 +42,7 @@ export class BirdViewPageListenerService implements PageListener {
   onPageLoad(ctx: FormContext, params: ParamMap, queryParams: ParamMap): void {
   }
 
-
+  onCompletion(ctx: FormContext): string {
+    return CompletionResult.Continue;
+  }
 }

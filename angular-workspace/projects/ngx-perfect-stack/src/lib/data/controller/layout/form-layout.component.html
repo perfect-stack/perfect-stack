@@ -5,7 +5,7 @@
     <div [formGroup]="formGroup">
       <div class="row form-row" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
-          <ng-container *ngIf="cell.attribute && cell.attribute.type !== AttributeType.OneToPoly">
+          <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
             <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
           </ng-container>
           <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
@@ -36,7 +36,7 @@
           </ng-container>
 
           <ng-container *ngIf="cell.attribute">
-            <ng-container *ngIf="cell.attribute">
+            <ng-container *ngIf="cell.attribute && isShowLabel(cell)">
               <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
             </ng-container>
             <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>

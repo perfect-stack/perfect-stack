@@ -8,6 +8,7 @@ import {AttributeType} from '../../domain/meta.entity';
 import {IdentifierVisitor, IntegerVisitor, MetaEntityTreeWalker} from '../../utils/tree-walker/meta-entity-tree-walker';
 import {DebugService} from '../../utils/debug/debug.service';
 import {EventService} from '../../event/event.service';
+import {CompletionResult} from '../../event/page-listener';
 
 
 @Component({
@@ -43,8 +44,8 @@ export class DataEditComponent implements OnInit {
       console.log('queryParamMap', queryParamMap.keys);
 
       if(this.metaName && this.mode) {
-        this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, this.entityId).pipe(tap((ctx) => {
-          this.eventService.dispatchOnPageLoad('Event.view_edit', ctx, paramMap, queryParamMap);
+        this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, this.entityId, paramMap, queryParamMap).pipe(tap((ctx) => {
+          this.eventService.dispatchOnPageLoad(ctx.metaPage.name, ctx, paramMap, queryParamMap);
         }));
       }
       else {
@@ -72,7 +73,13 @@ export class DataEditComponent implements OnInit {
     this.router.navigate([`/data/${this.metaName}/edit`, this.entityId]);
   }
 
-  onCancel() {
+  onCancel(ctx: FormContext) {
+
+    let completionResult = this.eventService.dispatchOnCompletion(ctx.metaPage.name, ctx);
+    if(completionResult === CompletionResult.Stop) {
+      return;
+    }
+
     if(this.entityId) {
       this.router.navigate([`/data/${this.metaName}/view`, this.entityId]);
     }
@@ -94,7 +101,7 @@ export class DataEditComponent implements OnInit {
     // TODO: this is wrong since it now depends on entityForm
     //const entityData = ctx.entityForm.value;
 
-    // TODO: so that entityForm could be removed from FOrmContext we are going to use a rule that says an edit page
+    // TODO: so that entityForm could be removed from FormContext we are going to use a rule that says an edit page
     // only has one form and so we can get the one and only form out of the formMap. Once this changes to some sort
     // of template approach then the template binding will be needed here to find the form to get the entityData
     const entityData = this.getDataForm(ctx).value;
@@ -108,7 +115,7 @@ export class DataEditComponent implements OnInit {
 
     if(this.metaName) {
       this.dataService.save(this.metaName, entityData).subscribe(() => {
-        this.onCancel();
+        this.onCancel(ctx);
       });
     }
   }

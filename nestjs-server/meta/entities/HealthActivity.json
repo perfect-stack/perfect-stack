@@ -54,6 +54,26 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
+    },
+    {
+      "name": "eyes_checked",
+      "label": "Eyes checked",
+      "description": "",
+      "type": "Boolean",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "legs_checked",
+      "label": "Legs checked",
+      "description": "",
+      "type": "Boolean",
+      "visibility": "Visible",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     }
   ]
 }

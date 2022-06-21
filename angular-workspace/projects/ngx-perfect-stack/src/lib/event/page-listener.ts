@@ -10,4 +10,11 @@ export interface PageListener extends PerfectStackEventListener {
   onManyToOneItemSelected(formGroup: FormGroup, attribute: MetaAttribute, itemSelected: any): void;
   onBeforeSave(ctx: FormContext): void;
   onAfterSave(ctx: FormContext): void;
+  onCompletion(ctx: FormContext): string;
+}
+
+export class CompletionResult {
+  static readonly Continue = 'AA-Continue';
+  static readonly Stop = 'BB-Stop';  // Stop any further navigation after this event
+  static readonly Error = 'CC-Error';
 }

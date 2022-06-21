@@ -1,6 +1,7 @@
 export enum AttributeType {
   Text = 'Text',
   Html = 'Html',
+  Boolean = 'Boolean',
   Number = 'Number',
   Integer = 'Integer',
   Identifier = 'Identifier',

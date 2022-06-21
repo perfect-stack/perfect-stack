@@ -142,6 +142,13 @@ export class MetaEntityService {
           };
         }
 
+        if (nextMetaAttribute.type === AttributeType.Boolean) {
+          modelAttribute = {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+          };
+        }
+
         if (nextMetaAttribute.type === AttributeType.Enumeration) {
           modelAttribute = {
             type: DataTypes.TEXT,

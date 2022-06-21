@@ -9,6 +9,7 @@ import {Observable, of, switchMap} from 'rxjs';
 import {AttributeType, MetaAttribute, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
 import {DataMapService} from './data-map.service';
 import {NewFormService} from './new-form.service';
+import {ParamMap} from '@angular/router';
 
 
 export class FormContext {
@@ -21,6 +22,8 @@ export class FormContext {
   metaEntityMap: Map<string, MetaEntity>;
   dataMap: Map<string, any>;
   formMap: Map<string, AbstractControl>;
+  paramMap: ParamMap;
+  queryParamMap: ParamMap;
   //entity: Entity;
   //entityForm: FormGroup;
 }
@@ -45,7 +48,7 @@ export class FormService {
               protected readonly dataService: DataService) {
   }
 
-  loadFormContext(metaName: string, mode: string, id: string | null): Observable<FormContext> {
+  loadFormContext(metaName: string, mode: string, id: string | null, paramMap: ParamMap, queryParamMap: ParamMap): Observable<FormContext> {
 
     let pageKey = mode === 'view' || mode === 'edit' ? 'view_edit' : mode;
 
@@ -60,6 +63,8 @@ export class FormService {
     ctx.metaName = metaName;
     ctx.mode = mode;
     ctx.id = id;
+    ctx.paramMap = paramMap;
+    ctx.queryParamMap = queryParamMap;
 
     return this.metaPageService.metaPageMap$.pipe(switchMap((metaPageMap) => {
       ctx.metaPageMap = metaPageMap;
