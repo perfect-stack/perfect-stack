@@ -3,7 +3,7 @@
 
   <ng-container *ngIf="metaEntity && metaEntity.attributes">
     <div class="draggable-attribute drag-handle" *ngFor="let attribute of metaEntity.attributes" my-draggable [drag-data]="attribute">
-      <span class="material-icons align-middle">drag_indicator</span>
+      <span class="material-symbols-outlined align-middle">drag_indicator</span>
       {{attribute.label}}
     </div>
   </ng-container>

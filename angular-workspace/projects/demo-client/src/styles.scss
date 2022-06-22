@@ -300,3 +300,11 @@ a {
 .back-link {
   font-size: $font-md;
 }
+
+.icon-filled {
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48;
+}

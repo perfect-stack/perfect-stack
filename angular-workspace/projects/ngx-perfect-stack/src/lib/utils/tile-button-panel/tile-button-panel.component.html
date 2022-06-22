@@ -5,14 +5,14 @@
               [ngClass]="{'tile-btn-selected': isSelected(colIdx, rowIdx)}"
               [disabled]="!isEnabled(colIdx, rowIdx)"
               (click)="onButtonClicked(colIdx, rowIdx)">
-        <div class="btn-icon material-icons text-primary" [ngClass]="{'btn-icon-disabled': !isEnabled(colIdx, rowIdx)}">{{getButton(colIdx, rowIdx).icon}}</div>
+        <div class="btn-icon material-symbols-outlined text-primary" [ngClass]="{'btn-icon-disabled': !isEnabled(colIdx, rowIdx)}">{{getButton(colIdx, rowIdx).icon}}</div>
         <div>{{getButton(colIdx, rowIdx).name}}</div>
         <ng-container *ngIf="selectionMode === 'single'">
-          <span class="btn-icon btn-radio material-icons btn-radio-selected" *ngIf="isSelected(colIdx, rowIdx)">radio_button_checked</span>
-          <span class="btn-icon btn-radio material-icons" *ngIf="!isSelected(colIdx, rowIdx)">radio_button_unchecked</span>
+          <span class="btn-icon btn-radio material-symbols-outlined btn-radio-selected" *ngIf="isSelected(colIdx, rowIdx)">radio_button_checked</span>
+          <span class="btn-icon btn-radio material-symbols-outlined" *ngIf="!isSelected(colIdx, rowIdx)">radio_button_unchecked</span>
         </ng-container>
         <ng-container *ngIf="selectionMode === 'multiple'">
-          <span class="btn-icon material-icons btn-check-selected" *ngIf="isSelected(colIdx, rowIdx)">check_box</span>
+          <span class="btn-icon material-symbols-outlined icon-filled btn-check-selected" *ngIf="isSelected(colIdx, rowIdx)">check_box</span>
         </ng-container>
       </button>
     </div>

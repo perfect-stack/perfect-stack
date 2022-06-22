@@ -5,6 +5,6 @@
 </form>
 
 <span class="badge bg-success me-1" *ngFor="let value of formGroup.value.enumeration; let i = index;">
-  <span>{{value}}</span><span class="material-icons small" (click)="removeValue(i)">close</span>
+  <span>{{value}}</span><span class="material-symbols-outlined small" (click)="removeValue(i)">close</span>
 </span>
 

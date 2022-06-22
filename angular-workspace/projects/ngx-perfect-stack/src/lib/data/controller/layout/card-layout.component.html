@@ -6,7 +6,7 @@
 
         <div class="d-flex justify-content-between">
           <h5 id="cards[{{i}}].cardHdg">{{getHeadingForRow(i, metaPageMap)}}</h5>
-          <span class="btn-icon text-danger material-icons" (click)="onDeleteItem(i)" *ngIf="mode === 'view'" id="cards[{{i}}].deleteBtn">remove_circle</span>
+          <span class="btn-icon text-danger material-symbols-outlined" (click)="onDeleteItem(i)" *ngIf="mode === 'view'" id="cards[{{i}}].deleteBtn">remove_circle</span>
         </div>
 
         <lib-form-layout
