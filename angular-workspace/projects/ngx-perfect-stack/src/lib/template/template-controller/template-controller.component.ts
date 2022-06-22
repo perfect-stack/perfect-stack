@@ -350,6 +350,7 @@ export class CellViewComponent implements OnInit, OnChanges {
       styles: '',
       orderByName: '',
       orderByDir: '',
+      noItemsHtml: '',
       locations: {},
     };
   }
@@ -387,6 +388,7 @@ export class CellViewComponent implements OnInit, OnChanges {
         styles: '',
         orderByName: 'UNKNOWN',
         orderByDir: 'ASC',
+        noItemsHtml: '',
         locations: {},
       };
     }

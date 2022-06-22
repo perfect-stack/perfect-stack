@@ -92,6 +92,7 @@ export const TemplatePropertyList = [
   { name: 'styles', type: PropertyType.string},
   { name: 'orderByName', type: PropertyType.string},
   { name: 'orderByDir', type: PropertyType.string, options: ['ASC', 'DESC']},
+  { name: 'noItemsHtml', type: PropertyType.string},
   { name: 'navigation', type: PropertyType.string, options: TemplateNavigationType},
   { name: 'route', type: PropertyType.string},
 ];
@@ -100,6 +101,7 @@ export const TemplatePropertyList = [
 export const CellPropertyList = [
   { name: 'component', type: PropertyType.string, options: ComponentType},
   { name: 'secondaryAttributeName', type: PropertyType.string},
+  { name: 'noItemsHtml', type: PropertyType.string},
 ]
 
 

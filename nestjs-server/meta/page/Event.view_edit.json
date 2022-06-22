@@ -121,7 +121,8 @@
                 ]
               ],
               "locations": {},
-              "styles": "table-borderless"
+              "styles": "table-borderless",
+              "noItemsHtml": "<span class=\"text-secondary\"><i><b>No observers added</b> - You can add observers by editing this event</i></span>"
             }
           }
         ]
@@ -137,7 +138,8 @@
           {
             "width": "12",
             "height": "1",
-            "attributeName": "activities"
+            "attributeName": "activities",
+            "noItemsHtml": "<span class=\"text-secondary\"><i><b>No activities added</b> - You can add activities by editing this event</i></span>"
           }
         ]
       ],

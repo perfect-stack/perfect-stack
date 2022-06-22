@@ -12,11 +12,13 @@ export class Cell {
   attributeName?: string;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   componentData?: ComponentData;
+  noItemsHtml?: string; // Html displayed when no items
   tool?: Tool;
   template?: Template;
 }
 
-export class ComponentData {}
+export class ComponentData {
+}
 
 export class SelectTwoComponentData implements ComponentData {
   secondaryAttributeName: string;
@@ -96,12 +98,13 @@ export class Template {
     ],
   ];
   locations: TemplateLocationMap;
-  orderByName: string; // Only for search result tables
-  orderByDir: string; // Only for search result tables
 
   styles: string; // CSS style classes
 
-  // for table rows
+  // for table templates
+  orderByName: string; // Only for search result tables
+  orderByDir: string; // Only for search result tables
+  noItemsHtml: string; // Html displayed when no items
   navigation?: TemplateNavigationType;
   route?: string;
 }

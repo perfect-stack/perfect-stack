@@ -1,43 +1,39 @@
 <ng-container *ngIf="cells$ | async as cells">
 
-  <table class="table" [ngClass]="getStyleClasses()" [formGroup]="formGroup">
-    <thead>
-    <tr *ngIf="cells">
-      <th *ngFor="let nextCell of cells[0]">
-        <ng-container *ngIf="nextCell.attribute">
-          {{nextCell.attribute.label}}
-        </ng-container>
-        <ng-container *ngIf="nextCell.tool">
-          {{nextCell.tool.label}}
-        </ng-container>
-      </th>
-    </tr>
-    </thead>
-    <tbody>
-
-    <ng-container *ngIf="cells && attributes && attributes.length > 0">
-      <ng-container [formArrayName]="relationshipProperty" *ngFor="let group of attributes.controls; let i=index">
-        <tr [formGroupName]="i" (click)="onRowClicked(i)">
-          <td *ngFor="let nextCell of cells[0]">
-            <ng-container *ngIf="nextCell.attribute || nextCell.tool">
-              <lib-cell [mode]="mode" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!"></lib-cell>
+  <ng-container *ngIf="cells && attributes && (attributes.length > 0 || mode === 'edit')">
+    <table class="table" [ngClass]="getStyleClasses()" [formGroup]="formGroup">
+      <thead>
+        <tr *ngIf="cells">
+          <th *ngFor="let nextCell of cells[0]">
+            <ng-container *ngIf="nextCell.attribute">
+              {{nextCell.attribute.label}}
             </ng-container>
-          </td>
-          <td *ngIf="mode === 'edit'">
-            <span class="btn-icon text-danger material-icons" (click)="onDeleteRow(i)">delete</span>
-          </td>
+            <ng-container *ngIf="nextCell.tool">
+              {{nextCell.tool.label}}
+            </ng-container>
+          </th>
         </tr>
-      </ng-container>
-    </ng-container>
+      </thead>
+      <tbody>
+        <ng-container [formArrayName]="relationshipProperty" *ngFor="let group of attributes.controls; let i=index">
+          <tr [formGroupName]="i" (click)="onRowClicked(i)">
+            <td *ngFor="let nextCell of cells[0]">
+              <ng-container *ngIf="nextCell.attribute || nextCell.tool">
+                <lib-cell [mode]="mode" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!"></lib-cell>
+              </ng-container>
+            </td>
+            <td class="align-middle" *ngIf="mode === 'edit'">
+              <span class="btn-icon text-primary material-symbols-outlined" (click)="onDeleteRow(i)">delete</span>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </ng-container>
 
-    <ng-container *ngIf="cells && attributes && attributes.length == 0">
-      <tr>
-        <td class="small" colspan="99">No items</td>
-      </tr>
-    </ng-container>
-
-    </tbody>
-  </table>
+  <ng-container *ngIf="mode !== 'edit' && cells && attributes && attributes.length == 0">
+    <div [innerHtml]="getNoItemsHtml()"></div>
+  </ng-container>
 
   <div class="d-flex" *ngIf="mode === 'edit'">
     <a class="text-primary" (click)="onAddRow()" id="addRowBtn" role="button">

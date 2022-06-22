@@ -227,6 +227,10 @@ export class TableLayoutComponent implements OnInit {
 
     return styleClasses;
   }
+
+  getNoItemsHtml() {
+    return this.template.noItemsHtml ? this.template.noItemsHtml : 'No items';
+  }
 }
 
 export interface CardItem {
@@ -247,6 +251,10 @@ export class CardLayoutComponent implements OnInit {
 
   //@Input()
   //template: Template;
+
+  // CardLayout doesn't have a Template like Table and Form does, but is allowed to know the Cell it sits in.
+  @Input()
+  cell: Cell;
 
   @Input()
   ctx: FormContext;
@@ -428,6 +436,10 @@ export class CardLayoutComponent implements OnInit {
         });
       }
     });
+  }
+
+  getNoItemsHtml() {
+    return this.cell.noItemsHtml ? this.cell.noItemsHtml : 'No items';
   }
 }
 
