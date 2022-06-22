@@ -222,7 +222,7 @@ export class TableLayoutComponent implements OnInit {
     }
 
     if(this.template.navigation === 'Enabled') {
-      styleClasses += ' table-hover';
+      styleClasses += ' table-hover row-navigation';
     }
 
     return styleClasses;
