@@ -12,7 +12,7 @@
       <lib-date-time-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-date-time-control>
     </ng-container>
 
-    <ng-container *ngSwitchCase="['Text', 'Html', 'Integer'].includes(cell.attribute.type) ? cell.attribute.type : ''">
+    <ng-container *ngSwitchCase="['Text', 'Html', 'Double', 'Integer'].includes(cell.attribute.type) ? cell.attribute.type : ''">
       <ng-container [ngSwitch]="cell.component">
         <ng-container *ngSwitchCase="'TextArea'">
           <app-text-area-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></app-text-area-control>

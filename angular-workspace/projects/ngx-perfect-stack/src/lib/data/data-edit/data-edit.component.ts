@@ -5,7 +5,12 @@ import {DataService} from '../data-service/data.service';
 import {FormContext, FormService} from './form-service/form.service';
 import * as uuid from 'uuid';
 import {AttributeType} from '../../domain/meta.entity';
-import {IdentifierVisitor, IntegerVisitor, MetaEntityTreeWalker} from '../../utils/tree-walker/meta-entity-tree-walker';
+import {
+  DoubleVisitor,
+  IdentifierVisitor,
+  IntegerVisitor,
+  MetaEntityTreeWalker
+} from '../../utils/tree-walker/meta-entity-tree-walker';
 import {DebugService} from '../../utils/debug/debug.service';
 import {EventService} from '../../event/event.service';
 import {CompletionResult} from '../../event/page-listener';
@@ -108,6 +113,7 @@ export class DataEditComponent implements OnInit {
     console.log(`DataEdit: form value:`, entityData);
 
     const treeWalker = new MetaEntityTreeWalker(ctx.metaEntityMap);
+    treeWalker.byType(AttributeType.Double, new DoubleVisitor());
     treeWalker.byType(AttributeType.Integer, new IntegerVisitor());
     treeWalker.byType(AttributeType.Identifier, new IdentifierVisitor());
     treeWalker.walk(entityData, ctx.metaEntity);

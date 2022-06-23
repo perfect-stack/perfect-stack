@@ -1,6 +1,7 @@
 {
   "name": "Location",
   "pluralName": "Locations",
+  "icon": "",
   "type": "Database",
   "timestamps": true,
   "attributes": [
@@ -50,7 +51,7 @@
       "name": "easting",
       "label": "Easting",
       "description": "",
-      "type": "Integer",
+      "type": "Double",
       "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -60,7 +61,7 @@
       "name": "northing",
       "label": "Northing",
       "description": "",
-      "type": "Integer",
+      "type": "Double",
       "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",

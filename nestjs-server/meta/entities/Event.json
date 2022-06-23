@@ -89,7 +89,7 @@
       "name": "northing",
       "label": "Northing",
       "description": "",
-      "type": "Integer",
+      "type": "Double",
       "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -99,7 +99,7 @@
       "name": "easting",
       "label": "Easting",
       "description": "",
-      "type": "Integer",
+      "type": "Double",
       "visibility": "Visible",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -114,7 +114,8 @@
       "comparisonOperator": "",
       "relationshipTarget": "Bird",
       "typeaheadSearch": [
-        "name"
+        "name",
+        "band"
       ]
     },
     {

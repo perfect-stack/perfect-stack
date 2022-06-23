@@ -2,7 +2,7 @@ export enum AttributeType {
   Text = 'Text',
   Html = 'Html',
   Boolean = 'Boolean',
-  Number = 'Number',
+  Double = 'Double',
   Integer = 'Integer',
   Identifier = 'Identifier',
   Date = 'Date',

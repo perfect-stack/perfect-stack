@@ -102,9 +102,10 @@ export class TemplateTableEditorComponent implements OnInit {
             return 'yyyy-mm-dd';
           case AttributeType.Text:
             return 'Abc...';
-          case AttributeType.Number:
+          case AttributeType.Double:
+            return '123.00';
           case AttributeType.Integer:
-            return '123.0';
+            return '123';
           case AttributeType.ManyToOne:
             return 'Search...';
           case AttributeType.Enumeration:

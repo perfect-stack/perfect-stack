@@ -2,7 +2,7 @@ export enum AttributeType {
   Text = 'Text',
   Html = 'Html',
   Boolean = 'Boolean',
-  Number = 'Number',
+  Double = 'Double',
   Integer = 'Integer',
   Identifier = 'Identifier',
   Date = 'Date',
@@ -46,7 +46,10 @@ export class MetaAttribute {
   enumeration: string[];
 
   static isMetaAttribute(something: any) {
-    return something.type && Object.values(AttributeType).indexOf(something.type) >= 0;
+    return (
+      something.type &&
+      Object.values(AttributeType).indexOf(something.type) >= 0
+    );
   }
 }
 
