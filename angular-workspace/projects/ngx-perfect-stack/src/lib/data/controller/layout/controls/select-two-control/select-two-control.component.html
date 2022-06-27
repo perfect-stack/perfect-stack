@@ -1,12 +1,26 @@
 <ng-container [formGroup]="formGroup" *ngIf="options$ | async as options">
-  <div class="d-flex">
-    <select [ngClass]="getCSSClass('me-1')" [formControlName]="attribute.name" [compareWith]="byEntityId" (ngModelChange)="onEntityChange($event)" [id]="attribute.name">
-      <option [ngValue]="null"></option>
-      <option *ngFor="let o of options" [ngValue]="o">{{getDisplayValue(o)}}</option>
-    </select>
-    <select [ngClass]="getCSSClass('ms-1')" [formControlName]="secondaryAttributeName" [id]="secondaryAttributeName">
-      <option [ngValue]="null"></option>
-      <option *ngFor="let s of secondaryOptions" [ngValue]="s">{{s}}</option>
-    </select>
-  </div>
+  <ng-container *ngIf="mode !== 'view' || formGroup.controls[attribute.name].value">
+    <div class="d-flex">
+      <select [ngClass]="getCSSClass('me-1')" [formControlName]="attribute.name" [compareWith]="byEntityId" (ngModelChange)="onEntityChange($event)" [id]="attribute.name">
+        <option [ngValue]="null"></option>
+        <option *ngFor="let o of options" [ngValue]="o">{{getDisplayValue(o)}}</option>
+      </select>
+      <select [ngClass]="getCSSClass('ms-1')" [formControlName]="secondaryAttributeName" [id]="secondaryAttributeName">
+        <option [ngValue]="null"></option>
+        <option *ngFor="let s of secondaryOptions" [ngValue]="s">{{s}}</option>
+      </select>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="mode === 'view' && !formGroup.controls[attribute.name].value">
+    <div class="d-flex">
+      <div class="input-group me-1">
+        <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
+      </div>
+
+      <div class="input-group ms-1">
+        <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
+      </div>
+    </div>
+  </ng-container>
 </ng-container>

@@ -1,6 +1,14 @@
 <ng-container [formGroup]="formGroup" *ngIf="options">
-  <select [ngClass]="getCSSClass()" [id]="attribute.name"
-          [formControlName]="attribute.name">
-    <option *ngFor="let o of options" [ngValue]="o">{{o}}</option>
-  </select>
+  <ng-container *ngIf="mode !== 'view' || formGroup.controls[attribute.name].value">
+    <select [ngClass]="getCSSClass()" [id]="attribute.name"
+            [formControlName]="attribute.name">
+      <option *ngFor="let o of options" [ngValue]="o">{{o}}</option>
+    </select>
+  </ng-container>
+
+  <ng-container *ngIf="mode === 'view' && !formGroup.controls[attribute.name].value">
+    <div class="input-group">
+      <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
+    </div>
+  </ng-container>
 </ng-container>

@@ -60,7 +60,7 @@ export class DatePickerControlComponent implements OnInit {
   }
 
   get placeholder() {
-    return this.isReadOnly ? '-' : this.stackConfig.dateFormat.toLowerCase();
+    return this.isReadOnly ? '—' : this.stackConfig.dateFormat.toLowerCase();
   }
 
   toggle(datePicker: NgbInputDatepicker) {
