@@ -412,7 +412,7 @@ export class CardLayoutComponent implements OnInit {
   }
 
   onDeleteItem(rowIdx: number) {
-    const modalRef = this.modalService.open(MessageDialogComponent)
+    /*const modalRef = this.modalService.open(MessageDialogComponent)
     const modalComponent: MessageDialogComponent = modalRef.componentInstance;
     modalComponent.title = 'Delete Entity Confirmation';
     modalComponent.text = `This action will delete the selected entity. It cannot be undone.`;
@@ -435,7 +435,8 @@ export class CardLayoutComponent implements OnInit {
           this.attributes.removeAt(rowIdx);
         });
       }
-    });
+    });*/
+    this.attributes.removeAt(rowIdx);
   }
 
   getNoItemsHtml() {

@@ -9,6 +9,7 @@ import { Op } from 'sequelize';
 import {
   AttributeType,
   ComparisonOperator,
+  DiscriminatorAttribute,
   MetaAttribute,
   MetaEntity,
 } from '../domain/meta.entity';
@@ -131,7 +132,8 @@ export class DataService {
 
       return result;
     } catch (error) {
-      console.error('save() failed:', error);
+      //console.error('save() failed:', error);
+      throw error;
     }
   }
 
@@ -247,6 +249,13 @@ export class DataService {
       `Unable to find discriminator attribute name for attribute ${attribute.name} in entity ${parentMetaEntity.name}`;
     }
 
+    await this.deleteMissingChildrenPoly(
+      parentEntity,
+      parentMetaEntity,
+      attribute,
+      discriminator,
+    );
+
     const listOfChildren = parentEntity[attribute.name] as [];
     for (let i = 0; i < listOfChildren.length; i++) {
       const childEntity: any = listOfChildren[i];
@@ -255,6 +264,7 @@ export class DataService {
         const childEntityMapping = discriminator.entityMappingList.find(
           (a) => a.discriminatorValue === discriminatorValue,
         );
+
         if (childEntityMapping) {
           const childFk = parentMetaEntity.name.toLowerCase() + '_id';
           childEntity[childFk] = parentEntity.id;
@@ -379,6 +389,50 @@ export class DataService {
         const existingChild = existingChildren.get(childKey);
         existingChildren.delete(childKey);
         existingChild.destroy();
+      }
+    }
+  }
+
+  private async deleteMissingChildrenPoly(
+    parentEntity: Entity,
+    parentMetaEntity: MetaEntity,
+    relationshipAttribute: MetaAttribute,
+    discriminator: DiscriminatorAttribute,
+  ) {
+    let childList = parentEntity[relationshipAttribute.name] as any[];
+    if (!childList) {
+      childList = []; // Even if there are no children now, we still need to check the database
+    }
+
+    // query the database for every entity mapping
+    for (const nextEntityMapping of discriminator.entityMappingList) {
+      // create a criteria search that will look for the children in this entityMapping that belong to the parent
+      const queryRequest = new QueryRequest();
+      queryRequest.metaEntityName = nextEntityMapping.metaEntityName;
+      queryRequest.criteria = [
+        {
+          name: parentMetaEntity.name.toLowerCase() + '_id',
+          operator: ComparisonOperator.Equals,
+          value: parentEntity.id,
+        },
+      ];
+
+      // execute the search and get a list of children back
+      const existingChildListResponse = await this.findByCriteria(queryRequest);
+      const existingChildList = existingChildListResponse.resultList;
+
+      // check if any of the entities found still exist in the relationship
+      for (const nextExistingChild of existingChildList) {
+        const childFound =
+          childList.find((x) => x.id === nextExistingChild.id) >= 0;
+
+        // if not found in the current parent object graph then delete the child so the database matches the new parent
+        if (!childFound) {
+          await this.destroy(
+            nextEntityMapping.metaEntityName,
+            nextExistingChild.id,
+          );
+        }
       }
     }
   }
