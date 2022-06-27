@@ -45,7 +45,7 @@ export class MetaAttribute {
   // List of the enumerated values (if attribute type === enumeration)
   enumeration: string[];
   unitOfMeasure: string;
-  scale: number;
+  scale: string;
 
   static isMetaAttribute(something: any) {
     return (

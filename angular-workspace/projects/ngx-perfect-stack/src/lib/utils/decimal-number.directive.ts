@@ -4,12 +4,12 @@ import {Directive, ElementRef, HostListener, Input} from '@angular/core';
  * https://stackoverflow.com/questions/50722368/limit-input-field-to-two-decimal-places-angular-5
  */
 @Directive({
-  selector: '[libDecimalNumberDirective]'
+  selector: '[libDecimalNumber]'
 })
-export class DecimalNumberDirectiveDirective {
+export class DecimalNumberDirective {
 
   @Input()
-  scale: number | undefined;
+  scale: string | undefined;
 
   private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', '-', 'ArrowLeft', 'ArrowRight', 'Del', 'Delete'];
 
@@ -18,7 +18,7 @@ export class DecimalNumberDirectiveDirective {
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
 
-    if(this.scale || this.scale === 0) {
+    if(this.scale) {
       // Allow Copy & Paste key combos
       if((event.ctrlKey || event.metaKey) && event.keyCode == 67) {
         console.log('CTRL + C');
@@ -32,6 +32,12 @@ export class DecimalNumberDirectiveDirective {
 
       // Allow Backspace, tab, end, and home keys
       if (this.specialKeys.indexOf(event.key) !== -1) {
+        return;
+      }
+
+      // Don't allow the decimal point if scale is zero
+      if(this.scale === '0' && event.key === '.') {
+        event.preventDefault();
         return;
       }
 
