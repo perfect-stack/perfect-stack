@@ -46,7 +46,7 @@ export class MetaEntityEditComponent implements OnInit {
       return this.metaName === '**NEW**' ? of(this.createNewMetaEntity()) : this.metaEntityService.findById(this.metaName);
     }));
 
-    this.metaEntity$.subscribe((metaEntity) => {
+    this.metaEntity$.subscribe((metaEntity: MetaEntity) => {
       for(const metaAttribute of metaEntity.attributes) {
         const formGroup = this.addBlankRow();
         if(metaAttribute.type === AttributeType.OneToPoly) {
@@ -89,6 +89,8 @@ export class MetaEntityEditComponent implements OnInit {
       name: ['', Validators.required],
       label: ['', Validators.required],
       description: [''],
+      unitOfMeasure: [''],
+      scale: [''],
       type: [AttributeType.Text],
       visibility: [VisibilityType.Visible],
       comparisonOperator: [''],

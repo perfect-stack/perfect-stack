@@ -60,6 +60,8 @@
             <th scope="col">Name</th>
             <th scope="col">Label</th>
             <th scope="col">Description</th>
+            <th scope="col">Unit of Measure</th>
+            <th scope="col">Scale</th>
             <th scope="col">Type</th>
             <th scope="col">Visibility</th>
             <th scope="col">Comparison</th>
@@ -68,12 +70,22 @@
           <tbody>
           <ng-container formArrayName="attributes" *ngFor="let formGroup of attributes.controls; let i=index">
             <tr [formGroupName]="i">
-              <td><input class="form-control" type="text" formControlName="name" readonly></td>
+              <td>
+                <input class="form-control" type="text" formControlName="name" readonly>
+              </td>
               <td>
                 <input class="form-control" type="text" formControlName="label" (keyup)="onLabelKeyup(formGroup)">
                 <app-validation-message [control]="getAttributeFormGroupAt(i).controls['label']" [attributePath]="'label'"></app-validation-message>
               </td>
-              <td><input class="form-control" type="text" formControlName="description"></td>
+              <td>
+                <input class="form-control" type="text" formControlName="description">
+              </td>
+              <td>
+                <input class="form-control" type="text" formControlName="unitOfMeasure">
+              </td>
+              <td>
+                <input class="form-control" type="text" formControlName="scale">
+              </td>
               <td>
                 <select class="form-select" formControlName="type">
                   <option *ngFor="let o of getAttributeTypeOptions()" [ngValue]="o">{{o}}</option>

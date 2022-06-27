@@ -107,6 +107,7 @@ import { DateTimeControlComponent } from './data/controller/layout/controls/date
 import { TimeControlComponent } from './data/controller/layout/controls/time-control/time-control.component';
 import { TileButtonPanelComponent } from './utils/tile-button-panel/tile-button-panel.component';
 import { BooleanCheckBoxControlComponent } from './data/controller/layout/controls/boolean-check-box-control/boolean-check-box-control.component';
+import { DecimalNumberDirectiveDirective } from './utils/decimal-number-directive.directive';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -210,6 +211,7 @@ const routes: Routes = [
     TimeControlComponent,
     TileButtonPanelComponent,
     BooleanCheckBoxControlComponent,
+    DecimalNumberDirectiveDirective,
   ],
   providers: [
     AuthenticationService,

@@ -44,6 +44,8 @@ export class MetaAttribute {
   discriminator: DiscriminatorAttribute;
   // List of the enumerated values (if attribute type === enumeration)
   enumeration: string[];
+  unitOfMeasure: string;
+  scale: number;
 
   static isMetaAttribute(something: any) {
     return (

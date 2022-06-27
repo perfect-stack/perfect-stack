@@ -1,6 +1,9 @@
 <ng-container *ngIf="mode !== 'view'">
   <div class="input-group" [formGroup]="formGroup">
-    <input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
+    <input class="form-control" [readonly]="isReadOnly()" [id]="name" [formControlName]="name" libDecimalNumberDirective [scale]="attribute?.scale">
+    <span class="input-group-text" [id]="name + '_uom'" *ngIf="attribute && attribute.unitOfMeasure">
+      {{attribute.unitOfMeasure}}
+    </span>
   </div>
 </ng-container>
 
