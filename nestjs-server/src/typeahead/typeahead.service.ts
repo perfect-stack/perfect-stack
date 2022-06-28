@@ -15,22 +15,33 @@ export class TypeaheadService {
     //const q = `SELECT id, given_name, family_name FROM "Person" as "Person" WHERE given_name LIKE '${request.searchText}%' ORDER BY given_name, family_name LIMIT 20`;
 
     const attribute = request.metaAttribute;
-
-    const whereClause = {};
-    whereClause[attribute.typeaheadSearch[0]] = {
-      [Op.iLike]: request.searchText + '%',
-    };
-
-    const orderClause = [];
-    if (attribute.typeaheadSearch[0]) {
-      orderClause.push([attribute.typeaheadSearch[0], 'ASC']);
+    if (!attribute.typeaheadSearch) {
+      throw new Error(
+        `No typeahead search fields defined for attribute ${attribute.name}`,
+      );
     }
+
+    const orClause = [];
+    const orderClause = [];
+    for (const nextSearchTerm of attribute.typeaheadSearch) {
+      orClause.push({
+        [nextSearchTerm]: {
+          [Op.iLike]: this.ormService.wrapWithWildcards(request.searchText),
+        },
+      });
+
+      orderClause.push([nextSearchTerm, 'ASC']);
+    }
+
+    const whereClause = {
+      [Op.or]: orClause,
+    };
 
     const model = this.ormService.sequelize.model(attribute.relationshipTarget);
     const rows = await model.findAll({
       where: whereClause,
-      limit: 20,
       order: orderClause,
+      limit: 20,
     });
 
     const results: Item[] = [];

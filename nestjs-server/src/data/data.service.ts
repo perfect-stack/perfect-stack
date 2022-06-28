@@ -529,11 +529,11 @@ export class DataService {
     for (const nextCriteria of queryRequest.criteria) {
       let value = nextCriteria.value;
       if (nextCriteria.operator === ComparisonOperator.InsensitiveStartsWith) {
-        value = this.appendWildcard(value);
+        value = this.ormService.appendWildcard(value);
       }
 
       if (nextCriteria.operator === ComparisonOperator.InsensitiveLike) {
-        value = this.wrapWithWildcards(value);
+        value = this.ormService.wrapWithWildcards(value);
       }
 
       if (nextCriteria.value && nextCriteria.value !== 'null') {
@@ -664,20 +664,5 @@ export class DataService {
         id: id,
       },
     });
-  }
-
-  private wrapWithWildcards(value: string) {
-    if (value) {
-      value = value.startsWith('%') ? value : `%${value}`;
-      value = value.endsWith('%') ? value : `${value}%`;
-    }
-    return value;
-  }
-
-  private appendWildcard(value: string) {
-    if (value) {
-      value = value.endsWith('%') ? value : `${value}%`;
-    }
-    return value;
   }
 }
