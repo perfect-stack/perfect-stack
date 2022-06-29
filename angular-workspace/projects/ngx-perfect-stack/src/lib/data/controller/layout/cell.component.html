@@ -56,7 +56,9 @@
         </ng-container>
 
         <ng-container *ngSwitchDefault>
-          <app-many-to-one-control [mode]="mode" [ctx]="ctx" [formGroup]="formGroup" [attribute]="cell.attribute"></app-many-to-one-control>
+          <ng-container *ngIf="cell.metaEntity">
+            <app-many-to-one-control [mode]="mode" [ctx]="ctx" [formGroup]="formGroup" [metaEntity]="cell.metaEntity" [attribute]="cell.attribute"></app-many-to-one-control>
+          </ng-container>
         </ng-container>
       </ng-container>
     </ng-container>

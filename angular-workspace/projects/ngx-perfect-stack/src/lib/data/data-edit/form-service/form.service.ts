@@ -204,6 +204,7 @@ export class FormService {
 
     const attribute = metaEntity.attributes.find(a => cell.attributeName == a.name);
     if (attribute) {
+      cellAttribute.metaEntity = metaEntity;
       cellAttribute.attribute = attribute;
     }
 

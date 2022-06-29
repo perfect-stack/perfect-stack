@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Item} from './typeahead.response';
 import {TypeaheadRequest} from './typeahead.request';
-import {MetaAttribute} from '../../../../../domain/meta.entity';
+import {MetaAttribute, MetaEntity} from '../../../../../domain/meta.entity';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
 @Injectable({
@@ -16,11 +16,11 @@ export class TypeaheadService {
     protected readonly stackConfig: NgxPerfectStackConfig,
     protected readonly http: HttpClient) { }
 
-  search(term: string, metaAttribute: MetaAttribute): Observable<Item[]> {
+  search(term: string, metaEntity: MetaEntity, metaAttribute: MetaAttribute): Observable<Item[]> {
     const typeaheadRequest: TypeaheadRequest = {
       searchText: term,
       metaAttribute: metaAttribute,
-      metaEntityName: 'XX'
+      metaEntityName: metaEntity.name,
     }
     return this.http.post<Item[]>(`${this.stackConfig.apiUrl}/typeahead`, typeaheadRequest);
   }

@@ -14,7 +14,6 @@ import {AttributeType, MetaEntity} from '../../../domain/meta.entity';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CardItemDialogComponent} from './controls/card-item-dialog/card-item-dialog.component';
 import {DataService} from '../../data-service/data.service';
-import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
 import {DebugService} from '../../../utils/debug/debug.service';
 import {Router} from '@angular/router';
 

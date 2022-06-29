@@ -1,6 +1,6 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {MetaAttribute} from '../../../../../domain/meta.entity';
+import {MetaAttribute, MetaEntity} from '../../../../../domain/meta.entity';
 import {catchError, debounceTime, distinctUntilChanged, Observable, of, OperatorFunction, switchMap, tap} from 'rxjs';
 import {TypeaheadService} from './typeahead.service';
 import {Item} from './typeahead.response';
@@ -24,6 +24,9 @@ export class ManyToOneControlComponent implements OnInit {
 
   @Input()
   formGroup: FormGroup;
+
+  @Input()
+  metaEntity: MetaEntity;
 
   @Input()
   attribute: MetaAttribute;
@@ -61,7 +64,7 @@ export class ManyToOneControlComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => this.searching = true),
       switchMap(term =>
-        this.typeaheadService.search(term, this.attribute).pipe(
+        this.typeaheadService.search(term, this.metaEntity, this.attribute).pipe(
           tap(() => this.searchFailed = false),
           catchError(() => {
             this.searchFailed = true;
