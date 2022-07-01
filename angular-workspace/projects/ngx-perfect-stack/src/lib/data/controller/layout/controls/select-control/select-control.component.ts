@@ -42,11 +42,6 @@ export class SelectControlComponent implements OnInit {
     return this.mode === 'view';
   }
 
-  getCSSClass() {
-    return this.isReadOnly() ? 'form-control': 'form-select';
-  }
-
-
   getDisplayText(option: any) {
     let displayValue = '';
     for(const displayAttributeName of this.attribute.typeaheadSearch) {
@@ -69,6 +64,9 @@ export class SelectControlComponent implements OnInit {
     console.log('onModelChange()', selectedEntity);
     if(this.formGroup && this.attribute) {
       this.formGroup.controls[this.attribute.name].patchValue(selectedEntity);
+
+      const controlName = (this.attribute.name + '_id').toLowerCase();
+      this.formGroup.controls[controlName].setValue(selectedEntity.id);
     }
   }
 }

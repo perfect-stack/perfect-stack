@@ -169,7 +169,26 @@ export class TableLayoutComponent implements OnInit {
     if(this.mode === 'edit') {
       const formGroup = this.formGroupService.createFormGroup(this.mode, this.template.metaEntityName, this.metaPageMap, this.metaEntityMap, null);
       if(this.attributes) {
+        console.log('onAddRow()');
         this.attributes.push(formGroup);
+
+        // for(const nextControlKey of Object.keys(formGroup.controls)) {
+        //   formGroup.controls[nextControlKey].markAllAsTouched();
+        //   formGroup.controls[nextControlKey].updateValueAndValidity();
+        // }
+        //
+        // formGroup.markAllAsTouched();
+        // formGroup.updateValueAndValidity();
+        // this.formGroup.markAllAsTouched();
+        // this.formGroup.updateValueAndValidity()
+
+        //formGroup.patchValue({});
+
+        // this.attributes.updateValueAndValidity();
+        // this.attributes.markAllAsTouched();
+
+        //this.attributes.push(new FormGroup({}));
+        //this.attributes.removeAt(this.attributes.length - 1);
       }
     }
   }

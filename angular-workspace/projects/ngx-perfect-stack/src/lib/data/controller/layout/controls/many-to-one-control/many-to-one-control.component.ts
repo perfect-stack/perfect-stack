@@ -84,6 +84,8 @@ export class ManyToOneControlComponent implements OnInit {
     const item = event.item;
     this.dataService.findById(this.attribute.relationshipTarget, item.id).subscribe(entity => {
       this.formGroup.controls[this.attribute.name].patchValue(entity);
+      const controlName = (this.attribute.name + '_id').toLowerCase();
+      this.formGroup.controls[controlName].setValue(item.id);
     });
   }
 

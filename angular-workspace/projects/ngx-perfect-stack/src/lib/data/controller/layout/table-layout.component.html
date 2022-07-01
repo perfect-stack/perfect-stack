@@ -25,6 +25,9 @@
             <td *ngIf="mode === 'edit'">
               <span class="btn-icon text-primary material-symbols-outlined" (click)="onDeleteRow(i)">delete</span>
             </td>
+            <!--<td>
+              {{getFormGroupForRow(i)!.valid}}
+            </td>-->
           </tr>
         </ng-container>
       </tbody>

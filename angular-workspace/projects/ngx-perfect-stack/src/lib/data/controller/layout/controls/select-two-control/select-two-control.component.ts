@@ -25,7 +25,7 @@ export class SelectTwoControlComponent implements OnInit {
   @Input()
   cell: Cell;
 
-
+  selectedEntity: any;
   options$: Observable<Entity[]>
 
   secondaryAttributeName: string;
@@ -35,6 +35,10 @@ export class SelectTwoControlComponent implements OnInit {
   constructor(protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
+    if(this.formGroup && this.attribute) {
+      this.selectedEntity = this.formGroup.controls[this.attribute.name].value;
+    }
+
     this.secondaryAttributeName = (this.cell.componentData as any).secondaryAttributeName;
 
     if(this.secondaryAttributeName) {
@@ -77,6 +81,14 @@ export class SelectTwoControlComponent implements OnInit {
 
   onEntityChange(primaryEntity: any) {
     console.log(`onEntityChange: `, primaryEntity);
+
+    if(this.formGroup && this.attribute) {
+      this.formGroup.controls[this.attribute.name].patchValue(primaryEntity);
+
+      const controlName = (this.attribute.name + '_id').toLowerCase();
+      this.formGroup.controls[controlName].setValue(primaryEntity.id);
+    }
+
     if(primaryEntity && this.secondaryAttributeName) {
       const secondaryValues: string = primaryEntity[this.secondaryAttributeName];
       if(secondaryValues) {

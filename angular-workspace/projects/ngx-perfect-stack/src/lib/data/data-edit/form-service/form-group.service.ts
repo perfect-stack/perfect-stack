@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {MetaPage} from '../../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
 import {Entity} from '../../../domain/entity';
-import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {FormArrayWithAttribute, FormControlWithAttribute} from './form.service';
 
 @Injectable({
@@ -162,13 +162,17 @@ export class FormGroupService {
                                   mode: string,
                                   metaPageMap: Map<string, MetaPage>,
                                   metaEntityMap: Map<string, MetaEntity>,
-                                  entity: any): FormGroup {
-    const childEntityName = attribute.relationshipTarget;
-    const childEntity = entity ? (entity as any)[attribute.name] : null;
-    const childFormGroup = this.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity, false);
-    return childFormGroup;
-    // const formControl = new FormControlWithAttribute();
-    // return formControl;
+                                  entity: any): AbstractControl {
+    if(mode === 'view') {
+      const formControl = new FormControlWithAttribute();
+      return formControl;
+    }
+    else {
+      const childEntityName = attribute.relationshipTarget;
+      const childEntity = entity ? (entity as any)[attribute.name] : null;
+      const childFormGroup = this.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity, false);
+      return childFormGroup;
+    }
   }
 
   private formControlForOneToOne(attribute: MetaAttribute,

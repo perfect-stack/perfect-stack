@@ -1,7 +1,12 @@
 <ng-container *ngIf="options$ | async as options">
   <ng-container *ngIf="mode !== 'view' || formGroup.controls[attribute.name].value">
     <div class="input-group" [formGroup]="formGroup">
-      <select [ngClass]="getCSSClass()" [id]="attribute.name" (ngModelChange)="onModelChange($event)"
+      <!-- ng-invalid is here because  this select isn't bound to a form control name and so we need to be responsible for setting the valid status/flags-->
+      <select [ngClass]="{
+        'form-control': isReadOnly(),
+        'form-select': !isReadOnly(),
+        'ng-invalid': formGroup.controls[attribute.name + '_id'].valid
+      }" [id]="attribute.name" (ngModelChange)="onModelChange($event)" [disabled]="isReadOnly()"
               [(ngModel)]="selectedEntity" [compareWith]="byEntityId" [ngModelOptions]="{standalone: true}">
         <option *ngFor="let o of options" [ngValue]="o">{{getDisplayText(o)}}</option>
       </select>
