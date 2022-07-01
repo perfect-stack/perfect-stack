@@ -21,11 +21,16 @@ export class SelectControlComponent implements OnInit {
   @Input()
   mode: string | null;
 
+  selectedEntity: any;
   options$: Observable<Entity[]>
 
   constructor(protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
+    if(this.formGroup && this.attribute) {
+      this.selectedEntity = this.formGroup.controls[this.attribute.name].value;
+    }
+
     this.options$ = this.dataService.findAll(this.attribute.relationshipTarget).pipe(
       switchMap(response => {
         return of(response.resultList as Entity[]);
@@ -60,4 +65,10 @@ export class SelectControlComponent implements OnInit {
     }
   }
 
+  onModelChange(selectedEntity: any) {
+    console.log('onModelChange()', selectedEntity);
+    if(this.formGroup && this.attribute) {
+      this.formGroup.controls[this.attribute.name].patchValue(selectedEntity);
+    }
+  }
 }

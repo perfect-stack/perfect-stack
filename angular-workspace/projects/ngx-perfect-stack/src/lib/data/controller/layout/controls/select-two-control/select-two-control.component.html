@@ -1,14 +1,14 @@
 <ng-container [formGroup]="formGroup" *ngIf="options$ | async as options">
   <ng-container *ngIf="mode !== 'view' || formGroup.controls[attribute.name].value">
     <div class="d-flex">
-      <select [ngClass]="getCSSClass('me-1')" [formControlName]="attribute.name" [compareWith]="byEntityId" (ngModelChange)="onEntityChange($event)" [id]="attribute.name">
+      <!--<select [ngClass]="getCSSClass('me-1')" [formControlName]="attribute.name" [compareWith]="byEntityId" (ngModelChange)="onEntityChange($event)" [id]="attribute.name">
         <option [ngValue]="null"></option>
         <option *ngFor="let o of options" [ngValue]="o">{{getDisplayValue(o)}}</option>
       </select>
       <select [ngClass]="getCSSClass('ms-1')" [formControlName]="secondaryAttributeName" [id]="secondaryAttributeName">
         <option [ngValue]="null"></option>
         <option *ngFor="let s of secondaryOptions" [ngValue]="s">{{s}}</option>
-      </select>
+      </select>-->
     </div>
   </ng-container>
 

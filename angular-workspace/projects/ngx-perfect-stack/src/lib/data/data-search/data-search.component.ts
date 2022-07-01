@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AttributeType, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
@@ -11,7 +11,7 @@ import {
 } from '../controller/layout/controls/date-picker-control/custom-date-parser-formatter';
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {Observable, of, switchMap, withLatestFrom} from 'rxjs';
-import {NewFormService} from '../data-edit/form-service/new-form.service';
+import {FormGroupService} from '../data-edit/form-service/form-group.service';
 
 @Component({
   selector: 'app-data-search',
@@ -38,7 +38,7 @@ export class DataSearchComponent implements OnInit {
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly formService: FormService,
-              protected readonly newFormService: NewFormService,
+              protected readonly formGroupService: FormGroupService,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly dataService: DataService) { }
 
@@ -57,7 +57,7 @@ export class DataSearchComponent implements OnInit {
             if (!ctx.formMap) {
               ctx.formMap = new Map<string, AbstractControl>();
             }
-            const criteriaForm = this.newFormService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null)
+            const criteriaForm = this.formGroupService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null)
             ctx.formMap.set('criteria', criteriaForm);
             console.log('Criteria form:', criteriaForm);
 

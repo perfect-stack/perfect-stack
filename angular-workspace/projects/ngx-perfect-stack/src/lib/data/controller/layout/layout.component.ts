@@ -16,6 +16,7 @@ import {CardItemDialogComponent} from './controls/card-item-dialog/card-item-dia
 import {DataService} from '../../data-service/data.service';
 import {DebugService} from '../../../utils/debug/debug.service';
 import {Router} from '@angular/router';
+import {FormGroupService} from '../../data-edit/form-service/form-group.service';
 
 
 // This file contains many Components because they have a circular dependency on the top-level component of
@@ -125,9 +126,10 @@ export class TableLayoutComponent implements OnInit {
   metaEntityMap: Map<string, MetaEntity>;
   metaPageMap: Map<string, MetaPage>;
 
-  constructor(private readonly metaEntityService: MetaEntityService,
-              private readonly router: Router,
-              private readonly formService: FormService) { }
+  constructor(protected readonly metaEntityService: MetaEntityService,
+              protected readonly router: Router,
+              protected readonly formService: FormService,
+              protected readonly formGroupService: FormGroupService) { }
 
   ngOnInit(): void {
     this.mode = this.mode ? this.mode : this.ctx.mode;
@@ -165,7 +167,7 @@ export class TableLayoutComponent implements OnInit {
 
   onAddRow() {
     if(this.mode === 'edit') {
-      const formGroup = this.formService.createFormGroup(this.mode, this.template, this.metaPageMap, this.metaEntityMap, null);
+      const formGroup = this.formGroupService.createFormGroup(this.mode, this.template.metaEntityName, this.metaPageMap, this.metaEntityMap, null);
       if(this.attributes) {
         this.attributes.push(formGroup);
       }
@@ -274,7 +276,7 @@ export class CardLayoutComponent implements OnInit {
               private metaPageService: MetaPageService,
               private dataService: DataService,
               private fb: FormBuilder,
-              private formService: FormService) {}
+              private formGroupService: FormGroupService) {}
 
   ngOnInit(): void {
 
@@ -392,7 +394,7 @@ export class CardLayoutComponent implements OnInit {
 
         if(mode) {
           // create the new item formGroup
-          const itemFormGroup = this.formService.createFormGroup(mode, template, metaPageMap, metaEntityMap, null);
+          const itemFormGroup = this.formGroupService.createFormGroup(mode, template.metaEntityName, metaPageMap, metaEntityMap, null);
           itemFormGroup.addControl('activity_type', this.fb.control(''));
 
           // create the new mostly empty item
@@ -411,30 +413,6 @@ export class CardLayoutComponent implements OnInit {
   }
 
   onDeleteItem(rowIdx: number) {
-    /*const modalRef = this.modalService.open(MessageDialogComponent)
-    const modalComponent: MessageDialogComponent = modalRef.componentInstance;
-    modalComponent.title = 'Delete Entity Confirmation';
-    modalComponent.text = `This action will delete the selected entity. It cannot be undone.`;
-    modalComponent.actions = [
-      {name: 'Cancel', style: 'btn btn-outline-primary'},
-      {name: 'Delete', style: 'btn btn-danger'},
-    ];
-
-    modalRef.closed.subscribe((closedResult) => {
-      console.log(`Message Dialog closedResult = ${closedResult}`);
-      if(closedResult === 'Delete') {
-        const formGroup = this.getFormGroupForRow(rowIdx);
-        const childEntity = formGroup.value;
-        const childEntityId = childEntity.id;
-
-        const cardItem = this.getCardItem(rowIdx);
-        const childEntityName = cardItem.metaEntityName
-
-        this.dataService.destroy(childEntityName, childEntityId).subscribe(() => {
-          this.attributes.removeAt(rowIdx);
-        });
-      }
-    });*/
     this.attributes.removeAt(rowIdx);
   }
 

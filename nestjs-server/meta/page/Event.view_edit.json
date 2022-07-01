@@ -107,7 +107,7 @@
               "cells": [
                 [
                   {
-                    "width": "12",
+                    "width": "1",
                     "height": "1",
                     "attributeName": "person"
                   },
@@ -115,7 +115,6 @@
                     "width": "1",
                     "height": "1",
                     "attributeName": "role",
-                    "componentType": "Select",
                     "component": "Select"
                   }
                 ]

@@ -1,7 +1,7 @@
 <ng-container *ngIf="cells$ | async as cells">
 
   <ng-container *ngIf="cells && attributes && (attributes.length > 0 || mode === 'edit')">
-    <table class="table" [ngClass]="getStyleClasses()" [formGroup]="formGroup">
+    <table class="table" [ngClass]="getStyleClasses()">
       <thead>
         <tr *ngIf="cells">
           <th *ngFor="let nextCell of cells[0]">
@@ -15,8 +15,8 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container [formArrayName]="relationshipProperty" *ngFor="let group of attributes.controls; let i=index">
-          <tr class="align-middle" [formGroupName]="i" (click)="onRowClicked(i)">
+        <ng-container *ngFor="let group of attributes.controls; let i=index">
+          <tr class="align-middle" (click)="onRowClicked(i)">
             <td *ngFor="let nextCell of cells[0]">
               <ng-container *ngIf="nextCell.attribute || nextCell.tool">
                 <lib-cell [mode]="mode" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!"></lib-cell>

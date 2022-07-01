@@ -12,17 +12,12 @@
              [inputFormatter]="formatter"
              [resultTemplate]="rt"
              [(ngModel)]="model"
+             [ngModelOptions]="{standalone: true}"
              (selectItem)="onSelectItem($event)"
              [id]="attribute.name"
       />
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
-
-      <!--<div class="input-group-append">
-        <button class="form-control btn-outline-primary btn p-0" readonly (click)="onSearchRequested()" type="button" id="{{attribute.name}}SearchBtn">
-          <span class="material-symbols-outlined p-1">search</span>
-        </button>
-      </div>-->
     </div>
   </fieldset>
 </ng-container>
@@ -38,9 +33,3 @@
   </div>
 </ng-container>
 
-<!--
-     [ngClass]="{'ng-invalid': true, 'ng-touched': true}"
-<br>
-Model: {{model|json}}<br>
-Control: {{formGroup.controls[attribute.name].value|json}}
--->

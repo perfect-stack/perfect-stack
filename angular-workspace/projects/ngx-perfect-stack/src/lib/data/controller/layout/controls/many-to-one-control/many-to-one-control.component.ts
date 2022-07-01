@@ -47,11 +47,11 @@ export class ManyToOneControlComponent implements OnInit {
 
   ngOnInit(): void {
     // pump it once at the start to init
+    console.log(`ManyToOneControlComponent.ngOnInit() ${this.attribute.name}`, this.formGroup.controls[this.attribute.name].value);
     this.updateDisplayValue(this.formGroup.controls[this.attribute.name].value);
 
     this.formGroup.controls[this.attribute.name].valueChanges.subscribe((dataValue) => {
       this.updateDisplayValue(dataValue);
-
       if(this.ctx) {
         this.eventService.dispatchOnManyToOneItemSelected(this.ctx.metaPage.name, this.formGroup, this.attribute, dataValue);
       }
@@ -101,12 +101,4 @@ export class ManyToOneControlComponent implements OnInit {
       this.model.displayText = this.displayValue.trim();
     }
   }
-
-  /*onSearchRequested() {
-    this.model = null;
-    this.formGroup.reset();
-    setTimeout(()=>{ // this will make the execution after the above boolean has changed
-      this.searchInput.nativeElement.focus();
-    },0);
-  }*/
 }
