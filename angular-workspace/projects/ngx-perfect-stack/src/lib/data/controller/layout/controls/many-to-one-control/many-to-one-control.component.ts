@@ -1,7 +1,17 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormControlStatus, FormGroup} from '@angular/forms';
 import {MetaAttribute, MetaEntity} from '../../../../../domain/meta.entity';
-import {catchError, debounceTime, distinctUntilChanged, Observable, of, OperatorFunction, switchMap, tap} from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  Observable,
+  of,
+  OperatorFunction,
+  Subscription,
+  switchMap,
+  tap
+} from 'rxjs';
 import {TypeaheadService} from './typeahead.service';
 import {Item} from './typeahead.response';
 import {NgbTypeaheadSelectItemEvent} from '@ng-bootstrap/ng-bootstrap';
@@ -39,6 +49,8 @@ export class ManyToOneControlComponent implements OnInit {
   searchFailed = false;
 
   displayValue: string;
+  status: FormControlStatus = 'PENDING';
+  statusSubscription: Subscription;
 
   constructor(protected readonly dataService: DataService,
               protected readonly eventService: EventService,
@@ -51,10 +63,13 @@ export class ManyToOneControlComponent implements OnInit {
 
     this.formGroup.controls[this.attribute.name].valueChanges.subscribe((dataValue) => {
       this.updateDisplayValue(dataValue);
-
       if(this.ctx) {
         this.eventService.dispatchOnManyToOneItemSelected(this.ctx.metaPage.name, this.formGroup, this.attribute, dataValue);
       }
+    });
+
+    this.statusSubscription = this.formGroup.controls[this.attribute.name].statusChanges.subscribe((formControlStatus) => {
+      this.status = formControlStatus;
     });
   }
 
@@ -82,9 +97,18 @@ export class ManyToOneControlComponent implements OnInit {
 
   onSelectItem(event: NgbTypeaheadSelectItemEvent<Item>) {
     const item = event.item;
-    this.dataService.findById(this.attribute.relationshipTarget, item.id).subscribe(entity => {
-      this.formGroup.controls[this.attribute.name].patchValue(entity);
-    });
+    if(item && item.id) {
+      this.dataService.findById(this.attribute.relationshipTarget, item.id).subscribe(entity => {
+        if(entity) {
+          this.formGroup.controls[this.attribute.name].patchValue(entity);
+          const controlName = (this.attribute.name + '_id').toLowerCase();
+          this.formGroup.controls[controlName].setValue(item.id);
+        }
+      });
+    }
+    else {
+      console.warn('Not sure if this code path actually happens or not');
+    }
   }
 
   updateDisplayValue(dataValue: any) {
@@ -101,12 +125,4 @@ export class ManyToOneControlComponent implements OnInit {
       this.model.displayText = this.displayValue.trim();
     }
   }
-
-  /*onSearchRequested() {
-    this.model = null;
-    this.formGroup.reset();
-    setTimeout(()=>{ // this will make the execution after the above boolean has changed
-      this.searchInput.nativeElement.focus();
-    },0);
-  }*/
 }

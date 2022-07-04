@@ -1,4 +1,4 @@
-<ng-template #rt let-r="result" let-t="term">
+<ng-template #resultTemplate let-r="result" let-t="term">
   <ngb-highlight [result]="r.displayText" [term]="t"></ngb-highlight>
 </ng-template>
 
@@ -6,23 +6,21 @@
   <fieldset class="form-inline">
     <div class="input-group w-100">
       <input #searchInput type="text" class="form-control" placeholder="Search..."
-             [required]="attribute.visibility == 'Required'"
+             [ngClass]="{
+               'ng-invalid': status === 'INVALID',
+               'ng-touched': status === 'INVALID'
+             }"
              [class.is-invalid]="searchFailed"
              [ngbTypeahead]="search"
              [inputFormatter]="formatter"
-             [resultTemplate]="rt"
+             [resultTemplate]="resultTemplate"
              [(ngModel)]="model"
+             [ngModelOptions]="{standalone: true}"
              (selectItem)="onSelectItem($event)"
              [id]="attribute.name"
       />
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
-
-      <!--<div class="input-group-append">
-        <button class="form-control btn-outline-primary btn p-0" readonly (click)="onSearchRequested()" type="button" id="{{attribute.name}}SearchBtn">
-          <span class="material-symbols-outlined p-1">search</span>
-        </button>
-      </div>-->
     </div>
   </fieldset>
 </ng-container>
@@ -38,9 +36,3 @@
   </div>
 </ng-container>
 
-<!--
-     [ngClass]="{'ng-invalid': true, 'ng-touched': true}"
-<br>
-Model: {{model|json}}<br>
-Control: {{formGroup.controls[attribute.name].value|json}}
--->

@@ -6,13 +6,15 @@
      when the user flips between view and edit mode. I think it's something to do with changing a value in the code
      is not triggering an update in the framework. Need to understand this behaviour better so that this bit of
      uglyness can be removed -->
-    <ng-container *ngIf="ctx.mode === 'view'">
+    <!--<ng-container *ngIf="ctx.mode === 'view'">
       <lib-layout [ctx]="ctx" [template]="template" [showTemplateHeadings]="showTemplateHeadings"></lib-layout>
     </ng-container>
 
     <ng-container *ngIf="ctx.mode !== 'view'">
       <lib-layout [ctx]="ctx" [template]="template" [showTemplateHeadings]="showTemplateHeadings"></lib-layout>
-    </ng-container>
+    </ng-container>-->
+
+    <lib-layout [ctx]="ctx" [template]="template" [showTemplateHeadings]="showTemplateHeadings"></lib-layout>
   </ng-container>
 
   <div class="d-flex my-2">

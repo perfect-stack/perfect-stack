@@ -1,0 +1,20 @@
+<h2>select-test-page</h2>
+
+<br>
+
+<div class="row">
+  <div class="col-4">
+    <ng-container *ngIf="formGroup && attributes">
+      <div *ngFor="let group of attributes.controls; let i=index">
+        <!--<app-select-control [mode]="'edit'" [formGroup]="getFormGroupForRow(i)!" [attribute]="attribute"></app-select-control>-->
+        <lib-cell [mode]="'edit'" [formGroup]="getFormGroupForRow(i)!" [cell]="cell"></lib-cell>
+      </div>
+
+      <button class="btn btn-primary" (click)="onAdd()">Add</button>
+    </ng-container>
+  </div>
+</div>
+
+
+<hr>
+{{formGroup.value|json}}

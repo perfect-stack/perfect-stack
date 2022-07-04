@@ -6,21 +6,25 @@
   "timestamps": true,
   "attributes": [
     {
+      "type": "Identifier",
+      "visibility": "Hidden",
       "name": "id",
       "label": "Id",
       "description": "",
-      "type": "Identifier",
-      "visibility": "Hidden",
+      "unitOfMeasure": "",
+      "scale": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
     },
     {
+      "type": "ManyToOne",
+      "visibility": "Required",
       "name": "person",
       "label": "Person",
       "description": "Each Person associated with the event",
-      "type": "ManyToOne",
-      "visibility": "Required",
+      "unitOfMeasure": "",
+      "scale": "",
       "comparisonOperator": "",
       "relationshipTarget": "Person",
       "typeaheadSearch": [
@@ -29,11 +33,13 @@
       ]
     },
     {
+      "type": "ManyToOne",
+      "visibility": "Required",
       "name": "role",
       "label": "Role",
       "description": "The role that this person placed during this event",
-      "type": "ManyToOne",
-      "visibility": "Required",
+      "unitOfMeasure": "",
+      "scale": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "ObserverRole",
       "typeaheadSearch": [

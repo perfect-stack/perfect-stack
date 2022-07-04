@@ -24,7 +24,7 @@
       "unitOfMeasure": "g",
       "scale": "0",
       "type": "Double",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []

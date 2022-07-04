@@ -108,6 +108,7 @@ import { TimeControlComponent } from './data/controller/layout/controls/time-con
 import { TileButtonPanelComponent } from './utils/tile-button-panel/tile-button-panel.component';
 import { BooleanCheckBoxControlComponent } from './data/controller/layout/controls/boolean-check-box-control/boolean-check-box-control.component';
 import { DecimalNumberDirective } from './utils/decimal-number.directive';
+import { SelectTestPageComponent } from './select-test-page/select-test-page.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -130,7 +131,10 @@ const routes: Routes = [
   { path: 'session-timeout', component: SessionTimeOutComponent},
 
   // Just for Controller development purposes
-  { path: 'controller', component: ControllerComponent}
+  { path: 'controller', component: ControllerComponent},
+
+  // Just for Testing Select
+  { path: 'select-test', component: SelectTestPageComponent}
 ];
 
 @NgModule({
@@ -212,6 +216,7 @@ const routes: Routes = [
     TileButtonPanelComponent,
     BooleanCheckBoxControlComponent,
     DecimalNumberDirective,
+    SelectTestPageComponent,
   ],
   providers: [
     AuthenticationService,

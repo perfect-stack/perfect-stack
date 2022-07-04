@@ -50,11 +50,6 @@
           <lib-select-two-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-select-two-control>
         </ng-container>
 
-        <!-- This isn't ideal, it means StaticImage only work if the attribute type equals ManyToOne, but will do for now -->
-        <ng-container *ngSwitchCase="'StaticImage'">
-          <lib-static-image-control></lib-static-image-control>
-        </ng-container>
-
         <ng-container *ngSwitchDefault>
           <ng-container *ngIf="cell.metaEntity">
             <app-many-to-one-control [mode]="mode" [ctx]="ctx" [formGroup]="formGroup" [metaEntity]="cell.metaEntity" [attribute]="cell.attribute"></app-many-to-one-control>

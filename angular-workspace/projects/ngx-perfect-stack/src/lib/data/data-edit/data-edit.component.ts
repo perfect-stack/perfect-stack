@@ -14,6 +14,7 @@ import {
 import {DebugService} from '../../utils/debug/debug.service';
 import {EventService} from '../../event/event.service';
 import {CompletionResult} from '../../event/page-listener';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 
 
 @Component({
@@ -109,22 +110,47 @@ export class DataEditComponent implements OnInit {
     // TODO: so that entityForm could be removed from FormContext we are going to use a rule that says an edit page
     // only has one form and so we can get the one and only form out of the formMap. Once this changes to some sort
     // of template approach then the template binding will be needed here to find the form to get the entityData
-    const entityData = this.getDataForm(ctx).value;
-    console.log(`DataEdit: form value:`, entityData);
+    const form = this.getDataForm(ctx);
+    this.validateAllFields('root', form);
 
-    const treeWalker = new MetaEntityTreeWalker(ctx.metaEntityMap);
-    treeWalker.byType(AttributeType.Double, new DoubleVisitor());
-    treeWalker.byType(AttributeType.Integer, new IntegerVisitor());
-    treeWalker.byType(AttributeType.Identifier, new IdentifierVisitor());
-    treeWalker.walk(entityData, ctx.metaEntity);
-    console.log(`DataEdit: save value:`, entityData);
+    if(form.valid) {
+      const entityData = form.value;
+      console.log(`DataEdit: form value:`, entityData);
 
-    if(this.metaName) {
-      this.dataService.save(this.metaName, entityData).subscribe(() => {
-        this.onCancel(ctx);
-      });
+      const treeWalker = new MetaEntityTreeWalker(ctx.metaEntityMap);
+      treeWalker.byType(AttributeType.Double, new DoubleVisitor());
+      treeWalker.byType(AttributeType.Integer, new IntegerVisitor());
+      treeWalker.byType(AttributeType.Identifier, new IdentifierVisitor());
+      treeWalker.walk(entityData, ctx.metaEntity);
+      console.log(`DataEdit: save value:`, entityData);
+
+      if(this.metaName) {
+        this.dataService.save(this.metaName, entityData).subscribe(() => {
+          this.onCancel(ctx);
+        });
+      }
     }
   }
 
+  validateAllFields(name: string, abstractControl: AbstractControl) {
+    abstractControl.updateValueAndValidity();
+    abstractControl.markAsTouched();
+    if(!abstractControl.valid) {
+      console.warn(`${name} - INVALID: touched: ${abstractControl.touched}, untouched: ${abstractControl.untouched}`);
+    }
+
+    if (abstractControl instanceof FormGroup) {
+      const fg = abstractControl as FormGroup;
+      Object.keys(fg.controls).forEach(key => {
+        this.validateAllFields(key, fg.controls[key]);
+      });
+    } else if( abstractControl instanceof  FormArray) {
+      const formArray = abstractControl as FormArray;
+      for(let i = 0; i < formArray.length; i++) {
+        const nextChildControl = formArray.at(i);
+        this.validateAllFields(`${name}[${i}]`, nextChildControl);
+      }
+    }
+  }
 }
 

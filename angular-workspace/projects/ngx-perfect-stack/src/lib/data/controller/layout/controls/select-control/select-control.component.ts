@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {FormControlStatus, FormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {DataService} from '../../../../data-service/data.service';
-import {Observable, of, switchMap} from 'rxjs';
+import {Observable, of, Subscription, switchMap} from 'rxjs';
 import {Entity} from '../../../../../domain/entity';
 
 @Component({
@@ -10,7 +10,7 @@ import {Entity} from '../../../../../domain/entity';
   templateUrl: './select-control.component.html',
   styleUrls: ['./select-control.component.css']
 })
-export class SelectControlComponent implements OnInit {
+export class SelectControlComponent implements OnInit, OnDestroy {
 
   @Input()
   formGroup: FormGroup;
@@ -21,11 +21,23 @@ export class SelectControlComponent implements OnInit {
   @Input()
   mode: string | null;
 
+  selectedEntity: any;
   options$: Observable<Entity[]>
+
+  status: FormControlStatus = 'PENDING';
+  statusSubscription: Subscription;
 
   constructor(protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
+    if(this.formGroup && this.attribute) {
+      this.selectedEntity = this.formGroup.controls[this.attribute.name].value;
+    }
+
+    this.statusSubscription = this.formGroup.controls[this.attribute.name].statusChanges.subscribe((formControlStatus) => {
+      this.status = formControlStatus;
+    });
+
     this.options$ = this.dataService.findAll(this.attribute.relationshipTarget).pipe(
       switchMap(response => {
         return of(response.resultList as Entity[]);
@@ -36,11 +48,6 @@ export class SelectControlComponent implements OnInit {
   isReadOnly() {
     return this.mode === 'view';
   }
-
-  getCSSClass() {
-    return this.isReadOnly() ? 'form-control': 'form-select';
-  }
-
 
   getDisplayText(option: any) {
     let displayValue = '';
@@ -60,4 +67,24 @@ export class SelectControlComponent implements OnInit {
     }
   }
 
+  onModelChange(selectedEntity: any) {
+    console.log('onModelChange()', selectedEntity);
+    if(this.formGroup && this.attribute) {
+      const controlName = (this.attribute.name + '_id').toLowerCase();
+      if(selectedEntity) {
+        this.formGroup.controls[this.attribute.name].patchValue(selectedEntity);
+        this.formGroup.controls[controlName].setValue(selectedEntity.id);
+      }
+      else {
+        this.formGroup.controls[this.attribute.name].reset();
+        this.formGroup.controls[controlName].reset();
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    if(this.statusSubscription) {
+      this.statusSubscription.unsubscribe();
+    }
+  }
 }

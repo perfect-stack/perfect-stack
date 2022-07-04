@@ -1,7 +1,9 @@
 <ng-container [formGroup]="formGroup" *ngIf="options$ | async as options">
   <ng-container *ngIf="mode !== 'view' || formGroup.controls[attribute.name].value">
     <div class="d-flex">
-      <select [ngClass]="getCSSClass('me-1')" [formControlName]="attribute.name" [compareWith]="byEntityId" (ngModelChange)="onEntityChange($event)" [id]="attribute.name">
+      <!-- Important: the first select does not have a formControlName and the second one does. This is because the first one is selecting an entity. -->
+      <select [ngClass]="getCSSClass('me-1')" [(ngModel)]="selectedEntity" [compareWith]="byEntityId" [disabled]="isReadOnly()"
+              (ngModelChange)="onEntityChange($event)" [id]="attribute.name" [ngModelOptions]="{standalone: true}">
         <option [ngValue]="null"></option>
         <option *ngFor="let o of options" [ngValue]="o">{{getDisplayValue(o)}}</option>
       </select>
