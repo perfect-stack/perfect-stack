@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {MetaPage} from '../../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
 import {Entity} from '../../../domain/entity';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {FormArrayWithAttribute, FormControlWithAttribute} from './form.service';
 
 @Injectable({
@@ -18,12 +18,9 @@ export class FormGroupService {
                   metaPageMap: Map<string, MetaPage>,
                   metaEntityMap: Map<string, MetaEntity>,
                   entity: Entity | null,
-                  recursive = true
+                  recursive = true,
+                  suppressValidators= false
   ) {
-    // const controls: {
-    //   [key: string]: AbstractControl;
-    // } = {};
-
     const formGroup = new FormGroup({});
 
     const metaEntity = metaEntityMap.get(metaEntityName);
@@ -51,6 +48,7 @@ export class FormGroupService {
             formGroup.addControl(controlName, new FormControl(''));
             console.log(`Added control for: ${controlName}`);
           } // else recursion flag is false so don't drill down any further (need to break circular relationships)
+
           break;
         case AttributeType.OneToOne:
           abstractControl = this.formControlForOneToOne(nextAttribute, mode, metaPageMap, metaEntityMap, entity);
@@ -59,6 +57,7 @@ export class FormGroupService {
           const controlName = (nextAttribute.name + '_id').toLowerCase();
           formGroup.addControl(controlName, new FormControl(''));
           console.log(`Added control for: ${controlName}`);
+
           break;
         case AttributeType.Date:
           abstractControl = this.formControlForDate(mode);
@@ -76,7 +75,10 @@ export class FormGroupService {
       }
 
       if(abstractControl) {
-        if(nextAttribute.visibility === VisibilityType.Required) {
+        // add validator if required, but ManyToOne is handled different in the formControlForManyToOne() method below
+        // suppressValidators was added because when there is a ManyToOne we don't want validators added to the form for
+        // the attributes that the user can't edit on the ManyToOne
+        if(nextAttribute.visibility === VisibilityType.Required && !suppressValidators && nextAttribute.type !== AttributeType.ManyToOne) {
           abstractControl.addValidators(Validators.required);
         }
 
@@ -91,8 +93,6 @@ export class FormGroupService {
 
     // Experimental: For each form add two extra for createdAt and updatedAt fields so that setValue() doesn't barf with
     // NG01001: Cannot find form control with name: 'createdAt'
-    // controls['createdAt'] = this.formControlForDate(mode);
-    // controls['updatedAt'] = this.formControlForDate(mode);
     formGroup.addControl('createdAt', this.formControlForDate(mode));
     formGroup.addControl('updatedAt', this.formControlForDate(mode));
 
@@ -170,7 +170,10 @@ export class FormGroupService {
     else {
       const childEntityName = attribute.relationshipTarget;
       const childEntity = entity ? (entity as any)[attribute.name] : null;
-      const childFormGroup = this.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity, false);
+      const childFormGroup = this.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity, false, true);
+      if(attribute.visibility === VisibilityType.Required) {
+        childFormGroup.addValidators(manyToOneRequiredValidator(attribute));
+      }
       return childFormGroup;
     }
   }
@@ -196,4 +199,13 @@ export class FormGroupService {
     // It's important to set this to false as the default value because otherwise the database will reject the default value of ''
     return new FormControlWithAttribute(false);
   }
+}
+
+
+export function manyToOneRequiredValidator(configDataIfNeeded: any): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const currentValue = control.value;
+    const validationResult = !currentValue || !currentValue.id ? {'required': {value: 'some data'}} : null;
+    return validationResult;
+  };
 }

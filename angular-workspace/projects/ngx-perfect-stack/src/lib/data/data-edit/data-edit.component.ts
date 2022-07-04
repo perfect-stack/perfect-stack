@@ -133,11 +133,11 @@ export class DataEditComponent implements OnInit {
   }
 
   validateAllFields(name: string, abstractControl: AbstractControl) {
-    if(!abstractControl.valid) {
-      console.warn(`${name} - INVALID`);
-    }
     abstractControl.updateValueAndValidity();
-    abstractControl.markAllAsTouched();
+    abstractControl.markAsTouched();
+    if(!abstractControl.valid) {
+      console.warn(`${name} - INVALID: touched: ${abstractControl.touched}, untouched: ${abstractControl.untouched}`);
+    }
 
     if (abstractControl instanceof FormGroup) {
       const fg = abstractControl as FormGroup;

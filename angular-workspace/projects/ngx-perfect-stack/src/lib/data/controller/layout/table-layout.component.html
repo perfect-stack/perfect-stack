@@ -7,6 +7,7 @@
           <th *ngFor="let nextCell of cells[0]">
             <ng-container *ngIf="nextCell.attribute">
               {{nextCell.attribute.label}}
+              <span class="text-danger" *ngIf="mode === 'edit' && nextCell.attribute.visibility === 'Required' && attributes.length > 0">*</span>
             </ng-container>
             <ng-container *ngIf="nextCell.tool">
               {{nextCell.tool.label}}

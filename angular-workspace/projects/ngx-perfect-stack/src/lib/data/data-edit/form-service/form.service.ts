@@ -138,7 +138,6 @@ export class FormService {
           // ...but the data type of the data determines the FormGroup not the template
           const metaEntityName = dataQuery.queryName
           const dataMapItem = dataMap.get(template.binding);
-          console.log('Here - 1');
           const form = this.createFormGroupForDataMapItem(ctx, metaEntityName, dataQuery.resultCardinality, template, dataMapItem.result);
           formMap.set(template.binding, form);
         }
@@ -150,7 +149,6 @@ export class FormService {
         // If the cell has a Template inside it, then recursively call down into it
         const childTemplate = nextCellCol.template;
         if(childTemplate) {
-          console.log('Here - 2');
           this.createFormMapForOneTemplate(ctx, childTemplate, formMap, dataQueryList, dataMap);
         }
       }

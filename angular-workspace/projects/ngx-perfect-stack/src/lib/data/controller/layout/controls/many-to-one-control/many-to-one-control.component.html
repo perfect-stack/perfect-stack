@@ -1,4 +1,4 @@
-<ng-template #rt let-r="result" let-t="term">
+<ng-template #resultTemplate let-r="result" let-t="term">
   <ngb-highlight [result]="r.displayText" [term]="t"></ngb-highlight>
 </ng-template>
 
@@ -6,11 +6,14 @@
   <fieldset class="form-inline">
     <div class="input-group w-100">
       <input #searchInput type="text" class="form-control" placeholder="Search..."
-             [required]="attribute.visibility == 'Required'"
+             [ngClass]="{
+               'ng-invalid': status === 'INVALID',
+               'ng-touched': status === 'INVALID'
+             }"
              [class.is-invalid]="searchFailed"
              [ngbTypeahead]="search"
              [inputFormatter]="formatter"
-             [resultTemplate]="rt"
+             [resultTemplate]="resultTemplate"
              [(ngModel)]="model"
              [ngModelOptions]="{standalone: true}"
              (selectItem)="onSelectItem($event)"
