@@ -131,7 +131,7 @@ export class FormGroupService {
                                   mode: string,
                                   metaPageMap: Map<string, MetaPage>,
                                   metaEntityMap: Map<string, MetaEntity>,
-                                  entity: any) {
+                                  entity: any): AbstractControl | null {
     const formControl = new FormArrayWithAttribute([]);
 
     // TODO: more here iterating through the children and creating their Form Controls
@@ -162,8 +162,9 @@ export class FormGroupService {
                                   mode: string,
                                   metaPageMap: Map<string, MetaPage>,
                                   metaEntityMap: Map<string, MetaEntity>,
-                                  entity: any): AbstractControl {
+                                  entity: any): AbstractControl | null {
     if(mode === 'view') {
+      // TODO: Don't like that this is needed for View mode and don't understand why. Should be removed.
       const formControl = new FormControlWithAttribute();
       return formControl;
     }

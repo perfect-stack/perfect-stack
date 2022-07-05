@@ -15,7 +15,8 @@
           {
             "width": "4",
             "height": "1",
-            "attributeName": "method"
+            "attributeName": "method",
+            "component": "Select"
           }
         ]
       ],

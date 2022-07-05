@@ -334,23 +334,35 @@ export class CardLayoutComponent implements OnInit {
   }
 
   getCardItem(rowIdx: number) {
-    const formControlWithAttribute = (this.getFormGroupForRow(rowIdx) as unknown) as FormControlWithAttribute;
-    const item = formControlWithAttribute.value;
+    //const formControlWithAttribute = (this.getFormGroupForRow(rowIdx) as unknown) as FormControlWithAttribute;
+    //const item = formControlWithAttribute.value;
 
     const attribute = this.attributes.attribute;
-    const discriminator = attribute.discriminator;
-    if(discriminator) {
-      const discriminatorValue = item[attribute.discriminator.discriminatorName];
-      const cardItem = this.cardItemMap.get(discriminatorValue);
-      if(cardItem) {
-        return cardItem;
+    if(attribute) {
+      const discriminator = attribute.discriminator;
+      if(discriminator) {
+        //const discriminatorValue = item[attribute.discriminator.discriminatorName];
+        const discriminatorValue = this.getFormGroupForRow(rowIdx).controls[discriminator.discriminatorName].value
+
+        if(discriminatorValue) {
+          const cardItem = this.cardItemMap.get(discriminatorValue);
+          if(cardItem) {
+            return cardItem;
+          }
+          else {
+            throw new Error(`Unable to find cardItem for rowIdx ${rowIdx}, discriminatorValue = ${JSON.stringify(discriminatorValue)}`);
+          }
+        }
+        else {
+         throw new Error(`Unable to find discriminatorValue for ${attribute.discriminator.discriminatorName}`);
+        }
       }
       else {
-        throw new Error(`Unable to find cardItem for rowIdx ${rowIdx}`);
+        throw new Error(`No discriminator defined for attribute ${attribute.name}`);
       }
     }
     else {
-      throw new Error(`No discriminator defined for attribute ${attribute.name}`);
+      throw new Error(`No attribute found for rowIdx ${rowIdx}`);
     }
   }
 
