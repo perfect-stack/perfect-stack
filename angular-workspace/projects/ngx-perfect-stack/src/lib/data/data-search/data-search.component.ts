@@ -119,12 +119,17 @@ export class DataSearchComponent implements OnInit {
   toCriteria(control: FormControlWithAttribute) {
     const attribute = control.attribute;
     const criteria = new Criteria();
+    criteria.attributeType = attribute.type;
     criteria.operator = attribute.comparisonOperator;
 
     const byId = attribute.type === AttributeType.ManyToOne;
     if(byId) {
       criteria.name = attribute.name + '_id';
       criteria.value = control.value['id'];
+    }
+    else if(attribute.comparisonField) {
+      criteria.name = attribute.comparisonField;
+      criteria.value = String(control.value);
     }
     else {
       criteria.name = attribute.name;

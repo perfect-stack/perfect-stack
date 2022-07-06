@@ -272,6 +272,7 @@ export class DataService {
     queryRequest.criteria = [
       {
         name: parentMetaEntity.name + 'Id',
+        attributeType: AttributeType.Identifier,
         operator: ComparisonOperator.Equals,
         value: parentEntity.id,
       },
@@ -326,6 +327,7 @@ export class DataService {
       queryRequest.criteria = [
         {
           name: parentMetaEntity.name.toLowerCase() + '_id',
+          attributeType: AttributeType.Identifier,
           operator: ComparisonOperator.Equals,
           value: parentEntity.id,
         },

@@ -98,6 +98,7 @@ export class QueryService {
         {
           name: entityFk,
           value: entity.id,
+          attributeType: AttributeType.Identifier,
           operator: ComparisonOperator.Equals,
         },
       ];
@@ -124,15 +125,27 @@ export class QueryService {
       pageSize = 50;
     }
 
-    const criteria = {};
+    const whereClause = { [Op.and]: [] };
+    const criteriaList = whereClause[Op.and];
 
     const operatorMap = new Map<string, symbol>();
     operatorMap.set(ComparisonOperator.Equals, Op.eq);
+    operatorMap.set(ComparisonOperator.GreaterThan, Op.gt);
+    operatorMap.set(ComparisonOperator.GreaterThanOrEqualTo, Op.gte);
+    operatorMap.set(ComparisonOperator.LessThan, Op.lt);
+    operatorMap.set(ComparisonOperator.LessThanOrEqualTo, Op.lte);
     operatorMap.set(ComparisonOperator.StartsWith, Op.startsWith);
     operatorMap.set(ComparisonOperator.InsensitiveStartsWith, Op.iLike);
 
     for (const nextCriteria of queryRequest.criteria) {
-      let value = nextCriteria.value;
+      let value: any = nextCriteria.value;
+
+      // upgrade value to the right data type, otherwise the comparison operators below don't work correctly
+      value = this.convertStringToAttributeType(
+        value,
+        nextCriteria.attributeType,
+      );
+
       if (nextCriteria.operator === ComparisonOperator.InsensitiveStartsWith) {
         value = this.ormService.appendWildcard(value);
       }
@@ -141,13 +154,23 @@ export class QueryService {
         value = this.ormService.wrapWithWildcards(value);
       }
 
+      if (
+        nextCriteria.attributeType === AttributeType.Date &&
+        nextCriteria.operator === ComparisonOperator.LessThanOrEqualTo
+      ) {
+        // update the time value of the incoming criteria value to the end of the day
+        value = (value as Date).setHours(23, 59, 59, 999);
+      }
+
       if (nextCriteria.value && nextCriteria.value !== 'null') {
         if (nextCriteria.operator) {
           const op = operatorMap.get(nextCriteria.operator);
           if (op) {
-            criteria[nextCriteria.name] = {
-              [op]: value,
-            };
+            criteriaList.push({
+              [nextCriteria.name]: {
+                [op]: value,
+              },
+            });
           } else {
             this.logger.warn(
               `No SQL operator defined for application level comparison operator of ${JSON.stringify(
@@ -170,7 +193,7 @@ export class QueryService {
 
     const offset = (pageNumber - 1) * pageSize;
     const { count, rows } = await model.findAndCountAll({
-      where: criteria,
+      where: whereClause,
       order: orderBy,
       offset: offset,
       limit: pageSize,
@@ -182,5 +205,35 @@ export class QueryService {
     response.totalCount = count;
 
     return response;
+  }
+
+  convertStringToAttributeType(
+    value: string,
+    attributeType: AttributeType,
+  ): any {
+    let result: any;
+    if (value) {
+      switch (attributeType) {
+        case AttributeType.Date:
+          result = this.convertStringToDate(value);
+          break;
+        case AttributeType.DateTime:
+          result = this.convertStringToDateTime(value);
+          break;
+        default:
+          // keep calm and just use value as it is
+          result = value;
+      }
+    }
+
+    return result;
+  }
+
+  private convertStringToDate(value: string) {
+    return new Date(value);
+  }
+
+  private convertStringToDateTime(value: string) {
+    return new Date(value);
   }
 }

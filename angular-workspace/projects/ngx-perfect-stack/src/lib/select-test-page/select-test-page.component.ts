@@ -27,6 +27,7 @@ export class SelectTestPageComponent implements OnInit {
     description: '',
     type: AttributeType.ManyToOne,
     visibility: VisibilityType.Visible,
+    comparisonField: '',
     comparisonOperator: ComparisonOperator.Equals,
     relationshipTarget: 'ObserverRole',
     typeaheadSearch: [

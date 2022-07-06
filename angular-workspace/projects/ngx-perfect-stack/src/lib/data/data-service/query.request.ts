@@ -1,8 +1,9 @@
-import {ComparisonOperator} from '../../domain/meta.entity';
+import {AttributeType, ComparisonOperator} from '../../domain/meta.entity';
 
 export class Criteria {
   name: string;
   operator: ComparisonOperator;
+  attributeType: AttributeType;
   value: string;
 }
 

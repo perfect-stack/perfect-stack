@@ -19,9 +19,11 @@ export enum ComparisonOperator {
   StartsWith = 'StartsWith',
   InsensitiveStartsWith = 'InsensitiveStartsWith',
   InsensitiveLike = 'InsensitiveLike',
-  Includes = 'Includes',
+  Includes = 'Includes', // in subset of OneToPoly association
   GreaterThan = 'GreaterThan',
+  GreaterThanOrEqualTo = 'GreaterThanOrEqualTo',
   LessThan = 'LessThan',
+  LessThanOrEqualTo = 'LessThanOrEqualTo',
 }
 
 export enum VisibilityType {
@@ -37,6 +39,7 @@ export class MetaAttribute {
   description: string;
   type = AttributeType.Text;
   visibility = VisibilityType.Visible;
+  comparisonField: string;
   comparisonOperator: ComparisonOperator; // Only used by Criteria objects
   relationshipTarget: string;
   // List of attribute names in the relationshipTarget entity used for Typeahead components
@@ -44,6 +47,8 @@ export class MetaAttribute {
   discriminator: DiscriminatorAttribute;
   // List of the enumerated values (if attribute type === enumeration)
   enumeration: string[];
+  unitOfMeasure: string;
+  scale: string;
 
   static isMetaAttribute(something: any) {
     return (

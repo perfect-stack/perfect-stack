@@ -64,6 +64,7 @@
             <th scope="col">Scale</th>
             <th scope="col">Type</th>
             <th scope="col">Visibility</th>
+            <th scope="col">Comparison Field</th>
             <th scope="col">Comparison</th>
           </tr>
           </thead>
@@ -104,6 +105,9 @@
                 <select class="form-select" formControlName="visibility">
                   <option *ngFor="let o of getVisibilityTypeOptions()" [ngValue]="o">{{o}}</option>
                 </select>
+              </td>
+              <td>
+                <input class="form-control" type="text" formControlName="comparisonField">
               </td>
               <td>
                 <select class="form-select" formControlName="comparisonOperator">

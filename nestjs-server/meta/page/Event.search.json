@@ -50,7 +50,7 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "date"
+            "attributeName": "date_time"
           },
           {
             "width": "1",
@@ -157,8 +157,8 @@
       ],
       "metaEntityName": "Event",
       "type": "table",
-      "orderByName": "date",
-      "orderByDir": "ASC"
+      "orderByName": "date_time",
+      "orderByDir": "DESC"
     }
   ],
   "dataQueryList": []

@@ -3,7 +3,7 @@ import {DataQuery, QueryType, ResultCardinalityType} from '../../../domain/meta.
 import {forkJoin, Observable, of, switchMap} from 'rxjs';
 import {DataService} from '../../data-service/data.service';
 import {QueryRequest} from '../../data-service/query.request';
-import {ComparisonOperator} from '../../../domain/meta.entity';
+import {AttributeType, ComparisonOperator} from '../../../domain/meta.entity';
 
 
 export interface DataMapItem {
@@ -62,6 +62,7 @@ export class DataMapService {
         queryRequest.metaEntityName = dataQuery.queryName;
         queryRequest.criteria.push({
           name: dataQuery.fieldName,
+          attributeType: AttributeType.Text, // TODO: this probably isn't right but DataMap doesn't have any concept of Attribute or field/parameter type yet. This will do for now.
           operator: ComparisonOperator.Equals,
           value: parameterMap[dataQuery.parameter]
         });
