@@ -10,6 +10,7 @@ export class Criteria {
 export class QueryRequest {
   metaEntityName: string;
   criteria: Criteria[] = [];
+  customQuery?: string;
   orderByName: string;
   orderByDir: string;
   pageNumber = 1;

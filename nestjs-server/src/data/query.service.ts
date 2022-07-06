@@ -110,7 +110,9 @@ export class QueryService {
     }
   }
 
-  async findByCriteria(queryRequest: QueryRequest) {
+  async findByCriteria(
+    queryRequest: QueryRequest,
+  ): Promise<QueryResponse<any>> {
     console.log(`findByCriteria(): ${JSON.stringify(queryRequest)}`);
 
     const model = this.ormService.sequelize.model(queryRequest.metaEntityName);
@@ -203,7 +205,6 @@ export class QueryService {
     const response = new QueryResponse<Entity>();
     response.resultList = rows as unknown as Entity[];
     response.totalCount = count;
-
     return response;
   }
 

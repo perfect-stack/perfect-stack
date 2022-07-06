@@ -17,12 +17,14 @@ import { Request } from 'express';
 import { AuditService } from '../audit/audit.service';
 import { AuditAction } from '../domain/audit';
 import { QueryService } from './query.service';
+import { CustomQueryService } from './custom-query.service';
 
 @Controller('data')
 export class DataController {
   constructor(
     protected readonly auditService: AuditService,
     protected readonly dataService: DataService,
+    protected readonly customQueryService: CustomQueryService,
     protected readonly queryService: QueryService,
   ) {}
 
@@ -37,7 +39,11 @@ export class DataController {
 
   @Post('/query')
   findByCriteria(@Body() queryRequest: QueryRequest) {
-    return this.queryService.findByCriteria(queryRequest);
+    if (queryRequest.customQuery) {
+      return this.customQueryService.findByCriteria(queryRequest);
+    } else {
+      return this.queryService.findByCriteria(queryRequest);
+    }
   }
 
   @Get('/:entityName/:id')

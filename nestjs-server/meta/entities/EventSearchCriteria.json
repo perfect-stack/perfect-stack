@@ -1,0 +1,73 @@
+{
+  "name": "EventSearchCriteria",
+  "pluralName": "EventSearchCriteria",
+  "icon": "search",
+  "type": "Criteria",
+  "timestamps": false,
+  "attributes": [
+    {
+      "name": "date_from",
+      "label": "Date from",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonField": "date_time",
+      "comparisonOperator": "GreaterThanOrEqualTo",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "date_to",
+      "label": "Date to",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonField": "date_time",
+      "comparisonOperator": "LessThanOrEqualTo",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "event_type",
+      "label": "Event type",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Capture",
+        "Sighting",
+        "Audio",
+        "Transmitter",
+        "Electronic"
+      ]
+    },
+    {
+      "name": "activity_type",
+      "label": "Activity type",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Health",
+        "Measurement",
+        "Weight"
+      ]
+    }
+  ]
+}

@@ -158,7 +158,8 @@
       "metaEntityName": "Event",
       "type": "table",
       "orderByName": "date_time",
-      "orderByDir": "DESC"
+      "orderByDir": "DESC",
+      "customQuery": "EventSearchByCriteria"
     }
   ],
   "dataQueryList": []
