@@ -16,12 +16,14 @@ import { UpdateSortIndexRequest } from './update-sort-index.request';
 import { Request } from 'express';
 import { AuditService } from '../audit/audit.service';
 import { AuditAction } from '../domain/audit';
+import { QueryService } from './query.service';
 
 @Controller('data')
 export class DataController {
   constructor(
     protected readonly auditService: AuditService,
     protected readonly dataService: DataService,
+    protected readonly queryService: QueryService,
   ) {}
 
   @Get('/:entityName')
@@ -30,12 +32,12 @@ export class DataController {
     @Query('pageNumber') pageNumber?: number,
     @Query('pageSize') pageSize?: number,
   ) {
-    return this.dataService.findAll(entityName, pageNumber, pageSize);
+    return this.queryService.findAll(entityName, pageNumber, pageSize);
   }
 
   @Post('/query')
   findByCriteria(@Body() queryRequest: QueryRequest) {
-    return this.dataService.findByCriteria(queryRequest);
+    return this.queryService.findByCriteria(queryRequest);
   }
 
   @Get('/:entityName/:id')
@@ -43,7 +45,7 @@ export class DataController {
     @Param('entityName') entityName: string,
     @Param('id') id: string,
   ): Promise<Entity> {
-    return this.dataService.findOne(entityName, id);
+    return this.queryService.findOne(entityName, id);
   }
 
   @Post('/:entityName/:id')

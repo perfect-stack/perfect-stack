@@ -5,8 +5,33 @@
   "layoutStyle": "",
   "templates": [
     {
-      "cells": [],
-      "metaEntityName": "Event",
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "date_from"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "date_to"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "event_type",
+            "component": "Select"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "activity_type",
+            "component": "Select"
+          }
+        ]
+      ],
+      "metaEntityName": "EventSearchCriteria",
       "type": "form",
       "locations": {
         "OuterTopRight": {
@@ -30,7 +55,27 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "location"
+            "attributeName": "bird"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "species"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "form"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "event_type"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "activities"
           }
         ],
         [

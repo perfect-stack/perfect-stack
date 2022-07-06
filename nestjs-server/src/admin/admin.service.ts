@@ -6,15 +6,19 @@ import { v4 as uuid } from 'uuid';
 
 import { DateTimeFormatter, LocalDate } from '@js-joda/core';
 import { DataService } from '../data/data.service';
+import { QueryService } from '../data/query.service';
 
 @Injectable()
 export class AdminService {
   private readonly logger = new Logger(AdminService.name);
 
-  constructor(protected readonly dataService: DataService) {}
+  constructor(
+    protected readonly dataService: DataService,
+    protected readonly queryService: QueryService,
+  ) {}
 
   public async createFakePeople(): Promise<any> {
-    const personQueryResponse = await this.dataService.findAll('Person');
+    const personQueryResponse = await this.queryService.findAll('Person');
 
     console.log(
       `loadFakePeople() personList.length = ${personQueryResponse.totalCount}`,
