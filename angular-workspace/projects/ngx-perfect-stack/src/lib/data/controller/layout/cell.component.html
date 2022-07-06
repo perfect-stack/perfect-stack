@@ -18,6 +18,10 @@
           <app-text-area-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></app-text-area-control>
         </ng-container>
 
+        <ng-container *ngSwitchCase="'BadgeList'">
+          <lib-badge-list  [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-badge-list>
+        </ng-container>
+
         <ng-container *ngSwitchDefault>
           <lib-text-field-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-text-field-control>
         </ng-container>

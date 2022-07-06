@@ -60,6 +60,11 @@
           {
             "width": "1",
             "height": "1",
+            "attributeName": "band"
+          },
+          {
+            "width": "1",
+            "height": "1",
             "attributeName": "species"
           },
           {
@@ -75,7 +80,8 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "activities"
+            "attributeName": "activities",
+            "component": "BadgeList"
           }
         ],
         [
@@ -155,7 +161,7 @@
           }
         ]
       ],
-      "metaEntityName": "Event",
+      "metaEntityName": "EventSearchResult",
       "type": "table",
       "orderByName": "date_time",
       "orderByDir": "DESC",

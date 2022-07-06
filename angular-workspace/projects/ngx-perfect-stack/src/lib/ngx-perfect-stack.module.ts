@@ -109,6 +109,7 @@ import { TileButtonPanelComponent } from './utils/tile-button-panel/tile-button-
 import { BooleanCheckBoxControlComponent } from './data/controller/layout/controls/boolean-check-box-control/boolean-check-box-control.component';
 import { DecimalNumberDirective } from './utils/decimal-number.directive';
 import { SelectTestPageComponent } from './select-test-page/select-test-page.component';
+import { BadgeListComponent } from './data/controller/layout/controls/badge-list/badge-list.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -217,6 +218,7 @@ const routes: Routes = [
     BooleanCheckBoxControlComponent,
     DecimalNumberDirective,
     SelectTestPageComponent,
+    BadgeListComponent,
   ],
   providers: [
     AuthenticationService,

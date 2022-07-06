@@ -1,0 +1,113 @@
+{
+  "name": "EventSearchResult",
+  "pluralName": "EventSearchResult",
+  "icon": "",
+  "type": "Basic",
+  "timestamps": false,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "id",
+      "description": "Event id",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "date_time",
+      "label": "Date time",
+      "description": "Event date_time",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "bird",
+      "label": "Bird",
+      "description": "Bird name",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "band",
+      "label": "Band",
+      "description": "Bird band",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "species",
+      "label": "Species",
+      "description": "Species name",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "form",
+      "label": "Form",
+      "description": "Species form (from event)",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "event_type",
+      "label": "Event type",
+      "description": "Event type",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    },
+    {
+      "name": "activities",
+      "label": "Activities",
+      "description": "List of Activities from Event",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
+    }
+  ]
+}
