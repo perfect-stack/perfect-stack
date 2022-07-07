@@ -90,6 +90,7 @@ export const TemplatePropertyList = [
   { name: 'metaEntityName', type: PropertyType.metaEntity},
   { name: 'type', type: PropertyType.string, options: TemplateType},
   { name: 'styles', type: PropertyType.string},
+  { name: 'customQuery', type: PropertyType.string},
   { name: 'orderByName', type: PropertyType.string},
   { name: 'orderByDir', type: PropertyType.string, options: ['ASC', 'DESC']},
   { name: 'noItemsHtml', type: PropertyType.string},

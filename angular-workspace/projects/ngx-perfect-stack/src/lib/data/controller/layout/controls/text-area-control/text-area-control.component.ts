@@ -12,13 +12,13 @@ import {Cell} from '../../../../../domain/meta.page';
 export class TextAreaControlComponent implements OnInit {
 
   @Input()
+  mode: string | null;
+
+  @Input()
   formGroup: FormGroup;
 
   @Input()
   attribute: MetaAttribute;
-
-  @Input()
-  mode: string | null;
 
   @Input()
   cell: Cell;

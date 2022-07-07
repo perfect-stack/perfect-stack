@@ -18,21 +18,22 @@
     <!-- The *ngIf here is important because it triggers the redisplay of the criteria when the route changes. There's
     an indirect dependency here between the route changing, the search criteria form changing and a new search being done -->
     <form class="container-fluid container-form" *ngIf="searchResultsFormGroup">
-      <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate">
-        <ng-container BottomLeftActions>
-        </ng-container>
-        <ng-container BottomRightActions>
+      <div class="d-flex">
+        <div class="flex-grow-1">
+          <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate"></lib-controller>
+        </div>
+        <div class="action-buttons-right">
           <button type="button" class="btn btn-outline-primary me-2" (click)="onReset(ctx)" id="resetBtn">Reset</button>
           <button type="submit" class="btn btn-primary" (click)="onSearch(ctx)" id="searchBtn">Search</button>
-        </ng-container>
-      </lib-controller>
+        </div>
+      </div>
     </form>
   </ng-container>
 
   <div class="container-table" *ngIf="searchResultsFormGroup">
 
     <div class="collection-size-found">
-      {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found
+      Showing {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found
     </div>
 
     <ng-container *ngIf="searchResultsFormGroup">

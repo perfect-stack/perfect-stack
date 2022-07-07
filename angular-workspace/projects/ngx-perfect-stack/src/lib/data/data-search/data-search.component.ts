@@ -90,12 +90,15 @@ export class DataSearchComponent implements OnInit {
     if(this.metaName) {
       this.searchResultsFormGroup = null;
 
-      const queryRequest = new QueryRequest();
-      queryRequest.metaEntityName = this.metaName;
-      queryRequest.orderByName = this.resultTableTemplate.orderByName;
-      queryRequest.orderByDir = this.resultTableTemplate.orderByDir;
-      queryRequest.pageNumber = this.pageNumber;
-      queryRequest.pageSize = this.pageSize;
+      const queryRequest: QueryRequest = {
+        metaEntityName: this.metaName,
+        criteria: [],
+        customQuery: this.resultTableTemplate.customQuery,
+        orderByName: this.resultTableTemplate.orderByName,
+        orderByDir: this.resultTableTemplate.orderByDir,
+        pageNumber: this.pageNumber,
+        pageSize: this.pageSize,
+      };
 
       const criteriaForm = ctx.formMap.get('criteria') as FormGroup;
       for (let controlsKey in criteriaForm.controls) {
@@ -119,12 +122,17 @@ export class DataSearchComponent implements OnInit {
   toCriteria(control: FormControlWithAttribute) {
     const attribute = control.attribute;
     const criteria = new Criteria();
+    criteria.attributeType = attribute.type;
     criteria.operator = attribute.comparisonOperator;
 
     const byId = attribute.type === AttributeType.ManyToOne;
     if(byId) {
       criteria.name = attribute.name + '_id';
       criteria.value = control.value['id'];
+    }
+    else if(attribute.comparisonField) {
+      criteria.name = attribute.comparisonField;
+      criteria.value = String(control.value);
     }
     else {
       criteria.name = attribute.name;

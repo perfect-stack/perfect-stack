@@ -40,6 +40,7 @@
           <th scope="col">Scale</th>
           <th scope="col">Type</th>
           <th scope="col">Visibility</th>
+          <th scope="col">Comparison Field</th>
           <th scope="col">Comparison</th>
           <th scope="col">Actions</th>
         </tr>
@@ -57,6 +58,7 @@
             <div *ngIf="attribute.typeaheadSearch && attribute.typeaheadSearch.length > 0">{{attribute.typeaheadSearch | json}}</div>
           </td>
           <td>{{attribute.visibility}}</td>
+          <td>{{attribute.comparisonField}}</td>
           <td>{{attribute.comparisonOperator}}</td>
           <td>
             <span class="btn-icon text-danger material-symbols-outlined" (click)="onDeleteAttribute(attribute)">remove_circle</span>

@@ -21,7 +21,9 @@ export enum ComparisonOperator {
   InsensitiveLike = 'InsensitiveLike',
   Includes = 'Includes',
   GreaterThan = 'GreaterThan',
+  GreaterThanOrEqualTo = 'GreaterThanOrEqualTo',
   LessThan = 'LessThan',
+  LessThanOrEqualTo = 'LessThanOrEqualTo',
 }
 
 export enum VisibilityType {
@@ -37,6 +39,7 @@ export class MetaAttribute {
   description: string;
   type = AttributeType.Text;
   visibility = VisibilityType.Visible;
+  comparisonField: string;
   comparisonOperator: ComparisonOperator; // Only used by Criteria objects
   relationshipTarget: string;
   // List of attribute names in the relationshipTarget entity used for Typeahead components

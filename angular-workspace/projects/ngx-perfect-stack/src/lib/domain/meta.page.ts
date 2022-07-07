@@ -1,7 +1,8 @@
 export enum ComponentType {
-  TextInput = 'TextInput',
-  TextArea = 'TextArea',
+  BadgeList = 'BadgeList',
   DatePicker = 'DatePicker',
+  TextArea = 'TextArea',
+  TextInput = 'TextInput',
   Select = 'Select',
   SelectTwo = 'SelectTwo',
 }
@@ -102,6 +103,7 @@ export class Template {
   styles: string; // CSS style classes
 
   // for table templates
+  customQuery?: string; // for when we need to call for complex custom queries
   orderByName: string; // Only for search result tables
   orderByDir: string; // Only for search result tables
   noItemsHtml: string; // Html displayed when no items

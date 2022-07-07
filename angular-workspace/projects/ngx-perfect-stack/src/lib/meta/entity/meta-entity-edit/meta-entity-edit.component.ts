@@ -93,6 +93,7 @@ export class MetaEntityEditComponent implements OnInit {
       scale: [''],
       type: [AttributeType.Text],
       visibility: [VisibilityType.Visible],
+      comparisonField: [''],
       comparisonOperator: [''],
       relationshipTarget: [''],
       typeaheadSearch: [[]],

@@ -3,7 +3,9 @@ import {FormGroup} from '@angular/forms';
 import {DateTimeFormatter, Instant, LocalDateTime, LocalTime, ZonedDateTime, ZoneId, ZoneOffset} from '@js-joda/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
-import {Locale} from '@js-joda/locale_en-us';
+// This next import may appear to be grey and unused, but it is important because it imports the right language/words for
+// when date time formats use text days and months and not just numerical values
+import {Locale} from '@js-joda/locale_en';
 import '@js-joda/timezone';
 
 
