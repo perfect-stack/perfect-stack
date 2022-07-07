@@ -100,3 +100,20 @@ export const getCriteriaValue = (criteria: Criteria): any => {
 
   return value;
 };
+
+export const KnexComparisonOperatorMap = (): Map<
+  ComparisonOperator,
+  string
+> => {
+  const map = new Map<ComparisonOperator, string>();
+  map.set(ComparisonOperator.Equals, '=');
+  map.set(ComparisonOperator.StartsWith, 'like');
+  map.set(ComparisonOperator.InsensitiveStartsWith, 'ilike');
+  map.set(ComparisonOperator.InsensitiveLike, 'ilike');
+  map.set(ComparisonOperator.Includes, 'XX-TODO-XX');
+  map.set(ComparisonOperator.GreaterThan, '>');
+  map.set(ComparisonOperator.GreaterThanOrEqualTo, '>=');
+  map.set(ComparisonOperator.LessThan, '<');
+  map.set(ComparisonOperator.LessThanOrEqualTo, '<=');
+  return map;
+};

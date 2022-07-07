@@ -6,8 +6,10 @@ import { CustomQueryService } from './data/custom-query.service';
 import { QueryRequest } from './data/query.request';
 import { QueryResponse } from './data/query.response';
 import { KnexService } from './knex/knex.service';
-import { ComparisonOperator } from './domain/meta.entity';
-import { getCriteriaValue } from './data/query-utils';
+import {
+  getCriteriaValue,
+  KnexComparisonOperatorMap,
+} from './data/query-utils';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -171,17 +173,3 @@ export class AppService implements OnApplicationBootstrap {
     );
   }
 }
-
-const KnexComparisonOperatorMap = (): Map<ComparisonOperator, string> => {
-  const map = new Map<ComparisonOperator, string>();
-  map.set(ComparisonOperator.Equals, '=');
-  map.set(ComparisonOperator.StartsWith, 'like');
-  map.set(ComparisonOperator.InsensitiveStartsWith, 'ilike');
-  map.set(ComparisonOperator.InsensitiveLike, 'ilike');
-  map.set(ComparisonOperator.Includes, 'XX-TODO-XX');
-  map.set(ComparisonOperator.GreaterThan, '>');
-  map.set(ComparisonOperator.GreaterThanOrEqualTo, '>=');
-  map.set(ComparisonOperator.LessThan, '<');
-  map.set(ComparisonOperator.LessThanOrEqualTo, '<=');
-  return map;
-};
