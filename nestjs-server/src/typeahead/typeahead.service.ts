@@ -5,6 +5,7 @@ import { Model, Op } from 'sequelize';
 import { Item } from './dto/typeahead.response';
 import { MetaAttribute } from '../domain/meta.entity';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
+import { wrapWithWildcards } from '../data/query-utils';
 
 @Injectable()
 export class TypeaheadService {
@@ -34,7 +35,7 @@ export class TypeaheadService {
 
     const tableName = metaAttribute.relationshipTarget;
     const searchFieldList = metaAttribute.typeaheadSearch.join(", ' ', ");
-    const searchValue = this.ormService.wrapWithWildcards(request.searchText);
+    const searchValue = wrapWithWildcards(request.searchText);
 
     const whereClause = {
       id: {

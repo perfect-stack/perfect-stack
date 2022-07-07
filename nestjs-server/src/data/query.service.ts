@@ -12,6 +12,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
 import { Op } from 'sequelize';
 import { QueryResponse } from './query.response';
+import {
+  appendWildcard,
+  convertStringToAttributeType,
+  getCriteriaValue,
+  wrapWithWildcards,
+} from './query-utils';
 
 @Injectable()
 export class QueryService {
@@ -140,29 +146,7 @@ export class QueryService {
     operatorMap.set(ComparisonOperator.InsensitiveStartsWith, Op.iLike);
 
     for (const nextCriteria of queryRequest.criteria) {
-      let value: any = nextCriteria.value;
-
-      // upgrade value to the right data type, otherwise the comparison operators below don't work correctly
-      value = this.convertStringToAttributeType(
-        value,
-        nextCriteria.attributeType,
-      );
-
-      if (nextCriteria.operator === ComparisonOperator.InsensitiveStartsWith) {
-        value = this.ormService.appendWildcard(value);
-      }
-
-      if (nextCriteria.operator === ComparisonOperator.InsensitiveLike) {
-        value = this.ormService.wrapWithWildcards(value);
-      }
-
-      if (
-        nextCriteria.attributeType === AttributeType.Date &&
-        nextCriteria.operator === ComparisonOperator.LessThanOrEqualTo
-      ) {
-        // update the time value of the incoming criteria value to the end of the day
-        value = (value as Date).setHours(23, 59, 59, 999);
-      }
+      const value: any = getCriteriaValue(nextCriteria);
 
       if (nextCriteria.value && nextCriteria.value !== 'null') {
         if (nextCriteria.operator) {
@@ -206,35 +190,5 @@ export class QueryService {
     response.resultList = rows as unknown as Entity[];
     response.totalCount = count;
     return response;
-  }
-
-  convertStringToAttributeType(
-    value: string,
-    attributeType: AttributeType,
-  ): any {
-    let result: any;
-    if (value) {
-      switch (attributeType) {
-        case AttributeType.Date:
-          result = this.convertStringToDate(value);
-          break;
-        case AttributeType.DateTime:
-          result = this.convertStringToDateTime(value);
-          break;
-        default:
-          // keep calm and just use value as it is
-          result = value;
-      }
-    }
-
-    return result;
-  }
-
-  private convertStringToDate(value: string) {
-    return new Date(value);
-  }
-
-  private convertStringToDateTime(value: string) {
-    return new Date(value);
   }
 }

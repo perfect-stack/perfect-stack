@@ -12,19 +12,4 @@ export class OrmService {
   async reload() {
     this.sequelize = await databaseProviders[0].useFactory(this.configService);
   }
-
-  wrapWithWildcards(value: string) {
-    if (value) {
-      value = value.startsWith('%') ? value : `%${value}`;
-      value = value.endsWith('%') ? value : `${value}%`;
-    }
-    return value;
-  }
-
-  appendWildcard(value: string) {
-    if (value) {
-      value = value.endsWith('%') ? value : `${value}%`;
-    }
-    return value;
-  }
 }

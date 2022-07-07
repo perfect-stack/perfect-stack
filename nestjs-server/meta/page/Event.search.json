@@ -50,7 +50,8 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "date_time"
+            "attributeName": "date_time",
+            "component": "DatePicker"
           },
           {
             "width": "1",

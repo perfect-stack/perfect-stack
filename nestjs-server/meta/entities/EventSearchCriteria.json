@@ -60,7 +60,7 @@
       "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
-      "comparisonOperator": "",
+      "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "enumeration": [

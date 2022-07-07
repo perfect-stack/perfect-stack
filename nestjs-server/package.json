@@ -23,7 +23,9 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.46.0",
     "@aws-sdk/client-secrets-manager": "^3.46.0",
-    "@js-joda/core": "^4.3.1",
+    "@js-joda/core": "^5.2.0",
+    "@js-joda/locale_en": "^4.7.0",
+    "@js-joda/timezone": "^2.12.0",
     "@nestjs/axios": "^0.0.7",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^1.0.1",

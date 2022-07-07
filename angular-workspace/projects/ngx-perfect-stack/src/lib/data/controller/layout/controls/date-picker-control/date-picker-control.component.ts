@@ -4,7 +4,9 @@ import {NgbDate, NgbInputDatepicker} from '@ng-bootstrap/ng-bootstrap';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 import {DateTimeFormatter, Instant, LocalDate, ZonedDateTime, ZoneId} from '@js-joda/core';
 
-import {Locale} from '@js-joda/locale_en-us';
+// This next import may appear to be grey and unused, but it is important because it imports the right language/words for
+// when date time formats use text days and months and not just numerical values
+import {Locale} from '@js-joda/locale_en';
 import '@js-joda/timezone';
 
 @Component({

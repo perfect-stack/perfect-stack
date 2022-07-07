@@ -6,6 +6,8 @@ import { CustomQueryService } from './data/custom-query.service';
 import { QueryRequest } from './data/query.request';
 import { QueryResponse } from './data/query.response';
 import { KnexService } from './knex/knex.service';
+import { ComparisonOperator } from './domain/meta.entity';
+import { getCriteriaValue } from './data/query-utils';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -69,8 +71,8 @@ export class AppService implements OnApplicationBootstrap {
 
         const selectCount = () => knex.select().count();
 
-        const from = (select) =>
-          select
+        const from = (select) => {
+          select = select
             .from('Event')
             .leftOuterJoin('Bird', 'Bird.id', 'Event.bird_id')
             .leftOuterJoin('Species', 'Species.id', 'Event.species_id')
@@ -90,8 +92,53 @@ export class AppService implements OnApplicationBootstrap {
               'Event.id',
             );
 
+          const comparisonOperatorMap = KnexComparisonOperatorMap();
+
+          for (const criteria of queryRequest.criteria) {
+            const name = criteria.name;
+            const operator = comparisonOperatorMap.get(criteria.operator);
+            const value: any = getCriteriaValue(criteria);
+
+            if (name === 'activity_type') {
+              switch (value) {
+                case 'Health':
+                  select = select.where(
+                    'HealthActivity.activity_type',
+                    '=',
+                    'Health',
+                  );
+                  break;
+                case 'Weight':
+                  select = select.where(
+                    'WeightActivity.activity_type',
+                    '=',
+                    'Weight',
+                  );
+                  break;
+                case 'Measurement':
+                  select = select.where(
+                    'MeasurementActivity.activity_type',
+                    '=',
+                    'Measurement',
+                  );
+                  break;
+                default:
+                  throw new Error(`Unknown activity type of ${value}`);
+              }
+            } else {
+              select = select.where(name, operator, value);
+            }
+          }
+
+          return select;
+        };
+
         // specify the pagination properties
         let dataQuery = from(selectData()).offset(offset).limit(pageSize);
+
+        console.log(
+          `dataQuery: ${JSON.stringify(dataQuery.toSQL().toNative())}`,
+        );
 
         // specify the ordering properties
         if (queryRequest.orderByName && queryRequest.orderByDir) {
@@ -124,3 +171,17 @@ export class AppService implements OnApplicationBootstrap {
     );
   }
 }
+
+const KnexComparisonOperatorMap = (): Map<ComparisonOperator, string> => {
+  const map = new Map<ComparisonOperator, string>();
+  map.set(ComparisonOperator.Equals, '=');
+  map.set(ComparisonOperator.StartsWith, 'like');
+  map.set(ComparisonOperator.InsensitiveStartsWith, 'ilike');
+  map.set(ComparisonOperator.InsensitiveLike, 'ilike');
+  map.set(ComparisonOperator.Includes, 'XX-TODO-XX');
+  map.set(ComparisonOperator.GreaterThan, '>');
+  map.set(ComparisonOperator.GreaterThanOrEqualTo, '>=');
+  map.set(ComparisonOperator.LessThan, '<');
+  map.set(ComparisonOperator.LessThanOrEqualTo, '<=');
+  return map;
+};

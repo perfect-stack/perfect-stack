@@ -24,7 +24,7 @@
       "description": "Event date_time",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "DateTime",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
