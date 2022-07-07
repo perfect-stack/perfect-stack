@@ -37,10 +37,21 @@ export class AppService implements OnApplicationBootstrap {
       findByCriteria: async (
         queryRequest: QueryRequest,
       ): Promise<QueryResponse<any>> => {
-        const knex = this.knexService.knex;
+        let pageNumber = queryRequest.pageNumber;
+        let pageSize = queryRequest.pageSize;
 
-        const events = await knex
-          .select(
+        if (!pageNumber) {
+          pageNumber = 1;
+        }
+
+        if (!pageSize) {
+          pageSize = 50;
+        }
+        const offset = (pageNumber - 1) * pageSize;
+
+        const knex = this.knexService.knex;
+        const selectData = () =>
+          knex.select(
             'Event.id',
             'Event.date_time',
             'Bird.name as bird',
@@ -54,35 +65,56 @@ export class AppService implements OnApplicationBootstrap {
             knex.raw(
               'concat("HealthActivity".activity_type, \',\', "WeightActivity".activity_type, \',\', "MeasurementActivity".activity_type) as activities',
             ),
-          )
-          .from('Event')
-          .leftOuterJoin('Bird', 'Bird.id', 'Event.bird_id')
-          .leftOuterJoin('Species', 'Species.id', 'Event.species_id')
-          .leftOuterJoin(
-            'HealthActivity',
-            'HealthActivity.event_id',
-            'Event.id',
-          )
-          .leftOuterJoin(
-            'WeightActivity',
-            'WeightActivity.event_id',
-            'Event.id',
-          )
-          .leftOuterJoin(
-            'MeasurementActivity',
-            'MeasurementActivity.event_id',
-            'Event.id',
-          )
-          .whereNotNull('date_time');
+          );
+
+        const selectCount = () => knex.select().count();
+
+        const from = (select) =>
+          select
+            .from('Event')
+            .leftOuterJoin('Bird', 'Bird.id', 'Event.bird_id')
+            .leftOuterJoin('Species', 'Species.id', 'Event.species_id')
+            .leftOuterJoin(
+              'HealthActivity',
+              'HealthActivity.event_id',
+              'Event.id',
+            )
+            .leftOuterJoin(
+              'WeightActivity',
+              'WeightActivity.event_id',
+              'Event.id',
+            )
+            .leftOuterJoin(
+              'MeasurementActivity',
+              'MeasurementActivity.event_id',
+              'Event.id',
+            );
+
+        // specify the pagination properties
+        let dataQuery = from(selectData()).offset(offset).limit(pageSize);
+
+        // specify the ordering properties
+        if (queryRequest.orderByName && queryRequest.orderByDir) {
+          const orderBy = [];
+          orderBy.push({
+            column: queryRequest.orderByName,
+            order: queryRequest.orderByDir,
+            nulls: 'last',
+          });
+          dataQuery = dataQuery.orderBy(orderBy);
+        }
+
+        const dataResults = await dataQuery;
+
+        const countResponse = await from(selectCount());
+        const totalCount = Number(countResponse[0].count);
 
         const response: QueryResponse<any> = {
-          resultList: events,
-          totalCount: events.length,
+          resultList: dataResults,
+          totalCount: totalCount,
         };
 
-        return new Promise((resolve, reject) => {
-          resolve(response);
-        });
+        return response;
       },
     };
 
