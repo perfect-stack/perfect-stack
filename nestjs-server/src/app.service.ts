@@ -53,7 +53,7 @@ export class AppService implements OnApplicationBootstrap {
         }
         const offset = (pageNumber - 1) * pageSize;
 
-        const knex = this.knexService.knex;
+        const knex = await this.knexService.getKnex();
         const selectData = () =>
           knex.select(
             'Event.id',
