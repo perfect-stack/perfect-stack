@@ -1,19 +1,21 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormControlStatus, FormGroup} from '@angular/forms';
+import {ControlValueAccessor, FormControlStatus, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {DataService} from '../../../../data-service/data.service';
-import {Observable, of, Subscription, switchMap} from 'rxjs';
-import {Entity} from '../../../../../domain/entity';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-select-control',
   templateUrl: './select-control.component.html',
-  styleUrls: ['./select-control.component.css']
+  styleUrls: ['./select-control.component.css'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: SelectControlComponent,
+      multi: true
+    }]
 })
-export class SelectControlComponent implements OnInit, OnDestroy {
-
-  @Input()
-  formGroup: FormGroup;
+export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
   @Input()
   attribute: MetaAttribute;
@@ -21,28 +23,32 @@ export class SelectControlComponent implements OnInit, OnDestroy {
   @Input()
   mode: string | null;
 
+  selectedEntity_id: string;
   selectedEntity: any;
-  options$: Observable<Entity[]>
+
+  optionList: any[];
+  optionListSubscription: Subscription;
 
   status: FormControlStatus = 'PENDING';
   statusSubscription: Subscription;
 
+  disabled = false;
+
   constructor(protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
-    if(this.formGroup && this.attribute) {
-      this.selectedEntity = this.formGroup.controls[this.attribute.name].value;
-    }
+    // this.statusSubscription = this.formGroup.controls[this.attribute.name].statusChanges.subscribe((formControlStatus) => {
+    //   this.status = formControlStatus;
+    // });
 
-    this.statusSubscription = this.formGroup.controls[this.attribute.name].statusChanges.subscribe((formControlStatus) => {
-      this.status = formControlStatus;
+    this.optionListSubscription = this.dataService.findAll(this.attribute.relationshipTarget).subscribe((response) => {
+      this.optionList = response.resultList;
+      this.updateSelectedEntity();
     });
+  }
 
-    this.options$ = this.dataService.findAll(this.attribute.relationshipTarget).pipe(
-      switchMap(response => {
-        return of(response.resultList as Entity[]);
-      }
-    ));
+  get attribute_name_id() {
+    return (this.attribute.name + '_id').toLowerCase();
   }
 
   isReadOnly() {
@@ -58,33 +64,74 @@ export class SelectControlComponent implements OnInit, OnDestroy {
     return displayValue;
   }
 
-  byEntityId(entity1: Entity, entity2: Entity) {
-    if(entity1 && entity2) {
-      return entity1.id === entity2.id;
+  byEntityId(entity1: any, entity2: any) {
+    const findId = (entity: any) => {
+      return entity && entity.id ? entity.id : entity;
+    }
+
+    const id_1 = findId(entity1);
+    const id_2 = findId(entity2);
+    if(id_1 && id_2) {
+      return id_1 === id_2;
     }
     else {
-      return entity1 === null && entity2 === null;
+      return id_1 === null && id_2 === null;
     }
   }
 
   onModelChange(selectedEntity: any) {
     console.log('onModelChange()', selectedEntity);
-    if(this.formGroup && this.attribute) {
-      const controlName = (this.attribute.name + '_id').toLowerCase();
-      if(selectedEntity) {
-        this.formGroup.controls[this.attribute.name].patchValue(selectedEntity);
-        this.formGroup.controls[controlName].setValue(selectedEntity.id);
-      }
-      else {
-        this.formGroup.controls[this.attribute.name].reset();
-        this.formGroup.controls[controlName].reset();
-      }
-    }
+    //this.value = selectedEntity ? selectedEntity.id : null;
+    this.value = selectedEntity ? selectedEntity.id : '';
   }
 
   ngOnDestroy(): void {
     if(this.statusSubscription) {
       this.statusSubscription.unsubscribe();
     }
+    if(this.optionListSubscription) {
+      this.optionListSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * The id may arrive before the entity list has been downloaded, or the entity list may be downloaded before the id
+   * is set. So we need call this method whenever either changes but only do the actual selection if both are set.
+   */
+  updateSelectedEntity() {
+    if(this.optionList) {
+      if(this.selectedEntity_id) {
+        this.selectedEntity = this.optionList.find(x => x.id === this.selectedEntity_id);
+      }
+      else {
+        this.selectedEntity = null;
+      }
+    }
+  }
+
+  set value(val: string){
+    this.selectedEntity_id = val
+    this.updateSelectedEntity();
+    this.onChange(val)
+    this.onTouch(val)
+  }
+
+  onChange: any = () => {}
+  onTouch: any = () => {}
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouch = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  writeValue(obj: any): void {
+    this.value = obj;
   }
 }

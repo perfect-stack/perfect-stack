@@ -47,7 +47,10 @@
     <ng-container *ngSwitchCase="'ManyToOne'">
       <ng-container [ngSwitch]="cell.component">
         <ng-container *ngSwitchCase="'Select'">
-          <app-select-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></app-select-control>
+          <div [formGroup]="formGroup">
+            <app-select-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></app-select-control>
+          </div>
+          <!--<app-select-control [mode]="mode" [formGroup]="formGroup" [formControlName]="cell.attribute.name" [attribute]="cell.attribute"></app-select-control>-->
         </ng-container>
 
         <ng-container *ngSwitchCase="'SelectTwo'">
