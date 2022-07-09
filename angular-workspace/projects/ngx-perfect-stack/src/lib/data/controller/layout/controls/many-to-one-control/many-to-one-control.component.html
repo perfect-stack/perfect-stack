@@ -14,18 +14,21 @@
              [ngbTypeahead]="search"
              [inputFormatter]="formatter"
              [resultTemplate]="resultTemplate"
-             [(ngModel)]="model"
              [ngModelOptions]="{standalone: true}"
+             [(ngModel)]="selectedModel"
              (selectItem)="onSelectItem($event)"
              [id]="attribute.name"
       />
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
     </div>
+    <div>
+      selectedModelId: {{selectedModelId}} <br>
+    </div>
   </fieldset>
 </ng-container>
 
-<ng-container *ngIf="mode === 'view'">
+<!--<ng-container *ngIf="mode === 'view'">
   <div class="input-group">
     <ng-container *ngIf="model && model.id">
       <a [routerLink]="['/data', attribute.relationshipTarget, 'view', model.id]" href="#" [id]="attribute.name">{{displayValue}}</a>
@@ -34,5 +37,5 @@
       <input class="form-control" disabled [id]="attribute.name" value="&mdash;">
     </ng-container>
   </div>
-</ng-container>
+</ng-container>-->
 
