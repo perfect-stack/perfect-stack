@@ -1,4 +1,4 @@
-<ng-container *ngIf="mode !== 'view' || selectedEntity_id">
+<ng-container *ngIf="mode !== 'view' || selectedEntityId">
   <div class="input-group" *ngIf="optionList">
     <!-- ng-invalid and ng-touched is here because  this select isn't bound to a form control name and so we need to
     be responsible for setting the valid status/flags. Don't really like this way of doing it, but wasn't able to
@@ -9,22 +9,22 @@
       'ng-invalid': status === 'INVALID',
       'ng-touched': status === 'INVALID'
     }" [id]="attribute.name" (ngModelChange)="onModelChange($event)" [disabled]="isReadOnly() || disabled"
-            [ngModel]="selectedEntity" [compareWith]="byEntityId" [ngModelOptions]="{standalone: true}">
+            [ngModel]="selectedEntity" [compareWith]="byEntityOrId" [ngModelOptions]="{standalone: true}">
       <option *ngFor="let o of optionList" [ngValue]="o">{{getDisplayText(o)}}</option>
-      <option [ngValue]="null">NONE</option>
+      <option [ngValue]="null"></option>
     </select>
 
-    Name: {{attribute.name}}<br>
+    <!--Name: {{attribute.name}}<br>
     Visibility: {{attribute.visibility}}<br>
     attribute_name_id: {{attribute_name_id}}<br>
     selectedEntity_id: {{selectedEntity_id}}<br>
-    selectedEntity: "{{selectedEntity ? selectedEntity.name : 'null'}}"<br>
+    selectedEntity: "{{selectedEntity ? selectedEntity.name : 'null'}}"<br>-->
     <!--Status1: {{formGroup.controls[attribute.name].status}}<br>
     Status2: {{status}}-->
   </div>
 </ng-container>
 
-<ng-container *ngIf="mode === 'view' && !selectedEntity_id">
+<ng-container *ngIf="mode === 'view' && !selectedEntityId">
   <div class="input-group">
     <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
   </div>

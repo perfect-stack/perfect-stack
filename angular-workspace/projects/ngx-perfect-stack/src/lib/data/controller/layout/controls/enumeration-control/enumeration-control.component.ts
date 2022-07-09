@@ -1,28 +1,26 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
-import {FormGroup} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 
 @Component({
   selector: 'lib-enumeration-control',
   templateUrl: './enumeration-control.component.html',
-  styleUrls: ['./enumeration-control.component.css']
+  styleUrls: ['./enumeration-control.component.css'],
+  providers: [{provide: NG_VALUE_ACCESSOR, useExisting: EnumerationControlComponent, multi: true}]
 })
-export class EnumerationControlComponent implements OnInit {
+export class EnumerationControlComponent implements OnInit, ControlValueAccessor {
 
   @Input()
   mode: string | null;
 
   @Input()
-  cell: CellAttribute;
-
-  @Input()
   attribute: MetaAttribute;
 
   @Input()
-  formGroup: FormGroup;
+  options: string[] = [];
 
-  options: string[];
+  selectedOption: string;
+  disabled = false;
 
   constructor() { }
 
@@ -30,9 +28,7 @@ export class EnumerationControlComponent implements OnInit {
     if(this.attribute && this.attribute.enumeration) {
       this.options = this.attribute.enumeration;
     }
-    else {
-      throw new Error(`No options supplied for attribute ${this.attribute?.name} of type Enumeration`);
-    }
+    // if no enumeration supplied by the MetaAttribute then the options can be @Input() directly. See "SelectTwoControl"
   }
 
   isReadOnly() {
@@ -43,4 +39,28 @@ export class EnumerationControlComponent implements OnInit {
     return this.isReadOnly() ? 'form-control': 'form-select';
   }
 
+  set value(val: string){
+    this.selectedOption = val
+    this.onChange(val)
+    this.onTouch(val)
+  }
+
+  onChange: any = () => {}
+  onTouch: any = () => {}
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouch = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  writeValue(obj: any): void {
+    this.value = obj;
+  }
 }

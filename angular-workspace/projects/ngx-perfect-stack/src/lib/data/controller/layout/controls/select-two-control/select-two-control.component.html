@@ -1,28 +1,9 @@
-<ng-container [formGroup]="formGroup" *ngIf="options$ | async as options">
-  <ng-container *ngIf="mode !== 'view' || formGroup.controls[attribute.name].value">
-    <div class="d-flex">
-      <!-- Important: the first select does not have a formControlName and the second one does. This is because the first one is selecting an entity. -->
-      <select [ngClass]="getCSSClass('me-1')" [(ngModel)]="selectedEntity" [compareWith]="byEntityId" [disabled]="isReadOnly()"
-              (ngModelChange)="onEntityChange($event)" [id]="attribute.name" [ngModelOptions]="{standalone: true}">
-        <option [ngValue]="null"></option>
-        <option *ngFor="let o of options" [ngValue]="o">{{getDisplayValue(o)}}</option>
-      </select>
-      <select [ngClass]="getCSSClass('ms-1')" [formControlName]="secondaryAttributeName" [id]="secondaryAttributeName">
-        <option [ngValue]="null"></option>
-        <option *ngFor="let s of secondaryOptions" [ngValue]="s">{{s}}</option>
-      </select>
-    </div>
-  </ng-container>
+<div class="row" [formGroup]="formGroup">
+  <div class="col-6">
+    <lib-select-control [mode]="mode" [formControlName]="attribute.name + '_id'" [attribute]="attribute" (selectedEntityEvent)="onSelectedEntity($event)"></lib-select-control>
+  </div>
+  <div class="col-6">
+    <lib-enumeration-control [mode]="mode" [formControlName]="secondaryAttributeName" [attribute]="attribute" [options]="secondaryOptions"></lib-enumeration-control>
+  </div>
+</div>
 
-  <ng-container *ngIf="mode === 'view' && !formGroup.controls[attribute.name].value">
-    <div class="d-flex">
-      <div class="input-group me-1">
-        <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
-      </div>
-
-      <div class="input-group ms-1">
-        <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
-      </div>
-    </div>
-  </ng-container>
-</ng-container>

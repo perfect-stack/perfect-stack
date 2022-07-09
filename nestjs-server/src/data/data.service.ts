@@ -406,12 +406,15 @@ export class DataService {
     parentEntity: Entity,
     relationshipAttribute: MetaAttribute,
   ) {
-    const childEntity = parentEntity[relationshipAttribute.name] as Entity;
-    if (!childEntity) {
-      return;
+    // const childEntity = parentEntity[relationshipAttribute.name] as Entity;
+    // if (!childEntity) {
+    //   return;
+    // }
+    //
+    // parentEntity[relationshipAttribute.name + '_id'] = childEntity.id;
+    if (parentEntity[relationshipAttribute.name + '_id'] === '') {
+      parentEntity[relationshipAttribute.name + '_id'] = null;
     }
-
-    parentEntity[relationshipAttribute.name + '_id'] = childEntity.id;
   }
 
   archive(entityName: string, id: string): Promise<void> {

@@ -23,12 +23,7 @@ import {FormContext} from '../../../../data-edit/form-service/form.service';
   selector: 'app-many-to-one-control',
   templateUrl: './many-to-one-control.component.html',
   styleUrls: ['./many-to-one-control.component.css'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: ManyToOneControlComponent,
-      multi: true
-    }]
+  providers: [{provide: NG_VALUE_ACCESSOR, useExisting: ManyToOneControlComponent, multi: true}]
 })
 export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
@@ -53,8 +48,6 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   searching = false;
   searchFailed = false;
 
-  displayValue: string;
-
   status: FormControlStatus = 'PENDING';
   statusSubscription: Subscription;
 
@@ -66,12 +59,6 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   }
 
   ngOnInit(): void {
-    // this.formGroup.controls[this.attribute.name].valueChanges.subscribe((dataValue) => {
-    //   this.updateDisplayValue(dataValue);
-    //   if(this.ctx) {
-    //     this.eventService.dispatchOnManyToOneItemSelected(this.ctx.metaPage.name, this.formGroup, this.attribute, dataValue);
-    //   }
-    // });
 
     // this.statusSubscription = this.formGroup.controls[this.attribute.name].statusChanges.subscribe((formControlStatus) => {
     //   this.status = formControlStatus;
@@ -110,21 +97,6 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
       console.warn('Not sure if this code path actually happens or not');
     }
   }
-
-  // updateDisplayValue(dataValue: any) {
-  //   this.displayValue = '';
-  //   if(dataValue) {
-  //     for(const displayAttributeName of this.attribute.typeaheadSearch) {
-  //       if(dataValue[displayAttributeName]) {
-  //         this.displayValue += dataValue[displayAttributeName];
-  //         this.displayValue += ' ';
-  //       }
-  //     }
-  //
-  //     this.selectedModel = dataValue;
-  //     this.selectedModel.displayText = this.displayValue.trim();
-  //   }
-  // }
 
   setValueByItem(item: Item | null) {
     if(item) {

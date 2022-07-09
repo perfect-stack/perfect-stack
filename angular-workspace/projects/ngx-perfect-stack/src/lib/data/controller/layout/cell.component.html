@@ -32,8 +32,8 @@
       <lib-boolean-check-box-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-boolean-check-box-control>
     </ng-container>
 
-    <ng-container *ngSwitchCase="'Enumeration'">
-      <lib-enumeration-control [mode]="mode" [cell]="cell" [attribute]="cell.attribute" [formGroup]="formGroup"></lib-enumeration-control>
+    <ng-container [formGroup]="formGroup" *ngSwitchCase="'Enumeration'">
+      <lib-enumeration-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToMany'">
@@ -47,8 +47,7 @@
     <ng-container *ngSwitchCase="'ManyToOne'">
       <ng-container [formGroup]="formGroup" [ngSwitch]="cell.component">
         <ng-container *ngSwitchCase="'Select'">
-          <app-select-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></app-select-control>
-          <!--<app-select-control [mode]="mode" [formGroup]="formGroup" [formControlName]="cell.attribute.name" [attribute]="cell.attribute"></app-select-control>-->
+          <lib-select-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
         </ng-container>
 
         <ng-container *ngSwitchCase="'SelectTwo'">

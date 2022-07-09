@@ -1,19 +1,14 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ControlValueAccessor, FormControlStatus, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {DataService} from '../../../../data-service/data.service';
 import {Subscription} from 'rxjs';
 
 @Component({
-  selector: 'app-select-control',
+  selector: 'lib-select-control',
   templateUrl: './select-control.component.html',
   styleUrls: ['./select-control.component.css'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: SelectControlComponent,
-      multi: true
-    }]
+  providers: [{provide: NG_VALUE_ACCESSOR, useExisting: SelectControlComponent, multi: true}]
 })
 export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
@@ -23,7 +18,10 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   @Input()
   mode: string | null;
 
-  selectedEntity_id: string;
+  @Output()
+  selectedEntityEvent = new EventEmitter();
+
+  selectedEntityId: string;
   selectedEntity: any;
 
   optionList: any[];
@@ -33,6 +31,9 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   statusSubscription: Subscription;
 
   disabled = false;
+
+  // Comparison function; local variable equals exported function
+  byEntityOrId = byEntityOrId;
 
   constructor(protected readonly dataService: DataService) { }
 
@@ -64,21 +65,6 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
     return displayValue;
   }
 
-  byEntityId(entity1: any, entity2: any) {
-    const findId = (entity: any) => {
-      return entity && entity.id ? entity.id : entity;
-    }
-
-    const id_1 = findId(entity1);
-    const id_2 = findId(entity2);
-    if(id_1 && id_2) {
-      return id_1 === id_2;
-    }
-    else {
-      return id_1 === null && id_2 === null;
-    }
-  }
-
   onModelChange(selectedEntity: any) {
     console.log('onModelChange()', selectedEntity);
     //this.value = selectedEntity ? selectedEntity.id : null;
@@ -100,17 +86,19 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
    */
   updateSelectedEntity() {
     if(this.optionList) {
-      if(this.selectedEntity_id) {
-        this.selectedEntity = this.optionList.find(x => x.id === this.selectedEntity_id);
+      if(this.selectedEntityId) {
+        this.selectedEntity = this.optionList.find(x => x.id === this.selectedEntityId);
       }
       else {
         this.selectedEntity = null;
       }
+
+      this.selectedEntityEvent.next(this.selectedEntity);
     }
   }
 
   set value(val: string){
-    this.selectedEntity_id = val
+    this.selectedEntityId = val
     this.updateSelectedEntity();
     this.onChange(val)
     this.onTouch(val)
@@ -135,3 +123,25 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
     this.value = obj;
   }
 }
+
+/**
+ * This function returns true if the supplied parameters are "matched". The supplied parameters can be either an Id
+ * or an Entity, but we won't know which is which. They are matched if any independent Id matches the Id of the Entity.
+ * @param entity1
+ * @param entity2
+ */
+export const byEntityOrId = (entity1: any, entity2: any): boolean => {
+  const findId = (entity: any) => {
+    return entity && entity.id ? entity.id : entity;
+  }
+
+  const id_1 = findId(entity1);
+  const id_2 = findId(entity2);
+  if(id_1 && id_2) {
+    return id_1 === id_2;
+  }
+  else {
+    return id_1 === null && id_2 === null;
+  }
+}
+
