@@ -67,9 +67,12 @@ export class SelectTestPageComponent implements OnInit {
     });
 
     if(id) {
-      row.patchValue({
-        observer_role_id: id
-      });
+      // either way should work
+      // row.patchValue({
+      //   observer_role_id: id
+      // });
+
+      row.controls['observer_role_id'].setValue(id);
     }
 
     this.attributes!.push(row);

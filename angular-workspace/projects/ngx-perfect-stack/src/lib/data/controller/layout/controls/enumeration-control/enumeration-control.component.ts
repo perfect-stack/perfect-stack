@@ -63,4 +63,8 @@ export class EnumerationControlComponent implements OnInit, ControlValueAccessor
   writeValue(obj: any): void {
     this.value = obj;
   }
+
+  onSelectOption(option: string) {
+    this.value = option;
+  }
 }

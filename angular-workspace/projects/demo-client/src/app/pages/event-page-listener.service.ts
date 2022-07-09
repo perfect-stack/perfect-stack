@@ -49,10 +49,11 @@ export class EventPageListenerService implements PageListener {
 
     const eventType = queryParams.get('event_type');
     if(eventType) {
-      console.log(`onPageLoad. eventType = ${birdId}`);
       const eventFormGroup = ctx.formMap.get('event') as FormGroup;
       if(eventFormGroup) {
+        console.log(`onPageLoad: eventType = ${eventType}`)
         eventFormGroup.controls['event_type'].setValue(eventType);
+        console.log(`onPageLoad: eventType setValue completed.`)
       }
     }
   }
@@ -61,12 +62,12 @@ export class EventPageListenerService implements PageListener {
     this.dataService.findById('Bird', birdId).subscribe((entity) => {
       const birdEntity = entity as any;
       console.log(`GOT bird entity ${birdEntity.name}`);
-      const birdControl = formGroup.controls['bird'];
+      const birdControl = formGroup.controls['bird_id'];
       if(birdControl) {
-        console.log(`Found form and control, patching in Bird data now for; ${birdEntity.name}`);
-        birdControl.patchValue(birdEntity, {emitEvent: emitEvent});
+        console.log(`Found FormGroup and bird control, patching in Bird data now for ${birdEntity.name}`);
+        birdControl.patchValue(birdEntity.id, {emitEvent: emitEvent});
         formGroup.controls['status'].setValue(birdEntity.status);
-        formGroup.controls['species'].setValue(birdEntity.species);
+        formGroup.controls['species_id'].setValue(birdEntity.species.id);
         formGroup.controls['form'].setValue(birdEntity.form);
         formGroup.controls['sex'].setValue(birdEntity.sex);
         formGroup.controls['age_class'].setValue(birdEntity.age_class);
