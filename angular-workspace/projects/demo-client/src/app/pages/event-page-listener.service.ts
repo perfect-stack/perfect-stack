@@ -82,9 +82,9 @@ export class EventPageListenerService implements PageListener {
     this.dataService.findById('Location', locationId).subscribe((entity) => {
       const locationEntity = entity as any;
       console.log(`GOT location entity`, locationEntity);
-      const locationControl = formGroup.controls['location'];
+      const locationControl = formGroup.controls['location_id'];
       if(locationControl) {
-        locationControl.patchValue(locationEntity, {emitEvent: false});
+        locationControl.patchValue(locationEntity.id, {emitEvent: false});
         formGroup.controls['easting'].setValue(locationEntity.easting);
         formGroup.controls['northing'].setValue(locationEntity.northing);
       }

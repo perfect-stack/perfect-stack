@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ControlValueAccessor, FormControlStatus, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ControlValueAccessor, FormControlStatus, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {MetaAttribute, MetaEntity} from '../../../../../domain/meta.entity';
 import {
   catchError,
@@ -32,6 +32,9 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
 
   @Input()
   ctx: FormContext;
+
+  @Input()
+  formGroup: FormGroup;
 
   @Input()
   metaEntity: MetaEntity;
@@ -92,6 +95,9 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
     if(item && item.id) {
       console.log('onSelectItem', event.item);
       this.setValueByItem(item);
+
+      // Dispatch event for the item selected
+      this.eventService.dispatchOnManyToOneItemSelected(this.ctx.metaPage.name, this.formGroup, this.attribute, item);
     }
     else {
       console.warn('Not sure if this code path actually happens or not');
