@@ -51,7 +51,11 @@ export class FormGroupService {
 */
           {
             const controlName = (nextAttribute.name + '_id').toLowerCase();
-            formGroup.addControl(controlName, new FormControl(''));
+            const formControl = new FormControl('');
+            if(nextAttribute.visibility === VisibilityType.Required) {
+              formControl.addValidators(Validators.required)
+            }
+            formGroup.addControl(controlName, formControl);
             console.log(`Added control for: ${controlName}`);
           }
 
@@ -84,7 +88,8 @@ export class FormGroupService {
         // add validator if required, but ManyToOne is handled different in the formControlForManyToOne() method below
         // suppressValidators was added because when there is a ManyToOne we don't want validators added to the form for
         // the attributes that the user can't edit on the ManyToOne
-        if(nextAttribute.visibility === VisibilityType.Required && !suppressValidators && nextAttribute.type !== AttributeType.ManyToOne) {
+//        if(nextAttribute.visibility === VisibilityType.Required && !suppressValidators && nextAttribute.type !== AttributeType.ManyToOne) {
+        if(nextAttribute.visibility === VisibilityType.Required) {
           abstractControl.addValidators(Validators.required);
         }
 

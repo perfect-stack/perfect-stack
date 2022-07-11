@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {ControlValueAccessor, FormControlStatus, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {DataService} from '../../../../data-service/data.service';
 import {Subscription} from 'rxjs';
@@ -8,7 +8,6 @@ import {Subscription} from 'rxjs';
   selector: 'lib-select-control',
   templateUrl: './select-control.component.html',
   styleUrls: ['./select-control.component.css'],
-  providers: [{provide: NG_VALUE_ACCESSOR, useExisting: SelectControlComponent, multi: true}]
 })
 export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
@@ -27,21 +26,16 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   optionList: any[];
   optionListSubscription: Subscription;
 
-  status: FormControlStatus = 'PENDING';
-  statusSubscription: Subscription;
-
   disabled = false;
 
   // Comparison function; local variable equals exported function
   byEntityOrId = byEntityOrId;
 
-  constructor(protected readonly dataService: DataService) { }
+  constructor(protected readonly dataService: DataService, public ngControl: NgControl) {
+    ngControl.valueAccessor = this;
+  }
 
   ngOnInit(): void {
-    // this.statusSubscription = this.formGroup.controls[this.attribute.name].statusChanges.subscribe((formControlStatus) => {
-    //   this.status = formControlStatus;
-    // });
-
     this.optionListSubscription = this.dataService.findAll(this.attribute.relationshipTarget).subscribe((response) => {
       this.optionList = response.resultList;
       this.updateSelectedEntity();
@@ -72,9 +66,6 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   }
 
   ngOnDestroy(): void {
-    if(this.statusSubscription) {
-      this.statusSubscription.unsubscribe();
-    }
     if(this.optionListSubscription) {
       this.optionListSubscription.unsubscribe();
     }
@@ -101,7 +92,7 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
     this.selectedEntityId = val
     this.updateSelectedEntity();
     this.onChange(val)
-    this.onTouch(val)
+    //this.onTouch(val)
   }
 
   onChange: any = () => {}

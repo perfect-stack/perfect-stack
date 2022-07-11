@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ControlValueAccessor, FormControlStatus, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ControlValueAccessor, FormGroup, NgControl} from '@angular/forms';
 import {MetaAttribute, MetaEntity} from '../../../../../domain/meta.entity';
 import {
   catchError,
@@ -23,7 +23,6 @@ import {FormContext} from '../../../../data-edit/form-service/form.service';
   selector: 'app-many-to-one-control',
   templateUrl: './many-to-one-control.component.html',
   styleUrls: ['./many-to-one-control.component.css'],
-  providers: [{provide: NG_VALUE_ACCESSOR, useExisting: ManyToOneControlComponent, multi: true}]
 })
 export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
@@ -51,21 +50,16 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   searching = false;
   searchFailed = false;
 
-  status: FormControlStatus = 'PENDING';
-  statusSubscription: Subscription;
-
   disabled = false;
 
   constructor(protected readonly dataService: DataService,
               protected readonly eventService: EventService,
-              protected readonly typeaheadService: TypeaheadService) {
+              protected readonly typeaheadService: TypeaheadService,
+              public ngControl: NgControl) {
+    ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
-
-    // this.statusSubscription = this.formGroup.controls[this.attribute.name].statusChanges.subscribe((formControlStatus) => {
-    //   this.status = formControlStatus;
-    // });
   }
 
   search: OperatorFunction<string, readonly Item[]> = (text$: Observable<string>) =>
@@ -73,14 +67,18 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
       debounceTime(300),
       distinctUntilChanged(),
       tap(() => this.searching = true),
-      switchMap(term =>
-        this.typeaheadService.search(term, this.metaEntity, this.attribute).pipe(
-          tap(() => this.searchFailed = false),
-          catchError(() => {
-            this.searchFailed = true;
-            return of([]);
-          }))
-      ),
+      switchMap((term) => {
+        if (term) {
+          return this.typeaheadService.search(term, this.metaEntity, this.attribute).pipe(
+            tap(() => this.searchFailed = false),
+            catchError(() => {
+              this.searchFailed = true;
+              return of([]);
+            }))
+        } else {
+          return of([]);
+        }
+      }),
       tap(() => this.searching = false)
     );
 
@@ -97,7 +95,9 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
       this.setValueByItem(item);
 
       // Dispatch event for the item selected
-      this.eventService.dispatchOnManyToOneItemSelected(this.ctx.metaPage.name, this.formGroup, this.attribute, item);
+      if(this.ctx) {
+        this.eventService.dispatchOnManyToOneItemSelected(this.ctx.metaPage.name, this.formGroup, this.attribute, item);
+      }
     }
     else {
       console.warn('Not sure if this code path actually happens or not');
@@ -110,14 +110,14 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
       this.selectedModel = item;
 
       this.onChange(this.selectedModelId)
-      this.onTouch(this.selectedModelId)
+      //this.onTouch(this.selectedModelId)
     }
     else {
       this.selectedModelId = null;
       this.selectedModel = null;
 
       this.onChange('')
-      this.onTouch('')
+      //this.onTouch('')
     }
   }
 

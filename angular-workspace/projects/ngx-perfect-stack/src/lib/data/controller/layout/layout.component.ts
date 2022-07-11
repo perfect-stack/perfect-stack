@@ -7,7 +7,6 @@ import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-e
 import {
   FormArrayWithAttribute,
   FormContext,
-  FormControlWithAttribute,
   FormService
 } from '../../data-edit/form-service/form.service';
 import {AttributeType, MetaEntity} from '../../../domain/meta.entity';
@@ -503,7 +502,6 @@ export class FormLayoutComponent implements OnInit, OnChanges {
           form = this.ctx.formMap.get(formLookupKey) as FormGroup;
         }
 
-        console.log(`Found form: ${this.template.binding}: `, form);
         this.formGroup = form;
       }
       else {
@@ -514,7 +512,7 @@ export class FormLayoutComponent implements OnInit, OnChanges {
       console.warn('UNABLE to initialise FormLayoutComponent sensibly');
     }
 
-    this.updateCells$();
+    //this.updateCells$();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

@@ -42,7 +42,7 @@ export class EnumerationControlComponent implements OnInit, ControlValueAccessor
   set value(val: string){
     this.selectedOption = val
     this.onChange(val)
-    this.onTouch(val)
+    //this.onTouch(val)
   }
 
   onChange: any = () => {}

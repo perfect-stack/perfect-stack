@@ -11,7 +11,8 @@ import {FormGroup} from '@angular/forms';
 })
 export class SelectTwoControlComponent implements OnInit {
 
-  // Important: Only use the FormGroup to talk to the secondary attribute control
+  // Important: This is needed because we are just a wrapper for the real components and so this component sets the
+  // formControlName for those components and not the Cell/template above us.
   @Input()
   formGroup: FormGroup;
 
@@ -51,7 +52,8 @@ export class SelectTwoControlComponent implements OnInit {
   }
 
   onSelectedEntity(entity: any) {
-    console.log('onSelectedEntity()', entity);
+    //console.log(`onSelectedEntity() touched = ${this.formGroup.touched}`);
+    console.log(`onSelectedEntity() entity: `, entity);
 
     if(entity && this.secondaryAttributeName) {
       const secondaryValues: string = entity[this.secondaryAttributeName];
@@ -75,5 +77,6 @@ export class SelectTwoControlComponent implements OnInit {
       //   onlySelf: true
       // });
     }
+    //console.log(`onSelectedEntity() touched = ${this.formGroup.touched}`);
   }
 }

@@ -63,7 +63,8 @@ export class SelectTestPageComponent implements OnInit {
   onAdd(id?: string) {
     console.log('onAdd()');
     const row = new FormGroup({
-      observer_role_id: new FormControl('', Validators.required)
+      observer_role_id: new FormControl('')
+      //observer_role_id: new FormControl('', Validators.required)
     });
 
     if(id) {

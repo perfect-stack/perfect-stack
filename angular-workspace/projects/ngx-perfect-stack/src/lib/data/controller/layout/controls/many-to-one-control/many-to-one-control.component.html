@@ -7,8 +7,8 @@
     <div class="input-group w-100">
       <input #searchInput type="text" class="form-control" placeholder="Search..."
              [ngClass]="{
-               'ng-invalid': status === 'INVALID',
-               'ng-touched': status === 'INVALID'
+               'ng-invalid': ngControl.invalid,
+               'ng-touched': ngControl.touched
              }"
              [class.is-invalid]="searchFailed"
              [ngbTypeahead]="search"
@@ -22,6 +22,8 @@
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
     </div>
+    <!--valid: {{ngControl.valid}}
+    value: {{ngControl.value}}-->
   </fieldset>
 </ng-container>
 
