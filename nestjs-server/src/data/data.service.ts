@@ -44,7 +44,7 @@ export class DataService {
 
       return result;
     } catch (error) {
-      //console.error('save() failed:', error);
+      console.error('save() failed:', error);
       throw error;
     }
   }
@@ -67,25 +67,25 @@ export class DataService {
       entity.id = uuid.v4();
     }
 
-    const metaEntity = metaEntityMap.get(entityName);
-    if (!metaEntity) {
-      throw new Error(`Unable to find MetaEntity ${entityName}`);
-    }
-
-    // recursively save all the children (excluding the Poly ones)
-    await this.saveTheChildren(metaEntityMap, metaEntity, entity);
-
     let action;
     if (!entityModel) {
       // if entityModel was not found, or entity did not arrive with id
       action = AuditAction.Create;
-      entityModel = await model.create(entity);
+      entityModel = await model.create(entity as any);
     } else {
       // else entityModel was found
       action = AuditAction.Update;
       entityModel.set(entity);
       await entityModel.save();
     }
+
+    const metaEntity = metaEntityMap.get(entityName);
+    if (!metaEntity) {
+      throw new Error(`Unable to find MetaEntity ${entityName}`);
+    }
+
+    // recursively save all the children (excluding the Poly ones)
+    await this.saveTheChildren(metaEntityMap, metaEntity, entity, entityModel);
 
     // recursively save all Poly relationships
     await this.saveAllPolys(metaEntityMap, metaEntity, entity);
@@ -100,6 +100,7 @@ export class DataService {
     metaEntityMap: Map<string, MetaEntity>,
     parentMetaEntity: MetaEntity,
     parentEntity: Entity,
+    parentEntityModel: any,
   ) {
     for (const attribute of parentMetaEntity.attributes) {
       switch (attribute.type) {
@@ -107,12 +108,18 @@ export class DataService {
           await this.saveListOfChildren(
             metaEntityMap,
             parentEntity,
+            parentEntityModel,
             parentMetaEntity,
             attribute,
           );
           break;
         case AttributeType.OneToOne:
-          await this.saveOneToOne(metaEntityMap, parentEntity, attribute);
+          await this.saveOneToOne(
+            metaEntityMap,
+            parentEntity,
+            parentEntityModel,
+            attribute,
+          );
           break;
         case AttributeType.ManyToOne:
           await this.saveManyToOne(metaEntityMap, parentEntity, attribute);
@@ -200,6 +207,7 @@ export class DataService {
   private async saveListOfChildren(
     metaEntityMap: Map<string, MetaEntity>,
     parentEntity: Entity,
+    parentEntityModel: any,
     parentMetaEntity: MetaEntity,
     relationshipAttribute: MetaAttribute,
   ) {
@@ -233,14 +241,14 @@ export class DataService {
         let childEntityModel = null;
         if (childEntity.id) {
           this.validateUuid(childEntity.id);
-          //childEntityModel = await childModel.findByPk(childEntity.id);
-          childEntityModel = existingChildren.get(childEntity.id);
+          childEntityModel = await childModel.findByPk(childEntity.id);
+          //childEntityModel = existingChildren.get(childEntity.id);
         } else {
           childEntity.id = uuid.v4();
         }
 
         if (!childEntityModel) {
-          childEntityModel = await childModel.create(childEntity);
+          childEntityModel = await childModel.create(childEntity as any);
         }
 
         const metaEntity = metaEntityMap.get(
@@ -252,13 +260,50 @@ export class DataService {
           );
         }
 
-        await this.saveTheChildren(metaEntityMap, metaEntity, childEntity);
+        await this.saveTheChildren(
+          metaEntityMap,
+          metaEntity,
+          childEntity,
+          childEntityModel,
+        );
 
-        childEntityModel.set(childEntity);
-        childEntityModel[parentMetaEntity.name + 'Id'] = parentEntity.id;
-        childEntityModel.save();
+        // childEntityModel.set(childEntity);
+        // childEntityModel[parentMetaEntity.name + 'Id'] = parentEntity.id;
+        // childEntityModel.save();
+
+        // const fnName: string = this.addAssociationFunctionName(
+        //   relationshipAttribute.name,
+        // );
+        // console.log(`fnName = ${fnName}`);
+        // parentEntityModel[fnName](childEntityModel);
+
+        this.addOneToManyAssociation(
+          parentEntityModel,
+          childEntityModel,
+          relationshipAttribute,
+        );
       }
     }
+  }
+
+  private capitalizeFirstLetter(relationshipName: string): string {
+    return relationshipName.charAt(0).toUpperCase() + relationshipName.slice(1);
+  }
+
+  private setOneToOneAssociation(
+    parentModel: any,
+    childModel: any,
+    attribute: MetaAttribute,
+  ) {
+    parentModel[`set${this.capitalizeFirstLetter(attribute.name)}`](childModel);
+  }
+
+  private addOneToManyAssociation(
+    parentModel: any,
+    childModel: any,
+    attribute: MetaAttribute,
+  ) {
+    parentModel[`add${this.capitalizeFirstLetter(attribute.name)}`](childModel);
   }
 
   private async findExistingChildren(
@@ -358,6 +403,7 @@ export class DataService {
   private async saveOneToOne(
     metaEntityMap: Map<string, MetaEntity>,
     parentEntity: Entity,
+    parentEntityModel: any,
     relationshipAttribute: MetaAttribute,
   ) {
     const metaEntity = await metaEntityMap.get(
@@ -390,15 +436,32 @@ export class DataService {
       const childModel = await this.ormService.sequelize.model(
         relationshipAttribute.relationshipTarget,
       );
-      childEntityModel = await childModel.create(childEntity);
+      childEntityModel = await childModel.create(childEntity as any);
     }
 
     // recurse down into the children of this child (if needed)
-    await this.saveTheChildren(metaEntityMap, metaEntity, childEntity);
+    await this.saveTheChildren(
+      metaEntityMap,
+      metaEntity,
+      childEntity,
+      childEntityModel,
+    );
 
-    childEntityModel.set(childEntity);
-    childEntityModel.save();
-    parentEntity[relationshipAttribute.name + '_id'] = childEntity.id;
+    // childEntityModel.set(childEntity);
+    // childEntityModel.save();
+    // parentEntity[relationshipAttribute.name + '_id'] = childEntity.id;
+
+    // const fnName: string = this.addAssociationFunctionName(
+    //   relationshipAttribute.name,
+    // );
+    // console.log(`fnName = ${fnName}`);
+    // parentEntityModel[fnName](childEntityModel);
+
+    this.setOneToOneAssociation(
+      parentEntityModel,
+      childEntityModel,
+      relationshipAttribute,
+    );
   }
 
   private async saveManyToOne(

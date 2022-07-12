@@ -65,7 +65,7 @@ export class AuditService {
         person_name: personName,
         person_id: personId,
         duration: duration,
-      } as Audit);
+      } as any);
 
       return;
     } else {
