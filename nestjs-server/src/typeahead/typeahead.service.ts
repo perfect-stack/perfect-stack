@@ -34,16 +34,33 @@ export class TypeaheadService {
     );
 
     const tableName = metaAttribute.relationshipTarget;
-    const searchFieldList = metaAttribute.typeaheadSearch.join(", ' ', ");
-    const searchValue = wrapWithWildcards(request.searchText);
 
-    const whereClause = {
-      id: {
+    // const whereClause = {
+    //   id: {
+    //     [Op.in]: this.ormService.sequelize.literal(
+    //       `(Select id from "${tableName}" where concat(${searchFieldList}) ilike '${searchValue}')`,
+    //     ),
+    //   },
+    // };
+
+    const whereClause = {};
+    if (request.searchId) {
+      whereClause['id'] = {
+        [Op.eq]: request.searchId,
+      };
+    } else if (request.searchText) {
+      const searchFieldList = metaAttribute.typeaheadSearch.join(", ' ', ");
+      const searchValue = wrapWithWildcards(request.searchText);
+      whereClause['id'] = {
         [Op.in]: this.ormService.sequelize.literal(
           `(Select id from "${tableName}" where concat(${searchFieldList}) ilike '${searchValue}')`,
         ),
-      },
-    };
+      };
+    } else {
+      throw new Error(
+        'Invalid TypeaheadRequest searchId XOR searchText must be supplied',
+      );
+    }
 
     const orderClause = [];
     for (const nextSearchTerm of metaAttribute.typeaheadSearch) {

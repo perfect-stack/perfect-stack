@@ -19,8 +19,7 @@
           <ng-container BottomRightActions>
             <div class="mt-2" *ngIf="mode === 'edit'">
               <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx)" id="cancelBtn">Cancel</button>
-              <button type="submit" class="btn btn-primary me-2" [disabled]="!getDataForm(ctx).valid" (click)="onSave(ctx)" id="saveBtn">Save details</button>
-              <!--<button type="submit" class="btn btn-primary me-2" (click)="onSave(ctx)" id="saveBtn">Save details</button>-->
+              <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save details</button>
             </div>
           </ng-container>
         </lib-paris-layout-style>
@@ -47,12 +46,12 @@
             </div>
             <div class="mt-2" *ngSwitchCase="'edit'">
               <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx)" id="cancelBtn">Cancel</button>
-              <button type="submit" class="btn btn-primary me-2" [disabled]="!getDataForm(ctx).valid" (click)="onSave(ctx)" id="saveBtn">Save</button>
+              <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save</button>
             </div>
           </ng-container>
         </lib-new-york-layout-style>
       </ng-container>
     </ng-container>
   </div>
-
 </div>
+

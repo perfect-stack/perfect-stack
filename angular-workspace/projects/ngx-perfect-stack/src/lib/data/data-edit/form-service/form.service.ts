@@ -171,7 +171,6 @@ export class FormService {
             console.log('FormService: about to patch form', form);
             console.log('FormService: with objectOrArray', objectOrArray);
             form.patchValue(objectOrArray);
-            //form.setValue(objectOrArray);
             console.log('FormService: form value patched value', form.value);
           }
         }

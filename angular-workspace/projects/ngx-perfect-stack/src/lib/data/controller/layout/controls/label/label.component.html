@@ -7,7 +7,7 @@ above each Cell, otherwise things look a bit squished -->
       <span class="text-danger" *ngIf="attribute.visibility == 'Required'">*</span>
     </ng-container>
   </label>
-  <label class="col ps-0" *ngIf="secondaryAttribute" id="{{attribute.name}}Lbl">
+  <label class="col" *ngIf="secondaryAttribute" id="{{attribute.name}}Lbl">
     <span placement="right" [ngbTooltip]="secondaryAttribute.description">{{secondaryAttribute.label}}</span>
     <ng-container *ngIf="mode == 'edit'">
       <span class="text-danger" *ngIf="secondaryAttribute.visibility == 'Required'">*</span>

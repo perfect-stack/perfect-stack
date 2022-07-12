@@ -1,13 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
-import {
-  AttributeType,
-  ComparisonOperator,
-  DiscriminatorAttribute,
-  MetaAttribute,
-  VisibilityType
-} from '../domain/meta.entity';
-import {Cell} from '../domain/meta.page';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AttributeType, ComparisonOperator, MetaAttribute, VisibilityType} from '../domain/meta.entity';
 import {CellAttribute} from '../meta/page/meta-page-service/meta-page.service';
 
 @Component({
@@ -26,7 +19,7 @@ export class SelectTestPageComponent implements OnInit {
     label: 'Observer role',
     description: '',
     type: AttributeType.ManyToOne,
-    visibility: VisibilityType.Visible,
+    visibility: VisibilityType.Required,
     comparisonField: '',
     comparisonOperator: ComparisonOperator.Equals,
     relationshipTarget: 'ObserverRole',
@@ -50,15 +43,16 @@ export class SelectTestPageComponent implements OnInit {
     component: "Select"
   }
 
+  mode = 'edit';
 
   constructor() { }
 
   ngOnInit(): void {
     this.cell.attribute = this.attribute;
+    this.onAdd('2a9a9151-2452-4b53-8448-f53c48736421');
   }
 
   get attributes(): FormArray | null {
-    //return this.formGroup.get('observers') as FormArray;
     return this.formGroup.controls['observers'] as FormArray;
   }
 
@@ -66,16 +60,32 @@ export class SelectTestPageComponent implements OnInit {
     return this.attributes ? this.attributes.at(rowIdx) as FormGroup : null;
   }
 
-  onAdd() {
+  onAdd(id?: string) {
     console.log('onAdd()');
-    //const formArray = this.formGroup.controls['observers'] as FormArray;
-
     const row = new FormGroup({
-      observer_role: new FormGroup({})
-    })
+      observer_role_id: new FormControl('')
+      //observer_role_id: new FormControl('', Validators.required)
+    });
 
-    //formArray.push(row);
+    if(id) {
+      // either way should work
+      // row.patchValue({
+      //   observer_role_id: id
+      // });
+
+      row.controls['observer_role_id'].setValue(id);
+    }
+
     this.attributes!.push(row);
     console.log('onAdd() - finished.', this.attributes?.controls);
+  }
+
+  onMode() {
+    if(this.mode === 'edit') {
+      this.mode = 'view';
+    }
+    else {
+      this.mode = 'edit';
+    }
   }
 }

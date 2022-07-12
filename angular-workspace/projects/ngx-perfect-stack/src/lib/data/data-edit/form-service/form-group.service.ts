@@ -40,7 +40,7 @@ export class FormGroupService {
           abstractControl = this.formControlForOneToPoly(nextAttribute, mode, metaPageMap, metaEntityMap, entity);
           break;
         case AttributeType.ManyToOne:
-          if(recursive) {
+          /*if(recursive) {
             abstractControl = this.formControlForManyToOne(nextAttribute, mode, metaPageMap, metaEntityMap, entity);
 
             // experiment attempting to use setValue() instead of patchValue() need to populate all attributes from data entity
@@ -48,6 +48,18 @@ export class FormGroupService {
             formGroup.addControl(controlName, new FormControl(''));
             console.log(`Added control for: ${controlName}`);
           } // else recursion flag is false so don't drill down any further (need to break circular relationships)
+*/
+          {
+            const controlName = (nextAttribute.name + '_id').toLowerCase();
+            //const formControl = new FormControl('');
+            // Important: need to make sure initial state is null, otherwise server attempts to create a relationship to an entity with a '' id.
+            const formControl = new FormControl(null);
+            if(nextAttribute.visibility === VisibilityType.Required) {
+              formControl.addValidators(Validators.required)
+            }
+            formGroup.addControl(controlName, formControl);
+            console.log(`Added control for: ${controlName}`);
+          }
 
           break;
         case AttributeType.OneToOne:
@@ -78,7 +90,8 @@ export class FormGroupService {
         // add validator if required, but ManyToOne is handled different in the formControlForManyToOne() method below
         // suppressValidators was added because when there is a ManyToOne we don't want validators added to the form for
         // the attributes that the user can't edit on the ManyToOne
-        if(nextAttribute.visibility === VisibilityType.Required && !suppressValidators && nextAttribute.type !== AttributeType.ManyToOne) {
+//        if(nextAttribute.visibility === VisibilityType.Required && !suppressValidators && nextAttribute.type !== AttributeType.ManyToOne) {
+        if(nextAttribute.visibility === VisibilityType.Required) {
           abstractControl.addValidators(Validators.required);
         }
 
@@ -158,7 +171,7 @@ export class FormGroupService {
     return formControl;
   }
 
-  private formControlForManyToOne(attribute: MetaAttribute,
+  /*private formControlForManyToOne(attribute: MetaAttribute,
                                   mode: string,
                                   metaPageMap: Map<string, MetaPage>,
                                   metaEntityMap: Map<string, MetaEntity>,
@@ -177,7 +190,7 @@ export class FormGroupService {
       }
       return childFormGroup;
     }
-  }
+  }*/
 
   private formControlForOneToOne(attribute: MetaAttribute,
                                  mode: string,

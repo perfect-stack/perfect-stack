@@ -21,6 +21,7 @@ describe('DataService-CRUD', () => {
     }).compile();
 
     dataService = moduleRef.get(DataService);
+    queryService = moduleRef.get(QueryService);
     metaEntityService = moduleRef.get(MetaEntityService);
 
     await metaEntityService.syncMetaModelWithDatabase(false);
@@ -39,7 +40,22 @@ describe('DataService-CRUD', () => {
       physical_address: {
         street_address: '123 Somewhere Street',
       },
+      phone_numbers: [],
     };
+
+    // update with some more children and no id needed
+    person1.phone_numbers = [
+      {
+        type: 'mobile',
+        country: '+64',
+        number: '123 5678',
+      },
+      {
+        type: 'home',
+        country: '+64',
+        number: '333 5678',
+      },
+    ];
 
     const person2EntityResponse = await dataService.save(
       'Person',
@@ -58,15 +74,6 @@ describe('DataService-CRUD', () => {
       '123 Somewhere Street',
     );
 
-    // update with some more children and no id needed
-    person3.phone_numbers = [
-      {
-        type: 'mobile',
-        country: '+64',
-        number: '123 5678',
-      },
-    ];
-
     const person4EntityResponse = await dataService.save('Person', person3);
     const person5 = (await queryService.findOne('Person', personId)) as any;
     expect(personId).toEqual(person5.id);
@@ -74,5 +81,6 @@ describe('DataService-CRUD', () => {
       '123 Somewhere Street',
     );
     expect(person5.phone_numbers[0].number).toEqual('123 5678');
+    expect(person5.phone_numbers[1].number).toEqual('333 5678');
   }, 120000);
 });

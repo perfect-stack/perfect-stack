@@ -19,6 +19,17 @@ export class TypeaheadService {
   search(term: string, metaEntity: MetaEntity, metaAttribute: MetaAttribute): Observable<Item[]> {
     const typeaheadRequest: TypeaheadRequest = {
       searchText: term,
+      searchId: null,
+      metaAttribute: metaAttribute,
+      metaEntityName: metaEntity.name,
+    }
+    return this.http.post<Item[]>(`${this.stackConfig.apiUrl}/typeahead`, typeaheadRequest);
+  }
+
+  searchById(id: string, metaEntity: MetaEntity, metaAttribute: MetaAttribute): Observable<Item[]> {
+    const typeaheadRequest: TypeaheadRequest = {
+      searchText: null,
+      searchId: id,
       metaAttribute: metaAttribute,
       metaEntityName: metaEntity.name,
     }

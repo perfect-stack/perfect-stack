@@ -1,10 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
-import {Observable, of, switchMap} from 'rxjs';
-import {Entity} from '../../../../../domain/entity';
 import {Cell} from '../../../../../domain/meta.page';
 import {DataService} from '../../../../data-service/data.service';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'lib-select-two-control',
@@ -13,6 +11,8 @@ import {DataService} from '../../../../data-service/data.service';
 })
 export class SelectTwoControlComponent implements OnInit {
 
+  // Important: This is needed because we are just a wrapper for the real components and so this component sets the
+  // formControlName for those components and not the Cell/template above us.
   @Input()
   formGroup: FormGroup;
 
@@ -25,103 +25,22 @@ export class SelectTwoControlComponent implements OnInit {
   @Input()
   cell: Cell;
 
-  selectedEntity: any;
-  options$: Observable<Entity[]>
-
   secondaryAttributeName: string;
   secondaryOptions: string[] = [];
-
 
   constructor(protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
-    if(this.formGroup && this.attribute) {
-      this.selectedEntity = this.formGroup.controls[this.attribute.name].value;
-    }
-
     this.secondaryAttributeName = (this.cell.componentData as any).secondaryAttributeName;
 
-    if(this.secondaryAttributeName) {
-      const secondaryAttributeControl = this.formGroup.controls[this.secondaryAttributeName];
-      if(secondaryAttributeControl && this.isReadOnly()) {
-        console.log('GOT secondaryAttributeControl && isReadOnly() ')
-        secondaryAttributeControl.disable({onlySelf: false, emitEvent: true});
-      }
-    }
+    // if(this.secondaryAttributeName) {
+    //   const secondaryAttributeControl = this.formGroup.controls[this.secondaryAttributeName];
+    //   if(secondaryAttributeControl && this.isReadOnly()) {
+    //     console.log('GOT secondaryAttributeControl && isReadOnly() ')
+    //     secondaryAttributeControl.disable({onlySelf: false, emitEvent: true});
+    //   }
+    // }
 
-    this.options$ = this.dataService.findAll(this.attribute.relationshipTarget).pipe(
-      switchMap((response) => {
-        return of(response.resultList);
-    }));
-
-    const entity = this.formGroup.controls[this.attribute.name].value;
-    this.onEntityChange(entity);
-  }
-
-  getDisplayValue(entity: any) {
-    let displayValue = '';
-    for(let i = 0; i < this.attribute.typeaheadSearch.length; i++) {
-      const displayAttributeName = this.attribute.typeaheadSearch[i];
-      displayValue += entity[displayAttributeName];
-      if(i < this.attribute.typeaheadSearch.length - 1) {
-        displayValue += ' ';
-      }
-    }
-    return displayValue;
-  }
-
-  byEntityId(entity1: Entity, entity2: Entity) {
-    if(entity1 && entity2) {
-      return entity1.id === entity2.id;
-    }
-    else {
-      return entity1 === null && entity2 === null;
-    }
-  }
-
-  onEntityChange(primaryEntity: any) {
-    console.log(`onEntityChange: `, primaryEntity);
-
-    if(this.formGroup && this.attribute) {
-      this.formGroup.controls[this.attribute.name].patchValue(primaryEntity);
-
-      const controlName = (this.attribute.name + '_id').toLowerCase();
-      this.formGroup.controls[controlName].setValue(primaryEntity.id);
-    }
-
-    if(primaryEntity && this.secondaryAttributeName) {
-      const secondaryValues: string = primaryEntity[this.secondaryAttributeName];
-      if(secondaryValues) {
-        this.secondaryOptions = secondaryValues.split(',').map(value => value.trim());
-      }
-      else {
-        this.secondaryOptions = [];
-      }
-
-      // This bit is important and was the cause of a bug. Only enable the form control if we are not isReadOnly()
-      if(!this.isReadOnly()) {
-        this.formGroup.controls[this.secondaryAttributeName].enable({
-          onlySelf: true
-        });
-      }
-    }
-    else {
-      this.secondaryOptions = [];
-      this.formGroup.controls[this.secondaryAttributeName].disable({
-        onlySelf: true
-      });
-    }
-
-    console.log(`onEntityChange: secondaryOptions = `, this.secondaryOptions);
-  }
-
-  getFormGroupDump() {
-    return Object.keys(this.formGroup.controls);
-  }
-
-  bySecondaryValue(v1:any, v2:any) {
-    console.log('bySecondaryValue:', [v1, v2]);
-    return false;
   }
 
   isReadOnly() {
@@ -130,5 +49,34 @@ export class SelectTwoControlComponent implements OnInit {
 
   getCSSClass(css: string) {
     return this.isReadOnly() ? `form-control ${css}` : `form-select ${css}`;
+  }
+
+  onSelectedEntity(entity: any) {
+    //console.log(`onSelectedEntity() touched = ${this.formGroup.touched}`);
+    console.log(`onSelectedEntity() entity: `, entity);
+
+    if(entity && this.secondaryAttributeName) {
+      const secondaryValues: string = entity[this.secondaryAttributeName];
+      if(secondaryValues) {
+        this.secondaryOptions = secondaryValues.split(',').map(value => value.trim());
+      }
+      else {
+        this.secondaryOptions = [];
+      }
+
+      // // This bit is important and was the cause of a bug. Only enable the form control if we are not isReadOnly()
+      // if(!this.isReadOnly()) {
+      //   this.formGroup.controls[this.secondaryAttributeName].enable({
+      //     onlySelf: true
+      //   });
+      // }
+    }
+    else {
+      this.secondaryOptions = [];
+      // this.formGroup.controls[this.secondaryAttributeName].disable({
+      //   onlySelf: true
+      // });
+    }
+    //console.log(`onSelectedEntity() touched = ${this.formGroup.touched}`);
   }
 }

@@ -1,32 +1,35 @@
-<ng-container *ngIf="options$ | async as options">
-  <ng-container *ngIf="mode !== 'view' || formGroup.controls[attribute.name].value">
-    <div class="input-group" [formGroup]="formGroup">
-      <!-- ng-invalid and ng-touched is here because  this select isn't bound to a form control name and so we need to
-      be responsible for setting the valid status/flags. Don't really like this way of doing it, but wasn't able to
-      figure out a better way at the time. Should probably be upgraded to a ControlValueAccessor approach at some point -->
-      <select [ngClass]="{
-        'form-control': isReadOnly(),
-        'form-select': !isReadOnly(),
-        'ng-invalid': status === 'INVALID',
-        'ng-touched': status === 'INVALID'
-      }" [id]="attribute.name" (ngModelChange)="onModelChange($event)" [disabled]="isReadOnly()"
-              [(ngModel)]="selectedEntity" [compareWith]="byEntityId" [ngModelOptions]="{standalone: true}">
-        <option *ngFor="let o of options" [ngValue]="o">{{getDisplayText(o)}}</option>
-        <!--<option [ngValue]="null">NONE</option>-->
-      </select>
+<ng-container *ngIf="mode !== 'view' || selectedEntityId">
+  <div class="input-group" *ngIf="optionList">
+    <!-- ng-invalid and ng-touched is here because  this select isn't bound to a form control name and so we need to
+    be responsible for setting the valid status/flags. Don't really like this way of doing it, but wasn't able to
+    figure out a better way at the time. Should probably be upgraded to a ControlValueAccessor approach at some point -->
+    <select [id]="attribute.name" [disabled]="isReadOnly() || disabled"
+            [ngModel]="selectedEntity" (ngModelChange)="onModelChange($event)" [compareWith]="byEntityOrId"
+            [ngModelOptions]="{standalone: true}"
+            [ngClass]="{
+              'form-control': isReadOnly(),
+              'form-select': !isReadOnly(),
+              'ng-invalid': ngControl.invalid,
+              'ng-touched': ngControl.touched
+            }">
+      <option *ngFor="let o of optionList" [ngValue]="o">{{getDisplayText(o)}}</option>
+      <option [ngValue]="null"></option>
+    </select>
 
-      <!--Name: {{attribute.name}}<br>
-      Visibility: {{attribute.visibility}}<br>
-      Value: "{{selectedEntity ? selectedEntity.name : 'null'}}"<br>
-      Valid: {{formGroup.controls[attribute.name].valid}}<br>
-      Status1: {{formGroup.controls[attribute.name].status}}<br>
-      Status2: {{status}}-->
-    </div>
-  </ng-container>
+    <!--Control Valid: {{ngControl.valid}}-->
 
-  <ng-container *ngIf="mode === 'view' && !formGroup.controls[attribute.name].value">
-    <div class="input-group">
-      <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
-    </div>
-  </ng-container>
+    <!--Name: {{attribute.name}}<br>
+    Visibility: {{attribute.visibility}}<br>
+    attribute_name_id: {{attribute_name_id}}<br>
+    selectedEntity_id: {{selectedEntity_id}}<br>
+    selectedEntity: "{{selectedEntity ? selectedEntity.name : 'null'}}"<br>-->
+    <!--Status1: {{formGroup.controls[attribute.name].status}}<br>
+    Status2: {{status}}-->
+  </div>
+</ng-container>
+
+<ng-container *ngIf="mode === 'view' && !selectedEntityId">
+  <div class="input-group">
+    <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
+  </div>
 </ng-container>

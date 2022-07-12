@@ -35,8 +35,7 @@ export class DataEditComponent implements OnInit {
               protected readonly router: Router,
               protected readonly formService: FormService,
               protected readonly dataService: DataService,
-              protected readonly eventService: EventService) {
-  }
+              protected readonly eventService: EventService) {}
 
   ngOnInit(): void {
     this.route.url.pipe(
@@ -130,6 +129,16 @@ export class DataEditComponent implements OnInit {
         });
       }
     }
+  }
+
+  /**
+   * The form can be invalid, but the save button is not disabled until the user has had a chance to make changes of
+   * some kind and the form become "touched". The onSave() action above will do validation checks and not save the
+   * form if it is not valid.
+   */
+  isSaveDisabled(ctx: FormContext) {
+    const dataForm = this.getDataForm(ctx);
+    return dataForm.touched && !dataForm.valid;
   }
 
   validateAllFields(name: string, abstractControl: AbstractControl) {

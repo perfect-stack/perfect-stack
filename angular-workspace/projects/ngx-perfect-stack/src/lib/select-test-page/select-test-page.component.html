@@ -2,19 +2,26 @@
 
 <br>
 
-<div class="row">
-  <div class="col-4">
+<div class="row m-4">
+  <div class="col-6">
     <ng-container *ngIf="formGroup && attributes">
-      <div *ngFor="let group of attributes.controls; let i=index">
+      <div class="my-2" *ngFor="let group of attributes.controls; let i=index">
         <!--<app-select-control [mode]="'edit'" [formGroup]="getFormGroupForRow(i)!" [attribute]="attribute"></app-select-control>-->
-        <lib-cell [mode]="'edit'" [formGroup]="getFormGroupForRow(i)!" [cell]="cell"></lib-cell>
+        <lib-cell [mode]="mode" [formGroup]="getFormGroupForRow(i)!" [cell]="cell"></lib-cell>
       </div>
 
-      <button class="btn btn-primary" (click)="onAdd()">Add</button>
+      <div>
+        <button class="btn btn-primary me-2" (click)="onMode()">Mode</button>
+        <button class="btn btn-primary" (click)="onAdd()">Add</button>
+      </div>
     </ng-container>
   </div>
 </div>
 
 
 <hr>
-{{formGroup.value|json}}
+Value: {{formGroup.value|json}}
+
+<hr>
+
+Form Valid: {{formGroup.valid|json}}
