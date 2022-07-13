@@ -63,6 +63,14 @@ export const ButtonPropertyList = [
   { name: 'route', type: PropertyType.route},
 ];
 
+export const ButtonGroupPropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
+  { name: 'action', type: PropertyType.string},
+  { name: 'route', type: PropertyType.route},
+];
+
 export const ImagePropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
@@ -112,6 +120,7 @@ export type PropertyListMapType = {
 
 export const PropertyListMap: PropertyListMapType = {
   'Button': ButtonPropertyList,
+  'ButtonGroup': ButtonGroupPropertyList,
   'Icon': IconPropertyList,
   'Image': ImagePropertyList,
   'TextTool': TextToolPropertyList,

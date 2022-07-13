@@ -5,6 +5,10 @@
         <lib-button-tool [buttonTool]="asButtonTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-button-tool>
       </ng-container>
 
+      <ng-container *ngSwitchCase="'ButtonGroup'">
+        <lib-button-group-tool [buttonGroupTool]="asButtonGroupTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-button-group-tool>
+      </ng-container>
+
       <ng-container *ngSwitchCase="'Image'">
         <lib-image-tool [imageTool]="asImageTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-image-tool>
       </ng-container>

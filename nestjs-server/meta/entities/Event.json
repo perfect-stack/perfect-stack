@@ -13,6 +13,7 @@
       "scale": "",
       "type": "Identifier",
       "visibility": "Hidden",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
@@ -25,6 +26,7 @@
       "scale": "",
       "type": "Date",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
@@ -37,6 +39,7 @@
       "scale": "",
       "type": "Html",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
@@ -49,6 +52,7 @@
       "scale": "",
       "type": "OneToMany",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "EventObserver",
       "typeaheadSearch": []
@@ -61,10 +65,11 @@
       "scale": "",
       "type": "ManyToOne",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Location",
       "typeaheadSearch": [
-        "name"
+        "location_name"
       ]
     },
     {
@@ -75,6 +80,7 @@
       "scale": "",
       "type": "OneToPoly",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
@@ -102,9 +108,10 @@
       "label": "Northing",
       "description": "",
       "unitOfMeasure": "",
-      "scale": "2",
+      "scale": "0",
       "type": "Double",
-      "visibility": "Visible",
+      "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
@@ -114,9 +121,10 @@
       "label": "Easting",
       "description": "",
       "unitOfMeasure": "",
-      "scale": "2",
+      "scale": "0",
       "type": "Double",
-      "visibility": "Visible",
+      "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
@@ -129,6 +137,7 @@
       "scale": "",
       "type": "ManyToOne",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Bird",
       "typeaheadSearch": [
@@ -144,6 +153,7 @@
       "scale": "",
       "type": "Enumeration",
       "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
@@ -163,6 +173,7 @@
       "scale": "",
       "type": "ManyToOne",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Species",
       "typeaheadSearch": [
@@ -177,6 +188,7 @@
       "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
@@ -189,6 +201,7 @@
       "scale": "",
       "type": "Enumeration",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
@@ -207,6 +220,7 @@
       "scale": "",
       "type": "Enumeration",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
@@ -226,6 +240,7 @@
       "scale": "",
       "type": "Enumeration",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
@@ -243,6 +258,7 @@
       "scale": "",
       "type": "DateTime",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []

@@ -43,6 +43,7 @@ export enum TemplateLocationType {
 
 export enum ToolType {
   Button = 'Button',
+  ButtonGroup = 'ButtonGroup',
   TextTool = 'TextTool',
   Image = 'Image',
   Select = 'Select',
@@ -61,6 +62,11 @@ export class Tool {
 }
 
 export class ButtonTool extends Tool {
+  action: string;
+  route: string;
+}
+
+export class ButtonGroupTool extends Tool {
   action: string;
   route: string;
 }

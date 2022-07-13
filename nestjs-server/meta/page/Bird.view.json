@@ -142,7 +142,7 @@
               "templateHeading": "Events",
               "type": "table",
               "metaEntityName": "Event",
-              "orderByName": "date",
+              "orderByName": "date_time",
               "orderByDir": "DESC",
               "cells": [
                 [

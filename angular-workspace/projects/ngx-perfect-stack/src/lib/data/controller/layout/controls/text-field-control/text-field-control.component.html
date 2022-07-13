@@ -1,19 +1,22 @@
 <ng-container *ngIf="mode !== 'view'">
-  <div class="input-group" [formGroup]="formGroup">
-    <input class="form-control" [readonly]="isReadOnly()" [id]="name" [formControlName]="name" libDecimalNumber [scale]="attribute?.scale">
-    <span class="input-group-text" [id]="name + '_uom'" *ngIf="attribute && attribute.unitOfMeasure">
-      {{attribute.unitOfMeasure}}
+  <div class="input-group" >
+    <input class="form-control" [readonly]="isReadOnly()" [id]="name"
+           [ngModel]="internalValue" (ngModelChange)="onModelChange($event)" [ngModelOptions]="{standalone: true}"
+           libDecimalNumber [scale]="cell.attribute?.scale">
+    <span class="input-group-text" [id]="name + '_uom'" *ngIf="cell.attribute && cell.attribute.unitOfMeasure">
+      {{cell.attribute.unitOfMeasure}}
     </span>
   </div>
 </ng-container>
 
 <ng-container *ngIf="mode === 'view'">
-  <ng-container *ngIf="formGroup.controls[name].value">
-    <div class="input-group" [formGroup]="formGroup">
-      <input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name" [formControlName]="name">
+  <ng-container *ngIf="internalValue">
+    <div class="input-group">
+      <input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name"
+             [(ngModel)]="internalValue" [ngModelOptions]="{standalone: true}">
     </div>
   </ng-container>
-  <ng-container *ngIf="!formGroup.controls[name].value">
+  <ng-container *ngIf="!internalValue">
     <div class="input-group">
       <input class="form-control empty-value" readonly [id]="name" value="&mdash;">
     </div>

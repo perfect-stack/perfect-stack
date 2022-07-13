@@ -8,15 +8,9 @@
       "cells": [
         [
           {
-            "width": "5",
-            "height": "1",
-            "attributeName": "name"
-          },
-          {
             "width": "4",
             "height": "1",
-            "attributeName": "location_type",
-            "component": "Select"
+            "attributeName": "location_name"
           }
         ]
       ],
@@ -29,12 +23,7 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "name"
-          },
-          {
-            "width": "1",
-            "height": "1",
-            "attributeName": "location_type"
+            "attributeName": "location_name"
           },
           {
             "width": "1",
@@ -45,6 +34,11 @@
             "width": "1",
             "height": "1",
             "attributeName": "northing"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "altitude"
           }
         ],
         [

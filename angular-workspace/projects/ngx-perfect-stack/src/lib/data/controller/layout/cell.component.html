@@ -1,5 +1,5 @@
 <ng-container *ngIf="cell && cell.tool">
-  <lib-tool-view [tool]="cell.tool" [formGroup]="formGroup"></lib-tool-view>
+  <lib-tool-view [tool]="cell.tool" [ctx]="ctx" [formGroup]="formGroup"></lib-tool-view>
 </ng-container>
 
 <ng-container *ngIf="formGroup && mode && cell && cell.attribute && !cell.tool">
@@ -23,7 +23,9 @@
         </ng-container>
 
         <ng-container *ngSwitchDefault>
-          <lib-text-field-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-text-field-control>
+          <ng-container [formGroup]="formGroup">
+            <lib-text-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-text-field-control>
+          </ng-container>
         </ng-container>
       </ng-container>
     </ng-container>

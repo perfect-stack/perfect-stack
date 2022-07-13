@@ -110,6 +110,7 @@ import { BooleanCheckBoxControlComponent } from './data/controller/layout/contro
 import { DecimalNumberDirective } from './utils/decimal-number.directive';
 import { SelectTestPageComponent } from './select-test-page/select-test-page.component';
 import { BadgeListComponent } from './data/controller/layout/controls/badge-list/badge-list.component';
+import { ButtonGroupToolComponent } from './data/controller/tool/tool-view/button-group-tool/button-group-tool.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -219,6 +220,7 @@ const routes: Routes = [
     DecimalNumberDirective,
     SelectTestPageComponent,
     BadgeListComponent,
+    ButtonGroupToolComponent,
   ],
   providers: [
     AuthenticationService,

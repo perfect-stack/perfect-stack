@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ButtonTool, IconTool, ImageTool, TextTool, ToolType} from '../../domain/meta.page';
+import {ButtonGroupTool, ButtonTool, IconTool, ImageTool, TextTool, ToolType} from '../../domain/meta.page';
 
 @Component({
   selector: 'lib-tool-palette',
@@ -15,6 +15,15 @@ export class ToolPaletteComponent implements OnInit {
     label: 'Button',
     action: '',
     route: '/route/go/here'
+  };
+
+  static readonly buttonGroupPrototype: ButtonGroupTool = {
+    type: ToolType.ButtonGroup,
+    containerStyles: '',
+    styles: 'btn btn-primary',
+    label: 'Button1,Button2',
+    action: 'action1,action2',
+    route: '/route/go/here1,/route/go/here2'
   };
 
   static readonly imagePrototype: ImageTool = {

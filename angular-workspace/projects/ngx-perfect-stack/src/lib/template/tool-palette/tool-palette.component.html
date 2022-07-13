@@ -7,10 +7,10 @@
       </button>
     </div>
     <div class="col-6">
-      <div class="form-control tool drag-handle" my-draggable [drag-data]="ToolPaletteComponent.textPrototype">
+      <button class="btn btn-primary tool text-start w-100 drag-handle" my-draggable [drag-data]="ToolPaletteComponent.buttonGroupPrototype">
         <span class="material-symbols-outlined align-middle">drag_indicator</span>
-        Text
-      </div>
+        Btn Group
+      </button>
     </div>
   </div>
 
@@ -23,9 +23,9 @@
       </div>
     </div>
     <div class="col-6">
-      <div class="form-select tool drag-handle" my-draggable>
+      <div class="form-control tool drag-handle" my-draggable [drag-data]="ToolPaletteComponent.textPrototype">
         <span class="material-symbols-outlined align-middle">drag_indicator</span>
-        Select
+        Text
       </div>
     </div>
   </div>
@@ -39,6 +39,10 @@
       </div>
     </div>
     <div class="col-6">
+      <div class="form-select tool drag-handle" my-draggable>
+        <span class="material-symbols-outlined align-middle">drag_indicator</span>
+        Select
+      </div>
     </div>
   </div>
 </div>
