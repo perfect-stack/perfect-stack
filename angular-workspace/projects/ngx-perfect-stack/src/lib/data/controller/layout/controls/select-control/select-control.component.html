@@ -3,7 +3,7 @@
     <!-- ng-invalid and ng-touched is here because  this select isn't bound to a form control name and so we need to
     be responsible for setting the valid status/flags. Don't really like this way of doing it, but wasn't able to
     figure out a better way at the time. Should probably be upgraded to a ControlValueAccessor approach at some point -->
-    <select [id]="attribute.name" [disabled]="isReadOnly() || disabled"
+    <select [id]="ngControl.name" [disabled]="isReadOnly() || disabled"
             [ngModel]="selectedEntity" (ngModelChange)="onModelChange($event)" [compareWith]="byEntityOrId"
             [ngModelOptions]="{standalone: true}"
             [ngClass]="{

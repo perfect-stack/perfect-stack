@@ -43,7 +43,7 @@
               "type": "ButtonTabs",
               "containerStyles": "",
               "styles": "btn btn-secondary",
-              "label": "",
+              "label": "Select how to capture location",
               "templateIndex": 1,
               "template1": "LocationCoordinates.tab",
               "template2": "LocationFinder.tab",

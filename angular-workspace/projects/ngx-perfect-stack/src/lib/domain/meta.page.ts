@@ -5,6 +5,7 @@ export enum ComponentType {
   TextInput = 'TextInput',
   Select = 'Select',
   SelectTwo = 'SelectTwo',
+  Spy = 'Spy',
 }
 
 export class Cell {

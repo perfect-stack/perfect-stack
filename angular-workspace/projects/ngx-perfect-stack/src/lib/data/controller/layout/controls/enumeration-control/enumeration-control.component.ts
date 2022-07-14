@@ -1,12 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 
 @Component({
   selector: 'lib-enumeration-control',
   templateUrl: './enumeration-control.component.html',
   styleUrls: ['./enumeration-control.component.css'],
-  providers: [{provide: NG_VALUE_ACCESSOR, useExisting: EnumerationControlComponent, multi: true}]
+  //providers: [{provide: NG_VALUE_ACCESSOR, useExisting: EnumerationControlComponent, multi: true}]
 })
 export class EnumerationControlComponent implements OnInit, ControlValueAccessor {
 
@@ -22,7 +22,9 @@ export class EnumerationControlComponent implements OnInit, ControlValueAccessor
   selectedOption: string;
   disabled = false;
 
-  constructor() { }
+  constructor(public ngControl: NgControl) {
+    ngControl.valueAccessor = this;
+  }
 
   ngOnInit(): void {
     if(this.attribute && this.attribute.enumeration) {

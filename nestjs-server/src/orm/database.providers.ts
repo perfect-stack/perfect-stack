@@ -58,6 +58,7 @@ export const loadOrm = async (
     database: databaseSettings.databaseName,
     logging: false,
     logQueryParameters: false,
+    ssl: true,
     pool: {
       /*
        * Lambda functions process one request at a time but your code may issue multiple queries

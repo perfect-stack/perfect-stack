@@ -127,6 +127,7 @@ export const CellPropertyList = [
   { name: 'component', type: PropertyType.string, options: ComponentType},
   { name: 'secondaryAttributeName', type: PropertyType.string},
   { name: 'noItemsHtml', type: PropertyType.string},
+  { name: 'spyTemplate', type: PropertyType.metaPage},
 ]
 
 

@@ -112,6 +112,7 @@ import { SelectTestPageComponent } from './select-test-page/select-test-page.com
 import { BadgeListComponent } from './data/controller/layout/controls/badge-list/badge-list.component';
 import { ButtonGroupToolComponent } from './data/controller/tool/tool-view/button-group-tool/button-group-tool.component';
 import { ButtonTabsToolComponent } from './data/controller/tool/tool-view/button-tabs-tool/button-tabs-tool.component';
+import { SpyControlComponent } from './data/controller/layout/controls/spy-control/spy-control.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -223,6 +224,7 @@ const routes: Routes = [
     BadgeListComponent,
     ButtonGroupToolComponent,
     ButtonTabsToolComponent,
+    SpyControlComponent,
   ],
   providers: [
     AuthenticationService,
