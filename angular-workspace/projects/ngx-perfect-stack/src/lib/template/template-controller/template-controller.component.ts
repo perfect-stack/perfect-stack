@@ -48,7 +48,8 @@ export class TemplateFormEditor implements OnInit {
 
   constructor(protected readonly metaEntityService: MetaEntityService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   getCSS(cell: Cell): string[] {
     return [

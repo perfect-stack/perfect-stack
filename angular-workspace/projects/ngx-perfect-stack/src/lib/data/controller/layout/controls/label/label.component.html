@@ -1,6 +1,6 @@
 <!-- CSS: this mt-3 on the label is quite significant, it gives all of the rows in the forms some whitespace
 above each Cell, otherwise things look a bit squished -->
-<div class="row">
+<div class="row" *ngIf="!labelHidden">
   <label class="col" [for]="attribute.name" id="{{attribute.name}}Lbl">
     <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
     <ng-container *ngIf="mode == 'edit'">

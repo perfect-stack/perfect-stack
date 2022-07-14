@@ -197,7 +197,9 @@
       "queryType": "Entity",
       "queryName": "Event",
       "fieldName": "bird_id",
-      "parameter": "id"
+      "parameter": "id",
+      "orderByName": "date_time",
+      "orderByDir": "DESC"
     }
   ]
 }

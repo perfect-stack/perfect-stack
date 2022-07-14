@@ -67,6 +67,14 @@ export class DataMapService {
           value: parameterMap[dataQuery.parameter]
         });
 
+        if(dataQuery.orderByName) {
+          queryRequest.orderByName = dataQuery.orderByName;
+        }
+
+        if(dataQuery.orderByDir) {
+          queryRequest.orderByDir = dataQuery.orderByDir;
+        }
+
         return this.dataService.findByCriteria(queryRequest).pipe(switchMap(response => {
           return of({dataName: dataQuery.dataName, result: response.resultList});
         }));

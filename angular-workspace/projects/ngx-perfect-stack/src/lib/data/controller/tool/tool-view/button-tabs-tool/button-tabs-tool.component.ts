@@ -66,12 +66,15 @@ export class ButtonTabsToolComponent implements OnInit {
       buttonGroupTool.label = tabNames.join(',');
       buttonGroupTool.action = tabNames.join(',');
 
+      // set the initial tab
+      console.log(`Set initial tab = ${tabNames[0]}`);
+      this.onTabSelected(tabNames[0], tabContext);
+
       return of(tabContext);
     }));
   }
 
   extractNames(...names: string[]) {
-    console.log('extractNames:', names);
     return names.filter(s => s !== null && s.length > 0);
   }
 
@@ -93,7 +96,7 @@ export class ButtonTabsToolComponent implements OnInit {
   }
 
   onTabSelected(tabName: string, tabContext: TabContext) {
-    console.log(`Button Tab selected: ${tabName}, templateIndex = ${this.buttonTabsTool.templateIndex}. MetaPage = ${this.ctx.metaPage.name}`);
+    console.log(`Button Tab selected: ${tabName}, templateIndex = ${this.buttonTabsTool.templateIndex}.`);
     const tabMetaPage = tabContext.tabMap.get(tabName);
     if(tabMetaPage) {
       console.log(`Button Tab metaPage = ${tabMetaPage.name}`);

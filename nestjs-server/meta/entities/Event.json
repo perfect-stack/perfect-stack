@@ -262,6 +262,19 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": []
+    },
+    {
+      "name": "altitude",
+      "label": "Altitude",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "0",
+      "type": "Double",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": []
     }
   ]
 }

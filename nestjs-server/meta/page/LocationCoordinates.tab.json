@@ -19,12 +19,14 @@
           },
           {
             "width": "3",
-            "height": "1"
+            "height": "1",
+            "attributeName": "altitude"
           }
         ]
       ],
       "metaEntityName": "Event",
-      "type": "form"
+      "type": "form",
+      "binding": "event"
     }
   ],
   "dataQueryList": []

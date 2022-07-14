@@ -21,15 +21,22 @@ export class LabelComponent implements OnInit {
   @Input()
   cell: Cell;
 
+  labelHidden = false;
   secondaryAttribute: MetaAttribute | undefined;
 
   constructor() { }
 
   ngOnInit(): void {
-    if(this.cell && this.cell.component === 'SelectTwo') {
-      const secondaryAttributeName = ((this.cell.componentData as unknown) as any)?.secondaryAttributeName;
-      if(secondaryAttributeName) {
-        this.secondaryAttribute = this.metaEntity.attributes.find(a => a.name === secondaryAttributeName);
+    if(this.cell) {
+      if(this.cell.component === 'Spy') {
+        this.labelHidden = true;
+      }
+
+      if(this.cell.component === 'SelectTwo') {
+        const secondaryAttributeName = ((this.cell.componentData as unknown) as any)?.secondaryAttributeName;
+        if(secondaryAttributeName) {
+          this.secondaryAttribute = this.metaEntity.attributes.find(a => a.name === secondaryAttributeName);
+        }
       }
     }
   }

@@ -21,6 +21,7 @@ export class SpyControlComponent implements OnInit, OnDestroy, ControlValueAcces
 
   disabled = false;
 
+  targetValue: any;
 
   formGroupSubscription: Subscription;
 
@@ -34,6 +35,7 @@ export class SpyControlComponent implements OnInit, OnDestroy, ControlValueAcces
         console.log(`Spy detects update in target attribute ${this.attribute.relationshipTarget}`, nextValue);
         // const targetEntity = this.formGroup.controls[this.attribute.name].value;
         // console.log('Spy found targetEntity', targetEntity);
+        this.targetValue = nextValue;
       });
     }
   }

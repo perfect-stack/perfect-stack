@@ -1,13 +1,13 @@
 
 .paris-layout-style {
-  padding: 36px 56px 36px 56px;
+  padding: 36px 56px 0px 56px;
 }
 
 .template {
-  padding: 40px 40px 40px 56px;
+  padding: 40px 40px 0px 56px;
   border-top: #EAECF0 solid 1px;
 }
 
-.paris-layout-style .row {
-  margin-bottom: 36px;
-}
+/*.paris-layout-style .row {
+  padding-bottom: 36px;
+}*/

@@ -1,6 +1,6 @@
 {
   "name": "EventSearchResult",
-  "pluralName": "EventSearchResult",
+  "pluralName": "Events",
   "icon": "",
   "type": "Basic",
   "timestamps": false,

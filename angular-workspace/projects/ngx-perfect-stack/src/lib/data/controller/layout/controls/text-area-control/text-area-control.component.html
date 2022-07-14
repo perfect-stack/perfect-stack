@@ -1,7 +1,10 @@
 <div class="input-group" [formGroup]="formGroup">
   <ng-container *ngIf="isReadOnly()">
-    <div [ngStyle]="{'height': getCSSHeight(cell)}" class="overflow-auto form-control" readonly [id]="attribute.name">
+    <div class="overflow-auto form-control" readonly [id]="attribute.name" *ngIf="formGroup.controls[attribute.name].value">
       <div [innerHtml]="formGroup.controls[attribute.name].value"></div>
+    </div>
+    <div class="overflow-auto form-control" readonly [id]="attribute.name" *ngIf="!formGroup.controls[attribute.name].value">
+      <div>&mdash;</div>
     </div>
   </ng-container>
 

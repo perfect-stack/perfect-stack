@@ -22,6 +22,10 @@
             <app-date-picker-control [formGroup]="entityForm" [name]="attribute.name"></app-date-picker-control>
           </ng-container>
 
+          <ng-container *ngSwitchCase="'DateTime'">
+            <lib-date-time-control [mode]="'edit'" [name]="attribute.name"></lib-date-time-control>
+          </ng-container>
+
           <ng-container *ngSwitchCase="['Text', 'Html', 'Integer'].includes(attribute.type) ? attribute.type : ''">
             <ng-container [ngSwitch]="cell.component">
               <ng-container *ngSwitchCase="'TextArea'">
@@ -29,7 +33,9 @@
               </ng-container>
 
               <ng-container *ngSwitchDefault>
-                <lib-text-field-control [formGroup]="entityForm" [name]="attribute.name"></lib-text-field-control>
+                <ng-container [formGroup]="entityForm">
+                  <lib-text-field-control [mode]="'edit'" [formControlName]="attribute.name" [name]="attribute.name"></lib-text-field-control>
+                </ng-container>
               </ng-container>
             </ng-container>
           </ng-container>

@@ -172,6 +172,8 @@ export class DataQuery {
   queryName: string;
   fieldName: string;
   parameter: string;
+  orderByName: string;
+  orderByDir: string;
 }
 
 
