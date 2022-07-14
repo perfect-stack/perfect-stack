@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ButtonGroupTool} from '../../../../../domain/meta.page';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
@@ -21,6 +21,9 @@ export class ButtonGroupToolComponent implements OnInit {
 
   @Input()
   editorMode = false;
+
+  @Output()
+  action = new EventEmitter();
 
   actionNames: string[] = [];
   buttonNames: string[] = [];
@@ -55,6 +58,10 @@ export class ButtonGroupToolComponent implements OnInit {
   }
 
   doApplicationAction(buttonName: string) {
+
+    // framework actions happen before page events
+    this.action.next(buttonName);
+
     if (this.buttonGroupTool.action) {
       const actionNameIdx = this.buttonNames.indexOf(buttonName);
       const actionName = this.actionNames[actionNameIdx];

@@ -11,6 +11,7 @@ export class PropertySheetService {
   constructor() { }
 
   edit(title: string, source: any) {
+    console.log(`PropertySheetService: edit ${title} of source type = ${source.type}`);
     if(source.type) {
       this.editWithType(title, source, source.type);
     }
@@ -45,6 +46,7 @@ export enum PropertyType {
   number = 'number',
   route = 'route',
   metaEntity = 'metaEntity',
+  metaPage = 'metaPage',
   componentType = 'componentType',
 }
 
@@ -69,6 +71,20 @@ export const ButtonGroupPropertyList = [
   { name: 'label', type: PropertyType.string},
   { name: 'action', type: PropertyType.string},
   { name: 'route', type: PropertyType.route},
+];
+
+export const ButtonTabsPropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
+  { name: 'templateIndex', type: PropertyType.number},
+  { name: 'template1', type: PropertyType.metaPage},
+  { name: 'template2', type: PropertyType.metaPage},
+  { name: 'template3', type: PropertyType.metaPage},
+  { name: 'template4', type: PropertyType.metaPage},
+  { name: 'template5', type: PropertyType.metaPage},
+  { name: 'template6', type: PropertyType.metaPage},
+  { name: 'template7', type: PropertyType.metaPage},
 ];
 
 export const ImagePropertyList = [
@@ -121,6 +137,7 @@ export type PropertyListMapType = {
 export const PropertyListMap: PropertyListMapType = {
   'Button': ButtonPropertyList,
   'ButtonGroup': ButtonGroupPropertyList,
+  'ButtonTabs': ButtonTabsPropertyList,
   'Icon': IconPropertyList,
   'Image': ImagePropertyList,
   'TextTool': TextToolPropertyList,

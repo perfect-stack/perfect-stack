@@ -44,6 +44,7 @@ export enum TemplateLocationType {
 export enum ToolType {
   Button = 'Button',
   ButtonGroup = 'ButtonGroup',
+  ButtonTabs = 'ButtonTabs',
   TextTool = 'TextTool',
   Image = 'Image',
   Select = 'Select',
@@ -69,6 +70,17 @@ export class ButtonTool extends Tool {
 export class ButtonGroupTool extends Tool {
   action: string;
   route: string;
+}
+
+export class ButtonTabsTool extends Tool {
+  templateIndex: number; // the template number that this tool will operate on
+  template1: string; // The template names to use as Tabs. The Tab name will come from the template heading
+  template2: string;
+  template3: string;
+  template4: string;
+  template5: string;
+  template6: string;
+  template7: string;
 }
 
 export class ImageTool extends Tool {

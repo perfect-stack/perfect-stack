@@ -1,0 +1,10 @@
+<ng-container *ngIf="tabContext$ | async as tabContext">
+  <lib-button-group-tool [buttonGroupTool]="tabContext.buttonGroupTool" [editorMode]="false" [ctx]="ctx" (action)="onTabSelected($event, tabContext)"></lib-button-group-tool>
+  <ng-container *ngIf="editorMode">
+    <div class="material-symbols-outlined" (click)="doEditorAction()">settings</div>
+  </ng-container>
+
+  <ng-container *ngIf="selectedTemplate">
+    <lib-controller [ctx]="ctx" [template]="selectedTemplate"></lib-controller>
+  </ng-container>
+</ng-container>

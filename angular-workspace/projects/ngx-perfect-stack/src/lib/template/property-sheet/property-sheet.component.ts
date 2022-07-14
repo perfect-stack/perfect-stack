@@ -1,9 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {PropertyEditEvent, PropertySheetService, PropertyType} from './property-sheet.service';
+import {Property, PropertyEditEvent, PropertySheetService, PropertyType} from './property-sheet.service';
 import {Observable, Subscription} from 'rxjs';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {MetaEntity} from '../../domain/meta.entity';
-import {Template} from '../../domain/meta.page';
+import {MetaPage, Template} from '../../domain/meta.page';
+import {MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
   selector: 'lib-property-sheet',
@@ -17,14 +18,17 @@ export class PropertySheetComponent implements OnInit, OnDestroy {
   editEventSubscription: Subscription;
 
   metaEntityOptions$: Observable<MetaEntity[]>;
+  metaPageOptions$: Observable<MetaPage[]>;
 
   constructor(protected readonly propertySheetService: PropertySheetService,
-              protected readonly metaEntityService: MetaEntityService) {
+              protected readonly metaEntityService: MetaEntityService,
+              protected readonly metaPageService: MetaPageService) {
     this.editEventSubscription = this.propertySheetService.editEvent$.subscribe((editEvent: PropertyEditEvent) => {
       this.editEvent = editEvent;
     });
 
     this.metaEntityOptions$ = this.metaEntityService.findAll();
+    this.metaPageOptions$ = this.metaPageService.findAll();
   }
 
   ngOnInit(): void {
@@ -45,14 +49,37 @@ export class PropertySheetComponent implements OnInit, OnDestroy {
     }
   }
 
-  getMetaEntity(template: Template, metaEntityOptions: MetaEntity[]) {
-    return metaEntityOptions.find(me => me.name === template.metaEntityName);
+  getMetaEntity(property: Property, metaEntityOptions: MetaEntity[]) {
+    const propertyValue = this.editEvent.source[property.name];
+    return metaEntityOptions.find(me => me.name === propertyValue);
   }
 
-  onEntityChange(metaEntity: MetaEntity) {
-    // todo this can be written more generically
-    this.editEvent.source.metaEntityName = metaEntity.name;
+  getMetaPage(property: Property, metaPageOptions: MetaPage[]) {
+    const propertyValue = this.editEvent.source[property.name];
+    return metaPageOptions.find(mp => mp.name === propertyValue);
   }
+
+  onEntityChange(property: Property, metaEntity: MetaEntity) {
+    // todo this can be written more generically
+    //this.editEvent.source.metaEntityName = metaEntity.name;
+    this.editEvent.source[property.name] = metaEntity.name;
+  }
+
+  onMetaPageChange(property: Property, metaPage: MetaPage) {
+    //this.editEvent.source.metaPageName = metaPage.name;
+    this.editEvent.source[property.name] = metaPage.name;
+  }
+
+  /*metaPageComparator(p1: any, p2: any) {
+    const name1 = p1 && p1.name ? p1.name : p1;
+    const name2 = p2 && p2.name ? p2.name : p2;
+    if(name1 && name2) {
+      return name1 === name2;
+    }
+    else {
+      return name1 === null && name2 === null;
+    }
+  }*/
 
   get PropertyType() {
     return PropertyType;

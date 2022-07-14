@@ -1,0 +1,23 @@
+{
+  "name": "LocationFinder.tab",
+  "title": "Find saved location",
+  "type": "view_edit",
+  "layoutStyle": "",
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "location"
+          }
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "form",
+      "binding": "event"
+    }
+  ],
+  "dataQueryList": []
+}

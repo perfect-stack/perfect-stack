@@ -37,32 +37,22 @@
       "cells": [
         [
           {
-            "width": "4",
+            "width": "12",
             "height": "1",
             "tool": {
-              "type": "ButtonGroup",
+              "type": "ButtonTabs",
               "containerStyles": "",
-              "styles": "btn btn-primary",
-              "label": "Easting/northing,Find saved location",
-              "action": "action1,action2",
-              "route": "/route/go/here1,/route/go/here2"
+              "styles": "btn btn-secondary",
+              "label": "",
+              "templateIndex": 1,
+              "template1": "LocationCoordinates.tab",
+              "template2": "LocationFinder.tab",
+              "template3": "",
+              "template4": "",
+              "template5": "",
+              "template6": "",
+              "template7": ""
             }
-          },
-          {
-            "width": "4",
-            "height": "1"
-          }
-        ],
-        [
-          {
-            "width": "4",
-            "height": "1",
-            "attributeName": "easting"
-          },
-          {
-            "width": "4",
-            "height": "1",
-            "attributeName": "northing"
           }
         ]
       ],
