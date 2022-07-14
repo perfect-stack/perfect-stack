@@ -2,8 +2,8 @@
   <div class="input-group" >
     <input class="form-control" [readonly]="isReadOnly()" [id]="name"
            [ngModel]="internalValue" (ngModelChange)="onModelChange($event)" [ngModelOptions]="{standalone: true}"
-           libDecimalNumber [scale]="cell.attribute?.scale">
-    <span class="input-group-text" [id]="name + '_uom'" *ngIf="cell.attribute && cell.attribute.unitOfMeasure">
+           libDecimalNumber [scale]="cell?.attribute?.scale">
+    <span class="input-group-text" [id]="name + '_uom'" *ngIf="cell && cell.attribute && cell.attribute.unitOfMeasure">
       {{cell.attribute.unitOfMeasure}}
     </span>
   </div>

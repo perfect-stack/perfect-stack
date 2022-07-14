@@ -23,10 +23,10 @@
           </ng-container>
 
           <ng-container *ngSwitchCase="'DateTime'">
-            <lib-date-time-control [mode]="'edit'" [name]="attribute.name"></lib-date-time-control>
+            <lib-date-time-control [mode]="'edit'" [formGroup]="entityForm" [name]="attribute.name"></lib-date-time-control>
           </ng-container>
 
-          <ng-container *ngSwitchCase="['Text', 'Html', 'Integer'].includes(attribute.type) ? attribute.type : ''">
+          <ng-container *ngSwitchCase="['Text', 'Html', 'Double', 'Integer'].includes(attribute.type) ? attribute.type : ''">
             <ng-container [ngSwitch]="cell.component">
               <ng-container *ngSwitchCase="'TextArea'">
                 <app-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>
@@ -34,7 +34,8 @@
 
               <ng-container *ngSwitchDefault>
                 <ng-container [formGroup]="entityForm">
-                  <lib-text-field-control [mode]="'edit'" [formControlName]="attribute.name" [name]="attribute.name"></lib-text-field-control>
+                  <!--<lib-text-field-control [mode]="'edit'" [formControlName]="attribute.name" [name]="attribute.name"></lib-text-field-control>-->
+                  <input class="form-control">
                 </ng-container>
               </ng-container>
             </ng-container>

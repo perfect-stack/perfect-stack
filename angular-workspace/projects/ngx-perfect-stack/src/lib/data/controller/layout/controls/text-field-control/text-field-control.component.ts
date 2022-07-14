@@ -44,12 +44,14 @@ export class TextFieldControlComponent implements OnInit, ControlValueAccessor {
   set value(val: string) {
 
     let nextValue = val;
-    if(this.cell.attribute?.type === AttributeType.Double) {
-      nextValue = this.changeScaleOfNumber(nextValue, this.cell.attribute.scale);
-    }
+    if(this.cell && this.cell.attribute) {
+      if(this.cell.attribute?.type === AttributeType.Double) {
+        nextValue = this.changeScaleOfNumber(nextValue, this.cell.attribute.scale);
+      }
 
-    if(this.cell.attribute?.type === AttributeType.Integer) {
-      nextValue = this.changeScaleOfNumber(nextValue, 0);
+      if(this.cell.attribute?.type === AttributeType.Integer) {
+        nextValue = this.changeScaleOfNumber(nextValue, 0);
+      }
     }
 
     this.internalValue = nextValue
