@@ -1,7 +1,6 @@
-<div class="spy-bg" *ngIf="targetValue">
-  <p>spy-control works!. target value = {{targetValue}}</p>
-  <br>
-  <br>
-  <br>
-  <br>
+<div class="spy-bg p-2" *ngIf="targetValue">
+  <ng-container *ngIf="spyCtx$ | async as spyCtx">
+    <!--<lib-layout [ctx]="spyCtx" [template]="spyCtx.metaPage.templates[0]" [showTemplateHeadings]="false"></lib-layout>-->
+    <lib-layout [ctx]="spyCtx" [template]="getSpyTemplate(spyCtx.metaPageMap)" [showTemplateHeadings]="false"></lib-layout>
+  </ng-container>
 </div>

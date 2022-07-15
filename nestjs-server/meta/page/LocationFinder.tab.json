@@ -19,7 +19,7 @@
             "height": "1",
             "attributeName": "location",
             "component": "Spy",
-            "spyTemplate": "Location.view_edit"
+            "spyTemplate": "LocationFinder.spy"
           }
         ]
       ],

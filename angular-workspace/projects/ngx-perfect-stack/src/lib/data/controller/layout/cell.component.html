@@ -57,7 +57,7 @@
         </ng-container>
 
         <ng-container *ngSwitchCase="'Spy'">
-          <lib-spy-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-spy-control>
+          <lib-spy-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [formGroup]="formGroup" [cell]="cell" [attribute]="cell.attribute"></lib-spy-control>
         </ng-container>
 
         <ng-container *ngSwitchDefault>

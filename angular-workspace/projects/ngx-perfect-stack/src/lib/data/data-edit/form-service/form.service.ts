@@ -58,7 +58,7 @@ export class FormService {
               protected readonly dataService: DataService) {
   }
 
-  loadFormContext(metaName: string, mode: string, id: string | null, paramMap: ParamMap, queryParamMap: ParamMap): Observable<FormContext> {
+  loadFormContext(metaName: string, mode: string, id: string | null, paramMap: ParamMap | null, queryParamMap: ParamMap | null): Observable<FormContext> {
 
     let pageKey = mode === 'view' || mode === 'edit' ? 'view_edit' : mode;
 
@@ -73,8 +73,14 @@ export class FormService {
     ctx.metaName = metaName;
     ctx.mode = mode;
     ctx.id = id;
-    ctx.paramMap = paramMap;
-    ctx.queryParamMap = queryParamMap;
+
+    if(paramMap) {
+      ctx.paramMap = paramMap;
+    }
+
+    if(queryParamMap) {
+      ctx.queryParamMap = queryParamMap;
+    }
 
     return this.metaPageService.metaPageMap$.pipe(switchMap((metaPageMap) => {
       ctx.metaPageMap = metaPageMap;

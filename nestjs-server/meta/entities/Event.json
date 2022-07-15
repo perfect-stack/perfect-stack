@@ -267,7 +267,7 @@
       "name": "altitude",
       "label": "Altitude",
       "description": "",
-      "unitOfMeasure": "",
+      "unitOfMeasure": "m",
       "scale": "0",
       "type": "Double",
       "visibility": "Visible",

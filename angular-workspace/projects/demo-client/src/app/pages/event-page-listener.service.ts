@@ -87,6 +87,7 @@ export class EventPageListenerService implements PageListener {
         locationControl.patchValue(locationEntity.id, {emitEvent: false});
         formGroup.controls['easting'].setValue(locationEntity.easting);
         formGroup.controls['northing'].setValue(locationEntity.northing);
+        formGroup.controls['altitude'].setValue(locationEntity.altitude);
       }
     });
   }

@@ -1,7 +1,10 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, FormGroup, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription, tap} from 'rxjs';
+import {FormContext, FormService} from '../../../../data-edit/form-service/form.service';
+import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {MetaPage} from '../../../../../domain/meta.page';
 
 @Component({
   selector: 'lib-spy-control',
@@ -17,26 +20,51 @@ export class SpyControlComponent implements OnInit, OnDestroy, ControlValueAcces
   formGroup: FormGroup;
 
   @Input()
+  cell: CellAttribute;
+
+  @Input()
   attribute: MetaAttribute;
 
   disabled = false;
+  spyTemplate: string;
 
   targetValue: any;
 
+  spyCtx$: Observable<FormContext>;
+
   formGroupSubscription: Subscription;
 
-  constructor(public ngControl: NgControl) {
+  constructor(protected readonly formService: FormService,
+              public ngControl: NgControl) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
+    if(this.cell && this.cell.component) {
+      this.spyTemplate = (this.cell as any).spyTemplate;
+    }
+
     if(this.formGroup && this.attribute) {
       this.formGroupSubscription = this.formGroup.controls[this.attribute.name + '_id'].valueChanges.subscribe((nextValue) => {
         console.log(`Spy detects update in target attribute ${this.attribute.relationshipTarget}`, nextValue);
-        // const targetEntity = this.formGroup.controls[this.attribute.name].value;
-        // console.log('Spy found targetEntity', targetEntity);
         this.targetValue = nextValue;
+
+        const metaName = this.attribute.relationshipTarget;
+        const mode = 'view';
+        const entityId = nextValue;
+
+        this.spyCtx$ = this.formService.loadFormContext(metaName, mode, entityId, null, null);
       });
+    }
+  }
+
+  getSpyTemplate(metaPageMap: Map<string, MetaPage>) {
+    const metaPage = metaPageMap.get(this.spyTemplate);
+    if(metaPage) {
+      return metaPage.templates[0];
+    }
+    else {
+      throw new Error(`Unable to find spy template for: ${this.spyTemplate}`);
     }
   }
 
