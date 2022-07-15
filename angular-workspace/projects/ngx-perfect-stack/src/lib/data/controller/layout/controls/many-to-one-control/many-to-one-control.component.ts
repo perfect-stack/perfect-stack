@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ControlValueAccessor, FormGroup, NgControl} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormGroup, NgControl} from '@angular/forms';
 import {MetaAttribute, MetaEntity} from '../../../../../domain/meta.entity';
 import {
   catchError,
@@ -33,7 +33,7 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   ctx: FormContext;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   metaEntity: MetaEntity;

@@ -1,7 +1,7 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Menu, MenuItem} from '../../../../domain/meta.menu';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 
 
 
@@ -38,7 +38,7 @@ export class MenuItemViewComponent implements OnInit {
   });
 
   constructor(
-    protected readonly fb: FormBuilder,
+    protected readonly fb: UntypedFormBuilder,
     protected readonly modalService: NgbModal) { }
 
   ngOnInit(): void {

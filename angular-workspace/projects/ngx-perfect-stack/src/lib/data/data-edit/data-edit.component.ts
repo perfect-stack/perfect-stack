@@ -14,7 +14,7 @@ import {
 import {DebugService} from '../../utils/debug/debug.service';
 import {EventService} from '../../event/event.service';
 import {CompletionResult} from '../../event/page-listener';
-import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormGroup} from '@angular/forms';
 
 
 @Component({
@@ -148,13 +148,13 @@ export class DataEditComponent implements OnInit {
       console.warn(`${name} - INVALID: touched: ${abstractControl.touched}, untouched: ${abstractControl.untouched}`);
     }
 
-    if (abstractControl instanceof FormGroup) {
-      const fg = abstractControl as FormGroup;
+    if (abstractControl instanceof UntypedFormGroup) {
+      const fg = abstractControl as UntypedFormGroup;
       Object.keys(fg.controls).forEach(key => {
         this.validateAllFields(key, fg.controls[key]);
       });
-    } else if( abstractControl instanceof  FormArray) {
-      const formArray = abstractControl as FormArray;
+    } else if( abstractControl instanceof  UntypedFormArray) {
+      const formArray = abstractControl as UntypedFormArray;
       for(let i = 0; i < formArray.length; i++) {
         const nextChildControl = formArray.at(i);
         this.validateAllFields(`${name}[${i}]`, nextChildControl);

@@ -2,7 +2,7 @@ import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output,
 import {Cell, Template, TemplateLocationType, TemplateType, Tool} from '../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Observable} from 'rxjs';
 import {PropertySheetService} from '../property-sheet/property-sheet.service';
@@ -182,7 +182,7 @@ export class CellViewComponent implements OnInit, OnChanges {
   set attribute(value: MetaAttribute | undefined) {
     this._attribute = value;
     if(value && value.name) {
-      this.entityForm.addControl(value.name, new FormControl(''));
+      this.entityForm.addControl(value.name, new UntypedFormControl(''));
     }
   }
 
@@ -205,7 +205,7 @@ export class CellViewComponent implements OnInit, OnChanges {
 
   mouseActive = false;
 
-  entityForm: FormGroup = new FormGroup([] as any);
+  entityForm: UntypedFormGroup = new UntypedFormGroup([] as any);
 
   closeResult = '';
 
@@ -275,7 +275,7 @@ export class CellViewComponent implements OnInit, OnChanges {
     delete this.cell.template;
     delete this.cell.tool;
     this.attribute = undefined;
-    this.entityForm = new FormGroup([] as any);
+    this.entityForm = new UntypedFormGroup([] as any);
   }
 
   isDropDisabled() {

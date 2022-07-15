@@ -1,5 +1,5 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {DateTimeFormatter, Instant, LocalDateTime, LocalTime, ZonedDateTime, ZoneId, ZoneOffset} from '@js-joda/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
@@ -20,7 +20,7 @@ export class TimeControlComponent implements OnInit {
   mode: string | null;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   name: string;

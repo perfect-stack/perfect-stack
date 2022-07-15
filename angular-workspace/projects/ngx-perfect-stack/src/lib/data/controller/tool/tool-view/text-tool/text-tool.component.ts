@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {TextTool} from '../../../../../domain/meta.page';
 import {ExpressionService} from '../../../layout/controls/expression-control/expression.service';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class TextToolComponent implements OnInit {
   editorMode = false;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   textValue: string
   stylesValue: string;

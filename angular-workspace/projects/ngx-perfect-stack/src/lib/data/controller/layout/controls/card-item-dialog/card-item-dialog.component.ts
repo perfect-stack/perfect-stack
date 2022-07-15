@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 import {ButtonDefinition} from '../../../../../utils/tile-button-panel/tile-button-panel.component';
 import {MetaEntityService} from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
 
@@ -22,7 +22,7 @@ export class CardItemDialogComponent implements OnInit {
   buttonList: ButtonDefinition[] = [];
   itemsSelected: string[] | null = null;
 
-  constructor(protected readonly fb: FormBuilder,
+  constructor(protected readonly fb: UntypedFormBuilder,
               protected readonly metaEntityService: MetaEntityService,
               public activeModal: NgbActiveModal) { }
 

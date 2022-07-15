@@ -4,7 +4,7 @@ import {FormContext} from '../../../../ngx-perfect-stack/src/lib/data/data-edit/
 import {ParamMap, Router} from '@angular/router';
 import {MetaAttribute} from '../../../../ngx-perfect-stack/src/lib/domain/meta.entity';
 import {DataService} from '../../../../ngx-perfect-stack/src/lib/data/data-service/data.service';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class EventPageListenerService implements PageListener {
   onAction(ctx: FormContext, action: string): void {
   }
 
-  onManyToOneItemSelected(formGroup: FormGroup, attribute: MetaAttribute, itemSelected: any): void {
+  onManyToOneItemSelected(formGroup: UntypedFormGroup, attribute: MetaAttribute, itemSelected: any): void {
     console.log(`onManyToOneItemSelected for ${attribute.name}`, itemSelected);
     if(attribute.name === 'bird') {
       this.loadBird(itemSelected.id, formGroup, false);
@@ -38,7 +38,7 @@ export class EventPageListenerService implements PageListener {
     const birdId = queryParams.get('bird_id');
     if(birdId) {
       console.log(`onPageLoad. birdId = ${birdId}`);
-      const eventFormGroup = ctx.formMap.get('event') as FormGroup;
+      const eventFormGroup = ctx.formMap.get('event') as UntypedFormGroup;
       if(eventFormGroup) {
         this.loadBird(birdId, eventFormGroup, true);
       }
@@ -49,7 +49,7 @@ export class EventPageListenerService implements PageListener {
 
     const eventType = queryParams.get('event_type');
     if(eventType) {
-      const eventFormGroup = ctx.formMap.get('event') as FormGroup;
+      const eventFormGroup = ctx.formMap.get('event') as UntypedFormGroup;
       if(eventFormGroup) {
         console.log(`onPageLoad: eventType = ${eventType}`)
         eventFormGroup.controls['event_type'].setValue(eventType);
@@ -58,7 +58,7 @@ export class EventPageListenerService implements PageListener {
     }
   }
 
-  loadBird(birdId: string, formGroup: FormGroup, emitEvent: boolean) {
+  loadBird(birdId: string, formGroup: UntypedFormGroup, emitEvent: boolean) {
     this.dataService.findById('Bird', birdId).subscribe((entity) => {
       const birdEntity = entity as any;
       console.log(`GOT bird entity ${birdEntity.name}`);
@@ -78,7 +78,7 @@ export class EventPageListenerService implements PageListener {
     });
   }
 
-  loadLocation(locationId: string, formGroup: FormGroup) {
+  loadLocation(locationId: string, formGroup: UntypedFormGroup) {
     this.dataService.findById('Location', locationId).subscribe((entity) => {
       const locationEntity = entity as any;
       console.log(`GOT location entity`, locationEntity);

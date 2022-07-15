@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Cell, MetaPage, Template, TemplateLocationType, TemplateType} from '../../../domain/meta.page';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
@@ -38,7 +38,7 @@ export class LayoutComponent implements OnInit {
   template: Template;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   relationshipProperty: string;
@@ -59,20 +59,20 @@ export class LayoutComponent implements OnInit {
       this.mode = this.ctx.mode;
       this.metaEntity = this.ctx.metaEntityMap.get(this.template.metaEntityName) as MetaEntity;
       if(!this.formGroup && this.ctx.formMap && this.template.binding) {
-        this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
+        this.formGroup = this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;
         this.relationshipProperty = this.template.binding;
       }
     }
   }
 
-  getFormGroupForTemplate(template: Template): FormGroup {
+  getFormGroupForTemplate(template: Template): UntypedFormGroup {
     if(this.ctx && this.ctx.formMap && template.binding) {
-      return this.ctx.formMap.get(template.binding) as unknown as FormGroup;
+      return this.ctx.formMap.get(template.binding) as unknown as UntypedFormGroup;
     }
     else if(template.binding) {
       const fg = this.formGroup.get(template.binding);
       if(fg) {
-        return fg as FormGroup;
+        return fg as UntypedFormGroup;
       }
       else {
         throw new Error(`Unable to find formGroup for binding ${template.binding} in controls ${Object.keys(this.formGroup.controls)}`);
@@ -115,7 +115,7 @@ export class TableLayoutComponent implements OnInit {
   template: Template;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   relationshipProperty: string;
@@ -133,7 +133,7 @@ export class TableLayoutComponent implements OnInit {
   ngOnInit(): void {
     this.mode = this.mode ? this.mode : this.ctx.mode;
     if(!this.formGroup && this.ctx.formMap && this.template.binding) {
-      this.formGroup = this.ctx.formMap.get(this.template.binding) as FormGroup;
+      this.formGroup = this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;
       this.relationshipProperty = this.template.binding;
     }
 
@@ -156,12 +156,12 @@ export class TableLayoutComponent implements OnInit {
     }));
   }
 
-  get attributes(): FormArray | null {
-    return this.formGroup && this.relationshipProperty ? this.formGroup.get(this.relationshipProperty) as FormArray : null;
+  get attributes(): UntypedFormArray | null {
+    return this.formGroup && this.relationshipProperty ? this.formGroup.get(this.relationshipProperty) as UntypedFormArray : null;
   }
 
-  getFormGroupForRow(rowIdx: number): FormGroup | null {
-    return this.attributes ? this.attributes.at(rowIdx) as FormGroup : null;
+  getFormGroupForRow(rowIdx: number): UntypedFormGroup | null {
+    return this.attributes ? this.attributes.at(rowIdx) as UntypedFormGroup : null;
   }
 
   onAddRow() {
@@ -279,7 +279,7 @@ export class CardLayoutComponent implements OnInit {
   ctx: FormContext;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   relationshipProperty: string;
@@ -293,7 +293,7 @@ export class CardLayoutComponent implements OnInit {
               private metaEntityService: MetaEntityService,
               private metaPageService: MetaPageService,
               private dataService: DataService,
-              private fb: FormBuilder,
+              private fb: UntypedFormBuilder,
               private formGroupService: FormGroupService) {}
 
   ngOnInit(): void {
@@ -329,7 +329,7 @@ export class CardLayoutComponent implements OnInit {
   }
 
   getFormGroupForRow(rowIdx: number) {
-    return this.attributes.at(rowIdx) as FormGroup;
+    return this.attributes.at(rowIdx) as UntypedFormGroup;
   }
 
   getCardItem(rowIdx: number) {
@@ -389,7 +389,7 @@ export class CardLayoutComponent implements OnInit {
 
       const disabledList: string[] = [];
       for(const formGroupRow of this.attributes.controls) {
-        if(formGroupRow instanceof FormGroup) {
+        if(formGroupRow instanceof UntypedFormGroup) {
           disabledList.push(formGroupRow.controls['activity_type'].value);
         }
       }
@@ -469,7 +469,7 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   template: Template;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   metaEntity: MetaEntity;
@@ -493,13 +493,13 @@ export class FormLayoutComponent implements OnInit, OnChanges {
           formLookupKey = binding.substring(0, binding.indexOf('.'));
           const childFormGroup = binding.substring(binding.indexOf('.') + 1);
           console.log(`Binding NESTED for: ${binding}, formLookupKey = "${formLookupKey}", childFormGroup = "${childFormGroup}"`);
-          form = this.ctx.formMap.get(formLookupKey) as FormGroup;
-          form = form.controls[childFormGroup] as FormGroup;
+          form = this.ctx.formMap.get(formLookupKey) as UntypedFormGroup;
+          form = form.controls[childFormGroup] as UntypedFormGroup;
         }
         else {
           formLookupKey = binding;
           console.log(`Binding ROOT - ${binding}`)
-          form = this.ctx.formMap.get(formLookupKey) as FormGroup;
+          form = this.ctx.formMap.get(formLookupKey) as UntypedFormGroup;
         }
 
         this.formGroup = form;
@@ -566,7 +566,7 @@ export class CellComponent implements OnInit {
   cell: CellAttribute;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   ctx: FormContext;
@@ -592,7 +592,7 @@ export class OneToManyControlComponent implements OnInit {
   cell: CellAttribute;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   constructor() { }
 
@@ -615,7 +615,7 @@ export class OneToPolyControlComponent implements OnInit {
   cell: CellAttribute;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   constructor() { }
 
@@ -639,10 +639,10 @@ export class OneToOneControlComponent implements OnInit {
   cell: CellAttribute;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   childCells: CellAttribute[][];
-  childFormGroup: FormGroup;
+  childFormGroup: UntypedFormGroup;
 
   constructor(protected readonly formService: FormService, protected readonly metaEntityService: MetaEntityService) { }
 
@@ -655,7 +655,7 @@ export class OneToOneControlComponent implements OnInit {
         const metaEntity = metaEntityMap.get(childMetaEntityName);
         if(childTemplate && metaEntity) {
           this.childCells = this.formService.toCellAttributeArray(childTemplate, metaEntity);
-          this.childFormGroup = this.formGroup.controls[attribute.name] as FormGroup;
+          this.childFormGroup = this.formGroup.controls[attribute.name] as UntypedFormGroup;
         }
       });
     }

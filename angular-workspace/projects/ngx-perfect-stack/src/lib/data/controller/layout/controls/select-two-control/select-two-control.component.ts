@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {Cell} from '../../../../../domain/meta.page';
 import {DataService} from '../../../../data-service/data.service';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
 @Component({
   selector: 'lib-select-two-control',
@@ -14,7 +14,7 @@ export class SelectTwoControlComponent implements OnInit {
   // Important: This is needed because we are just a wrapper for the real components and so this component sets the
   // formControlName for those components and not the Cell/template above us.
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   attribute: MetaAttribute;

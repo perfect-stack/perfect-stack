@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 
 @Component({
@@ -13,7 +13,7 @@ export class BooleanCheckBoxControlComponent implements OnInit {
   mode: string;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   attribute: MetaAttribute;

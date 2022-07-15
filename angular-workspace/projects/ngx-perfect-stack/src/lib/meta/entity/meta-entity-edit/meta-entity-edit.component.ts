@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {
@@ -35,7 +35,7 @@ export class MetaEntityEditComponent implements OnInit {
 
   public metaEntityOptions$: Observable<MetaEntity[]>
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly metaEntityService: MetaEntityService) { }
@@ -71,11 +71,11 @@ export class MetaEntityEditComponent implements OnInit {
   }
 
   get attributes() {
-    return this.metaEntityForm.get('attributes') as FormArray;
+    return this.metaEntityForm.get('attributes') as UntypedFormArray;
   }
 
   getAttributeFormGroupAt(idx: number) {
-    return this.attributes.at(idx) as FormGroup;
+    return this.attributes.at(idx) as UntypedFormGroup;
   }
 
   addBlankRow() {
@@ -84,7 +84,7 @@ export class MetaEntityEditComponent implements OnInit {
     return formGroup;
   }
 
-  createTableRow(): FormGroup {
+  createTableRow(): UntypedFormGroup {
     return this.fb.group({
       name: ['', Validators.required],
       label: ['', Validators.required],
@@ -151,7 +151,7 @@ export class MetaEntityEditComponent implements OnInit {
   }
 
   onLabelKeyup(group: AbstractControl) {
-    const formGroup = group as FormGroup;
+    const formGroup = group as UntypedFormGroup;
     const label = formGroup.controls['label'].value;
 
     function toEntityNameFromLabel(label: string) {
@@ -163,26 +163,26 @@ export class MetaEntityEditComponent implements OnInit {
   }
 
   isRelationshipType(rowIdx: number) {
-    const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
+    const rowFormGroup = this.attributes.at(rowIdx) as UntypedFormGroup;
     const type = rowFormGroup.controls['type'].value;
     const relationshipTypes = [AttributeType.OneToMany, AttributeType.OneToOne, AttributeType.ManyToOne];
     return relationshipTypes.includes(type);
   }
 
   isManyToOne(rowIdx: number) {
-    const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
+    const rowFormGroup = this.attributes.at(rowIdx) as UntypedFormGroup;
     const type = rowFormGroup.controls['type'].value;
     return type === AttributeType.ManyToOne;
   }
 
   isOneToPoly(rowIdx: number) {
-    const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
+    const rowFormGroup = this.attributes.at(rowIdx) as UntypedFormGroup;
     const type = rowFormGroup.controls['type'].value;
     return type === AttributeType.OneToPoly;
   }
 
   isEnumeration(rowIdx: number) {
-    const rowFormGroup = this.attributes.at(rowIdx) as FormGroup;
+    const rowFormGroup = this.attributes.at(rowIdx) as UntypedFormGroup;
     const type = rowFormGroup.controls['type'].value;
     return type === AttributeType.Enumeration;
   }
@@ -191,7 +191,7 @@ export class MetaEntityEditComponent implements OnInit {
 
 export const uniqueNameValidator = (control: AbstractControl): ValidationErrors | null => {
 
-  const attributes = control.get('attributes') as FormArray;
+  const attributes = control.get('attributes') as UntypedFormArray;
   for(const sourceRowControls of attributes.controls) {
     const sourceAttribute = sourceRowControls.value as MetaAttribute;
     const labelControl = sourceRowControls.get('label');

@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ControlValueAccessor, FormGroup, NgControl} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormGroup, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {Observable, Subscription, tap} from 'rxjs';
 import {FormContext, FormService} from '../../../../data-edit/form-service/form.service';
@@ -17,7 +17,7 @@ export class SpyControlComponent implements OnInit, OnDestroy, ControlValueAcces
   mode: string;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   cell: CellAttribute;

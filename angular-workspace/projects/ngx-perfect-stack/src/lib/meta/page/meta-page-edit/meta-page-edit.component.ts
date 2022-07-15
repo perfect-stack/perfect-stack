@@ -3,7 +3,7 @@ import {Observable, of, switchMap, tap} from 'rxjs';
 import {DataQuery, LayoutStyle, MetaPage, PageType, Template, TemplateType} from '../../../domain/meta.page';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {MetaEntityService} from '../../entity/meta-entity-service/meta-entity.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
@@ -22,11 +22,11 @@ export class MetaPageEditComponent implements OnInit {
   dataQueryList: DataQuery[];
   templates: Template[];
 
-  metaPageForm = new FormGroup({
-    name: new FormControl(''),
-    title: new FormControl(''),
-    type: new FormControl(''),
-    layoutStyle: new FormControl(''),
+  metaPageForm = new UntypedFormGroup({
+    name: new UntypedFormControl(''),
+    title: new UntypedFormControl(''),
+    type: new UntypedFormControl(''),
+    layoutStyle: new UntypedFormControl(''),
   });
 
   constructor(protected readonly route: ActivatedRoute,

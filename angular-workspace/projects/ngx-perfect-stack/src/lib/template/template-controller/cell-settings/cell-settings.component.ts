@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ComponentType} from '../../../domain/meta.page';
 import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 
 @Component({
   selector: 'lib-cell-settings',
@@ -23,7 +23,7 @@ export class CellSettingsComponent implements OnInit {
     assetUrl: [''],
   });
 
-  constructor(public fb: FormBuilder,
+  constructor(public fb: UntypedFormBuilder,
               public activeModal: NgbActiveModal,
               private changeDetection: ChangeDetectorRef) { }
 

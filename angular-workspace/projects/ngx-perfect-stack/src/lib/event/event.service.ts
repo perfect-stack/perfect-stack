@@ -4,7 +4,7 @@ import {FormContext} from '../data/data-edit/form-service/form.service';
 import {ParamMap} from '@angular/router';
 import {MetaAttribute} from '../domain/meta.entity';
 import {PerfectStackEventListener} from './perfect-stack-event-listener';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
 enum ListenerType {
   PageListener = 'PageListener'
@@ -65,7 +65,7 @@ export class EventService {
     }
   }
 
-  dispatchOnManyToOneItemSelected(pageName: string, formGroup: FormGroup, attribute: MetaAttribute, itemSelected: any): void {
+  dispatchOnManyToOneItemSelected(pageName: string, formGroup: UntypedFormGroup, attribute: MetaAttribute, itemSelected: any): void {
     console.log(`Dispatch event , {emitEvent: false} to meta page listeners: ${pageName}`);
     const listenerList = this.getListenerList(ListenerType.PageListener, pageName);
     for(const listener of listenerList) {

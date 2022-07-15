@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {MetaPage} from '../../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity, VisibilityType} from '../../../domain/meta.entity';
 import {Entity} from '../../../domain/entity';
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {FormArrayWithAttribute, FormControlWithAttribute} from './form.service';
 
 @Injectable({
@@ -21,7 +21,7 @@ export class FormGroupService {
                   recursive = true,
                   suppressValidators= false
   ) {
-    const formGroup = new FormGroup({});
+    const formGroup = new UntypedFormGroup({});
 
     const metaEntity = metaEntityMap.get(metaEntityName);
     if (!metaEntity) {
@@ -53,7 +53,7 @@ export class FormGroupService {
             const controlName = (nextAttribute.name + '_id').toLowerCase();
             //const formControl = new FormControl('');
             // Important: need to make sure initial state is null, otherwise server attempts to create a relationship to an entity with a '' id.
-            const formControl = new FormControl(null);
+            const formControl = new UntypedFormControl(null);
             if(nextAttribute.visibility === VisibilityType.Required) {
               formControl.addValidators(Validators.required)
             }
@@ -67,7 +67,7 @@ export class FormGroupService {
 
           // experiment attempting to use setValue() instead of patchValue() need to populate all attributes from data entity
           const controlName = (nextAttribute.name + '_id').toLowerCase();
-          formGroup.addControl(controlName, new FormControl(''));
+          formGroup.addControl(controlName, new UntypedFormControl(''));
           console.log(`Added control for: ${controlName}`);
 
           break;
@@ -130,7 +130,7 @@ export class FormGroupService {
 
           // experiment attempting to use setValue() instead of patchValue() need to populate all attributes from data entity
           const controlName = metaEntityName + 'Id';
-          fg.addControl(controlName, new FormControl(''));
+          fg.addControl(controlName, new UntypedFormControl(''));
           console.log(`Added control for: ${controlName}`);
 
           formControl.push(fg);
@@ -196,20 +196,20 @@ export class FormGroupService {
                                  mode: string,
                                  metaPageMap: Map<string, MetaPage>,
                                  metaEntityMap: Map<string, MetaEntity>,
-                                 entity: any): FormGroup {
+                                 entity: any): UntypedFormGroup {
 
     const childEntityName = attribute.relationshipTarget;
     const childEntity = entity ? (entity as any)[attribute.name] : null;
     return this.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity);
   }
 
-  private formControlForDate(mode: string): FormControl {
+  private formControlForDate(mode: string): UntypedFormControl {
     // See WARNING below: Date does need to be null, otherwise empty string is treated as an invalid Date and prevents
     // "no value" optional dates from allowing the form validation to be valid
     return new FormControlWithAttribute({value: null, disabled: mode === 'view'});
   }
 
-  private formControlForBoolean(): FormControl {
+  private formControlForBoolean(): UntypedFormControl {
     // It's important to set this to false as the default value because otherwise the database will reject the default value of ''
     return new FormControlWithAttribute(false);
   }

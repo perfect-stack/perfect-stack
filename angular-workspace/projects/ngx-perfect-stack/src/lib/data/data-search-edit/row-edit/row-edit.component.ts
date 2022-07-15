@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {DataSearchActionEvent} from '../data-search-action-event';
 import {DataService} from '../../data-service/data.service';
@@ -21,7 +21,7 @@ export class RowEditComponent implements OnInit {
   @Output()
   actionEvent = new EventEmitter<DataSearchActionEvent>();
 
-  formGroup = new FormGroup({
+  formGroup = new UntypedFormGroup({
     id: new FormControlWithAttribute(''),
     status: new FormControlWithAttribute(''),
     name: new FormControlWithAttribute('', Validators.required),

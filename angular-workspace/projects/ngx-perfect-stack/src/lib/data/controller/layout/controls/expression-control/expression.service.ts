@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -143,7 +143,7 @@ export class ExpressionService {
   }
 
 
-  evaluateFormGroup(expression: string, formGroup: FormGroup): string {
+  evaluateFormGroup(expression: string, formGroup: UntypedFormGroup): string {
     const controlExpressionMatchList = this.buildFromFormGroup(expression, formGroup);
     if(expression.startsWith('?')) {
       const methodName = this.resolveMethodName(expression);
@@ -154,7 +154,7 @@ export class ExpressionService {
     }
   }
 
-  buildFromFormGroup(expression: string, formGroup: FormGroup) {
+  buildFromFormGroup(expression: string, formGroup: UntypedFormGroup) {
     const controlExpressionMatchList: ControlExpressionMatch[] = [];
     const matches: RegExpMatchArray[] = Array.from(expression.matchAll(/\${([a-zA-Z0-9_\\.]+)}/gm));
     for(const nextMatch of matches) {
@@ -169,7 +169,7 @@ export class ExpressionService {
     return controlExpressionMatchList;
   }
 
-  findControlInFormGroup(attributeName: string, formGroup: FormGroup) {
+  findControlInFormGroup(attributeName: string, formGroup: UntypedFormGroup) {
     if(formGroup) {
       const control = formGroup.controls[attributeName];
       if (control) {
