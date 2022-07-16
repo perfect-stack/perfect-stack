@@ -4,7 +4,7 @@ import {
   ButtonTabsTool,
   ButtonTool,
   IconTool,
-  ImageTool,
+  ImageTool, MapTool,
   TextTool,
   Tool
 } from '../../../../domain/meta.page';
@@ -49,6 +49,10 @@ export class ToolViewComponent implements OnInit {
 
   asImageTool() {
     return this.tool as ImageTool;
+  }
+
+  asMapTool() {
+    return this.tool as MapTool;
   }
 
   asTextTool() {

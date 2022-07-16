@@ -1,0 +1,16 @@
+
+<ng-container *ngIf="editorMode">
+  <div (click)="doEditorAction()">MAP goes here...</div>
+</ng-container>
+
+<ng-container *ngIf="!editorMode && options">
+  <div [ngStyle]="{'height': height}"
+       leaflet
+       [leafletOptions]="options"
+       [(leafletCenter)]="center"
+       [leafletBaseLayers]="baseLayers"
+       (leafletClick)="onMapClick($event)"
+  >
+    <div *ngFor="let l of layers" [leafletLayer]="l"></div>
+  </div>
+</ng-container>

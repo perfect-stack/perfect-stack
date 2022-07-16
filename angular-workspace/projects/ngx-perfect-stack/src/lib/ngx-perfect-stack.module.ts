@@ -113,6 +113,9 @@ import { BadgeListComponent } from './data/controller/layout/controls/badge-list
 import { ButtonGroupToolComponent } from './data/controller/tool/tool-view/button-group-tool/button-group-tool.component';
 import { ButtonTabsToolComponent } from './data/controller/tool/tool-view/button-tabs-tool/button-tabs-tool.component';
 import { SpyControlComponent } from './data/controller/layout/controls/spy-control/spy-control.component';
+import { MapTestPageComponent } from './map-test-page/map-test-page.component';
+import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import { MapToolComponent } from './data/controller/tool/tool-view/map-tool/map-tool.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -137,8 +140,9 @@ const routes: Routes = [
   // Just for Controller development purposes
   { path: 'controller', component: ControllerComponent},
 
-  // Just for Testing Select
-  { path: 'select-test', component: SelectTestPageComponent}
+  // Just for Testing Components
+  { path: 'select-test', component: SelectTestPageComponent},
+  { path: 'map-test', component: MapTestPageComponent}
 ];
 
 @NgModule({
@@ -225,6 +229,8 @@ const routes: Routes = [
     ButtonGroupToolComponent,
     ButtonTabsToolComponent,
     SpyControlComponent,
+    MapTestPageComponent,
+    MapToolComponent,
   ],
   providers: [
     AuthenticationService,
@@ -261,6 +267,7 @@ const routes: Routes = [
     HttpClientModule,
     CommonModule,
     EditorModule,
+    LeafletModule,
     RouterModule.forChild(routes),
     ReactiveFormsModule,
     LoadingBarHttpClientModule,

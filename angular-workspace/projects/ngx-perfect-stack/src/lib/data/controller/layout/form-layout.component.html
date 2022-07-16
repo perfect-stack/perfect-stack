@@ -10,6 +10,9 @@
           </ng-container>
           <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
 
+          <div *ngIf="mode === 'edit' && cell.footerHtml" [innerHtml]="cell.footerHtml"></div>
+
+          <!-- this got moved into the Cell -->
           <!--<ng-container *ngIf="cell.tool">
             <lib-tool-view [tool]="cell.tool"></lib-tool-view>
           </ng-container>-->
@@ -26,7 +29,7 @@
 
   <!-- If this template doesn't have a binding (normally this means it's a root level template with nested child templates, so no binding means no form group) -->
   <ng-container *ngIf="template && !template.binding">
-    <div [ngClass]="template.styles" [formGroup]="formGroup">
+    <div [ngClass]="template.styles">  <!-- NO Binding means NO formGroup -->
       <div class="row" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
 
@@ -40,7 +43,7 @@
             <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
           </ng-container>
 
-          <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+          <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell"></lib-cell>
 
           <!-- TODO: there's probably a tool one here, and in fact these have probably evolved into being just one block (same as above) -->
         </div>
