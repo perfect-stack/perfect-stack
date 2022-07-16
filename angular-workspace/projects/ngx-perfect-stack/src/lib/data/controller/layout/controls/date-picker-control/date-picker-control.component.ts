@@ -1,5 +1,5 @@
 import {Component, Inject, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {NgbDate, NgbInputDatepicker} from '@ng-bootstrap/ng-bootstrap';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 import {DateTimeFormatter, Instant, LocalDate, ZonedDateTime, ZoneId} from '@js-joda/core';
@@ -21,7 +21,7 @@ export class DatePickerControlComponent implements OnInit {
   mode: string | null;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   name: string;

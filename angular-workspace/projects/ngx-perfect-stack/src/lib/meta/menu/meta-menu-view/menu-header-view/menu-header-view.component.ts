@@ -1,6 +1,6 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Menu, MenuItem} from '../../../../domain/meta.menu';
-import {FormsModule, ReactiveFormsModule, FormBuilder} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule, UntypedFormBuilder} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -29,7 +29,7 @@ export class MenuHeaderViewComponent implements OnInit {
   });
 
   constructor(
-    protected readonly fb: FormBuilder,
+    protected readonly fb: UntypedFormBuilder,
     protected readonly modalService: NgbModal) { }
 
   ngOnInit(): void {

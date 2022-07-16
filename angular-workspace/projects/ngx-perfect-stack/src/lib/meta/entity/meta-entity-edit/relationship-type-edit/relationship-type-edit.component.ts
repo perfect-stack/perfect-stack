@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AttributeType, MetaEntity} from '../../../../domain/meta.entity';
 import {MetaEntityService} from '../../meta-entity-service/meta-entity.service';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-relationship-type-edit',
@@ -11,7 +11,7 @@ import {FormGroup} from '@angular/forms';
 export class RelationshipTypeEditComponent implements OnInit {
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   metaEntityOptions: MetaEntity[];

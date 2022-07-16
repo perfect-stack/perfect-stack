@@ -8,6 +8,26 @@
       "cells": [
         [
           {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "Map",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "easting": "easting",
+              "northing": "northing"
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Location",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
             "width": "6",
             "height": "1",
             "attributeName": "location_name"
@@ -24,20 +44,8 @@
             "width": "12",
             "height": "3",
             "attributeName": "description",
-            "component": "TextArea"
-          }
-        ],
-        [
-          {
-            "width": "6",
-            "height": "1",
-            "tool": {
-              "type": "TextTool",
-              "containerStyles": "",
-              "styles": "text-muted",
-              "label": "",
-              "text": "e.g. 30 m south of the big rimu in the southern block."
-            }
+            "component": "TextArea",
+            "footerHtml": "<span class=\"text-muted mt-1\">e.g. 30 m south of the big rimu in the southern block.</span>"
           }
         ]
       ],

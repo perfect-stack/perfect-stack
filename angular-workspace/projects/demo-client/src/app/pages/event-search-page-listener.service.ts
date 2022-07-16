@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {CompletionResult, PageListener} from '../../../../ngx-perfect-stack/src/lib/event/page-listener';
 import {FormContext} from '../../../../ngx-perfect-stack/src/lib/data/data-edit/form-service/form.service';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../ngx-perfect-stack/src/lib/domain/meta.entity';
 import {ParamMap, Router} from '@angular/router';
 import {AddEventDialogComponent} from './add-event-dialog/add-event-dialog.component';
@@ -30,7 +30,7 @@ export class EventSearchPageListenerService implements PageListener {
   onBeforeSave(ctx: FormContext): void {
   }
 
-  onManyToOneItemSelected(formGroup: FormGroup, attribute: MetaAttribute, itemSelected: any): void {
+  onManyToOneItemSelected(formGroup: UntypedFormGroup, attribute: MetaAttribute, itemSelected: any): void {
   }
 
   onPageLoad(ctx: FormContext, params: ParamMap, queryParams: ParamMap): void {

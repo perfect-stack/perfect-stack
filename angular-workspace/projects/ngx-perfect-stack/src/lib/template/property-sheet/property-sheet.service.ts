@@ -94,6 +94,14 @@ export const ImagePropertyList = [
   { name: 'imageUrl', type: PropertyType.string},
 ];
 
+export const MapPropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
+  { name: 'easting', type: PropertyType.string},
+  { name: 'northing', type: PropertyType.string},
+];
+
 export const TextToolPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
@@ -127,6 +135,7 @@ export const CellPropertyList = [
   { name: 'component', type: PropertyType.string, options: ComponentType},
   { name: 'secondaryAttributeName', type: PropertyType.string},
   { name: 'noItemsHtml', type: PropertyType.string},
+  { name: 'footerHtml', type: PropertyType.string},
   { name: 'spyTemplate', type: PropertyType.metaPage},
 ]
 
@@ -141,6 +150,7 @@ export const PropertyListMap: PropertyListMapType = {
   'ButtonTabs': ButtonTabsPropertyList,
   'Icon': IconPropertyList,
   'Image': ImagePropertyList,
+  'Map': MapPropertyList,
   'TextTool': TextToolPropertyList,
   'Template': TemplatePropertyList,
   'Cell': CellPropertyList,

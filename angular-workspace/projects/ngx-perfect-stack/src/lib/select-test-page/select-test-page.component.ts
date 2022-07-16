@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {AttributeType, ComparisonOperator, MetaAttribute, VisibilityType} from '../domain/meta.entity';
 import {CellAttribute} from '../meta/page/meta-page-service/meta-page.service';
 
@@ -10,8 +10,8 @@ import {CellAttribute} from '../meta/page/meta-page-service/meta-page.service';
 })
 export class SelectTestPageComponent implements OnInit {
 
-  formGroup: FormGroup = new FormGroup({
-    observers: new FormArray([]),
+  formGroup: UntypedFormGroup = new UntypedFormGroup({
+    observers: new UntypedFormArray([]),
   });
 
   attribute: MetaAttribute = {
@@ -52,18 +52,18 @@ export class SelectTestPageComponent implements OnInit {
     this.onAdd('2a9a9151-2452-4b53-8448-f53c48736421');
   }
 
-  get attributes(): FormArray | null {
-    return this.formGroup.controls['observers'] as FormArray;
+  get attributes(): UntypedFormArray | null {
+    return this.formGroup.controls['observers'] as UntypedFormArray;
   }
 
-  getFormGroupForRow(rowIdx: number): FormGroup | null {
-    return this.attributes ? this.attributes.at(rowIdx) as FormGroup : null;
+  getFormGroupForRow(rowIdx: number): UntypedFormGroup | null {
+    return this.attributes ? this.attributes.at(rowIdx) as UntypedFormGroup : null;
   }
 
   onAdd(id?: string) {
     console.log('onAdd()');
-    const row = new FormGroup({
-      observer_role_id: new FormControl('')
+    const row = new UntypedFormGroup({
+      observer_role_id: new UntypedFormControl('')
       //observer_role_id: new FormControl('', Validators.required)
     });
 

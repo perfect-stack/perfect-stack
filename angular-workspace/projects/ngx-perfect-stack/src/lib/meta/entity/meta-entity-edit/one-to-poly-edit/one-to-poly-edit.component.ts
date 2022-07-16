@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {MetaAttribute, MetaEntity} from '../../../../domain/meta.entity';
 import {MetaEntityService} from '../../meta-entity-service/meta-entity.service';
@@ -13,15 +13,15 @@ import {DataService} from '../../../../data/data-service/data.service';
 export class OneToPolyEditComponent implements OnInit {
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   metaEntityOptions: MetaEntity[];
 
-  discriminatorFormGroup: FormGroup;
+  discriminatorFormGroup: UntypedFormGroup;
   discriminatorValueOptions$: Observable<any>;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               protected readonly dataService: DataService,
               protected readonly metaEntityService: MetaEntityService) { }
 
@@ -30,7 +30,7 @@ export class OneToPolyEditComponent implements OnInit {
       const metaAttribute: MetaAttribute = this.formGroup.value;
       OneToPolyEditComponent.addDiscriminatorFormGroup(this.fb, this.formGroup, metaAttribute);
 
-      this.discriminatorFormGroup = this.formGroup.get('discriminator') as FormGroup;
+      this.discriminatorFormGroup = this.formGroup.get('discriminator') as UntypedFormGroup;
 
       if(metaAttribute.discriminator && metaAttribute.discriminator.discriminatorType) {
         this.onDiscriminatorTypeChange(metaAttribute.discriminator.discriminatorType);
@@ -38,26 +38,26 @@ export class OneToPolyEditComponent implements OnInit {
     }
   }
 
-  get mappings(): FormArray {
-    return this.discriminatorFormGroup.controls['entityMappingList'] as FormArray;
+  get mappings(): UntypedFormArray {
+    return this.discriminatorFormGroup.controls['entityMappingList'] as UntypedFormArray;
   }
 
   getMappingAt(idx: number) {
-    return this.mappings.at(idx) as FormGroup;
+    return this.mappings.at(idx) as UntypedFormGroup;
   }
 
   onAddEntityMapping() {
     this.mappings.push(OneToPolyEditComponent.createTableRow(this.fb));
   }
 
-  static addDiscriminatorFormGroup(fb: FormBuilder, formGroup: FormGroup, metaAttribute: MetaAttribute) {
+  static addDiscriminatorFormGroup(fb: UntypedFormBuilder, formGroup: UntypedFormGroup, metaAttribute: MetaAttribute) {
     const discriminatorFormGroup = fb.group({
       discriminatorName: [''],
       discriminatorType: [''],
       entityMappingList: fb.array([]),
     });
 
-    const entityMappingListFormArray = discriminatorFormGroup.controls['entityMappingList'] as FormArray;
+    const entityMappingListFormArray = discriminatorFormGroup.controls['entityMappingList'] as UntypedFormArray;
     if(metaAttribute && metaAttribute.discriminator && metaAttribute.discriminator.entityMappingList) {
       const rowCountNeeded = metaAttribute.discriminator.entityMappingList.length;
       for(let i = 0; i < rowCountNeeded; i++) {
@@ -68,7 +68,7 @@ export class OneToPolyEditComponent implements OnInit {
     formGroup.addControl('discriminator', discriminatorFormGroup);
   }
 
-  static createTableRow(fb: FormBuilder): FormGroup {
+  static createTableRow(fb: UntypedFormBuilder): UntypedFormGroup {
     return fb.group({
       discriminatorValue: ['', Validators.required],
       metaEntityName: ['', Validators.required],

@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {MetaPage, Template, Tool} from '../../../domain/meta.page';
+import {ComponentData, MetaPage, Template, Tool} from '../../../domain/meta.page';
 import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
 import {Observable, of, shareReplay, switchMap} from 'rxjs';
@@ -15,6 +15,10 @@ export class CellAttribute {
   metaEntity?: MetaEntity;
   attribute?: MetaAttribute;
   template?: Template;
+
+  componentData?: ComponentData;
+  noItemsHtml?: string; // Html displayed when no items
+  footerHtml?: string; // Footer html that appears under the component (only in edit mode)
 }
 
 @Injectable({

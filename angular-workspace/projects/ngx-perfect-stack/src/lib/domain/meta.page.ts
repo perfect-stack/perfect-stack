@@ -15,6 +15,7 @@ export class Cell {
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   componentData?: ComponentData;
   noItemsHtml?: string; // Html displayed when no items
+  footerHtml?: string; // Footer html that appears under the component (only in edit mode)
   tool?: Tool;
   template?: Template;
 }
@@ -46,10 +47,11 @@ export enum ToolType {
   Button = 'Button',
   ButtonGroup = 'ButtonGroup',
   ButtonTabs = 'ButtonTabs',
-  TextTool = 'TextTool',
+  Icon = 'Icon',
   Image = 'Image',
+  Map = 'Map',
   Select = 'Select',
-  Icon = 'Icon'
+  TextTool = 'TextTool'
 }
 
 export class Tool {
@@ -86,6 +88,11 @@ export class ButtonTabsTool extends Tool {
 
 export class ImageTool extends Tool {
   imageUrl: string;
+}
+
+export class MapTool extends Tool {
+  easting: string;
+  northing: string;
 }
 
 export class TextTool extends Tool {

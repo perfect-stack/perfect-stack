@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../domain/meta.entity';
 
 @Component({
@@ -10,13 +10,13 @@ import {MetaAttribute} from '../../../../domain/meta.entity';
 export class EnumeratonEditComponent implements OnInit {
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   nextValueFormGroup = this.fb.group({
     nextValue: this.fb.control(''),
   });
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: UntypedFormBuilder) { }
 
   ngOnInit(): void {
     if(!this.formGroup.get('enumeration')) {
@@ -25,7 +25,7 @@ export class EnumeratonEditComponent implements OnInit {
     }
   }
 
-  static addEnumerationFormControl(fb: FormBuilder, formGroup: FormGroup, metaAttribute: MetaAttribute) {
+  static addEnumerationFormControl(fb: UntypedFormBuilder, formGroup: UntypedFormGroup, metaAttribute: MetaAttribute) {
     const formArray = fb.array([]);
 
     formGroup.addControl('enumeration', formArray);
@@ -35,7 +35,7 @@ export class EnumeratonEditComponent implements OnInit {
   }
 
   get formArray() {
-    return this.formGroup.controls['enumeration'] as FormArray;
+    return this.formGroup.controls['enumeration'] as UntypedFormArray;
   }
 
   onAdd(value: string) {

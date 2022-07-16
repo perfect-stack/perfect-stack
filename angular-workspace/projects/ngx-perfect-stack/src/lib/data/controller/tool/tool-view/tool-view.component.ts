@@ -4,12 +4,12 @@ import {
   ButtonTabsTool,
   ButtonTool,
   IconTool,
-  ImageTool,
+  ImageTool, MapTool,
   TextTool,
   Tool
 } from '../../../../domain/meta.page';
 import {FormContext} from '../../../data-edit/form-service/form.service';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
 @Component({
   selector: 'lib-tool-view',
@@ -28,7 +28,7 @@ export class ToolViewComponent implements OnInit {
   editorMode = false;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   constructor() { }
 
@@ -49,6 +49,10 @@ export class ToolViewComponent implements OnInit {
 
   asImageTool() {
     return this.tool as ImageTool;
+  }
+
+  asMapTool() {
+    return this.tool as MapTool;
   }
 
   asTextTool() {

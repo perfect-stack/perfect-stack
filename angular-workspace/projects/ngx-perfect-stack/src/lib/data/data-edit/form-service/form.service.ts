@@ -6,9 +6,9 @@ import {Cell, DataQuery, MetaPage, ResultCardinalityType, Template} from '../../
 import {
   AbstractControl,
   AbstractControlOptions, AsyncValidatorFn,
-  FormArray,
-  FormControl, FormControlOptions,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormControl, FormControlOptions,
+  UntypedFormGroup,
   ValidatorFn,
 } from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
@@ -32,14 +32,14 @@ export class FormContext {
   queryParamMap: ParamMap;
 }
 
-export class FormControlWithAttribute extends FormControl {
+export class FormControlWithAttribute extends UntypedFormControl {
   attribute: MetaAttribute;
   constructor(formState?: any, validatorOrOpts?: ValidatorFn | ValidatorFn[] | FormControlOptions | null, asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
     super(formState, validatorOrOpts, asyncValidator);
   }
 }
 
-export class FormArrayWithAttribute extends FormArray {
+export class FormArrayWithAttribute extends UntypedFormArray {
   attribute: MetaAttribute;
   constructor(controls: AbstractControl[], validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null, asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
     super(controls, validatorOrOpts, asyncValidator);
@@ -166,7 +166,7 @@ export class FormService {
                                        resultCardinality: ResultCardinalityType,
                                        template: Template,
                                        objectOrArray: any | any[]) {
-    let form: FormGroup;
+    let form: UntypedFormGroup;
     switch (resultCardinality) {
       case ResultCardinalityType.QueryOne:
         // The dataValue result is a single object we only need one form
@@ -187,13 +187,13 @@ export class FormService {
       case ResultCardinalityType.QueryMany:
         // The dataValue result is an array so create the same number of form rows
         const rowCount = objectOrArray.length;
-        const formArray = new FormArray([]);
+        const formArray = new UntypedFormArray([]);
         for(let i = 0; i < rowCount; i++) {
           const formRow = this.formGroupService.createFormGroup(ctx.mode, template.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
           formArray.push(formRow);
         }
 
-        form = new FormGroup({});
+        form = new UntypedFormGroup({});
         form.addControl(template.binding, formArray);
 
         if(objectOrArray) {

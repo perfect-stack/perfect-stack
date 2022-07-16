@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {Cell} from '../../../../../domain/meta.page';
 
@@ -14,7 +14,7 @@ export class BadgeListComponent implements OnInit {
   mode: string | null;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   @Input()
   attribute: MetaAttribute;

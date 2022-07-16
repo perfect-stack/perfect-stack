@@ -9,7 +9,7 @@ import {ResultCardinalityType, Template, TemplateNavigationType} from '../../dom
 import {
   CustomDateParserFormatter
 } from '../controller/layout/controls/date-picker-control/custom-date-parser-formatter';
-import {AbstractControl, FormGroup} from '@angular/forms';
+import {AbstractControl, UntypedFormGroup} from '@angular/forms';
 import {Observable, of, switchMap, withLatestFrom} from 'rxjs';
 import {FormGroupService} from '../data-edit/form-service/form-group.service';
 
@@ -32,7 +32,7 @@ export class DataSearchComponent implements OnInit {
   searchCriteriaTemplate: Template;
   resultTableTemplate: Template;
   resultTableMetaEntity: MetaEntity;
-  searchResultsFormGroup: FormGroup | null;
+  searchResultsFormGroup: UntypedFormGroup | null;
 
   constructor(protected readonly customDateParserFormatter: CustomDateParserFormatter,
               protected readonly route: ActivatedRoute,
@@ -100,7 +100,7 @@ export class DataSearchComponent implements OnInit {
         pageSize: this.pageSize,
       };
 
-      const criteriaForm = ctx.formMap.get('criteria') as FormGroup;
+      const criteriaForm = ctx.formMap.get('criteria') as UntypedFormGroup;
       for (let controlsKey in criteriaForm.controls) {
         const control = criteriaForm.controls[controlsKey];
         if(control.value && control instanceof FormControlWithAttribute) {

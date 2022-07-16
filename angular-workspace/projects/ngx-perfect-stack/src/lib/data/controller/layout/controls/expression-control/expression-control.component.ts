@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
-import {AbstractControl, FormGroup} from '@angular/forms';
+import {AbstractControl, UntypedFormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {ExpressionService} from './expression.service';
 
@@ -71,7 +71,7 @@ export class ExpressionControlComponent implements OnChanges, OnDestroy {
         if(tokens.length == 2) {
           const binding = tokens[0];
           const attributeName = tokens[1];
-          const formGroup = formMap.get(binding) as FormGroup;
+          const formGroup = formMap.get(binding) as UntypedFormGroup;
           if(formGroup) {
             const control = formGroup.controls[attributeName];
             if(control) {

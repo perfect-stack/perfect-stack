@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {IconTool} from '../../../../../domain/meta.page';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {ToolPaletteComponent} from '../../../../../template/tool-palette/tool-palette.component';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
 import {ExpressionService} from '../../../layout/controls/expression-control/expression.service';
@@ -23,7 +23,7 @@ export class IconToolComponent implements OnInit {
   editorMode = false;
 
   @Input()
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 
   iconValue: string;
   stylesValue: string;
