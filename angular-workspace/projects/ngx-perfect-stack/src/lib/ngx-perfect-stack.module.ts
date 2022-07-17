@@ -65,8 +65,15 @@ import { ControllerComponent } from './data/controller/controller.component';
 import {
   CellComponent,
   LayoutComponent,
-  FormLayoutComponent, OneToManyControlComponent, OneToOneControlComponent,
-  TableLayoutComponent, CardLayoutComponent, OneToPolyControlComponent, SpyControlComponent
+  FormLayoutComponent,
+  OneToManyControlComponent,
+  OneToOneControlComponent,
+  TableLayoutComponent,
+  CardLayoutComponent,
+  OneToPolyControlComponent,
+  SpyControlComponent,
+  ButtonTabsToolComponent,
+  ToolViewComponent
 } from './data/controller/layout/layout.component';
 import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
@@ -96,13 +103,12 @@ import { DraggableDirective } from './utils/dragdrop/draggable.directive';
 import { DropzoneDirective } from './utils/dragdrop/dropzone.directive';
 import { ToolPaletteComponent } from './template/tool-palette/tool-palette.component';
 import { ToolDropZoneComponent } from './template/template-controller/tool-drop-zone/tool-drop-zone.component';
-import { ToolViewComponent } from './data/controller/tool/tool-view/tool-view.component';
-import {ButtonToolComponent} from './data/controller/tool/tool-view/button-tool/button-tool.component';
-import {ImageToolComponent} from './data/controller/tool/tool-view/image-tool/image-tool.component';
+import {ButtonToolComponent} from './data/controller/layout/tool-view/button-tool/button-tool.component';
+import {ImageToolComponent} from './data/controller/layout/tool-view/image-tool/image-tool.component';
 import { PropertySheetComponent } from './template/property-sheet/property-sheet.component';
 import { VeniceLayoutStyleComponent } from './data/data-edit/venice-layout-style/venice-layout-style.component';
-import { TextToolComponent } from './data/controller/tool/tool-view/text-tool/text-tool.component';
-import { IconToolComponent } from './data/controller/tool/tool-view/icon-tool/icon-tool.component';
+import { TextToolComponent } from './data/controller/layout/tool-view/text-tool/text-tool.component';
+import { IconToolComponent } from './data/controller/layout/tool-view/icon-tool/icon-tool.component';
 import { DateTimeControlComponent } from './data/controller/layout/controls/date-time-control/date-time-control.component';
 import { TimeControlComponent } from './data/controller/layout/controls/time-control/time-control.component';
 import { TileButtonPanelComponent } from './utils/tile-button-panel/tile-button-panel.component';
@@ -110,11 +116,10 @@ import { BooleanCheckBoxControlComponent } from './data/controller/layout/contro
 import { DecimalNumberDirective } from './utils/decimal-number.directive';
 import { SelectTestPageComponent } from './select-test-page/select-test-page.component';
 import { BadgeListComponent } from './data/controller/layout/controls/badge-list/badge-list.component';
-import { ButtonGroupToolComponent } from './data/controller/tool/tool-view/button-group-tool/button-group-tool.component';
-import { ButtonTabsToolComponent } from './data/controller/tool/tool-view/button-tabs-tool/button-tabs-tool.component';
+import { ButtonGroupToolComponent } from './data/controller/layout/tool-view/button-group-tool/button-group-tool.component';
 import { MapTestPageComponent } from './map-test-page/map-test-page.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
-import { MapToolComponent } from './data/controller/tool/tool-view/map-tool/map-tool.component';
+import { MapToolComponent } from './data/controller/layout/tool-view/map-tool/map-tool.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -278,3 +283,4 @@ const routes: Routes = [
   ]
 })
 export class NgxPerfectStackModule {}
+

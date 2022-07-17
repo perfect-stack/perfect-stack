@@ -77,8 +77,9 @@ export class MapToolComponent implements OnInit {
   }
 
   onMapClick(event: LeafletMouseEvent) {
+    const editMode = this.ctx.mode === 'edit';
     const metaKeyPressed = event.originalEvent.metaKey;
-    if(metaKeyPressed) {
+    if(editMode && metaKeyPressed) {
       console.log(`Map Click at: ${event.latlng}`);
       const nztm = this.mapService.toNZTM(event.latlng);
       console.log(`Converted to; ${nztm.easting}, ${nztm.northing}`);
