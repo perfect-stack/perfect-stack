@@ -1,4 +1,4 @@
 #!/bin/bash
-npm run build ngx-perfect-stack
+npm run build
 cd dist/ngx-perfect-stack
 npm publish
