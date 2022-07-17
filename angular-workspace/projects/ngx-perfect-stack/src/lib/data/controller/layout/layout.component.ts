@@ -1,7 +1,7 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {Cell, MetaPage, Template, TemplateLocationType, TemplateType} from '../../../domain/meta.page';
-import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
-import {Observable, of, switchMap} from 'rxjs';
+import {ControlValueAccessor, NgControl, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
+import {Observable, of, Subscription, switchMap} from 'rxjs';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 import {
@@ -9,7 +9,7 @@ import {
   FormContext,
   FormService
 } from '../../data-edit/form-service/form.service';
-import {AttributeType, MetaEntity} from '../../../domain/meta.entity';
+import {AttributeType, MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CardItemDialogComponent} from './controls/card-item-dialog/card-item-dialog.component';
 import {DataService} from '../../data-service/data.service';
@@ -19,7 +19,7 @@ import {FormGroupService} from '../../data-edit/form-service/form-group.service'
 
 
 // This file contains many Components because they have a circular dependency on the top-level component of
-// LayoutComponent. When Angular builds this as a library it doesn't allow this sort of circular dependency to
+// LayoutComponent "lib-layout". When Angular builds this as a library it doesn't allow this sort of circular dependency to
 // exist in separate files, but is ok if all the components are in a single file. It also allows this situation if
 // you are building as an application (but not a library). See the following Angular error for what this coding structure
 // is solving. NG3003: One or more import cycles would need to be created to compile this component
@@ -680,6 +680,102 @@ export class OneToOneControlComponent implements OnInit {
         template.metaEntityName = attribute.relationshipTarget;
         cell.template = template;
       }
+    }
+  }
+}
+
+@Component({
+  selector: 'lib-spy-control',
+  templateUrl: './controls/spy-control/spy-control.component.html',
+  styleUrls: ['./controls/spy-control/spy-control.component.css']
+})
+export class SpyControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
+
+  @Input()
+  mode: string;
+
+  @Input()
+  formGroup: UntypedFormGroup;
+
+  @Input()
+  cell: CellAttribute;
+
+  @Input()
+  attribute: MetaAttribute;
+
+  disabled = false;
+  spyTemplate: string;
+
+  targetValue: any;
+
+  spyCtx$: Observable<FormContext>;
+
+  formGroupSubscription: Subscription;
+
+  constructor(protected readonly formService: FormService,
+              public ngControl: NgControl) {
+    ngControl.valueAccessor = this;
+  }
+
+  ngOnInit(): void {
+    if(this.cell && this.cell.component) {
+      this.spyTemplate = (this.cell as any).spyTemplate;
+    }
+
+    if(this.formGroup && this.attribute) {
+      this.formGroupSubscription = this.formGroup.controls[this.attribute.name + '_id'].valueChanges.subscribe((nextValue) => {
+        console.log(`Spy detects update in target attribute ${this.attribute.relationshipTarget}`, nextValue);
+        this.targetValue = nextValue;
+
+        const metaName = this.attribute.relationshipTarget;
+        const mode = 'view';
+        const entityId = nextValue;
+
+        this.spyCtx$ = this.formService.loadFormContext(metaName, mode, entityId, null, null);
+      });
+    }
+  }
+
+  getSpyTemplate(metaPageMap: Map<string, MetaPage>) {
+    const metaPage = metaPageMap.get(this.spyTemplate);
+    if(metaPage) {
+      return metaPage.templates[0];
+    }
+    else {
+      throw new Error(`Unable to find spy template for: ${this.spyTemplate}`);
+    }
+  }
+
+  set value(val: string){
+
+    // spy control doesn't update anything, it only watches the field it's bound to
+
+    // this.selectedEntityId = val
+    // this.onChange(val)
+  }
+
+  onChange: any = () => {}
+  onTouch: any = () => {}
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouch = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  writeValue(obj: any): void {
+    this.value = obj;
+  }
+
+  ngOnDestroy(): void {
+    if(this.formGroupSubscription) {
+      this.formGroupSubscription.unsubscribe();
     }
   }
 }

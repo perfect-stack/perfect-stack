@@ -66,7 +66,7 @@ import {
   CellComponent,
   LayoutComponent,
   FormLayoutComponent, OneToManyControlComponent, OneToOneControlComponent,
-  TableLayoutComponent, CardLayoutComponent, OneToPolyControlComponent
+  TableLayoutComponent, CardLayoutComponent, OneToPolyControlComponent, SpyControlComponent
 } from './data/controller/layout/layout.component';
 import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
@@ -112,7 +112,6 @@ import { SelectTestPageComponent } from './select-test-page/select-test-page.com
 import { BadgeListComponent } from './data/controller/layout/controls/badge-list/badge-list.component';
 import { ButtonGroupToolComponent } from './data/controller/tool/tool-view/button-group-tool/button-group-tool.component';
 import { ButtonTabsToolComponent } from './data/controller/tool/tool-view/button-tabs-tool/button-tabs-tool.component';
-import { SpyControlComponent } from './data/controller/layout/controls/spy-control/spy-control.component';
 import { MapTestPageComponent } from './map-test-page/map-test-page.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import { MapToolComponent } from './data/controller/tool/tool-view/map-tool/map-tool.component';
