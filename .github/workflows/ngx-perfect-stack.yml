@@ -24,7 +24,7 @@ jobs:
         run: git pull
       - name: npm ci
         working-directory: ./angular-workspace
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       - name: npm run build
         working-directory: ./angular-workspace
         run: npm run build
