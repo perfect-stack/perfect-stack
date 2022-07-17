@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build ngx-perfect-stack",
     "watch": "ng build --watch",
     "publish:github": "./npm-publish-github.sh",
     "test": "ng test"
