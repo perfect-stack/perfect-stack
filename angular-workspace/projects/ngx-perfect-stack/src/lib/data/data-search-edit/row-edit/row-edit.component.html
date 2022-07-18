@@ -1,9 +1,9 @@
-<td>
-  <lib-text-field-control [mode]="'edit'" [name]="'name'" [formGroup]="formGroup" ></lib-text-field-control>
+<td [formGroup]="formGroup">
+  <lib-text-field-control [mode]="'edit'" [cell]="getCellFor('name')" [formControlName]="'name'" ></lib-text-field-control>
 </td>
 
-<td>
-  <lib-text-field-control [mode]="'edit'" [name]="'description'" [formGroup]="formGroup" ></lib-text-field-control>
+<td [formGroup]="formGroup">
+  <lib-text-field-control [mode]="'edit'" [cell]="getCellFor('description')" [formControlName]="'description'"></lib-text-field-control>
 </td>
 
 <td>

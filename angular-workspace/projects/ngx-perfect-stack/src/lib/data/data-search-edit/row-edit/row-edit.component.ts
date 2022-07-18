@@ -4,6 +4,7 @@ import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {DataSearchActionEvent} from '../data-search-action-event';
 import {DataService} from '../../data-service/data.service';
 import {FormControlWithAttribute} from '../../data-edit/form-service/form.service';
+import {CellAttribute} from '../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
   selector: '[app-row-edit]',  // NOTE: using [] syntax here so cells are nested inside "tr" correctly
@@ -31,6 +32,8 @@ export class RowEditComponent implements OnInit {
     sort_index: new FormControlWithAttribute(''),
   });
 
+  cellMap = new Map<string, CellAttribute>();
+
   constructor(protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
@@ -39,11 +42,20 @@ export class RowEditComponent implements OnInit {
     this.metaEntity.attributes.forEach((attribute) => {
       const formControlWithAttribute = this.formGroup.get(attribute.name) as FormControlWithAttribute;
       formControlWithAttribute.attribute = attribute;
+
+      // while we're looping let's create the CellAttribute's we need too
+      this.cellMap.set(attribute.name, this.createCell(attribute.name));
     });
   }
 
   findAttribute(name: string): MetaAttribute {
     return this.metaEntity.attributes.find(x => x.name === name) || new MetaAttribute();
+  }
+
+  createCell(name: string): CellAttribute {
+    const cell = new CellAttribute();
+    cell.attribute = this.findAttribute(name);
+    return cell;
   }
 
   onCancel() {
@@ -63,5 +75,15 @@ export class RowEditComponent implements OnInit {
         action: 'save'
       });
     });
+  }
+
+  getCellFor(name: string): CellAttribute {
+    const cell = this.cellMap.get(name);
+    if(cell) {
+      return cell;
+    }
+    else {
+      throw new Error(`Unable to find CellAttribute for ${name}`);
+    }
   }
 }

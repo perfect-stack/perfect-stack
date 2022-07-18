@@ -13,8 +13,8 @@ export class TextFieldControlComponent implements OnInit, ControlValueAccessor {
   @Input()
   mode: string;
 
-  @Input()
-  name: string;
+  // @Input()
+  // name: string;
 
   // @Input()
   // formGroup: FormGroup;
@@ -35,6 +35,10 @@ export class TextFieldControlComponent implements OnInit, ControlValueAccessor {
 
   isReadOnly() {
     return this.mode === 'view' ? true : false;
+  }
+
+  get name() {
+    return this.cell.attribute?.name;
   }
 
   get inputType() {
