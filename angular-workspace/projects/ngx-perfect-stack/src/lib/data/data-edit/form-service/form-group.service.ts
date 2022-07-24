@@ -53,7 +53,8 @@ export class FormGroupService {
             const controlName = (nextAttribute.name + '_id').toLowerCase();
             //const formControl = new FormControl('');
             // Important: need to make sure initial state is null, otherwise server attempts to create a relationship to an entity with a '' id.
-            const formControl = new UntypedFormControl(null);
+            const formControl = new FormControlWithAttribute(null);
+            formControl.attribute = nextAttribute;
             if(nextAttribute.visibility === VisibilityType.Required) {
               formControl.addValidators(Validators.required)
             }

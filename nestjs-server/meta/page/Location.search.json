@@ -11,6 +11,12 @@
             "width": "4",
             "height": "1",
             "attributeName": "location_name"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "location_type",
+            "component": "Select"
           }
         ]
       ],
@@ -39,6 +45,11 @@
             "width": "1",
             "height": "1",
             "attributeName": "altitude"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "location_type"
           }
         ],
         [

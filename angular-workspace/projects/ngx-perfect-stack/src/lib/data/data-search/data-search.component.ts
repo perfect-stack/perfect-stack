@@ -125,10 +125,9 @@ export class DataSearchComponent implements OnInit {
     criteria.attributeType = attribute.type;
     criteria.operator = attribute.comparisonOperator;
 
-    const byId = attribute.type === AttributeType.ManyToOne;
-    if(byId) {
+    if(attribute.type === AttributeType.ManyToOne) {
       criteria.name = attribute.name + '_id';
-      criteria.value = control.value['id'];
+      criteria.value = control.value;
     }
     else if(attribute.comparisonField) {
       criteria.name = attribute.comparisonField;
