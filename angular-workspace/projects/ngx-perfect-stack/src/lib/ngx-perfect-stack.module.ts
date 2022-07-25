@@ -120,6 +120,7 @@ import { ButtonGroupToolComponent } from './data/controller/layout/tool-view/but
 import { MapTestPageComponent } from './map-test-page/map-test-page.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import { MapToolComponent } from './data/controller/layout/tool-view/map-tool/map-tool.component';
+import { LinkToolComponent } from './data/controller/layout/tool-view/link-tool/link-tool.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -235,6 +236,7 @@ const routes: Routes = [
     SpyControlComponent,
     MapTestPageComponent,
     MapToolComponent,
+    LinkToolComponent,
   ],
   providers: [
     AuthenticationService,

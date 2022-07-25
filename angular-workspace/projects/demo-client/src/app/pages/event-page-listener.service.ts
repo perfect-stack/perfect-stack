@@ -22,6 +22,9 @@ export class EventPageListenerService implements PageListener {
   }
 
   onAction(ctx: FormContext, action: string): void {
+    if(action === 'CreateLocation') {
+      console.log(`Custom page hook ready to: ${action}`);
+    }
   }
 
   onManyToOneItemSelected(formGroup: UntypedFormGroup, attribute: MetaAttribute, itemSelected: any): void {

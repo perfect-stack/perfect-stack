@@ -4,7 +4,7 @@ import {
   ButtonTabsTool,
   ButtonTool,
   IconTool,
-  ImageTool, MapTool,
+  ImageTool, LinkTool, MapTool,
   TextTool,
   ToolType
 } from '../../domain/meta.page';
@@ -55,6 +55,16 @@ export class ToolPaletteComponent implements OnInit {
     styles: '',
     label: '',
     imageUrl: '/assets/images/image.png'
+  }
+
+  static readonly linkPrototype: LinkTool = {
+    type: ToolType.Link,
+    containerStyles: '',
+    styles: '',
+    label: '',
+    action: '',
+    route: '/route/go/here',
+    text: 'Text'
   }
 
   static readonly mapPrototype: MapTool = {

@@ -94,6 +94,15 @@ export const ImagePropertyList = [
   { name: 'imageUrl', type: PropertyType.string},
 ];
 
+export const LinkPropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
+  { name: 'action', type: PropertyType.string},
+  { name: 'route', type: PropertyType.route},
+  { name: 'text', type: PropertyType.string},
+];
+
 export const MapPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
@@ -150,6 +159,7 @@ export const PropertyListMap: PropertyListMapType = {
   'ButtonTabs': ButtonTabsPropertyList,
   'Icon': IconPropertyList,
   'Image': ImagePropertyList,
+  'Link': LinkPropertyList,
   'Map': MapPropertyList,
   'TextTool': TextToolPropertyList,
   'Template': TemplatePropertyList,

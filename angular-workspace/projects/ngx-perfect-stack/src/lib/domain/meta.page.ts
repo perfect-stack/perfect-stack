@@ -49,6 +49,7 @@ export enum ToolType {
   ButtonTabs = 'ButtonTabs',
   Icon = 'Icon',
   Image = 'Image',
+  Link = 'Link',
   Map = 'Map',
   Select = 'Select',
   TextTool = 'TextTool'
@@ -88,6 +89,12 @@ export class ButtonTabsTool extends Tool {
 
 export class ImageTool extends Tool {
   imageUrl: string;
+}
+
+export class LinkTool extends Tool {
+  action: string;
+  route: string;
+  text: string;  // This does not support full html, just put <a>markers around the link text</a>
 }
 
 export class MapTool extends Tool {

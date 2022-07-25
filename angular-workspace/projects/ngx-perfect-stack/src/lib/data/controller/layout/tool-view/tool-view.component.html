@@ -17,6 +17,10 @@
         <lib-image-tool [imageTool]="asImageTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-image-tool>
       </ng-container>
 
+      <ng-container *ngSwitchCase="'Link'">
+        <lib-link-tool [linkTool]="asLinkTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-link-tool>
+      </ng-container>
+
       <ng-container *ngSwitchCase="'Map'">
         <lib-map-tool [mapTool]="asMapTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-map-tool>
       </ng-container>
