@@ -99,6 +99,18 @@
           {
             "discriminatorValue": "Weight",
             "metaEntityName": "WeightActivity"
+          },
+          {
+            "discriminatorValue": "Banding",
+            "metaEntityName": "BandingActivity"
+          },
+          {
+            "discriminatorValue": "Microchip",
+            "metaEntityName": "MicrochipActivity"
+          },
+          {
+            "discriminatorValue": "Wing tag",
+            "metaEntityName": "WingTagActivity"
           }
         ]
       }

@@ -1,20 +1,20 @@
 {
-  "name": "WeightActivity.view_edit",
-  "title": "Weight",
+  "name": "WingTagActivity.view_edit",
+  "title": "Wing tag",
   "type": "view_edit",
-  "layoutStyle": "",
+  "layoutStyle": "Paris",
   "templates": [
     {
       "cells": [
         [
           {
-            "width": "4",
+            "width": "6",
             "height": "1",
-            "attributeName": "weight"
+            "attributeName": "wing_tag"
           }
         ]
       ],
-      "metaEntityName": "WeightActivity",
+      "metaEntityName": "WingTagActivity",
       "type": "form"
     }
   ],

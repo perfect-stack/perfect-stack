@@ -36,11 +36,6 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "band"
-          },
-          {
-            "width": "3",
-            "height": "1",
             "attributeName": "age_class"
           }
         ],
@@ -55,7 +50,40 @@
             "height": "1",
             "attributeName": "father"
           }
-        ],
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "form",
+      "templateHeading": "Kiwi details",
+      "binding": "bird"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "band"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "wing_tag"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "microchip"
+          }
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "form",
+      "templateHeading": "Latest markings",
+      "binding": "bird"
+    },
+    {
+      "cells": [
         [
           {
             "width": "3",
@@ -77,7 +105,15 @@
             "height": "1",
             "attributeName": "demise_date"
           }
-        ],
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "form",
+      "templateHeading": "Key dates",
+      "binding": "bird"
+    },
+    {
+      "cells": [
         [
           {
             "width": "12",
@@ -89,7 +125,7 @@
       ],
       "metaEntityName": "Bird",
       "type": "form",
-      "templateHeading": "Kiwi details",
+      "templateHeading": "Comments",
       "binding": "bird"
     }
   ],

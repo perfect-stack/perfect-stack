@@ -333,6 +333,24 @@ export class CardLayoutComponent implements OnInit {
       metaEntityName: 'WeightActivity',
       metaPageName: 'WeightActivity.view_edit'
     });
+
+    this.cardItemMap.set('Banding', {
+      discriminatorValue: 'Banding',
+      metaEntityName: 'BandingActivity',
+      metaPageName: 'BandingActivity.view_edit'
+    });
+
+    this.cardItemMap.set('Microchip', {
+      discriminatorValue: 'Microchip',
+      metaEntityName: 'MicrochipActivity',
+      metaPageName: 'MicrochipActivity.view_edit'
+    });
+
+    this.cardItemMap.set('Wing tag', {
+      discriminatorValue: 'Wing tag',
+      metaEntityName: 'WingTagActivity',
+      metaPageName: 'WingTagActivity.view_edit'
+    });
   }
 
   get attributes() {
