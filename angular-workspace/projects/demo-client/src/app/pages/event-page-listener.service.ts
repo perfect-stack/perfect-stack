@@ -4,7 +4,9 @@ import {FormContext} from '../../../../ngx-perfect-stack/src/lib/data/data-edit/
 import {ParamMap, Router} from '@angular/router';
 import {MetaAttribute} from '../../../../ngx-perfect-stack/src/lib/domain/meta.entity';
 import {DataService} from '../../../../ngx-perfect-stack/src/lib/data/data-service/data.service';
-import {UntypedFormGroup} from '@angular/forms';
+import {FormGroup, UntypedFormGroup} from '@angular/forms';
+import {AddLocationDialogComponent} from './add-location-dialog/add-location-dialog.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,7 @@ import {UntypedFormGroup} from '@angular/forms';
 export class EventPageListenerService implements PageListener {
 
   constructor(protected readonly dataService: DataService,
+              private modalService: NgbModal,
               protected readonly router: Router) {
   }
 
@@ -22,6 +25,22 @@ export class EventPageListenerService implements PageListener {
   }
 
   onAction(ctx: FormContext, action: string): void {
+    if(action === 'CreateLocation') {
+      console.log(`Custom page hook ready to: ${action}`);
+      this.createLocation(ctx);
+    }
+  }
+
+  createLocation(ctx: FormContext) {
+    const modalRef = this.modalService.open(AddLocationDialogComponent, {size: 'xl'}).closed.subscribe((locationId) => {
+      console.log(`EventPageListenerService: created location with locationId = ${locationId}`);
+      if(locationId) {
+        const locationForm = ctx.formMap.get('event');
+        if(locationForm) {
+          this.loadLocation(locationId, locationForm as FormGroup);
+        }
+      }
+    });
   }
 
   onManyToOneItemSelected(formGroup: UntypedFormGroup, attribute: MetaAttribute, itemSelected: any): void {

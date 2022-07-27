@@ -1,0 +1,14 @@
+<ng-container *ngIf="ctx$ | async as ctx">
+  <div class="modal-header">
+    <h4 class="modal-title text-uppercase">Create location</h4>
+  </div>
+  <div class="modal-body" id="AddLocationDialog">
+      <ng-container *ngFor="let template of ctx.metaPage.templates; index as i">
+        <lib-layout [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-layout>
+      </ng-container>
+  </div>
+  <div class="modal-footer d-flex justify-content-between">
+    <button class="btn btn-outline-primary" (click)="onCancel()">Cancel</button>
+    <button class="btn btn-primary" (click)="onSave(ctx)" [disabled]="isSaveDisabled(ctx)">Save</button>
+  </div>
+</ng-container>

@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@an
 import {
   ButtonGroupTool,
   ButtonTabsTool, ButtonTool,
-  Cell, IconTool, ImageTool, MapTool,
+  Cell, IconTool, ImageTool, LinkTool, MapTool,
   MetaPage,
   Template,
   TemplateLocationType,
@@ -831,6 +831,10 @@ export class ToolViewComponent implements OnInit {
     return this.tool as ImageTool;
   }
 
+  asLinkTool() {
+    return this.tool as LinkTool;
+  }
+
   asMapTool() {
     return this.tool as MapTool;
   }
@@ -843,6 +847,16 @@ export class ToolViewComponent implements OnInit {
     return this.tool as IconTool;
   }
 
+  isToolVisible() {
+    const modes = this.tool.modes;
+    if(modes) {
+      return modes.indexOf(this.ctx.mode) >= 0;
+    }
+    else {
+      // If no list of modes is defined then the tool is always visible
+      return true;
+    }
+  }
 }
 
 @Component({

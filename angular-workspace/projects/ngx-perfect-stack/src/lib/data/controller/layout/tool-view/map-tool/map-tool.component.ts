@@ -23,7 +23,7 @@ export class MapToolComponent implements OnInit {
   editorMode = false;
 
   @Input()
-  height = '500px';
+  height = '300px';
 
   @Input()
   zoom = 10;

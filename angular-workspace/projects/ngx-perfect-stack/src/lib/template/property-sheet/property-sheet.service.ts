@@ -61,6 +61,7 @@ export const ButtonPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
   { name: 'action', type: PropertyType.string},
   { name: 'route', type: PropertyType.route},
 ];
@@ -69,6 +70,7 @@ export const ButtonGroupPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
   { name: 'action', type: PropertyType.string},
   { name: 'route', type: PropertyType.route},
 ];
@@ -77,6 +79,7 @@ export const ButtonTabsPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
   { name: 'templateIndex', type: PropertyType.number},
   { name: 'template1', type: PropertyType.metaPage},
   { name: 'template2', type: PropertyType.metaPage},
@@ -91,13 +94,25 @@ export const ImagePropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
   { name: 'imageUrl', type: PropertyType.string},
+];
+
+export const LinkPropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
+  { name: 'action', type: PropertyType.string},
+  { name: 'route', type: PropertyType.route},
+  { name: 'text', type: PropertyType.string},
 ];
 
 export const MapPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
   { name: 'easting', type: PropertyType.string},
   { name: 'northing', type: PropertyType.string},
 ];
@@ -106,6 +121,7 @@ export const TextToolPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
   { name: 'text', type: PropertyType.string},
 ];
 
@@ -113,6 +129,7 @@ export const IconPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
   { name: 'iconName', type: PropertyType.string},
 ];
 
@@ -150,6 +167,7 @@ export const PropertyListMap: PropertyListMapType = {
   'ButtonTabs': ButtonTabsPropertyList,
   'Icon': IconPropertyList,
   'Image': ImagePropertyList,
+  'Link': LinkPropertyList,
   'Map': MapPropertyList,
   'TextTool': TextToolPropertyList,
   'Template': TemplatePropertyList,

@@ -49,6 +49,7 @@ export enum ToolType {
   ButtonTabs = 'ButtonTabs',
   Icon = 'Icon',
   Image = 'Image',
+  Link = 'Link',
   Map = 'Map',
   Select = 'Select',
   TextTool = 'TextTool'
@@ -59,6 +60,7 @@ export class Tool {
   containerStyles: string;
   styles: string;
   label: string;
+  modes: string; // comma separated list of modes for when this Tool will be made visible. If blank, then it's always visible.
 
   static isTool(something: any) {
     return something.type && Object.values(ToolType).indexOf(something.type) >= 0;
@@ -88,6 +90,12 @@ export class ButtonTabsTool extends Tool {
 
 export class ImageTool extends Tool {
   imageUrl: string;
+}
+
+export class LinkTool extends Tool {
+  action: string;
+  route: string;
+  text: string;  // This does not support full html, just put <a>markers around the link text</a>
 }
 
 export class MapTool extends Tool {
