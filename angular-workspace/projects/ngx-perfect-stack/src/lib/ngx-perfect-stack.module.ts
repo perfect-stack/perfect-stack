@@ -282,6 +282,7 @@ const routes: Routes = [
     NgxPerfectStackComponent,
     ToastsComponent,
     TileButtonPanelComponent,
+    LayoutComponent,
   ]
 })
 export class NgxPerfectStackModule {}

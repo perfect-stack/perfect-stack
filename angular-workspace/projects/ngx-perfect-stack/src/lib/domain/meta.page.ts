@@ -60,6 +60,7 @@ export class Tool {
   containerStyles: string;
   styles: string;
   label: string;
+  modes: string; // comma separated list of modes for when this Tool will be made visible. If blank, then it's always visible.
 
   static isTool(something: any) {
     return something.type && Object.values(ToolType).indexOf(something.type) >= 0;

@@ -1,4 +1,4 @@
-<ng-container *ngIf="tool">
+<ng-container *ngIf="tool && isToolVisible()">
   <div [ngClass]="tool.containerStyles">
     <ng-container [ngSwitch]="tool.type">
       <ng-container *ngSwitchCase="'Button'">

@@ -847,6 +847,16 @@ export class ToolViewComponent implements OnInit {
     return this.tool as IconTool;
   }
 
+  isToolVisible() {
+    const modes = this.tool.modes;
+    if(modes) {
+      return modes.indexOf(this.ctx.mode) >= 0;
+    }
+    else {
+      // If no list of modes is defined then the tool is always visible
+      return true;
+    }
+  }
 }
 
 @Component({

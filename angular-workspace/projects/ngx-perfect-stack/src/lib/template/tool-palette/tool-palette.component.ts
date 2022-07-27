@@ -21,6 +21,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: 'btn btn-primary',
     label: 'Button',
+    modes: '',
     action: '',
     route: '/route/go/here'
   };
@@ -30,6 +31,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: 'btn btn-primary',
     label: 'Button1,Button2',
+    modes: '',
     action: 'action1,action2',
     route: '/route/go/here1,/route/go/here2'
   };
@@ -39,6 +41,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: 'btn btn-secondary',
     label: '',
+    modes: '',
     templateIndex: 0,
     template1: '',
     template2: '',
@@ -54,6 +57,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: '',
     label: '',
+    modes: '',
     imageUrl: '/assets/images/image.png'
   }
 
@@ -62,6 +66,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: '',
     label: '',
+    modes: '',
     action: '',
     route: '/route/go/here',
     text: 'Text'
@@ -72,6 +77,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: '',
     label: '',
+    modes: '',
     easting: 'easting',
     northing: 'northing'
   }
@@ -81,6 +87,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: '',
     label: '',
+    modes: '',
     text: 'Text'
   }
 
@@ -89,6 +96,7 @@ export class ToolPaletteComponent implements OnInit {
     containerStyles: '',
     styles: '',
     label: '',
+    modes: '',
     iconName: 'icon_name'
   }
 

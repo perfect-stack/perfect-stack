@@ -24,7 +24,8 @@
               "label": "",
               "action": "CreateLocation",
               "route": "/route/go/here",
-              "text": "Not seeing a saved location? <a>Create new saved location</a>"
+              "text": "Not seeing a saved location? <a>Create new saved location</a>",
+              "modes": "edit"
             }
           }
         ],
