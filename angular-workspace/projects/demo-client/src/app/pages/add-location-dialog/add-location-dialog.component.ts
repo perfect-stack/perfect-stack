@@ -24,10 +24,11 @@ export class AddLocationDialogComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal,
               protected readonly dataService: DataService,
-              protected readonly formService: FormService) { }
+              protected readonly formService: FormService) {
+    this.ctx$ = this.formService.loadFormContext('Location', 'edit', null, null, null);
+  }
 
   ngOnInit(): void {
-    this.ctx$ = this.formService.loadFormContext('Location', 'edit', null, null, null);
   }
 
   onCancel() {
