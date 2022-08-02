@@ -6,10 +6,11 @@ import { MetaEntityModule } from '../meta/meta-entity/meta-entity.module';
 import { AuditModule } from '../audit/audit.module';
 import { QueryService } from './query.service';
 import { CustomQueryService } from './custom-query.service';
+import { RuleModule } from './rule/rule.module';
 
 @Module({
   controllers: [DataController],
-  imports: [AuditModule, MetaEntityModule, OrmModule],
+  imports: [AuditModule, MetaEntityModule, OrmModule, RuleModule],
   providers: [DataService, CustomQueryService, QueryService],
   exports: [DataService, CustomQueryService, QueryService],
 })

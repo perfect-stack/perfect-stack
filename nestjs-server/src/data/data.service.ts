@@ -15,6 +15,8 @@ import * as uuid from 'uuid';
 import { UpdateSortIndexRequest } from './update-sort-index.request';
 import { AuditAction } from '../domain/audit';
 import { QueryService } from './query.service';
+import { RuleService } from './rule/rule.service';
+import { ValidationResultMapController } from '../domain/meta.rule';
 
 @Injectable()
 export class DataService {
@@ -24,6 +26,7 @@ export class DataService {
     protected readonly metaEntityService: MetaEntityService,
     protected readonly ormService: OrmService,
     protected readonly queryService: QueryService,
+    protected readonly ruleService: RuleService,
   ) {}
 
   validateUuid(value: string) {
@@ -37,9 +40,8 @@ export class DataService {
   async save(entityName: string, entity: Entity): Promise<EntityResponse> {
     try {
       console.log(`save(${entityName}) ${JSON.stringify(entity)}`);
-
       const result = await this.ormService.sequelize.transaction(async () => {
-        return this.saveInternal(entityName, entity);
+        return this.saveInTransaction(entityName, entity);
       });
 
       return result;
@@ -49,14 +51,49 @@ export class DataService {
     }
   }
 
-  private async saveInternal(entityName: string, entity: Entity) {
+  private async saveInTransaction(entityName: string, entity: Entity) {
     const metaEntityList = await this.metaEntityService.findAll();
     const metaEntityMap = new Map<string, MetaEntity>();
     for (const nextMetaEntity of metaEntityList) {
       metaEntityMap.set(nextMetaEntity.name, nextMetaEntity);
     }
 
-    const model = this.ormService.sequelize.model(entityName);
+    const metaEntity = metaEntityMap.get(entityName);
+    if (!metaEntity) {
+      throw new Error(`Unable to find MetaEntity ${entityName}`);
+    }
+
+    const validationResultMapController = new ValidationResultMapController(
+      await this.ruleService.validate(entity, metaEntity),
+    );
+
+    if (!validationResultMapController.hasErrors()) {
+      const { action, entityModel } = await this.saveValidatedEntity(
+        entity,
+        metaEntity,
+        metaEntityMap,
+      );
+
+      return {
+        action: action,
+        entity: entityModel,
+        validationResults: validationResultMapController.validationResultMap,
+      };
+    } else {
+      return {
+        action: 'none',
+        entity: entity,
+        validationResults: validationResultMapController.validationResultMap,
+      };
+    }
+  }
+
+  private async saveValidatedEntity(
+    entity: Entity,
+    metaEntity: MetaEntity,
+    metaEntityMap: Map<string, MetaEntity>,
+  ) {
+    const model = this.ormService.sequelize.model(metaEntity.name);
 
     // entity may arrive with or without an id, and may exist or not exist in the database
     let entityModel;
@@ -79,21 +116,13 @@ export class DataService {
       await entityModel.save();
     }
 
-    const metaEntity = metaEntityMap.get(entityName);
-    if (!metaEntity) {
-      throw new Error(`Unable to find MetaEntity ${entityName}`);
-    }
-
     // recursively save all the children (excluding the Poly ones)
     await this.saveTheChildren(metaEntityMap, metaEntity, entity, entityModel);
 
     // recursively save all Poly relationships
     await this.saveAllPolys(metaEntityMap, metaEntity, entity);
 
-    return {
-      action: action,
-      entity: entityModel,
-    };
+    return { action, entityModel };
   }
 
   private async saveTheChildren(
@@ -188,7 +217,11 @@ export class DataService {
           const childFk = parentMetaEntity.name.toLowerCase() + '_id';
           childEntity[childFk] = parentEntity.id;
           const childEntityName = childEntityMapping.metaEntityName;
-          await this.saveInternal(childEntityName, childEntity);
+          await this.saveValidatedEntity(
+            childEntity,
+            metaEntityMap.get(childEntityName),
+            metaEntityMap,
+          );
         } else {
           throw new Error(
             `Unable to find entity mapping for discriminator value ${discriminatorValue} in entity mapping of ${JSON.stringify(
