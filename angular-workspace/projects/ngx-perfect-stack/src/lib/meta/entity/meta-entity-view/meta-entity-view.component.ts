@@ -52,4 +52,9 @@ export class MetaEntityViewComponent implements OnInit {
       });
     }
   }
+
+  attributeHasRuleData(attribute: MetaAttribute) {
+    return attribute.rules && attribute.rules.length > 0;
+  }
+
 }

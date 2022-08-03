@@ -16,7 +16,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "name",
@@ -29,7 +30,8 @@
       "comparisonField": "",
       "comparisonOperator": "StartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "location_type",
@@ -44,7 +46,8 @@
       "relationshipTarget": "LocationType",
       "typeaheadSearch": [
         "name"
-      ]
+      ],
+      "rules": []
     },
     {
       "name": "description",
@@ -57,7 +60,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "easting",
@@ -70,7 +74,17 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Range",
+          "config": "1090000,2090000"
+        },
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "northing",
@@ -83,7 +97,17 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        },
+        {
+          "type": "Range",
+          "config": "4748000,6192000"
+        }
+      ]
     },
     {
       "name": "location_name",
@@ -96,7 +120,8 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "altitude",
@@ -109,7 +134,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

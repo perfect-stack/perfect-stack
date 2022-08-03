@@ -11,23 +11,36 @@ export enum RuleType {
 
 export class RuleData {
   type: RuleType;
-  customValidatorName: string; // name of the custom validator if type = 'Custom'
-  config: any;
+  // Range: "minValue,maxValue" where each value can be a number, or a DateRuleName
+  // Custom: "nameOfCustomValidator"
+  // Pattern: "regex pattern"
+  config: string;
 }
 
-export class RuleValidator {
-  metaEntity: MetaEntity;
-  metaAttribute: MetaAttribute;
-  ruleData: RuleData;
+export type DateRuleName = '$yesterday' | '$today' | '$now' | '$tomorrow';
 
-  async validate(entity: any, attribute: MetaAttribute): Promise<ValidationResult | null>;
+export class RangeRuleConfig {
+  minValue: number | DateRuleName | null;
+  maxValue: number | DateRuleName | null;
 }
 
+export abstract class RuleValidator {
+  constructor(
+    public metaEntity: MetaEntity,
+    public metaAttribute: MetaAttribute,
+    public ruleData: RuleData,
+  ) {}
+
+  abstract validate(
+    entity: any,
+    attribute: MetaAttribute,
+  ): Promise<ValidationResult | null>;
+}
 
 export enum ResultType {
   Info = 'Info',
   Warning = 'Warning',
-  Error = 'Error'
+  Error = 'Error',
 }
 
 export class ValidationResult {
@@ -36,18 +49,30 @@ export class ValidationResult {
   message: string;
 }
 
-
 // client setup, sweep though MetaEntity but only do the ones the run on the client
 // server setup, for a MetaEntity create and execute all validation rules
 
-
 export class ValidationResultMap {
-  [string: any]: ValidationResult;
+  [key: string]: ValidationResult;
 }
 
-export class MetaEntityRuleValidator {
-  async validate(entity): Promise<ValidationResultMap>
+export class ValidationResultMapController {
+  constructor(public validationResultMap: ValidationResultMap) {}
+
+  hasErrors() {
+    for (const resultKey of Object.keys(this.validationResultMap)) {
+      const result = this.validationResultMap[resultKey];
+      if (result.resultType === ResultType.Error) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
-
-
+export abstract class MetaEntityRuleValidator {
+  abstract validate(
+    entity: any,
+    metaEntity: MetaEntity,
+  ): Promise<ValidationResultMap>;
+}

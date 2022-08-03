@@ -1,5 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {
+  AbstractControl, FormArray, FormGroup,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {
@@ -13,6 +20,8 @@ import {
 import {ActivatedRoute, Router} from '@angular/router';
 import {OneToPolyEditComponent} from './one-to-poly-edit/one-to-poly-edit.component';
 import {EnumeratonEditComponent} from './enumeraton-edit/enumeraton-edit.component';
+import {RuleEditDialogComponent} from './rule-edit-dialog/rule-edit-dialog.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-meta-entity-edit',
@@ -38,6 +47,7 @@ export class MetaEntityEditComponent implements OnInit {
   constructor(private fb: UntypedFormBuilder,
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
+              private modalService: NgbModal,
               protected readonly metaEntityService: MetaEntityService) { }
 
   ngOnInit(): void {
@@ -55,6 +65,11 @@ export class MetaEntityEditComponent implements OnInit {
 
         if(metaAttribute.type === AttributeType.Enumeration) {
           EnumeratonEditComponent.addEnumerationFormControl(this.fb, formGroup, metaAttribute);
+        }
+
+        const rulesFormArray = formGroup.controls['rules'] as FormArray;
+        for(const ruleData of metaAttribute.rules) {
+          rulesFormArray.push(this.createRuleDataFormGroup())
         }
       }
 
@@ -78,6 +93,10 @@ export class MetaEntityEditComponent implements OnInit {
     return this.attributes.at(idx) as UntypedFormGroup;
   }
 
+  getAttributeAt(idx: number): MetaAttribute {
+    return this.getAttributeFormGroupAt(idx).value as MetaAttribute;
+  }
+
   addBlankRow() {
     const formGroup = this.createTableRow();
     this.attributes.push(formGroup);
@@ -97,6 +116,7 @@ export class MetaEntityEditComponent implements OnInit {
       comparisonOperator: [''],
       relationshipTarget: [''],
       typeaheadSearch: [[]],
+      rules: this.fb.array([])
       // discriminator: [{}]  // Don't add this one here, the way the ngOnInit() in OneToPolyEditComponent works means this will be done when it is needed
     });
   }
@@ -126,6 +146,46 @@ export class MetaEntityEditComponent implements OnInit {
     else {
       this.router.navigate(['meta/entity/view', this.metaName]);
     }
+  }
+
+  attributeHasRuleData(idx: number) {
+    const attribute = this.getAttributeAt(idx);
+    return attribute.rules && attribute.rules.length > 0;
+  }
+
+  onAddRule(idx: number) {
+    const modalRef = this.modalService.open(RuleEditDialogComponent);
+    const ruleEditDialog = modalRef.componentInstance as RuleEditDialogComponent;
+
+    const attributeFormGroup = this.getAttributeFormGroupAt(idx);
+    const ruleFormArray = attributeFormGroup.controls['rules'] as FormArray;
+
+    const ruleDataFormGroup = this.createRuleDataFormGroup();
+    ruleFormArray.push(ruleDataFormGroup);
+    ruleEditDialog.ruleDataFormGroup = ruleDataFormGroup;
+  }
+
+  private createRuleDataFormGroup() {
+    return this.fb.group({
+      type: this.fb.control(''),
+      config: this.fb.control('')
+    });
+  }
+
+  editRule(i: number, ri: number) {
+    const modalRef = this.modalService.open(RuleEditDialogComponent);
+    const ruleEditDialog = modalRef.componentInstance as RuleEditDialogComponent;
+
+    const attributeFormGroup = this.getAttributeFormGroupAt(i);
+    const ruleFormArray = attributeFormGroup.controls['rules'] as FormArray;
+    const ruleDataFormGroup = ruleFormArray.at(ri) as FormGroup;
+    // TODO should really edit a clone, and then only update if the user clicks update and not cancel
+    ruleEditDialog.ruleDataFormGroup = ruleDataFormGroup;
+  }
+
+  removeRule(i: number, ri: number) {
+    const attribute = this.getAttributeAt(i);
+
   }
 
   getAttributeTypeOptions(): string[] {

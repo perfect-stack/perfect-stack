@@ -96,8 +96,8 @@ export class RangeRuleValidator extends RuleValidator {
     entity: any,
     attribute: MetaAttribute,
   ): Promise<ValidationResult | null> {
-    const rangeRuleConfig = this.ruleData.config;
-    if (rangeRuleConfig) {
+    if (this.ruleData.config) {
+      const rangeRuleConfig = this.toRangeRuleConfig(this.ruleData.config);
       const value = entity[attribute.name];
 
       if (
@@ -123,6 +123,24 @@ export class RangeRuleValidator extends RuleValidator {
         `Invalid RuleData. RangeRule has no RangeRuleConfig supplied within it`,
       );
     }
+  }
+
+  toRangeRuleConfig(config: string): RangeRuleConfig {
+    const values = config.split(',');
+    let minValue = null;
+    let maxValue = null;
+    if (values) {
+      if (values.length > 0) {
+        minValue = values[0];
+      }
+      if (values.length > 1) {
+        maxValue = values[1];
+      }
+    }
+    return {
+      minValue: minValue,
+      maxValue: maxValue,
+    };
   }
 
   async validateDateValue(

@@ -64,6 +64,7 @@
             <th scope="col">Scale</th>
             <th scope="col">Type</th>
             <th scope="col">Visibility</th>
+            <th scope="col">Rules</th>
             <th scope="col">Comparison Field</th>
             <th scope="col">Comparison</th>
           </tr>
@@ -105,6 +106,14 @@
                 <select class="form-select" formControlName="visibility">
                   <option *ngFor="let o of getVisibilityTypeOptions()" [ngValue]="o">{{o}}</option>
                 </select>
+              </td>
+              <td>
+                <ng-container *ngIf="attributeHasRuleData(i)">
+                  <span class="badge bg-danger me-1" *ngFor="let r of getAttributeAt(i).rules; let ri = index;">
+                    <span (click)="editRule(i, ri)">{{r.type}}</span><span class="material-symbols-outlined small" (click)="removeRule(i, ri)">close</span>
+                  </span>
+                </ng-container>
+                <button class="btn btn-outline-primary btn-sm" (click)="onAddRule(i)">+</button>
               </td>
               <td>
                 <input class="form-control" type="text" formControlName="comparisonField">

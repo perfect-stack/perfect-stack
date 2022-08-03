@@ -11,8 +11,10 @@ export enum RuleType {
 
 export class RuleData {
   type: RuleType;
-  customValidatorName: string; // name of the custom validator if type = 'Custom'
-  config: any;
+  // Range: "minValue,maxValue" where each value can be a number, or a DateRuleName
+  // Custom: "nameOfCustomValidator"
+  // Pattern: "regex pattern"
+  config: string;
 }
 
 export type DateRuleName = '$yesterday' | '$today' | '$now' | '$tomorrow';

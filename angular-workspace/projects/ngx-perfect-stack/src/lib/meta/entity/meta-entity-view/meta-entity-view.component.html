@@ -40,6 +40,7 @@
           <th scope="col">Scale</th>
           <th scope="col">Type</th>
           <th scope="col">Visibility</th>
+          <th scope="col">Rules</th>
           <th scope="col">Comparison Field</th>
           <th scope="col">Comparison</th>
           <th scope="col">Actions</th>
@@ -58,6 +59,13 @@
             <div *ngIf="attribute.typeaheadSearch && attribute.typeaheadSearch.length > 0">{{attribute.typeaheadSearch | json}}</div>
           </td>
           <td>{{attribute.visibility}}</td>
+          <td>
+            <ng-container *ngIf="attributeHasRuleData(attribute)">
+              <span class="badge bg-danger me-1" *ngFor="let r of attribute.rules; let ri = index;">
+                <span>{{r.type}}</span>
+              </span>
+            </ng-container>
+          </td>
           <td>{{attribute.comparisonField}}</td>
           <td>{{attribute.comparisonOperator}}</td>
           <td>
