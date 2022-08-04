@@ -145,7 +145,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0"
+        }
+      ]
     }
   ]
 }
