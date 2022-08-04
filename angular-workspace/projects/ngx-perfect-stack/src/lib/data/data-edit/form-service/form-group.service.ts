@@ -92,9 +92,11 @@ export class FormGroupService {
         // suppressValidators was added because when there is a ManyToOne we don't want validators added to the form for
         // the attributes that the user can't edit on the ManyToOne
 //        if(nextAttribute.visibility === VisibilityType.Required && !suppressValidators && nextAttribute.type !== AttributeType.ManyToOne) {
-        if(nextAttribute.visibility === VisibilityType.Required) {
-          abstractControl.addValidators(Validators.required);
-        }
+
+        // 4-Aug, disable client validators for now while testing server validation
+        // if(nextAttribute.visibility === VisibilityType.Required) {
+        //   abstractControl.addValidators(Validators.required);
+        // }
 
         (abstractControl as any).attribute = nextAttribute;
         //controls[nextAttribute.name] = abstractControl;

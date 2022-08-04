@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 import {DataService} from '../../data-service/data.service';
@@ -34,8 +34,14 @@ export class FormContext {
 
 export class FormControlWithAttribute extends UntypedFormControl {
   attribute: MetaAttribute;
+  touched$ = new EventEmitter<void>();
   constructor(formState?: any, validatorOrOpts?: ValidatorFn | ValidatorFn[] | FormControlOptions | null, asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
     super(formState, validatorOrOpts, asyncValidator);
+  }
+
+  override markAsTouched(opts: { onlySelf?: boolean } | undefined): void {
+    super.markAsTouched(opts)
+    this.touched$.next();
   }
 }
 

@@ -91,12 +91,6 @@
         {
           "editable": true,
           "roles": [],
-          "label": "Weight Method",
-          "route": "/data/WeightMethod/search_edit"
-        },
-        {
-          "editable": true,
-          "roles": [],
           "label": "Species",
           "route": "/data/Species/search"
         }

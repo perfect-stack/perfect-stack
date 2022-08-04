@@ -20,8 +20,7 @@ export class Cell {
   template?: Template;
 }
 
-export class ComponentData {
-}
+export class ComponentData {}
 
 export class SelectTwoComponentData implements ComponentData {
   secondaryAttributeName: string;
@@ -40,7 +39,7 @@ export enum TemplateLocationType {
   TopRight = 'TopRight',
   BottomLeft = 'BottomLeft',
   BottomMiddle = 'BottomMiddle',
-  BottomRight = 'BottomRight'
+  BottomRight = 'BottomRight',
 }
 
 export enum ToolType {
@@ -52,7 +51,7 @@ export enum ToolType {
   Link = 'Link',
   Map = 'Map',
   Select = 'Select',
-  TextTool = 'TextTool'
+  TextTool = 'TextTool',
 }
 
 export class Tool {
@@ -63,7 +62,9 @@ export class Tool {
   modes: string; // comma separated list of modes for when this Tool will be made visible. If blank, then it's always visible.
 
   static isTool(something: any) {
-    return something.type && Object.values(ToolType).indexOf(something.type) >= 0;
+    return (
+      something.type && Object.values(ToolType).indexOf(something.type) >= 0
+    );
   }
 }
 
@@ -95,7 +96,7 @@ export class ImageTool extends Tool {
 export class LinkTool extends Tool {
   action: string;
   route: string;
-  text: string;  // This does not support full html, just put <a>markers around the link text</a>
+  text: string; // This does not support full html, just put <a>markers around the link text</a>
 }
 
 export class MapTool extends Tool {
@@ -112,7 +113,7 @@ export class IconTool extends Tool {
 }
 
 export class TemplateLocationMap {
-  [key: string] : Tool;
+  [key: string]: Tool;
 }
 
 export class Template {
@@ -147,7 +148,7 @@ export class Template {
 
 export enum TemplateNavigationType {
   Disabled = 'Disabled',
-  Enabled = 'Enabled'
+  Enabled = 'Enabled',
 }
 
 export type TemplateMap = {
@@ -167,7 +168,7 @@ export enum LayoutStyle {
   NewYork = 'New York',
   Paris = 'Paris',
   Stockholm = 'Stockholm',
-  Venice = 'Venice'
+  Venice = 'Venice',
 }
 
 export enum ResultCardinalityType {
@@ -177,7 +178,7 @@ export enum ResultCardinalityType {
 
 export enum QueryType {
   Entity = 'Entity',
-  Custom = 'Custom'
+  Custom = 'Custom',
 }
 
 export class DataQuery {
@@ -190,7 +191,6 @@ export class DataQuery {
   orderByName: string;
   orderByDir: string;
 }
-
 
 export class MetaPage {
   name: string;

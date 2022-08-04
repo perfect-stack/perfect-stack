@@ -13,9 +13,11 @@
       "scale": "",
       "type": "Identifier",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "weight",
@@ -25,9 +27,11 @@
       "scale": "0",
       "type": "Double",
       "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "method",
@@ -37,11 +41,13 @@
       "scale": "",
       "type": "ManyToOne",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "WeightMethod",
       "typeaheadSearch": [
         "name"
-      ]
+      ],
+      "rules": []
     },
     {
       "name": "activity_type",
@@ -51,9 +57,11 @@
       "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

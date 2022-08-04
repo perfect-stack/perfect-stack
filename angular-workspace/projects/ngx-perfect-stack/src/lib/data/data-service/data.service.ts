@@ -6,6 +6,7 @@ import {QueryRequest} from './query.request';
 import {QueryResponse} from './query.response';
 import {UpdateSortIndexRequest} from './update-sort-index.request';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-config';
+import {SaveResponse} from './save.response';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,7 @@ export class DataService {
   }
 
   save(entityName: string, entity: Entity) {
-    return this.http.post(`${this.stackConfig.apiUrl}/data/${entityName}/${entity.id}`, entity);
+    return this.http.post<SaveResponse>(`${this.stackConfig.apiUrl}/data/${entityName}/${entity.id}`, entity);
   }
 
   updateSortIndex(updateSortIndexRequest: UpdateSortIndexRequest) {

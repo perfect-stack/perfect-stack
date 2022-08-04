@@ -1,3 +1,5 @@
+import { RuleData } from './meta.rule';
+
 export enum AttributeType {
   Text = 'Text',
   Html = 'Html',
@@ -19,7 +21,7 @@ export enum ComparisonOperator {
   StartsWith = 'StartsWith',
   InsensitiveStartsWith = 'InsensitiveStartsWith',
   InsensitiveLike = 'InsensitiveLike',
-  Includes = 'Includes',
+  Includes = 'Includes', // in subset of OneToPoly association
   GreaterThan = 'GreaterThan',
   GreaterThanOrEqualTo = 'GreaterThanOrEqualTo',
   LessThan = 'LessThan',
@@ -49,6 +51,8 @@ export class MetaAttribute {
   enumeration: string[];
   unitOfMeasure: string;
   scale: string;
+
+  rules: RuleData[];
 
   static isMetaAttribute(something: any) {
     return (

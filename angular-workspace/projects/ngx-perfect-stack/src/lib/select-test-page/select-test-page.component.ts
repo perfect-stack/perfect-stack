@@ -31,6 +31,7 @@ export class SelectTestPageComponent implements OnInit {
       discriminatorName: '',
       discriminatorType: ''
     },
+    rules: [],
     enumeration: [],
     unitOfMeasure: '',
     scale: '',

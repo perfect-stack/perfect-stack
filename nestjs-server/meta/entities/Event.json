@@ -16,7 +16,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "date",
@@ -29,7 +30,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "comments",
@@ -42,7 +44,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "observers",
@@ -55,7 +58,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "EventObserver",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "location",
@@ -70,7 +74,8 @@
       "relationshipTarget": "Location",
       "typeaheadSearch": [
         "location_name"
-      ]
+      ],
+      "rules": []
     },
     {
       "name": "activities",
@@ -84,6 +89,7 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [],
       "discriminator": {
         "discriminatorName": "activity_type",
         "discriminatorType": "ActivityType",
@@ -126,7 +132,17 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        },
+        {
+          "type": "Range",
+          "config": "4748000,6192000"
+        }
+      ]
     },
     {
       "name": "easting",
@@ -139,7 +155,17 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        },
+        {
+          "type": "Range",
+          "config": "1090000,2090000"
+        }
+      ]
     },
     {
       "name": "bird",
@@ -155,7 +181,8 @@
       "typeaheadSearch": [
         "name",
         "band"
-      ]
+      ],
+      "rules": []
     },
     {
       "name": "event_type",
@@ -169,6 +196,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ],
       "enumeration": [
         "Capture",
         "Sighting",
@@ -190,7 +223,8 @@
       "relationshipTarget": "Species",
       "typeaheadSearch": [
         "name"
-      ]
+      ],
+      "rules": []
     },
     {
       "name": "form",
@@ -203,7 +237,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "status",
@@ -217,6 +252,7 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [],
       "enumeration": [
         "Alive",
         "Dead",
@@ -236,6 +272,7 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [],
       "enumeration": [
         "Adult",
         "Sub adult",
@@ -256,6 +293,7 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [],
       "enumeration": [
         "Male",
         "Female",
@@ -273,7 +311,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "altitude",
@@ -286,7 +325,13 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0"
+        }
+      ]
     }
   ]
 }

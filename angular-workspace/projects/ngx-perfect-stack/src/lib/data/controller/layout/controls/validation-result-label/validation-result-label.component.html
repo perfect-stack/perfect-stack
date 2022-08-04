@@ -1,0 +1,7 @@
+
+<ng-container [ngSwitch]="validationResult.resultType">
+  <span *ngSwitchCase="'Error'" class="validation-result text-danger">{{validationResult.message}}</span>
+  <span *ngSwitchCase="'Info'" class="validation-result text-info">{{validationResult.message}}</span>
+  <span *ngSwitchCase="'Warning'" class="validation-result text-warning">{{validationResult.message}}</span>
+</ng-container>
+

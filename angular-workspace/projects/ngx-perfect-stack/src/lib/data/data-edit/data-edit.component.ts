@@ -14,7 +14,10 @@ import {
 import {DebugService} from '../../utils/debug/debug.service';
 import {EventService} from '../../event/event.service';
 import {CompletionResult} from '../../event/page-listener';
-import {AbstractControl, UntypedFormArray, UntypedFormGroup} from '@angular/forms';
+import {AbstractControl, FormGroup, UntypedFormArray, UntypedFormGroup} from '@angular/forms';
+import {SaveResponse} from '../data-service/save.response';
+import {ValidationResultMapController} from '../../domain/meta.rule';
+import {ToastService} from '../../utils/toast.service';
 
 
 @Component({
@@ -35,6 +38,7 @@ export class DataEditComponent implements OnInit {
               protected readonly router: Router,
               protected readonly formService: FormService,
               protected readonly dataService: DataService,
+              protected readonly toastService: ToastService,
               protected readonly eventService: EventService) {}
 
   ngOnInit(): void {
@@ -124,11 +128,43 @@ export class DataEditComponent implements OnInit {
       console.log(`DataEdit: save value:`, entityData);
 
       if(this.metaName) {
-        this.dataService.save(this.metaName, entityData).subscribe(() => {
-          this.onCancel(ctx);
+        this.dataService.save(this.metaName, entityData).subscribe((response: SaveResponse) => {
+          if(response.validationResults) {
+            const validationResultController = new ValidationResultMapController(response.validationResults);
+            if(validationResultController.hasErrors()) {
+              this.saveRejected(ctx, response);
+            }
+            else {
+              this.saveCompleted(ctx);
+            }
+          }
+          else {
+            this.saveCompleted(ctx)
+          }
         });
       }
     }
+  }
+
+  saveRejected(ctx: FormContext, response: SaveResponse) {
+    console.log(`Save rejected:`, response.validationResults);
+    this.toastService.showError('Error while saving. Please check form for errors.');
+    const form = this.getDataForm(ctx) as FormGroup;
+    let keys = Object.keys(response.validationResults);
+    keys.forEach((k: string) => {
+      const control = form.controls[k];
+      if(control) {
+        console.log('set error', response.validationResults[k]);
+        console.log('set error control', control);
+        control.setErrors(response.validationResults[k]);
+        //control.markAsTouched();
+      }
+    });
+  }
+
+  saveCompleted(ctx: FormContext) {
+    this.toastService.showSuccess('Save is successful');
+    this.onCancel(ctx);
   }
 
   /**

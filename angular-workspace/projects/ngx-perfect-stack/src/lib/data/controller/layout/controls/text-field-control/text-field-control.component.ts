@@ -1,14 +1,17 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {AttributeType} from '../../../../../domain/meta.entity';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
+import {Subscription} from 'rxjs';
+import {ValidationResult, ValidationResultMap} from '../../../../../domain/meta.rule';
 
 @Component({
   selector: 'lib-text-field-control',
   templateUrl: './text-field-control.component.html',
   styleUrls: ['./text-field-control.component.css']
 })
-export class TextFieldControlComponent implements OnInit, ControlValueAccessor {
+export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
   @Input()
   mode: string;
@@ -26,11 +29,22 @@ export class TextFieldControlComponent implements OnInit, ControlValueAccessor {
 
   disabled = false;
 
+  touched = false;
+  touchSubscription: Subscription;
+
   constructor(public ngControl: NgControl) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
+    if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
+      this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
+        this.touched = true;
+      });
+    }
+    else {
+      console.warn(`This component is NOT using a FormControlWithAttribute`);
+    }
   }
 
   isReadOnly() {
@@ -57,6 +71,10 @@ export class TextFieldControlComponent implements OnInit, ControlValueAccessor {
         nextValue = this.changeScaleOfNumber(nextValue, 0);
       }
     }
+
+    // if(this.mode === 'view' && nextValue && this.cell.attribute?.unitOfMeasure) {
+    //   nextValue = nextValue + ` (${this.cell.attribute.unitOfMeasure})`;
+    // }
 
     this.internalValue = nextValue
     this.onChange(val)
@@ -88,6 +106,20 @@ export class TextFieldControlComponent implements OnInit, ControlValueAccessor {
 
   onModelChange(nextValue: any) {
     this.value = nextValue;
+  }
+
+  hasErrors() {
+    return this.ngControl.errors !== null;
+  }
+
+  get validationResult() {
+    return this.ngControl.errors as ValidationResult;
+  }
+
+  ngOnDestroy(): void {
+    if(this.touchSubscription) {
+      this.touchSubscription.unsubscribe();
+    }
   }
 }
 
