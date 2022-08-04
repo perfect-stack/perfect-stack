@@ -17,6 +17,7 @@ import {CompletionResult} from '../../event/page-listener';
 import {AbstractControl, FormGroup, UntypedFormArray, UntypedFormGroup} from '@angular/forms';
 import {SaveResponse} from '../data-service/save.response';
 import {ValidationResultMapController} from '../../domain/meta.rule';
+import {ToastService} from '../../utils/toast.service';
 
 
 @Component({
@@ -37,6 +38,7 @@ export class DataEditComponent implements OnInit {
               protected readonly router: Router,
               protected readonly formService: FormService,
               protected readonly dataService: DataService,
+              protected readonly toastService: ToastService,
               protected readonly eventService: EventService) {}
 
   ngOnInit(): void {
@@ -146,6 +148,7 @@ export class DataEditComponent implements OnInit {
 
   saveRejected(ctx: FormContext, response: SaveResponse) {
     console.log(`Save rejected:`, response.validationResults);
+    this.toastService.showError('Error while saving. Please check form for errors.');
     const form = this.getDataForm(ctx) as FormGroup;
     let keys = Object.keys(response.validationResults);
     keys.forEach((k: string) => {
@@ -160,6 +163,7 @@ export class DataEditComponent implements OnInit {
   }
 
   saveCompleted(ctx: FormContext) {
+    this.toastService.showSuccess('Save is successful');
     this.onCancel(ctx);
   }
 

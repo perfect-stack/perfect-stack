@@ -14,6 +14,10 @@ export class ToastService {
     this.show( message, { classname: 'bg-warning', delay: 5000 });
   }
 
+  showError(message: string) {
+    this.show( message, { classname: 'bg-danger text-light', delay: 5000 });
+  }
+
   show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
     this.toasts.push({ textOrTpl, ...options });
   }
