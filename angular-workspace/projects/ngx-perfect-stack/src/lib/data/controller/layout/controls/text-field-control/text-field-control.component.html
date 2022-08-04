@@ -15,13 +15,16 @@
 <ng-container *ngIf="mode === 'view'">
   <ng-container *ngIf="internalValue">
     <div class="input-group">
-      <input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name"
-             [(ngModel)]="internalValue" [ngModelOptions]="{standalone: true}">
+      <span class="form-control" readonly="true"  [id]="name">
+        {{internalValue}} <span [id]="name + '_uom'" *ngIf="cell.attribute?.unitOfMeasure">{{cell.attribute?.unitOfMeasure}}</span>
+      </span>
+      <!--<input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name"
+             [(ngModel)]="internalValue" [ngModelOptions]="{standalone: true}">-->
     </div>
   </ng-container>
   <ng-container *ngIf="!internalValue">
     <div class="input-group">
-      <input class="form-control empty-value" readonly [id]="name" value="&mdash;">
+      <span class="form-control empty-value" readonly [id]="name">&mdash;</span>
     </div>
   </ng-container>
 </ng-container>
