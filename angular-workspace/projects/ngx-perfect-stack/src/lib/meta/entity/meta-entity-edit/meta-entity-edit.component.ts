@@ -67,9 +67,11 @@ export class MetaEntityEditComponent implements OnInit {
           EnumeratonEditComponent.addEnumerationFormControl(this.fb, formGroup, metaAttribute);
         }
 
-        const rulesFormArray = formGroup.controls['rules'] as FormArray;
-        for(const ruleData of metaAttribute.rules) {
-          rulesFormArray.push(this.createRuleDataFormGroup())
+        if(metaAttribute.rules && formGroup.controls['rules']) {
+          const rulesFormArray = formGroup.controls['rules'] as FormArray;
+          for(const ruleData of metaAttribute.rules) {
+            rulesFormArray.push(this.createRuleDataFormGroup());
+          }
         }
       }
 
@@ -185,7 +187,7 @@ export class MetaEntityEditComponent implements OnInit {
 
   removeRule(i: number, ri: number) {
     const attribute = this.getAttributeAt(i);
-
+    attribute.rules.splice(ri, 1);
   }
 
   getAttributeTypeOptions(): string[] {

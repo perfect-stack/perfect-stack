@@ -16,7 +16,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "name",
@@ -29,7 +30,8 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "sex",
@@ -43,6 +45,12 @@
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ],
       "enumeration": [
         "Male",
         "Female",
@@ -60,7 +68,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "hatch_date",
@@ -73,7 +82,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "demise_date",
@@ -86,7 +96,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "status",
@@ -100,6 +111,7 @@
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [],
       "enumeration": [
         "Alive",
         "Dead",
@@ -120,6 +132,12 @@
       "relationshipTarget": "Species",
       "typeaheadSearch": [
         "name"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
       ]
     },
     {
@@ -136,7 +154,8 @@
       "typeaheadSearch": [
         "name",
         "band"
-      ]
+      ],
+      "rules": []
     },
     {
       "name": "father",
@@ -152,7 +171,8 @@
       "typeaheadSearch": [
         "name",
         "band"
-      ]
+      ],
+      "rules": []
     },
     {
       "name": "first_found_date",
@@ -165,7 +185,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "comments",
@@ -178,7 +199,8 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveLike",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "age_class",
@@ -192,6 +214,7 @@
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [],
       "enumeration": [
         "Adult",
         "Sub adult",
@@ -211,7 +234,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "form",
@@ -224,7 +248,8 @@
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "band",
@@ -237,7 +262,13 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Unique",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "microchip",
@@ -250,7 +281,13 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Unique",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "wing_tag",
@@ -263,7 +300,13 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Unique",
+          "config": ""
+        }
+      ]
     }
   ]
 }

@@ -72,6 +72,10 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
       }
     }
 
+    // if(this.mode === 'view' && nextValue && this.cell.attribute?.unitOfMeasure) {
+    //   nextValue = nextValue + ` (${this.cell.attribute.unitOfMeasure})`;
+    // }
+
     this.internalValue = nextValue
     this.onChange(val)
     //this.onTouch(val)

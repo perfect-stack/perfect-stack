@@ -6,7 +6,7 @@ above each Cell, otherwise things look a bit squished -->
     <ng-container *ngIf="mode == 'edit'">
       <span class="text-danger ps-1" *ngIf="attribute.visibility == 'Required'">*</span>
     </ng-container>
-    <ng-container *ngIf="attribute.unitOfMeasure">
+    <ng-container *ngIf="attribute.unitOfMeasure && mode !== 'edit'">
       ({{attribute.unitOfMeasure}})
     </ng-container>
   </label>

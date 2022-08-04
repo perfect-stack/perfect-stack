@@ -1,23 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  AttributeType,
-  MetaAttribute,
-  MetaEntity,
-} from '../../domain/meta.entity';
+import { MetaAttribute, MetaEntity } from '../../domain/meta.entity';
 import {
   MetaEntityRuleValidator,
-  RangeRuleConfig,
-  ResultType,
   RuleData,
   RuleType,
   RuleValidator,
-  ValidationResult,
   ValidationResultMap,
 } from '../../domain/meta.rule';
+import { RangeRuleValidator } from './rules/range-rule-validator';
+import { RequiredRuleValidator } from './rules/required-rule-validator';
+import { UniqueRuleValidator } from './rules/unique-rule-validator';
+import { KnexService } from '../../knex/knex.service';
 
 @Injectable()
 export class RuleService implements MetaEntityRuleValidator {
   private readonly logger = new Logger(RuleService.name);
+
+  constructor(protected readonly knexService: KnexService) {}
 
   async validate(
     entity: any,
@@ -57,129 +56,17 @@ export class RuleService implements MetaEntityRuleValidator {
         return new RequiredRuleValidator(metaEntity, attribute, ruleData);
       case RuleType.Range:
         return new RangeRuleValidator(metaEntity, attribute, ruleData);
+      case RuleType.Unique:
+        return new UniqueRuleValidator(
+          this.knexService,
+          metaEntity,
+          attribute,
+          ruleData,
+        );
       default:
         throw new Error(
           `Unknown rule type of ${ruleData.type}. Unable to fine RuleValidator`,
         );
     }
-  }
-}
-
-export class RequiredRuleValidator extends RuleValidator {
-  async validate(
-    entity: any,
-    attribute: MetaAttribute,
-  ): Promise<ValidationResult | null> {
-    const value = entity[attribute.name];
-    let valid = undefined;
-    if (attribute.type === AttributeType.Boolean) {
-      // valid if value = true or false (invalid if null or undefined)
-      valid = value || value === false;
-    } else {
-      valid = value !== null && value !== undefined && String(value).length > 0;
-    }
-
-    if (!valid) {
-      return {
-        name: attribute.name,
-        resultType: ResultType.Error,
-        message: 'Attribute is required',
-      };
-    } else {
-      return null;
-    }
-  }
-}
-
-export class RangeRuleValidator extends RuleValidator {
-  async validate(
-    entity: any,
-    attribute: MetaAttribute,
-  ): Promise<ValidationResult | null> {
-    if (this.ruleData.config) {
-      const rangeRuleConfig = this.toRangeRuleConfig(this.ruleData.config);
-      const value = entity[attribute.name];
-
-      if (
-        this.metaAttribute.type === AttributeType.Date ||
-        this.metaAttribute.type === AttributeType.DateTime
-      ) {
-        return this.validateDateValue(
-          value,
-          rangeRuleConfig,
-          entity,
-          attribute,
-        );
-      } else {
-        return this.validateNumberValue(
-          value,
-          rangeRuleConfig,
-          entity,
-          attribute,
-        );
-      }
-    } else {
-      throw new Error(
-        `Invalid RuleData. RangeRule has no RangeRuleConfig supplied within it`,
-      );
-    }
-  }
-
-  toRangeRuleConfig(config: string): RangeRuleConfig {
-    const values = config.split(',');
-    let minValue = null;
-    let maxValue = null;
-    if (values) {
-      if (values.length > 0) {
-        minValue = values[0];
-      }
-      if (values.length > 1) {
-        maxValue = values[1];
-      }
-    }
-    return {
-      minValue: minValue,
-      maxValue: maxValue,
-    };
-  }
-
-  async validateDateValue(
-    value: string,
-    rangeRuleConfig: RangeRuleConfig,
-    entity: any,
-    attribute: MetaAttribute,
-  ): Promise<ValidationResult | null> {
-    return null;
-  }
-
-  async validateNumberValue(
-    value: number,
-    rangeRuleConfig: RangeRuleConfig,
-    entity: any,
-    attribute: MetaAttribute,
-  ): Promise<ValidationResult | null> {
-    if (rangeRuleConfig.minValue) {
-      const minValue = Number(rangeRuleConfig.minValue);
-      if (value < minValue) {
-        return {
-          name: attribute.name,
-          resultType: ResultType.Error,
-          message: `Attribute value must be a min value of ${minValue} or greater`,
-        };
-      }
-    }
-
-    if (rangeRuleConfig.maxValue) {
-      const maxValue = Number(rangeRuleConfig.maxValue);
-      if (value > maxValue) {
-        return {
-          name: attribute.name,
-          resultType: ResultType.Error,
-          message: `Attribute value must be a max value of ${maxValue} or less`,
-        };
-      }
-    }
-
-    return null;
   }
 }
