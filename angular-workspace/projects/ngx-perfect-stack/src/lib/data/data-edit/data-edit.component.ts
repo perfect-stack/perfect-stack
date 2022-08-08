@@ -152,12 +152,16 @@ export class DataEditComponent implements OnInit {
     const form = this.getDataForm(ctx) as FormGroup;
     let keys = Object.keys(response.validationResults);
     keys.forEach((k: string) => {
-      const control = form.controls[k];
+      console.log(`Looking for control; ${k}`);
+      const control = form.get(k);
       if(control) {
         console.log('set error', response.validationResults[k]);
         console.log('set error control', control);
         control.setErrors(response.validationResults[k]);
         //control.markAsTouched();
+      }
+      else {
+        console.log(`Did not find control; ${k}`);
       }
     });
   }

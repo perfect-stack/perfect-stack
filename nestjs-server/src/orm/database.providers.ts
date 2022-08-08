@@ -71,7 +71,7 @@ export const loadOrm = async (
        * Ideally you want to choose a `max` number where this holds true:
        * max * EXPECTED_MAX_CONCURRENT_LAMBDA_INVOCATIONS < MAX_ALLOWED_DATABASE_CONNECTIONS * 0.8
        */
-      max: 2,
+      max: 4,
       /*
        * Set this value to 0 so connection pool eviction logic eventually cleans up all connections
        * in the event of a Lambda function timeout.

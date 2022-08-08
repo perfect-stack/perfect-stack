@@ -12,12 +12,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
 import { Op } from 'sequelize';
 import { QueryResponse } from './query.response';
-import {
-  appendWildcard,
-  convertStringToAttributeType,
-  getCriteriaValue,
-  wrapWithWildcards,
-} from './query-utils';
+import { getCriteriaValue } from './query-utils';
 
 @Injectable()
 export class QueryService {
@@ -119,7 +114,7 @@ export class QueryService {
   async findByCriteria(
     queryRequest: QueryRequest,
   ): Promise<QueryResponse<any>> {
-    console.log(`findByCriteria(): ${JSON.stringify(queryRequest)}`);
+    this.logger.log(JSON.stringify(queryRequest));
 
     const model = this.ormService.sequelize.model(queryRequest.metaEntityName);
     let pageNumber = queryRequest.pageNumber;

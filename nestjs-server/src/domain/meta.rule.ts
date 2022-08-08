@@ -74,5 +74,6 @@ export abstract class MetaEntityRuleValidator {
   abstract validate(
     entity: any,
     metaEntity: MetaEntity,
+    metaEntityMap: Map<string, MetaEntity>,
   ): Promise<ValidationResultMap>;
 }

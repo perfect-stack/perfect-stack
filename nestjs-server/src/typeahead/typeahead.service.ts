@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { TypeaheadRequest } from './dto/typeahead.request';
 import { OrmService } from '../orm/orm.service';
 import { Model, Op } from 'sequelize';
@@ -9,13 +9,17 @@ import { wrapWithWildcards } from '../data/query-utils';
 
 @Injectable()
 export class TypeaheadService {
+  private readonly logger = new Logger(TypeaheadService.name);
+
   constructor(
     protected readonly ormService: OrmService,
     protected readonly metaEntityService: MetaEntityService,
   ) {}
 
   async search(request: TypeaheadRequest): Promise<Item[]> {
-    console.log(`Typeahead request: ${JSON.stringify(request.metaAttribute)}`);
+    this.logger.log(
+      `Typeahead request: ${JSON.stringify(request.metaAttribute)}`,
+    );
 
     if (!request.metaAttribute.typeaheadSearch) {
       throw new Error(

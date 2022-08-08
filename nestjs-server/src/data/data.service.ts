@@ -17,6 +17,7 @@ import { AuditAction } from '../domain/audit';
 import { QueryService } from './query.service';
 import { RuleService } from './rule/rule.service';
 import { ValidationResultMapController } from '../domain/meta.rule';
+import { EventService } from '../event/event.service';
 
 @Injectable()
 export class DataService {
@@ -27,6 +28,7 @@ export class DataService {
     protected readonly ormService: OrmService,
     protected readonly queryService: QueryService,
     protected readonly ruleService: RuleService,
+    protected readonly eventService: EventService,
   ) {}
 
   validateUuid(value: string) {
@@ -63,9 +65,22 @@ export class DataService {
       throw new Error(`Unable to find MetaEntity ${entityName}`);
     }
 
-    const validationResultMapController = new ValidationResultMapController(
-      await this.ruleService.validate(entity, metaEntity),
+    const eventValidations = await this.eventService.dispatchOnBeforeSave(
+      entity,
+      metaEntity,
+      metaEntityMap,
     );
+
+    const ruleValidations = await this.ruleService.validate(
+      entity,
+      metaEntity,
+      metaEntityMap,
+    );
+
+    const validationResultMapController = new ValidationResultMapController({
+      ...eventValidations,
+      ...ruleValidations,
+    });
 
     if (!validationResultMapController.hasErrors()) {
       const { action, entityModel } = await this.saveValidatedEntity(
@@ -74,12 +89,15 @@ export class DataService {
         metaEntityMap,
       );
 
+      await this.eventService.dispatchOnAfterSave(entity, metaEntity);
+
       return {
         action: action,
         entity: entityModel,
         validationResults: validationResultMapController.validationResultMap,
       };
     } else {
+      // dispatchOnAfterSave() is not fired, because the entity was not saved since it had errors
       return {
         action: 'none',
         entity: entity,

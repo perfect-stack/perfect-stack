@@ -31,7 +31,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0"
+        }
+      ]
     },
     {
       "name": "tarsus_length",
@@ -45,7 +50,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0"
+        }
+      ]
     },
     {
       "name": "tarsus_width",
@@ -59,7 +69,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0"
+        }
+      ]
     },
     {
       "name": "tarsus_depth",
@@ -73,7 +88,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0"
+        }
+      ]
     },
     {
       "name": "activity_type",

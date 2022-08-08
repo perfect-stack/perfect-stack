@@ -37,8 +37,6 @@ export class UniqueRuleValidator extends RuleValidator {
       .andWhere('id', '<>', entity.id)
       .limit(1);
 
-    console.log(`UniqueRuleValidator: ${JSON.stringify(results)}`);
-
     // valid = count(*) === 0
     const valid = results.length === 0;
 

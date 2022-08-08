@@ -16,6 +16,7 @@ import { MetaPageModule } from './meta/meta-page/meta-page.module';
 import { AuditModule } from './audit/audit.module';
 import { KnexModule } from './knex/knex.module';
 import { RuleModule } from './data/rule/rule.module';
+import { EventModule } from './event/event.module';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -38,6 +39,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     AuthenticationModule,
     ClientConfigModule,
     CONFIG_MODULE,
+    EventModule,
     KnexModule,
     OrmModule,
     MetaMenuModule,

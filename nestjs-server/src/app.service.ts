@@ -10,6 +10,10 @@ import {
   getCriteriaValue,
   KnexComparisonOperatorMap,
 } from './data/query-utils';
+import { DataEventListener, EventService } from './event/event.service';
+import { MetaEntity } from './domain/meta.entity';
+import { QueryService } from './data/query.service';
+import { ResultType, ValidationResultMap } from './domain/meta.rule';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -19,8 +23,10 @@ export class AppService implements OnApplicationBootstrap {
     protected readonly metaEntityService: MetaEntityService,
     protected readonly metaMenuService: MetaMenuService,
     protected readonly dataService: DataService,
+    protected readonly queryService: QueryService,
     protected readonly customQueryService: CustomQueryService,
     protected readonly knexService: KnexService,
+    protected readonly eventService: EventService,
   ) {}
 
   get(): string {
@@ -33,6 +39,7 @@ export class AppService implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<any> {
     await this.metaEntityService.syncMetaModelWithDatabase(false);
     this.addEventSearchCriteriaQuery();
+    this.addBandingActivityListener();
     return;
   }
 
@@ -171,5 +178,147 @@ export class AppService implements OnApplicationBootstrap {
       'EventSearchByCriteria',
       eventSearchCriteriaQuery,
     );
+  }
+
+  private addBandingActivityListener() {
+    this.eventService.addDataEventListener(
+      'Event',
+      new BandingActivityDataEventListener(
+        this.dataService,
+        this.queryService,
+        this.knexService,
+      ),
+    );
+  }
+}
+
+export class BandingActivityDataEventListener implements DataEventListener {
+  private readonly logger = new Logger(BandingActivityDataEventListener.name);
+
+  constructor(
+    protected readonly dataService: DataService,
+    protected readonly queryService: QueryService,
+    protected readonly knexService: KnexService,
+  ) {}
+
+  private findBandingActivityIndex(activityList: any[]): number | null {
+    if (activityList) {
+      return activityList.findIndex((s: any) => s.activity_type === 'Banding');
+    } else {
+      return null;
+    }
+  }
+
+  async isAttributeValueUniqueForBird(
+    attributeName: string,
+    value: string,
+    id: string,
+  ) {
+    // select count(*) from table where attributeName = :value and id <> :id
+    const knex = await this.knexService.getKnex();
+    const results: any[] = await knex
+      .select()
+      .from('Bird')
+      .where(attributeName, '=', value)
+      .andWhere('id', '<>', id)
+      .limit(1);
+
+    // valid if count(*) === 0
+    const valid = results.length === 0;
+    return valid;
+  }
+
+  async onBeforeSave(
+    entity: any,
+    metaEntity: MetaEntity,
+    metaEntityMap: Map<string, MetaEntity>,
+  ): Promise<ValidationResultMap> {
+    this.logger.log(`BandingActivityDataEventListener: onBeforeSave()`);
+
+    const validationResultMap = {};
+
+    const bandingActivityIdx = this.findBandingActivityIndex(entity.activities);
+    if (bandingActivityIdx >= 0) {
+      const bandingActivity = entity.activities[bandingActivityIdx];
+      if (bandingActivity) {
+        const bird_id = entity.bird_id;
+        if (!bird_id) {
+          validationResultMap[`activities.${bandingActivityIdx}.band`] = {
+            name: 'band',
+            resultType: ResultType.Error,
+            message:
+              'Unable to validate activity, no Bird is attached to the event',
+          };
+        }
+
+        const band = bandingActivity.band;
+        if (!band) {
+          validationResultMap[`activities.${bandingActivityIdx}.band`] = {
+            name: 'band',
+            resultType: ResultType.Error,
+            message: 'Band value is mandatory if activity has been added',
+          };
+        }
+
+        const unique = await this.isAttributeValueUniqueForBird(
+          'band',
+          band,
+          bird_id,
+        );
+
+        if (!unique) {
+          validationResultMap[`activities.${bandingActivityIdx}.band`] = {
+            name: 'band',
+            resultType: ResultType.Error,
+            message: 'The value supplied already exists on another Bird',
+          };
+        }
+      }
+    }
+
+    return validationResultMap;
+  }
+
+  async onAfterSave(metaEntity: MetaEntity, entity: any) {
+    this.logger.log(`BandingActivityDataEventListener: onAfterSave()`);
+    const activityList: [] = entity.activities;
+    if (activityList) {
+      const bandingActivity: any = activityList.find(
+        (s: any) => s.activity_type === 'Banding',
+      );
+
+      if (bandingActivity) {
+        this.logger.log(
+          `Found Banding activity with band = ${
+            bandingActivity.band
+          }. ${JSON.stringify(bandingActivity)}`,
+        );
+        const bird_id = entity.bird_id;
+        if (bird_id) {
+          const bird = (await this.queryService.findOne(
+            'Bird',
+            bird_id,
+          )) as any;
+
+          if (bird) {
+            this.logger.log(`Found Bird: ${bird.name} ${bird.id}`);
+            if (bird.band !== bandingActivity.band) {
+              this.logger.log(
+                `Detected different bands. Update Bird: ${bird.name} from ${bird.band} to band = ${bandingActivity.band}`,
+              );
+              bird.band = bandingActivity.band;
+              await this.dataService.save('Bird', bird);
+            } else {
+              // This can happen if someone updates an event as well as funny situations where they updated the Bird
+              // directly with a new Band and then added the Event. The net effect should be the same, the right band
+              // value should be on the bird.
+              this.logger.log(`Band is the same so no update required.`);
+            }
+          } else {
+            // No Bird found?
+          }
+        }
+      }
+    }
   }
 }
