@@ -30,10 +30,20 @@ export class AuditService {
           personId = user.user_id; // TODO: This is probably Authentication provider specific
         }
 
-        // TODO: Cognito
-        if ((user.given_name || user.family_name) && user.name) {
+        // Cognito (AzureAD)
+        if (user.given_name || user.family_name) {
           personName = `${user.given_name} ${user.family_name}`;
-          personId = user.name;
+          if (user.name) {
+            personId = user.name;
+          } else if (user['cognito:username']) {
+            personId = user['cognito:username'];
+          }
+        }
+
+        // Cognito (Plain Cognito group)
+        if (user.username) {
+          personName = user.username;
+          personId = user.username;
         }
 
         if (!personName) {

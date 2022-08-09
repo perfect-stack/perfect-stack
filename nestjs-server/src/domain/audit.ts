@@ -13,5 +13,5 @@ export enum AuditAction {
   Create = 'Create',
   Update = 'Update',
   Archive = 'Archive',
-  Delete = 'Delete'
+  Delete = 'Delete',
 }
