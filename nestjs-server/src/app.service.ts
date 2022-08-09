@@ -14,6 +14,7 @@ import { DataEventListener, EventService } from './event/event.service';
 import { MetaEntity } from './domain/meta.entity';
 import { QueryService } from './data/query.service';
 import { ResultType, ValidationResultMap } from './domain/meta.rule';
+import { Entity } from './domain/entity';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -195,15 +196,35 @@ export class AppService implements OnApplicationBootstrap {
 export class BandingActivityDataEventListener implements DataEventListener {
   private readonly logger = new Logger(BandingActivityDataEventListener.name);
 
+  private readonly markings = [
+    {
+      attribute_name: 'band',
+      activity_type: 'Banding',
+    },
+    {
+      attribute_name: 'microchip',
+      activity_type: 'Microchip',
+    },
+    {
+      attribute_name: 'wing_tag',
+      activity_type: 'Wing tag',
+    },
+  ];
+
   constructor(
     protected readonly dataService: DataService,
     protected readonly queryService: QueryService,
     protected readonly knexService: KnexService,
   ) {}
 
-  private findBandingActivityIndex(activityList: any[]): number | null {
+  private findActivityIndex(
+    activityList: any[],
+    activity_type: string,
+  ): number | null {
     if (activityList) {
-      return activityList.findIndex((s: any) => s.activity_type === 'Banding');
+      return activityList.findIndex(
+        (s: any) => s.activity_type === activity_type,
+      );
     } else {
       return null;
     }
@@ -237,77 +258,139 @@ export class BandingActivityDataEventListener implements DataEventListener {
 
     const validationResultMap = {};
 
-    const bandingActivityIdx = this.findBandingActivityIndex(entity.activities);
-    if (bandingActivityIdx >= 0) {
-      const bandingActivity = entity.activities[bandingActivityIdx];
-      if (bandingActivity) {
-        const bird_id = entity.bird_id;
-        if (!bird_id) {
-          validationResultMap[`activities.${bandingActivityIdx}.band`] = {
-            name: 'band',
-            resultType: ResultType.Error,
-            message:
-              'Unable to validate activity, no Bird is attached to the event',
-          };
-        }
-
-        const band = bandingActivity.band;
-        if (!band) {
-          validationResultMap[`activities.${bandingActivityIdx}.band`] = {
-            name: 'band',
-            resultType: ResultType.Error,
-            message: 'Band value is mandatory if activity has been added',
-          };
-        }
-
-        const unique = await this.isAttributeValueUniqueForBird(
-          'band',
-          band,
-          bird_id,
-        );
-
-        if (!unique) {
-          validationResultMap[`activities.${bandingActivityIdx}.band`] = {
-            name: 'band',
-            resultType: ResultType.Error,
-            message: 'The value supplied already exists on another Bird',
-          };
-        }
-      }
+    for (const nextMarking of this.markings) {
+      await this.validateMarking(
+        entity,
+        nextMarking.attribute_name,
+        nextMarking.activity_type,
+        validationResultMap,
+      );
     }
 
     return validationResultMap;
   }
 
-  async onAfterSave(metaEntity: MetaEntity, entity: any) {
+  private async validateMarking(
+    entity: any,
+    attribute_name: string,
+    activity_type: string,
+    validationResultMap: ValidationResultMap,
+  ) {
+    const activityIndex = this.findActivityIndex(
+      entity.activities,
+      activity_type,
+    );
+
+    if (activityIndex >= 0) {
+      const activity = entity.activities[activityIndex];
+      if (activity) {
+        const bird_id = entity.bird_id;
+        if (!bird_id) {
+          validationResultMap[`activities.${activityIndex}.${attribute_name}`] =
+            {
+              name: attribute_name,
+              resultType: ResultType.Error,
+              message:
+                'Unable to validate activity, no Bird is attached to the event',
+            };
+        }
+
+        const marking = activity[attribute_name];
+        if (marking) {
+          const unique = await this.isAttributeValueUniqueForBird(
+            attribute_name,
+            marking,
+            bird_id,
+          );
+
+          if (!unique) {
+            validationResultMap[
+              `activities.${activityIndex}.${attribute_name}`
+            ] = {
+              name: attribute_name,
+              resultType: ResultType.Error,
+              message: 'The value supplied already exists on another Bird',
+            };
+          }
+        } else {
+          validationResultMap[`activities.${activityIndex}.${attribute_name}`] =
+            {
+              name: attribute_name,
+              resultType: ResultType.Error,
+              message: 'Value is mandatory if activity has been added',
+            };
+        }
+      }
+    }
+  }
+
+  async onAfterSave(entity: any, metaEntity: MetaEntity) {
     this.logger.log(`BandingActivityDataEventListener: onAfterSave()`);
+
+    // check if there are any marking activities to worry about
+    if (this.hasMarkingActivities(entity)) {
+      // if there are load the bird once at the start
+      const bird = await this.loadBird(entity);
+
+      // do all the updates (validation has already been checked above)
+      for (const nextMarking of this.markings) {
+        await this.updateMarking(
+          entity,
+          nextMarking.attribute_name,
+          nextMarking.activity_type,
+          bird,
+        );
+      }
+
+      // do the save of the bird once at the end
+      await this.dataService.save('Bird', bird);
+    }
+  }
+
+  hasMarkingActivities(entity: any) {
     const activityList: [] = entity.activities;
     if (activityList) {
-      const bandingActivity: any = activityList.find(
-        (s: any) => s.activity_type === 'Banding',
-      );
+      for (const nextMarking of this.markings) {
+        if (
+          this.findActivityIndex(activityList, nextMarking.activity_type) >= 0
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
-      if (bandingActivity) {
+  async loadBird(entity: any): Promise<Entity> {
+    return await this.queryService.findOne('Bird', entity.bird_id);
+  }
+
+  private async updateMarking(
+    entity: any,
+    attribute_name: string,
+    activity_type: string,
+    bird: any,
+  ) {
+    const activityIdx = this.findActivityIndex(
+      entity.activities,
+      activity_type,
+    );
+
+    if (activityIdx >= 0) {
+      const activity = entity.activities[activityIdx];
+      if (activity) {
         this.logger.log(
-          `Found Banding activity with band = ${
-            bandingActivity.band
-          }. ${JSON.stringify(bandingActivity)}`,
+          `Found ${activity_type} activity with ${attribute_name} = ${activity[attribute_name]}.`,
         );
         const bird_id = entity.bird_id;
         if (bird_id) {
-          const bird = (await this.queryService.findOne(
-            'Bird',
-            bird_id,
-          )) as any;
-
           if (bird) {
-            this.logger.log(`Found Bird: ${bird.name} ${bird.id}`);
-            if (bird.band !== bandingActivity.band) {
+            this.logger.log(`Found Bird: ${bird.name}, ${bird.id}`);
+            if (bird[attribute_name] !== activity[attribute_name]) {
               this.logger.log(
-                `Detected different bands. Update Bird: ${bird.name} from ${bird.band} to band = ${bandingActivity.band}`,
+                `Detected different ${attribute_name}. Update Bird: ${bird.name} ${attribute_name} from ${bird[attribute_name]} to ${activity[attribute_name]}`,
               );
-              bird.band = bandingActivity.band;
-              await this.dataService.save('Bird', bird);
+              bird[attribute_name] = activity[attribute_name];
             } else {
               // This can happen if someone updates an event as well as funny situations where they updated the Bird
               // directly with a new Band and then added the Event. The net effect should be the same, the right band
@@ -318,6 +401,8 @@ export class BandingActivityDataEventListener implements DataEventListener {
             // No Bird found?
           }
         }
+      } else {
+        this.logger.log(`No ${activity_type} activity found`);
       }
     }
   }
