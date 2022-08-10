@@ -12,6 +12,7 @@ import {
 import {AbstractControl, UntypedFormGroup} from '@angular/forms';
 import {Observable, of, switchMap, withLatestFrom} from 'rxjs';
 import {FormGroupService} from '../data-edit/form-service/form-group.service';
+import {CriteriaService} from './criteria.service';
 
 @Component({
   selector: 'app-data-search',
@@ -40,6 +41,7 @@ export class DataSearchComponent implements OnInit {
               protected readonly formService: FormService,
               protected readonly formGroupService: FormGroupService,
               protected readonly metaEntityService: MetaEntityService,
+              protected readonly criteriaService: CriteriaService,
               protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
@@ -60,6 +62,11 @@ export class DataSearchComponent implements OnInit {
             const criteriaForm = this.formGroupService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null)
             ctx.formMap.set('criteria', criteriaForm);
             console.log('Criteria form:', criteriaForm);
+
+            // grab the latest criteria object from our in-memory store
+            const searchState = this.criteriaService.getSearchState(this.searchCriteriaTemplate.metaEntityName);
+            criteriaForm.patchValue(searchState.criteria);
+            this.pageNumber = searchState.pageNumber;
 
             // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
             this.resultTableTemplate = ctx.metaPage.templates[1];
@@ -108,6 +115,10 @@ export class DataSearchComponent implements OnInit {
         }
       }
 
+      // update the criteria object to memory for remembering searches later
+      const criteria = criteriaForm.getRawValue();
+      this.criteriaService.updateSearchState(this.searchCriteriaTemplate.metaEntityName, criteria, this.pageNumber);
+
       this.dataService.findByCriteria(queryRequest).subscribe((response) => {
         this.collectionSize = response.totalCount;
         this.searchResultsFormGroup = this.formService.createFormGroupForDataMapItem(ctx, null, ResultCardinalityType.QueryMany, this.resultTableTemplate, response.resultList);
@@ -146,6 +157,7 @@ export class DataSearchComponent implements OnInit {
     console.log('onReset()', criteriaForm);
     if(criteriaForm) {
       criteriaForm.reset();
+      this.pageNumber = 1;
       this.onSearch(ctx);
     }
   }
