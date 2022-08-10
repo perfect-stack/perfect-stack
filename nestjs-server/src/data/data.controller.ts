@@ -64,13 +64,15 @@ export class DataController {
 
     const entityResponse = await this.dataService.save(entityName, entity);
 
-    await this.auditService.audit(
-      request,
-      entityName,
-      entity.id,
-      entityResponse.action,
-      Date.now() - startTime,
-    );
+    if (entityResponse.action !== AuditAction.None) {
+      await this.auditService.audit(
+        request,
+        entityName,
+        entity.id,
+        entityResponse.action,
+        Date.now() - startTime,
+      );
+    }
 
     return entityResponse;
   }

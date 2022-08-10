@@ -10,6 +10,7 @@ export interface Audit {
 }
 
 export enum AuditAction {
+  None = 'None',
   Create = 'Create',
   Update = 'Update',
   Archive = 'Archive',

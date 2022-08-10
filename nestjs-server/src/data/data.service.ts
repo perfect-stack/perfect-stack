@@ -53,7 +53,10 @@ export class DataService {
     }
   }
 
-  private async saveInTransaction(entityName: string, entity: Entity) {
+  private async saveInTransaction(
+    entityName: string,
+    entity: Entity,
+  ): Promise<EntityResponse> {
     const metaEntityList = await this.metaEntityService.findAll();
     const metaEntityMap = new Map<string, MetaEntity>();
     for (const nextMetaEntity of metaEntityList) {
@@ -99,7 +102,7 @@ export class DataService {
     } else {
       // dispatchOnAfterSave() is not fired, because the entity was not saved since it had errors
       return {
-        action: 'none',
+        action: AuditAction.None,
         entity: entity,
         validationResults: validationResultMapController.validationResultMap,
       };
