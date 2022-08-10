@@ -61,6 +61,8 @@ export class AppService implements OnApplicationBootstrap {
         }
         const offset = (pageNumber - 1) * pageSize;
 
+        const metaEntity = await this.metaEntityService.findOne('Event');
+
         const knex = await this.knexService.getKnex();
         const selectData = () =>
           knex.select(
@@ -74,8 +76,11 @@ export class AppService implements OnApplicationBootstrap {
             'HealthActivity.activity_type as health_activity',
             'WeightActivity.activity_type as weight_activity',
             'MeasurementActivity.activity_type as measurement_activity',
+            'BandingActivity.activity_type as banding_activity',
+            'MicrochipActivity.activity_type as microchip_activity',
+            'WingTagActivity.activity_type as wing_tag_activity',
             knex.raw(
-              'concat("HealthActivity".activity_type, \',\', "WeightActivity".activity_type, \',\', "MeasurementActivity".activity_type) as activities',
+              'concat("HealthActivity".activity_type, \',\', "WeightActivity".activity_type, \',\', "MeasurementActivity".activity_type, \',\', "BandingActivity".activity_type, \',\', "MicrochipActivity".activity_type, \',\', "WingTagActivity".activity_type) as activities',
             ),
           );
 
@@ -100,6 +105,21 @@ export class AppService implements OnApplicationBootstrap {
               'MeasurementActivity',
               'MeasurementActivity.event_id',
               'Event.id',
+            )
+            .leftOuterJoin(
+              'BandingActivity',
+              'BandingActivity.event_id',
+              'Event.id',
+            )
+            .leftOuterJoin(
+              'MicrochipActivity',
+              'MicrochipActivity.event_id',
+              'Event.id',
+            )
+            .leftOuterJoin(
+              'WingTagActivity',
+              'WingTagActivity.event_id',
+              'Event.id',
             );
 
           const comparisonOperatorMap = KnexComparisonOperatorMap();
@@ -110,31 +130,19 @@ export class AppService implements OnApplicationBootstrap {
             const value: any = getCriteriaValue(criteria);
 
             if (name === 'activity_type') {
-              switch (value) {
-                case 'Health':
-                  select = select.where(
-                    'HealthActivity.activity_type',
-                    '=',
-                    'Health',
-                  );
-                  break;
-                case 'Weight':
-                  select = select.where(
-                    'WeightActivity.activity_type',
-                    '=',
-                    'Weight',
-                  );
-                  break;
-                case 'Measurement':
-                  select = select.where(
-                    'MeasurementActivity.activity_type',
-                    '=',
-                    'Measurement',
-                  );
-                  break;
-                default:
-                  throw new Error(`Unknown activity type of ${value}`);
-              }
+              const attribute = metaEntity.attributes.find(
+                (s) => s.name === 'activities',
+              );
+              const discriminator = attribute.discriminator;
+              const entityMapping = discriminator.entityMappingList.find(
+                (s) => s.discriminatorValue === value,
+              );
+
+              select = select.where(
+                `${entityMapping.metaEntityName}.activity_type`,
+                '=',
+                `${entityMapping.discriminatorValue}`,
+              );
             } else {
               select = select.where(name, operator, value);
             }

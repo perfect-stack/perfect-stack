@@ -16,7 +16,8 @@
       "comparisonField": "date_time",
       "comparisonOperator": "GreaterThanOrEqualTo",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "date_to",
@@ -29,7 +30,8 @@
       "comparisonField": "date_time",
       "comparisonOperator": "LessThanOrEqualTo",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "event_type",
@@ -43,6 +45,7 @@
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [],
       "enumeration": [
         "Capture",
         "Sighting",
@@ -63,10 +66,14 @@
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [],
       "enumeration": [
         "Health",
         "Measurement",
-        "Weight"
+        "Weight",
+        "Banding",
+        "Microchip",
+        "Wing tag"
       ]
     }
   ]
