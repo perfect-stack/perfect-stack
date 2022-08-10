@@ -11,7 +11,7 @@ export class DecimalNumberDirective {
   @Input()
   scale: string | undefined;
 
-  private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', '-', 'ArrowLeft', 'ArrowRight', 'Del', 'Delete'];
+  private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight', 'Del', 'Delete'];
 
   constructor(private el: ElementRef) {}
 
@@ -46,9 +46,13 @@ export class DecimalNumberDirective {
       const position = this.el.nativeElement.selectionStart;
       const next: string = [current.slice(0, position), event.key == 'Decimal' ? '.' : event.key, current.slice(position)].join('');
 
+      // WARNING: be aware that this regex below is designed for typing partial numbers. It can't be used to validate a numerical
+      // value by itself since this one allows things like "-" and "123."
+
       // if we don't like what the next value will look like then prevent it from happening
       //const regex: RegExp = new RegExp(/^\d*\.?\d{0,2}$/g);
-      const regex: RegExp = new RegExp('^\\d*\\.?\\d{0,' + this.scale + '}$', 'g');
+      //const regex: RegExp = new RegExp('^\\d*\\.?\\d{0,' + this.scale + '}$', 'g');
+      const regex: RegExp = new RegExp('^-?[0-9]*\\.?\\d{0,' + this.scale + '}$', 'g');
       if (next && !String(next).match(regex)) {
         event.preventDefault();
       }

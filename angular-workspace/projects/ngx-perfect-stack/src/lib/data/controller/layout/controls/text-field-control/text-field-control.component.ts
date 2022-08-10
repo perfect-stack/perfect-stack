@@ -4,7 +4,7 @@ import {AttributeType} from '../../../../../domain/meta.entity';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
 import {Subscription} from 'rxjs';
-import {ValidationResult, ValidationResultMap} from '../../../../../domain/meta.rule';
+import {ValidationResult} from '../../../../../domain/meta.rule';
 
 @Component({
   selector: 'lib-text-field-control',
@@ -72,17 +72,31 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
       }
     }
 
-    // if(this.mode === 'view' && nextValue && this.cell.attribute?.unitOfMeasure) {
-    //   nextValue = nextValue + ` (${this.cell.attribute.unitOfMeasure})`;
-    // }
-
     this.internalValue = nextValue
     this.onChange(val)
     //this.onTouch(val)
   }
 
   changeScaleOfNumber(number: any, scale: any) {
-    return Number(number).toFixed(Number(scale));
+
+    // escape hatch for typing a negative number
+    if(number === '-') {
+      return number;
+    }
+
+    const currentScale = this.getScale(number);
+    if(currentScale > scale) {
+      return Number(number).toFixed(Number(scale)).toString();
+    }
+    else {
+      return Number(number).toString();
+    }
+  }
+
+  getScale(number: any) {
+    const numberStr = String(number);
+    const decimalPoint = numberStr.indexOf('.');
+    return decimalPoint >= 0 ? numberStr.length - decimalPoint : 0;
   }
 
   onChange: any = () => {}
