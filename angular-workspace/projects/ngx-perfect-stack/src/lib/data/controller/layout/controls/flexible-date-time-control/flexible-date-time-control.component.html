@@ -1,0 +1,56 @@
+<ng-container *ngIf="mode === 'edit'">
+  <div class="row">
+    <div class="col-3">
+      <app-date-picker-control [mode]="mode" [formGroup]="formGroup" [name]="name" [includesTimeValue]="true"></app-date-picker-control>
+    </div>
+
+    <div class="col-3">
+      <lib-time-control [mode]="mode" [formGroup]="formGroup" [name]="name"></lib-time-control>
+    </div>
+
+    <div class="col-6">
+      <div class="float-start pt-2 pe-4">- or -</div>
+      <div class="btn-group" role="group">
+        <ng-container *ngFor="let option of timeOptions; let i = index;">
+          <input type="radio" class="btn-check" id="btn{{i}}" autocomplete="off" [checked]="option.name === timeOptionSelected">
+          <label class="btn btn-outline-secondary" for="btn{{i}}" (click)="onClick(option)">{{option.name}}</label>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="row flexible-time-text mt-1">
+    <div class="col-12 d-flex" *ngIf="timeOptionSelected === 'Day'">
+      <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-sun pt-1 pe-2">light_mode</div>
+      <div class="flex-grow-0">
+        <div class="flexible-time-hdg">Day time.</div>
+        <div>This is an approximate time for this event and would be any time between 12am-11:59am</div>
+        <a class="text-primary" role="button" (click)="resetTime()">Enter a specific time</a>
+      </div>
+    </div>
+    <div class="col-12 d-flex" *ngIf="timeOptionSelected === 'Night'">
+      <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-moon pt-1 pe-2">nightlight</div>
+      <div class="flex-grow-0">
+        <div class="flexible-time-hdg">Night time.</div>
+        <div>This is an approximate time for this event and would be any time between 12pm-11:59pm</div>
+        <a class="text-primary" role="button" (click)="resetTime()">Enter a specific time</a>
+      </div>
+    </div>
+    <div class="col-12 d-flex" *ngIf="timeOptionSelected === 'Unknown'">
+      <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-unknown pt-1 pe-2">help</div>
+      <div class="flex-grow-0">
+        <div class="flexible-time-hdg">Unknown.</div>
+        <div>If you think day or night is more accurate, select one of those.</div>
+        <a class="text-primary" role="button" (click)="resetTime()">Enter a specific time</a>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<div class="row" *ngIf="mode !== 'edit'">
+  <div class="col-12">
+    <div class="form-control" readonly>
+      {{dateTimeValue}}
+    </div>
+  </div>
+</div>

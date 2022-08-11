@@ -70,7 +70,7 @@ export class TimeControlComponent implements OnInit {
 
       console.log(` - formValue = "${formValue}"`);
 
-      const utc = Instant.parse(formValue)
+      const utc = Instant.parse(formValue);
       console.log(` - instant = "${utc}"`);
 
       let timeValue = ZonedDateTime.ofInstant(utc, ZoneId.of('Pacific/Auckland')).withHour(newTimeValue.hour()).withMinute(newTimeValue.minute());

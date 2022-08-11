@@ -9,7 +9,15 @@
     </ng-container>
 
     <ng-container *ngSwitchCase="'DateTime'">
-      <lib-date-time-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-date-time-control>
+      <ng-container [ngSwitch]="cell.component">
+        <ng-container *ngSwitchCase="'FlexibleDateTime'">
+          <lib-flexible-date-time-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-flexible-date-time-control>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <lib-date-time-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-date-time-control>
+        </ng-container>
+      </ng-container>
     </ng-container>
 
     <ng-container *ngSwitchCase="['Text', 'Html', 'Double', 'Integer'].includes(cell.attribute.type) ? cell.attribute.type : ''">

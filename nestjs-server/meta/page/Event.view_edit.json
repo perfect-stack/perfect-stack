@@ -8,15 +8,16 @@
       "cells": [
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "event_type",
             "component": "Select"
           },
           {
-            "width": "6",
+            "width": "8",
             "height": "1",
-            "attributeName": "date_time"
+            "attributeName": "date_time",
+            "component": "FlexibleDateTime"
           }
         ],
         [
