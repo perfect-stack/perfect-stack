@@ -7,6 +7,7 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-st
 // when date time formats use text days and months and not just numerical values
 import {Locale} from '@js-joda/locale_en';
 import '@js-joda/timezone';
+import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
   selector: 'lib-date-time-control',
@@ -17,6 +18,9 @@ export class DateTimeControlComponent implements OnInit {
 
   @Input()
   mode: string | null;
+
+  @Input()
+  cell: CellAttribute;
 
   @Input()
   formGroup: UntypedFormGroup;

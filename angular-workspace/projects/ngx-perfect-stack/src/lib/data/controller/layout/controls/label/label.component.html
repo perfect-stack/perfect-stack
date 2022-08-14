@@ -1,19 +1,32 @@
-<!-- CSS: this mt-3 on the label is quite significant, it gives all of the rows in the forms some whitespace
-above each Cell, otherwise things look a bit squished -->
-<div class="row" *ngIf="!labelHidden">
+<div class="row" *ngIf="!labelHidden && cell.component !== 'FlexibleDateTime'">
   <label class="col" [for]="attribute.name" id="{{attribute.name}}Lbl">
     <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
     <ng-container *ngIf="mode == 'edit'">
       <span class="text-danger ps-1" *ngIf="attribute.visibility == 'Required'">*</span>
     </ng-container>
-    <!--<ng-container *ngIf="attribute.unitOfMeasure && mode !== 'edit'">
-      ({{attribute.unitOfMeasure}})
-    </ng-container>-->
   </label>
+
   <label class="col" *ngIf="secondaryAttribute" id="{{attribute.name}}Lbl">
     <span placement="right" [ngbTooltip]="secondaryAttribute.description">{{secondaryAttribute.label}}</span>
     <ng-container *ngIf="mode == 'edit'">
       <span class="text-danger" *ngIf="secondaryAttribute.visibility == 'Required'">*</span>
     </ng-container>
   </label>
+</div>
+
+<div class="row" *ngIf="!labelHidden && cell.component === 'FlexibleDateTime'">
+  <ng-container *ngIf="mode === 'view'">
+    <label class="col" [for]="attribute.name" id="{{attribute.name}}Lbl">
+      <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
+    </label>
+  </ng-container>
+
+  <ng-container *ngIf="mode !== 'view'">
+    <!--<div class="row">
+      <label class="col-3">Date</label>
+      <label class="col-3">Time</label>
+      <label class="col-1 label-hidden">- or -</label>
+      <label class="col-5">Unsure of the time?</label>
+    </div>-->
+  </ng-container>
 </div>

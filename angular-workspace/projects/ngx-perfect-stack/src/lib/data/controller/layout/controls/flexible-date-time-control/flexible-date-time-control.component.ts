@@ -3,6 +3,7 @@ import {UntypedFormGroup} from '@angular/forms';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 import {Locale} from '@js-joda/locale_en';
 import {DateTimeFormatter, Instant, LocalTime, ZonedDateTime, ZoneId} from '@js-joda/core';
+import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
   selector: 'lib-flexible-date-time-control',
@@ -13,6 +14,9 @@ export class FlexibleDateTimeControlComponent implements OnInit {
 
   @Input()
   mode: string | null;
+
+  @Input()
+  cell: CellAttribute;
 
   @Input()
   formGroup: UntypedFormGroup;
@@ -30,13 +34,15 @@ export class FlexibleDateTimeControlComponent implements OnInit {
     },
     {
       name: 'Night',
-      time: '11:59'
+      time: '23:59'
     },
     {
       name: 'Unknown',
       time: '00:00'
     }
   ];
+
+  timeInputDisabled = false;
 
   constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) {
     Locale.getAvailableLocales();
@@ -75,11 +81,14 @@ export class FlexibleDateTimeControlComponent implements OnInit {
       console.log(`Update time ${option.time}`);
       console.log(`Zoned: ${newZonedDateTime}`);
       console.log(`New Form value: ${newFormControlValue}`);
+      formControl.setValue(newFormControlValue);
+      this.timeInputDisabled = true;
     }
   }
 
   resetTime() {
     this.timeOptionSelected = '';
+    this.timeInputDisabled = false;
     console.log(`Set time: 00:00`);
   }
 }

@@ -332,6 +332,26 @@
           "config": "0"
         }
       ]
+    },
+    {
+      "name": "time_precision",
+      "label": "Time precision",
+      "description": "How accurate is the time value",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "Exact",
+        "Day",
+        "Night",
+        "Unknown"
+      ]
     }
   ]
 }

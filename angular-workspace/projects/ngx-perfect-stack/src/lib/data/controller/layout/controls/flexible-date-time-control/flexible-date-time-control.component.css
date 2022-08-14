@@ -8,9 +8,17 @@
   color: #667085;
 }
 
+.flexible-time-input-field {
+  min-width: 150px !important;
+}
+
 .flexible-time-icon {
 }
 
 .flexible-time-sun {
   color: #FDB022;
+}
+
+.label-hidden {
+  visibility: hidden;
 }

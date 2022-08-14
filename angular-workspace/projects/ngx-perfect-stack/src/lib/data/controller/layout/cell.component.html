@@ -11,7 +11,7 @@
     <ng-container *ngSwitchCase="'DateTime'">
       <ng-container [ngSwitch]="cell.component">
         <ng-container *ngSwitchCase="'FlexibleDateTime'">
-          <lib-flexible-date-time-control [mode]="mode" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-flexible-date-time-control>
+          <lib-flexible-date-time-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-flexible-date-time-control>
         </ng-container>
 
         <ng-container *ngSwitchDefault>

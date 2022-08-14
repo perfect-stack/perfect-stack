@@ -1,15 +1,22 @@
 <ng-container *ngIf="mode === 'edit'">
-  <div class="row">
-    <div class="col-3">
+  <div class="row" [formGroup]="formGroup">
+    <div class="col-3 flexible-time-input-field">
+      <label>Date</label>
       <app-date-picker-control [mode]="mode" [formGroup]="formGroup" [name]="name" [includesTimeValue]="true"></app-date-picker-control>
     </div>
 
-    <div class="col-3">
-      <lib-time-control [mode]="mode" [formGroup]="formGroup" [name]="name"></lib-time-control>
+    <div class="col-3 flexible-time-input-field" *ngIf="cell && cell.attribute && cell.attribute.name">
+      <label>Time</label>
+      <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [disabled]="timeInputDisabled"></lib-time-control>
     </div>
 
-    <div class="col-6">
-      <div class="float-start pt-2 pe-4">- or -</div>
+    <div class="col-1">
+      <label class="label-hidden">Hidden</label>
+      -&nbsp;or&nbsp;-
+    </div>
+
+    <div class="col-5">
+      <label>Unsure of the time?</label>
       <div class="btn-group" role="group">
         <ng-container *ngFor="let option of timeOptions; let i = index;">
           <input type="radio" class="btn-check" id="btn{{i}}" autocomplete="off" [checked]="option.name === timeOptionSelected">
@@ -19,29 +26,29 @@
     </div>
   </div>
 
-  <div class="row flexible-time-text mt-1">
+  <div class="row flexible-time-text mt-3">
     <div class="col-12 d-flex" *ngIf="timeOptionSelected === 'Day'">
       <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-sun pt-1 pe-2">light_mode</div>
       <div class="flex-grow-0">
-        <div class="flexible-time-hdg">Day time.</div>
+        <div class="flexible-time-hdg">Day time</div>
         <div>This is an approximate time for this event and would be any time between 12am-11:59am</div>
-        <a class="text-primary" role="button" (click)="resetTime()">Enter a specific time</a>
+        <a class="text-primary" role="button" (click)="resetTime()">Enter an exact time</a>
       </div>
     </div>
     <div class="col-12 d-flex" *ngIf="timeOptionSelected === 'Night'">
       <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-moon pt-1 pe-2">nightlight</div>
       <div class="flex-grow-0">
-        <div class="flexible-time-hdg">Night time.</div>
+        <div class="flexible-time-hdg">Night time</div>
         <div>This is an approximate time for this event and would be any time between 12pm-11:59pm</div>
-        <a class="text-primary" role="button" (click)="resetTime()">Enter a specific time</a>
+        <a class="text-primary" role="button" (click)="resetTime()">Enter an exact time</a>
       </div>
     </div>
     <div class="col-12 d-flex" *ngIf="timeOptionSelected === 'Unknown'">
       <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-unknown pt-1 pe-2">help</div>
       <div class="flex-grow-0">
-        <div class="flexible-time-hdg">Unknown.</div>
+        <div class="flexible-time-hdg">Unknown</div>
         <div>If you think day or night is more accurate, select one of those.</div>
-        <a class="text-primary" role="button" (click)="resetTime()">Enter a specific time</a>
+        <a class="text-primary" role="button" (click)="resetTime()">Enter an exact time</a>
       </div>
     </div>
   </div>
@@ -54,3 +61,6 @@
     </div>
   </div>
 </div>
+
+<!--<hr>-->
+<!--{{formGroup.controls[name].value}}-->
