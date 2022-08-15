@@ -17,7 +17,7 @@
 
     <div class="col-5">
       <label>Unsure of the time?</label>
-      <div class="btn-group" role="group">
+      <div class="btn-group d-block w-100" role="group">
         <ng-container *ngFor="let option of timeOptions; let i = index;">
           <input type="radio" class="btn-check" id="btn{{i}}" autocomplete="off" [checked]="option.name === timeOptionSelected">
           <label class="btn btn-outline-secondary" for="btn{{i}}" (click)="onClick(option)">{{option.name}}</label>
@@ -58,6 +58,9 @@
   <div class="col-12">
     <div class="form-control" readonly>
       {{dateTimeValue}}
+      <ng-container *ngIf="timePrecisionControl && timePrecisionControl.value">
+        - <span class="badge small bg-secondary">{{timePrecisionControl.value}}</span>
+      </ng-container>
     </div>
   </div>
 </div>
