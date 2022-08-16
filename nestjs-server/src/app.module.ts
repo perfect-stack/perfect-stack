@@ -17,6 +17,7 @@ import { AuditModule } from './audit/audit.module';
 import { KnexModule } from './knex/knex.module';
 import { RuleModule } from './data/rule/rule.module';
 import { EventModule } from './event/event.module';
+import { AppEventModule } from './app-event/app-event.module';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -33,6 +34,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
 
 @Module({
   imports: [
+    AppEventModule,
     AuditModule,
     TypeaheadModule,
     AdminModule,
