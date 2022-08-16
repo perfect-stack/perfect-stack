@@ -265,7 +265,7 @@
       "typeaheadSearch": [],
       "rules": [
         {
-          "type": "Unique",
+          "type": "UniqueInsensitive",
           "config": ""
         }
       ]
@@ -284,7 +284,7 @@
       "typeaheadSearch": [],
       "rules": [
         {
-          "type": "Unique",
+          "type": "UniqueInsensitive",
           "config": ""
         }
       ]
@@ -303,7 +303,7 @@
       "typeaheadSearch": [],
       "rules": [
         {
-          "type": "Unique",
+          "type": "UniqueInsensitive",
           "config": ""
         }
       ]

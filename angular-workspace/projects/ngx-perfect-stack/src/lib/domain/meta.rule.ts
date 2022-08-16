@@ -1,12 +1,13 @@
 import {MetaAttribute, MetaEntity} from './meta.entity';
 
 export enum RuleType {
-  Required = 'Required',
-  Range = 'Range',
-  Pattern = 'Pattern',
-  Email = 'Email',
-  Unique = 'Unique',
   Custom = 'Custom',
+  Email = 'Email',
+  Pattern = 'Pattern',
+  Range = 'Range',
+  Required = 'Required',
+  Unique = 'Unique',
+  UniqueInsensitive = 'UniqueInsensitive',
 }
 
 export class RuleData {

@@ -15,6 +15,7 @@ import { RangeRuleValidator } from './rules/range-rule-validator';
 import { RequiredRuleValidator } from './rules/required-rule-validator';
 import { UniqueRuleValidator } from './rules/unique-rule-validator';
 import { KnexService } from '../../knex/knex.service';
+import { UniqueInsensitiveRuleValidator } from './rules/unique-insensitive-rule-validator';
 
 @Injectable()
 export class RuleService implements MetaEntityRuleValidator {
@@ -164,6 +165,13 @@ export class RuleService implements MetaEntityRuleValidator {
         return new RangeRuleValidator(metaEntity, attribute, ruleData);
       case RuleType.Unique:
         return new UniqueRuleValidator(
+          this.knexService,
+          metaEntity,
+          attribute,
+          ruleData,
+        );
+      case RuleType.UniqueInsensitive:
+        return new UniqueInsensitiveRuleValidator(
           this.knexService,
           metaEntity,
           attribute,

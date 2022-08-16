@@ -11,7 +11,7 @@ import {
 } from '../../../domain/meta.entity';
 import { KnexService } from '../../../knex/knex.service';
 
-export class UniqueRuleValidator extends RuleValidator {
+export class UniqueInsensitiveRuleValidator extends RuleValidator {
   constructor(
     protected readonly knexService: KnexService,
     metaEntity: MetaEntity,
@@ -27,7 +27,7 @@ export class UniqueRuleValidator extends RuleValidator {
   ): Promise<ValidationResult | null> {
     let validationResult = null;
 
-    const value = entity[attribute.name];
+    const value = String(entity[attribute.name]);
     if (value) {
       const knex = await this.knexService.getKnex();
 
@@ -37,14 +37,18 @@ export class UniqueRuleValidator extends RuleValidator {
         results = await knex
           .select()
           .from(this.metaEntity.name)
-          .where(attribute.name, '=', value)
+          .where(
+            knex.raw(`LOWER(${attribute.name}) = '${value.toLowerCase()}'`),
+          ) // This is different to the UniqueRuleValidator
           .andWhere('id', '<>', entity.id)
           .limit(1);
       } else {
         results = await knex
           .select()
           .from(this.metaEntity.name)
-          .where(attribute.name, '=', value)
+          .where(
+            knex.raw(`LOWER(${attribute.name}) = '${value.toLowerCase()}'`),
+          ) // This is different to the UniqueRuleValidator
           .limit(1);
       }
 
@@ -54,7 +58,7 @@ export class UniqueRuleValidator extends RuleValidator {
         validationResult = {
           name: attribute.name,
           resultType: ResultType.Error,
-          message: 'Attribute value must be unique (case sensitive)',
+          message: 'Attribute value must be unique (case insensitive)',
         };
       }
     }

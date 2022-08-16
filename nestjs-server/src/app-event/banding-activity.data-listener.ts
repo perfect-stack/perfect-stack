@@ -54,7 +54,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
     const results: any[] = await knex
       .select()
       .from('Bird')
-      .where(attributeName, '=', value)
+      .where(knex.raw(`LOWER(${attributeName}) = '${value.toLowerCase()}'`))
       .andWhere('id', '<>', id)
       .limit(1);
 
@@ -123,7 +123,8 @@ export class BandingActivityDataEventListener implements DataEventListener {
             ] = {
               name: attribute_name,
               resultType: ResultType.Error,
-              message: 'The value supplied already exists on another Bird',
+              message:
+                'The value supplied already exists on another Bird (case insensitive)',
             };
           }
         } else {
