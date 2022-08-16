@@ -43,7 +43,7 @@
     </lib-card-layout>
   </ng-container>
 
-  <div class="mt-2" *ngIf="template.locations">
+  <div *ngIf="template.locations">
     <div class="d-flex">
       <div class="flex-grow-1" *ngIf="template.locations[TemplateLocationType.BottomLeft]">
         <lib-tool-view [tool]="template.locations[TemplateLocationType.BottomLeft]" [ctx]="ctx"></lib-tool-view>

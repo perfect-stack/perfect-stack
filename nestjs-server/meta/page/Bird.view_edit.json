@@ -61,19 +61,19 @@
       "cells": [
         [
           {
-            "width": "3",
+            "width": "4",
             "height": "1",
             "attributeName": "band"
           },
           {
-            "width": "3",
-            "height": "1",
-            "attributeName": "wing_tag"
-          },
-          {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "microchip"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "wing_tag"
           }
         ]
       ],

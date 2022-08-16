@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import {CompletionResult, PageListener} from '../../../../ngx-perfect-stack/src/lib/event/page-listener';
-import {FormContext} from '../../../../ngx-perfect-stack/src/lib/data/data-edit/form-service/form.service';
+import {
+  FormArrayWithAttribute,
+  FormContext
+} from '../../../../ngx-perfect-stack/src/lib/data/data-edit/form-service/form.service';
 import {ParamMap, Router} from '@angular/router';
 import {MetaAttribute} from '../../../../ngx-perfect-stack/src/lib/domain/meta.entity';
 import {DataService} from '../../../../ngx-perfect-stack/src/lib/data/data-service/data.service';
@@ -90,11 +93,45 @@ export class EventPageListenerService implements PageListener {
         formGroup.controls['form'].setValue(birdEntity.form);
         formGroup.controls['sex'].setValue(birdEntity.sex);
         formGroup.controls['age_class'].setValue(birdEntity.age_class);
+
+        // When a Bird is added to the Event we need to clear any Validation errors that may be associated with
+        // the Marking Activities of the Event so that the user does not need to manually edit the fields to clear the error
+        // Loop through all activities in the form
+        const activitiesControl = formGroup.controls['activities'] as FormArrayWithAttribute;
+        if(activitiesControl) {
+          for(let i = 0; i < activitiesControl.length; i++) {
+            const nextActivityFormGroup = activitiesControl.at(i) as FormGroup;
+
+            // If the activity has a marking activity then clear the validation errors of that marking field
+            if(nextActivityFormGroup) {
+              const activityType = nextActivityFormGroup.controls['activity_type'].value;
+
+              switch (activityType) {
+                case 'Banding':
+                  this.clearControlErrors(nextActivityFormGroup, 'band');
+                  break;
+                case 'Microchip':
+                  this.clearControlErrors(nextActivityFormGroup, 'microchip');
+                  break;
+                case 'Wing tag':
+                  this.clearControlErrors(nextActivityFormGroup, 'wing_tag');
+                  break;
+              }
+            }
+          }
+        }
       }
       else {
         console.warn('Unable to find bird control');
       }
     });
+  }
+
+  clearControlErrors(formGroup: FormGroup, controlName: string) {
+    const control = formGroup.controls[controlName];
+    if(control) {
+      control.setErrors(null);
+    }
   }
 
   loadLocation(locationId: string, formGroup: UntypedFormGroup) {
