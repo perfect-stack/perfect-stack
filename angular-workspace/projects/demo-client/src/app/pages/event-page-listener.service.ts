@@ -89,7 +89,7 @@ export class EventPageListenerService implements PageListener {
         console.log(`Found FormGroup and bird control, patching in Bird data now for ${birdEntity.name}`);
         birdControl.patchValue(birdEntity.id, {emitEvent: emitEvent});
         formGroup.controls['status'].setValue(birdEntity.status);
-        formGroup.controls['species_id'].setValue(birdEntity.species.id);
+        formGroup.controls['species_id'].setValue(birdEntity.species ? birdEntity.species.id : '');
         formGroup.controls['form'].setValue(birdEntity.form);
         formGroup.controls['sex'].setValue(birdEntity.sex);
         formGroup.controls['age_class'].setValue(birdEntity.age_class);
