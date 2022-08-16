@@ -34,7 +34,7 @@ export class FlexibleDateTimeControlComponent implements OnInit {
     },
     {
       name: 'Night',
-      time: '23:59:59'
+      time: '23:59'
     },
     {
       name: 'Unknown',
@@ -86,8 +86,17 @@ export class FlexibleDateTimeControlComponent implements OnInit {
     const formControl = this.formGroup.controls[this.name];
     if(formControl) {
       const newTimeValue = LocalTime.parse(option.time);
-      const currentUtc = Instant.parse(formControl.value);
-      let newZonedDateTime = ZonedDateTime.ofInstant(currentUtc, ZoneId.of('Pacific/Auckland')).withHour(newTimeValue.hour()).withMinute(newTimeValue.minute()).withSecond(newTimeValue.second());
+      console.log(`Got newTimeValue:`, newTimeValue);
+      let currentValueAsInstant;
+      if(formControl.value) {
+        currentValueAsInstant = Instant.parse(formControl.value);
+      }
+      else {
+        currentValueAsInstant = Instant.now();
+      }
+
+      console.log(`Got currentUtc:`, currentValueAsInstant);
+      let newZonedDateTime = ZonedDateTime.ofInstant(currentValueAsInstant, ZoneId.of('Pacific/Auckland')).withHour(newTimeValue.hour()).withMinute(newTimeValue.minute());
       const newUtc = newZonedDateTime.toInstant();
 
       const newFormControlValue = newUtc.toString();
