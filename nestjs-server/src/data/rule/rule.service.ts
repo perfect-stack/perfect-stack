@@ -77,6 +77,9 @@ export class RuleService implements MetaEntityRuleValidator {
 
         if (validationResult) {
           validationResultMap[path + validationResult.name] = validationResult;
+          this.logger.log(
+            `Validation result: ${JSON.stringify(validationResult)}`,
+          );
         }
       }
     }

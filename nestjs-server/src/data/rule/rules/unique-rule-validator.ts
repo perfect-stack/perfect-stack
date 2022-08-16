@@ -29,14 +29,24 @@ export class UniqueRuleValidator extends RuleValidator {
 
     const value = entity[attribute.name];
     if (value) {
-      // select count(*) from table where attributeName = :value and id <> :id
       const knex = await this.knexService.getKnex();
-      const results: any[] = await knex
-        .select()
-        .from(this.metaEntity.name)
-        .where(attribute.name, '=', value)
-        .andWhere('id', '<>', entity.id)
-        .limit(1);
+
+      let results: any[];
+      if (entity.id) {
+        // select count(*) from table where attributeName = :value and id <> :id
+        results = await knex
+          .select()
+          .from(this.metaEntity.name)
+          .where(attribute.name, '=', value)
+          .andWhere('id', '<>', entity.id)
+          .limit(1);
+      } else {
+        results = await knex
+          .select()
+          .from(this.metaEntity.name)
+          .where(attribute.name, '=', value)
+          .limit(1);
+      }
 
       // valid = count(*) === 0
       const valid = results.length === 0;

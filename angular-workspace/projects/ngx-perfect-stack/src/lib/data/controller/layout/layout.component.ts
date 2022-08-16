@@ -579,6 +579,14 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   get AttributeType() {
     return AttributeType;
   }
+
+  isFormRow(row: CellAttribute[]) {
+    // Was in a hurry and needed to suppress the form-row class on rows that used the Map component. Ideally the Row
+    // object of the MetaPage would have metadata to control this, but have gone with a hunt-and-shoot-to-kill approach
+    // for now. If the row has one cell and that Cell is a ToolView, and it has a Map component then "form-row" is
+    // disabled.
+    return !(row && row.length === 1 && row[0].tool && row[0].tool.type === 'Map');
+  }
 }
 
 @Component({

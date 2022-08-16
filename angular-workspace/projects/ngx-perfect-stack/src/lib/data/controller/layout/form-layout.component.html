@@ -3,7 +3,7 @@
   <!-- If template has a binding to the form -->
   <ng-container *ngIf="template && template.binding">
     <div [ngClass]="template.styles" [formGroup]="formGroup">
-      <div class="row form-row" *ngFor="let row of cells">
+      <div class="row" [ngClass]="{'form-row': isFormRow(row)}"  *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
           <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
             <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
@@ -31,7 +31,7 @@
   <ng-container *ngIf="template && !template.binding">
     <div [formGroup]="formGroup">
       <div [ngClass]="template.styles">  <!-- NO Binding means NO formGroup -->
-        <div class="row form-row" *ngFor="let row of cells">
+        <div class="row" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
           <div [class]="getCSS(cell)" *ngFor="let cell of row">
 
             <ng-container *ngIf="cell.template">
