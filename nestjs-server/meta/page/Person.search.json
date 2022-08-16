@@ -2,6 +2,7 @@
   "name": "Person.search",
   "title": "Search person",
   "type": "search",
+  "layoutStyle": "",
   "templates": [
     {
       "metaEntityName": "PersonSearchCriteria",
@@ -11,17 +12,19 @@
           {
             "width": "4",
             "height": "1",
-            "attributeName": "given_name"
+            "attributeName": "name"
           },
           {
             "width": "4",
             "height": "1",
-            "attributeName": "family_name"
+            "component": "Select",
+            "attributeName": "email_address"
           },
           {
             "width": "4",
             "height": "1",
-            "attributeName": "gender"
+            "attributeName": "organisation",
+            "component": "Select"
           }
         ]
       ]
@@ -32,22 +35,17 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "given_name"
+            "attributeName": "name"
           },
           {
             "width": "3",
-            "height": "1",
-            "attributeName": "family_name"
-          },
-          {
-            "width": "1",
             "height": "1",
             "attributeName": "email_address"
           },
           {
             "width": "1",
             "height": "1",
-            "attributeName": "birthday"
+            "attributeName": "organisation"
           }
         ],
         [
@@ -61,10 +59,12 @@
           }
         ]
       ],
-      "metaEntityName": "Person",
+      "metaEntityName": "PersonSearchResult",
       "type": "table",
       "orderByDir": "ASC",
-      "orderByName": "given_name"
+      "orderByName": "name",
+      "customQuery": "PersonSearch"
     }
-  ]
+  ],
+  "dataQueryList": []
 }

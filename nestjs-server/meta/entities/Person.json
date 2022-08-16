@@ -1,6 +1,7 @@
 {
   "name": "Person",
   "pluralName": "People",
+  "icon": "",
   "type": "Database",
   "timestamps": true,
   "attributes": [
@@ -8,121 +9,106 @@
       "name": "id",
       "label": "Id",
       "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Identifier",
       "visibility": "Hidden",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "given_name",
       "label": "Given name",
       "description": "The person's given name",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "family_name",
       "label": "Family name",
       "description": "The person's family name",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "email_address",
       "label": "Email address",
       "description": "Email address",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Required",
-      "comparisonOperator": "",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        },
+        {
+          "type": "Unique",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "last_login",
       "label": "Last login",
       "description": "The last login date of this user",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Date",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
-      "name": "gender",
-      "label": "Gender",
-      "description": "The gender of the person",
-      "type": "Text",
+      "name": "organisation",
+      "label": "Organisation",
+      "description": "The organisation that the person belongs to",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": []
-    },
-    {
-      "name": "birthday",
-      "label": "Birthday",
-      "description": "",
-      "type": "Date",
-      "visibility": "Required",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": []
-    },
-    {
-      "name": "occupation",
-      "label": "Occupation",
-      "description": "",
-      "type": "Text",
-      "visibility": "Visible",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": []
-    },
-    {
-      "name": "company",
-      "label": "Company",
-      "description": "",
-      "type": "Text",
-      "visibility": "Visible",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": []
-    },
-    {
-      "name": "phone_numbers",
-      "label": "Phone numbers",
-      "description": "",
-      "type": "OneToMany",
-      "visibility": "Visible",
-      "comparisonOperator": "",
-      "relationshipTarget": "PhoneNumber",
-      "typeaheadSearch": []
-    },
-    {
-      "name": "physical_address",
-      "label": "Physical Address",
-      "description": "",
-      "type": "OneToOne",
-      "visibility": "Visible",
-      "comparisonOperator": "",
-      "relationshipTarget": "Address",
-      "typeaheadSearch": []
-    },
-    {
-      "name": "postal_address",
-      "label": "Postal Address",
-      "description": "",
-      "type": "OneToOne",
-      "visibility": "Visible",
-      "comparisonOperator": "",
-      "relationshipTarget": "Address",
-      "typeaheadSearch": []
+      "relationshipTarget": "Organisation",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
     }
   ]
 }

@@ -8,6 +8,7 @@ import { EventService } from './event/event.service';
 import { QueryService } from './data/query.service';
 import { BandingActivityDataEventListener } from './app-event/banding-activity.data-listener';
 import { EventSearchCriteriaQuery } from './app-event/event-search-criteria.query';
+import { PersonSearchQuery } from './app-event/person-search.query';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -33,6 +34,7 @@ export class AppService implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<any> {
     await this.metaEntityService.syncMetaModelWithDatabase(false);
     this.addEventSearchCriteriaQuery();
+    this.addPersonSearchQuery();
     this.addBandingActivityListener();
     return;
   }
@@ -41,6 +43,13 @@ export class AppService implements OnApplicationBootstrap {
     this.customQueryService.addCustomQuery(
       'EventSearchByCriteria',
       new EventSearchCriteriaQuery(this.knexService, this.metaEntityService),
+    );
+  }
+
+  private addPersonSearchQuery() {
+    this.customQueryService.addCustomQuery(
+      'PersonSearch',
+      new PersonSearchQuery(this.knexService, this.metaEntityService),
     );
   }
 

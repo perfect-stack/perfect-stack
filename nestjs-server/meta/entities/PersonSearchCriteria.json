@@ -1,38 +1,53 @@
 {
   "name": "PersonSearchCriteria",
   "pluralName": "persons",
+  "icon": "",
   "type": "Criteria",
   "timestamps": true,
   "attributes": [
     {
-      "name": "given_name",
-      "label": "Given Name",
-      "description": "Person where name starts with this value",
+      "name": "name",
+      "label": "Name",
+      "description": "Omni search of given or family name",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Visible",
-      "comparisonOperator": "InsensitiveStartsWith",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveLike",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
-      "name": "family_name",
-      "label": "Family Name",
+      "name": "organisation",
+      "label": "Organisation",
       "description": "",
-      "type": "Text",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
       "visibility": "Visible",
-      "comparisonOperator": "InsensitiveStartsWith",
-      "relationshipTarget": "",
-      "typeaheadSearch": []
-    },
-    {
-      "name": "gender",
-      "label": "Gender",
-      "description": "",
-      "type": "Text",
-      "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "Equals",
+      "relationshipTarget": "Organisation",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
+    },
+    {
+      "name": "email_address",
+      "label": "Email address",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveLike",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }
