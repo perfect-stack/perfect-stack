@@ -19,8 +19,8 @@
       <label>Unsure of the time?</label>
       <div class="btn-group d-block w-100" role="group">
         <ng-container *ngFor="let option of timeOptions; let i = index;">
-          <input type="radio" class="btn-check" id="btn{{i}}" autocomplete="off" [checked]="option.name === timeOptionSelected">
-          <label class="btn btn-outline-secondary" for="btn{{i}}" (click)="onClick(option)">{{option.name}}</label>
+          <input type="radio" class="btn-check" [id]="'btn_' + option.name" autocomplete="off" [checked]="option.name === timeOptionSelected">
+          <label class="btn btn-outline-secondary" [for]="'btn_' + option.name" (click)="onClick(option)">{{option.name}}</label>
         </ng-container>
       </div>
     </div>
