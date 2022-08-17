@@ -19,6 +19,13 @@
   </ng-container>
 
   <ng-container [ngSwitch]="template.type">
+    <lib-header-layout
+      *ngSwitchCase="'header'"
+      [ctx]="ctx"
+      [metaEntity]="metaEntity"
+      [template]="template">
+    </lib-header-layout>
+
     <lib-form-layout
       *ngSwitchCase="'form'"
       [ctx]="ctx"

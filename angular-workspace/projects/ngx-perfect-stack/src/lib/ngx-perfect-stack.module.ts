@@ -19,7 +19,7 @@ import {AuthGuard} from './authentication/auth-guard.service';
 import {
   CellViewComponent,
   TemplateControllerComponent,
-  TemplateFormEditor
+  TemplateFormEditor, TemplateHeaderEditorComponent
 } from './template/template-controller/template-controller.component';
 import {AttributePaletteComponent} from './template/attribute-palette/attribute-palette.component';
 import {MetaPageService} from './meta/page/meta-page-service/meta-page.service';
@@ -73,7 +73,7 @@ import {
   OneToPolyControlComponent,
   SpyControlComponent,
   ButtonTabsToolComponent,
-  ToolViewComponent
+  ToolViewComponent, HeaderLayoutComponent
 } from './data/controller/layout/layout.component';
 import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
@@ -243,6 +243,8 @@ const routes: Routes = [
     RuleEditDialogComponent,
     ValidationResultLabelComponent,
     FlexibleDateTimeControlComponent,
+    TemplateHeaderEditorComponent,
+    HeaderLayoutComponent
   ],
   providers: [
     AuthenticationService,

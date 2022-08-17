@@ -107,8 +107,14 @@ export class ExpressionService {
     let expressionResult = expression;
     for(const nextControlExpression of controlExpressionMatchList) {
       const search = nextControlExpression.expressionMatch[0];
-      const replaceValue = nextControlExpression.value ? String(nextControlExpression.value) : '';
+      let replaceValue = nextControlExpression.value ? String(nextControlExpression.value) : '';
+
+      if(search === '${status}') {
+        replaceValue = this.replaceSpaces(replaceValue, '-');
+      }
+
       expressionResult = expressionResult.replace(search, replaceValue.trim());
+      //console.log(`### Search: ${search}, replace: ${replaceValue.trim()}`);
     }
 
     return expressionResult;

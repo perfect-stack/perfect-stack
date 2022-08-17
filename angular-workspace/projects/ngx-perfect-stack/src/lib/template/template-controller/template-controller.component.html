@@ -7,6 +7,10 @@
   </div>
 
   <ng-container [ngSwitch]="template.type">
+    <ng-container *ngSwitchCase="'header'">
+      <lib-template-header-editor [template]="template"></lib-template-header-editor>
+    </ng-container>
+
     <ng-container *ngSwitchCase="'form'">
       <lib-template-form-editor [template]="template"></lib-template-form-editor>
     </ng-container>

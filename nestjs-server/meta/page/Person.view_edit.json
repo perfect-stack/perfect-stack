@@ -1,9 +1,60 @@
 {
   "name": "Person.view_edit",
-  "title": "${person.given_name} ${person.family_name}",
+  "title": "Person View/Edit",
   "type": "view_edit",
-  "layoutStyle": "Paris",
+  "layoutStyle": "Stockholm",
   "templates": [
+    {
+      "metaEntityName": "Person",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "1",
+            "height": "1",
+            "tool": {
+              "type": "Link",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "action": "",
+              "route": "/data/Person/search",
+              "text": "<a>Person search</a>"
+            }
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "containerStyles": "",
+              "styles": "h2",
+              "label": "",
+              "modes": "",
+              "text": "Add/Update Person"
+            }
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "containerStyles": "",
+              "styles": "last-signed-in px-3 ms-4",
+              "label": "",
+              "modes": "",
+              "text": "Last signed in 12 Aug 2022 13:14"
+            },
+            "styles": "bg-warning"
+          }
+        ]
+      ],
+      "templateHeading": "The Header Heading",
+      "binding": "person"
+    },
     {
       "metaEntityName": "Person",
       "type": "form",

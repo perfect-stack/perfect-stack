@@ -1,0 +1,13 @@
+<ng-container *ngIf="cells$ | async as cells">
+
+  <!-- If template has a binding to the form -->
+  <ng-container *ngIf="template && template.binding">
+    <div [ngClass]="template.styles" [formGroup]="formGroup">
+      <div class="d-flex flex-row align-items-baseline" *ngFor="let row of cells">
+        <div class="min-cell-width h-100" *ngFor="let cell of row">
+          <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>

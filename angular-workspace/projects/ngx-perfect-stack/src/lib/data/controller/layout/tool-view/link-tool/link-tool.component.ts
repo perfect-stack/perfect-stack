@@ -97,7 +97,7 @@ export class LinkToolComponent implements OnInit {
 
   doEditorAction() {
     // trigger the PropertySheetService to start editing it
-    this.propertySheetService.edit('Button', this.linkTool);
+    this.propertySheetService.edit('Link', this.linkTool);
   }
 
   doApplicationAction() {

@@ -28,6 +28,7 @@ export class SelectTwoComponentData implements ComponentData {
 }
 
 export enum TemplateType {
+  header = 'header',
   form = 'form',
   table = 'table',
   card = 'card',

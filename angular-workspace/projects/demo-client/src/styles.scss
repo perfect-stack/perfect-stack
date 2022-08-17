@@ -156,6 +156,10 @@ a {
   padding-bottom: 32px;
 }
 
+.stockholm-layout-style .form-row {
+  padding-bottom: 32px;
+}
+
 .bird-view .form-row {
   padding-bottom: 24px;
 }
@@ -291,6 +295,14 @@ a {
   background: #EAECF0;
   color: #667085;
 }
+
+/*********** Last Signed in **********/
+.last-signed-in {
+  @include badge-mixin;
+  background: #F2F4F7;
+  color: #1D2939;
+}
+
 
 /*********** Miscellaneous **********/
 .bird-profile-image-width {

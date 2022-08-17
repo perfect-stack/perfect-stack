@@ -311,24 +311,10 @@ export class CellViewComponent implements OnInit, OnChanges {
   }
 
   onSettings() {
-    if(this.cell && this.attribute && this.metaEntity) {
-      /*const modalRef = this.modalService.open(CellSettingsComponent, {ariaLabelledBy: 'modal-basic-title'});
-
-      const cellSettingsComponent = modalRef.componentInstance as CellSettingsComponent;
-      cellSettingsComponent.init(this.metaEntity, this.attribute, this.cell.component, this.cell.componentData);
-
-      modalRef.closed.subscribe((result: CellSettingsResult) => {
-        this.cell.component = result.componentType;
-        if(result.componentType === 'SelectTwo') {
-          this.cell.componentData = {
-            secondaryAttributeName: result.secondaryAttributeName
-          } as SelectTwoComponentData;
-        }
-        else {
-          delete this.cell.componentData;
-        }
-      });*/
-
+    // if(this.cell && this.attribute && this.metaEntity) {
+    //   this.propertySheetService.editWithType('Cell', this.cell, 'Cell');
+    // }
+    if(this.cell) {
       this.propertySheetService.editWithType('Cell', this.cell, 'Cell');
     }
   }
@@ -410,4 +396,136 @@ export class CellViewComponent implements OnInit, OnChanges {
   isShowLabel(attribute: MetaAttribute) {
     return attribute && attribute.type !== AttributeType.Boolean;
   }
+}
+
+@Component({
+  selector: 'lib-template-header-editor',
+  templateUrl: './template-header-editor.component.html',
+  styleUrls: ['./template-header-editor.component.css'],
+})
+export class TemplateHeaderEditorComponent implements OnInit{
+
+  @Input()
+  public template: Template;
+
+  metaEntityMap$: Observable<Map<string, MetaEntity>> = this.metaEntityService.metaEntityMap$;
+
+  constructor(protected readonly metaEntityService: MetaEntityService) { }
+
+  ngOnInit(): void {
+  }
+
+  /*getCSS(cell: Cell): string[] {
+    return [
+      `col-${cell.width}`
+    ];
+  }*/
+
+  getAttribute(name: string | undefined, metaEntityMap: Map<string, MetaEntity>, metaEntityName: string): MetaAttribute | undefined {
+    if(name && metaEntityMap && metaEntityName) {
+      const metaEntity = metaEntityMap.get(metaEntityName)
+      if(metaEntity) {
+        return metaEntity.attributes.find(a => a.name === name);
+      }
+    }
+    return undefined;
+  }
+
+  onChangeWidth(value: number, row: Cell[], cell: Cell) {
+    const lastCell = row[row.length - 1];
+    let lastCellWidth = Number(lastCell.width);
+
+    const totalWidth = this.getTotalWidth(row);
+    const newTotalWidth = totalWidth + value;
+
+    const cellWidth = Number(cell.width);
+    const newCellWidth = cellWidth + value;
+
+    if(cell === lastCell) {
+      if(newTotalWidth <= 12 && newCellWidth >= 1 && newCellWidth <= 12) {
+        cell.width = String(newCellWidth);
+      }
+    }
+    else {
+      const lastCellChangeNeeded = newTotalWidth > 12;
+
+      let canLastCellBeChanged = true;
+      if(lastCellChangeNeeded) {
+        lastCellWidth = lastCellWidth - 1;
+        canLastCellBeChanged = lastCellWidth >= 1 && lastCellWidth <= 12;
+      }
+
+      const canCellBeChanged = newCellWidth >= 1 && newCellWidth <= 12;
+      if(canCellBeChanged && canLastCellBeChanged) {
+        cell.width = String(newCellWidth);
+        if(lastCellChangeNeeded) {
+          lastCell.width = String(lastCellWidth);
+        }
+      }
+    }
+  }
+
+  getTotalWidth(row: Cell[]) {
+    let totalWidth = 0;
+    for(let nextCell of row) {
+      totalWidth += Number(nextCell.width);
+    }
+    return totalWidth;
+  }
+
+  onChangeHeight($event: number, nextRow: Cell[], nextCell: Cell) {
+    console.log(`onChangeHeight: ${$event}`);
+    let newHeight: number = Number(nextCell.height) + $event;
+    if(newHeight < 1) {
+      newHeight = 1;
+    }
+
+    if(newHeight > 10) {
+      newHeight = 10;
+    }
+
+    nextCell.height = String(newHeight);
+  }
+
+  onAddCell(row: Cell[]) {
+    const totalWidth = this.getTotalWidth(row);
+    const cellWidth = Math.min(12 - totalWidth, 4);
+
+    const cell = new Cell();
+    cell.width = String(cellWidth);
+    cell.height = String(1)
+    row.push(cell);
+  }
+
+  onDeleteCell(cell: Cell, row: Cell[]) {
+    row.splice(row.indexOf(cell), 1);
+    if(row.length == 0) {
+      this.template.cells = this.template.cells.filter((r) => r.length > 0);
+    }
+  }
+
+  onAddRow(number: number) {
+    for(let i = 0; i < number; i++) {
+      const row: Cell[] = [];
+      this.onAddCell(row);
+      this.template.cells.push(row);
+    }
+  }
+
+  clearAllCells() {
+    for(const nextRow of this.template.cells) {
+      for(const nextCell of nextRow) {
+        this.clearOneCell(nextCell);
+      }
+    }
+  }
+
+  clearOneCell(cell: Cell) {
+    cell.attributeName = undefined;
+  }
+
+  getMetaEntity(metaEntityMap: Map<string, MetaEntity>, metaEntityName: string) {
+    return metaEntityMap?.get(metaEntityName);
+  }
+
 }
