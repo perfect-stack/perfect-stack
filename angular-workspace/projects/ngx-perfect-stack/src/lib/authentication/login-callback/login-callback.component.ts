@@ -29,6 +29,10 @@ export class LoginCallbackComponent implements OnInit {
           cognitoUser.accessToken = accessToken;
           cognitoUser.saveTokens();
           this.authenticationService.handleLoginResult(true);
+
+          this.authenticationService.sendNotification(idToken, accessToken).subscribe(() => {
+            console.log('Authentication notification sent');
+          });
         }
       }
     }

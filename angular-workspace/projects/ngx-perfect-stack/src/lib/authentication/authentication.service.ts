@@ -7,6 +7,8 @@ import {CognitoUser} from './user/cognito-user';
 import {BehaviorSubject, of, switchMap} from 'rxjs';
 import {nativeJs, ZonedDateTime} from '@js-joda/core';
 import jwt_decode from "jwt-decode";
+import {HttpClient} from '@angular/common/http';
+import {LoginNotification} from './login-notification';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +40,7 @@ export class AuthenticationService {
 
   constructor(protected readonly router: Router,
               protected readonly route: ActivatedRoute,
+              protected readonly http: HttpClient,
               @Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig) {
 
@@ -82,6 +85,14 @@ export class AuthenticationService {
     else {
       this.isLoggedIn = false;
     }
+  }
+
+  sendNotification(idToken: string, accessToken: string) {
+    console.log(`Sending login notification`);
+    return this.http.post<LoginNotification>(`${this.stackConfig.apiUrl}/authentication/notification`, {
+      idToken: idToken,
+      accessToken: accessToken,
+    });
   }
 
   navigateToFirstPage() {

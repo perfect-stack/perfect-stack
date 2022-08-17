@@ -5,9 +5,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { DataModule } from '../data/data.module';
 
 @Module({
-  imports: [HttpModule, ConfigModule, JwtModule.register({})],
+  imports: [HttpModule, ConfigModule, DataModule, JwtModule.register({})],
   providers: [AuthenticationService, JwtStrategy],
   controllers: [AuthenticationController],
   exports: [AuthenticationService],
