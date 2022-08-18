@@ -95,6 +95,10 @@ export class AuthenticationService {
     });
   }
 
+  findLastSignIn(username: string) {
+    return this.http.get(`${this.stackConfig.apiUrl}/authentication/last-sign-in/${username}`);
+  }
+
   navigateToFirstPage() {
     if(this._redirectUrl) {
       console.log(`navigateToFirstPage: by redirectUrl ${this._redirectUrl} `);

@@ -50,6 +50,7 @@ export enum ToolType {
   ButtonTabs = 'ButtonTabs',
   Icon = 'Icon',
   Image = 'Image',
+  LastSignIn = 'LastSignIn',
   Link = 'Link',
   Map = 'Map',
   Select = 'Select',
@@ -93,6 +94,10 @@ export class ButtonTabsTool extends Tool {
 
 export class ImageTool extends Tool {
   imageUrl: string;
+}
+
+export class LastSignInTool extends Tool {
+  username: string;
 }
 
 export class LinkTool extends Tool {

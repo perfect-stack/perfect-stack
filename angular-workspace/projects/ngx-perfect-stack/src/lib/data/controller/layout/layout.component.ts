@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@an
 import {
   ButtonGroupTool,
   ButtonTabsTool, ButtonTool,
-  Cell, IconTool, ImageTool, LinkTool, MapTool,
+  Cell, IconTool, ImageTool, LastSignInTool, LinkTool, MapTool,
   MetaPage,
   Template,
   TemplateLocationType,
@@ -963,6 +963,10 @@ export class ToolViewComponent implements OnInit {
 
   asImageTool() {
     return this.tool as ImageTool;
+  }
+
+  asLastSignInTool() {
+    return this.tool as LastSignInTool;
   }
 
   asLinkTool() {

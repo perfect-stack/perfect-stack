@@ -7,6 +7,9 @@ import * as jwksClient from 'jwks-rsa';
 import { nativeJs, ZonedDateTime } from '@js-joda/core';
 import { DataService } from '../data/data.service';
 import { Entity } from '../domain/entity';
+import { QueryService } from '../data/query.service';
+import { QueryRequest } from '../data/query.request';
+import { AttributeType, ComparisonOperator } from '../domain/meta.entity';
 
 @Injectable()
 export class AuthenticationService {
@@ -15,6 +18,7 @@ export class AuthenticationService {
   constructor(
     protected readonly configService: ConfigService,
     protected readonly dataService: DataService,
+    protected readonly queryService: QueryService,
   ) {
     this.jwksClient = jwksClient({
       jwksUri: configService.get('AUTHENTICATION_PUBLIC_KEY_URL'),
@@ -61,5 +65,32 @@ export class AuthenticationService {
     const kid = getKeyIdFromToken(token);
     const key = await this.jwksClient.getSigningKey(kid);
     return jwt.verify(token, key.getPublicKey());
+  }
+
+  public async findLastSignIn(username: string): Promise<any> {
+    let result = null;
+    if (username) {
+      const qr = new QueryRequest();
+      qr.criteria.push({
+        name: 'email_address',
+        value: username,
+        operator: ComparisonOperator.Equals,
+        attributeType: AttributeType.Text,
+      });
+
+      qr.metaEntityName = 'Authentication';
+      qr.orderByName = 'auth_time';
+      qr.orderByDir = 'DESC';
+      qr.pageNumber = 1;
+      qr.pageSize = 1;
+
+      const response = await this.queryService.findByCriteria(qr);
+
+      if (response.totalCount > 0) {
+        result = response.resultList[0];
+      }
+    }
+
+    return result;
   }
 }

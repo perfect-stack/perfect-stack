@@ -17,6 +17,10 @@
         <lib-image-tool [imageTool]="asImageTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-image-tool>
       </ng-container>
 
+      <ng-container *ngSwitchCase="'LastSignIn'">
+        <lib-last-sign-in-tool [lastSignInTool]="asLastSignInTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-last-sign-in-tool>
+      </ng-container>
+
       <ng-container *ngSwitchCase="'Link'">
         <lib-link-tool [linkTool]="asLinkTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-link-tool>
       </ng-container>

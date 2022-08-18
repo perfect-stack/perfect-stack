@@ -41,14 +41,26 @@
             "width": "4",
             "height": "1",
             "tool": {
-              "type": "TextTool",
+              "type": "LastSignIn",
               "containerStyles": "",
-              "styles": "last-signed-in px-3 ms-4",
+              "styles": "",
               "label": "",
               "modes": "",
-              "text": "Last signed in 12 Aug 2022 13:14"
-            },
-            "styles": "bg-warning"
+              "username": "${person.email_address}"
+            }
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "tool": {
+              "type": "Button",
+              "containerStyles": "",
+              "styles": "btn btn-outline-primary",
+              "label": "Edit",
+              "modes": "",
+              "action": "edit",
+              "route": "/route/go/here"
+            }
           }
         ]
       ],

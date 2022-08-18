@@ -4,7 +4,7 @@ import {
   ButtonTabsTool,
   ButtonTool,
   IconTool,
-  ImageTool, LinkTool, MapTool,
+  ImageTool, LastSignInTool, LinkTool, MapTool,
   TextTool,
   ToolType
 } from '../../domain/meta.page';
@@ -59,6 +59,15 @@ export class ToolPaletteComponent implements OnInit {
     label: '',
     modes: '',
     imageUrl: '/assets/images/image.png'
+  }
+
+  static readonly lastSignInPrototype: LastSignInTool = {
+    type: ToolType.LastSignIn,
+    containerStyles: '',
+    styles: '',
+    label: '',
+    modes: '',
+    username: 'email_address'
   }
 
   static readonly linkPrototype: LinkTool = {

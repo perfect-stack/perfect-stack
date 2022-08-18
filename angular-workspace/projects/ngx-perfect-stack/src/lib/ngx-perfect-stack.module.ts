@@ -124,6 +124,7 @@ import { LinkToolComponent } from './data/controller/layout/tool-view/link-tool/
 import { RuleEditDialogComponent } from './meta/entity/meta-entity-edit/rule-edit-dialog/rule-edit-dialog.component';
 import { ValidationResultLabelComponent } from './data/controller/layout/controls/validation-result-label/validation-result-label.component';
 import { FlexibleDateTimeControlComponent } from './data/controller/layout/controls/flexible-date-time-control/flexible-date-time-control.component';
+import { LastSignInToolComponent } from './data/controller/layout/tool-view/last-sign-in-tool/last-sign-in-tool.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -244,7 +245,8 @@ const routes: Routes = [
     ValidationResultLabelComponent,
     FlexibleDateTimeControlComponent,
     TemplateHeaderEditorComponent,
-    HeaderLayoutComponent
+    HeaderLayoutComponent,
+    LastSignInToolComponent
   ],
   providers: [
     AuthenticationService,

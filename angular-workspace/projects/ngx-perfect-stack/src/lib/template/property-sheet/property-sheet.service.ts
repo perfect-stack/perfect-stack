@@ -98,6 +98,14 @@ export const ImagePropertyList = [
   { name: 'imageUrl', type: PropertyType.string},
 ];
 
+export const LastSignInPropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
+  { name: 'username', type: PropertyType.string},
+];
+
 export const LinkPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
@@ -167,6 +175,7 @@ export const PropertyListMap: PropertyListMapType = {
   'ButtonTabs': ButtonTabsPropertyList,
   'Icon': IconPropertyList,
   'Image': ImagePropertyList,
+  'LastSignIn': LastSignInPropertyList,
   'Link': LinkPropertyList,
   'Map': MapPropertyList,
   'TextTool': TextToolPropertyList,
