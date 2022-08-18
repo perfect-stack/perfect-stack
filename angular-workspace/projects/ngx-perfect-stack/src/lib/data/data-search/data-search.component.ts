@@ -35,6 +35,8 @@ export class DataSearchComponent implements OnInit {
   resultTableMetaEntity: MetaEntity;
   searchResultsFormGroup: UntypedFormGroup | null;
 
+  resultsMessage = '';
+
   constructor(protected readonly customDateParserFormatter: CustomDateParserFormatter,
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
@@ -126,6 +128,12 @@ export class DataSearchComponent implements OnInit {
           ctx.formMap = new Map<string, AbstractControl>()
         }
         ctx.formMap.set('results', this.searchResultsFormGroup);
+
+        const startRow = Math.min(((queryRequest.pageNumber - 1) * queryRequest.pageSize) + 1, response.totalCount);
+        const endRow = Math.min(startRow + queryRequest.pageSize - 1, response.totalCount);
+        const totalRows = response.totalCount;
+        const pluralName = this.resultTableMetaEntity.pluralName;
+        this.resultsMessage = `Showing ${startRow}-${endRow} of ${totalRows} ${pluralName}`;
       });
     }
   }

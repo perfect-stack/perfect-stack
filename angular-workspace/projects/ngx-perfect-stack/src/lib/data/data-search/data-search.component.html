@@ -32,8 +32,9 @@
 
   <div class="container-table" *ngIf="searchResultsFormGroup">
 
-    <div class="collection-size-found">
-      Showing {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found
+    <div class="collection-size-found" *ngIf="resultsMessage">
+      <!--Showing {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found-->
+      {{resultsMessage}}
     </div>
 
     <ng-container *ngIf="searchResultsFormGroup">

@@ -63,7 +63,7 @@ export class PersonSearchQuery implements CustomQuery {
         const value: any = getCriteriaValue(criteria);
 
         if (name === 'organisation_id') {
-          // TODO: add organisation criteria
+          select = select.where('Organisation.id', '=', value);
         } else if (name === 'name') {
           select = select
             .where('Person.given_name', 'ilike', wrapWithWildcards(value))

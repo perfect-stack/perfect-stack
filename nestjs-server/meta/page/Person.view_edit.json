@@ -10,22 +10,6 @@
       "cells": [
         [
           {
-            "width": "1",
-            "height": "1",
-            "tool": {
-              "type": "Link",
-              "containerStyles": "",
-              "styles": "",
-              "label": "",
-              "modes": "",
-              "action": "",
-              "route": "/data/Person/search",
-              "text": "<a>Person search</a>"
-            }
-          }
-        ],
-        [
-          {
             "width": "4",
             "height": "1",
             "tool": {
@@ -34,7 +18,7 @@
               "styles": "h2",
               "label": "",
               "modes": "",
-              "text": "Add/Update Person"
+              "text": "Person View/Edit"
             }
           },
           {
@@ -47,19 +31,6 @@
               "label": "",
               "modes": "",
               "username": "${person.email_address}"
-            }
-          },
-          {
-            "width": "4",
-            "height": "1",
-            "tool": {
-              "type": "Button",
-              "containerStyles": "",
-              "styles": "btn btn-outline-primary",
-              "label": "Edit",
-              "modes": "",
-              "action": "edit",
-              "route": "/route/go/here"
             }
           }
         ]

@@ -27,7 +27,19 @@
 
       <!-- Stockholm layout style -->
       <ng-container *ngSwitchCase="'Stockholm'">
-        <lib-stockholm-layout-style [ctx]="ctx"></lib-stockholm-layout-style>
+        <lib-stockholm-layout-style [ctx]="ctx">
+          <ng-container TopRightActions>
+            <div class="h-100 d-flex align-items-center" *ngIf="mode === 'view'" >
+              <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">Edit {{ctx.metaEntity.name.toLowerCase()}}</button>
+            </div>
+          </ng-container>
+          <ng-container BottomRightActions>
+            <div class="mt-2" *ngIf="mode === 'edit'">
+              <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx)" id="cancelBtn">Cancel</button>
+              <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save details</button>
+            </div>
+          </ng-container>
+        </lib-stockholm-layout-style>
       </ng-container>
 
       <!-- Venice layout style -->
