@@ -1,0 +1,9 @@
+.table thead {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background: #F2F4F7;
+}
+
+.table > :not(:first-child) {
+  border-top: unset;
+}

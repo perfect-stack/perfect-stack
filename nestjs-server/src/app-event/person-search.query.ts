@@ -8,8 +8,11 @@ import {
   KnexComparisonOperatorMap,
   wrapWithWildcards,
 } from '../data/query-utils';
+import { Logger } from '@nestjs/common';
 
 export class PersonSearchQuery implements CustomQuery {
+  private readonly logger = new Logger(PersonSearchQuery.name);
+
   constructor(
     protected readonly knexService: KnexService,
     protected readonly metaEntityService: MetaEntityService,
@@ -78,8 +81,7 @@ export class PersonSearchQuery implements CustomQuery {
 
     // specify the pagination properties
     let dataQuery = from(selectData()).offset(offset).limit(pageSize);
-
-    console.log(`dataQuery: ${JSON.stringify(dataQuery.toSQL().toNative())}`);
+    this.knexService.logQuery(this.logger, 'PersonSearch', dataQuery);
 
     // specify the ordering properties
     if (queryRequest.orderByName && queryRequest.orderByDir) {

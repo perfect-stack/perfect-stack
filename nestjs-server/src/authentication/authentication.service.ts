@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { LoginNotification } from './login-notification';
 import { getKeyIdFromToken } from './jwt.strategy';
 import * as jwt from 'jsonwebtoken';
@@ -13,6 +13,7 @@ import { AttributeType, ComparisonOperator } from '../domain/meta.entity';
 
 @Injectable()
 export class AuthenticationService {
+  private readonly logger = new Logger(AuthenticationService.name);
   private jwksClient;
 
   constructor(
@@ -33,8 +34,8 @@ export class AuthenticationService {
    * source of authentication is Cognito and AzureAD logs themselves.
    */
   async notification(loginNotification: LoginNotification) {
-    console.log(`idToken: ${loginNotification.idToken}`);
-    console.log(`accessToken: ${loginNotification.accessToken}`);
+    // console.log(`idToken: ${loginNotification.idToken}`);
+    // console.log(`accessToken: ${loginNotification.accessToken}`);
 
     const idToken = await this.decodeAndVerify(loginNotification.idToken);
     const accessToken = await this.decodeAndVerify(
@@ -45,8 +46,8 @@ export class AuthenticationService {
       nativeJs(new Date(idToken.auth_time * 1000)),
     );
 
-    console.log(
-      `Login notification From: ${idToken.given_name} ${idToken.family_name}, ${idToken.email}, ${accessToken.username} - ${auth_time}`,
+    this.logger.log(
+      `Login notification, saving... ${idToken.given_name} ${idToken.family_name}, ${idToken.email}, ${accessToken.username} - ${auth_time}`,
     );
 
     await this.dataService.save('Authentication', {
@@ -57,6 +58,10 @@ export class AuthenticationService {
       email_address: idToken.email, // subtle name change here!
       username: accessToken.username,
     } as Entity);
+
+    this.logger.log(
+      `Login notification Saved ok: ${idToken.given_name} ${idToken.family_name}, ${idToken.email}, ${accessToken.username} - ${auth_time}`,
+    );
 
     return;
   }

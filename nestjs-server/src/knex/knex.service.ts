@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { knex } from 'knex';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseSettings } from '../orm/database.providers';
@@ -58,5 +58,13 @@ export class KnexService {
     }
 
     return this._knex;
+  }
+
+  logQuery(logger: Logger, queryName: string, query: any) {
+    const nativeQuery = query.toSQL().toNative();
+    logger.log(`${queryName}.sql: ${nativeQuery.sql}`);
+    logger.log(
+      `${queryName}.bindings: ${JSON.stringify(nativeQuery.bindings)}`,
+    );
   }
 }

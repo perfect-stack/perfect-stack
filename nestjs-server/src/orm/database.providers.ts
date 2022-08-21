@@ -56,8 +56,8 @@ export const loadOrm = async (
     username: databaseSettings.databaseUser,
     password: databasePassword,
     database: databaseSettings.databaseName,
-    logging: false,
-    logQueryParameters: false,
+    logging: true,
+    logQueryParameters: true,
     ssl: true,
     pool: {
       /*

@@ -41,10 +41,14 @@ export class DataService {
 
   async save(entityName: string, entity: Entity): Promise<EntityResponse> {
     try {
-      console.log(`save(${entityName}) ${JSON.stringify(entity)}`);
+      this.logger.log(`save.1(${entityName}) ${JSON.stringify(entity)}`);
       const result = await this.ormService.sequelize.transaction(async () => {
-        return this.saveInTransaction(entityName, entity);
+        this.logger.log(`save.2(${entityName}) ${JSON.stringify(entity)}`);
+        const txnResult = this.saveInTransaction(entityName, entity);
+        this.logger.log(`save.3(${entityName}) ${JSON.stringify(entity)}`);
+        return txnResult;
       });
+      this.logger.log(`save.4(${entityName}) ${JSON.stringify(entity)}`);
 
       return result;
     } catch (error) {

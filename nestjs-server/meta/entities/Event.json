@@ -307,12 +307,17 @@
       "unitOfMeasure": "",
       "scale": "",
       "type": "DateTime",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "altitude",
