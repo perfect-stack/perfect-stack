@@ -46,7 +46,6 @@ export class FormGroupService {
             // experiment attempting to use setValue() instead of patchValue() need to populate all attributes from data entity
             const controlName = (nextAttribute.name + '_id').toLowerCase();
             formGroup.addControl(controlName, new FormControl(''));
-            console.log(`Added control for: ${controlName}`);
           } // else recursion flag is false so don't drill down any further (need to break circular relationships)
 */
           {
@@ -59,7 +58,6 @@ export class FormGroupService {
               formControl.addValidators(Validators.required)
             }
             formGroup.addControl(controlName, formControl);
-            console.log(`Added control for: ${controlName}`);
           }
 
           break;
@@ -69,8 +67,6 @@ export class FormGroupService {
           // experiment attempting to use setValue() instead of patchValue() need to populate all attributes from data entity
           const controlName = (nextAttribute.name + '_id').toLowerCase();
           formGroup.addControl(controlName, new UntypedFormControl(''));
-          console.log(`Added control for: ${controlName}`);
-
           break;
         case AttributeType.Date:
           abstractControl = this.formControlForDate(mode);
@@ -134,8 +130,6 @@ export class FormGroupService {
           // experiment attempting to use setValue() instead of patchValue() need to populate all attributes from data entity
           const controlName = metaEntityName + 'Id';
           fg.addControl(controlName, new UntypedFormControl(''));
-          console.log(`Added control for: ${controlName}`);
-
           formControl.push(fg);
         }
       }

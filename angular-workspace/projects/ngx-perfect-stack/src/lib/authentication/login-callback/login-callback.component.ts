@@ -30,13 +30,18 @@ export class LoginCallbackComponent implements OnInit {
           cognitoUser.saveTokens();
 
           // accept the login result (so that user/token is created, but delay the navigation until we notify the server
-          this.authenticationService.handleLoginResult(true, true);
-
+          this.authenticationService.handleLoginResult(true);
           this.authenticationService.sendNotification(idToken, accessToken).subscribe(() => {
             console.log('Authentication notification sent');
-            // Now navigate to the first page
-            this.authenticationService.navigateToFirstPage();
           });
+
+
+          // this.authenticationService.handleLoginResult(true, true);
+          // this.authenticationService.sendNotification(idToken, accessToken).subscribe(() => {
+          //   console.log('Authentication notification sent');
+          //   // Now navigate to the first page
+          //   this.authenticationService.navigateToFirstPage();
+          // });
         }
       }
     }
