@@ -50,7 +50,7 @@ export class AuthenticationService {
       `Login notification, saving... ${idToken.given_name} ${idToken.family_name}, ${idToken.email}, ${accessToken.username} - ${auth_time}`,
     );
 
-    await this.dataService.save('Authentication', {
+    await this.dataService.saveInTransaction('Authentication', {
       id: null,
       auth_time: auth_time.toInstant().toString(),
       given_name: idToken.given_name,

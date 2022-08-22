@@ -57,7 +57,7 @@ export class DataService {
     }
   }
 
-  private async saveInTransaction(
+  async saveInTransaction(
     entityName: string,
     entity: Entity,
   ): Promise<EntityResponse> {
