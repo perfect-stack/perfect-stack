@@ -66,7 +66,7 @@ export class AuthenticationService {
     }
   }
 
-  handleLoginResult(loginSuccessful: boolean): void {
+  handleLoginResult(loginSuccessful: boolean, delayNavigation = false): void {
     console.log(`handleLoginResult: loginSuccessful = ${loginSuccessful}`)
     if(loginSuccessful) {
       this.isLoggedIn = true;
@@ -80,7 +80,9 @@ export class AuthenticationService {
         console.log(`Expiry time has been set: ${this.expiryTime}`);
       });
 
-      this.navigateToFirstPage();
+      if(!delayNavigation) {
+        this.navigateToFirstPage();
+      }
     }
     else {
       this.isLoggedIn = false;
