@@ -50,7 +50,8 @@ export class AuthenticationService {
       `Login notification, saving... ${idToken.given_name} ${idToken.family_name}, ${idToken.email}, ${accessToken.username} - ${auth_time}`,
     );
 
-    await this.dataService.saveInTransaction('Authentication', {
+    this.logger.log(`Login notification, save with transaction`);
+    await this.dataService.save('Authentication', {
       id: null,
       auth_time: auth_time.toInstant().toString(),
       given_name: idToken.given_name,
@@ -58,6 +59,16 @@ export class AuthenticationService {
       email_address: idToken.email, // subtle name change here!
       username: accessToken.username,
     } as Entity);
+
+    // this.logger.log(`Login notification, bypass transaction and save directly`)
+    // await this.dataService.saveInTransaction('Authentication', {
+    //   id: null,
+    //   auth_time: auth_time.toInstant().toString(),
+    //   given_name: idToken.given_name,
+    //   family_name: idToken.family_name,
+    //   email_address: idToken.email, // subtle name change here!
+    //   username: accessToken.username,
+    // } as Entity);
 
     this.logger.log(
       `Login notification Saved ok: ${idToken.given_name} ${idToken.family_name}, ${idToken.email}, ${accessToken.username} - ${auth_time}`,
