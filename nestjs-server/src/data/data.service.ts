@@ -18,6 +18,7 @@ import { QueryService } from './query.service';
 import { RuleService } from './rule/rule.service';
 import { ValidationResultMapController } from '../domain/meta.rule';
 import { EventService } from '../event/event.service';
+import { Transaction } from 'sequelize';
 
 @Injectable()
 export class DataService {
@@ -42,12 +43,14 @@ export class DataService {
   async save(entityName: string, entity: Entity): Promise<EntityResponse> {
     try {
       this.logger.log(`save.1(${entityName}) ${JSON.stringify(entity)}`);
-      const result = await this.ormService.sequelize.transaction(async () => {
-        this.logger.log(`save.2(${entityName}) ${JSON.stringify(entity)}`);
-        const txnResult = this.saveInTransaction(entityName, entity);
-        this.logger.log(`save.3(${entityName}) ${JSON.stringify(entity)}`);
-        return txnResult;
-      });
+      const result = await this.ormService.sequelize.transaction(
+        async (txn: Transaction) => {
+          this.logger.log(`save.2(${entityName}) ${JSON.stringify(entity)}`);
+          const txnResult = this.saveInTransaction(entityName, entity, txn);
+          this.logger.log(`save.3(${entityName}) ${JSON.stringify(entity)}`);
+          return txnResult;
+        },
+      );
       this.logger.log(`save.4(${entityName}) ${JSON.stringify(entity)}`);
 
       return result;
@@ -60,6 +63,7 @@ export class DataService {
   async saveInTransaction(
     entityName: string,
     entity: Entity,
+    txn: Transaction,
   ): Promise<EntityResponse> {
     const metaEntityList = await this.metaEntityService.findAll();
     const metaEntityMap = new Map<string, MetaEntity>();

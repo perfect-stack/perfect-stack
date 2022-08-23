@@ -5,6 +5,11 @@ import {
 } from '@aws-sdk/client-secrets-manager';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
+import * as cls from 'cls-hooked';
+
+// Setup for Sequelize Transactions (https://sequelize.org/docs/v6/other-topics/transactions/)
+const CLS_NAMESPACE = cls.createNamespace('MY_CLS_NAMESPACE');
+Sequelize.useCLS(CLS_NAMESPACE);
 
 const logger = new Logger('OrmService');
 
