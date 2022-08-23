@@ -8,7 +8,6 @@ import {
   Observable,
   of,
   OperatorFunction,
-  Subscription,
   switchMap,
   tap
 } from 'rxjs';
