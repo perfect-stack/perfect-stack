@@ -37,9 +37,9 @@ export class PageTitleToolComponent implements OnInit {
       // values instead
       this.formGroup = this.ctx.formMap.values().next().value;
 
-      const isNew = this.formGroup.get('id')?.value === null;
+      const isNew = !this.formGroup.get('id')?.value;
       this.pageMode = PageTitleToolComponent.toPageMode(this.ctx.mode, isNew);
-      if(this.pageTitleTool.nameAttributes) {
+      if(this.pageTitleTool && this.pageTitleTool.nameAttributes) {
         this.nameAttributes = this.pageTitleTool.nameAttributes.split(',');
       }
     }
