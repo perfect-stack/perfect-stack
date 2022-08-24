@@ -1,0 +1,26 @@
+<ng-container *ngIf="isStaticTitle()">
+  <h3>{{this.ctx.metaPage.title}}</h3>
+</ng-container>
+
+<ng-container *ngIf="!isStaticTitle()">
+  <ng-container [ngSwitch]="pageMode">
+    <ng-container *ngSwitchCase="'search'">
+      <h3>Search {{entityNamePlural}}</h3>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'add'">
+      <h3>Add {{entityNameSingular}}</h3>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'view'">
+      <h3 *ngIf="usingNames">{{fullName}}</h3>
+      <h3 *ngIf="!usingNames">{{entityNameSingular}}</h3>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'update'">
+      <h3 *ngIf="usingNames">Update {{firstName}}&apos;s details</h3>
+      <h3 *ngIf="!usingNames">Update {{entityNameSingular}}</h3>
+    </ng-container>
+  </ng-container>
+</ng-container>
+

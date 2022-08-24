@@ -59,8 +59,9 @@
 
   <div class="row">
     <div class="col-6">
-      <div class="form-select tool drag-handle" my-draggable>
-        Select
+      <div class="form-control tool drag-handle" my-draggable [drag-data]="ToolPaletteComponent.pageTitlePrototype">
+        <span class="material-symbols-outlined align-middle">format_h3</span>
+        Page title
       </div>
     </div>
     <div class="col-6">

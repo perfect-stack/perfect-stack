@@ -12,6 +12,10 @@
           </label>
 
           <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [parentDisplaysError]="true" [includesTimeValue]="true"></app-date-picker-control>
+
+          <ng-container *ngIf="hasDateErrors() && cell.attribute">
+            <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+          </ng-container>
         </div>
 
         <div class="col-6 flexible-time-input-field" *ngIf="cell && cell.attribute && cell.attribute.name">

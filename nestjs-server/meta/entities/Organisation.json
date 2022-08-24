@@ -1,26 +1,37 @@
 {
   "name": "Organisation",
+  "pluralName": "Organisations",
+  "icon": "",
   "type": "Database",
+  "timestamps": true,
   "attributes": [
     {
       "name": "id",
       "label": "Id",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Identifier",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "name",
       "label": "Name",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

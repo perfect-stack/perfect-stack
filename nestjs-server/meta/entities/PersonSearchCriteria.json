@@ -1,6 +1,6 @@
 {
   "name": "PersonSearchCriteria",
-  "pluralName": "persons",
+  "pluralName": "People",
   "icon": "",
   "type": "Criteria",
   "timestamps": true,

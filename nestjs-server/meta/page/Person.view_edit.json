@@ -1,6 +1,6 @@
 {
   "name": "Person.view_edit",
-  "title": "Person View/Edit",
+  "title": "$PageTitle",
   "type": "view_edit",
   "layoutStyle": "Stockholm",
   "templates": [
@@ -13,12 +13,12 @@
             "width": "4",
             "height": "1",
             "tool": {
-              "type": "TextTool",
+              "type": "PageTitle",
               "containerStyles": "",
-              "styles": "h2",
+              "styles": "",
               "label": "",
               "modes": "",
-              "text": "Person View/Edit"
+              "nameAttributes": "given_name,family_name"
             }
           },
           {

@@ -40,26 +40,17 @@ export class FormGroupService {
           abstractControl = this.formControlForOneToPoly(nextAttribute, mode, metaPageMap, metaEntityMap, entity);
           break;
         case AttributeType.ManyToOne:
-          /*if(recursive) {
-            abstractControl = this.formControlForManyToOne(nextAttribute, mode, metaPageMap, metaEntityMap, entity);
+          // This one is a bit different since it needs to use a different name. Could be refactored, but the structure
+          // of the method would need to be flexible about the name of the control and delegate that responsibility.
+          const manyToOneControlName = (nextAttribute.name + '_id').toLowerCase();
 
-            // experiment attempting to use setValue() instead of patchValue() need to populate all attributes from data entity
-            const controlName = (nextAttribute.name + '_id').toLowerCase();
-            formGroup.addControl(controlName, new FormControl(''));
-          } // else recursion flag is false so don't drill down any further (need to break circular relationships)
-*/
-          {
-            const controlName = (nextAttribute.name + '_id').toLowerCase();
-            //const formControl = new FormControl('');
-            // Important: need to make sure initial state is null, otherwise server attempts to create a relationship to an entity with a '' id.
-            const formControl = new FormControlWithAttribute(null);
-            formControl.attribute = nextAttribute;
-            if(nextAttribute.visibility === VisibilityType.Required) {
-              formControl.addValidators(Validators.required)
-            }
-            formGroup.addControl(controlName, formControl);
+          // Important: need to make sure initial state is null, otherwise server attempts to create a relationship to an entity with a '' id.
+          const formControl = new FormControlWithAttribute(null);
+          formControl.attribute = nextAttribute;
+          if(nextAttribute.visibility === VisibilityType.Required) {
+            formControl.addValidators(Validators.required)
           }
-
+          formGroup.addControl(manyToOneControlName, formControl);
           break;
         case AttributeType.OneToOne:
           abstractControl = this.formControlForOneToOne(nextAttribute, mode, metaPageMap, metaEntityMap, entity);
@@ -167,27 +158,6 @@ export class FormGroupService {
 
     return formControl;
   }
-
-  /*private formControlForManyToOne(attribute: MetaAttribute,
-                                  mode: string,
-                                  metaPageMap: Map<string, MetaPage>,
-                                  metaEntityMap: Map<string, MetaEntity>,
-                                  entity: any): AbstractControl | null {
-    if(mode === 'view') {
-      // TODO: Don't like that this is needed for View mode and don't understand why. Should be removed.
-      const formControl = new FormControlWithAttribute();
-      return formControl;
-    }
-    else {
-      const childEntityName = attribute.relationshipTarget;
-      const childEntity = entity ? (entity as any)[attribute.name] : null;
-      const childFormGroup = this.createFormGroup(mode, childEntityName, metaPageMap, metaEntityMap, childEntity, false, true);
-      if(attribute.visibility === VisibilityType.Required) {
-        childFormGroup.addValidators(manyToOneRequiredValidator(attribute));
-      }
-      return childFormGroup;
-    }
-  }*/
 
   private formControlForOneToOne(attribute: MetaAttribute,
                                  mode: string,

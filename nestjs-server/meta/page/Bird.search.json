@@ -1,6 +1,6 @@
 {
   "name": "Bird.search",
-  "title": "Search Birds",
+  "title": "$PageTitle",
   "type": "search",
   "layoutStyle": "",
   "templates": [

@@ -1,6 +1,6 @@
 {
   "name": "EventSearchCriteria",
-  "pluralName": "EventSearchCriteria",
+  "pluralName": "Events",
   "icon": "search",
   "type": "Criteria",
   "timestamps": false,

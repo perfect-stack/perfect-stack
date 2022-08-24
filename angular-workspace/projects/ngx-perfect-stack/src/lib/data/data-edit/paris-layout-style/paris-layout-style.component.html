@@ -6,9 +6,12 @@
         <span class="align-middle">Search {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
       </a>
 
-      <h2 class="my-3" *ngIf="ctx.formMap">
+      <!--<h2 class="my-3" *ngIf="ctx.formMap">
         <lib-expression-control [mode]="ctx.mode" [formMap]="ctx.formMap" [expression]="ctx.metaPage.title" ></lib-expression-control>
-      </h2>
+      </h2>-->
+      <div class="my-3">
+        <lib-page-title [ctx]="ctx"></lib-page-title>
+      </div>
     </div>
     <div>
       <ng-content select="[TopRightActions]"></ng-content>

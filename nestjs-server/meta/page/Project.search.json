@@ -1,6 +1,6 @@
 {
   "name": "Project.search",
-  "title": "Project Search",
+  "title": "$PageTitle",
   "type": "search",
   "layoutStyle": "",
   "templates": [

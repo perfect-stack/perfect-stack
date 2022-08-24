@@ -3,7 +3,7 @@ import {
   ButtonGroupTool,
   ButtonTabsTool, ButtonTool,
   Cell, IconTool, ImageTool, LastSignInTool, LinkTool, MapTool,
-  MetaPage,
+  MetaPage, PageTitleTool,
   Template,
   TemplateLocationType,
   TemplateType, TextTool, Tool,
@@ -977,6 +977,10 @@ export class ToolViewComponent implements OnInit {
     return this.tool as MapTool;
   }
 
+  asPageTitleTool() {
+    return this.tool as PageTitleTool;
+  }
+
   asTextTool() {
     return this.tool as TextTool;
   }
@@ -995,6 +999,7 @@ export class ToolViewComponent implements OnInit {
       return true;
     }
   }
+
 }
 
 @Component({

@@ -1,6 +1,6 @@
 {
   "name": "Person.search",
-  "title": "Search person",
+  "title": "$PageTitle",
   "type": "search",
   "layoutStyle": "",
   "templates": [

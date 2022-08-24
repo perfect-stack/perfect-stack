@@ -29,6 +29,10 @@
         <lib-map-tool [mapTool]="asMapTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-map-tool>
       </ng-container>
 
+      <ng-container *ngSwitchCase="'PageTitle'">
+        <lib-page-title-tool [pageTitleTool]="asPageTitleTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-page-title-tool>
+      </ng-container>
+
       <ng-container *ngSwitchCase="'TextTool'">
         <lib-text-tool [textTool]="asTextTool()" [editorMode]="editorMode" [ctx]="ctx" [formGroup]="formGroup"></lib-text-tool>
       </ng-container>

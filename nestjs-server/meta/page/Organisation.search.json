@@ -1,6 +1,6 @@
 {
   "name": "Organisation.search",
-  "title": "Organisation Search",
+  "title": "$PageTitle",
   "type": "search",
   "layoutStyle": "",
   "templates": [

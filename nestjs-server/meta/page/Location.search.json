@@ -1,6 +1,6 @@
 {
   "name": "Location.search",
-  "title": "Location Search",
+  "title": "$PageTitle",
   "type": "search",
   "layoutStyle": "",
   "templates": [

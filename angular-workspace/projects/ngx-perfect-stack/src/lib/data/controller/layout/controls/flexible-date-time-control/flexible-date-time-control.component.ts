@@ -129,16 +129,22 @@ export class FlexibleDateTimeControlComponent implements OnInit {
     return formControl && formControl.errors !== null;
   }
 
+  hasDateErrors() {
+    const formControl = this.formGroup.controls[this.name];
+    const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl.value);
+    return this.hasErrors() && !dateTimeComponents.date;
+  }
+
   hasTimeErrors() {
     const formControl = this.formGroup.controls[this.name];
     const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl.value);
-    return this.hasErrors() && dateTimeComponents.date && !dateTimeComponents.time;
+    return this.hasErrors() && !dateTimeComponents.time;
   }
 
   hasDateTimeErrors() {
     const formControl = this.formGroup.controls[this.name];
     const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl.value);
-    return this.hasErrors() && !(dateTimeComponents.date && !dateTimeComponents.time);
+    return this.hasErrors() && dateTimeComponents.date && dateTimeComponents.time;
   }
 
   get validationResult() {

@@ -53,6 +53,7 @@ export enum ToolType {
   LastSignIn = 'LastSignIn',
   Link = 'Link',
   Map = 'Map',
+  PageTitle = 'PageTitle',
   Select = 'Select',
   TextTool = 'TextTool',
 }
@@ -109,6 +110,10 @@ export class LinkTool extends Tool {
 export class MapTool extends Tool {
   easting: string;
   northing: string;
+}
+
+export class PageTitleTool extends Tool {
+  nameAttributes: string;
 }
 
 export class TextTool extends Tool {

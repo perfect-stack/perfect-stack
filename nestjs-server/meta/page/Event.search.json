@@ -1,6 +1,6 @@
 {
   "name": "Event.search",
-  "title": "Event Search",
+  "title": "$PageTitle",
   "type": "search",
   "layoutStyle": "",
   "templates": [

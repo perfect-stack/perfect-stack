@@ -125,6 +125,14 @@ export const MapPropertyList = [
   { name: 'northing', type: PropertyType.string},
 ];
 
+export const PageTitlePropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
+  { name: 'nameAttributes', type: PropertyType.string},
+];
+
 export const TextToolPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
@@ -178,6 +186,7 @@ export const PropertyListMap: PropertyListMapType = {
   'LastSignIn': LastSignInPropertyList,
   'Link': LinkPropertyList,
   'Map': MapPropertyList,
+  'PageTitle': PageTitlePropertyList,
   'TextTool': TextToolPropertyList,
   'Template': TemplatePropertyList,
   'Cell': CellPropertyList,

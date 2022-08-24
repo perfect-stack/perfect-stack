@@ -1,96 +1,135 @@
 {
   "name": "Species",
+  "pluralName": "Species",
+  "icon": "",
   "type": "Database",
+  "timestamps": true,
   "attributes": [
     {
       "name": "id",
       "label": "Id",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Identifier",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "name",
       "label": "Name",
       "description": "The primary name we want to use from Common or Māori",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "description",
       "label": "Description",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "start_date",
       "label": "Start date",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Date",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "end_date",
       "label": "End date",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Date",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "sort_index",
       "label": "Sort index",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Integer",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "form",
       "label": "Form",
       "description": "The informal sub-type within each species",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "scientific_name",
       "label": "Scientific name",
       "description": "The formal scientific species name",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "māori_name",
       "label": "Māori name",
       "description": "Any additional Māori names if not already defined in the common name",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }
