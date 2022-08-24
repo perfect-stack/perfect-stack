@@ -86,4 +86,24 @@ export class RowEditComponent implements OnInit {
       throw new Error(`Unable to find CellAttribute for ${name}`);
     }
   }
+
+  get startDateAttribute(): MetaAttribute {
+    const cell = this.getCellFor('start_date');
+    if(cell && cell.attribute) {
+      return cell.attribute;
+    }
+    else {
+      throw new Error('')
+    }
+  }
+
+  get endDateAttribute(): MetaAttribute {
+    const cell = this.getCellFor('end_date');
+    if(cell && cell.attribute) {
+      return cell.attribute;
+    }
+    else {
+      throw new Error('')
+    }
+  }
 }

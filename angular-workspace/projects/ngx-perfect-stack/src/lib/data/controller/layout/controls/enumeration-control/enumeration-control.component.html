@@ -1,10 +1,14 @@
 <ng-container *ngIf="options">
   <ng-container *ngIf="mode !== 'view' || selectedOption">
-    <select [ngClass]="getCSSClass()" [id]="ngControl.name" [disabled]="disabled"
+    <select [ngClass]="{'form-control': isReadOnly(), 'form-select': !isReadOnly(), 'ng-invalid': this.hasErrors(), 'ng-touched': touched}" [id]="ngControl.name" [disabled]="disabled"
             [ngModel]="selectedOption" (ngModelChange)="onSelectOption($event)" [ngModelOptions]="{standalone: true}">
       <option *ngFor="let o of options" [ngValue]="o">{{o}}</option>
       <option [ngValue]="null"></option>
     </select>
+
+    <ng-container *ngIf="hasErrors() && attribute">
+      <lib-validation-result-label [attribute]="attribute" [validationResult]="validationResult"></lib-validation-result-label>
+    </ng-container>
   </ng-container>
 
   <ng-container *ngIf="mode === 'view' && !selectedOption">

@@ -1,6 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
+import {ValidationResult} from '../../../../../domain/meta.rule';
+import {Subscription} from 'rxjs';
+import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
 
 @Component({
   selector: 'lib-enumeration-control',
@@ -8,7 +11,7 @@ import {MetaAttribute} from '../../../../../domain/meta.entity';
   styleUrls: ['./enumeration-control.component.css'],
   //providers: [{provide: NG_VALUE_ACCESSOR, useExisting: EnumerationControlComponent, multi: true}]
 })
-export class EnumerationControlComponent implements OnInit, ControlValueAccessor {
+export class EnumerationControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
   @Input()
   mode: string | null;
@@ -22,11 +25,23 @@ export class EnumerationControlComponent implements OnInit, ControlValueAccessor
   selectedOption: string;
   disabled = false;
 
+  touched = false;
+  touchSubscription: Subscription;
+
   constructor(public ngControl: NgControl) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
+    if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
+      this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
+        this.touched = true;
+      });
+    }
+    else {
+      console.warn(`This component is NOT using a FormControlWithAttribute`);
+    }
+
     if(this.attribute && this.attribute.enumeration) {
       this.options = this.attribute.enumeration;
     }
@@ -35,10 +50,6 @@ export class EnumerationControlComponent implements OnInit, ControlValueAccessor
 
   isReadOnly() {
     return this.mode === 'view';
-  }
-
-  getCSSClass() {
-    return this.isReadOnly() ? 'form-control': 'form-select';
   }
 
   set value(val: string){
@@ -66,7 +77,21 @@ export class EnumerationControlComponent implements OnInit, ControlValueAccessor
     this.value = obj;
   }
 
+  hasErrors() {
+    return this.ngControl.errors !== null;
+  }
+
+  get validationResult() {
+    return this.ngControl.errors as ValidationResult;
+  }
+
   onSelectOption(option: string) {
     this.value = option;
+  }
+
+  ngOnDestroy(): void {
+    if (this.touchSubscription) {
+      this.touchSubscription.unsubscribe();
+    }
   }
 }

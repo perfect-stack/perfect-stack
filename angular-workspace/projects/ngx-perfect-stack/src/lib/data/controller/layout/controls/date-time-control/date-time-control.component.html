@@ -1,6 +1,6 @@
 <div class="row" *ngIf="mode === 'edit'">
-  <div class="col-6">
-    <app-date-picker-control [mode]="mode" [formGroup]="formGroup" [name]="name" [includesTimeValue]="true"></app-date-picker-control>
+  <div class="col-6" *ngIf="cell && cell.attribute && cell.attribute.name">
+    <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="true"></app-date-picker-control>
   </div>
   <div class="col-6" *ngIf="cell && cell.attribute && cell.attribute.name">
     <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-time-control>

@@ -180,7 +180,9 @@
       "relationshipTarget": "Bird",
       "typeaheadSearch": [
         "name",
-        "band"
+        "band",
+        "microchip",
+        "wing_tag"
       ],
       "rules": []
     },
@@ -316,6 +318,10 @@
         {
           "type": "Required",
           "config": ""
+        },
+        {
+          "type": "Range",
+          "config": ",$today"
         }
       ]
     },

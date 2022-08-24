@@ -3,4 +3,9 @@
        [readonly]="disabled"
        (change)="onTimeChanged($event)"
        [ngModel]="timeModel"
+       [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}"
        type="time">
+
+<ng-container *ngIf="!parentDisplaysError && hasErrors() && cell.attribute">
+  <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+</ng-container>

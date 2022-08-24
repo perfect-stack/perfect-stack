@@ -19,7 +19,7 @@
 
         <div [ngSwitch]="attribute.type">
           <ng-container *ngSwitchCase="'Date'">
-            <app-date-picker-control [formGroup]="entityForm" [name]="attribute.name"></app-date-picker-control>
+            <app-date-picker-control [attribute]="attribute"></app-date-picker-control>
           </ng-container>
 
           <ng-container *ngSwitchCase="'DateTime'">

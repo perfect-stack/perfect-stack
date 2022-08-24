@@ -1,12 +1,15 @@
-<div class="input-group">
-  <input class="form-control"
-         [placeholder]="placeholder"
-         [id]="name"
-         [name]="name"
-         [readonly]="isReadOnly"
-         [autoClose]="true"
-         (dateSelect)="onDateSelect($event)"
-         (click)="toggle(datePicker)"
-         [ngModel]="dateModel"
-         ngbDatepicker #datePicker="ngbDatepicker">
-</div>
+<input class="form-control"
+       [placeholder]="placeholder"
+       [id]="attribute.name"
+       [readonly]="isReadOnly"
+       [autoClose]="true"
+       (dateSelect)="onDateSelect($event)"
+       (click)="toggle(datePicker)"
+       [ngModel]="dateModel"
+       [ngModelOptions]="{standalone: true}"
+       [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}"
+       ngbDatepicker #datePicker="ngbDatepicker">
+
+<ng-container *ngIf="!parentDisplaysError && hasErrors() && attribute">
+  <lib-validation-result-label [attribute]="attribute" [validationResult]="validationResult"></lib-validation-result-label>
+</ng-container>

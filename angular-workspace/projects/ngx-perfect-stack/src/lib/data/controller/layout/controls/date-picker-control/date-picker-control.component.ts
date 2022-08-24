@@ -1,13 +1,23 @@
-import {Component, Inject, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {UntypedFormGroup} from '@angular/forms';
+import {Component, Inject, Input, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
+import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {NgbDate, NgbInputDatepicker} from '@ng-bootstrap/ng-bootstrap';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
-import {DateTimeFormatter, Instant, LocalDate, ZonedDateTime, ZoneId} from '@js-joda/core';
+import {
+  DateTimeFormatter,
+  LocalDate,
+  ZonedDateTime,
+  ZoneId
+} from '@js-joda/core';
 
 // This next import may appear to be grey and unused, but it is important because it imports the right language/words for
 // when date time formats use text days and months and not just numerical values
 import {Locale} from '@js-joda/locale_en';
 import '@js-joda/timezone';
+import {MetaAttribute} from '../../../../../domain/meta.entity';
+import {ValidationResult} from '../../../../../domain/meta.rule';
+import {Subscription} from 'rxjs';
+import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
+import {TimeService} from '../../../../../utils/time/time.service';
 
 @Component({
   selector: 'app-date-picker-control',
@@ -15,46 +25,51 @@ import '@js-joda/timezone';
   styleUrls: ['./date-picker-control.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class DatePickerControlComponent implements OnInit {
+export class DatePickerControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
   @Input()
   mode: string | null;
 
   @Input()
-  formGroup: UntypedFormGroup;
-
-  @Input()
-  name: string;
+  attribute: MetaAttribute;
 
   @Input()
   includesTimeValue = false;
 
+  @Input()
+  parentDisplaysError = false;
+
+  @Input()
+  disabled = false;
+
   dateModel: string | null;
 
-  constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) { }
+  touched = false;
+  touchSubscription: Subscription;
+  subscription: Subscription | undefined;
+
+  constructor(@Inject(STACK_CONFIG)
+              protected readonly stackConfig: NgxPerfectStackConfig,
+              protected readonly timeService: TimeService,
+              public ngControl: NgControl) {
+    ngControl.valueAccessor = this;
+  }
+
 
   ngOnInit(): void {
-    const formControl = this.formGroup.controls[this.name];
-    if(formControl) {
-      console.log(` - currentValue = ${formControl.value}`);
-
-      const databaseValue = formControl.value;
-      if(databaseValue) {
-        if(databaseValue.length > 10) {
-          let zonedDateTime = ZonedDateTime.parse(databaseValue);
-          zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of('Pacific/Auckland'));
-          const controlFormat = DateTimeFormatter.ofPattern('yyyy-MM-dd');
-          this.dateModel = controlFormat.format(zonedDateTime);
-        }
-        else {
-          // TODO: we need to migrate all of the date values in the database??
-          this.dateModel = databaseValue;
-        }
-      }
-      else {
-        this.dateModel = null;
-      }
+    if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
+      this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
+        this.touched = true;
+      });
     }
+    else {
+      console.warn(`This component is NOT using a FormControlWithAttribute`);
+    }
+
+    // this.subscription = this.ngControl.valueChanges?.subscribe((nextValue: any) => {
+    //   console.log('GOT date valueChange', nextValue);
+    //   this.updateValue(nextValue, false);
+    // });
   }
 
   get isReadOnly() {
@@ -73,38 +88,79 @@ export class DatePickerControlComponent implements OnInit {
 
   onDateSelect(date: NgbDate) {
     console.log(`onDateSelect(): ${JSON.stringify(date)}`);
-    const formControl = this.formGroup.controls[this.name];
-    if(formControl) {
-      console.log(` - currentValue = ${formControl.value}`);
-      if(this.includesTimeValue) {
-        const formValue = formControl.value;
+    console.log(` - currentValue = ${this.ngControl.value}`);
+    if(this.includesTimeValue) {
+      const formValue = this.ngControl.value;
+      const newFormValue = this.timeService.mergeDate(formValue, LocalDate.of(date.year, date.month, date.day));
+      console.log(` - newFormValue = ${newFormValue}`);
+      this.writeValue(newFormValue);
+    }
+    else {
+      const localDate = LocalDate.of(date.year, date.month, date.day);
+      const dateFormat = DateTimeFormatter.ofPattern('yyyy-MM-dd'); // This is always this format because it's a database value
+      const formValue = dateFormat.format(localDate);
+      this.writeValue(formValue);
+    }
+  }
 
-        let utc;
-        if(formValue) {
-          utc = Instant.parse(formValue)
-        }
-        else {
-          utc = Instant.now();
-        }
-
-        console.log(` - instant = "${utc}"`);
-
-        let dateTimeValue = ZonedDateTime.ofInstant(utc, ZoneId.of('Pacific/Auckland')).withYear(date.year).withMonth(date.month).withDayOfMonth(date.day);
-        console.log(` - timeValue adjusted = "${dateTimeValue}"`);
-
-        const newFormValue = dateTimeValue.toInstant().toString();
-        console.log(` - newFormValue = "${newFormValue}"`);
-
-        formControl.setValue(newFormValue, {emitEvent: false});
-
+  updateValue(value: string, emitEvent = true){
+    console.log(`@@@-D ${this.attribute?.name} set value "${value}"`)
+    if(value) {
+      if(value.length > 10) {
+        let zonedDateTime = ZonedDateTime.parse(value);
+        zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of('Pacific/Auckland'));
+        const controlFormat = DateTimeFormatter.ofPattern('yyyy-MM-dd');
+        this.dateModel = controlFormat.format(zonedDateTime);
       }
       else {
-        const localDate = LocalDate.of(date.year, date.month, date.day);
-        const dateFormat = DateTimeFormatter.ofPattern('yyyy-MM-dd');
-        const formValue = dateFormat.format(localDate);
-        console.log(`set formControl ${this.name} = ${formValue}`);
-        formControl.setValue(formValue);
+        // TODO: we need to migrate all of the date values in the database??
+        this.dateModel = value;
       }
+    }
+    else {
+      this.dateModel = null;
+    }
+
+    if(emitEvent) {
+     this.onChange(value)
+    }
+    //this.onTouch(val)
+  }
+
+  onChange: any = () => {}
+  onTouch: any = () => {}
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouch = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  writeValue(obj: any): void {
+    this.updateValue(obj);
+  }
+
+  hasErrors() {
+    return this.ngControl.errors !== null;
+  }
+
+  get validationResult() {
+    return this.ngControl.errors as ValidationResult;
+  }
+
+  ngOnDestroy(): void {
+    if (this.touchSubscription) {
+      this.touchSubscription.unsubscribe();
+    }
+
+    if(this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }

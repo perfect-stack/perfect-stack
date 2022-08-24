@@ -4,6 +4,7 @@ import {
   ValidationResult,
 } from '../../../domain/meta.rule';
 import { AttributeType, MetaAttribute } from '../../../domain/meta.entity';
+import { Instant } from '@js-joda/core';
 
 export class RequiredRuleValidator extends RuleValidator {
   async validate(
@@ -20,6 +21,8 @@ export class RequiredRuleValidator extends RuleValidator {
     if (attribute.type === AttributeType.Boolean) {
       // valid if value = true or false (invalid if null or undefined)
       valid = value || value === false;
+    } else if (attribute.type === AttributeType.DateTime) {
+      valid = this.isValidDateTime(value);
     } else {
       valid = value !== null && value !== undefined && String(value).length > 0;
     }
@@ -33,5 +36,15 @@ export class RequiredRuleValidator extends RuleValidator {
     } else {
       return null;
     }
+  }
+
+  private isValidDateTime(value: any) {
+    if (value) {
+      try {
+        Instant.parse(value);
+        return true;
+      } catch (e) {}
+    }
+    return false;
   }
 }

@@ -1,25 +1,39 @@
 <ng-container *ngIf="mode === 'edit'">
   <div class="row" [formGroup]="formGroup">
-    <div class="col-3 flexible-time-input-field" *ngIf="cell && cell.attribute">
-      <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
-        <span placement="right" [ngbTooltip]="cell.attribute.description">Date</span>
-        <ng-container *ngIf="mode == 'edit'">
-          <span class="text-danger ps-1" *ngIf="cell.attribute.visibility == 'Required'">*</span>
-        </ng-container>
-      </label>
+    <!--Cell: {{cell|json}}-->
+    <div class="col-6">
+      <div class="row">
+        <div class="col-6 flexible-time-input-field" *ngIf="cell && cell.attribute">
+          <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
+            <span placement="right" [ngbTooltip]="cell.attribute.description">Date</span>
+            <ng-container *ngIf="mode == 'edit'">
+              <span class="text-danger ps-1" *ngIf="cell.attribute.visibility == 'Required'">*</span>
+            </ng-container>
+          </label>
 
-      <app-date-picker-control [mode]="mode" [formGroup]="formGroup" [name]="name" [includesTimeValue]="true"></app-date-picker-control>
+          <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [parentDisplaysError]="true" [includesTimeValue]="true"></app-date-picker-control>
+        </div>
+
+        <div class="col-6 flexible-time-input-field" *ngIf="cell && cell.attribute && cell.attribute.name">
+          <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
+            <span placement="right" [ngbTooltip]="cell.attribute.description">Time</span>
+            <ng-container *ngIf="mode == 'edit'">
+              <span class="text-danger ps-1" *ngIf="cell.attribute.visibility == 'Required'">*</span>
+            </ng-container>
+          </label>
+          <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [parentDisplaysError]="true" [disabled]="timeInputDisabled" [includesDate]="true"></lib-time-control>
+
+          <ng-container *ngIf="hasTimeErrors() && cell.attribute">
+            <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+          </ng-container>
+        </div>
+
+        <ng-container *ngIf="hasDateTimeErrors() && cell.attribute">
+          <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+        </ng-container>
+      </div>
     </div>
 
-    <div class="col-3 flexible-time-input-field" *ngIf="cell && cell.attribute && cell.attribute.name">
-      <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
-        <span placement="right" [ngbTooltip]="cell.attribute.description">Time</span>
-        <ng-container *ngIf="mode == 'edit'">
-          <span class="text-danger ps-1" *ngIf="cell.attribute.visibility == 'Required'">*</span>
-        </ng-container>
-      </label>
-      <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [disabled]="timeInputDisabled"></lib-time-control>
-    </div>
 
     <div class="col-1">
       <label class="label-hidden">Hidden</label>

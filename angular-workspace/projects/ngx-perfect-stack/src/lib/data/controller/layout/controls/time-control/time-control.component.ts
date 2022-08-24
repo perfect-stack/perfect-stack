@@ -1,8 +1,9 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, NgControl, UntypedFormGroup} from '@angular/forms';
 import {
+  ChronoField,
   DateTimeFormatter,
-  Instant,
+  Instant, LocalDate,
   LocalDateTime,
   LocalTime,
   TemporalAdjusters,
@@ -17,6 +18,10 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-st
 import {Locale} from '@js-joda/locale_en';
 import '@js-joda/timezone';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {ValidationResult} from '../../../../../domain/meta.rule';
+import {Subscription} from 'rxjs';
+import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
+import {TimeService} from '../../../../../utils/time/time.service';
 
 
 @Component({
@@ -24,42 +29,50 @@ import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-pag
   templateUrl: './time-control.component.html',
   styleUrls: ['./time-control.component.css']
 })
-export class TimeControlComponent implements OnInit, ControlValueAccessor {
+export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
   @Input()
   mode: string | null;
 
-  // @Input()
-  // formGroup: UntypedFormGroup;
-  //
-  // @Input()
-  // name: string;
-
   @Input()
   cell: CellAttribute;
 
-  timeModel: string | null = null;
+  @Input()
+  parentDisplaysError = false;
+
+  @Input()
+  includesDate = false;
 
   @Input()
   disabled = false;
 
+  timeModel: string | null = null;
+
+  touched = false;
+  touchSubscription: Subscription;
+  subscription: Subscription | undefined;
+
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
+              protected readonly timeService: TimeService,
               public ngControl: NgControl) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
-    // const formControl = this.formGroup.controls[this.name];
-    // if(formControl) {
-    //   let currentValue = formControl.value;
-    //   if(currentValue) {
-    //     let zonedDateTime = ZonedDateTime.parse(currentValue);
-    //     zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of('Pacific/Auckland'));
-    //     const timeFormat = DateTimeFormatter.ofPattern('HH:mm');
-    //     this.timeModel = timeFormat.format(zonedDateTime);
-    //   }
-    // }
+    if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
+      this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
+        this.touched = true;
+      });
+    }
+    else {
+      console.warn(`This component is NOT using a FormControlWithAttribute`);
+    }
+
+    // this.subscription = this.ngControl.valueChanges?.subscribe((nextValue) => {
+    //   console.log('GOT time valueChange', nextValue);
+    //   this.updateValue(nextValue, false);
+    // });
   }
 
   get isReadOnly() {
@@ -68,54 +81,46 @@ export class TimeControlComponent implements OnInit, ControlValueAccessor {
 
   onTimeChanged(event$: any) {
     const value = event$.target.value;
-    const newTimeValue = LocalTime.parse(value);
-    console.log(`onTimeChanged: ${newTimeValue}`);
+    const localTime = LocalTime.parse(value);
+    console.log(`onTimeChanged: ${localTime}`);
 
-    //const formControl = this.formGroup.controls[this.name];
-    const formControl = this.ngControl.control;
-    if(formControl) {
-      let formValue = formControl.value;
-
-      if(formValue.length === 0) {
-        formValue = '2022-01-01 00:00';
-      }
-
-      if(formValue.length <= 10) {
-        formValue = formValue + ' 00:00';
-      }
-
-      console.log(` - formValue = "${formValue}"`);
-
-      const utc = Instant.parse(formValue);
-      console.log(` - instant = "${utc}"`);
-
-      let timeValue = ZonedDateTime.ofInstant(utc, ZoneId.of('Pacific/Auckland')).withHour(newTimeValue.hour()).withMinute(newTimeValue.minute());
-      console.log(` - timeValue adjusted = "${timeValue}"`);
-
-      const newFormValue = timeValue.toInstant().toString();
-      console.log(` - newFormValue = "${newFormValue}"`);
-
-      //formControl.setValue(newFormValue, {emitEvent: false});
-      //formControl.setValue(newFormValue);
-      //formControl.setValue(newFormValue, {emitEvent: true});
+    if(this.includesDate) {
+      const formValue = this.ngControl.value;
+      const newFormValue = this.timeService.mergeTime(formValue, localTime);
+      console.log(` - newFormValue = ${newFormValue}`);
+      this.writeValue(newFormValue);
+    }
+    else {
+      const dateFormat = DateTimeFormatter.ofPattern('HH:mm:ss'); // This is always this format because it's a database value
+      const newFormValue = dateFormat.format(localTime);
+      console.log(` - newFormValue = ${newFormValue}`);
       this.writeValue(newFormValue);
     }
   }
 
-  set value(value: string){
-    console.log(`@@@ set value ${value}`)
+  updateValue(value: string, emitEvent = true){
+    console.log(`@@@-T ${this.cell.attribute?.name} set value "${value}"`)
 
     if(value) {
-      let zonedDateTime = ZonedDateTime.parse(value);
-      zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of('Pacific/Auckland'));
-      const timeFormat = DateTimeFormatter.ofPattern('HH:mm');
-      this.timeModel = timeFormat.format(zonedDateTime);
+      if(value.length < 10) {
+        let localTime = LocalTime.parse(value);
+        const timeFormat = DateTimeFormatter.ofPattern('HH:mm');
+        this.timeModel = timeFormat.format(localTime);
+      }
+      else {
+        let zonedDateTime = ZonedDateTime.parse(value);
+        zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of('Pacific/Auckland'));
+        const timeFormat = DateTimeFormatter.ofPattern('HH:mm');
+        this.timeModel = timeFormat.format(zonedDateTime);
+      }
     }
     else {
       this.timeModel = null;
     }
 
-    this.onChange(value)
+    if(emitEvent) {
+      this.onChange(value)
+    }
     //this.onTouch(val)
   }
 
@@ -135,6 +140,24 @@ export class TimeControlComponent implements OnInit, ControlValueAccessor {
   }
 
   writeValue(obj: any): void {
-    this.value = obj;
+    this.updateValue(obj);
+  }
+
+  hasErrors() {
+    return this.ngControl.errors !== null;
+  }
+
+  get validationResult() {
+    return this.ngControl.errors as ValidationResult;
+  }
+
+  ngOnDestroy(): void {
+    if (this.touchSubscription) {
+      this.touchSubscription.unsubscribe();
+    }
+
+    if(this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

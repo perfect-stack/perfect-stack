@@ -38,6 +38,12 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   ngOnInit(): void {
     this.optionListSubscription = this.dataService.findAll(this.attribute.relationshipTarget).subscribe((response) => {
       this.optionList = response.resultList;
+      if(this.optionList && this.optionList.length > 0) {
+        const firstElement = this.optionList[0];
+        if(firstElement && firstElement.sort_index) {
+          this.optionList.sort((a, b) => a.sort_index - b.sort_index);
+        }
+      }
       this.updateSelectedEntity();
     });
   }

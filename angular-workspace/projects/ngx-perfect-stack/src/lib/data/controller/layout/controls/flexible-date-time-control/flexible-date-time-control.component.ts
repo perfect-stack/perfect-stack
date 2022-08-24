@@ -4,6 +4,8 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-st
 import {Locale} from '@js-joda/locale_en';
 import {DateTimeFormatter, Instant, LocalTime, ZonedDateTime, ZoneId} from '@js-joda/core';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {ValidationResult} from '../../../../../domain/meta.rule';
+import {TimeService} from '../../../../../utils/time/time.service';
 
 @Component({
   selector: 'lib-flexible-date-time-control',
@@ -44,7 +46,9 @@ export class FlexibleDateTimeControlComponent implements OnInit {
 
   timeInputDisabled = false;
 
-  constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) {
+  constructor(@Inject(STACK_CONFIG)
+              protected readonly stackConfig: NgxPerfectStackConfig,
+              protected readonly timeService: TimeService) {
     Locale.getAvailableLocales();
   }
 
@@ -87,22 +91,8 @@ export class FlexibleDateTimeControlComponent implements OnInit {
     if(formControl) {
       const newTimeValue = LocalTime.parse(option.time);
       console.log(`Got newTimeValue:`, newTimeValue);
-      let currentValueAsInstant;
-      if(formControl.value) {
-        currentValueAsInstant = Instant.parse(formControl.value);
-      }
-      else {
-        currentValueAsInstant = Instant.now();
-      }
+      const newFormControlValue = this.timeService.mergeTime(formControl.value, newTimeValue);
 
-      console.log(`Got currentUtc:`, currentValueAsInstant);
-      let newZonedDateTime = ZonedDateTime.ofInstant(currentValueAsInstant, ZoneId.of('Pacific/Auckland')).withHour(newTimeValue.hour()).withMinute(newTimeValue.minute());
-      const newUtc = newZonedDateTime.toInstant();
-
-      const newFormControlValue = newUtc.toString();
-      console.log(`Current Form value: ${formControl.value}`);
-      console.log(`Update time ${option.time}`);
-      console.log(`Zoned: ${newZonedDateTime}`);
       console.log(`New Form value: ${newFormControlValue}`);
       formControl.setValue(newFormControlValue);
       this.timeInputDisabled = true;
@@ -111,7 +101,6 @@ export class FlexibleDateTimeControlComponent implements OnInit {
         this.timePrecisionControl.setValue(option.name);
       }
     }
-
   }
 
   get timePrecisionControl(): AbstractControl | null {
@@ -133,6 +122,28 @@ export class FlexibleDateTimeControlComponent implements OnInit {
     if(this.timePrecisionControl) {
       this.timePrecisionControl.setValue('Exact');
     }
+  }
+
+  hasErrors() {
+    const formControl = this.formGroup.controls[this.name];
+    return formControl && formControl.errors !== null;
+  }
+
+  hasTimeErrors() {
+    const formControl = this.formGroup.controls[this.name];
+    const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl.value);
+    return this.hasErrors() && dateTimeComponents.date && !dateTimeComponents.time;
+  }
+
+  hasDateTimeErrors() {
+    const formControl = this.formGroup.controls[this.name];
+    const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl.value);
+    return this.hasErrors() && !(dateTimeComponents.date && !dateTimeComponents.time);
+  }
+
+  get validationResult() {
+    const formControl = this.formGroup.controls[this.name];
+    return formControl && formControl.errors as ValidationResult;
   }
 }
 
