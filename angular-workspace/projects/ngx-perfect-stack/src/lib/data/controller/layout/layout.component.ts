@@ -3,7 +3,7 @@ import {
   ButtonGroupTool,
   ButtonTabsTool, ButtonTool,
   Cell, IconTool, ImageTool, LastSignInTool, LinkTool, MapTool,
-  MetaPage, PageTitleTool,
+  MetaPage, PageTitleTool, TabTool,
   Template,
   TemplateLocationType,
   TemplateType, TextTool, Tool,
@@ -534,7 +534,7 @@ export class FormLayoutComponent implements OnInit, OnChanges {
         this.formGroup = form;
       }
       else {
-        console.log('Binding - Not found. Keep calm and carry on 🙂');
+        console.warn('BINDING - NOT FOUND. Keep calm and carry on but you might be getting NG01052: formGroup expects a FormGroup instance from here onwards 🙂');
       }
     }
     else {
@@ -572,8 +572,10 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   }
 
   isShowLabel(cell: CellAttribute) {
-    const hideLabelsSet = new Set<AttributeType>([AttributeType.OneToPoly, AttributeType.Boolean]);
-    return cell && cell.attribute ? !hideLabelsSet.has(cell.attribute.type) : true;
+    const hiddenAttributeTypes = new Set<AttributeType>([AttributeType.OneToPoly, AttributeType.Boolean]);
+    const hideAttributeType = cell && cell.attribute && hiddenAttributeTypes.has(cell.attribute.type);
+    const hideLabel = cell.hideLabel;
+    return !(hideAttributeType || hideLabel);
   }
 
   get AttributeType() {
@@ -981,6 +983,10 @@ export class ToolViewComponent implements OnInit {
     return this.tool as PageTitleTool;
   }
 
+  asTabTool() {
+    return this.tool as TabTool;
+  }
+
   asTextTool() {
     return this.tool as TextTool;
   }
@@ -991,7 +997,7 @@ export class ToolViewComponent implements OnInit {
 
   isToolVisible() {
     const modes = this.tool.modes;
-    if(modes) {
+    if(modes && this.ctx && this.ctx.mode) {
       return modes.indexOf(this.ctx.mode) >= 0;
     }
     else {
@@ -1019,7 +1025,6 @@ export class ButtonTabsToolComponent implements OnInit {
   editorMode = false;
 
   tabContext$: Observable<TabContext>;
-
   selectedTemplate: Template;
 
   constructor(protected readonly propertySheetService: PropertySheetService,

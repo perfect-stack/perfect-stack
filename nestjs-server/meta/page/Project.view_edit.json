@@ -1,9 +1,35 @@
 {
   "name": "Project.view_edit",
-  "title": "Project View/Edit",
+  "title": "$PageTitle",
   "type": "view_edit",
-  "layoutStyle": "",
+  "layoutStyle": "Stockholm",
   "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "name"
+            }
+          },
+          {
+            "width": "4",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Project",
+      "type": "header",
+      "binding": "project",
+      "templateHeading": ""
+    },
     {
       "cells": [
         [
@@ -15,35 +41,69 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "organisation"
-          },
-          {
-            "width": "3",
-            "height": "1",
-            "attributeName": "status"
+            "attributeName": "start_date"
           }
         ],
         [
           {
             "width": "6",
+            "height": "1",
+            "attributeName": "organisation",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "12",
             "height": "3",
             "attributeName": "description",
             "component": "TextArea"
-          },
-          {
-            "width": "3",
-            "height": "1",
-            "attributeName": "start_date"
-          },
-          {
-            "width": "3",
-            "height": "1",
-            "attributeName": "end_date"
           }
         ]
       ],
       "metaEntityName": "Project",
       "type": "form",
+      "binding": "project",
+      "templateHeading": "Project details"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "template": {
+              "binding": "members",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "ProjectMember",
+              "cells": [
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "member"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "role",
+                    "component": "Select"
+                  }
+                ]
+              ],
+              "styles": "table-borderless",
+              "orderByName": "member",
+              "orderByDir": "ASC",
+              "noItemsHtml": "",
+              "locations": {}
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Project",
+      "type": "form",
+      "templateHeading": "Project team",
       "binding": "project"
     }
   ],

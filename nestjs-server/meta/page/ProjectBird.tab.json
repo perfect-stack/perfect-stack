@@ -1,0 +1,52 @@
+{
+  "name": "ProjectBird.tab",
+  "title": "Birds",
+  "type": "view_edit",
+  "layoutStyle": "Venice",
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "text": "Bird Search table goes here"
+            }
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Person",
+      "type": "form",
+      "binding": "project"
+    }
+  ],
+  "dataQueryList": []
+}

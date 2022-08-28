@@ -394,7 +394,7 @@ export class CellViewComponent implements OnInit, OnChanges {
   }
 
   isShowLabel(attribute: MetaAttribute) {
-    return attribute && attribute.type !== AttributeType.Boolean;
+    return attribute && attribute.type !== AttributeType.Boolean && this.cell.hideLabel !== true;
   }
 }
 

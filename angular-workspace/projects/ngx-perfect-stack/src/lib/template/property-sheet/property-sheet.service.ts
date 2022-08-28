@@ -1,5 +1,10 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {ComponentType, TemplateNavigationType, TemplateType} from '../../domain/meta.page';
+import {
+  ComponentType,
+  TemplateNavigationType,
+  TemplateShowSideHeadingsType,
+  TemplateType
+} from '../../domain/meta.page';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +49,7 @@ export interface PropertyEditEvent {
 export enum PropertyType {
   string = 'string',
   number = 'number',
+  boolean = 'boolean',
   route = 'route',
   metaEntity = 'metaEntity',
   metaPage = 'metaPage',
@@ -133,6 +139,20 @@ export const PageTitlePropertyList = [
   { name: 'nameAttributes', type: PropertyType.string},
 ];
 
+export const TabPropertyList = [
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
+  { name: 'template1', type: PropertyType.metaPage},
+  { name: 'template2', type: PropertyType.metaPage},
+  { name: 'template3', type: PropertyType.metaPage},
+  { name: 'template4', type: PropertyType.metaPage},
+  { name: 'template5', type: PropertyType.metaPage},
+  { name: 'template6', type: PropertyType.metaPage},
+  { name: 'template7', type: PropertyType.metaPage},
+];
+
 export const TextToolPropertyList = [
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
@@ -154,6 +174,7 @@ export const TemplatePropertyList = [
   { name: 'binding', type: PropertyType.string},
   { name: 'metaEntityName', type: PropertyType.metaEntity},
   { name: 'type', type: PropertyType.string, options: TemplateType},
+  { name: 'showSideHeadings', type: PropertyType.string, options: TemplateShowSideHeadingsType},
   { name: 'styles', type: PropertyType.string},
   { name: 'customQuery', type: PropertyType.string},
   { name: 'orderByName', type: PropertyType.string},
@@ -166,6 +187,7 @@ export const TemplatePropertyList = [
 // Cell Properties
 export const CellPropertyList = [
   { name: 'component', type: PropertyType.string, options: ComponentType},
+  { name: 'hideLabel', type: PropertyType.boolean},
   { name: 'secondaryAttributeName', type: PropertyType.string},
   { name: 'noItemsHtml', type: PropertyType.string},
   { name: 'footerHtml', type: PropertyType.string},
@@ -187,6 +209,7 @@ export const PropertyListMap: PropertyListMapType = {
   'Link': LinkPropertyList,
   'Map': MapPropertyList,
   'PageTitle': PageTitlePropertyList,
+  'TabTool': TabPropertyList,
   'TextTool': TextToolPropertyList,
   'Template': TemplatePropertyList,
   'Cell': CellPropertyList,

@@ -1,0 +1,71 @@
+{
+  "name": "Project.view",
+  "title": "$PageTitle",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "name"
+            }
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Project",
+      "type": "header",
+      "binding": "project"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "TabTool",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "template1": "ProjectBird.tab",
+              "template2": "ProjectTeam.tab",
+              "template3": "ProjectDescription.tab",
+              "template4": "",
+              "template5": "",
+              "template6": "",
+              "template7": ""
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Project",
+      "type": "form",
+      "binding": "project",
+      "showSideHeadings": "Disabled"
+    }
+  ],
+  "dataQueryList": [
+    {
+      "dataName": "project",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Project",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ]
+}

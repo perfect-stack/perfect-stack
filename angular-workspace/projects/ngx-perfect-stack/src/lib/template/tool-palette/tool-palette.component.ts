@@ -4,7 +4,7 @@ import {
   ButtonTabsTool,
   ButtonTool,
   IconTool,
-  ImageTool, LastSignInTool, LinkTool, MapTool, PageTitleTool,
+  ImageTool, LastSignInTool, LinkTool, MapTool, PageTitleTool, TabTool,
   TextTool,
   ToolType
 } from '../../domain/meta.page';
@@ -98,6 +98,21 @@ export class ToolPaletteComponent implements OnInit {
     label: '',
     modes: '',
     nameAttributes: ''
+  }
+
+  static readonly tabPrototype: TabTool = {
+    type: ToolType.TabTool,
+    containerStyles: '',
+    styles: '',
+    label: '',
+    modes: '',
+    template1: '',
+    template2: '',
+    template3: '',
+    template4: '',
+    template5: '',
+    template6: '',
+    template7: '',
   }
 
   static readonly textPrototype: TextTool = {

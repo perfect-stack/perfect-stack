@@ -41,16 +41,27 @@ export class DataService {
   }
 
   async save(entityName: string, entity: Entity): Promise<EntityResponse> {
+    // try {
+    //   this.logger.log(`save.1(${entityName}) ${JSON.stringify(entity)}`);
+    //   const result = await this.ormService.sequelize.transaction(
+    //     async (txn: Transaction) => {
+    //       this.logger.log(`save.2(${entityName}) ${JSON.stringify(entity)}`);
+    //       const txnResult = this.saveInTransaction(entityName, entity, txn);
+    //       this.logger.log(`save.3(${entityName}) ${JSON.stringify(entity)}`);
+    //       return txnResult;
+    //     },
+    //   );
+    //   this.logger.log(`save.4(${entityName}) ${JSON.stringify(entity)}`);
+    //
+    //   return result;
+    // } catch (error) {
+    //   console.error('save.5() failed:', error);
+    //   throw error;
+    // }
+
     try {
       this.logger.log(`save.1(${entityName}) ${JSON.stringify(entity)}`);
-      const result = await this.ormService.sequelize.transaction(
-        async (txn: Transaction) => {
-          this.logger.log(`save.2(${entityName}) ${JSON.stringify(entity)}`);
-          const txnResult = this.saveInTransaction(entityName, entity, txn);
-          this.logger.log(`save.3(${entityName}) ${JSON.stringify(entity)}`);
-          return txnResult;
-        },
-      );
+      const result = this.saveInTransaction(entityName, entity, null);
       this.logger.log(`save.4(${entityName}) ${JSON.stringify(entity)}`);
 
       return result;

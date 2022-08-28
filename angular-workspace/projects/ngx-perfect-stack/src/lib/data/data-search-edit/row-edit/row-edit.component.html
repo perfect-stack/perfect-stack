@@ -6,12 +6,12 @@
   <lib-text-field-control [mode]="'edit'" [cell]="getCellFor('description')" [formControlName]="'description'"></lib-text-field-control>
 </td>
 
-<td>
-  <app-date-picker-control [mode]="'edit'" [attribute]="startDateAttribute"></app-date-picker-control>
+<td [formGroup]="formGroup">
+  <app-date-picker-control [mode]="'edit'" [attribute]="startDateAttribute" [formControlName]="'start_date'"></app-date-picker-control>
 </td>
 
-<td>
-  <app-date-picker-control [mode]="'edit'" [attribute]="endDateAttribute"></app-date-picker-control>
+<td [formGroup]="formGroup">
+  <app-date-picker-control [mode]="'edit'" [attribute]="endDateAttribute" [formControlName]="'end_date'"></app-date-picker-control>
 </td>
 
 <td>

@@ -1,0 +1,29 @@
+<ng-container *ngIf="tabContext$ | async as tabContext">
+  <div *ngIf="tabContext.tabList.length > 0">
+    <div class="d-flex border-bottom">
+      <div class="tab-heading"
+           [ngClass]="{
+           'border-bottom': metaPage.name === selectedMetaPage.name,
+           'border-primary': metaPage.name === selectedMetaPage.name,
+           'border-4': metaPage.name === selectedMetaPage.name
+           }"
+           *ngFor="let metaPage of tabContext.tabList">
+        <div (click)="onTabMetaPageSelected(metaPage)">
+          {{metaPage.title}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <ng-container *ngIf="selectedTemplate">
+        <lib-layout [ctx]="ctx" [template]="selectedTemplate"></lib-layout>
+      </ng-container>
+    </div>
+  </div>
+
+  <div *ngIf="tabContext.tabList.length === 0">
+    No Tabs defined yet
+  </div>
+</ng-container>

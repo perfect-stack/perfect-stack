@@ -16,15 +16,20 @@
     </div>
   </ng-container>
 
-  <div class="container-fluid mt-3 bg-light shadow-sm border">
+  <div class="container-fluid p-0 mt-3 bg-light shadow-sm border">
     <ng-container *ngFor="let template of contentTemplates; index as i">
-      <div class="row template">
+      <div class="row template" *ngIf="template.showSideHeadings !== 'Disabled'">
         <div class="col-4">
           <h4 id="template[{{i}}].sectionHdg">{{template.templateHeading}}</h4>
         </div>
         <div class="col-8">
           <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
         </div>
+      </div>
+
+      <!-- This row doesn't get the "template" class that the row above does so that it stretches full width -->
+      <div *ngIf="template.showSideHeadings === 'Disabled'">
+        <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
       </div>
     </ng-container>
 

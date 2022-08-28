@@ -1,0 +1,48 @@
+{
+  "name": "ProjectTeam.tab",
+  "title": "Project team",
+  "type": "view_edit",
+  "layoutStyle": "Venice",
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "template": {
+              "binding": "members",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "ProjectMember",
+              "cells": [
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "member"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "role"
+                  }
+                ]
+              ],
+              "styles": "",
+              "orderByName": "UNKNOWN",
+              "orderByDir": "ASC",
+              "noItemsHtml": "",
+              "locations": {}
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Project",
+      "type": "form",
+      "binding": "project",
+      "showSideHeadings": "Disabled"
+    }
+  ],
+  "dataQueryList": []
+}

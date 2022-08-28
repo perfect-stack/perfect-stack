@@ -13,6 +13,7 @@ export class Cell {
   width: string;
   height: string;
   attributeName?: string;
+  hideLabel?: boolean;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   componentData?: ComponentData;
   noItemsHtml?: string; // Html displayed when no items
@@ -55,6 +56,7 @@ export enum ToolType {
   Map = 'Map',
   PageTitle = 'PageTitle',
   Select = 'Select',
+  TabTool = 'TabTool',
   TextTool = 'TextTool',
 }
 
@@ -116,6 +118,16 @@ export class PageTitleTool extends Tool {
   nameAttributes: string;
 }
 
+export class TabTool extends Tool {
+  template1: string; // The template names to use as Tabs. The Tab name will come from the template heading
+  template2: string;
+  template3: string;
+  template4: string;
+  template5: string;
+  template6: string;
+  template7: string;
+}
+
 export class TextTool extends Tool {
   text: string;
 }
@@ -133,6 +145,7 @@ export class Template {
   binding: string;
   metaEntityName: string;
   type: TemplateType;
+  showSideHeadings?: TemplateShowSideHeadingsType;
   cells: Cell[][] = [
     [
       { width: '3', height: '1' },
@@ -156,6 +169,11 @@ export class Template {
   noItemsHtml: string; // Html displayed when no items
   navigation?: TemplateNavigationType;
   route?: string;
+}
+
+export enum TemplateShowSideHeadingsType {
+  Disabled = 'Disabled',
+  Enabled = 'Enabled',
 }
 
 export enum TemplateNavigationType {

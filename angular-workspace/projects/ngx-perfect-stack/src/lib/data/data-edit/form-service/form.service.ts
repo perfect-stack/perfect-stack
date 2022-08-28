@@ -28,8 +28,8 @@ export class FormContext {
   metaEntityMap: Map<string, MetaEntity>;
   dataMap: Map<string, any>;
   formMap: Map<string, AbstractControl>;
-  paramMap: ParamMap;
-  queryParamMap: ParamMap;
+  paramMap: ParamMap | null;
+  queryParamMap: ParamMap | null;
 }
 
 export class FormControlWithAttribute extends UntypedFormControl {
@@ -66,30 +66,16 @@ export class FormService {
 
   loadFormContext(metaName: string, mode: string, id: string | null, paramMap: ParamMap | null, queryParamMap: ParamMap | null): Observable<FormContext> {
 
-    let pageKey = mode === 'view' || mode === 'edit' ? 'view_edit' : mode;
-
-    // TODO: DON't COMMIT THIS!!! - hack for DataQueryMap feature
-    //const pageKey = mode === 'view' || mode === 'edit' ? 'view' : mode;
-    if(mode === 'view' && metaName === 'Bird') {
-      pageKey = 'view';
-    }
-
-    const metaPageName = `${metaName}.${pageKey}`;
     const ctx = new FormContext();
     ctx.metaName = metaName;
     ctx.mode = mode;
     ctx.id = id;
-
-    if(paramMap) {
-      ctx.paramMap = paramMap;
-    }
-
-    if(queryParamMap) {
-      ctx.queryParamMap = queryParamMap;
-    }
+    ctx.paramMap = paramMap;
+    ctx.queryParamMap = queryParamMap;
 
     return this.metaPageService.metaPageMap$.pipe(switchMap((metaPageMap) => {
       ctx.metaPageMap = metaPageMap;
+      const metaPageName = this.calculatePageTemplate(ctx.metaName, ctx.mode, metaPageMap);
       ctx.metaPage = ctx.metaPageMap.get(metaPageName) as MetaPage;
 
       return this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
@@ -123,6 +109,19 @@ export class FormService {
         }
       }));
     }));
+  }
+
+  calculatePageTemplate(metaName: string, mode: string, metaPageMap: Map<string, MetaPage>) {
+    if(mode === 'view') {
+      // is there a plain 'view' page? if so use that, otherwise use 'view_edit'
+      return metaPageMap.has(`${metaName}.view`) ? `${metaName}.view` : `${metaName}.view_edit`;
+    }
+    else if(mode === 'edit') {
+      return `${metaName}.view_edit`;
+    }
+    else {
+      return `${metaName}.${mode}`;
+    }
   }
 
   public createFormMap(ctx: FormContext, templateList: Template[], dataQueryList: DataQuery[], dataMap: Map<string, any>) {

@@ -15,7 +15,7 @@
           {
             "width": "4",
             "height": "1",
-            "attributeName": "status",
+            "attributeName": "organisation",
             "component": "Select"
           }
         ]
@@ -34,12 +34,12 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "start_date"
+            "attributeName": "organisation"
           },
           {
             "width": "1",
             "height": "1",
-            "attributeName": "status"
+            "attributeName": "start_date"
           }
         ],
         [

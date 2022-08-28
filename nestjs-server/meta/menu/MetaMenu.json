@@ -91,6 +91,12 @@
         {
           "editable": true,
           "roles": [],
+          "label": "Project Role",
+          "route": "/data/ProjectRole/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
           "label": "Species",
           "route": "/data/Species/search"
         }

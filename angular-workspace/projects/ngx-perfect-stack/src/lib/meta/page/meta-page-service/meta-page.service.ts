@@ -10,6 +10,7 @@ export class CellAttribute {
   width: string;
   height: string;
   attributeName?: string;
+  hideLabel?: boolean;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   tool?: Tool;
   metaEntity?: MetaEntity;

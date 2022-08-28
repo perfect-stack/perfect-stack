@@ -1,6 +1,7 @@
 {
   "name": "Project",
   "pluralName": "Projects",
+  "icon": "",
   "type": "Database",
   "timestamps": true,
   "attributes": [
@@ -8,85 +9,117 @@
       "name": "id",
       "label": "Id",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Identifier",
       "visibility": "Hidden",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "name",
       "label": "Name",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "StartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "description",
       "label": "Description",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Html",
-      "visibility": "Required",
+      "visibility": "Optional",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "start_date",
       "label": "Start Date",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Date",
       "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "end_date",
       "label": "End Date",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Date",
       "visibility": "Optional",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "status",
       "label": "Status",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "ManyToOne",
-      "visibility": "Required",
+      "visibility": "Optional",
+      "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "ProjectStatus",
       "typeaheadSearch": [
         "name"
-      ]
+      ],
+      "rules": []
     },
     {
       "name": "organisation",
       "label": "Organisation",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "ManyToOne",
       "visibility": "Optional",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Organisation",
       "typeaheadSearch": [
         "name"
-      ]
+      ],
+      "rules": []
     },
     {
       "name": "members",
       "label": "Members",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "OneToMany",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "ProjectMember",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }
