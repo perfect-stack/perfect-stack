@@ -32,7 +32,8 @@
       "type": "form",
       "binding": "project",
       "templateHeading": "",
-      "showSideHeadings": "Disabled"
+      "showSideHeadings": "Disabled",
+      "styles": "p-4"
     }
   ],
   "dataQueryList": []

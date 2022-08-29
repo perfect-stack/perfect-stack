@@ -28,7 +28,7 @@
       "type": "Text",
       "visibility": "Required",
       "comparisonField": "",
-      "comparisonOperator": "StartsWith",
+      "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []

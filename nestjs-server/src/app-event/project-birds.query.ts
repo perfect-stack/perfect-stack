@@ -48,7 +48,16 @@ export class ProjectBirdsQuery implements CustomQuery {
 
     const selectCount = () => knex.select().count();
 
-    const projectId = '973059a4-78ed-49d9-a16d-0cb22689be28';
+    const projectIdCriteria = queryRequest.criteria.find(
+      (s) => s.name === 'id',
+    );
+    if (!projectIdCriteria || !projectIdCriteria.value) {
+      throw new Error(
+        'No project "id" has been supplied unable to execute the query',
+      );
+    }
+
+    const projectId = projectIdCriteria.value;
     const from = (select) => {
       select = select
         .from('Bird')
