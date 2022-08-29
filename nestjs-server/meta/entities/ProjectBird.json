@@ -1,0 +1,39 @@
+{
+  "name": "ProjectBird",
+  "pluralName": "Birds",
+  "icon": "",
+  "type": "Database",
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "project",
+      "label": "Project",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Project",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
+    }
+  ]
+}
