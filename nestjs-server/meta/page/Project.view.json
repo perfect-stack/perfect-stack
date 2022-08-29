@@ -21,7 +21,13 @@
           },
           {
             "width": "3",
-            "height": "1"
+            "height": "1",
+            "attributeName": "organisation"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "start_date"
           }
         ]
       ],
@@ -64,6 +70,14 @@
       "resultCardinality": "QueryOne",
       "queryType": "Entity",
       "queryName": "Project",
+      "fieldName": "id",
+      "parameter": "id"
+    },
+    {
+      "dataName": "birds",
+      "resultCardinality": "QueryMany",
+      "queryType": "Custom",
+      "queryName": "ProjectBirdsQuery",
       "fieldName": "id",
       "parameter": "id"
     }

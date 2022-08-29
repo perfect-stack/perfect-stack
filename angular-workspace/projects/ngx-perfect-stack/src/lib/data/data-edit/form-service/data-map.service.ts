@@ -84,10 +84,33 @@ export class DataMapService {
   }
 
   private observeCustomQuery(dataQuery: DataQuery, parameterMap: any) {
-    if(true) {
-      throw new Error(`TODO: not implemented yet`);
+    if(dataQuery.resultCardinality === ResultCardinalityType.QueryMany) {
+
+      const queryRequest = new QueryRequest();
+      queryRequest.customQuery = dataQuery.queryName;  // TODO: this is about the only difference between an EntityQuery and a CustomQuery (could probably be refactored)
+      queryRequest.criteria.push({
+        name: dataQuery.fieldName,
+        attributeType: AttributeType.Text, // TODO: this probably isn't right but DataMap doesn't have any concept of Attribute or field/parameter type yet. This will do for now.
+        operator: ComparisonOperator.Equals,
+        value: parameterMap[dataQuery.parameter]
+      });
+
+      if(dataQuery.orderByName) {
+        queryRequest.orderByName = dataQuery.orderByName;
+      }
+
+      if(dataQuery.orderByDir) {
+        queryRequest.orderByDir = dataQuery.orderByDir;
+      }
+
+      return this.dataService.findByCriteria(queryRequest).pipe(switchMap(response => {
+        return of({dataName: dataQuery.dataName, result: response.resultList});
+      }));
+
     }
-    return of({dataName: '', result: ''});
+    else {
+      throw new Error('TODO: ResultCardinalityType.QueryOne is not implemented for CustomQuery yet');
+    }
   }
 
 }

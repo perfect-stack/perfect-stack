@@ -1,4 +1,8 @@
 <ng-container *ngIf="tabContext$ | async as tabContext">
+  <ng-container *ngIf="editorMode">
+    <div class="material-symbols-outlined" (click)="doEditorAction()">settings</div>
+  </ng-container>
+
   <div *ngIf="tabContext.tabList.length > 0">
     <div class="d-flex border-bottom">
       <div class="tab-heading"

@@ -144,8 +144,12 @@ export class TableLayoutComponent implements OnInit {
   ngOnInit(): void {
     this.mode = this.mode ? this.mode : this.ctx.mode;
     if(!this.formGroup && this.ctx.formMap && this.template.binding) {
+      console.log(`TableLayoutComponent: template.binding = ${this.template.binding} formMap contains:`, this.ctx.formMap);
       this.formGroup = this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;
       this.relationshipProperty = this.template.binding;
+    }
+    else {
+      `TableLayoutComponent: did not get formGroup from formMap`
     }
 
     console.log('TableLayoutComponent: found formGroup: ', this.formGroup);

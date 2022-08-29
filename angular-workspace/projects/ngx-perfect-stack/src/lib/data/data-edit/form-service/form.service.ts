@@ -2,12 +2,14 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 import {DataService} from '../../data-service/data.service';
-import {Cell, DataQuery, MetaPage, ResultCardinalityType, Template} from '../../../domain/meta.page';
+import {Cell, DataQuery, MetaPage, ResultCardinalityType, TabTool, Template, ToolType} from '../../../domain/meta.page';
 import {
   AbstractControl,
-  AbstractControlOptions, AsyncValidatorFn,
+  AbstractControlOptions,
+  AsyncValidatorFn,
+  FormControlOptions,
   UntypedFormArray,
-  UntypedFormControl, FormControlOptions,
+  UntypedFormControl,
   UntypedFormGroup,
   ValidatorFn,
 } from '@angular/forms';
@@ -156,9 +158,25 @@ export class FormService {
     }
 
     for(const nextCellRow of template.cells) {
-      for(const nextCellCol of nextCellRow) {
+      for(const nextCell of nextCellRow) {
+
+        // If the cell has a TabTool inside it, then load a form for that Tab's MetaPage (if needed)
+        if(nextCell.tool && nextCell.tool.type === ToolType.TabTool) {
+          const tabTool:any = nextCell.tool;
+          for(let i = 1; i <= 7; i++) {
+            const tabMetaPageName = tabTool[`template${i}`] as string;
+            if(tabMetaPageName) {
+              const tabMetaPage = ctx.metaPageMap.get(tabMetaPageName)
+              if(tabMetaPage && tabMetaPage.templates && tabMetaPage.templates.length > 0) {
+                const tabTemplate = tabMetaPage.templates[0];
+                this.createFormMapForOneTemplate(ctx, tabTemplate, formMap, dataQueryList, dataMap);
+              }
+            }
+          }
+        }
+
         // If the cell has a Template inside it, then recursively call down into it
-        const childTemplate = nextCellCol.template;
+        const childTemplate = nextCell.template;
         if(childTemplate) {
           this.createFormMapForOneTemplate(ctx, childTemplate, formMap, dataQueryList, dataMap);
         }

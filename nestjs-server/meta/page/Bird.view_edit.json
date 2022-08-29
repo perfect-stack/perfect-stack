@@ -1,8 +1,8 @@
 {
   "name": "Bird.view_edit",
-  "title": "?updateOrView(${bird.name}, ${bird.id})",
+  "title": "$PageTitle",
   "type": "view_edit",
-  "layoutStyle": "Paris",
+  "layoutStyle": "Stockholm",
   "templates": [
     {
       "cells": [
@@ -111,6 +111,40 @@
       "type": "form",
       "templateHeading": "Key dates",
       "binding": "bird"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "template": {
+              "binding": "projects",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "ProjectBird",
+              "cells": [
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "project"
+                  }
+                ]
+              ],
+              "styles": "",
+              "orderByName": "UNKNOWN",
+              "orderByDir": "ASC",
+              "noItemsHtml": "",
+              "locations": {}
+            }
+          }
+        ]
+      ],
+      "binding": "bird",
+      "metaEntityName": "Bird",
+      "type": "form",
+      "templateHeading": "Projects"
     },
     {
       "cells": [

@@ -8,28 +8,58 @@
       "cells": [
         [
           {
-            "width": "3",
+            "width": "1",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "band"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "species"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "form"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "microchip"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "wing_tag"
+          },
+          {
+            "width": "1",
             "height": "1",
             "tool": {
               "type": "TextTool",
               "containerStyles": "",
-              "styles": "",
-              "label": "",
+              "styles": "status-badge-${status}",
+              "label": "Status",
               "modes": "",
-              "text": "Bird Search table goes here"
+              "text": "${status}"
             }
           },
           {
-            "width": "3",
-            "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1"
+            "width": "1",
+            "height": "1",
+            "tool": {
+              "type": "Icon",
+              "containerStyles": "",
+              "styles": "?mapSexSymbolToIconStyle(${sex})",
+              "label": "Sex",
+              "modes": "",
+              "iconName": "?mapSexSymbolToIcon(${sex})"
+            }
           }
         ],
         [
@@ -43,9 +73,9 @@
           }
         ]
       ],
-      "metaEntityName": "Person",
-      "type": "form",
-      "binding": "project"
+      "metaEntityName": "ProjectBirdSearchResult",
+      "type": "table",
+      "binding": "birds"
     }
   ],
   "dataQueryList": []

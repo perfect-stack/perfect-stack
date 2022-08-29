@@ -307,6 +307,20 @@
           "config": ""
         }
       ]
+    },
+    {
+      "name": "projects",
+      "label": "Projects",
+      "description": "The various projects this bird has been associated with",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "ProjectBird",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }
