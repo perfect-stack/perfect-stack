@@ -1028,7 +1028,7 @@ export class ButtonTabsToolComponent implements OnInit {
   @Input()
   editorMode = false;
 
-  tabContext$: Observable<TabContext>;
+  tabContext$: Observable<ButtonTabContext>;
   selectedTemplate: Template;
 
   constructor(protected readonly propertySheetService: PropertySheetService,
@@ -1038,7 +1038,7 @@ export class ButtonTabsToolComponent implements OnInit {
   ngOnInit(): void {
     this.tabContext$ = this.metaPageService.metaPageMap$.pipe(switchMap((metaPageMap) => {
 
-      const tabContext = new TabContext();
+      const tabContext = new ButtonTabContext();
       const tabNames: string[] = [];
 
       let pageNames = this.extractNames(
@@ -1100,7 +1100,7 @@ export class ButtonTabsToolComponent implements OnInit {
   doApplicationAction(buttonName: string) {
   }
 
-  onTabSelected(tabName: string, tabContext: TabContext) {
+  onTabSelected(tabName: string, tabContext: ButtonTabContext) {
     console.log(`Button Tab selected: ${tabName}, templateIndex = ${this.buttonTabsTool.templateIndex}.`);
     const tabMetaPage = tabContext.tabMap.get(tabName);
     if(tabMetaPage) {
@@ -1110,7 +1110,94 @@ export class ButtonTabsToolComponent implements OnInit {
   }
 }
 
-export class TabContext {
+export class ButtonTabContext {
   buttonGroupTool = new ButtonGroupTool();
   tabMap = new Map<string, MetaPage>();
+}
+
+@Component({
+  selector: 'lib-tab-tool',
+  templateUrl: './tool-view/tab-tool/tab-tool.component.html',
+  styleUrls: ['./tool-view/tab-tool/tab-tool.component.scss']
+})
+export class TabToolComponent implements OnInit {
+
+  @Input()
+  tabTool: TabTool;
+
+  @Input()
+  ctx: FormContext;
+
+  @Input()
+  editorMode = false;
+
+  tabContext$: Observable<TabToolContext>;
+  selectedMetaPage: MetaPage;
+  selectedTemplate: Template;
+
+  constructor(protected readonly propertySheetService: PropertySheetService,
+              protected readonly metaPageService: MetaPageService) { }
+
+  ngOnInit(): void {
+    this.tabContext$ = this.metaPageService.metaPageMap$.pipe(switchMap((metaPageMap) => {
+
+      const tabContext = new TabToolContext();
+
+      let pageNames = this.extractNames(
+        this.tabTool.template1,
+        this.tabTool.template2,
+        this.tabTool.template3,
+        this.tabTool.template4,
+        this.tabTool.template5,
+        this.tabTool.template6,
+        this.tabTool.template7,
+      );
+
+      if(pageNames.length > 0) {
+        for(const nextPageName of pageNames) {
+          const metaPage = metaPageMap.get(nextPageName);
+          if(metaPage) {
+            tabContext.tabList.push(metaPage);
+          }
+          else {
+            console.warn(`Unable to find MetaPage for Tab template of ${nextPageName}`);
+          }
+        }
+      }
+
+      // set the initial tab
+      if(tabContext.tabList.length > 0) {
+        const initialTab = tabContext.tabList[0];
+        this.onTabMetaPageSelected(initialTab);
+        console.log(`Set initial tab = ${initialTab.name}`);
+      }
+
+      return of(tabContext);
+    }));
+  }
+
+  extractNames(...names: string[]) {
+    return names.filter(s => s !== null && s.length > 0);
+  }
+
+  onClick() {
+    if (this.editorMode) {
+      this.doEditorAction();
+    }
+  }
+
+  doEditorAction() {
+    // trigger the PropertySheetService to start editing it
+    this.propertySheetService.edit('Tab', this.tabTool);
+  }
+
+  onTabMetaPageSelected(tabMetaPage: MetaPage) {
+    console.log(`Tab metaPage = ${tabMetaPage.name}`);
+    this.selectedMetaPage = tabMetaPage;
+    this.selectedTemplate = tabMetaPage.templates[0];
+  }
+}
+
+class TabToolContext {
+  tabList: MetaPage[] = [];
 }

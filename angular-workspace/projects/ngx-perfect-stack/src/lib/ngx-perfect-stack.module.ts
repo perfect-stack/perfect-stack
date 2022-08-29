@@ -73,7 +73,7 @@ import {
   OneToPolyControlComponent,
   SpyControlComponent,
   ButtonTabsToolComponent,
-  ToolViewComponent, HeaderLayoutComponent
+  ToolViewComponent, HeaderLayoutComponent, TabToolComponent
 } from './data/controller/layout/layout.component';
 import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
@@ -126,7 +126,6 @@ import { ValidationResultLabelComponent } from './data/controller/layout/control
 import { FlexibleDateTimeControlComponent } from './data/controller/layout/controls/flexible-date-time-control/flexible-date-time-control.component';
 import { LastSignInToolComponent } from './data/controller/layout/tool-view/last-sign-in-tool/last-sign-in-tool.component';
 import { PageTitleToolComponent } from './data/controller/layout/tool-view/page-title-tool/page-title-tool.component';
-import { TabToolComponent } from './data/controller/layout/tool-view/tab-tool/tab-tool.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
