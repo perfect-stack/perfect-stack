@@ -1,0 +1,47 @@
+
+<h4>Controllers</h4>
+
+<div class="row">
+  <div class="col-4">
+    <table class="table table-striped table-hover row-navigation">
+      <thead>
+      <th>Name</th>
+      <th>Class</th>
+      <th></th>
+      </thead>
+      <tbody>
+      <tr *ngFor="let controller of controllers; index as i">
+        <td>
+          <input class="form-control" [(ngModel)]="controller.name">
+        </td>
+        <td>
+          <select class="form-select" [(ngModel)]="controller.class">
+            <option *ngFor="let o of getControllerList()" [ngValue]="o">{{o}}</option>
+          </select>
+        </td>
+        <td>
+          <span class="material-symbols-outlined hover-highlight no_selection" (click)="onSettings(controller)">settings</span>
+          <span class="btn-icon text-danger material-symbols-outlined" (click)="onDelete(i)">remove_circle</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-4">
+
+  </div>
+  <div class="col-4">
+    <lib-property-sheet></lib-property-sheet>
+  </div>
+</div>
+
+<div class="d-flex">
+  <button class="btn btn-outline-success" (click)="onAddController()">Add controller</button>
+</div>
+
+<br>
+
+<!--
+<hr>
+{{controllers|json}}
+-->

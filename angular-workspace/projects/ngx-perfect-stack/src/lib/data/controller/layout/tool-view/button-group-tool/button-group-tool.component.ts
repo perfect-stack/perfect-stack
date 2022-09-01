@@ -65,7 +65,7 @@ export class ButtonGroupToolComponent implements OnInit {
     if (this.buttonGroupTool.action) {
       const actionNameIdx = this.buttonNames.indexOf(buttonName);
       const actionName = this.actionNames[actionNameIdx];
-      this.eventService.dispatchOnAction(this.ctx.metaPage.name, this.ctx, actionName);
+      this.eventService.dispatchOnAction(this.ctx.metaPage.name, this.buttonGroupTool.channel, this.ctx, actionName);
     }
   }
 }

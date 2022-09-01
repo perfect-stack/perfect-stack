@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Injector, OnInit} from '@angular/core';
 import {Observable, tap, withLatestFrom} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
@@ -39,7 +39,8 @@ export class DataEditComponent implements OnInit {
               protected readonly formService: FormService,
               protected readonly dataService: DataService,
               protected readonly toastService: ToastService,
-              protected readonly eventService: EventService) {}
+              protected readonly eventService: EventService,
+              protected readonly injector: Injector) {}
 
   ngOnInit(): void {
     this.route.url.pipe(
@@ -54,6 +55,8 @@ export class DataEditComponent implements OnInit {
 
       if(this.metaName && this.mode) {
         this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, this.entityId, paramMap, queryParamMap).pipe(tap((ctx) => {
+          this.attachControllers(ctx);
+          this.eventService.dispatchOnAction(ctx.metaPage.name, '*', ctx, 'init');
           this.eventService.dispatchOnPageLoad(ctx.metaPage.name, ctx, paramMap, queryParamMap);
         }));
       }
@@ -61,6 +64,33 @@ export class DataEditComponent implements OnInit {
         throw new Error('Invalid input parameters; ');
       }
     });
+  }
+
+  /**
+   * Convert the controller metadata into a proper service/class and add the controllers to the EventService so that
+   * they receive events from the page components.
+   */
+  attachControllers(ctx: FormContext) {
+    if(ctx.metaPage.controllers) {
+      for(const controller of ctx.metaPage.controllers) {
+        const controllerService = this.injector.get(controller.class) as any;
+
+        // copy the properties of the metadata into the service
+        for(const nextProperty of controllerService.propertyList) {
+          controllerService[nextProperty.name] = (controller as any)[nextProperty.name];
+        }
+
+        const channel = controllerService.channel ? controllerService.channel : '';
+        this.eventService.addActionListener(controllerService, ctx.metaPage.name, channel);
+      }
+    }
+  }
+
+  /**
+   * When the page is destroyed remove the controllers from the EventService.
+   */
+  detachControllers() {
+
   }
 
   toUuid(value: string | null) {

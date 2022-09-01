@@ -6,8 +6,8 @@ import {Cell, DataQuery, MetaPage, ResultCardinalityType, TabTool, Template, Too
 import {
   AbstractControl,
   AbstractControlOptions,
-  AsyncValidatorFn,
-  FormControlOptions,
+  AsyncValidatorFn, FormArray, FormControl,
+  FormControlOptions, FormGroup,
   UntypedFormArray,
   UntypedFormControl,
   UntypedFormGroup,
@@ -32,6 +32,20 @@ export class FormContext {
   formMap: Map<string, AbstractControl>;
   paramMap: ParamMap | null;
   queryParamMap: ParamMap | null;
+}
+
+export class FormGroupWithMetaEntity extends UntypedFormGroup {
+  metaEntity: MetaEntity;
+
+  constructor(metaEntity: MetaEntity,
+              controls: {
+                [key: string]: AbstractControl;
+              },
+              validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null,
+              asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
+    super(controls, validatorOrOpts, asyncValidator);
+    this.metaEntity = metaEntity;
+  }
 }
 
 export class FormControlWithAttribute extends UntypedFormControl {
@@ -99,6 +113,10 @@ export class FormService {
             ctx.dataMap = dataMap;
             console.log('FormService: dataMap:', dataMap);
             ctx.formMap = this.createFormMap(ctx, ctx.metaPage.templates, ctx.metaPage.dataQueryList, dataMap);
+
+            // create forms for controllers if not already created by the dataMap (e.g. criteria forms)
+            this.createControllerForms(ctx, ctx.metaPage, ctx.formMap);
+
             console.log('FormService: formMap:', ctx.formMap);
             return of(ctx);
           }));
@@ -192,43 +210,80 @@ export class FormService {
     let form: UntypedFormGroup;
     switch (resultCardinality) {
       case ResultCardinalityType.QueryOne:
-        // The dataValue result is a single object we only need one form
-        if(metaEntityName) {
-          form = this.formGroupService.createFormGroup(ctx.mode, metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, objectOrArray);
-
-          if(objectOrArray) {
-            console.log('FormService: about to patch form', form);
-            console.log('FormService: with objectOrArray', objectOrArray);
-            form.patchValue(objectOrArray);
-            console.log('FormService: form value patched value', form.value);
-          }
-        }
-        else {
-          throw new Error(`If ResultCardinalityType.QueryOne then metaEntityName must be supplied but has not been`);
-        }
+        form = this.createFormGroupForDataMapItemQueryOne(ctx, metaEntityName, resultCardinality, template, objectOrArray);
         break;
       case ResultCardinalityType.QueryMany:
-        // The dataValue result is an array so create the same number of form rows
-        const rowCount = objectOrArray.length;
-        const formArray = new UntypedFormArray([]);
-        for(let i = 0; i < rowCount; i++) {
-          const formRow = this.formGroupService.createFormGroup(ctx.mode, template.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
-          formArray.push(formRow);
-        }
-
-        form = new UntypedFormGroup({});
-        form.addControl(template.binding, formArray);
-
-        if(objectOrArray) {
-          formArray.patchValue(objectOrArray);
-        }
-
+        form = this.createFormGroupForDataMapItemQueryMany(ctx, template, objectOrArray as any[]);
         break;
       default:
         throw new Error(`Unknown ResultCardinality: ${resultCardinality}`);
     }
 
     return form;
+  }
+
+  createFormGroupForDataMapItemQueryOne(ctx: FormContext,
+                                        metaEntityName:string | null,
+                                        resultCardinality: ResultCardinalityType,
+                                        template: Template,
+                                        objectOrArray: any) {
+    // The dataValue result is a single object we only need one form
+    if(metaEntityName) {
+      const form = this.formGroupService.createFormGroup(ctx.mode, metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, objectOrArray);
+
+      if(objectOrArray) {
+        console.log('FormService: about to patch form', form);
+        console.log('FormService: with objectOrArray', objectOrArray);
+        form.patchValue(objectOrArray);
+        console.log('FormService: form value patched value', form.value);
+      }
+
+      return form;
+    }
+    else {
+      throw new Error(`If ResultCardinalityType.QueryOne then metaEntityName must be supplied but has not been`);
+    }
+  }
+
+  createFormGroupForDataMapItemQueryMany(ctx: FormContext, template: Template, arrayOfObjects: any[]) {
+    // The dataValue result is an array so create the same number of form rows
+    const rowCount = arrayOfObjects.length;
+    const formArray = new UntypedFormArray([]);
+    for(let i = 0; i < rowCount; i++) {
+      const formRow = this.formGroupService.createFormGroup(ctx.mode, template.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
+      formArray.push(formRow);
+    }
+
+    const form = new UntypedFormGroup({});
+    form.addControl(template.binding, formArray);
+
+    // These initial values are meant to be overridden but the calling method
+    // form.addControl('pageSize', new FormControl(2));
+    // form.addControl('pageNumber', new FormControl(1));
+    // form.addControl('totalCount', new FormControl(1));
+
+    formArray.patchValue(arrayOfObjects);
+
+    return form;
+  }
+
+  updateFormGroupForDataMapItemQueryMany(form: FormGroup, ctx: FormContext, template: Template, arrayOfObjects: any[]): void {
+
+    // remove all the current rows in the formArray
+    const formArray = form.get(template.binding) as FormArray;
+    for(let i = formArray.length - 1; i >=0; i--) {
+      formArray.removeAt(i);
+    }
+
+    // The dataValue result is an array so create the same number of form rows
+    const rowCount = arrayOfObjects.length;
+    for(let i = 0; i < rowCount; i++) {
+      const formRow = this.formGroupService.createFormGroup(ctx.mode, template.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
+      formArray.push(formRow);
+    }
+
+    //form.addControl(template.binding, formArray);
+    formArray.patchValue(arrayOfObjects);
   }
 
   public toCellAttributeArray(template: Template, metaEntity: MetaEntity) {
@@ -259,5 +314,39 @@ export class FormService {
     }
 
     return cellAttribute;
+  }
+
+  private createControllerForms(ctx: FormContext, metaPage: MetaPage, formMap: Map<string, AbstractControl>) {
+    for(const nextController of metaPage.controllers) {
+      console.log('Next Controller: ', nextController);
+      const criteriaFormName = (nextController as any).criteria;
+      if(criteriaFormName && !formMap.has(criteriaFormName)) {
+        const form = this.createCriteriaForm(ctx);
+        formMap.set(criteriaFormName, form)
+      }
+
+      const searchResultsFormName = (nextController as any).results;
+      if(searchResultsFormName && !formMap.has(searchResultsFormName)) {
+        const form = this.createSearchResultsForm(searchResultsFormName, ctx);
+        formMap.set(searchResultsFormName, form)
+      }
+    }
+  }
+
+  private createCriteriaForm(ctx: FormContext) {
+    const form = new UntypedFormGroup({});
+    form.addControl('id', new FormControl(ctx.id))
+    form.addControl('pageSize', new FormControl(5));
+    form.addControl('pageNumber', new FormControl(1));
+    form.addControl('collectionSize', new FormControl(1));
+    return form;
+  }
+
+  private createSearchResultsForm(name: string, ctx: FormContext) {
+    const formArray = new UntypedFormArray([]);
+    //return formArray;
+    const form = new UntypedFormGroup({});
+    form.addControl(name, formArray);
+    return form;
   }
 }

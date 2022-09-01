@@ -6,7 +6,7 @@ import {UntypedFormGroup} from '@angular/forms';
 
 export interface PageListener extends PerfectStackEventListener {
   onPageLoad(ctx: FormContext, params: ParamMap, queryParams: ParamMap): void;
-  onAction(ctx: FormContext, action: string): void;
+  onAction(ctx: FormContext, channel: string, action: string): void;
   onManyToOneItemSelected(formGroup: UntypedFormGroup, attribute: MetaAttribute, itemSelected: any): void;
   onBeforeSave(ctx: FormContext): void;
   onAfterSave(ctx: FormContext): void;

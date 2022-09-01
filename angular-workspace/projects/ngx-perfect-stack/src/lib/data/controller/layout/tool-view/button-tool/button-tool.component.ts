@@ -46,7 +46,7 @@ export class ButtonToolComponent implements OnInit {
 
   doApplicationAction() {
     if(this.buttonTool.action) {
-      this.eventService.dispatchOnAction(this.ctx.metaPage.name, this.ctx, this.buttonTool.action);
+      this.eventService.dispatchOnAction(this.ctx.metaPage.name, this.buttonTool.channel, this.ctx, this.buttonTool.action);
     }
     else if(this.buttonTool.route) {
 

@@ -3,6 +3,36 @@
   "title": "$PageTitle",
   "type": "view_edit",
   "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "project",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Project",
+      "fieldName": "id",
+      "parameter": "id"
+    },
+    {
+      "dataName": "birds",
+      "resultCardinality": "QueryMany",
+      "queryType": "Custom",
+      "queryName": "ProjectBirdsQuery",
+      "fieldName": "id",
+      "parameter": "id",
+      "orderByName": "name",
+      "orderByDir": "ASC"
+    }
+  ],
+  "controllers": [
+    {
+      "name": "BirdTabController",
+      "class": "SearchController",
+      "criteria": "birdsCriteriaForm",
+      "query": "birds",
+      "results": "birdTabSearchResults",
+      "channel": "birdTab"
+    }
+  ],
   "templates": [
     {
       "cells": [
@@ -62,24 +92,6 @@
       "type": "form",
       "binding": "project",
       "showSideHeadings": "Disabled"
-    }
-  ],
-  "dataQueryList": [
-    {
-      "dataName": "project",
-      "resultCardinality": "QueryOne",
-      "queryType": "Entity",
-      "queryName": "Project",
-      "fieldName": "id",
-      "parameter": "id"
-    },
-    {
-      "dataName": "birds",
-      "resultCardinality": "QueryMany",
-      "queryType": "Custom",
-      "queryName": "ProjectBirdsQuery",
-      "fieldName": "id",
-      "parameter": "id"
     }
   ]
 }

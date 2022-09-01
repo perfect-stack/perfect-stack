@@ -4,7 +4,7 @@ import {
   ButtonTabsTool,
   ButtonTool,
   IconTool,
-  ImageTool, LastSignInTool, LinkTool, MapTool, PageTitleTool, TabTool,
+  ImageTool, LastSignInTool, LinkTool, MapTool, PageTitleTool, PaginateTool, TabTool,
   TextTool,
   ToolType
 } from '../../domain/meta.page';
@@ -18,6 +18,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly buttonPrototype: ButtonTool = {
     type: ToolType.Button,
+    channel: '',
     containerStyles: '',
     styles: 'btn btn-primary',
     label: 'Button',
@@ -28,6 +29,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly buttonGroupPrototype: ButtonGroupTool = {
     type: ToolType.ButtonGroup,
+    channel: '',
     containerStyles: '',
     styles: 'btn btn-primary',
     label: 'Button1,Button2',
@@ -38,6 +40,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly buttonTabsPrototype: ButtonTabsTool = {
     type: ToolType.ButtonTabs,
+    channel: '',
     containerStyles: '',
     styles: 'btn btn-secondary',
     label: '',
@@ -54,6 +57,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly imagePrototype: ImageTool = {
     type: ToolType.Image,
+    channel: '',
     containerStyles: '',
     styles: '',
     label: '',
@@ -63,6 +67,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly lastSignInPrototype: LastSignInTool = {
     type: ToolType.LastSignIn,
+    channel: '',
     containerStyles: '',
     styles: '',
     label: '',
@@ -72,6 +77,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly linkPrototype: LinkTool = {
     type: ToolType.Link,
+    channel: '',
     containerStyles: '',
     styles: '',
     label: '',
@@ -83,6 +89,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly mapPrototype: MapTool = {
     type: ToolType.Map,
+    channel: '',
     containerStyles: '',
     styles: '',
     label: '',
@@ -93,6 +100,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly pageTitlePrototype: PageTitleTool = {
     type: ToolType.PageTitle,
+    channel: '',
     containerStyles: '',
     styles: '',
     label: '',
@@ -100,8 +108,19 @@ export class ToolPaletteComponent implements OnInit {
     nameAttributes: ''
   }
 
+  static readonly paginatePrototype: PaginateTool = {
+    type: ToolType.Paginate,
+    channel: '',
+    containerStyles: '',
+    styles: '',
+    label: '',
+    modes: '',
+    criteriaForm: ''
+  }
+
   static readonly tabPrototype: TabTool = {
     type: ToolType.TabTool,
+    channel: '',
     containerStyles: '',
     styles: '',
     label: '',
@@ -117,6 +136,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly textPrototype: TextTool = {
     type: ToolType.TextTool,
+    channel: '',
     containerStyles: '',
     styles: '',
     label: '',
@@ -126,6 +146,7 @@ export class ToolPaletteComponent implements OnInit {
 
   static readonly iconPrototype: IconTool = {
     type: ToolType.Icon,
+    channel: '',
     containerStyles: '',
     styles: '',
     label: '',

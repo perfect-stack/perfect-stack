@@ -55,6 +55,7 @@ export enum ToolType {
   Link = 'Link',
   Map = 'Map',
   PageTitle = 'PageTitle',
+  Paginate = 'Paginate',
   Select = 'Select',
   TabTool = 'TabTool',
   TextTool = 'TextTool',
@@ -62,6 +63,7 @@ export enum ToolType {
 
 export class Tool {
   type: ToolType;
+  channel: string; // when this tool publishes events they will be published to this channel
   containerStyles: string;
   styles: string;
   label: string;
@@ -116,6 +118,10 @@ export class MapTool extends Tool {
 
 export class PageTitleTool extends Tool {
   nameAttributes: string;
+}
+
+export class PaginateTool extends Tool {
+  criteriaForm: string;
 }
 
 export class TabTool extends Tool {
@@ -222,11 +228,17 @@ export class DataQuery {
   orderByDir: string;
 }
 
+export class Controller {
+  name: string;
+  class: string;
+}
+
 export class MetaPage {
   name: string;
   title: string;
   type: PageType;
   layoutStyle: LayoutStyle;
   dataQueryList: DataQuery[] = [];
+  controllers: Controller[] = [];
   templates: Template[] = [];
 }

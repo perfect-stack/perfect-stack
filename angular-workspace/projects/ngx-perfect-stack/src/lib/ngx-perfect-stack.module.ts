@@ -126,6 +126,10 @@ import { ValidationResultLabelComponent } from './data/controller/layout/control
 import { FlexibleDateTimeControlComponent } from './data/controller/layout/controls/flexible-date-time-control/flexible-date-time-control.component';
 import { LastSignInToolComponent } from './data/controller/layout/tool-view/last-sign-in-tool/last-sign-in-tool.component';
 import { PageTitleToolComponent } from './data/controller/layout/tool-view/page-title-tool/page-title-tool.component';
+import { PaginateToolComponent } from './data/controller/layout/tool-view/paginate-tool/paginate-tool.component';
+import { ControllerListComponent } from './meta/page/meta-page-edit/controller-list/controller-list.component';
+import {SearchControllerService} from './data/controller/search-controller.service';
+import {STANDARD_CONTROLLERS, standardControllers} from './data/controller/standard-controllers';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -249,7 +253,9 @@ const routes: Routes = [
     HeaderLayoutComponent,
     LastSignInToolComponent,
     PageTitleToolComponent,
-    TabToolComponent
+    TabToolComponent,
+    PaginateToolComponent,
+    ControllerListComponent
   ],
   providers: [
     AuthenticationService,
@@ -260,17 +266,11 @@ const routes: Routes = [
     ToastService,
     CustomDateAdapterService,
     CustomDateParserFormatter,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: () => initializeAuth,
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: () => inject(INJECTOR).get(MetaMenuService).initMenu(),
-      deps: [HttpClient, MetaMenuService],
-      multi: true
-    },
+    SearchControllerService,
+    {provide: 'SearchController', useExisting: SearchControllerService},
+    {provide: STANDARD_CONTROLLERS, useValue: standardControllers},
+    {provide: APP_INITIALIZER, useFactory: () => initializeAuth, multi: true},
+    {provide: APP_INITIALIZER, useFactory: () => inject(INJECTOR).get(MetaMenuService).initMenu(), deps: [HttpClient, MetaMenuService], multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true},
     {provide: NgbDateAdapter, useClass: CustomDateAdapterService},

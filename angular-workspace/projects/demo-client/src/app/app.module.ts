@@ -7,6 +7,18 @@ import {NgxPerfectStackModule} from '../../../ngx-perfect-stack/src/lib/ngx-perf
 import { AddEventDialogComponent } from './pages/add-event-dialog/add-event-dialog.component';
 import { AddLocationDialogComponent } from './pages/add-location-dialog/add-location-dialog.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import {DemoControllerService} from './controller/demo-controller.service';
+import {
+  CONTROLLER_LIST,
+  NgxPerfectControllerList
+} from '../../../ngx-perfect-stack/src/lib/ngx-perfect-stack-controller-list';
+
+
+const controllerList: NgxPerfectControllerList = {
+  controllers: [
+    'DemoController'
+  ]
+};
 
 @NgModule({
   declarations: [
@@ -21,7 +33,10 @@ import {ReactiveFormsModule} from '@angular/forms';
     NgbModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    {provide: 'DemoController', useExisting: DemoControllerService},
+    {provide: CONTROLLER_LIST, useValue: controllerList},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

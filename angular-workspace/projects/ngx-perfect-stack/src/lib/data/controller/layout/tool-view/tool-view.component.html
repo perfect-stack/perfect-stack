@@ -33,6 +33,10 @@
         <lib-page-title-tool [pageTitleTool]="asPageTitleTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-page-title-tool>
       </ng-container>
 
+      <ng-container *ngSwitchCase="'Paginate'">
+        <lib-paginate-tool [paginateTool]="asPaginateTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-paginate-tool>
+      </ng-container>
+
       <ng-container *ngSwitchCase="'TabTool'">
         <lib-tab-tool [tabTool]="asTabTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-tab-tool>
       </ng-container>

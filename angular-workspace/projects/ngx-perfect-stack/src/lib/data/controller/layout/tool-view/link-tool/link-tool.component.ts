@@ -102,7 +102,7 @@ export class LinkToolComponent implements OnInit {
 
   doApplicationAction() {
     if(this.linkTool.action) {
-      this.eventService.dispatchOnAction(this.ctx.metaPage.name, this.ctx, this.linkTool.action);
+      this.eventService.dispatchOnAction(this.ctx.metaPage.name, this.linkTool.channel, this.ctx, this.linkTool.action);
     }
     else if(this.linkTool.route) {
 

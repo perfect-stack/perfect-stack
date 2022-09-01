@@ -28,15 +28,19 @@ export class PropertySheetService {
   editWithType(title: string, source: any, type: string) {
     const propertyList = PropertyListMap[type];
     if(propertyList) {
-      this.editEvent$.emit({
-        title: title,
-        source: source,
-        propertyList: propertyList
-      });
+      this.editWithPropertyList(title, source, propertyList)
     }
     else {
       throw new Error(`Unable to find property list for tool type of ${type}`)
     }
+  }
+
+  editWithPropertyList(title: string, source: any, propertyList: Property[]) {
+    this.editEvent$.emit({
+      title: title,
+      source: source,
+      propertyList: propertyList
+    });
   }
 }
 
@@ -64,6 +68,7 @@ export class Property {
 
 
 export const ButtonPropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -73,6 +78,7 @@ export const ButtonPropertyList = [
 ];
 
 export const ButtonGroupPropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -82,6 +88,7 @@ export const ButtonGroupPropertyList = [
 ];
 
 export const ButtonTabsPropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -97,6 +104,7 @@ export const ButtonTabsPropertyList = [
 ];
 
 export const ImagePropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -105,6 +113,7 @@ export const ImagePropertyList = [
 ];
 
 export const LastSignInPropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -113,6 +122,7 @@ export const LastSignInPropertyList = [
 ];
 
 export const LinkPropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -123,6 +133,7 @@ export const LinkPropertyList = [
 ];
 
 export const MapPropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -132,6 +143,7 @@ export const MapPropertyList = [
 ];
 
 export const PageTitlePropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -139,7 +151,17 @@ export const PageTitlePropertyList = [
   { name: 'nameAttributes', type: PropertyType.string},
 ];
 
+export const PaginatePropertyList = [
+  { name: 'channel', type: PropertyType.string},
+  { name: 'containerStyles', type: PropertyType.string},
+  { name: 'styles', type: PropertyType.string},
+  { name: 'label', type: PropertyType.string},
+  { name: 'modes', type: PropertyType.string},
+  { name: 'criteriaForm', type: PropertyType.string}
+];
+
 export const TabPropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -154,6 +176,7 @@ export const TabPropertyList = [
 ];
 
 export const TextToolPropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -162,6 +185,7 @@ export const TextToolPropertyList = [
 ];
 
 export const IconPropertyList = [
+  { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
   { name: 'label', type: PropertyType.string},
@@ -209,6 +233,7 @@ export const PropertyListMap: PropertyListMapType = {
   'Link': LinkPropertyList,
   'Map': MapPropertyList,
   'PageTitle': PageTitlePropertyList,
+  'Paginate': PaginatePropertyList,
   'TabTool': TabPropertyList,
   'TextTool': TextToolPropertyList,
   'Template': TemplatePropertyList,

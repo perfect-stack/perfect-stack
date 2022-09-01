@@ -3,7 +3,7 @@ import {
   ButtonGroupTool,
   ButtonTabsTool, ButtonTool,
   Cell, IconTool, ImageTool, LastSignInTool, LinkTool, MapTool,
-  MetaPage, PageTitleTool, TabTool,
+  MetaPage, PageTitleTool, PaginateTool, TabTool,
   Template,
   TemplateLocationType,
   TemplateType, TextTool, Tool,
@@ -185,24 +185,6 @@ export class TableLayoutComponent implements OnInit {
       if(this.attributes) {
         console.log('onAddRow()');
         this.attributes.push(formGroup);
-
-        // for(const nextControlKey of Object.keys(formGroup.controls)) {
-        //   formGroup.controls[nextControlKey].markAllAsTouched();
-        //   formGroup.controls[nextControlKey].updateValueAndValidity();
-        // }
-        //
-        // formGroup.markAllAsTouched();
-        // formGroup.updateValueAndValidity();
-        // this.formGroup.markAllAsTouched();
-        // this.formGroup.updateValueAndValidity()
-
-        //formGroup.patchValue({});
-
-        // this.attributes.updateValueAndValidity();
-        // this.attributes.markAllAsTouched();
-
-        //this.attributes.push(new FormGroup({}));
-        //this.attributes.removeAt(this.attributes.length - 1);
       }
     }
   }
@@ -985,6 +967,10 @@ export class ToolViewComponent implements OnInit {
 
   asPageTitleTool() {
     return this.tool as PageTitleTool;
+  }
+
+  asPaginateTool() {
+    return this.tool as PaginateTool;
   }
 
   asTabTool() {

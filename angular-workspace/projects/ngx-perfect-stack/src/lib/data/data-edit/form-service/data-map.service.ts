@@ -9,6 +9,7 @@ import {AttributeType, ComparisonOperator} from '../../../domain/meta.entity';
 export interface DataMapItem {
   dataName: string,
   result: any
+  totalCount: number;
 }
 
 @Injectable({
@@ -51,11 +52,11 @@ export class DataMapService {
       case ResultCardinalityType.QueryOne:
         if(parameterMap[dataQuery.parameter]) {
           return this.dataService.findById(dataQuery.queryName, parameterMap[dataQuery.parameter]).pipe(switchMap(value => {
-            return of({dataName: dataQuery.dataName, result: value});
+            return of({dataName: dataQuery.dataName, result: value, totalCount: 1});
           }));
         }
         else {
-          return of({dataName: dataQuery.dataName, result: null});
+          return of({dataName: dataQuery.dataName, result: null, totalCount: 0});
         }
       case ResultCardinalityType.QueryMany:
         const queryRequest = new QueryRequest();
@@ -76,7 +77,7 @@ export class DataMapService {
         }
 
         return this.dataService.findByCriteria(queryRequest).pipe(switchMap(response => {
-          return of({dataName: dataQuery.dataName, result: response.resultList});
+          return of({dataName: dataQuery.dataName, result: response.resultList, totalCount: response.totalCount});
         }));
       default:
         throw new Error(`Unknown ResultCardinalityType of ${dataQuery.resultCardinality}`);
@@ -84,7 +85,12 @@ export class DataMapService {
   }
 
   private observeCustomQuery(dataQuery: DataQuery, parameterMap: any) {
-    if(dataQuery.resultCardinality === ResultCardinalityType.QueryMany) {
+
+    // CustomQuery got replaced by the new SearchController approach, so this doesn't do anything at the moment. If
+    // it's needed in the future we'll need to look at how/why it's different to the SearchController approach.
+    return of({dataName: dataQuery.dataName, result: [], totalCount: 0});
+
+    /*if(dataQuery.resultCardinality === ResultCardinalityType.QueryMany) {
 
       const queryRequest = new QueryRequest();
       queryRequest.customQuery = dataQuery.queryName;  // TODO: this is about the only difference between an EntityQuery and a CustomQuery (could probably be refactored)
@@ -103,14 +109,17 @@ export class DataMapService {
         queryRequest.orderByDir = dataQuery.orderByDir;
       }
 
+      // TODO: Hack for DEV testing
+      queryRequest.pageSize = 20;
+
       return this.dataService.findByCriteria(queryRequest).pipe(switchMap(response => {
-        return of({dataName: dataQuery.dataName, result: response.resultList});
+        return of({dataName: dataQuery.dataName, result: response.resultList, totalCount: response.totalCount});
       }));
 
     }
     else {
       throw new Error('TODO: ResultCardinalityType.QueryOne is not implemented for CustomQuery yet');
-    }
+    }*/
   }
 
 }

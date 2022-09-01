@@ -3,6 +3,8 @@
   "title": "Birds",
   "type": "view_edit",
   "layoutStyle": "Venice",
+  "dataQueryList": [],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -75,8 +77,18 @@
       ],
       "metaEntityName": "ProjectBirdSearchResult",
       "type": "table",
-      "binding": "birds"
+      "binding": "birdTabSearchResults",
+      "locations": {
+        "BottomMiddle": {
+          "type": "Paginate",
+          "containerStyles": "",
+          "styles": "",
+          "label": "",
+          "modes": "",
+          "channel": "birdTab",
+          "criteriaForm": "birdsCriteriaForm"
+        }
+      }
     }
-  ],
-  "dataQueryList": []
+  ]
 }

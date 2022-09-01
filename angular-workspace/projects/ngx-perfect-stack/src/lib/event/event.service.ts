@@ -5,8 +5,10 @@ import {ParamMap} from '@angular/router';
 import {MetaAttribute} from '../domain/meta.entity';
 import {PerfectStackEventListener} from './perfect-stack-event-listener';
 import {UntypedFormGroup} from '@angular/forms';
+import {ActionListener} from './action-listener';
 
 enum ListenerType {
+  ActionListener = 'ActionListener',
   PageListener = 'PageListener'
 }
 
@@ -48,6 +50,11 @@ export class EventService {
     this.getListenerList(ListenerType.PageListener, pageName).push(pageListener);
   }
 
+  addActionListener(actionListener: ActionListener, pageName: string, channel: string) {
+    // TODO: need to do more with the channel idea
+    this.getListenerList(ListenerType.ActionListener, pageName).push(actionListener);
+  }
+
   dispatchOnPageLoad(pageName: string, ctx: FormContext, params: ParamMap, queryParams: ParamMap): void {
     const listenerList = this.getListenerList(ListenerType.PageListener, pageName);
     for(const listener of listenerList) {
@@ -56,12 +63,19 @@ export class EventService {
     }
   }
 
-  dispatchOnAction(pageName: string, ctx: FormContext, action: string): void {
-    console.log(`Dispatch onAction(${action}) to page listeners: ${pageName}`);
+  dispatchOnAction(pageName: string, channel: string, ctx: FormContext, action: string): void {
+    console.log(`Dispatch onAction(${action}) to page listeners: ${pageName} on channel: ${channel}`);
     const listenerList = this.getListenerList(ListenerType.PageListener, pageName);
     for(const listener of listenerList) {
       const pageListener = listener as PageListener;
-      pageListener.onAction(ctx, action);
+      pageListener.onAction(ctx, channel, action);
+    }
+
+    console.log(`Dispatch onAction(${action}) to action listeners: ${pageName} on channel: ${channel}`);
+    const listenerList2 = this.getListenerList(ListenerType.ActionListener, pageName);
+    for(const listener of listenerList2) {
+      const actionListener = listener as ActionListener;
+      actionListener.onAction(ctx, channel, action);
     }
   }
 
