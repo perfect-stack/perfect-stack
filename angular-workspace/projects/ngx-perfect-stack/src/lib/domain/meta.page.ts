@@ -222,6 +222,7 @@ export class DataQuery {
   resultCardinality: ResultCardinalityType;
   queryType: QueryType;
   queryName: string;
+  metaEntityName: string;
   fieldName: string;
   parameter: string;
   orderByName: string;

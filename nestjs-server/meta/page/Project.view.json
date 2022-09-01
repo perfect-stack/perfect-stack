@@ -10,7 +10,8 @@
       "queryType": "Entity",
       "queryName": "Project",
       "fieldName": "id",
-      "parameter": "id"
+      "parameter": "id",
+      "metaEntityName": "Project"
     },
     {
       "dataName": "birds",
@@ -20,7 +21,8 @@
       "fieldName": "id",
       "parameter": "id",
       "orderByName": "name",
-      "orderByDir": "ASC"
+      "orderByDir": "ASC",
+      "metaEntityName": "ProjectBirdSearchResult"
     }
   ],
   "controllers": [

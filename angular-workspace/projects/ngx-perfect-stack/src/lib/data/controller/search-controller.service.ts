@@ -52,36 +52,24 @@ export class SearchControllerService implements ActionListener, PropertyListProv
 
   search(ctx: FormContext) {
     // get the criteria form
-    // convert into a query request
-    // execute the query
-    // set the result into the right table form
-
     const criteriaForm = this.getCriteriaForm(ctx);
-    const dataQuery = ctx.metaPage.dataQueryList.find(s => s.dataName === this.query);
-    if(dataQuery) {
-      const queryRequest = this.toQueryRequest(dataQuery, ctx);
-      this.dataService.findByCriteria(queryRequest).subscribe(response => {
 
-        console.log(`got ${response.resultList.length} of ${response.totalCount} results`)
+    // convert into a query request
+    const dataQuery = this.getDataQuery(ctx);
+    const queryRequest = this.toQueryRequest(dataQuery, ctx);
 
-        // TODO: this needs to be metadata driven
-        const birdTab = ctx.metaPageMap.get('ProjectBird.tab');
-        if(birdTab) {
-          const template = birdTab.templates[0];
-          const form = this.getResultsForm(ctx);
-          if(form) {
-            console.log(`update form with search results:`, form);
-            this.formService.updateFormGroupForDataMapItemQueryMany(form as FormGroup, ctx, template, response.resultList);
-            criteriaForm.get('pageNumber')?.setValue(queryRequest.pageNumber);
-            criteriaForm.get('pageSize')?.setValue(queryRequest.pageSize);
-            criteriaForm.get('collectionSize')?.setValue(response.totalCount);
-          }
-        }
-      });
-    }
-    else {
-      throw new Error(`Unable to find DataQuery ${this.query} for MetaPage ${ctx.metaPage.name}`);
-    }
+    // execute the query
+    this.dataService.findByCriteria(queryRequest).subscribe(response => {
+      console.log(`got ${response.resultList.length} of ${response.totalCount} results`)
+
+      // set the results into the right table form
+      const form = this.getResultsForm(ctx);
+      console.log(`update form with search results:`, form);
+      this.formService.updateFormGroupForDataMapItemQueryMany(form as FormGroup, ctx, dataQuery.metaEntityName, response.resultList);
+      criteriaForm.get('pageNumber')?.setValue(queryRequest.pageNumber);
+      criteriaForm.get('pageSize')?.setValue(queryRequest.pageSize);
+      criteriaForm.get('collectionSize')?.setValue(response.totalCount);
+    });
   }
 
   toQueryRequest(dataQuery: DataQuery, ctx: FormContext):QueryRequest {
@@ -114,6 +102,16 @@ export class SearchControllerService implements ActionListener, PropertyListProv
   reset(ctx: FormContext) {
     // get the criteria form
     // reset the form
+  }
+
+  getDataQuery(ctx: FormContext): DataQuery {
+    const dataQuery = ctx.metaPage.dataQueryList.find(s => s.dataName === this.query);
+    if(dataQuery) {
+      return dataQuery;
+    }
+    else {
+      throw new Error(`Unable to find DataQuery for ${this.query}`);
+    }
   }
 
   getPageNumber(ctx: FormContext): number {

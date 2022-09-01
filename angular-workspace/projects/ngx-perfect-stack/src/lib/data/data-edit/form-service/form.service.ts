@@ -212,7 +212,7 @@ export class FormService {
     let form: UntypedFormGroup;
     switch (resultCardinality) {
       case ResultCardinalityType.QueryOne:
-        form = this.createFormGroupForDataMapItemQueryOne(ctx, metaEntityName, resultCardinality, template, objectOrArray);
+        form = this.createFormGroupForDataMapItemQueryOne(ctx, metaEntityName, template, objectOrArray);
         break;
       case ResultCardinalityType.QueryMany:
         form = this.createFormGroupForDataMapItemQueryMany(ctx, metaEntityName, template, objectOrArray as any[]);
@@ -225,8 +225,7 @@ export class FormService {
   }
 
   createFormGroupForDataMapItemQueryOne(ctx: FormContext,
-                                        metaEntityName:string | null,
-                                        resultCardinality: ResultCardinalityType,
+                                        metaEntityName:string,
                                         template: Template,
                                         objectOrArray: any) {
     // The dataValue result is a single object we only need one form
@@ -258,34 +257,35 @@ export class FormService {
 
     const form = new UntypedFormGroup({});
     form.addControl(template.binding, formArray);
-
-    // These initial values are meant to be overridden but the calling method
-    // form.addControl('pageSize', new FormControl(2));
-    // form.addControl('pageNumber', new FormControl(1));
-    // form.addControl('totalCount', new FormControl(1));
-
     formArray.patchValue(arrayOfObjects);
-
     return form;
   }
 
-  updateFormGroupForDataMapItemQueryMany(form: FormGroup, ctx: FormContext, template: Template, arrayOfObjects: any[]): void {
+  updateFormGroupForDataMapItemQueryMany(form: FormGroup, ctx: FormContext, metaEntityName:string, arrayOfObjects: any[]): void {
 
-    // remove all the current rows in the formArray
-    const formArray = form.get(template.binding) as FormArray;
-    for(let i = formArray.length - 1; i >=0; i--) {
-      formArray.removeAt(i);
+    // It's not ideal but at the moment search result tables are the first and only Control in a FormGroup, that way there's
+    // a lot of code that only needs to deal with FromGroup and not FormGroup or FormArray. The trade-off is like here
+    // where things get a bit hacky to get the table out of the form without knowing the Template binding.
+    const controlKeys = Object.keys(form.controls);
+    if(controlKeys && controlKeys.length === 1) {
+      const firstControl = form.controls[controlKeys[0]];
+      const formArray = firstControl as FormArray;
+      for(let i = formArray.length - 1; i >=0; i--) {
+        formArray.removeAt(i);
+      }
+
+      // The dataValue result is an array so create the same number of form rows
+      const rowCount = arrayOfObjects.length;
+      for(let i = 0; i < rowCount; i++) {
+        const formRow = this.formGroupService.createFormGroup(ctx.mode, metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
+        formArray.push(formRow);
+      }
+
+      formArray.patchValue(arrayOfObjects);
     }
-
-    // The dataValue result is an array so create the same number of form rows
-    const rowCount = arrayOfObjects.length;
-    for(let i = 0; i < rowCount; i++) {
-      const formRow = this.formGroupService.createFormGroup(ctx.mode, template.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
-      formArray.push(formRow);
+    else {
+      throw new Error(`Unexpected situation; did not expect the Form to have more than one Control in it. May need to rethink the design here a little`);
     }
-
-    //form.addControl(template.binding, formArray);
-    formArray.patchValue(arrayOfObjects);
   }
 
   public toCellAttributeArray(template: Template, metaEntity: MetaEntity) {

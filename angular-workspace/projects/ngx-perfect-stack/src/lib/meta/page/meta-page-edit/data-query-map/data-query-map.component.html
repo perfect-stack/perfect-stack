@@ -1,4 +1,4 @@
-<div class="bg-light my-3 py-3">
+<div class="bg-light my-3 py-3" *ngIf="metaEntityNames$ | async as metaEntityNames">
   <h4>Data queries</h4>
 
   <table class="table table-striped">
@@ -7,6 +7,7 @@
     <th>Result Cardinality</th>
     <th>Query Type</th>
     <th>Query Name</th>
+    <th>Meta Entity</th>
     <th>Field Name</th>
     <th>Parameter</th>
     <th>Order By</th>
@@ -30,6 +31,11 @@
       </td>
       <td>
         <input class="form-control" [(ngModel)]="dataQuery.queryName">
+      </td>
+      <td>
+        <select class="form-select" [(ngModel)]="dataQuery.metaEntityName">
+          <option *ngFor="let o of metaEntityNames" [ngValue]="o">{{o}}</option>
+        </select>
       </td>
       <td>
         <input class="form-control" [(ngModel)]="dataQuery.fieldName">
