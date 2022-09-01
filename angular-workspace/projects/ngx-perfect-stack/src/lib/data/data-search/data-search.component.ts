@@ -123,7 +123,7 @@ export class DataSearchComponent implements OnInit {
 
       this.dataService.findByCriteria(queryRequest).subscribe((response) => {
         this.collectionSize = response.totalCount;
-        this.searchResultsFormGroup = this.formService.createFormGroupForDataMapItem(ctx, null, ResultCardinalityType.QueryMany, this.resultTableTemplate, response.resultList);
+        this.searchResultsFormGroup = this.formService.createFormGroupForDataMapItem(ctx, this.resultTableTemplate.metaEntityName, ResultCardinalityType.QueryMany, this.resultTableTemplate, response.resultList);
         if(!ctx.formMap) {
           ctx.formMap = new Map<string, AbstractControl>()
         }

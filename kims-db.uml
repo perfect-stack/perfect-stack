@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>DATABASE</ID>
+  <OriginalElement>f6acc1c3-1729-4155-b75a-4961b87b6453.SCHEMA:perfect-stack-demo-db.public</OriginalElement>
+  <nodes>
+    <node x="836.1775793650795" y="985.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectRole</node>
+    <node x="2523.1924603174602" y="287.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.MeasurementActivity</node>
+    <node x="496.4275793650794" y="498.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectBird</node>
+    <node x="2318.2549603174602" y="-132.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Location</node>
+    <node x="2104.0" y="1147.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Authentication</node>
+    <node x="2398.6924603174602" y="690.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.WingTagActivity</node>
+    <node x="2725.2549603174602" y="-110.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.LocationType</node>
+    <node x="1181.4275793650795" y="944.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Person</node>
+    <node x="2178.6924603174602" y="712.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.BandingActivity</node>
+    <node x="2218.1924603174602" y="287.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.HealthActivity</node>
+    <node x="2679.6924603174602" y="690.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.MicrochipActivity</node>
+    <node x="1084.9484126984125" y="137.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ObserverRole</node>
+    <node x="2846.6924603174602" y="297.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.WeightActivity</node>
+    <node x="1300.9900793650795" y="-335.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Species</node>
+    <node x="1825.2549603174605" y="-55.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event</node>
+    <node x="142.4275793650794" y="456.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Project</node>
+    <node x="2716.0" y="1147.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Audit</node>
+    <node x="862.9900793650795" y="689.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Organisation</node>
+    <node x="443.44246031746036" y="985.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectMember</node>
+    <node x="734.9424603174604" y="-224.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Bird</node>
+    <node x="153.0" y="40.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectStatus</node>
+    <node x="2410.0" y="1147.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ActivityType</node>
+    <node x="1437.3174603174605" y="137.0">f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.EventObserver</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.MicrochipActivity" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" relationship="REFERENCES">
+      <point x="-4.6031746023800224E-4" y="-82.0" />
+      <point x="2810.192" y="626.0" />
+      <point x="1955.755" y="626.0" />
+      <point x="3.968253963648749E-5" y="214.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.MeasurementActivity" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" relationship="REFERENCES">
+      <point x="-130.50046031746024" y="0.0" />
+      <point x="2502.0" y="402.0" />
+      <point x="2502.0" y="626.0" />
+      <point x="1955.755" y="626.0" />
+      <point x="3.968253963648749E-5" y="214.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectRole" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectRole" relationship="REFERENCES">
+      <point x="-130.4995793650795" y="0.0" />
+      <point x="782.567" y="1100.0" />
+      <point x="782.567" y="1100.0" />
+      <point x="-130.4995793650795" y="0.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Bird" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Species" relationship="REFERENCES">
+      <point x="130.49953968253965" y="-72.5" />
+      <point x="1215.49" y="-60.5" />
+      <point x="1215.49" y="-20.0" />
+      <point x="1431.49" y="-20.0" />
+      <point x="-7.936507950034866E-5" y="137.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.EventObserver" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" relationship="REFERENCES">
+      <point x="130.5" y="-60.0" />
+      <point x="-130.5" y="0.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.HealthActivity" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" relationship="REFERENCES">
+      <point x="130.49953968253976" y="0.0" />
+      <point x="2502.0" y="424.0" />
+      <point x="2502.0" y="626.0" />
+      <point x="1955.755" y="626.0" />
+      <point x="3.968253963648749E-5" y="214.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.WingTagActivity" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" relationship="REFERENCES">
+      <point x="-4.6031746023800224E-4" y="-82.0" />
+      <point x="2529.192" y="626.0" />
+      <point x="1955.755" y="626.0" />
+      <point x="3.968253963648749E-5" y="214.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.EventObserver" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ObserverRole" relationship="REFERENCES">
+      <point x="-130.5" y="22.0" />
+      <point x="130.5" y="0.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectBird" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Project" relationship="REFERENCES">
+      <point x="-130.5" y="2.0" />
+      <point x="130.5" y="0.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectMember" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Project" relationship="REFERENCES">
+      <point x="-130.5" y="0.0" />
+      <point x="272.9275793650794" y="1089.0" />
+      <point x="0.0" y="115.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.WeightActivity" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" relationship="REFERENCES">
+      <point x="-4.6031746023800224E-4" y="82.0" />
+      <point x="2977.192" y="626.0" />
+      <point x="1955.755" y="626.0" />
+      <point x="3.968253963648749E-5" y="214.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Bird" relationship="REFERENCES">
+      <point x="-130.5" y="-147.0" />
+      <point x="130.5" y="0.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.BandingActivity" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" relationship="REFERENCES">
+      <point x="-4.6031746023800224E-4" y="-60.0" />
+      <point x="2278.692" y="626.0" />
+      <point x="1955.755" y="626.0" />
+      <point x="3.968253963648749E-5" y="214.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Location" relationship="REFERENCES">
+      <point x="130.49999999999977" y="-165.0" />
+      <point x="-130.5" y="0.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Bird" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Bird" relationship="REFERENCES">
+      <point x="-97.875" y="236.0" />
+      <point x="767.5674603174604" y="268.0" />
+      <point x="714.9424603174604" y="268.0" />
+      <point x="714.9424603174604" y="130.0" />
+      <point x="-130.5" y="118.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Location" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.LocationType" relationship="REFERENCES">
+      <point x="130.5" y="0.0" />
+      <point x="-130.5" y="0.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Event" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Species" relationship="REFERENCES">
+      <point x="0.0" y="-214.0" />
+      <point x="1955.7549603174605" y="-198.0" />
+      <point x="130.5" y="0.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Project" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectStatus" relationship="REFERENCES">
+      <point x="10.572420634920604" y="-115.0" />
+      <point x="0.0" y="104.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectMember" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Person" relationship="REFERENCES">
+      <point x="0.0" y="-104.0" />
+      <point x="573.9424603174604" y="967.5" />
+      <point x="-130.5" y="-80.5" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Project" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Organisation" relationship="REFERENCES">
+      <point x="-14.999579365079398" y="115.0" />
+      <point x="257.928" y="877.0" />
+      <point x="993.49" y="877.0" />
+      <point x="-7.936507950034866E-5" y="60.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.EventObserver" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Person" relationship="REFERENCES">
+      <point x="0.0" y="82.0" />
+      <point x="1567.8174603174605" y="1048.0" />
+      <point x="130.5" y="0.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectMember" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectRole" relationship="REFERENCES">
+      <point x="130.5" y="-4.0" />
+      <point x="-130.5" y="-15.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Person" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Organisation" relationship="REFERENCES">
+      <point x="4.2063492060151475E-4" y="-104.0" />
+      <point x="1311.928" y="877.0" />
+      <point x="993.49" y="877.0" />
+      <point x="-7.936507950034866E-5" y="60.0" />
+    </edge>
+    <edge source="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.ProjectBird" target="f6acc1c3-1729-4155-b75a-4961b87b6453.TABLE:perfect-stack-demo-db.public.Bird" relationship="REFERENCES">
+      <point x="0.0" y="-71.0" />
+      <point x="626.9275793650794" y="-121.0" />
+      <point x="-130.5" y="-133.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="1.0" showDependencies="false" x="1573.0" y="582.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Columns</Category>
+    <Category>Comments</Category>
+    <Category>Key columns</Category>
+    <Category>Virtual foreign keys</Category>
+  </Categories>
+</Diagram>
+

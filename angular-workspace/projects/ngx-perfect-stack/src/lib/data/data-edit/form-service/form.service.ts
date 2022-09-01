@@ -115,7 +115,9 @@ export class FormService {
             ctx.formMap = this.createFormMap(ctx, ctx.metaPage.templates, ctx.metaPage.dataQueryList, dataMap);
 
             // create forms for controllers if not already created by the dataMap (e.g. criteria forms)
-            this.createControllerForms(ctx, ctx.metaPage, ctx.formMap);
+            if(ctx.metaPage.controllers) {
+              this.createControllerForms(ctx, ctx.metaPage, ctx.formMap);
+            }
 
             console.log('FormService: formMap:', ctx.formMap);
             return of(ctx);
@@ -203,7 +205,7 @@ export class FormService {
   }
 
   public createFormGroupForDataMapItem(ctx: FormContext,
-                                       metaEntityName:string | null,
+                                       metaEntityName:string,
                                        resultCardinality: ResultCardinalityType,
                                        template: Template,
                                        objectOrArray: any | any[]) {
@@ -213,7 +215,7 @@ export class FormService {
         form = this.createFormGroupForDataMapItemQueryOne(ctx, metaEntityName, resultCardinality, template, objectOrArray);
         break;
       case ResultCardinalityType.QueryMany:
-        form = this.createFormGroupForDataMapItemQueryMany(ctx, template, objectOrArray as any[]);
+        form = this.createFormGroupForDataMapItemQueryMany(ctx, metaEntityName, template, objectOrArray as any[]);
         break;
       default:
         throw new Error(`Unknown ResultCardinality: ${resultCardinality}`);
@@ -245,12 +247,12 @@ export class FormService {
     }
   }
 
-  createFormGroupForDataMapItemQueryMany(ctx: FormContext, template: Template, arrayOfObjects: any[]) {
+  createFormGroupForDataMapItemQueryMany(ctx: FormContext, metaEntityName: string, template: Template, arrayOfObjects: any[]) {
     // The dataValue result is an array so create the same number of form rows
     const rowCount = arrayOfObjects.length;
     const formArray = new UntypedFormArray([]);
     for(let i = 0; i < rowCount; i++) {
-      const formRow = this.formGroupService.createFormGroup(ctx.mode, template.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
+      const formRow = this.formGroupService.createFormGroup(ctx.mode, metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
       formArray.push(formRow);
     }
 

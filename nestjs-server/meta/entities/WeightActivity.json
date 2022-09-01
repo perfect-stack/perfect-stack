@@ -6,13 +6,13 @@
   "timestamps": true,
   "attributes": [
     {
+      "type": "Identifier",
+      "visibility": "Visible",
       "name": "id",
       "label": "Id",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Identifier",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -20,13 +20,13 @@
       "rules": []
     },
     {
+      "type": "Double",
+      "visibility": "Required",
       "name": "weight",
       "label": "Weight",
       "description": "Measured in (g)",
       "unitOfMeasure": "g",
       "scale": "0",
-      "type": "Double",
-      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -39,29 +39,13 @@
       ]
     },
     {
-      "name": "method",
-      "label": "Method",
-      "description": "Method of measurement",
-      "unitOfMeasure": "",
-      "scale": "",
-      "type": "ManyToOne",
+      "type": "Text",
       "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "WeightMethod",
-      "typeaheadSearch": [
-        "name"
-      ],
-      "rules": []
-    },
-    {
       "name": "activity_type",
       "label": "Activity type",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
