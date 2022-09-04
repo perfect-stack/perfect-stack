@@ -10,6 +10,7 @@ import { BandingActivityDataEventListener } from './app-event/banding-activity.d
 import { EventSearchCriteriaQuery } from './app-event/event-search-criteria.query';
 import { PersonSearchQuery } from './app-event/person-search.query';
 import { ProjectBirdsQuery } from './app-event/project-birds.query';
+import { ProjectTeamQuery } from './app-event/project-team.query';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -38,6 +39,7 @@ export class AppService implements OnApplicationBootstrap {
     this.addPersonSearchQuery();
     this.addBandingActivityListener();
     this.addProjectBirdsQuery();
+    this.addProjectTeamQuery();
     return;
   }
 
@@ -70,6 +72,13 @@ export class AppService implements OnApplicationBootstrap {
     this.customQueryService.addCustomQuery(
       'ProjectBirdsQuery',
       new ProjectBirdsQuery(this.knexService, this.metaEntityService),
+    );
+  }
+
+  private addProjectTeamQuery() {
+    this.customQueryService.addCustomQuery(
+      'ProjectTeamQuery',
+      new ProjectTeamQuery(this.knexService, this.metaEntityService),
     );
   }
 }

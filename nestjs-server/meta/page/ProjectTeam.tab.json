@@ -3,46 +3,47 @@
   "title": "Project team",
   "type": "view_edit",
   "layoutStyle": "Venice",
+  "dataQueryList": [],
+  "controllers": [],
   "templates": [
     {
       "cells": [
         [
           {
-            "width": "12",
+            "width": "3",
             "height": "1",
-            "template": {
-              "binding": "members",
-              "templateHeading": "",
-              "type": "table",
-              "metaEntityName": "ProjectMember",
-              "cells": [
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "member"
-                  },
-                  {
-                    "width": "1",
-                    "height": "1",
-                    "attributeName": "role"
-                  }
-                ]
-              ],
-              "styles": "",
-              "orderByName": "UNKNOWN",
-              "orderByDir": "ASC",
-              "noItemsHtml": "",
-              "locations": {}
-            }
+            "attributeName": "name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "email_address"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "role"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "last_sign_in"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
           }
         ]
       ],
-      "metaEntityName": "Project",
-      "type": "form",
-      "binding": "project",
-      "showSideHeadings": "Disabled"
+      "metaEntityName": "ProjectTeamSearchResult",
+      "type": "table",
+      "binding": "projectTeamSearchResults"
     }
-  ],
-  "dataQueryList": []
+  ]
 }

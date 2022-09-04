@@ -325,12 +325,14 @@ export class FormService {
       if(criteriaFormName && !formMap.has(criteriaFormName)) {
         const form = this.createCriteriaForm(ctx);
         formMap.set(criteriaFormName, form)
+        console.log('...set criteriaFormName: ', criteriaFormName);
       }
 
       const searchResultsFormName = (nextController as any).results;
       if(searchResultsFormName && !formMap.has(searchResultsFormName)) {
         const form = this.createSearchResultsForm(searchResultsFormName, ctx);
         formMap.set(searchResultsFormName, form)
+        console.log('...set searchResultsFormName: ', searchResultsFormName);
       }
     }
   }

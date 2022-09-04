@@ -1120,6 +1120,7 @@ export class TabToolComponent implements OnInit {
   tabContext$: Observable<TabToolContext>;
   selectedMetaPage: MetaPage;
   selectedTemplate: Template;
+  selectedTabIdx: number;
 
   constructor(protected readonly propertySheetService: PropertySheetService,
               protected readonly metaPageService: MetaPageService) { }
@@ -1154,7 +1155,7 @@ export class TabToolComponent implements OnInit {
       // set the initial tab
       if(tabContext.tabList.length > 0) {
         const initialTab = tabContext.tabList[0];
-        this.onTabMetaPageSelected(initialTab);
+        this.onTabMetaPageSelected(initialTab, 0);
         console.log(`Set initial tab = ${initialTab.name}`);
       }
 
@@ -1177,10 +1178,14 @@ export class TabToolComponent implements OnInit {
     this.propertySheetService.edit('Tab', this.tabTool);
   }
 
-  onTabMetaPageSelected(tabMetaPage: MetaPage) {
-    console.log(`Tab metaPage = ${tabMetaPage.name}`);
+  onTabMetaPageSelected(tabMetaPage: MetaPage, selectedTabIdx: number) {
+    console.log(`Tab Selected: metaPage = ${tabMetaPage.name}`);
     this.selectedMetaPage = tabMetaPage;
-    this.selectedTemplate = tabMetaPage.templates[0];
+    this.selectedTabIdx = selectedTabIdx;
+    if(tabMetaPage.templates && tabMetaPage.templates.length > 0) {
+      this.selectedTemplate = tabMetaPage.templates[0];
+      console.log(`Template Selected: ${this.selectedTemplate.binding}`);
+    }
   }
 }
 

@@ -64,7 +64,7 @@ export class SearchControllerService implements ActionListener, PropertyListProv
 
       // set the results into the right table form
       const form = this.getResultsForm(ctx);
-      console.log(`update form with search results:`, form);
+      console.log(`update form ${this.results} with search results:`, form);
       this.formService.updateFormGroupForDataMapItemQueryMany(form as FormGroup, ctx, dataQuery.metaEntityName, response.resultList);
       criteriaForm.get('pageNumber')?.setValue(queryRequest.pageNumber);
       criteriaForm.get('pageSize')?.setValue(queryRequest.pageSize);

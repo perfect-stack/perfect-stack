@@ -132,7 +132,7 @@ export class DataSearchComponent implements OnInit {
         const startRow = Math.min(((queryRequest.pageNumber - 1) * queryRequest.pageSize) + 1, response.totalCount);
         const endRow = Math.min(startRow + queryRequest.pageSize - 1, response.totalCount);
         const totalRows = response.totalCount;
-        const pluralName = this.resultTableMetaEntity.pluralName;
+        const pluralName = this.resultTableMetaEntity.pluralName ? this.resultTableMetaEntity.pluralName.toLowerCase() : '';
         this.resultsMessage = `Showing ${startRow}-${endRow} of ${totalRows} ${pluralName}`;
       });
     }

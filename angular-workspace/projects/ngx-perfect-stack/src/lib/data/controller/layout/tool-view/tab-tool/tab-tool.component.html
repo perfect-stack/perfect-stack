@@ -11,20 +11,22 @@
            'border-primary': metaPage.name === selectedMetaPage.name,
            'border-4': metaPage.name === selectedMetaPage.name
            }"
-           *ngFor="let metaPage of tabContext.tabList">
-        <div (click)="onTabMetaPageSelected(metaPage)">
+           *ngFor="let metaPage of tabContext.tabList; index as i">
+        <div (click)="onTabMetaPageSelected(metaPage, i)">
           {{metaPage.title}}
         </div>
       </div>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-12">
-      <ng-container *ngIf="selectedTemplate">
-        <lib-layout [ctx]="ctx" [template]="selectedTemplate"></lib-layout>
+  <div class="row" *ngIf="tabContext.tabList.length">
+    <ng-container *ngFor="let metaPage of tabContext.tabList; index as i">
+      <ng-container *ngIf="selectedTabIdx === i">
+        <div class="col-12">
+          <lib-layout [ctx]="ctx" [template]="tabContext.tabList[i].templates[0]"></lib-layout>
+        </div>
       </ng-container>
-    </div>
+    </ng-container>
   </div>
 
   <div *ngIf="tabContext.tabList.length === 0">

@@ -130,6 +130,8 @@ import { PaginateToolComponent } from './data/controller/layout/tool-view/pagina
 import { ControllerListComponent } from './meta/page/meta-page-edit/controller-list/controller-list.component';
 import {SearchControllerService} from './data/controller/search-controller.service';
 import {STANDARD_CONTROLLERS, standardControllers} from './data/controller/standard-controllers';
+import {DataService} from './data/data-service/data.service';
+import {FormService} from './data/data-edit/form-service/form.service';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },

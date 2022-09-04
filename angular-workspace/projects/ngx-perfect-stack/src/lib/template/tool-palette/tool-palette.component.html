@@ -1,14 +1,16 @@
 <div>
   <div class="row">
     <div class="col-6">
-      <button class="btn btn-primary tool text-start w-100 drag-handle" my-draggable [drag-data]="ToolPaletteComponent.buttonPrototype">
+      <div class="form-control tool drag-handle" my-draggable [drag-data]="ToolPaletteComponent.buttonPrototype">
+        <span class="material-symbols-outlined align-middle">crop_16_9</span>
         Button
-      </button>
+      </div>
     </div>
     <div class="col-6">
-      <button class="btn btn-primary tool text-start w-100 drag-handle" my-draggable [drag-data]="ToolPaletteComponent.buttonGroupPrototype">
+      <div class="form-control tool drag-handle" my-draggable [drag-data]="ToolPaletteComponent.buttonGroupPrototype">
+        <span class="material-symbols-outlined align-middle">view_column</span>
         Btn Group
-      </button>
+      </div>
     </div>
   </div>
 

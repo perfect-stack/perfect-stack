@@ -18,6 +18,7 @@ import {AbstractControl, FormGroup, UntypedFormArray, UntypedFormGroup} from '@a
 import {SaveResponse} from '../data-service/save.response';
 import {ValidationResultMapController} from '../../domain/meta.rule';
 import {ToastService} from '../../utils/toast.service';
+import {SearchControllerService} from '../controller/search-controller.service';
 
 
 @Component({
@@ -73,7 +74,10 @@ export class DataEditComponent implements OnInit {
   attachControllers(ctx: FormContext) {
     if(ctx.metaPage.controllers) {
       for(const controller of ctx.metaPage.controllers) {
-        const controllerService = this.injector.get(controller.class) as any;
+
+        // TODO: was looking for a DI friendly way of doing this but Angular services are typically only created once. Needs more thought.
+        //const controllerService = this.injector.get(controller.class) as any;
+        const controllerService: any = new SearchControllerService(this.dataService, this.formService);
 
         // copy the properties of the metadata into the service
         for(const nextProperty of controllerService.propertyList) {

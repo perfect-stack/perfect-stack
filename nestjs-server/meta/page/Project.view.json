@@ -23,6 +23,17 @@
       "orderByName": "name",
       "orderByDir": "ASC",
       "metaEntityName": "ProjectBirdSearchResult"
+    },
+    {
+      "dataName": "team",
+      "resultCardinality": "QueryMany",
+      "queryType": "Custom",
+      "queryName": "ProjectTeamQuery",
+      "metaEntityName": "ProjectTeamSearchResult",
+      "fieldName": "id",
+      "parameter": "id",
+      "orderByName": "name",
+      "orderByDir": "ASC"
     }
   ],
   "controllers": [
@@ -33,6 +44,14 @@
       "query": "birds",
       "results": "birdTabSearchResults",
       "channel": "birdTab"
+    },
+    {
+      "name": "TeamTabController",
+      "class": "SearchController",
+      "channel": "teamTab",
+      "query": "team",
+      "criteria": "teamCriteriaForm",
+      "results": "projectTeamSearchResults"
     }
   ],
   "templates": [
