@@ -3,6 +3,11 @@
   <!--Cells: {{cells|json}}-->
 
   <ng-container *ngIf="cells && attributes && (attributes.length > 0 || mode === 'edit')">
+
+    <div class="results-summary" *ngIf="hasResultsSummary()">
+      {{formGroup.controls['resultsSummary'].value}}
+    </div>
+
     <table class="table" [ngClass]="getStyleClasses()">
       <thead>
         <tr *ngIf="cells">
@@ -35,7 +40,14 @@
   </ng-container>
 
   <ng-container *ngIf="mode !== 'edit' && cells && attributes && attributes.length == 0">
-    <div [innerHtml]="getNoItemsHtml()"></div>
+    <div class="no-items-container">
+      <div class="d-flex justify-content-center no-items-icon">
+        <span class="material-symbols-outlined no-items-icon">manage_search</span>
+      </div>
+      <div class="d-flex justify-content-center no-items-title">
+        <div [innerHtml]="getNoItemsHtml()"></div>
+      </div>
+    </div>
   </ng-container>
 
   <div class="d-flex" *ngIf="mode === 'edit'">

@@ -7,3 +7,22 @@
 .table > :not(:first-child) {
   border-top: unset;
 }
+
+.results-summary {
+  padding: 24px;
+  font-size: 24px;
+}
+
+.no-items-container {
+  margin-top: 80px;
+  margin-bottom: 80px;
+}
+
+.no-items-icon {
+  color: #D0D5DD;
+  font-size: 72px;
+}
+
+.no-items-title {
+  color: #101828;
+}

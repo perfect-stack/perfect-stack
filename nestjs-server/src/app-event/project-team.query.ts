@@ -33,7 +33,7 @@ export class ProjectTeamQuery implements CustomQuery {
     const knex = await this.knexService.getKnex();
     const selectData = () =>
       knex.select(
-        'Project.id',
+        'ProjectMember.ProjectId',
         knex.raw(
           'concat("Person".given_name, \' \', "Person".family_name) as name',
         ),
@@ -55,14 +55,12 @@ export class ProjectTeamQuery implements CustomQuery {
 
     const projectId = projectIdCriteria.value;
     const from = (select) => {
-      // left outer join "ProjectMember" on "Project".id = "ProjectMember"."ProjectId"
       // left outer join "Person" on "ProjectMember".member_id = "Person".id
       // left outer join "ProjectRole" on "ProjectMember".role_id = "ProjectRole".id
       // left outer join "Authentication" on "Authentication".email_address = "Person".email_address
 
       select = select
-        .from('Project')
-        .leftOuterJoin('ProjectMember', 'Project.id', 'ProjectMember.ProjectId')
+        .from('ProjectMember')
         .leftOuterJoin('Person', 'ProjectMember.member_id', 'Person.id')
         .leftOuterJoin('ProjectRole', 'ProjectMember.role_id', 'ProjectRole.id')
         .leftOuterJoin(
@@ -77,9 +75,9 @@ export class ProjectTeamQuery implements CustomQuery {
       // "Person".email_address,
       // "ProjectRole".name;
       select = select
-        .where('Project.id', '=', projectId)
+        .where('ProjectMember.ProjectId', '=', projectId)
         .groupBy(
-          'Project.id',
+          'ProjectMember.id',
           'Person.given_name',
           'Person.family_name',
           'Person.email_address',
@@ -107,7 +105,10 @@ export class ProjectTeamQuery implements CustomQuery {
     const dataResults = await dataQuery;
 
     const countResponse = await from(selectCount());
-    const totalCount = Number(countResponse[0].count);
+    const totalCount =
+      countResponse && countResponse.length > 0
+        ? Number(countResponse[0].count)
+        : 0;
 
     const response: QueryResponse<any> = {
       resultList: dataResults,

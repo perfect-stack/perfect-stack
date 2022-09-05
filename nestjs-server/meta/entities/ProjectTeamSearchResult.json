@@ -1,6 +1,6 @@
 {
   "name": "ProjectTeamSearchResult",
-  "pluralName": "ProjectTeamMembers",
+  "pluralName": "Team Members",
   "icon": "",
   "type": "Basic",
   "timestamps": false,

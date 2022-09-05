@@ -1,12 +1,14 @@
 
-<ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onPaginate(ctx)">
-  <ng-template ngbPaginationFirst>First</ng-template>
-  <ng-template ngbPaginationLast>Last</ng-template>
-  <ng-template ngbPaginationPrevious>Previous</ng-template>
-  <ng-template ngbPaginationNext>Next</ng-template>
-  <ng-template ngbPaginationEllipsis>...</ng-template>
-  <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
-</ngb-pagination>
+<ng-container *ngIf="showPaginationControls()">
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onPaginate(ctx)">
+    <ng-template ngbPaginationFirst>First</ng-template>
+    <ng-template ngbPaginationLast>Last</ng-template>
+    <ng-template ngbPaginationPrevious>Previous</ng-template>
+    <ng-template ngbPaginationNext>Next</ng-template>
+    <ng-template ngbPaginationEllipsis>...</ng-template>
+    <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+  </ngb-pagination>
+</ng-container>
 
 <ng-container *ngIf="editorMode">
   <div class="material-symbols-outlined" (click)="doEditorAction()">settings</div>

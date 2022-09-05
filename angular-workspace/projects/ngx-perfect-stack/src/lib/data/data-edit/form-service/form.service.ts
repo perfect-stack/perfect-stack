@@ -266,7 +266,7 @@ export class FormService {
     // It's not ideal but at the moment search result tables are the first and only Control in a FormGroup, that way there's
     // a lot of code that only needs to deal with FromGroup and not FormGroup or FormArray. The trade-off is like here
     // where things get a bit hacky to get the table out of the form without knowing the Template binding.
-    const controlKeys = Object.keys(form.controls);
+    const controlKeys = Object.keys(form.controls).filter(s => s !== 'resultsSummary');
     if(controlKeys && controlKeys.length === 1) {
       const firstControl = form.controls[controlKeys[0]];
       const formArray = firstControl as FormArray;
@@ -351,6 +351,12 @@ export class FormService {
     //return formArray;
     const form = new UntypedFormGroup({});
     form.addControl(name, formArray);
+
+    // also going to add an extra field for "resultsSummary" so that the TableLayout can display that later on
+    const resultsSummaryControl = new FormControlWithAttribute({value: '', disabled: true}); // disabled is true because it's read-only
+    form.addControl('resultsSummary', resultsSummaryControl);
+    console.log(`Added resultsSummary to form:`, form);
+
     return form;
   }
 }

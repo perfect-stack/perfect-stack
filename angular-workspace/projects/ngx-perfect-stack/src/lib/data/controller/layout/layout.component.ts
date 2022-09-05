@@ -247,6 +247,10 @@ export class TableLayoutComponent implements OnInit {
   getNoItemsHtml() {
     return this.template.noItemsHtml ? this.template.noItemsHtml : 'No items';
   }
+
+  hasResultsSummary() {
+    return this.formGroup.get('resultsSummary') !== null && this.formGroup.get('resultsSummary')?.value.length > 0;
+  }
 }
 
 export interface CardItem {

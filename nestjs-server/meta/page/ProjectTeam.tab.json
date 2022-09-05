@@ -1,6 +1,6 @@
 {
   "name": "ProjectTeam.tab",
-  "title": "Project team",
+  "title": "Team",
   "type": "view_edit",
   "layoutStyle": "Venice",
   "dataQueryList": [],
@@ -43,7 +43,8 @@
       ],
       "metaEntityName": "ProjectTeamSearchResult",
       "type": "table",
-      "binding": "projectTeamSearchResults"
+      "binding": "projectTeamSearchResults",
+      "noItemsHtml": "<div class=\"text-center\">No people assigned to this project</div> <div class=\"text-center text-secondary\">You can assign people by editing this project</div>"
     }
   ]
 }

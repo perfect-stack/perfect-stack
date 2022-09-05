@@ -3,7 +3,7 @@
   <!-- If template has a binding to the form -->
   <ng-container *ngIf="template && template.binding">
     <div [ngClass]="template.styles" [formGroup]="formGroup">
-      <!--<div class="d-flex flex-row align-items-baseline header-layout" *ngFor="let row of cells">
+      <div class="d-flex flex-row header-layout" *ngFor="let row of cells">
         <div class="header-cell min-cell-width h-100" *ngFor="let cell of row">
           <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
             <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
@@ -12,16 +12,16 @@
         </div>
       </div>
 
-      <hr>-->
+      <!--<hr>-->
 
-      <div class="row header-layout" *ngFor="let row of cells">
+      <!--<div class="row header-layout" *ngFor="let row of cells">
         <div class="col header-cell min-cell-width" *ngFor="let cell of row">
           <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
             <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
           </ng-container>
           <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
         </div>
-      </div>
+      </div>-->
     </div>
   </ng-container>
 </ng-container>

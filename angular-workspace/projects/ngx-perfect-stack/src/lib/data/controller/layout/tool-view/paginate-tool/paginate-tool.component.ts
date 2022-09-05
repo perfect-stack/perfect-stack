@@ -75,6 +75,10 @@ export class PaginateToolComponent implements OnInit, OnDestroy {
     this.propertySheetService.edit('Paginate', this.paginateTool);
   }
 
+  showPaginationControls() {
+    return this.collectionSize > 0;
+  }
+
   ngOnDestroy(): void {
     if(this.criteriaFormSubscription) {
       this.criteriaFormSubscription.unsubscribe();
