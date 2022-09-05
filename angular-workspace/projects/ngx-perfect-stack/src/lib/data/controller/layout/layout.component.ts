@@ -502,6 +502,10 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     if(this.ctx && this.ctx.formMap) {
       console.log('FormLayoutComponent: initialising things the new way');
+      if(!this.template) {
+        throw new Error('No template defined, cannot proceed sensibly');
+      }
+
       this.mode = this.ctx.mode;
 
       let formLookupKey;
@@ -524,14 +528,12 @@ export class FormLayoutComponent implements OnInit, OnChanges {
         this.formGroup = form;
       }
       else {
-        console.warn('BINDING - NOT FOUND. Keep calm and carry on but you might be getting NG01052: formGroup expects a FormGroup instance from here onwards 🙂');
+        console.warn(`BINDING: "${binding}" - NOT FOUND. Keep calm and carry on but you might be getting NG01052: formGroup expects a FormGroup instance from here onwards 🙂`);
       }
     }
     else {
       console.warn('UNABLE to initialise FormLayoutComponent sensibly');
     }
-
-    //this.updateCells$();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

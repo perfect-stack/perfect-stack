@@ -2,6 +2,8 @@ export enum ComponentType {
   BadgeList = 'BadgeList',
   DatePicker = 'DatePicker',
   FlexibleDateTime = 'FlexibleDateTime',
+  ManyToOnePlain = 'ManyToOnePlain',
+  ManyToOneLink = 'ManyToOneLink',
   TextArea = 'TextArea',
   TextInput = 'TextInput',
   Select = 'Select',

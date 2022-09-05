@@ -3,6 +3,8 @@
   "title": "$PageTitle",
   "type": "search",
   "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -34,7 +36,8 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "organisation"
+            "attributeName": "organisation",
+            "component": "ManyToOnePlain"
           },
           {
             "width": "1",
@@ -124,6 +127,5 @@
       "orderByName": "name",
       "orderByDir": "ASC"
     }
-  ],
-  "dataQueryList": []
+  ]
 }

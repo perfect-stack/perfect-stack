@@ -68,6 +68,10 @@
           <lib-spy-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [formGroup]="formGroup" [cell]="cell" [attribute]="cell.attribute"></lib-spy-control>
         </ng-container>
 
+        <ng-container *ngSwitchCase="'ManyToOnePlain'">
+          <lib-select-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
+        </ng-container>
+
         <ng-container *ngSwitchDefault>
           <ng-container *ngIf="cell.metaEntity">
             <app-many-to-one-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [ctx]="ctx" [formGroup]="formGroup" [metaEntity]="cell.metaEntity" [attribute]="cell.attribute"></app-many-to-one-control>
