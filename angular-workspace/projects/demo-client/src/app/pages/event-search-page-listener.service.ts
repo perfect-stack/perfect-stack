@@ -15,9 +15,9 @@ export class EventSearchPageListenerService implements PageListener {
   constructor(private modalService: NgbModal,
               protected readonly router: Router) { }
 
-  onAction(ctx: FormContext, action: string): void {
+  onAction(ctx: FormContext, channel: string, action: string): void {
     console.log(`EventSearchPageListenerService got action ${action}`);
-    const modalRef = this.modalService.open(AddEventDialogComponent).closed.subscribe((eventType) => {
+    const modalRef = this.modalService.open(AddEventDialogComponent).closed.subscribe((eventType: any) => {
       console.log(`EventSearchPageListenerService: eventType = ${eventType}`);
       const route = `/data/Event/edit/**NEW**?event_type=${eventType}`;
       this.router.navigateByUrl(route);

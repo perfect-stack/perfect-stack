@@ -27,7 +27,7 @@ export class EventPageListenerService implements PageListener {
   onBeforeSave(ctx: FormContext): void {
   }
 
-  onAction(ctx: FormContext, action: string): void {
+  onAction(ctx: FormContext, channel: string, action: string): void {
     if(action === 'CreateLocation') {
       console.log(`Custom page hook ready to: ${action}`);
       this.createLocation(ctx);

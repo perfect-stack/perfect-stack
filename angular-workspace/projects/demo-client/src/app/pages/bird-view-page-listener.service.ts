@@ -15,19 +15,21 @@ export class BirdViewPageListenerService implements PageListener {
   constructor(private modalService: NgbModal,
               protected readonly router: Router) { }
 
-  onAction(ctx: FormContext, action: string): void {
+  onAction(ctx: FormContext, channel: string, action: string): void {
     // TODO: probably need to switch based on the name of the action
     console.log(`GOT action: ${action}`);
-    const modalRef = this.modalService.open(AddEventDialogComponent).closed.subscribe((eventType) => {
-      console.log(`BirdViewPageListenerService: eventType = ${eventType}`);
-      if(ctx.dataMap.get('bird')) {
-        const bird = ctx.dataMap.get('bird');
-        if(bird) {
-          const route = `/data/Event/edit/**NEW**?bird_id=${bird.result.id}&event_type=${eventType}`;
-          this.router.navigateByUrl(route);
+    if(action === 'recordEvent') {
+      const modalRef = this.modalService.open(AddEventDialogComponent).closed.subscribe((eventType) => {
+        console.log(`BirdViewPageListenerService: eventType = ${eventType}`);
+        if(ctx.dataMap.get('bird')) {
+          const bird = ctx.dataMap.get('bird');
+          if(bird) {
+            const route = `/data/Event/edit/**NEW**?bird_id=${bird.result.id}&event_type=${eventType}`;
+            this.router.navigateByUrl(route);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   onAfterSave(ctx: FormContext): void {
