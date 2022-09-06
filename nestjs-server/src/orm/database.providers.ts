@@ -17,6 +17,7 @@ export interface DatabaseSettings {
   databaseHost: string;
   databasePort: number;
   databaseUser: string;
+  databasePassword: string; // resolved at runtime depending on passwordProperty
   passwordProperty: string;
   passwordKey: string;
   databaseName: string;
@@ -128,6 +129,7 @@ export const databaseProviders = [
           databaseHost: configService.get<string>('DATABASE_HOST'),
           databasePort: configService.get<number>('DATABASE_PORT'),
           databaseUser: configService.get<string>('DATABASE_USER'),
+          databasePassword: '',
           passwordProperty: configService.get<string>('DATABASE_PASSWORD'),
           passwordKey: configService.get<string>('DATABASE_PASSWORD_KEY'),
           databaseName: configService.get<string>('DATABASE_NAME'),

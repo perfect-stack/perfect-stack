@@ -11,6 +11,7 @@ import { EventSearchCriteriaQuery } from './app-event/event-search-criteria.quer
 import { PersonSearchQuery } from './app-event/person-search.query';
 import { ProjectBirdsQuery } from './app-event/project-birds.query';
 import { ProjectTeamQuery } from './app-event/project-team.query';
+import { SettingsService } from './settings/settings.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -24,6 +25,7 @@ export class AppService implements OnApplicationBootstrap {
     protected readonly customQueryService: CustomQueryService,
     protected readonly knexService: KnexService,
     protected readonly eventService: EventService,
+    protected readonly settingsService: SettingsService,
   ) {}
 
   get(): string {
@@ -78,7 +80,11 @@ export class AppService implements OnApplicationBootstrap {
   private addProjectTeamQuery() {
     this.customQueryService.addCustomQuery(
       'ProjectTeamQuery',
-      new ProjectTeamQuery(this.knexService, this.metaEntityService),
+      new ProjectTeamQuery(
+        this.knexService,
+        this.metaEntityService,
+        this.settingsService,
+      ),
     );
   }
 }

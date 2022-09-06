@@ -43,8 +43,19 @@
       ],
       "metaEntityName": "ProjectTeamSearchResult",
       "type": "table",
-      "binding": "projectTeamSearchResults",
-      "noItemsHtml": "<div class=\"text-center\">No people assigned to this project</div> <div class=\"text-center text-secondary\">You can assign people by editing this project</div>"
+      "binding": "teamSearchResults",
+      "noItemsHtml": "<div class=\"text-center\">No people assigned to this project</div> <div class=\"text-center text-secondary\">You can assign people by editing this project</div>",
+      "locations": {
+        "BottomMiddle": {
+          "type": "Paginate",
+          "channel": "teamTab",
+          "containerStyles": "",
+          "styles": "",
+          "label": "",
+          "modes": "",
+          "criteriaForm": "teamCriteriaForm"
+        }
+      }
     }
   ]
 }

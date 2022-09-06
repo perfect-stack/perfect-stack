@@ -1,49 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { knex } from 'knex';
-import { ConfigService } from '@nestjs/config';
-import { DatabaseSettings } from '../orm/database.providers';
-import {
-  GetSecretValueCommand,
-  SecretsManagerClient,
-} from '@aws-sdk/client-secrets-manager';
+import { SettingsService } from '../settings/settings.service';
 
 @Injectable()
 export class KnexService {
   _knex;
 
-  constructor(protected readonly configService: ConfigService) {}
+  constructor(protected readonly settingsService: SettingsService) {}
 
   async getKnex(): Promise<any> {
     if (!this._knex) {
-      const databaseSettings: DatabaseSettings = {
-        databaseHost: this.configService.get<string>('DATABASE_HOST'),
-        databasePort: this.configService.get<number>('DATABASE_PORT'),
-        databaseUser: this.configService.get<string>('DATABASE_USER'),
-        passwordProperty: this.configService.get<string>('DATABASE_PASSWORD'),
-        passwordKey: this.configService.get<string>('DATABASE_PASSWORD_KEY'),
-        databaseName: this.configService.get<string>('DATABASE_NAME'),
-      };
-
-      let databasePassword;
-      if (databaseSettings.passwordProperty) {
-        if (
-          databaseSettings.passwordProperty.startsWith(
-            'arn:aws:secretsmanager:',
-          )
-        ) {
-          const client = new SecretsManagerClient({});
-          const command = new GetSecretValueCommand({
-            SecretId: databaseSettings.passwordProperty,
-          });
-          const response = await client.send(command);
-          const secret = JSON.parse(response.SecretString);
-          databasePassword = secret[databaseSettings.passwordKey];
-        } else {
-          databasePassword = databaseSettings.passwordProperty;
-        }
-      } else {
-        throw new Error('Database properties have not been initialised');
-      }
+      const databaseSettings = await this.settingsService.getDatabaseSettings();
 
       this._knex = knex({
         client: 'pg',
@@ -51,7 +18,7 @@ export class KnexService {
           host: databaseSettings.databaseHost,
           port: databaseSettings.databasePort,
           user: databaseSettings.databaseUser,
-          password: databasePassword,
+          password: databaseSettings.databasePassword,
           database: databaseSettings.databaseName,
         },
       });

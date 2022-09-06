@@ -4,6 +4,8 @@ import { KnexService } from '../knex/knex.service';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
 import { QueryRequest } from '../data/query.request';
 import { QueryResponse } from '../data/query.response';
+import { Pool } from 'pg';
+import { SettingsService } from '../settings/settings.service';
 
 export class ProjectTeamQuery implements CustomQuery {
   private readonly logger = new Logger(ProjectTeamQuery.name);
@@ -11,104 +13,70 @@ export class ProjectTeamQuery implements CustomQuery {
   constructor(
     protected readonly knexService: KnexService,
     protected readonly metaEntityService: MetaEntityService,
+    protected readonly settingsService: SettingsService,
   ) {}
 
   async findByCriteria(
     queryRequest: QueryRequest,
   ): Promise<QueryResponse<any>> {
-    let pageNumber = queryRequest.pageNumber;
-    let pageSize = queryRequest.pageSize;
+    const databaseSettings = await this.settingsService.getDatabaseSettings();
 
-    if (!pageNumber) {
-      pageNumber = 1;
-    }
+    const pool = new Pool({
+      user: databaseSettings.databaseUser,
+      host: databaseSettings.databaseHost,
+      database: databaseSettings.databaseName,
+      password: databaseSettings.databasePassword,
+      port: databaseSettings.databasePort,
+    });
 
-    if (!pageSize) {
-      pageSize = 50;
-    }
+    const pageNumber = queryRequest.pageNumber ? queryRequest.pageNumber : 1;
+    const pageSize = queryRequest.pageSize ? queryRequest.pageSize : 50;
     const offset = (pageNumber - 1) * pageSize;
 
-    //const metaEntity = await this.metaEntityService.findOne('Person');
+    const projectId = this.getProjectId(queryRequest);
 
-    const knex = await this.knexService.getKnex();
-    const selectData = () =>
-      knex.select(
-        'ProjectMember.ProjectId',
-        knex.raw(
-          'concat("Person".given_name, \' \', "Person".family_name) as name',
-        ),
-        'Person.email_address',
-        'ProjectRole.name as role',
-        knex.raw('max("Authentication".auth_time) as last_sign_in'),
-      );
+    const selectDataSQL =
+      'Select\n' +
+      '    concat("Person".given_name, \' \', "Person".family_name) as name,\n' +
+      '    "Person".email_address,\n' +
+      '    "ProjectRole".name as role,\n' +
+      '    max("Authentication".auth_time)\n' +
+      'FROM "ProjectMember"\n' +
+      '    left outer join "Person" on "ProjectMember".member_id = "Person".id\n' +
+      '    left outer join "ProjectRole" on "ProjectMember".role_id = "ProjectRole".id\n' +
+      '    left outer join "Authentication" on "Authentication".email_address = "Person".email_address\n' +
+      'WHERE\n' +
+      '    "ProjectMember"."ProjectId" = $1\n' +
+      'GROUP BY "ProjectMember"."ProjectId",\n' +
+      '         "Person".given_name,\n' +
+      '         "Person".family_name,\n' +
+      '         "Person".email_address,\n' +
+      '         "ProjectRole".name\n' +
+      'OFFSET $2\n' +
+      'LIMIT $3;\n';
 
-    const selectCount = () => knex.select().count();
+    const selectDataResponse = await pool.query(selectDataSQL, [
+      projectId,
+      offset,
+      pageSize,
+    ]);
 
-    const projectIdCriteria = queryRequest.criteria.find(
-      (s) => s.name === 'id',
+    this.logger.log(
+      `selectDataResponse: ${JSON.stringify(selectDataResponse.rows)}`,
     );
-    if (!projectIdCriteria || !projectIdCriteria.value) {
-      throw new Error(
-        'No project "id" has been supplied unable to execute the query',
-      );
-    }
 
-    const projectId = projectIdCriteria.value;
-    const from = (select) => {
-      // left outer join "Person" on "ProjectMember".member_id = "Person".id
-      // left outer join "ProjectRole" on "ProjectMember".role_id = "ProjectRole".id
-      // left outer join "Authentication" on "Authentication".email_address = "Person".email_address
+    const selectCountSQL =
+      'Select count(*) as total_count FROM "ProjectMember" WHERE "ProjectMember"."ProjectId" = $1';
 
-      select = select
-        .from('ProjectMember')
-        .leftOuterJoin('Person', 'ProjectMember.member_id', 'Person.id')
-        .leftOuterJoin('ProjectRole', 'ProjectMember.role_id', 'ProjectRole.id')
-        .leftOuterJoin(
-          'Authentication',
-          'Authentication.email_address',
-          'Person.email_address',
-        );
+    const selectCountResponse = await pool.query(selectCountSQL, [projectId]);
 
-      // "Project".id,
-      // "Person".given_name,
-      // "Person".family_name,
-      // "Person".email_address,
-      // "ProjectRole".name;
-      select = select
-        .where('ProjectMember.ProjectId', '=', projectId)
-        .groupBy(
-          'ProjectMember.id',
-          'Person.given_name',
-          'Person.family_name',
-          'Person.email_address',
-          'ProjectRole.name',
-        );
+    this.logger.log(
+      `selectCountResponse: ${JSON.stringify(selectCountResponse.rows)}`,
+    );
 
-      return select;
-    };
-
-    // specify the pagination properties
-    let dataQuery = from(selectData()).offset(offset).limit(pageSize);
-    this.knexService.logQuery(this.logger, ProjectTeamQuery.name, dataQuery);
-
-    // specify the ordering properties
-    if (queryRequest.orderByName && queryRequest.orderByDir) {
-      const orderBy = [];
-      orderBy.push({
-        column: queryRequest.orderByName,
-        order: queryRequest.orderByDir,
-        nulls: 'last',
-      });
-      dataQuery = dataQuery.orderBy(orderBy);
-    }
-
-    const dataResults = await dataQuery;
-
-    const countResponse = await from(selectCount());
-    const totalCount =
-      countResponse && countResponse.length > 0
-        ? Number(countResponse[0].count)
-        : 0;
+    await pool.end();
+    const dataResults = selectDataResponse.rows;
+    const totalCount = Number(selectCountResponse.rows[0].total_count);
 
     const response: QueryResponse<any> = {
       resultList: dataResults,
@@ -116,5 +84,19 @@ export class ProjectTeamQuery implements CustomQuery {
     };
 
     return response;
+  }
+
+  getProjectId(queryRequest: QueryRequest) {
+    const projectIdCriteria = queryRequest.criteria.find(
+      (s) => s.name === 'id',
+    );
+
+    if (!projectIdCriteria || !projectIdCriteria.value) {
+      throw new Error(
+        'No project "id" has been supplied unable to execute the query',
+      );
+    }
+
+    return projectIdCriteria.value;
   }
 }

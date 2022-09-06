@@ -51,7 +51,7 @@
       "channel": "teamTab",
       "query": "team",
       "criteria": "teamCriteriaForm",
-      "results": "projectTeamSearchResults"
+      "results": "teamSearchResults"
     }
   ],
   "templates": [

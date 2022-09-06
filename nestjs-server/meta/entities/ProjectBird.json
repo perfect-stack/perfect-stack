@@ -26,14 +26,19 @@
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Project",
       "typeaheadSearch": [
         "name"
       ],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     }
   ]
 }

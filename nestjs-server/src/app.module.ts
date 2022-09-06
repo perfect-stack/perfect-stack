@@ -18,6 +18,7 @@ import { KnexModule } from './knex/knex.module';
 import { RuleModule } from './data/rule/rule.module';
 import { EventModule } from './event/event.module';
 import { AppEventModule } from './app-event/app-event.module';
+import { SettingsModule } from './settings/settings.module';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -49,6 +50,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     MetaPageModule,
     DataModule,
     RuleModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
