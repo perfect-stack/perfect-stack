@@ -52,6 +52,7 @@ export class ProjectTeamQuery implements CustomQuery {
       '         "Person".family_name,\n' +
       '         "Person".email_address,\n' +
       '         "ProjectRole".name\n' +
+      'ORDER BY "name" ASC\n' + // ignoring the query criteria on this for now
       'OFFSET $2\n' +
       'LIMIT $3;\n';
 

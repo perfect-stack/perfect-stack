@@ -178,7 +178,11 @@ export class QueryService {
       order: orderBy,
       offset: offset,
       limit: pageSize,
-      include: { all: true, nested: true }, // TODO this should only return row data needed not nested entities
+      // Here be dragons: There was probably a time where the search results tables were showing attributes from
+      // child objects but as the code evolved those more complex situations have become custom queries. Reactivating
+      // this "include" feature here will probably reintroduce a bug to the Project search results since then that
+      // will have a count that includes all team members
+      //include: { all: true, nested: true }, // TODO this should only return row data needed not nested entities
     });
 
     const response = new QueryResponse<Entity>();
