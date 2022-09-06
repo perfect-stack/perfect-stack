@@ -134,7 +134,7 @@
       ],
       "metaEntityName": "Location",
       "type": "table",
-      "orderByName": "name",
+      "orderByName": "location_name",
       "orderByDir": "ASC"
     }
   ]

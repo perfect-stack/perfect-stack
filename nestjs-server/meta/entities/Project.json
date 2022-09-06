@@ -31,7 +31,12 @@
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "description",
@@ -59,7 +64,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "end_date",
@@ -98,14 +108,19 @@
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
-      "visibility": "Optional",
+      "visibility": "Required",
       "comparisonField": "",
-      "comparisonOperator": "",
+      "comparisonOperator": "Equals",
       "relationshipTarget": "Organisation",
       "typeaheadSearch": [
         "name"
       ],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "members",

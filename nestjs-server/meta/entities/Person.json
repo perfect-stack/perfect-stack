@@ -77,6 +77,10 @@
         {
           "type": "Unique",
           "config": ""
+        },
+        {
+          "type": "Email",
+          "config": ""
         }
       ]
     },

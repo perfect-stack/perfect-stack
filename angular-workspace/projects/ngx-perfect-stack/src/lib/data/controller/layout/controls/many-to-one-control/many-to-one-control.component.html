@@ -12,11 +12,14 @@
              }"
              [class.is-invalid]="searchFailed"
              [ngbTypeahead]="search"
+             [editable]="false"
+             [focusFirst]="false"
              [inputFormatter]="formatter"
              [resultTemplate]="resultTemplate"
              [ngModelOptions]="{standalone: true}"
              [(ngModel)]="selectedModel"
              (selectItem)="onSelectItem($event)"
+             (focusout)="onFocusOut($event)"
              [id]="attribute.name"
       />
       <small *ngIf="searching" class="form-text text-muted">searching...</small>

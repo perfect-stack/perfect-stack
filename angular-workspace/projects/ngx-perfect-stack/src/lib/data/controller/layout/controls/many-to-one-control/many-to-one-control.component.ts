@@ -155,4 +155,8 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   ngOnDestroy(): void {
   }
 
+  onFocusOut($event: FocusEvent) {
+    console.log(`onFocusOut`, $event);
+    this.writeValue(this.selectedModelId);
+  }
 }

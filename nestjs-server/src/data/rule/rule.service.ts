@@ -16,6 +16,7 @@ import { RequiredRuleValidator } from './rules/required-rule-validator';
 import { UniqueRuleValidator } from './rules/unique-rule-validator';
 import { KnexService } from '../../knex/knex.service';
 import { UniqueInsensitiveRuleValidator } from './rules/unique-insensitive-rule-validator';
+import { EmailRuleValidator } from './rules/email-rule-validator';
 
 @Injectable()
 export class RuleService implements MetaEntityRuleValidator {
@@ -159,6 +160,8 @@ export class RuleService implements MetaEntityRuleValidator {
     attribute: MetaAttribute,
   ): RuleValidator | null {
     switch (ruleData.type) {
+      case RuleType.Email:
+        return new EmailRuleValidator(metaEntity, attribute, ruleData);
       case RuleType.Required:
         return new RequiredRuleValidator(metaEntity, attribute, ruleData);
       case RuleType.Range:
