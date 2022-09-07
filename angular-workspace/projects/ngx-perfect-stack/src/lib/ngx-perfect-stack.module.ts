@@ -130,8 +130,8 @@ import { PaginateToolComponent } from './data/controller/layout/tool-view/pagina
 import { ControllerListComponent } from './meta/page/meta-page-edit/controller-list/controller-list.component';
 import {SearchControllerService} from './data/controller/search-controller.service';
 import {STANDARD_CONTROLLERS, standardControllers} from './data/controller/standard-controllers';
-import {DataService} from './data/data-service/data.service';
-import {FormService} from './data/data-edit/form-service/form.service';
+import { MetaRoleSearchComponent } from './meta/role/meta-role-search/meta-role-search.component';
+import { MetaRoleEditComponent } from './meta/role/meta-role-edit/meta-role-edit.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -146,6 +146,9 @@ const routes: Routes = [
 
   { path: 'meta/page/search', component: MetaPageSearchComponent, canActivate: [AuthGuard] },
   { path: 'meta/page/edit/:metaPageName', component: MetaPageEditComponent, canActivate: [AuthGuard] },
+
+  { path: 'meta/role/search', component: MetaRoleSearchComponent, canActivate: [AuthGuard] },
+  { path: 'meta/role/edit/:metaRoleName', component: MetaRoleEditComponent, canActivate: [AuthGuard] },
 
   { path: 'meta/version', component: VersionComponent, canActivate: [AuthGuard] },
 
@@ -257,7 +260,9 @@ const routes: Routes = [
     PageTitleToolComponent,
     TabToolComponent,
     PaginateToolComponent,
-    ControllerListComponent
+    ControllerListComponent,
+    MetaRoleSearchComponent,
+    MetaRoleEditComponent
   ],
   providers: [
     AuthenticationService,

@@ -19,6 +19,7 @@ import { RuleModule } from './data/rule/rule.module';
 import { EventModule } from './event/event.module';
 import { AppEventModule } from './app-event/app-event.module';
 import { SettingsModule } from './settings/settings.module';
+import { MetaRoleModule } from './meta/meta-role/meta-role.module';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -48,6 +49,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     MetaMenuModule,
     MetaEntityModule,
     MetaPageModule,
+    MetaRoleModule,
     DataModule,
     RuleModule,
     SettingsModule,

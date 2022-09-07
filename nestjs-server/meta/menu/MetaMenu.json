@@ -120,6 +120,12 @@
         {
           "editable": true,
           "roles": [],
+          "label": "Role",
+          "route": "/meta/role/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
           "label": "Version",
           "route": "/meta/version"
         }
