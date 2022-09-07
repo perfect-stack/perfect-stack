@@ -333,6 +333,12 @@ export class DataService {
           );
         }
 
+        // Hmm: this is a tricky bit of code and may not be right yet. There was a bug with Projects where it didn't
+        // update the Project Team Member's Role and these next two line fixed that. Watch out for changes here in the
+        // future.
+        childEntityModel.set(childEntity);
+        childEntityModel.save();
+
         await this.saveTheChildren(
           metaEntityMap,
           metaEntity,
