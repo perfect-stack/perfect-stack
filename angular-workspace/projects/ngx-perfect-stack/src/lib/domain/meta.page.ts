@@ -88,6 +88,7 @@ export class Tool {
 export class ButtonTool extends Tool {
   action: string;
   route: string;
+  icon: string;
 }
 
 export class ButtonGroupTool extends Tool {

@@ -227,7 +227,7 @@
                   "type": "Button",
                   "containerStyles": "",
                   "styles": "btn btn-outline-primary",
-                  "label": "Edit Bird",
+                  "label": "Edit bird",
                   "route": "/data/Bird/edit/${bird.id}"
                 },
                 "BottomRight": {
@@ -238,7 +238,8 @@
                   "label": "Delete bird",
                   "modes": "",
                   "action": "",
-                  "route": "/route/go/here"
+                  "route": "/route/go/here",
+                  "icon": "delete"
                 }
               },
               "styles": "bird-view"

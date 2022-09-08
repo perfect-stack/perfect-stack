@@ -24,7 +24,8 @@ export class ToolPaletteComponent implements OnInit {
     label: 'Button',
     modes: '',
     action: '',
-    route: '/route/go/here'
+    route: '/route/go/here',
+    icon: '',
   };
 
   static readonly buttonGroupPrototype: ButtonGroupTool = {

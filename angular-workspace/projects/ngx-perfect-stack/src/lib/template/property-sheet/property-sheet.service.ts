@@ -75,6 +75,7 @@ export const ButtonPropertyList = [
   { name: 'modes', type: PropertyType.string},
   { name: 'action', type: PropertyType.string},
   { name: 'route', type: PropertyType.route},
+  { name: 'icon', type: PropertyType.string},
 ];
 
 export const ButtonGroupPropertyList = [
