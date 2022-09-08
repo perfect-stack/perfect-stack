@@ -6,16 +6,20 @@
       <div class="row px-3" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
 
-          <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
+          <ng-container *ngIf="cell && isShowLabel(cell)">
             <ng-container *ngIf="isShowLabelTop(cell)">
-              <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+              <ng-container *ngIf="cell.attribute">
+                <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+              </ng-container>
               <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
             </ng-container>
 
             <ng-container *ngIf="isShowLabelLeft(cell)">
               <div class="row">
                 <div class="col-4">
-                  <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                  <ng-container *ngIf="cell.attribute">
+                    <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                  </ng-container>
                 </div>
                 <div class="col-8">
                   <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
@@ -28,7 +32,7 @@
             </ng-container>
           </ng-container>
 
-          <ng-container *ngIf="cell && cell.attribute && !isShowLabel(cell)">
+          <ng-container *ngIf="cell && !isShowLabel(cell)">
             <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
           </ng-container>
 

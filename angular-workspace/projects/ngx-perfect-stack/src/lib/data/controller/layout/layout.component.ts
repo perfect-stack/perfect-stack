@@ -572,7 +572,7 @@ export class FormLayoutComponent implements OnInit, OnChanges {
 
   isShowLabelTop(cell: CellAttribute): boolean {
     // We default to "Top" if not supplied
-    return !cell.labelLayout || cell.labelLayout === LabelLayoutType.Top;
+    return cell.labelLayout === undefined || cell.labelLayout === LabelLayoutType.Top;
   }
 
   isShowLabelLeft(cell: CellAttribute): boolean {
