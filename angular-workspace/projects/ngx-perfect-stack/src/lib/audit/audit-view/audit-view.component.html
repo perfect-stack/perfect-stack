@@ -1,10 +1,16 @@
 <div class="d-flex flex-column h-100">
   <div class="flex-grow-1 border-footer pb-4" *ngIf="mode == 'view'">
-    <div class="link-primary mt-3" (click)="toggleShowRecords()" id="showAuditRecords" *ngIf="!showRecords">Show audit records</div>
+    <div class="d-flex align-items-center link-primary" (click)="toggleShowRecords()" id="showAuditRecords" *ngIf="!showRecords">
+      <span class="p-0 material-symbols-outlined">chevron_right</span>
+      Show audit records
+    </div>
 
     <ng-container *ngIf="showRecords">
 
-      <div class="link-primary mt-3" (click)="toggleShowRecords()" id="hideAuditRecords">Hide audit records</div>
+      <div class="d-flex align-items-center link-primary" (click)="toggleShowRecords()" id="hideAuditRecords">
+        <span class="material-symbols-outlined">expand_more</span>
+        Hide audit records
+      </div>
 
       <ng-container *ngIf="auditRecords$ | async as auditRecords">
         <table class="table table-sm mt-3" style="width: 24em;">
