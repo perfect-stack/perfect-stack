@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {ComponentData, MetaPage, Template, Tool} from '../../../domain/meta.page';
+import {ComponentData, LabelLayoutType, MetaPage, Template, Tool} from '../../../domain/meta.page';
 import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
 import {Observable, of, shareReplay, switchMap} from 'rxjs';
@@ -11,6 +11,7 @@ export class CellAttribute {
   height: string;
   attributeName?: string;
   hideLabel?: boolean;
+  labelLayout?: LabelLayoutType;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   tool?: Tool;
   metaEntity?: MetaEntity;

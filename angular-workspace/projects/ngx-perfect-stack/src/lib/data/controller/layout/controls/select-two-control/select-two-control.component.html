@@ -1,9 +1,20 @@
-<div class="row" [formGroup]="formGroup">
-  <div class="col-6">
-    <lib-select-control [mode]="mode" [formControlName]="attribute.name + '_id'" [attribute]="attribute" (selectedEntityEvent)="onSelectedEntity($event)"></lib-select-control>
+<ng-container *ngIf="!(isShowLabelLeft(cell) && mode === 'view')">
+  <div class="row" [formGroup]="formGroup">
+    <div class="col-6">
+      <lib-select-control [mode]="mode" [formControlName]="attribute.name + '_id'" [attribute]="attribute" (selectedEntityEvent)="onSelectedEntity($event)"></lib-select-control>
+    </div>
+    <div class="col-6">
+      <lib-enumeration-control [mode]="mode" [formControlName]="secondaryAttributeName" [attribute]="attribute" [options]="secondaryOptions"></lib-enumeration-control>
+    </div>
   </div>
-  <div class="col-6">
-    <lib-enumeration-control [mode]="mode" [formControlName]="secondaryAttributeName" [attribute]="attribute" [options]="secondaryOptions"></lib-enumeration-control>
+</ng-container>
+
+<ng-container *ngIf="isShowLabelLeft(cell) && mode === 'view'">
+  <div class="row" [formGroup]="formGroup">
+    <div class="col-12">
+      <!--{{formGroup.controls[attribute.name + '_id']?.value|json}}-->
+      {{combinedValue}}
+    </div>
   </div>
-</div>
+</ng-container>
 

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormContext} from '../form-service/form.service';
-import {TemplateLocationType} from '../../../domain/meta.page';
+import {TemplateLocationType, TemplateType} from '../../../domain/meta.page';
 
 @Component({
   selector: 'lib-venice-layout-style',
@@ -20,6 +20,14 @@ export class VeniceLayoutStyleComponent implements OnInit {
 
   dumpDataMap() {
     console.log('DumpDataMap: ', this.ctx.dataMap);
+  }
+
+  get headerTemplates() {
+    return this.ctx.metaPage.templates.filter(s => s.type === TemplateType.header);
+  }
+
+  get contentTemplates() {
+    return this.ctx.metaPage.templates.filter(s => s.type !== TemplateType.header);
   }
 
   get TemplateLocationType() {

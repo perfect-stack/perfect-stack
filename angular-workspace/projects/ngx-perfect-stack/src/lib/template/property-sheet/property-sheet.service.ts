@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {
-  ComponentType,
+  ComponentType, LabelLayoutType,
   TemplateNavigationType,
   TemplateShowSideHeadingsType,
   TemplateType
@@ -212,6 +212,7 @@ export const TemplatePropertyList = [
 export const CellPropertyList = [
   { name: 'component', type: PropertyType.string, options: ComponentType},
   { name: 'hideLabel', type: PropertyType.boolean},
+  { name: 'labelLayout', type: PropertyType.string, options: LabelLayoutType},
   { name: 'secondaryAttributeName', type: PropertyType.string},
   { name: 'noItemsHtml', type: PropertyType.string},
   { name: 'footerHtml', type: PropertyType.string},

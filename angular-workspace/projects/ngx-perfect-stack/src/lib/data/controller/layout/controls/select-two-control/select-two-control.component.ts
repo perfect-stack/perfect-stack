@@ -1,8 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
-import {Cell} from '../../../../../domain/meta.page';
+import {Cell, LabelLayoutType} from '../../../../../domain/meta.page';
 import {DataService} from '../../../../data-service/data.service';
 import {UntypedFormGroup} from '@angular/forms';
+import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
   selector: 'lib-select-two-control',
@@ -28,19 +29,23 @@ export class SelectTwoControlComponent implements OnInit {
   secondaryAttributeName: string;
   secondaryOptions: string[] = [];
 
+  combinedValue: string | null = null;
+
   constructor(protected readonly dataService: DataService) { }
 
   ngOnInit(): void {
     this.secondaryAttributeName = (this.cell.componentData as any).secondaryAttributeName;
 
-    // if(this.secondaryAttributeName) {
-    //   const secondaryAttributeControl = this.formGroup.controls[this.secondaryAttributeName];
-    //   if(secondaryAttributeControl && this.isReadOnly()) {
-    //     console.log('GOT secondaryAttributeControl && isReadOnly() ')
-    //     secondaryAttributeControl.disable({onlySelf: false, emitEvent: true});
-    //   }
-    // }
-
+    const id = this.formGroup.get(this.attribute.name + '_id')?.value;
+    if(id) {
+      this.dataService.findById(this.attribute.relationshipTarget, id).subscribe((response: any) => {
+        this.combinedValue = response.name;
+        const secondaryAttributeControl = this.formGroup.get(this.secondaryAttributeName);
+        if(secondaryAttributeControl && secondaryAttributeControl.value) {
+          this.combinedValue += ' - ' + secondaryAttributeControl.value;
+        }
+      });
+    }
   }
 
   isReadOnly() {
@@ -78,5 +83,14 @@ export class SelectTwoControlComponent implements OnInit {
       // });
     }
     //console.log(`onSelectedEntity() touched = ${this.formGroup.touched}`);
+  }
+
+  isShowLabelTop(cell: CellAttribute): boolean {
+    // We default to "Top" if not supplied
+    return !cell.labelLayout || cell.labelLayout === LabelLayoutType.Top;
+  }
+
+  isShowLabelLeft(cell: CellAttribute): boolean {
+    return cell.labelLayout === LabelLayoutType.Left;
   }
 }

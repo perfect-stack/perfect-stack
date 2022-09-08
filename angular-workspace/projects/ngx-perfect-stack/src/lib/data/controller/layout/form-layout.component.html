@@ -2,13 +2,39 @@
 
   <!-- If template has a binding to the form -->
   <ng-container *ngIf="template && template.binding">
-    <div [ngClass]="template.styles" [formGroup]="formGroup">
-      <div class="row" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
+    <div class="py-3" [ngClass]="template.styles" [formGroup]="formGroup">
+      <div class="row px-3" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
-          <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
-            <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+
+          <ng-container *ngIf="cell && isShowLabel(cell)">
+            <ng-container *ngIf="isShowLabelTop(cell)">
+              <ng-container *ngIf="cell.attribute">
+                <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+              </ng-container>
+              <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+            </ng-container>
+
+            <ng-container *ngIf="isShowLabelLeft(cell)">
+              <div class="row">
+                <div class="col-4">
+                  <ng-container *ngIf="cell.attribute">
+                    <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                  </ng-container>
+                </div>
+                <div class="col-8">
+                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+                </div>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="!isShowLabelLeft(cell) && !isShowLabelTop(cell)">
+              Unknown Label Layout
+            </ng-container>
           </ng-container>
-          <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+
+          <ng-container *ngIf="cell && !isShowLabel(cell)">
+            <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+          </ng-container>
 
           <div *ngIf="mode === 'edit' && cell.footerHtml" [innerHtml]="cell.footerHtml"></div>
 
@@ -35,7 +61,7 @@
           <div [class]="getCSS(cell)" *ngFor="let cell of row">
 
             <ng-container *ngIf="cell.template">
-              <div class="p-3 bg-light shadow-sm border" *ngIf="cell.template">
+              <div class="bg-light shadow-sm border" *ngIf="cell.template">
                 <lib-layout [ctx]="ctx" [template]="cell.template"></lib-layout>
               </div>
             </ng-container>
