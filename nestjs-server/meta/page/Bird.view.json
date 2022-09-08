@@ -1,147 +1,92 @@
 {
   "name": "Bird.view",
-  "title": "",
+  "title": "$PageTitle",
   "type": "view_edit",
   "layoutStyle": "Venice",
+  "dataQueryList": [
+    {
+      "dataName": "bird",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Bird",
+      "fieldName": "id",
+      "parameter": "id"
+    },
+    {
+      "dataName": "events",
+      "resultCardinality": "QueryMany",
+      "queryType": "Custom",
+      "queryName": "EventSearchByCriteria",
+      "fieldName": "bird_id",
+      "parameter": "id",
+      "orderByName": "date_time",
+      "orderByDir": "DESC",
+      "metaEntityName": "EventSearchResult"
+    }
+  ],
+  "controllers": [
+    {
+      "name": "EventPanelController",
+      "class": "SearchController",
+      "channel": "eventPanel",
+      "criteria": "eventPanelCriteria",
+      "query": "events",
+      "results": "eventPanelSearchResults"
+    }
+  ],
   "templates": [
     {
       "cells": [
         [
           {
-            "width": "4",
+            "width": "3",
             "height": "1",
-            "template": {
-              "binding": "bird",
-              "templateHeading": "${bird.name}",
-              "type": "form",
-              "metaEntityName": "Bird",
-              "orderByName": "",
-              "orderByDir": "",
-              "cells": [
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "tool": {
-                      "type": "Image",
-                      "styles": "rounded-circle bird-profile-image-width",
-                      "imageUrl": "/assets/Kiwi.png",
-                      "containerStyles": "w-100 text-center"
-                    }
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "band"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "status"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "species",
-                    "component": "SelectTwo",
-                    "componentData": {
-                      "secondaryAttributeName": "form"
-                    }
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "age_class"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "first_found_date"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "lay_date"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "hatch_date"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "demise_date"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "component": "TextInput",
-                    "attributeName": "sex"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "component": "TextArea",
-                    "attributeName": "mother"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "father"
-                  }
-                ],
-                [
-                  {
-                    "width": "12",
-                    "height": "1",
-                    "attributeName": "comments",
-                    "component": "TextArea"
-                  }
-                ]
-              ],
-              "locations": {
-                "BottomMiddle": {
-                  "type": "Button",
-                  "containerStyles": "flex-grow-1",
-                  "styles": "btn btn-outline-primary w-100",
-                  "label": "Edit Bird",
-                  "route": "/data/Bird/edit/${bird.id}"
-                }
-              },
-              "styles": "bird-view"
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "name"
             }
           },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "band"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "microchip"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "wing_tag"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "status"
+          }
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "header",
+      "binding": "bird"
+    },
+    {
+      "cells": [
+        [
           {
             "width": "8",
             "height": "1",
             "template": {
-              "binding": "events",
+              "binding": "eventPanelSearchResults",
               "templateHeading": "Events",
               "type": "table",
-              "metaEntityName": "Event",
+              "metaEntityName": "EventSearchResult",
               "orderByName": "date_time",
               "orderByDir": "DESC",
               "cells": [
@@ -155,51 +100,154 @@
                     "width": "1",
                     "height": "1",
                     "attributeName": "event_type"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "activities",
+                    "component": "BadgeList"
                   }
                 ]
               ],
               "route": "/data/Event/view/${id}",
-              "navigation": "Enabled"
+              "navigation": "Enabled",
+              "locations": {
+                "BottomMiddle": {
+                  "type": "Paginate",
+                  "channel": "eventPanel",
+                  "containerStyles": "",
+                  "styles": "",
+                  "label": "",
+                  "modes": "",
+                  "criteriaForm": "eventPanelCriteria"
+                }
+              }
+            }
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "template": {
+              "binding": "bird",
+              "templateHeading": "Bird details",
+              "type": "form",
+              "metaEntityName": "Bird",
+              "orderByName": "",
+              "orderByDir": "",
+              "cells": [
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "species",
+                    "labelLayout": "Left",
+                    "component": "SelectTwo",
+                    "componentData": {
+                      "secondaryAttributeName": "form"
+                    }
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "age_class",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "first_found_date",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "lay_date",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "hatch_date",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "demise_date",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "component": "TextInput",
+                    "attributeName": "sex",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "component": "TextArea",
+                    "attributeName": "mother",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "father",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "comments",
+                    "component": "TextArea"
+                  }
+                ]
+              ],
+              "locations": {
+                "BottomLeft": {
+                  "type": "Button",
+                  "containerStyles": "",
+                  "styles": "btn btn-outline-primary",
+                  "label": "Edit Bird",
+                  "route": "/data/Bird/edit/${bird.id}"
+                },
+                "BottomRight": {
+                  "type": "Button",
+                  "channel": "",
+                  "containerStyles": "",
+                  "styles": "btn btn-link",
+                  "label": "Delete bird",
+                  "modes": "",
+                  "action": "",
+                  "route": "/route/go/here"
+                }
+              },
+              "styles": "bird-view"
             }
           }
         ]
       ],
       "metaEntityName": "Bird",
-      "type": "form",
-      "locations": {
-        "OuterTopRight": {
-          "type": "Button",
-          "styles": "btn btn-primary",
-          "label": "Record Event",
-          "route": "data/Event/edit/**NEW**?bird_id=${bird.id}",
-          "action": "recordEvent"
-        },
-        "TopRight": {
-          "type": "Image",
-          "styles": "",
-          "imageUrl": "/assets/images/image.png"
-        }
-      }
-    }
-  ],
-  "dataQueryList": [
-    {
-      "dataName": "bird",
-      "resultCardinality": "QueryOne",
-      "queryType": "Entity",
-      "queryName": "Bird",
-      "fieldName": "id",
-      "parameter": "id"
-    },
-    {
-      "dataName": "events",
-      "resultCardinality": "QueryMany",
-      "queryType": "Entity",
-      "queryName": "Event",
-      "fieldName": "bird_id",
-      "parameter": "id",
-      "orderByName": "date_time",
-      "orderByDir": "DESC"
+      "type": "form"
     }
   ]
 }

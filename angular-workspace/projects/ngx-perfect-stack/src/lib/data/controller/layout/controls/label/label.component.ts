@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MetaAttribute, MetaEntity} from '../../../../../domain/meta.entity';
-import {Cell} from '../../../../../domain/meta.page';
+import {Cell, LabelLayoutType} from '../../../../../domain/meta.page';
+import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
   selector: 'lib-label',
@@ -39,6 +40,15 @@ export class LabelComponent implements OnInit {
         }
       }
     }
+  }
+
+  isShowLabelTop(cell: CellAttribute): boolean {
+    // We default to "Top" if not supplied
+    return !cell.labelLayout || cell.labelLayout === LabelLayoutType.Top;
+  }
+
+  isShowLabelLeft(cell: CellAttribute): boolean {
+    return cell.labelLayout === LabelLayoutType.Left;
   }
 
 }

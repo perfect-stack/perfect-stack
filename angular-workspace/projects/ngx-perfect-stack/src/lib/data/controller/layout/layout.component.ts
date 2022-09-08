@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@an
 import {
   ButtonGroupTool,
   ButtonTabsTool, ButtonTool,
-  Cell, IconTool, ImageTool, LastSignInTool, LinkTool, MapTool,
+  Cell, IconTool, ImageTool, LabelLayoutType, LastSignInTool, LinkTool, MapTool,
   MetaPage, PageTitleTool, PaginateTool, TabTool,
   Template,
   TemplateLocationType,
@@ -566,8 +566,17 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   isShowLabel(cell: CellAttribute) {
     const hiddenAttributeTypes = new Set<AttributeType>([AttributeType.OneToPoly, AttributeType.Boolean]);
     const hideAttributeType = cell && cell.attribute && hiddenAttributeTypes.has(cell.attribute.type);
-    const hideLabel = cell.hideLabel;
+    const hideLabel = cell.hideLabel || cell.labelLayout === LabelLayoutType.Hidden;
     return !(hideAttributeType || hideLabel);
+  }
+
+  isShowLabelTop(cell: CellAttribute): boolean {
+    // We default to "Top" if not supplied
+    return !cell.labelLayout || cell.labelLayout === LabelLayoutType.Top;
+  }
+
+  isShowLabelLeft(cell: CellAttribute): boolean {
+    return cell.labelLayout === LabelLayoutType.Left;
   }
 
   get AttributeType() {
@@ -581,6 +590,7 @@ export class FormLayoutComponent implements OnInit, OnChanges {
     // disabled.
     return !(row && row.length === 1 && row[0].tool && row[0].tool.type === 'Map');
   }
+
 }
 
 @Component({

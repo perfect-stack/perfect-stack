@@ -4,7 +4,7 @@
   <ng-container *ngIf="template && template.binding">
     <div [ngClass]="template.styles" [formGroup]="formGroup">
       <div class="d-flex flex-row header-layout" *ngFor="let row of cells">
-        <div class="header-cell min-cell-width h-100" *ngFor="let cell of row">
+        <div class="header-cell min-cell-width" *ngFor="let cell of row">
           <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
             <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
           </ng-container>

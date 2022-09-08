@@ -11,11 +11,18 @@ export enum ComponentType {
   Spy = 'Spy',
 }
 
+export enum LabelLayoutType {
+  Top = 'Top',
+  Left = 'Left',
+  Hidden = 'Hidden'
+}
+
 export class Cell {
   width: string;
   height: string;
   attributeName?: string;
   hideLabel?: boolean;
+  labelLayout?: LabelLayoutType;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   componentData?: ComponentData;
   noItemsHtml?: string; // Html displayed when no items
