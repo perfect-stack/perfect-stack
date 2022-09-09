@@ -35,6 +35,10 @@
         {
           "type": "Required",
           "config": ""
+        },
+        {
+          "type": "UniqueInsensitive",
+          "config": ""
         }
       ]
     },

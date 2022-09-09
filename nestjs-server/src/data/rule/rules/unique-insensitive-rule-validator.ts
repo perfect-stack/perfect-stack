@@ -4,11 +4,7 @@ import {
   RuleValidator,
   ValidationResult,
 } from '../../../domain/meta.rule';
-import {
-  AttributeType,
-  MetaAttribute,
-  MetaEntity,
-} from '../../../domain/meta.entity';
+import { MetaAttribute, MetaEntity } from '../../../domain/meta.entity';
 import { KnexService } from '../../../knex/knex.service';
 
 export class UniqueInsensitiveRuleValidator extends RuleValidator {
@@ -27,8 +23,9 @@ export class UniqueInsensitiveRuleValidator extends RuleValidator {
   ): Promise<ValidationResult | null> {
     let validationResult = null;
 
-    const value = String(entity[attribute.name]);
-    if (value) {
+    const rawValue = entity[attribute.name];
+    if (rawValue) {
+      const textValue = String(rawValue).trim().toLowerCase();
       const knex = await this.knexService.getKnex();
 
       let results: any[];
@@ -37,18 +34,14 @@ export class UniqueInsensitiveRuleValidator extends RuleValidator {
         results = await knex
           .select()
           .from(this.metaEntity.name)
-          .where(
-            knex.raw(`LOWER(${attribute.name}) = '${value.toLowerCase()}'`),
-          ) // This is different to the UniqueRuleValidator
+          .where(knex.raw(`LOWER(${attribute.name}) = '${textValue}'`)) // This is different to the UniqueRuleValidator
           .andWhere('id', '<>', entity.id)
           .limit(1);
       } else {
         results = await knex
           .select()
           .from(this.metaEntity.name)
-          .where(
-            knex.raw(`LOWER(${attribute.name}) = '${value.toLowerCase()}'`),
-          ) // This is different to the UniqueRuleValidator
+          .where(knex.raw(`LOWER(${attribute.name}) = '${textValue}'`)) // This is different to the UniqueRuleValidator
           .limit(1);
       }
 
