@@ -46,6 +46,9 @@ export class SelectTwoControlComponent implements OnInit {
         }
       });
     }
+    else {
+      this.combinedValue = '—'
+    }
   }
 
   isReadOnly() {

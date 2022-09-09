@@ -1,6 +1,6 @@
 <ng-container *ngIf="ctx">
 
-  <div class="container-fluid venice-layout-style">
+  <div class="container-fluid venice-layout-style pt-3">
     <a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
       <span class="material-symbols-outlined align-middle">keyboard_backspace</span>
       <span class="align-middle">Search {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
@@ -12,7 +12,8 @@
           <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
         </div>
         <div>
-          <ng-content select="[TopRightActions]"></ng-content>
+          <!--<ng-content select="[TopRightActions]"></ng-content>-->
+          <lib-tool-view [tool]="template.locations[TemplateLocationType.TopRight]" [ctx]="ctx"></lib-tool-view>
         </div>
       </div>
     </ng-container>

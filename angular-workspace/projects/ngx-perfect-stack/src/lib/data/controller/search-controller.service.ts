@@ -21,17 +21,21 @@ import {QueryResponse} from '../data-service/query.response';
 })
 export class SearchControllerService implements ActionListener, PropertyListProvider {
 
+  public static readonly DEFAULT_INITIAL_PAGE_SIZE = 50;
+
   propertyList: Property[] = [
     { name: 'channel', type: PropertyType.string},
     { name: 'criteria', type: PropertyType.string},
     { name: 'query', type: PropertyType.string},
     { name: 'results', type: PropertyType.string},
+    { name: 'initialPageSize', type: PropertyType.number},
   ];
 
   channel: string; // channel on which this controller will listen for events
   criteria: string; // name of the form where the search criteria are coming from
   query: string; // name of the DataMap query which this controller will use to convert criteria into search results
   results: string; // name of the form where the search results are to be displayed
+  initialPageSize: number | undefined; // initial page size of search results
 
   constructor(protected readonly dataService: DataService,
               protected readonly formService: FormService) { }
@@ -68,7 +72,7 @@ export class SearchControllerService implements ActionListener, PropertyListProv
       console.log(`update form ${this.results} with search results:`, resultsForm);
       this.formService.updateFormGroupForDataMapItemQueryMany(resultsForm as FormGroup, ctx, dataQuery.metaEntityName, response.resultList);
       criteriaForm.get('pageNumber')?.setValue(queryRequest.pageNumber);
-      criteriaForm.get('pageSize')?.setValue(queryRequest.pageSize);
+      //criteriaForm.get('pageSize')?.setValue(queryRequest.pageSize);
       criteriaForm.get('collectionSize')?.setValue(response.totalCount);
 
       const resultTableMetaEntity = ctx.metaEntityMap.get(dataQuery.metaEntityName);

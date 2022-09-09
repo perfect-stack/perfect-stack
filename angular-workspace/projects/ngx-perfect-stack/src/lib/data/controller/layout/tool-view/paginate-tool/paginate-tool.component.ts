@@ -39,7 +39,6 @@ export class PaginateToolComponent implements OnInit, OnDestroy {
     else {
       const criteriaForm = this.ctx.formMap.get(this.paginateTool.criteriaForm);
       if(criteriaForm) {
-
         // listen for future changes
         this.criteriaFormSubscription = criteriaForm.valueChanges.subscribe((nextValue) => {
           this.updatePagination(nextValue);

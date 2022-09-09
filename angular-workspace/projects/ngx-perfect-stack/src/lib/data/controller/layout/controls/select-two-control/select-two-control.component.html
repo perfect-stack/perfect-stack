@@ -13,7 +13,7 @@
   <div class="row" [formGroup]="formGroup">
     <div class="col-12">
       <!--{{formGroup.controls[attribute.name + '_id']?.value|json}}-->
-      {{combinedValue}}
+      <div class="form-control" readonly>{{combinedValue}}</div>
     </div>
   </div>
 </ng-container>

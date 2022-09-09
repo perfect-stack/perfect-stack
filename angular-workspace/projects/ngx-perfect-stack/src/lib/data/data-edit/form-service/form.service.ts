@@ -18,6 +18,7 @@ import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {DataMapService} from './data-map.service';
 import {ParamMap} from '@angular/router';
 import {FormGroupService} from './form-group.service';
+import {SearchControllerService} from '../../controller/search-controller.service';
 
 
 export class FormContext {
@@ -323,9 +324,11 @@ export class FormService {
       console.log('Next Controller: ', nextController);
       const criteriaFormName = (nextController as any).criteria;
       if(criteriaFormName && !formMap.has(criteriaFormName)) {
-        const form = this.createCriteriaForm(ctx);
+        const searchController = nextController as unknown as SearchControllerService;
+        const initialPageSize = searchController.initialPageSize ? searchController.initialPageSize : SearchControllerService.DEFAULT_INITIAL_PAGE_SIZE;
+        const form = this.createCriteriaForm(ctx, initialPageSize);
         formMap.set(criteriaFormName, form)
-        console.log('...set criteriaFormName: ', criteriaFormName);
+        console.log(`...set criteriaFormName ${criteriaFormName} with initialPageSize = ${initialPageSize} `);
       }
 
       const searchResultsFormName = (nextController as any).results;
@@ -337,10 +340,10 @@ export class FormService {
     }
   }
 
-  private createCriteriaForm(ctx: FormContext) {
+  private createCriteriaForm(ctx: FormContext, initialPageSize: number) {
     const form = new UntypedFormGroup({});
     form.addControl('id', new FormControl(ctx.id))
-    form.addControl('pageSize', new FormControl(5));
+    form.addControl('pageSize', new FormControl(initialPageSize));
     form.addControl('pageNumber', new FormControl(1));
     form.addControl('collectionSize', new FormControl(1));
     return form;

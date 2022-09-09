@@ -31,7 +31,8 @@
       "channel": "eventPanel",
       "criteria": "eventPanelCriteria",
       "query": "events",
-      "results": "eventPanelSearchResults"
+      "results": "eventPanelSearchResults",
+      "initialPageSize": 10
     }
   ],
   "templates": [
@@ -74,7 +75,20 @@
       ],
       "metaEntityName": "Bird",
       "type": "header",
-      "binding": "bird"
+      "binding": "bird",
+      "locations": {
+        "TopRight": {
+          "type": "Button",
+          "channel": "",
+          "containerStyles": "",
+          "styles": "btn btn-success",
+          "label": "Add event",
+          "modes": "",
+          "action": "recordEvent",
+          "route": "data/Event/edit/**NEW**?bird_id=${bird.id}",
+          "icon": ""
+        }
+      }
     },
     {
       "cells": [
@@ -121,7 +135,8 @@
                   "modes": "",
                   "criteriaForm": "eventPanelCriteria"
                 }
-              }
+              },
+              "noItemsHtml": "<div class=\"text-center\">No events recorded yet</div> <div class=\"text-center text-secondary\">Click \"Add event\" to create a new event for this bird</div>"
             }
           },
           {
