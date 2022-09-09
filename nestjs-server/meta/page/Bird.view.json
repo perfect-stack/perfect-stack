@@ -88,7 +88,8 @@
           "route": "data/Event/edit/**NEW**?bird_id=${bird.id}",
           "icon": ""
         }
-      }
+      },
+      "styles": ""
     },
     {
       "cells": [
@@ -136,7 +137,8 @@
                   "criteriaForm": "eventPanelCriteria"
                 }
               },
-              "noItemsHtml": "<div class=\"text-center\">No events recorded yet</div> <div class=\"text-center text-secondary\">Click \"Add event\" to create a new event for this bird</div>"
+              "noItemsHtml": "<div class=\"text-center\">No events recorded yet</div> <div class=\"text-center text-secondary\">Click \"Add event\" to create a new event for this bird</div>",
+              "styles": ""
             }
           },
           {
@@ -263,7 +265,8 @@
         ]
       ],
       "metaEntityName": "Bird",
-      "type": "form"
+      "type": "form",
+      "styles": ""
     }
   ]
 }

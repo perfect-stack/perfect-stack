@@ -2,8 +2,8 @@
 
   <!-- If template has a binding to the form -->
   <ng-container *ngIf="template && template.binding">
-    <div class="py-3" [ngClass]="template.styles" [formGroup]="formGroup">
-      <div class="row px-3" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
+    <div [ngClass]="template.styles" [formGroup]="formGroup">
+      <div class="row" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
 
           <ng-container *ngIf="cell && isShowLabel(cell)">
@@ -61,7 +61,7 @@
           <div [class]="getCSS(cell)" *ngFor="let cell of row">
 
             <ng-container *ngIf="cell.template">
-              <div class="bg-light shadow-sm border" *ngIf="cell.template">
+              <div class="container-border-radius" *ngIf="cell.template">
                 <lib-layout [ctx]="ctx" [template]="cell.template"></lib-layout>
               </div>
             </ng-container>
