@@ -13,7 +13,6 @@ import { PublicApi } from '../../authentication/public-api';
 import { MetaEntity } from '../../domain/meta.entity';
 import { EntityResponse } from '../../domain/response/entity.response';
 import { MetaEntityService } from './meta-entity.service';
-import { DeleteAttributeRequest } from './delete-attribute.request';
 
 @Controller('meta/entity')
 export class MetaEntityController {

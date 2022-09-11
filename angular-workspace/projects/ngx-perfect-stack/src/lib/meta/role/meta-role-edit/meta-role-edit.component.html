@@ -1,0 +1,53 @@
+<div class="container-fluid mt-3">
+  <div class="bg-light shadow-sm border py-3 px-2" *ngIf="metaRole$ | async as metaRole">
+
+    <h2>Role Edit</h2>
+
+    <form class="form mb-2" #form="ngForm" [formGroup]="metaRoleForm">
+      <div class="row">
+        <div class="col-3">
+          <label class="form-label" for="name">Name</label>
+          <input class="form-control" type="text" id="name" formControlName="name">
+        </div>
+
+        <div class="col-3">
+          <label class="form-label" for="group">Group</label>
+          <input class="form-control" type="text" id="group" formControlName="group">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <label class="form-label">Description</label>
+
+          <editor class="flex-grow-1"
+                  [id]="'description'"
+                  [formControlName]="'description'"
+                  [init]="{
+                     base_url: '/tinymce',
+                     suffix: '.min',
+                     height: '100px;',
+                     menubar: false,
+                     plugins: [
+                       'advlist autolink lists link image charmap print preview anchor',
+                       'searchreplace visualblocks code fullscreen',
+                       'insertdatetime media table paste code help wordcount'
+                     ],
+                     toolbar:
+                       'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+                   }"
+          >
+          </editor>
+
+        </div>
+      </div>
+    </form>
+
+    <div class="d-flex my-5">
+      <div class="flex-grow-1"></div>
+      <button class="btn btn-danger me-2" (click)="onDelete(metaRole)">Delete</button>
+      <button class="btn btn-outline-primary me-2" (click)="onCancel()">Cancel</button>
+      <button class="btn btn-primary" (click)="onSave()">Save</button>
+    </div>
+  </div>
+</div>
