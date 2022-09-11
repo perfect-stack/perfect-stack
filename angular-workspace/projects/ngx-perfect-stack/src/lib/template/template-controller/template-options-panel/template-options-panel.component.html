@@ -2,13 +2,14 @@
   <div class="alert alert-info" [ngClass]="{'glowing-border': selected}" (click)="onClick(metaEntityMap, $event)">
     <div class="d-flex justify-content-between">
       <div class="d-flex">
-        <label class="form-label me-2">Heading</label>
+        <div class="material-symbols-outlined me-2" (click)="openTemplateOptions()">settings</div>
+        <!--<div class="h4">{{template.type}} - </div>-->
         <input class="form-control me-2" type="text" [(ngModel)]="template.templateHeading">
-        <div>
+        <!--<div>
           {{template.binding}}:{{template.metaEntityName}}&nbsp;-&nbsp;{{template.type}}<ng-container *ngIf="template.type === 'table'">, order by: {{template.orderByName}}, {{template.orderByDir}}</ng-container>
-        </div>
+        </div>-->
       </div>
-      <div class="material-symbols-outlined" (click)="openTemplateOptions()">settings</div>
+      <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
     </div>
   </div>
 </ng-container>

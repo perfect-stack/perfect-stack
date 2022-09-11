@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Template} from '../../../domain/meta.page';
+import {Template, TemplateLocationType} from '../../../domain/meta.page';
 import {TemplateOptionsModalComponent} from './template-options-modal/template-options-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MetaEntity} from '../../../domain/meta.entity';
@@ -29,9 +29,13 @@ export class TemplateOptionsPanelComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  get TemplateLocationType() {
+    return TemplateLocationType;
+  }
+
   openTemplateOptions() {
-    const modalRef = this.modalService.open(TemplateOptionsModalComponent, {});
-    modalRef.componentInstance.assignTemplate(this.template);
+    // const modalRef = this.modalService.open(TemplateOptionsModalComponent, {});
+    // modalRef.componentInstance.assignTemplate(this.template);
   }
 
   onClick(metaEntityMap: Map<string, MetaEntity>, $event: Event) {

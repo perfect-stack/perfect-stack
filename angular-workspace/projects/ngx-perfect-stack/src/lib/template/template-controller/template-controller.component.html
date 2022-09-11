@@ -1,10 +1,10 @@
 <div>
   <lib-template-options-panel [template]="template"></lib-template-options-panel>
 
-  <div class="d-flex justify-content-between">
+  <!--<div class="d-flex justify-content-between">
     <div></div>
     <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
-  </div>
+  </div>-->
 
   <ng-container [ngSwitch]="template.type">
     <ng-container *ngSwitchCase="'header'">
