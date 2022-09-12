@@ -1,5 +1,3 @@
-
-
 export enum ActionType {
   Any = 'Any',
   Read = 'Read',

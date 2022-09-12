@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CustomQuery } from '../data/custom-query.service';
 import { KnexService } from '../knex/knex.service';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
@@ -11,6 +11,8 @@ import {
 
 @Injectable()
 export class EventSearchCriteriaQuery implements CustomQuery {
+  private readonly logger = new Logger(EventSearchCriteriaQuery.name);
+
   constructor(
     protected readonly knexService: KnexService,
     protected readonly metaEntityService: MetaEntityService,
@@ -116,7 +118,8 @@ export class EventSearchCriteriaQuery implements CustomQuery {
     // specify the pagination properties
     let dataQuery = from(selectData()).offset(offset).limit(pageSize);
 
-    console.log(`dataQuery: ${JSON.stringify(dataQuery.toSQL().toNative())}`);
+    //console.log(`dataQuery: ${JSON.stringify(dataQuery.toSQL().toNative())}`);
+    this.knexService.logQuery(this.logger, queryRequest.customQuery, dataQuery);
 
     // specify the ordering properties
     if (queryRequest.orderByName && queryRequest.orderByDir) {

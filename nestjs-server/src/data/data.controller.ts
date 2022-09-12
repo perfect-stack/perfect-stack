@@ -18,6 +18,9 @@ import { AuditService } from '../audit/audit.service';
 import { AuditAction } from '../domain/audit';
 import { QueryService } from './query.service';
 import { CustomQueryService } from './custom-query.service';
+import { ActionPermit } from '../authentication/action-permit';
+import { ActionType } from '../domain/meta.role';
+import { SubjectKey } from '../authentication/subject';
 
 @Controller('data')
 export class DataController {
@@ -28,6 +31,8 @@ export class DataController {
     protected readonly queryService: QueryService,
   ) {}
 
+  @ActionPermit(ActionType.Read)
+  @SubjectKey('entityName')
   @Get('/:entityName')
   findAll(
     @Param('entityName') entityName: string,
@@ -37,6 +42,8 @@ export class DataController {
     return this.queryService.findAll(entityName, pageNumber, pageSize);
   }
 
+  @ActionPermit(ActionType.Read)
+  @SubjectKey('queryRequest.metaEntityName')
   @Post('/query')
   findByCriteria(@Body() queryRequest: QueryRequest) {
     if (queryRequest.customQuery) {
@@ -46,6 +53,8 @@ export class DataController {
     }
   }
 
+  @ActionPermit(ActionType.Read)
+  @SubjectKey('entityName')
   @Get('/:entityName/:id')
   findOne(
     @Param('entityName') entityName: string,
@@ -54,6 +63,8 @@ export class DataController {
     return this.queryService.findOne(entityName, id);
   }
 
+  @ActionPermit(ActionType.Edit)
+  @SubjectKey('entityName')
   @Post('/:entityName/:id')
   async save(
     @Req() request: Request,
@@ -77,6 +88,8 @@ export class DataController {
     return entityResponse;
   }
 
+  @ActionPermit(ActionType.Edit)
+  @SubjectKey('entityName')
   @Post('/:entityName/:id/sort_index')
   async updateSortIndex(
     @Req() request: Request,
@@ -107,6 +120,8 @@ export class DataController {
     return response;
   }
 
+  @ActionPermit(ActionType.Delete)
+  @SubjectKey('entityName')
   @Delete('/:entityName/:id')
   async destroy(
     @Req() request: Request,

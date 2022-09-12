@@ -129,11 +129,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     // Uncomment the following line for a quick easy way of seeing the JWT payload in clear text (which is safe)
     // without having to muck about grabbing the Base64 encoded version and decoding that
-    // console.log(`validate token: ${JSON.stringify(payload)}`);
+    console.log(`PASSPORT: validate token: ${JSON.stringify(payload)}`);
 
     const issuerValid = payload.iss === this.expectedIssuer;
     if (issuerValid) {
-      return payload;
+      return {
+        user: 'abc',
+        username: 'abc@def.govt.nz',
+      };
     } else {
       jwtLogger.error(
         `Invalid token, issuerValue = ${issuerValid}, for: ${JSON.stringify(

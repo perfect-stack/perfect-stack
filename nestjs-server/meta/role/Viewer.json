@@ -23,6 +23,10 @@
     {
       "action": "Menu",
       "subject": "Person"
+    },
+    {
+      "action": "Menu",
+      "subject": "Project"
     }
   ]
 }
