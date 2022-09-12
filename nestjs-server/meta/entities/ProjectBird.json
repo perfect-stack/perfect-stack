@@ -3,6 +3,7 @@
   "pluralName": "Birds",
   "icon": "",
   "type": "Database",
+  "rootNode": false,
   "timestamps": true,
   "attributes": [
     {

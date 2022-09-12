@@ -3,6 +3,7 @@
   "pluralName": "Microchips",
   "icon": "wifi",
   "type": "Database",
+  "rootNode": false,
   "timestamps": true,
   "attributes": [
     {
@@ -16,7 +17,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "microchip",
@@ -29,7 +31,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "activity_type",
@@ -42,7 +45,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

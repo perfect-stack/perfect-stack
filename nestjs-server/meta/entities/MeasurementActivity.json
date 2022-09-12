@@ -3,6 +3,7 @@
   "pluralName": "Measurements",
   "icon": "straighten",
   "type": "Database",
+  "rootNode": false,
   "timestamps": true,
   "attributes": [
     {

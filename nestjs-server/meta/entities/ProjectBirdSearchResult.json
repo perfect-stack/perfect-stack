@@ -3,6 +3,7 @@
   "pluralName": "Birds",
   "icon": "",
   "type": "Basic",
+  "rootNode": false,
   "timestamps": false,
   "attributes": [
     {

@@ -3,6 +3,7 @@
   "pluralName": "Team Members",
   "icon": "",
   "type": "Basic",
+  "rootNode": false,
   "timestamps": false,
   "attributes": [
     {

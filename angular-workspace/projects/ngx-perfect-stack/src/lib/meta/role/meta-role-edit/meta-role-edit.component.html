@@ -14,10 +14,17 @@
           <label class="form-label" for="group">Group</label>
           <input class="form-control" type="text" id="group" formControlName="group">
         </div>
+
+        <div class="col-3" *ngIf="inheritsOptions$|async as inheritsOptions">
+          <label class="form-label" for="inherits">Inherits</label>
+          <select class="form-select" id="inherits" formControlName="inherits">
+            <option *ngFor="let o of inheritsOptions" [ngValue]="o.name">{{o.name}}</option>
+          </select>
+        </div>
       </div>
 
       <div class="row">
-        <div class="col-6">
+        <div class="col-9">
           <label class="form-label">Description</label>
 
           <editor class="flex-grow-1"
@@ -39,6 +46,47 @@
           >
           </editor>
 
+        </div>
+      </div>
+
+
+      <div class="row mt-4">
+        <div class="row">
+          <div class="col-7">
+
+            <h3>Permissions</h3>
+
+            <table class="table table-striped">
+              <thead>
+              <th>Action</th>
+              <th class="subject-col">Subject</th>
+              </thead>
+              <tbody>
+              <tr *ngFor="let actionType of ActionTypeOptions">
+                <td>{{actionType}}</td>
+                <td class="subject-col" my-dropzone (myDropZoneDroppedEvent)="onDropEvent($event, actionType)">
+                  <span class="badge bg-info remove-permission me-1"
+                        (click)="removePermission(actionType, idx)"
+                        *ngFor="let p of permissionsMap.get(actionType); let idx = index;">
+                    <span>{{p}}</span><span class="material-symbols-outlined small ms-2">close</span>
+                  </span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col-2" *ngIf="subjectOptions$|async as subjectOptions">
+
+            <h3>Subjects</h3>
+
+            <div *ngFor="let subject of subjectOptions">
+              <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                <span class="material-symbols-outlined align-middle">category</span>
+                {{subject}}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </form>

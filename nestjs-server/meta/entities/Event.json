@@ -3,6 +3,7 @@
   "pluralName": "Events",
   "icon": "",
   "type": "Database",
+  "rootNode": true,
   "timestamps": true,
   "attributes": [
     {

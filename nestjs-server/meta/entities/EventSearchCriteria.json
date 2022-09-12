@@ -3,6 +3,7 @@
   "pluralName": "Events",
   "icon": "search",
   "type": "Criteria",
+  "rootNode": false,
   "timestamps": false,
   "attributes": [
     {

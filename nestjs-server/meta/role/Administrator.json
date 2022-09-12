@@ -1,0 +1,32 @@
+{
+  "name": "Administrator",
+  "group": "admins",
+  "inherits": "Manager",
+  "description": "<p>Controls admin menu, add projects, set project manager role, Add/Edit people (non-user)</p>",
+  "permissions": [
+    {
+      "action": "Edit",
+      "subject": "ActivityType"
+    },
+    {
+      "action": "Edit",
+      "subject": "LocationType"
+    },
+    {
+      "action": "Edit",
+      "subject": "ObserverRole"
+    },
+    {
+      "action": "Edit",
+      "subject": "ProjectRole"
+    },
+    {
+      "action": "Edit",
+      "subject": "ProjectStatus"
+    },
+    {
+      "action": "Edit",
+      "subject": "Species"
+    }
+  ]
+}

@@ -3,6 +3,7 @@
   "pluralName": "Project members",
   "icon": "",
   "type": "Database",
+  "rootNode": false,
   "timestamps": true,
   "attributes": [
     {

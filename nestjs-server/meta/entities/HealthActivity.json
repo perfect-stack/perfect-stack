@@ -3,27 +3,36 @@
   "pluralName": "Health checks",
   "icon": "favorite",
   "type": "Database",
+  "rootNode": false,
   "timestamps": true,
   "attributes": [
     {
       "name": "id",
       "label": "Id",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "condition",
       "label": "Condition",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Enumeration",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": [],
       "enumeration": [
         "Poor",
         "Good",
@@ -39,61 +48,85 @@
       "name": "lice",
       "label": "Lice",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Boolean",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "whisker_fungus",
       "label": "Whisker fungus",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Boolean",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "activity_type",
       "label": "Activity type",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "eyes_checked",
       "label": "Eyes checked",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Boolean",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "legs_checked",
       "label": "Legs checked",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Boolean",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "health_notes",
       "label": "Health notes",
       "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
       "type": "Html",
       "visibility": "Visible",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

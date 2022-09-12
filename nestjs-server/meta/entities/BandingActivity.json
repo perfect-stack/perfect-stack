@@ -3,6 +3,7 @@
   "pluralName": "Bandings",
   "icon": "circle",
   "type": "Database",
+  "rootNode": false,
   "timestamps": false,
   "attributes": [
     {
@@ -16,7 +17,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "band",
@@ -29,7 +31,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "activity_type",
@@ -42,7 +45,8 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

@@ -1,0 +1,9 @@
+
+.subject-col {
+  height: 60px;
+  column-width: 200px;
+}
+
+.remove-permission {
+  cursor: pointer;
+}

@@ -3,6 +3,7 @@
   "pluralName": "People",
   "icon": "",
   "type": "Database",
+  "rootNode": true,
   "timestamps": true,
   "attributes": [
     {

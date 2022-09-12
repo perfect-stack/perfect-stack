@@ -1,0 +1,12 @@
+{
+  "name": "Manager",
+  "group": "managers",
+  "inherits": "Editor",
+  "description": "<p>Can add/remove people to project they are a manager of</p>",
+  "permissions": [
+    {
+      "action": "Edit",
+      "subject": "Project"
+    }
+  ]
+}

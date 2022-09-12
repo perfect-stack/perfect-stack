@@ -1,0 +1,28 @@
+{
+  "name": "Viewer",
+  "group": "viewers",
+  "inherits": "",
+  "description": "<p>Read-only access, all DOC</p>",
+  "permissions": [
+    {
+      "action": "Read",
+      "subject": "Any"
+    },
+    {
+      "action": "Menu",
+      "subject": "Bird"
+    },
+    {
+      "action": "Menu",
+      "subject": "Event"
+    },
+    {
+      "action": "Menu",
+      "subject": "Location"
+    },
+    {
+      "action": "Menu",
+      "subject": "Person"
+    }
+  ]
+}

@@ -84,6 +84,7 @@ export class MetaEntity {
   pluralName: string;
   type: EntityType;
   icon: string; // icon name for this MetaEntity
+  rootNode: boolean;
   timestamps: boolean; // Controls if Sequelize will add createdAt and updatedAt timestamps to each record (if undefined defaults to true)
   attributes: MetaAttribute[];
 }

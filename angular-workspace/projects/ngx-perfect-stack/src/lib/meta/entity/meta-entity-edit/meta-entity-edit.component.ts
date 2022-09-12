@@ -38,6 +38,7 @@ export class MetaEntityEditComponent implements OnInit {
     pluralName: ['', Validators.required],
     icon: [''],
     type: ['', Validators.required],
+    rootNode: [false, Validators.required],
     timestamps: [true, Validators.required],
     attributes: this.fb.array([]),
   }, {validators: [uniqueNameValidator]});

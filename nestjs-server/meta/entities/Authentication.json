@@ -3,6 +3,7 @@
   "pluralName": "Authentications",
   "icon": "login",
   "type": "Database",
+  "rootNode": true,
   "timestamps": true,
   "attributes": [
     {

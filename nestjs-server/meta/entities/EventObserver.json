@@ -3,48 +3,55 @@
   "pluralName": "Event observers",
   "icon": "",
   "type": "Database",
+  "rootNode": false,
   "timestamps": true,
   "attributes": [
     {
-      "type": "Identifier",
-      "visibility": "Hidden",
       "name": "id",
       "label": "Id",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
-      "typeaheadSearch": []
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
-      "type": "ManyToOne",
-      "visibility": "Required",
       "name": "person",
       "label": "Person",
       "description": "Each Person associated with the event",
       "unitOfMeasure": "",
       "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Person",
       "typeaheadSearch": [
         "given_name",
         "family_name"
-      ]
+      ],
+      "rules": []
     },
     {
-      "type": "ManyToOne",
-      "visibility": "Required",
       "name": "role",
       "label": "Role",
       "description": "The role that this person placed during this event",
       "unitOfMeasure": "",
       "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Required",
+      "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "ObserverRole",
       "typeaheadSearch": [
         "name"
-      ]
+      ],
+      "rules": []
     }
   ]
 }
