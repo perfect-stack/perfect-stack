@@ -107,6 +107,7 @@ export class SearchControllerService implements ActionListener, PropertyListProv
 
     // WARNING: slight difference here between customQuery and Entity queries
     queryRequest.customQuery = dataQuery.queryName;
+    queryRequest.metaEntityName = dataQuery.metaEntityName;
 
     if(ctx.paramMap && dataQuery.parameter) {
       const paramValue = ctx.paramMap.get(dataQuery.parameter);
