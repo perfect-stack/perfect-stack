@@ -1,12 +1,15 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
 import { PUBLIC_API_KEY } from './public-api';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ActionType } from '../domain/meta.role';
 import { ACTION_PERMIT } from './action-permit';
-import { SUBJECT_KEY } from './subject';
+import { SUBJECT_KEY, SUBJECT_NAME } from './subject';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -17,62 +20,107 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const contextName = this.getContextName(context);
+    console.log(`\nGUARD: STARTED - ${contextName}`);
+
     if (this.configService.get('AUTH_DISABLE_FOR_DEV') === 'true') {
-      console.log('Auth Disabled');
+      console.log('GUARD: Auth Disabled');
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
-    // if (user) {
-    //   console.log(`User: ${JSON.stringify(user)}`);
-    // } else {
-    //   console.log(`NO USER FOUND`);
-    // }
-    console.log('GUARD:' + JSON.stringify(Object.keys(request)));
-
-    const actionPermit = this.reflector.getAllAndOverride<ActionType>(
-      ACTION_PERMIT,
-      [context.getHandler(), context.getClass()],
-    );
-
-    const subjectKey = this.reflector.getAllAndOverride<string>(SUBJECT_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-
-    let subject = null;
-    if (subjectKey) {
-      const params = context.switchToHttp().getRequest().params;
-      //console.log(`params = ${JSON.stringify(params)}`);
-      subject = params[subjectKey];
+    if (this.isPublic(context)) {
+      console.log('GUARD: isPublic');
+      return true;
     }
 
-    const contextName = `${context.getClass().name}.${
-      context.getHandler().name
-    }`;
+    // call super first to extract user and add it to the request
+    await super.canActivate(context);
+
+    const userGroups = this.getUserGroups(context);
+    const actionPermit = this.getActionPermit(context);
+    const subject = this.getSubject(context);
 
     if (actionPermit && subject) {
       console.log(
-        `Permission Check: ${contextName}: ACTION_PERMIT = ${actionPermit}.${subject}`,
+        `GUARD: Permission Check: ${contextName}: ACTION_PERMIT = ${actionPermit}.${subject}`,
       );
     } else {
       console.log(
-        `Permission Check: UNABLE to find action.subject for ${contextName}`,
+        `GUARD: Permission Check: UNABLE to find action.subject for ${contextName}`,
       );
     }
 
+    return true;
+  }
+
+  isPublic(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>(PUBLIC_API_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
+    return isPublic;
+  }
 
-    if (isPublic) {
-      return true;
+  getContextName(context: ExecutionContext) {
+    return `${context.getClass().name}.${context.getHandler().name}`;
+  }
+
+  getUserGroups(context: ExecutionContext): string[] {
+    let userGroups = null;
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    if (user) {
+      userGroups = user['cognito:groups'];
+      if (userGroups) {
+        console.log(`GUARD: Found user groups: ${JSON.stringify(userGroups)}`);
+      }
+    } else {
+      console.log(`GUARD: NO USER FOUND`);
+      throw new UnauthorizedException(
+        `GUARD: NO USER FOUND. ${this.getContextName(context)}`,
+      );
     }
-    return super.canActivate(context);
+    return userGroups;
+  }
+
+  getActionPermit(context: ExecutionContext): string {
+    const actionPermit = this.reflector.getAllAndOverride<ActionType>(
+      ACTION_PERMIT,
+      [context.getHandler(), context.getClass()],
+    );
+    return actionPermit;
+  }
+
+  getSubject(context: ExecutionContext): string {
+    let subject = null;
+    const subjectName = this.reflector.getAllAndOverride<string>(SUBJECT_NAME, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (subjectName) {
+      subject = subjectName;
+    } else {
+      const subjectKey = this.reflector.getAllAndOverride<string>(SUBJECT_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ]);
+
+      if (subjectKey) {
+        const params = context.switchToHttp().getRequest().params;
+        subject = params[subjectKey];
+      }
+    }
+    return subject;
+  }
+
+  handleRequest(err, user, info, context, status): any {
+    console.log(`GUARD: handle request`);
+
+    // if (err || !user) {
+    //   throw err || new UnauthorizedException();
+    // }
+    return user;
   }
 }
