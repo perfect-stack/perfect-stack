@@ -43,7 +43,7 @@ export class DataController {
   }
 
   @ActionPermit(ActionType.Read)
-  @SubjectKey('queryRequest.metaEntityName')
+  @SubjectKey('metaEntityName')
   @Post('/query')
   findByCriteria(@Body() queryRequest: QueryRequest) {
     if (queryRequest.customQuery) {

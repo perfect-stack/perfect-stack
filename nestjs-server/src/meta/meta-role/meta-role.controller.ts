@@ -10,7 +10,9 @@ import {
 } from '@nestjs/common';
 import { PublicApi } from '../../authentication/public-api';
 import { MetaRoleService } from './meta-role.service';
-import { MetaRole } from '../../domain/meta.role';
+import { ActionType, MetaRole } from '../../domain/meta.role';
+import { ActionPermit } from '../../authentication/action-permit';
+import { SubjectName } from '../../authentication/subject';
 
 @Controller('meta/role')
 export class MetaRoleController {
@@ -31,6 +33,8 @@ export class MetaRoleController {
     return this.metaRoleService.findOne(metaRoleName);
   }
 
+  @ActionPermit(ActionType.Edit)
+  @SubjectName('Meta')
   @Post('/:metaRoleName')
   create(
     @Param('metaRoleName') metaRoleName: string,
@@ -44,6 +48,8 @@ export class MetaRoleController {
     return this.metaRoleService.create(metaRole);
   }
 
+  @ActionPermit(ActionType.Edit)
+  @SubjectName('Meta')
   @Put('/:metaRoleName')
   update(
     @Param('metaRoleName') metaRoleName: string,
@@ -57,6 +63,8 @@ export class MetaRoleController {
     return this.metaRoleService.update(metaRole);
   }
 
+  @ActionPermit(ActionType.Delete)
+  @SubjectName('Meta')
   @Delete('/:metaRoleName')
   delete(@Param('metaRoleName') metaRoleName: string): Promise<void> {
     return this.metaRoleService.delete(metaRoleName);

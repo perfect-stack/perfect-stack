@@ -10,12 +10,14 @@ import { ConfigService } from '@nestjs/config';
 import { ActionType } from '../domain/meta.role';
 import { ACTION_PERMIT } from './action-permit';
 import { SUBJECT_KEY, SUBJECT_NAME } from './subject';
+import { AuthorizationService } from './authorization.service';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
-    private reflector: Reflector,
+    protected readonly reflector: Reflector,
     protected readonly configService: ConfigService,
+    protected readonly authorizationService: AuthorizationService,
   ) {
     super();
   }
@@ -44,6 +46,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (actionPermit && subject) {
       console.log(
         `GUARD: Permission Check: ${contextName}: ACTION_PERMIT = ${actionPermit}.${subject}`,
+      );
+      await this.authorizationService.checkPermission(
+        userGroups,
+        actionPermit,
+        subject,
       );
     } else {
       console.log(
@@ -108,11 +115,41 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       ]);
 
       if (subjectKey) {
-        const params = context.switchToHttp().getRequest().params;
-        subject = params[subjectKey];
+        subject = this.getSubjectFromParams(context, subjectKey);
+      } else {
+        throw new Error(
+          `Invalid Security definition. No @SubjectName() or @SubjectKey() has been defined for "${this.getContextName(
+            context,
+          )}"`,
+        );
       }
     }
     return subject;
+  }
+
+  getSubjectFromParams(context: ExecutionContext, subjectKey: string): string {
+    const request = context.switchToHttp().getRequest();
+    const params = request.params;
+    const body = request.body;
+    const target = Object.keys(params).length > 0 ? params : body;
+    const subject = this.evaluatePath(subjectKey.split('.'), target);
+
+    if (!subject) {
+      console.log(
+        `!! UNABLE: to find subjectKey ${subjectKey} for ${this.getContextName(
+          context,
+        )}`,
+      );
+    }
+    return subject;
+  }
+
+  private evaluatePath(pathElements: string[], target: any): any {
+    if (pathElements.length > 1) {
+      return this.evaluatePath(pathElements.slice(1), target[pathElements[0]]);
+    } else {
+      return target[pathElements[0]];
+    }
   }
 
   handleRequest(err, user, info, context, status): any {

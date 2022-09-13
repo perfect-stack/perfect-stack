@@ -9,6 +9,8 @@ import { SubjectName } from './subject';
 export class AuthenticationController {
   constructor(private service: AuthenticationService) {}
 
+  @ActionPermit(ActionType.Edit)
+  @SubjectName('Authentication')
   @Post('/notification')
   notification(@Body() loginNotification: LoginNotification) {
     this.service.notification(loginNotification);

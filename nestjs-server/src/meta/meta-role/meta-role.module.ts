@@ -7,5 +7,6 @@ import { FileRepositoryModule } from '../../file/file-repository.module';
   controllers: [MetaRoleController],
   providers: [MetaRoleService],
   imports: [FileRepositoryModule],
+  exports: [MetaRoleService],
 })
 export class MetaRoleModule {}

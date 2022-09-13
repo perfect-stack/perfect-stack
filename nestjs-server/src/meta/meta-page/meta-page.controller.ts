@@ -11,6 +11,9 @@ import {
 import { PublicApi } from '../../authentication/public-api';
 import { MetaPageService } from './meta-page.service';
 import { MetaPage } from '../../domain/meta.page';
+import { ActionPermit } from '../../authentication/action-permit';
+import { ActionType } from '../../domain/meta.role';
+import { SubjectName } from '../../authentication/subject';
 
 @Controller('meta/page')
 export class MetaPageController {
@@ -31,6 +34,8 @@ export class MetaPageController {
     return this.metaPageService.findOne(metaPageName);
   }
 
+  @ActionPermit(ActionType.Edit)
+  @SubjectName('Meta')
   @Post('/:metaPageName')
   create(
     @Param('metaPageName') metaPageName: string,
@@ -44,6 +49,8 @@ export class MetaPageController {
     return this.metaPageService.create(metaPage);
   }
 
+  @ActionPermit(ActionType.Edit)
+  @SubjectName('Meta')
   @Put('/:metaPageName')
   update(
     @Param('metaPageName') metaPageName: string,
@@ -57,6 +64,8 @@ export class MetaPageController {
     return this.metaPageService.update(metaPage);
   }
 
+  @ActionPermit(ActionType.Delete)
+  @SubjectName('Meta')
   @Delete('/:metaPageName')
   delete(@Param('metaPageName') metaPageName: string): Promise<void> {
     return this.metaPageService.delete(metaPageName);
