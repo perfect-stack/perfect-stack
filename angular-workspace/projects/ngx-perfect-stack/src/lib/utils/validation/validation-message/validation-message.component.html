@@ -1,6 +1,6 @@
 <ng-container *ngIf="control?.errors?.[attributePath]">
-  <div class="small text-danger">{{control?.errors?.[attributePath].errorText}}</div>
+  <div class="small text-danger">{{control.errors?.[attributePath].errorText}}</div>
 </ng-container>
-<ng-container *ngIf="control?.errors?.['required']">
+<ng-container *ngIf="control.errors?.['required']">
   <div class="small text-danger">Required</div>
 </ng-container>

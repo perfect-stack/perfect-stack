@@ -129,9 +129,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     // Uncomment the following line for a quick easy way of seeing the JWT payload in clear text (which is safe)
     // without having to muck about grabbing the Base64 encoded version and decoding that
-    //console.log(`\nPASSPORT: validate token: ${JSON.stringify(payload)}`);
+    console.log(`\nPASSPORT: validate token: ${JSON.stringify(payload)}`);
 
-    return payload;
+    return {
+      groups: payload['cognito:groups'],
+      username: payload['cognito:username'],
+      given_name: payload['given_name'],
+      family_name: payload['family_name'],
+      email: payload['email'],
+    };
+
+    //return payload;
 
     /*const issuerValid = payload.iss === this.expectedIssuer;
     if (issuerValid) {

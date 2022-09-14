@@ -6,6 +6,10 @@
   "permissions": [
     {
       "action": "Edit",
+      "subject": "Meta"
+    },
+    {
+      "action": "Edit",
       "subject": "Person"
     },
     {

@@ -87,15 +87,19 @@ export class AuthorizationService {
 
         if (foundMatch) {
           console.log(`FOUND: ${groupPermissions[j]}`);
+          return true;
         }
       }
     }
 
     if (!foundMatch) {
       console.log(`NOT FOUND: ${action}.${subject}`);
+      return false;
+    } else {
+      throw new Error(
+        'Unexpected code path. Should have returned from method by now',
+      );
     }
-
-    return true;
   }
 
   private isPermittedMatch(

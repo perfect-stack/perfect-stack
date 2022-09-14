@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {MetaEntity} from '../../../domain/meta.entity';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {Router} from '@angular/router';
-import {ToastService} from '../../../utils/toast.service';
+import {ToastService} from '../../../utils/toasts/toast.service';
 
 @Component({
   selector: 'app-meta-entity-search',

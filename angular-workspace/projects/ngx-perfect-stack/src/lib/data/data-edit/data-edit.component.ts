@@ -17,7 +17,7 @@ import {CompletionResult} from '../../event/page-listener';
 import {AbstractControl, FormGroup, UntypedFormArray, UntypedFormGroup} from '@angular/forms';
 import {SaveResponse} from '../data-service/save.response';
 import {ValidationResultMapController} from '../../domain/meta.rule';
-import {ToastService} from '../../utils/toast.service';
+import {ToastService} from '../../utils/toasts/toast.service';
 import {SearchControllerService} from '../controller/search-controller.service';
 
 
@@ -116,18 +116,18 @@ export class DataEditComponent implements OnInit {
     this.router.navigate([`/data/${this.metaName}/edit`, this.entityId]);
   }
 
-  onCancel(ctx: FormContext) {
+  onCancel(ctx: FormContext): Promise<boolean> {
 
     let completionResult = this.eventService.dispatchOnCompletion(ctx.metaPage.name, ctx);
     if(completionResult === CompletionResult.Stop) {
-      return;
+      return new Promise(() => false);
     }
 
     if(this.entityId) {
-      this.router.navigate([`/data/${this.metaName}/view`, this.entityId]);
+      return this.router.navigate([`/data/${this.metaName}/view`, this.entityId]);
     }
     else {
-      this.router.navigate([`/data/${this.metaName}/search`]);
+      return this.router.navigate([`/data/${this.metaName}/search`]);
     }
   }
 
@@ -182,7 +182,7 @@ export class DataEditComponent implements OnInit {
 
   saveRejected(ctx: FormContext, response: SaveResponse) {
     console.log(`Save rejected:`, response.validationResults);
-    this.toastService.showError('Error while saving. Please check form for errors.');
+    this.toastService.showError('Error while saving. Please check form for errors.', true);
     const form = this.getDataForm(ctx) as FormGroup;
     let keys = Object.keys(response.validationResults);
     keys.forEach((k: string) => {
@@ -201,8 +201,9 @@ export class DataEditComponent implements OnInit {
   }
 
   saveCompleted(ctx: FormContext) {
-    this.toastService.showSuccess('Save is successful');
-    this.onCancel(ctx);
+    this.onCancel(ctx).then(() => {
+      this.toastService.showSuccess('Save is successful');
+    });
   }
 
   /**

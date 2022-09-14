@@ -28,7 +28,7 @@ export class AuthenticationService {
 
   /**
    * Receive login notification data from the client when someone has successfully logged in. This is for informational
-   * purposes only. It has no bearing on how login sessions are handled. The token will be checked for validility to
+   * purposes only. It has no bearing on how login sessions are handled. The token will be checked for validity to
    * confirm that the user is not attempting to impersonate another user logging in but again since it's informational
    * only there is the possibility that someone does a login but then prevents this method being called. The one true
    * source of authentication is Cognito and AzureAD logs themselves.

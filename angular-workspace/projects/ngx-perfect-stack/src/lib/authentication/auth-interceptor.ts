@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
-import {HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {switchMap} from 'rxjs';
+import {HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {catchError, switchMap, throwError} from 'rxjs';
 import {AuthenticationService} from './authentication.service';
+import {ToastService} from '../utils/toasts/toast.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(protected readonly authenticationService: AuthenticationService) {}
+  constructor(protected readonly authenticationService: AuthenticationService,
+              protected readonly toastService: ToastService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
 
@@ -24,7 +26,29 @@ export class AuthInterceptor implements HttpInterceptor {
           headers: req.headers.set('Authorization', 'Bearer ' + token)
         });
 
-        return next.handle(authReq);
+        return next.handle(authReq).pipe(
+          catchError((error: HttpErrorResponse) => {
+
+            console.log('Application Intercepted HTTP error', error.error);
+            let toastErrorMessage = '';
+            const errorResponse = error.error;
+            if(errorResponse) {
+              if(errorResponse.error) {
+                toastErrorMessage += errorResponse.error + ':';
+              }
+
+              if(errorResponse.message) {
+                toastErrorMessage += ' ' + errorResponse.message
+              }
+            }
+
+            if(toastErrorMessage) {
+              console.error(toastErrorMessage, error);
+              this.toastService.showError(toastErrorMessage, false);
+            }
+
+            return throwError('Application Intercepted HTTP Error');
+          }));
       }));
     }
     else {

@@ -11,6 +11,7 @@ import { ActionType } from '../domain/meta.role';
 import { ACTION_PERMIT } from './action-permit';
 import { SUBJECT_KEY, SUBJECT_NAME } from './subject';
 import { AuthorizationService } from './authorization.service';
+import { User } from './user';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -47,11 +48,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       console.log(
         `GUARD: Permission Check: ${contextName}: ACTION_PERMIT = ${actionPermit}.${subject}`,
       );
-      await this.authorizationService.checkPermission(
+      const permitted = await this.authorizationService.checkPermission(
         userGroups,
         actionPermit,
         subject,
       );
+
+      if (!permitted) {
+        const username = this.getUser(context).username;
+        throw new UnauthorizedException(
+          `Permission Check Failed: On method ${contextName}(). User ${username} with groups ${JSON.stringify(
+            userGroups,
+          )} does not have the required permission ${actionPermit}.${subject}`,
+        );
+      }
     } else {
       console.log(
         `GUARD: Permission Check: UNABLE to find action.subject for ${contextName}`,
@@ -73,12 +83,19 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return `${context.getClass().name}.${context.getHandler().name}`;
   }
 
+  getUser(context: ExecutionContext): User {
+    return context.switchToHttp().getRequest().user;
+  }
+
+  getUsername(context: ExecutionContext): string {
+    return this.getUser(context).username;
+  }
+
   getUserGroups(context: ExecutionContext): string[] {
     let userGroups = null;
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
+    const user = this.getUser(context);
     if (user) {
-      userGroups = user['cognito:groups'];
+      userGroups = user.groups;
       if (userGroups) {
         console.log(`GUARD: Found user groups: ${JSON.stringify(userGroups)}`);
       }

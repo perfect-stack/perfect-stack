@@ -33,7 +33,7 @@ import {
   RelationshipTypeEditComponent
 } from './meta/entity/meta-entity-edit/relationship-type-edit/relationship-type-edit.component';
 import {AttributeDeleteDialogComponent} from './meta/entity/attribute-delete-dialog/attribute-delete-dialog.component';
-import {ToastService} from './utils/toast.service';
+import {ToastService} from './utils/toasts/toast.service';
 import {ValidationMessageComponent} from './utils/validation/validation-message/validation-message.component';
 import {ToastsComponent} from './utils/toasts/toasts.component';
 import {
