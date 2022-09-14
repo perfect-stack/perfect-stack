@@ -3,7 +3,40 @@
   "title": "$PageTitle",
   "type": "view_edit",
   "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "bird",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Bird",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
   "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "name"
+            }
+          }
+        ]
+      ],
+      "type": "header",
+      "metaEntityName": "Bird",
+      "binding": "bird"
+    },
     {
       "cells": [
         [
@@ -161,16 +194,6 @@
       "type": "form",
       "templateHeading": "Comments",
       "binding": "bird"
-    }
-  ],
-  "dataQueryList": [
-    {
-      "dataName": "bird",
-      "resultCardinality": "QueryOne",
-      "queryType": "Entity",
-      "queryName": "Bird",
-      "fieldName": "id",
-      "parameter": "id"
     }
   ]
 }
