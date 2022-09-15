@@ -48,8 +48,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       console.log(
         `GUARD: Permission Check: ${contextName}: ACTION_PERMIT = ${actionPermit}.${subject}`,
       );
+
+      const permissionMap = await this.authorizationService.loadPermissions();
+
       const permitted = await this.authorizationService.checkPermission(
         userGroups,
+        permissionMap,
         actionPermit,
         subject,
       );

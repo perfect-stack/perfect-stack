@@ -132,6 +132,7 @@ import {SearchControllerService} from './data/controller/search-controller.servi
 import {STANDARD_CONTROLLERS, standardControllers} from './data/controller/standard-controllers';
 import { MetaRoleSearchComponent } from './meta/role/meta-role-search/meta-role-search.component';
 import { MetaRoleEditComponent } from './meta/role/meta-role-edit/meta-role-edit.component';
+import {MetaRoleService} from './meta/role/meta-role-service/meta-role.service';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -276,8 +277,9 @@ const routes: Routes = [
     SearchControllerService,
     {provide: 'SearchController', useExisting: SearchControllerService},
     {provide: STANDARD_CONTROLLERS, useValue: standardControllers},
-    {provide: APP_INITIALIZER, useFactory: () => initializeAuth, multi: true},
+    //{provide: APP_INITIALIZER, useFactory: () => initializeAuth, multi: true},
     {provide: APP_INITIALIZER, useFactory: () => inject(INJECTOR).get(MetaMenuService).initMenu(), deps: [HttpClient, MetaMenuService], multi: true},
+    {provide: APP_INITIALIZER, useFactory: () => inject(INJECTOR).get(MetaRoleService).initMetaRoles(), deps: [HttpClient, MetaRoleService], multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true},
     {provide: NgbDateAdapter, useClass: CustomDateAdapterService},

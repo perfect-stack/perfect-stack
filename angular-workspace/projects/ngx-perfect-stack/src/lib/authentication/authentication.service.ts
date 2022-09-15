@@ -9,25 +9,13 @@ import {nativeJs, ZonedDateTime} from '@js-joda/core';
 import jwt_decode from "jwt-decode";
 import {HttpClient} from '@angular/common/http';
 import {LoginNotification} from './login-notification';
+import {AuthorizationService} from './authorization.service';
+import {MetaRoleService} from '../meta/role/meta-role-service/meta-role.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  get redirectUrl(): string | null {
-    return this._redirectUrl;
-  }
-
-  set redirectUrl(value: string | null) {
-    console.log(`set redirectUrl = ${value}`);
-    if(value) {
-      localStorage.setItem('redirectUrl', value);
-    }
-    else {
-      localStorage.removeItem('redirectUrl');
-    }
-    this._redirectUrl = value;
-  }
 
   isLoggedIn = false;
   user: User;
@@ -41,6 +29,8 @@ export class AuthenticationService {
   constructor(protected readonly router: Router,
               protected readonly route: ActivatedRoute,
               protected readonly http: HttpClient,
+              protected readonly metaRoleService: MetaRoleService,
+              protected readonly authorizationService: AuthorizationService,
               @Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig) {
 
@@ -58,6 +48,27 @@ export class AuthenticationService {
     }
 
     this.user.setLoginResultListener(this);
+
+    this.user.getBearerToken().subscribe((bearerToken) => {
+      if(bearerToken) {
+        this.handleLoginResult(true);
+      }
+    });
+  }
+
+  get redirectUrl(): string | null {
+    return this._redirectUrl;
+  }
+
+  set redirectUrl(value: string | null) {
+    console.log(`set redirectUrl = ${value}`);
+    if(value) {
+      localStorage.setItem('redirectUrl', value);
+    }
+    else {
+      localStorage.removeItem('redirectUrl');
+    }
+    this._redirectUrl = value;
   }
 
   login() {
@@ -66,23 +77,23 @@ export class AuthenticationService {
     }
   }
 
-  handleLoginResult(loginSuccessful: boolean, delayNavigation = false): void {
+  handleLoginResult(loginSuccessful: boolean): void {
     console.log(`handleLoginResult: loginSuccessful = ${loginSuccessful}`)
     if(loginSuccessful) {
       this.isLoggedIn = true;
 
-      this.user.getBearerToken().pipe(switchMap(token => {
-        const decodedToken: any = jwt_decode(token);
-        this.expiryTime = ZonedDateTime.from(nativeJs(new Date(decodedToken.exp * 1000)));
+      this.user.getBearerToken().pipe(switchMap(bearerToken => {
+        if(bearerToken) {
+          const decodedToken: any = jwt_decode(bearerToken);
+          this.expiryTime = ZonedDateTime.from(nativeJs(new Date(decodedToken.exp * 1000)));
+        }
         return of('')
       })).subscribe(() => {
         // This subscription might be needed, otherwise the code above won't be executed?
         console.log(`Expiry time has been set: ${this.expiryTime}`);
       });
 
-      if(!delayNavigation) {
-        this.navigateToFirstPage();
-      }
+      this.navigateToFirstPage();
     }
     else {
       this.isLoggedIn = false;

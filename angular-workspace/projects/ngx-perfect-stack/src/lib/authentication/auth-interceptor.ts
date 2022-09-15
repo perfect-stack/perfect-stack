@@ -14,7 +14,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     // WARNING: hack code here for dealing with loading menu when there
     // is no user logged in
-    if(req.method === 'GET' && req.url.includes('menu')) {
+    if(req.method === 'GET' && (req.url.includes('menu') || req.url.includes('role'))) {
       return next.handle(req);
     }
 
