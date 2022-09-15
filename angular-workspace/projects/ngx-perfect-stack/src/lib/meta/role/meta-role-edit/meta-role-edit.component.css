@@ -4,6 +4,26 @@
   column-width: 200px;
 }
 
+.inherited-permission {
+  opacity: 0.50;
+}
+
 .remove-permission {
   cursor: pointer;
+}
+
+.block {
+  display: inline-block;
+}
+
+.inline {
+  display: inline;
+}
+
+.key-table {
+  padding: 0 !important;
+}
+
+.key-table, table>:not(caption)>*>* {
+  padding: 0;
 }

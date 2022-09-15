@@ -2,7 +2,7 @@
   "name": "Operations",
   "group": "operators,ap-southeast-2_CIl5VvfWD_doc-azuread-sso",
   "inherits": "Viewer",
-  "description": "<p>can edit meta but not system, add projects, set project manager role,</p>",
+  "description": "<p>Can edit meta but not system, add projects, set project manager role,</p>",
   "permissions": [
     {
       "action": "Edit",
@@ -15,6 +15,14 @@
     {
       "action": "Edit",
       "subject": "Project"
+    },
+    {
+      "action": "Menu",
+      "subject": "Admin"
+    },
+    {
+      "action": "Menu",
+      "subject": "Meta"
     }
   ]
 }

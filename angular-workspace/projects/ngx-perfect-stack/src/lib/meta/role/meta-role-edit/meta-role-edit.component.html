@@ -52,7 +52,7 @@
 
       <div class="row mt-4">
         <div class="row">
-          <div class="col-7">
+          <div class="col-6">
 
             <h3>Permissions</h3>
 
@@ -65,25 +65,71 @@
               <tr *ngFor="let actionType of ActionTypeOptions">
                 <td>{{actionType}}</td>
                 <td class="subject-col" my-dropzone (myDropZoneDroppedEvent)="onDropEvent($event, actionType)">
-                  <span class="badge bg-info remove-permission me-1"
-                        (click)="removePermission(actionType, idx)"
-                        *ngFor="let p of permissionsMap.get(actionType); let idx = index;">
-                    <span>{{p}}</span><span class="material-symbols-outlined small ms-2">close</span>
-                  </span>
+                  <ng-container *ngFor="let p of inheritedPermissionsMap.get(actionType); let idx = index;">
+                    <span class="badge bg-secondary inherited-permission me-1">
+                      {{p}}
+                    </span>
+                  </ng-container>
+
+                  <ng-container *ngFor="let p of permissionsMap.get(actionType); let idx = index;">
+                    <span class="badge bg-info remove-permission me-1"
+                         (click)="removePermission(actionType, idx)">
+                      <span>{{p}}</span><span class="material-symbols-outlined small ms-2">close</span>
+                    </span>
+                  </ng-container>
                 </td>
               </tr>
               </tbody>
             </table>
+
+            <div class="p-3">
+              <h4>Key</h4>
+              <table class="table table-borderless key-table">
+                <tbody>
+                  <tr>
+                    <td><span class="badge bg-secondary inherited-permission me-1">Inherited</span></td>
+                    <td class="text-muted">These permissions come from the inherited parent or ancestor. They can only be changed by editing their parent Role.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge bg-info remove-permission me-1">Permission</span></td>
+                    <td class="text-muted">These permissions can be added or removed from this Role.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div class="col-2" *ngIf="subjectOptions$|async as subjectOptions">
+          <div class="col-3">
 
-            <h3>Subjects</h3>
+            <h3 class="pb-4">Subjects</h3>
 
-            <div *ngFor="let subject of subjectOptions">
-              <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
-                <span class="material-symbols-outlined align-middle">category</span>
-                {{subject}}
+            <div class="row">
+              <div class="col-6" *ngIf="menuSubjectOptions$|async as menuSubjectOptions">
+                <h4>Menus</h4>
+                <div *ngFor="let subject of menuSubjectOptions">
+                  <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                    <ng-container [ngSwitch]="subject.type">
+                      <span *ngSwitchCase="SubjectType.Special" class="material-symbols-outlined align-middle">emergency</span>
+                      <span *ngSwitchCase="SubjectType.Entity" class="material-symbols-outlined align-middle">category</span>
+                      <span *ngSwitchCase="SubjectType.Menu" class="material-symbols-outlined align-middle">menu</span>
+                    </ng-container>
+                    {{subject.name}}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-6" *ngIf="entitySubjectOptions$|async as entitySubjectOptions">
+                <h4>Entities</h4>
+                <div *ngFor="let subject of entitySubjectOptions">
+                  <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                    <ng-container [ngSwitch]="subject.type">
+                      <span *ngSwitchCase="SubjectType.Special" class="material-symbols-outlined align-middle">emergency</span>
+                      <span *ngSwitchCase="SubjectType.Entity" class="material-symbols-outlined align-middle">category</span>
+                      <span *ngSwitchCase="SubjectType.Menu" class="material-symbols-outlined align-middle">menu</span>
+                    </ng-container>
+                    {{subject.name}}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

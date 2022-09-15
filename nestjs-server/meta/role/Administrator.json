@@ -27,6 +27,10 @@
     {
       "action": "Edit",
       "subject": "Species"
+    },
+    {
+      "action": "Menu",
+      "subject": "Admin"
     }
   ]
 }

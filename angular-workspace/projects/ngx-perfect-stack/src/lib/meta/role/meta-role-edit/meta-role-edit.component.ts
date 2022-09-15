@@ -6,6 +6,7 @@ import {MetaRoleService} from '../meta-role-service/meta-role.service';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {MetaEntityService} from '../../entity/meta-entity-service/meta-entity.service';
 import {MetaEntity} from '../../../domain/meta.entity';
+import {MetaMenuService} from '../../menu/meta-menu-service/meta-menu.service';
 
 @Component({
   selector: 'lib-meta-role-edit',
@@ -25,12 +26,16 @@ export class MetaRoleEditComponent implements OnInit {
   });
 
   permissionsMap: Map<string, string[]> = new Map<string, string[]>();
+  inheritedPermissionsMap: Map<string, string[]> = new Map<string, string[]>();
 
   inheritsOptions$: Observable<MetaRole[]>;
-  subjectOptions$: Observable<string[]>;
+
+  entitySubjectOptions$: Observable<SubjectOption[]>;
+  menuSubjectOptions$: Observable<SubjectOption[]>;
 
   constructor(protected readonly metaRoleService: MetaRoleService,
               protected readonly metaEntityService: MetaEntityService,
+              protected readonly metaMenuService: MetaMenuService,
               protected readonly route: ActivatedRoute,
               protected readonly router: Router) { }
 
@@ -41,6 +46,7 @@ export class MetaRoleEditComponent implements OnInit {
       return obs.pipe(tap(metaRole => {
         this.metaRoleForm.patchValue(metaRole);
         this.loadPermissionsMap(metaRole);
+        this.loadInheritedPermissionsMap(metaRole);
       }));
     }));
 
@@ -48,12 +54,33 @@ export class MetaRoleEditComponent implements OnInit {
       return of(metaRoles.filter(s => s.name !== this.metaRoleName));
     }));
 
-    this.subjectOptions$ = this.metaEntityService.findAll().pipe(switchMap( (metaEntityList: MetaEntity[]) => {
-      const subjectOptions: string[] = [];
-      subjectOptions.push(String(ActionType.Any));
+    this.entitySubjectOptions$ = this.metaEntityService.findAll().pipe(switchMap( (metaEntityList: MetaEntity[]) => {
+      const subjectOptions: SubjectOption[] = [];
+
+      subjectOptions.push({
+        type: SubjectType.Special,
+        name: String(ActionType.Any)
+      });
+
       for(const nextMetaEntity of metaEntityList) {
         if(nextMetaEntity.rootNode) {
-          subjectOptions.push(nextMetaEntity.name);
+          subjectOptions.push({
+            type: SubjectType.Entity,
+            name: nextMetaEntity.name
+          });
+        }
+      }
+      return of(subjectOptions);
+    }));
+
+    this.menuSubjectOptions$ = this.metaMenuService.find().pipe(switchMap((metaMenu) => {
+      const subjectOptions: SubjectOption[] = [];
+      for(const nextMenu of metaMenu.menuList) {
+        if(nextMenu.label) {
+          subjectOptions.push({
+            type: SubjectType.Menu,
+            name: nextMenu.label
+          });
         }
       }
       return of(subjectOptions);
@@ -101,30 +128,54 @@ export class MetaRoleEditComponent implements OnInit {
   }
 
   onDropEvent($event: any, actionType: string) {
-    const subject = $event as string;
+    const subject = $event as SubjectOption;
     console.log(`Subject ${subject} dropped into ${actionType}`)
 
-    let permissionList = this.permissionsMap.get(actionType);
-    if(!permissionList) {
-      permissionList = [];
-      this.permissionsMap.set(actionType, permissionList);
-    }
-
-    // If the subject is "Any" then remove all items from the list and just add the "Any" subject
-    if(subject === ActionType.Any) {
-      permissionList.length = 0;
-      permissionList.push(subject);
-    }
-    else {
-      // If the list already contains "Any" then it doesn't matter what you add the "Any" would take effect, so if "Any"
-      // then don't need to add the subject
-      const containsAny = permissionList.findIndex(s => s === ActionType.Any) >= 0;
-
-      // If the list already contains the Subject then don't add it a second time
-      const containsSubject = permissionList.findIndex(s => s === subject) >= 0;
-      if(!containsAny && !containsSubject) {
-        permissionList.push(subject);
+    if(this.isDropAllowed(subject, actionType)){
+      let permissionList = this.permissionsMap.get(actionType);
+      if(!permissionList) {
+        permissionList = [];
+        this.permissionsMap.set(actionType, permissionList);
       }
+
+      // If the subject is "Any" then remove all items from the list and just add the "Any" subject
+      if(subject.name === ActionType.Any) {
+        permissionList.length = 0;
+        permissionList.push(subject.name);
+      }
+      else {
+        // If the list already contains "Any" then it doesn't matter what you add the "Any" would take effect, so if "Any"
+        // then don't need to add the subject
+        const containsAny = permissionList.findIndex(s => s === ActionType.Any) >= 0;
+
+        // If the list already contains the Subject then don't add it a second time
+        const containsSubject = permissionList.findIndex(s => s === subject.name) >= 0;
+
+        // If any of the inherited parent roles already contains the Subject then don't add it a second time
+        let parentContainsSubject = false;
+        const parentPermissionList = this.inheritedPermissionsMap.get(actionType);
+        if(parentPermissionList) {
+          parentContainsSubject = parentPermissionList.findIndex(s => s === subject.name) >= 0;
+        }
+
+        // If everything ok, then add it now
+        if(!containsAny && !containsSubject && !parentContainsSubject) {
+          permissionList.push(subject.name);
+        }
+      }
+    }
+  }
+
+  isDropAllowed(subjectOption: SubjectOption, actionType: string) {
+    switch (subjectOption.type) {
+      case SubjectType.Special:
+        return true;
+      case SubjectType.Menu:
+        return actionType === ActionType.Menu;
+      case SubjectType.Entity:
+        return actionType !== ActionType.Menu
+      default:
+        throw new Error(`Unknown subjectOption and actionType combination: ${JSON.stringify(subjectOption)}, ${actionType}`);
     }
   }
 
@@ -136,13 +187,34 @@ export class MetaRoleEditComponent implements OnInit {
   }
 
   private loadPermissionsMap(metaRole: MetaRole) {
+    this.addPermissions(metaRole, this.permissionsMap);
+  }
+
+  private loadInheritedPermissionsMap(metaRole: MetaRole){
+    const nextMap = new Map<string, string[]>();
+    if(metaRole.inherits) {
+      this.loadParentPermissions(metaRole.inherits, nextMap);
+    }
+    this.inheritedPermissionsMap = nextMap;
+  }
+
+  private loadParentPermissions(parentRole: string, nextMap: Map<string, string[]>) {
+    this.metaRoleService.findById(parentRole).subscribe((parentRole) => {
+      this.addPermissions(parentRole, nextMap);
+      if(parentRole.inherits) {
+        this.loadParentPermissions(parentRole.inherits, nextMap);
+      }
+    })
+  }
+
+  private addPermissions(metaRole: MetaRole, permissionMap: Map<string, string[]>) {
     // load the UI permissionsMap with data from the MetaRole
     if(metaRole.permissions) {
       for(const nextPermission of metaRole.permissions) {
-        let permissionList = this.permissionsMap.get(nextPermission.action);
+        let permissionList = permissionMap.get(nextPermission.action);
         if(!permissionList) {
           permissionList = [];
-          this.permissionsMap.set(nextPermission.action, permissionList);
+          permissionMap.set(nextPermission.action, permissionList);
         }
         permissionList.push(nextPermission.subject);
       }
@@ -164,4 +236,19 @@ export class MetaRoleEditComponent implements OnInit {
       }
     }
   }
+
+  get SubjectType() {
+    return SubjectType;
+  }
+}
+
+export enum SubjectType {
+  Special = 'Special',
+  Entity = 'Entity',
+  Menu = 'Menu'
+}
+
+export class SubjectOption {
+  type: SubjectType;
+  name: string;
 }

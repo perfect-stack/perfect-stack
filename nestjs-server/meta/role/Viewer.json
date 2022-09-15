@@ -26,11 +26,11 @@
     },
     {
       "action": "Menu",
-      "subject": "Person"
+      "subject": "Project"
     },
     {
       "action": "Menu",
-      "subject": "Project"
+      "subject": "People"
     }
   ]
 }
