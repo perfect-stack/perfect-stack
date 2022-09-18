@@ -14,24 +14,26 @@
 
   <div class="d-flex justify-content-between w-50" *ngIf="authenticationService.isLoggedIn">
     <div class="" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
-      <ng-container *ngIf="nextMenu.items.length > 1">
-        <a class="menu-title" tabindex="0" ngbDropdownToggle id="{{nextMenu.label}}Menu" role="button">
-          {{nextMenu.label}}
-        </a>
-        <div class="dropdown-menu" ngbDropdownMenu>
-          <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" id="{{menuItem.label}}MenuItem">
-            {{menuItem.label}}
+      <ng-container *ngIf="menuEnabled[nextMenu.label]">
+        <ng-container *ngIf="nextMenu.items.length > 1">
+          <a class="menu-title" tabindex="0" ngbDropdownToggle id="{{nextMenu.label}}Menu" role="button">
+            {{nextMenu.label}}
           </a>
-        </div>
-      </ng-container>
+          <div class="dropdown-menu" ngbDropdownMenu>
+            <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" id="{{menuItem.label}}MenuItem">
+              {{menuItem.label}}
+            </a>
+          </div>
+        </ng-container>
 
-      <ng-container *ngIf="nextMenu.items.length === 1">
-        <a class="menu-title"
-           routerLinkActive="active-link"
-           id="{{nextMenu.label}}Menu"
-           [routerLink]="nextMenu.items[0].route">
-          {{nextMenu.items[0].label}}
-        </a>
+        <ng-container *ngIf="nextMenu.items.length === 1">
+          <a class="menu-title"
+             routerLinkActive="active-link"
+             id="{{nextMenu.label}}Menu"
+             [routerLink]="nextMenu.items[0].route">
+            {{nextMenu.items[0].label}}
+          </a>
+        </ng-container>
       </ng-container>
     </div>
   </div>

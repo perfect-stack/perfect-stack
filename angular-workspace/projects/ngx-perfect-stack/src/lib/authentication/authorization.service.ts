@@ -1,6 +1,6 @@
 import { MetaRoleService } from '../meta/role/meta-role-service/meta-role.service';
 import { MetaRole } from '../domain/meta.role';
-import {Observable, of, switchMap} from 'rxjs';
+import {BehaviorSubject, Observable, of, switchMap} from 'rxjs';
 import {Injectable} from '@angular/core';
 
 @Injectable({
@@ -8,7 +8,14 @@ import {Injectable} from '@angular/core';
 })
 export class AuthorizationService {
 
-  constructor(protected readonly metaRoleService: MetaRoleService) {}
+  permissionMap$ = new BehaviorSubject<Map<string, string[]>|null>(null);
+
+  constructor(protected readonly metaRoleService: MetaRoleService) {
+    this.loadPermissions().subscribe((permissionMap) => {
+      console.log('GOT permissionMap');
+      this.permissionMap$.next(permissionMap);
+    });
+  }
 
   loadPermissions(): Observable<Map<string, string[]>> {
     return this.metaRoleService.findAll().pipe(switchMap((metaRoleList) => {
@@ -57,12 +64,26 @@ export class AuthorizationService {
     return permissions.findIndex((s) => s === permission) >= 0;
   }
 
-  async checkPermission(
+  checkPermission(
+    userGroups: string[],
+    action: string,
+    subject: string,
+  ): boolean {
+    const permissionMap = this.permissionMap$.getValue();
+    if(permissionMap) {
+      return this.checkPermissionWithMap(userGroups, permissionMap, action, subject);
+    }
+    else {
+      return false;
+    }
+  }
+
+  checkPermissionWithMap(
     userGroups: string[],
     permissionMap: Map<string, string[]>,
     action: string,
     subject: string,
-  ): Promise<boolean> {
+  ): boolean {
     let foundMatch = false;
     for (let i = 0; i < userGroups.length && !foundMatch; i++) {
       const group = userGroups[i];

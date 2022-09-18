@@ -18,38 +18,38 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    if(this.authenticationService.isLoggedIn && this.authenticationService.user) {
-      return this.authenticationService.user.getBearerToken().pipe(switchMap( (token) => {
-        // Clone the request and replace the original headers with
-        // cloned headers, updated with the authorization.
-        const authReq = req.clone({
-          headers: req.headers.set('Authorization', 'Bearer ' + token)
-        });
+    if(this.authenticationService.isLoggedIn && this.authenticationService.user$.getValue()) {
+      const bearerToken = this.authenticationService.user$.getValue()?.getBearerToken();
+      // Clone the request and replace the original headers with
+      // cloned headers, updated with the authorization.
+      const authReq = req.clone({
+        headers: req.headers.set('Authorization', 'Bearer ' + bearerToken)
+      });
 
-        return next.handle(authReq).pipe(
-          catchError((error: HttpErrorResponse) => {
+      return next.handle(authReq).pipe(
+        catchError((error: HttpErrorResponse) => {
 
-            console.log('Application Intercepted HTTP error', error.error);
-            let toastErrorMessage = '';
-            const errorResponse = error.error;
-            if(errorResponse) {
-              if(errorResponse.error) {
-                toastErrorMessage += errorResponse.error + ':';
-              }
-
-              if(errorResponse.message) {
-                toastErrorMessage += ' ' + errorResponse.message
-              }
+          console.log('Application Intercepted HTTP error', error.error);
+          let toastErrorMessage = '';
+          const errorResponse = error.error;
+          if(errorResponse) {
+            if(errorResponse.error) {
+              toastErrorMessage += errorResponse.error + ':';
             }
 
-            if(toastErrorMessage) {
-              console.error(toastErrorMessage, error);
-              this.toastService.showError(toastErrorMessage, false);
+            if(errorResponse.message) {
+              toastErrorMessage += ' ' + errorResponse.message
             }
+          }
 
-            return throwError('Application Intercepted HTTP Error');
-          }));
-      }));
+          if(toastErrorMessage) {
+            console.error(toastErrorMessage, error);
+            this.toastService.showError(toastErrorMessage, false);
+          }
+
+          return throwError('Application Intercepted HTTP Error');
+        })
+      );
     }
     else {
       return next.handle(req);

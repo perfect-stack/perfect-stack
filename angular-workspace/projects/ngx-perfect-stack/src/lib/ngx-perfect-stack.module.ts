@@ -268,6 +268,7 @@ const routes: Routes = [
   providers: [
     AuthenticationService,
     ClientConfigService,
+    MetaRoleService,
     MetaMenuService,
     MetaPageService,
     MetaEntityService,
@@ -279,7 +280,6 @@ const routes: Routes = [
     {provide: STANDARD_CONTROLLERS, useValue: standardControllers},
     //{provide: APP_INITIALIZER, useFactory: () => initializeAuth, multi: true},
     {provide: APP_INITIALIZER, useFactory: () => inject(INJECTOR).get(MetaMenuService).initMenu(), deps: [HttpClient, MetaMenuService], multi: true},
-    {provide: APP_INITIALIZER, useFactory: () => inject(INJECTOR).get(MetaRoleService).initMetaRoles(), deps: [HttpClient, MetaRoleService], multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true},
     {provide: NgbDateAdapter, useClass: CustomDateAdapterService},

@@ -2,15 +2,12 @@ import {Inject, Injectable} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
 import {User} from './user/user';
-import {FirebaseUser} from './user/firebase-user';
 import {CognitoUser} from './user/cognito-user';
-import {BehaviorSubject, of, switchMap} from 'rxjs';
-import {nativeJs, ZonedDateTime} from '@js-joda/core';
+import {BehaviorSubject} from 'rxjs';
+import {nativeJs, ZonedDateTime, ZoneId} from '@js-joda/core';
 import jwt_decode from "jwt-decode";
 import {HttpClient} from '@angular/common/http';
 import {LoginNotification} from './login-notification';
-import {AuthorizationService} from './authorization.service';
-import {MetaRoleService} from '../meta/role/meta-role-service/meta-role.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +15,9 @@ import {MetaRoleService} from '../meta/role/meta-role-service/meta-role.service'
 export class AuthenticationService {
 
   isLoggedIn = false;
-  user: User;
 
-  loginExpiry$ = new BehaviorSubject<string>('');
+  user$ = new BehaviorSubject<User|null>(null);
+
   expiryTime: ZonedDateTime | null = null;
 
   // store the URL so we can redirect after logging in
@@ -29,31 +26,45 @@ export class AuthenticationService {
   constructor(protected readonly router: Router,
               protected readonly route: ActivatedRoute,
               protected readonly http: HttpClient,
-              protected readonly metaRoleService: MetaRoleService,
-              protected readonly authorizationService: AuthorizationService,
               @Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig) {
 
     this._redirectUrl = localStorage.getItem('redirectUrl');
+    this.createUserFromLocalStorage();
+  }
 
-    switch (this.stackConfig.authenticationProvider) {
-      case 'FIREBASE':
-        this.user = new FirebaseUser();
-        break;
-      case 'COGNITO':
-        this.user = new CognitoUser(this.stackConfig);
-        break;
-      default:
-        throw new Error(`Unknown authenticationProvider of ${this.stackConfig.authenticationProvider}`);
-    }
+  createUserFromLocalStorage() {
+    const idToken = localStorage.getItem('idToken');
+    const accessToken = localStorage.getItem('accessToken');
+    this.createUser(idToken, accessToken);
+  }
 
-    this.user.setLoginResultListener(this);
+  createUser(idToken: string | null, accessToken: string | null) {
+    let user = null;
+    if(idToken && accessToken) {
+      const decodedToken: any = jwt_decode(idToken);
+      const expiryTime = ZonedDateTime.from(nativeJs(new Date(decodedToken.exp * 1000)));
+      if(expiryTime.isAfter(ZonedDateTime.now(ZoneId.UTC))) {
+        console.log(`Create user: session is active.`);
+        user = new CognitoUser(this.stackConfig);
+        user.idToken = idToken;
+        user.accessToken = accessToken;
+        user.saveTokens();
 
-    this.user.getBearerToken().subscribe((bearerToken) => {
-      if(bearerToken) {
-        this.handleLoginResult(true);
+        this.expiryTime = expiryTime;
+        this.sendNotification(idToken, accessToken);
+        this.navigateToFirstPage();
+
+        this.isLoggedIn = true;
       }
-    });
+      else {
+        console.log(`Create user: session is expired.`);
+      }
+    }
+    else {
+      console.log(`Create user: null tokens.`);
+    }
+    this.user$.next(user);
   }
 
   get redirectUrl(): string | null {
@@ -71,33 +82,10 @@ export class AuthenticationService {
     this._redirectUrl = value;
   }
 
-  login() {
-    if(this.user) {
-      this.user.login();
-    }
-  }
-
-  handleLoginResult(loginSuccessful: boolean): void {
-    console.log(`handleLoginResult: loginSuccessful = ${loginSuccessful}`)
-    if(loginSuccessful) {
-      this.isLoggedIn = true;
-
-      this.user.getBearerToken().pipe(switchMap(bearerToken => {
-        if(bearerToken) {
-          const decodedToken: any = jwt_decode(bearerToken);
-          this.expiryTime = ZonedDateTime.from(nativeJs(new Date(decodedToken.exp * 1000)));
-        }
-        return of('')
-      })).subscribe(() => {
-        // This subscription might be needed, otherwise the code above won't be executed?
-        console.log(`Expiry time has been set: ${this.expiryTime}`);
-      });
-
-      this.navigateToFirstPage();
-    }
-    else {
-      this.isLoggedIn = false;
-    }
+  login(): void {
+    const url = this.stackConfig.cognitoLoginUrl;
+    console.log('Login started: ');
+    window.open(url, "_self");
   }
 
   sendNotification(idToken: string, accessToken: string) {
@@ -129,25 +117,21 @@ export class AuthenticationService {
   logout() {
     console.log('Logout: started');
     this.isLoggedIn = false;
-    this.user.logout().subscribe(() => {
-      this.router.navigate(['/']).then(() => {
-        console.log('Logout: completed');
-      });
+    this.user$.getValue()?.logout();
+    this.user$.next(null);
+    this.router.navigate(['/']).then(() => {
+      console.log('Logout: completed');
     });
   }
 
   sessionTimeout() {
-    console.log('SessionTimout: started');
+    console.log('SessionTimeout: started');
     this.isLoggedIn = false;
-    this.user.logout().subscribe(() => {
-      this.router.navigate(['session-timeout']).then(() => {
-        console.log('SessionTimout: completed');
-      });
+    this.user$.getValue()?.logout();
+    this.user$.next(null);
+    this.router.navigate(['session-timeout']).then(() => {
+      console.log('SessionTimout: completed');
     });
   }
 }
 
-
-export interface LoginResultListener {
-  handleLoginResult(loginSuccessful: boolean): void;
-}

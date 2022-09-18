@@ -1,6 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AuthenticationService} from '../authentication/authentication.service';
 import {MetaMenuService} from '../meta/menu/meta-menu-service/meta-menu.service';
+import {AuthorizationService} from '../authentication/authorization.service';
+import {ActionType} from '../domain/meta.role';
 
 @Component({
   selector: 'lib-menu-bar',
@@ -28,10 +30,32 @@ export class MenuBarComponent implements OnInit {
   menuBarBackgroundColor: string;
 
 
-  constructor(public readonly authenticationService: AuthenticationService,
-              public readonly metaMenuService: MetaMenuService) {}
+  menuEnabled: any = {};
 
-  ngOnInit(): void {
+  constructor(public readonly authenticationService: AuthenticationService,
+              public readonly authorizationService: AuthorizationService,
+              public readonly metaMenuService: MetaMenuService) {
   }
 
+  ngOnInit(): void {
+    this.authorizationService.permissionMap$.subscribe((permissionMap) => {
+      // The first value through this handler will be null, but that's ok. It just takes a little while for the
+      // AuthorizationServer to load the permissions.
+      console.log('MenuBarComponent Permissions: ', permissionMap)
+      this.updateMenuEnabled();
+    });
+  }
+
+  updateMenuEnabled() {
+    const nextMenuEnabled: any = {};
+    const user = this.authenticationService.user$.getValue();
+    if(user) {
+      const  userGroups = user.getGroups();
+      for(const nextMenu of this.metaMenuService.menu.menuList) {
+        nextMenuEnabled[nextMenu.label] = this.authorizationService.checkPermission(userGroups, ActionType.Menu, nextMenu.label);
+      }
+    }
+
+    this.menuEnabled = nextMenuEnabled;
+  }
 }
