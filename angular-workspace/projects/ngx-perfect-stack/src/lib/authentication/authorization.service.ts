@@ -1,6 +1,6 @@
 import { MetaRoleService } from '../meta/role/meta-role-service/meta-role.service';
 import { MetaRole } from '../domain/meta.role';
-import {BehaviorSubject, Observable, of, switchMap} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {Inject, Injectable} from '@angular/core';
 import {AuthenticationService} from './authentication.service';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
@@ -16,30 +16,12 @@ export class AuthorizationService {
               protected readonly authenticationService: AuthenticationService,
               @Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig) {
-    // this.loadPermissions().subscribe((permissionMap) => {
-    //   console.log('GOT permissionMap');
-    //   this.permissionMap$.next(permissionMap);
-    // });
+
     const nextPermissionMap = this.loadPermissionsFromMetaRoleList(stackConfig.metaRoleList);
     this.permissionMap$.next(nextPermissionMap);
   }
 
-  // initApplication(): any {
-  //   return new Promise((resolve, reject) => {
-  //     this.loadPermissions().pipe(switchMap( (permissionMap) => {
-  //       console.log('GOT permissionMap');
-  //       this.permissionMap$.next(permissionMap);
-  //       resolve(true);
-  //       return of(true);
-  //     }));
-  //   });
-  // }
-
-  init() {
-    console.log('init()');
-  }
-
-  loadPermissions(): Observable<Map<string, string[]>> {
+  /*loadPermissions(): Observable<Map<string, string[]>> {
     return this.metaRoleService.findAll().pipe(switchMap((metaRoleList) => {
       const permissionMap = new Map<string, string[]>();
       for (const nextMetaRole of metaRoleList) {
@@ -54,7 +36,7 @@ export class AuthorizationService {
 
       return of(permissionMap);
     }));
-  }
+  }*/
 
   loadPermissionsFromMetaRoleList(metaRoleList: MetaRole[]) {
     const permissionMap = new Map<string, string[]>();
