@@ -4,10 +4,17 @@ import {
   ButtonTabsTool,
   ButtonTool,
   IconTool,
-  ImageTool, LastSignInTool, LinkTool, MapTool, PageTitleTool, PaginateTool, TabTool,
+  ImageTool,
+  LastSignInTool,
+  LinkTool,
+  MapTool,
+  PageTitleTool,
+  PaginateTool,
+  TabTool,
   TextTool,
   ToolType
 } from '../../domain/meta.page';
+import {ActionType} from '../../domain/meta.role';
 
 @Component({
   selector: 'lib-tool-palette',
@@ -26,6 +33,8 @@ export class ToolPaletteComponent implements OnInit {
     action: '',
     route: '/route/go/here',
     icon: '',
+    actionPermit: ActionType.Read,
+    subjectPermit: ''
   };
 
   static readonly buttonGroupPrototype: ButtonGroupTool = {

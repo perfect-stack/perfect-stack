@@ -19,6 +19,7 @@ import {SaveResponse} from '../data-service/save.response';
 import {ValidationResultMapController} from '../../domain/meta.rule';
 import {ToastService} from '../../utils/toasts/toast.service';
 import {SearchControllerService} from '../controller/search-controller.service';
+import {ActionType} from '../../domain/meta.role';
 
 
 @Component({
@@ -235,6 +236,10 @@ export class DataEditComponent implements OnInit {
         this.validateAllFields(`${name}[${i}]`, nextChildControl);
       }
     }
+  }
+
+  get ActionType() {
+    return ActionType;
   }
 }
 

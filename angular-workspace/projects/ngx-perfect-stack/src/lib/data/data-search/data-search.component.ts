@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AttributeType, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
@@ -13,6 +13,7 @@ import {AbstractControl, UntypedFormGroup} from '@angular/forms';
 import {Observable, of, switchMap, withLatestFrom} from 'rxjs';
 import {FormGroupService} from '../data-edit/form-service/form-group.service';
 import {CriteriaService} from './criteria.service';
+import {ActionType} from '../../domain/meta.role';
 
 @Component({
   selector: 'app-data-search',
@@ -21,14 +22,14 @@ import {CriteriaService} from './criteria.service';
 })
 export class DataSearchComponent implements OnInit {
 
-  public metaName: string | null;
-  public mode = 'search';
+  metaName: string | null;
+  mode = 'search';
 
   ctx$: Observable<FormContext>;
 
-  public pageNumber = 1;
-  public pageSize = 50;
-  public collectionSize = 0;
+  pageNumber = 1;
+  pageSize = 50;
+  collectionSize = 0;
 
   searchCriteriaTemplate: Template;
   resultTableTemplate: Template;
@@ -51,47 +52,45 @@ export class DataSearchComponent implements OnInit {
       withLatestFrom(this.route.paramMap, this.route.queryParamMap)
     ).subscribe(([url, paramMap,  queryParamMap]) => {
 
-      //this.ctx$ = this.route.paramMap.pipe(switchMap((params) => {
-        this.metaName = paramMap.get('metaName');
-        if (this.metaName) {
-          this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, null, paramMap, queryParamMap).pipe(switchMap((ctx) => {
+      this.metaName = paramMap.get('metaName');
+      if (this.metaName) {
 
-            this.searchCriteriaTemplate = ctx.metaPage.templates[0];
-            this.searchCriteriaTemplate.binding = 'criteria';
-            if (!ctx.formMap) {
-              ctx.formMap = new Map<string, AbstractControl>();
-            }
-            const criteriaForm = this.formGroupService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null)
-            ctx.formMap.set('criteria', criteriaForm);
-            console.log('Criteria form:', criteriaForm);
+        this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, null, paramMap, queryParamMap).pipe(switchMap((ctx) => {
+          this.searchCriteriaTemplate = ctx.metaPage.templates[0];
+          this.searchCriteriaTemplate.binding = 'criteria';
+          if (!ctx.formMap) {
+            ctx.formMap = new Map<string, AbstractControl>();
+          }
+          const criteriaForm = this.formGroupService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null)
+          ctx.formMap.set('criteria', criteriaForm);
+          console.log('Criteria form:', criteriaForm);
 
-            // grab the latest criteria object from our in-memory store
-            const searchState = this.criteriaService.getSearchState(this.searchCriteriaTemplate.metaEntityName);
-            criteriaForm.patchValue(searchState.criteria);
-            this.pageNumber = searchState.pageNumber;
+          // grab the latest criteria object from our in-memory store
+          const searchState = this.criteriaService.getSearchState(this.searchCriteriaTemplate.metaEntityName);
+          criteriaForm.patchValue(searchState.criteria);
+          this.pageNumber = searchState.pageNumber;
 
-            // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
-            this.resultTableTemplate = ctx.metaPage.templates[1];
-            if (!this.resultTableTemplate.binding) {
-              this.resultTableTemplate.binding = 'results';
-              this.resultTableTemplate.navigation = TemplateNavigationType.Enabled;
-              this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}';  // the ${id} parameter is being passed in as an expression to be resolved later
-            }
+          // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
+          this.resultTableTemplate = ctx.metaPage.templates[1];
+          if (!this.resultTableTemplate.binding) {
+            this.resultTableTemplate.binding = 'results';
+            this.resultTableTemplate.navigation = TemplateNavigationType.Enabled;
+            this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}';  // the ${id} parameter is being passed in as an expression to be resolved later
+          }
 
-            const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName;
-            const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
-            if (rtme) {
-              this.resultTableMetaEntity = rtme;
-              this.onSearch(ctx);
-              return of(ctx);
-            } else {
-              throw new Error(`Unable to find metaEntity of; ${resultTableMetaEntityName}`);
-            }
-          }));
-        } else {
-          throw new Error('Invalid input parameters; ');
-        }
-      //}));
+          const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName;
+          const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
+          if (rtme) {
+            this.resultTableMetaEntity = rtme;
+            this.onSearch(ctx);
+            return of(ctx);
+          } else {
+            throw new Error(`Unable to find metaEntity of; ${resultTableMetaEntityName}`);
+          }
+        }));
+      } else {
+        throw new Error('Invalid input parameters; ');
+      }
     });
   }
 
@@ -170,12 +169,15 @@ export class DataSearchComponent implements OnInit {
     }
   }
 
-  get newButtonLbl() {
+  get addButtonLbl() {
     return this.metaName ? `Add ${this.metaName.toLowerCase()}` : 'Add';
   }
 
-  onNew(ctx: FormContext) {
+  onAdd(ctx: FormContext) {
     this.router.navigate([`/data/${this.metaName}/edit/**NEW**`]);
   }
 
+  get ActionType() {
+    return ActionType;
+  }
 }

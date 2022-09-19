@@ -2,6 +2,7 @@ import { MetaRoleService } from '../meta/role/meta-role-service/meta-role.servic
 import { MetaRole } from '../domain/meta.role';
 import {BehaviorSubject, Observable, of, switchMap} from 'rxjs';
 import {Injectable} from '@angular/core';
+import {AuthenticationService} from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,8 @@ export class AuthorizationService {
 
   permissionMap$ = new BehaviorSubject<Map<string, string[]>|null>(null);
 
-  constructor(protected readonly metaRoleService: MetaRoleService) {
+  constructor(protected readonly metaRoleService: MetaRoleService,
+              protected readonly authenticationService: AuthenticationService) {
     this.loadPermissions().subscribe((permissionMap) => {
       console.log('GOT permissionMap');
       this.permissionMap$.next(permissionMap);
@@ -65,13 +67,25 @@ export class AuthorizationService {
   }
 
   checkPermission(
-    userGroups: string[],
     action: string,
-    subject: string,
+    subject: string | null,
   ): boolean {
-    const permissionMap = this.permissionMap$.getValue();
-    if(permissionMap) {
-      return this.checkPermissionWithMap(userGroups, permissionMap, action, subject);
+    // For both the user and permissionMap$ streams below we depend on the latest value which may be null but
+    // that's ok because if there is no current user logged in then the right answer is to return false.
+    if(subject) {
+      const user = this.authenticationService.user$.getValue();
+      if(user) {
+        const userGroups = user.getGroups();
+        const permissionMap = this.permissionMap$.getValue();
+        if (permissionMap) {
+          return this.checkPermissionWithMap(userGroups, permissionMap, action, subject);
+        } else {
+          return false;
+        }
+      }
+      else {
+        return false;
+      }
     }
     else {
       return false;
@@ -84,38 +98,27 @@ export class AuthorizationService {
     action: string,
     subject: string,
   ): boolean {
-    let foundMatch = false;
-    for (let i = 0; i < userGroups.length && !foundMatch; i++) {
+    let permitted = false;
+    for (let i = 0; i < userGroups.length && !permitted; i++) {
       const group = userGroups[i];
       const groupPermissions = permissionMap.get(group);
       if(groupPermissions) {
-        for (let j = 0; j < groupPermissions.length && !foundMatch; j++) {
+        for (let j = 0; j < groupPermissions.length && !permitted; j++) {
           const permits = groupPermissions[j].split('.');
           const permitAction = permits[0];
           const permitSubject = permits[1];
-          foundMatch = this.isPermittedMatch(
+          permitted = this.isPermittedMatch(
             action,
             subject,
             permitAction,
             permitSubject,
           );
-
-          if (foundMatch) {
-            console.log(`FOUND: ${groupPermissions[j]}`);
-            return true;
-          }
         }
       }
     }
 
-    if (!foundMatch) {
-      console.log(`NOT FOUND: ${action}.${subject}`);
-      return false;
-    } else {
-      throw new Error(
-        'Unexpected code path. Should have returned from method by now',
-      );
-    }
+    console.log(`CheckPermission: ${action}.${subject} for ${userGroups} = ${permitted}`);
+    return permitted;
   }
 
   private isPermittedMatch(

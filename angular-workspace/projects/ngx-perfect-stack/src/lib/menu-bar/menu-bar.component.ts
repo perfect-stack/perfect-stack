@@ -48,14 +48,9 @@ export class MenuBarComponent implements OnInit {
 
   updateMenuEnabled() {
     const nextMenuEnabled: any = {};
-    const user = this.authenticationService.user$.getValue();
-    if(user) {
-      const  userGroups = user.getGroups();
-      for(const nextMenu of this.metaMenuService.menu.menuList) {
-        nextMenuEnabled[nextMenu.label] = this.authorizationService.checkPermission(userGroups, ActionType.Menu, nextMenu.label);
-      }
+    for(const nextMenu of this.metaMenuService.menu.menuList) {
+      nextMenuEnabled[nextMenu.label] = this.authorizationService.checkPermission(ActionType.Menu, nextMenu.label);
     }
-
     this.menuEnabled = nextMenuEnabled;
   }
 }

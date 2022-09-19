@@ -1,3 +1,5 @@
+import {ActionType} from './meta.role';
+
 export enum ComponentType {
   BadgeList = 'BadgeList',
   DatePicker = 'DatePicker',
@@ -89,6 +91,8 @@ export class ButtonTool extends Tool {
   action: string;
   route: string;
   icon: string;
+  actionPermit: ActionType;
+  subjectPermit: string;
 }
 
 export class ButtonGroupTool extends Tool {

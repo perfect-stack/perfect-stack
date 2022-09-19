@@ -86,7 +86,9 @@
           "modes": "",
           "action": "recordEvent",
           "route": "data/Event/edit/**NEW**?bird_id=${bird.id}",
-          "icon": ""
+          "icon": "",
+          "actionPermit": "Edit",
+          "subjectPermit": "Event"
         }
       },
       "styles": ""
@@ -245,7 +247,9 @@
                   "containerStyles": "",
                   "styles": "btn btn-outline-primary",
                   "label": "Edit bird",
-                  "route": "/data/Bird/edit/${bird.id}"
+                  "route": "/data/Bird/edit/${bird.id}",
+                  "actionPermit": "Edit",
+                  "subjectPermit": "Bird"
                 },
                 "BottomRight": {
                   "type": "Button",
@@ -256,7 +260,9 @@
                   "modes": "",
                   "action": "",
                   "route": "/route/go/here",
-                  "icon": "delete"
+                  "icon": "delete",
+                  "actionPermit": "Archive",
+                  "subjectPermit": "Bird"
                 }
               },
               "styles": "bird-view"

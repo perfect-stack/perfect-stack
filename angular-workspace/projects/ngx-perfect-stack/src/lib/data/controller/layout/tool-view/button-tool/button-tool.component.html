@@ -1,11 +1,13 @@
-<button [ngClass]="buttonTool.styles" (click)="onClick()">
-  <ng-container *ngIf="buttonTool.icon">
-    <div class="d-flex align-items-center">
-      <span class="material-symbols-outlined pe-1">{{buttonTool.icon}}</span>
+<lib-permission-check [action]="buttonTool.actionPermit" [subject]="buttonTool.subjectPermit">
+  <button [ngClass]="buttonTool.styles" (click)="onClick()">
+    <ng-container *ngIf="buttonTool.icon">
+      <div class="d-flex align-items-center">
+        <span class="material-symbols-outlined pe-1">{{buttonTool.icon}}</span>
+        {{buttonTool.label}}
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!buttonTool.icon">
       {{buttonTool.label}}
-    </div>
-  </ng-container>
-  <ng-container *ngIf="!buttonTool.icon">
-    {{buttonTool.label}}
-  </ng-container>
-</button>
+    </ng-container>
+  </button>
+</lib-permission-check>

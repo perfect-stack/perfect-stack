@@ -5,6 +5,7 @@ import {
   TemplateShowSideHeadingsType,
   TemplateType
 } from '../../domain/meta.page';
+import {ActionType} from '../../domain/meta.role';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,8 @@ export const ButtonPropertyList = [
   { name: 'action', type: PropertyType.string},
   { name: 'route', type: PropertyType.route},
   { name: 'icon', type: PropertyType.string},
+  { name: 'actionPermit', type: PropertyType.string, options: ActionType},
+  { name: 'subjectPermit', type: PropertyType.string}
 ];
 
 export const ButtonGroupPropertyList = [

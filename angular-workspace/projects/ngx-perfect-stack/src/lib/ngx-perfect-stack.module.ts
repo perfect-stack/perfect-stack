@@ -133,6 +133,7 @@ import {STANDARD_CONTROLLERS, standardControllers} from './data/controller/stand
 import { MetaRoleSearchComponent } from './meta/role/meta-role-search/meta-role-search.component';
 import { MetaRoleEditComponent } from './meta/role/meta-role-edit/meta-role-edit.component';
 import {MetaRoleService} from './meta/role/meta-role-service/meta-role.service';
+import { PermissionCheckComponent } from './data/controller/layout/permission-check/permission-check.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -263,7 +264,8 @@ const routes: Routes = [
     PaginateToolComponent,
     ControllerListComponent,
     MetaRoleSearchComponent,
-    MetaRoleEditComponent
+    MetaRoleEditComponent,
+    PermissionCheckComponent
   ],
   providers: [
     AuthenticationService,
