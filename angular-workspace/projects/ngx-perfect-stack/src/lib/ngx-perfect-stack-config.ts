@@ -1,4 +1,5 @@
 import {InjectionToken} from '@angular/core';
+import {MetaRole} from './domain/meta.role';
 
 export const STACK_CONFIG = new InjectionToken<NgxPerfectStackConfig>('NgxPerfectStackConfig');
 
@@ -11,4 +12,5 @@ export interface NgxPerfectStackConfig {
   dateTimeFormat: string;
   timeFormat: string;
   debug: boolean;
+  metaRoleList: MetaRole[],
 }

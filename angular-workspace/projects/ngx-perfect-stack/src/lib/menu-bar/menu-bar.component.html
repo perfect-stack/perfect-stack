@@ -12,7 +12,7 @@
        }" href="#">{{applicationTitle}}</a>
   </div>
 
-  <div class="d-flex justify-content-between w-50" *ngIf="authenticationService.isLoggedIn">
+  <div class="d-flex justify-content-between w-50">
     <div class="" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
       <ng-container *ngIf="menuEnabled[nextMenu.label]">
         <ng-container *ngIf="nextMenu.items.length > 1">

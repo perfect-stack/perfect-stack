@@ -14,7 +14,7 @@ import {LoginNotification} from './login-notification';
 })
 export class AuthenticationService {
 
-  isLoggedIn = false;
+  isLoggedIn: boolean | null = null;
 
   user$ = new BehaviorSubject<User|null>(null);
 
@@ -36,7 +36,9 @@ export class AuthenticationService {
   createUserFromLocalStorage() {
     const idToken = localStorage.getItem('idToken');
     const accessToken = localStorage.getItem('accessToken');
-    this.createUser(idToken, accessToken);
+    if(idToken && accessToken) {
+      this.createUser(idToken, accessToken);
+    }
   }
 
   createUser(idToken: string | null, accessToken: string | null) {
@@ -45,7 +47,6 @@ export class AuthenticationService {
       const decodedToken: any = jwt_decode(idToken);
       const expiryTime = ZonedDateTime.from(nativeJs(new Date(decodedToken.exp * 1000)));
       if(expiryTime.isAfter(ZonedDateTime.now(ZoneId.UTC))) {
-        console.log(`Create user: session is active.`);
         user = new CognitoUser(this.stackConfig);
         user.idToken = idToken;
         user.accessToken = accessToken;
@@ -56,12 +57,15 @@ export class AuthenticationService {
         this.navigateToFirstPage();
 
         this.isLoggedIn = true;
+        console.log(`Create user: session is active.`);
       }
       else {
+        this.isLoggedIn = false;
         console.log(`Create user: session is expired.`);
       }
     }
     else {
+      this.isLoggedIn = false;
       console.log(`Create user: null tokens.`);
     }
     this.user$.next(user);

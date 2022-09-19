@@ -38,15 +38,16 @@ export class MenuBarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authorizationService.permissionMap$.subscribe((permissionMap) => {
-      // The first value through this handler will be null, but that's ok. It just takes a little while for the
-      // AuthorizationServer to load the permissions.
-      console.log('MenuBarComponent Permissions: ', permissionMap)
+    this.authenticationService.user$.subscribe((user) => {
+      // The first value through this handler can be null if it needs to be but that's ok.
+      console.log('MenuBarComponent User updated: ', user)
       this.updateMenuEnabled();
     });
   }
 
   updateMenuEnabled() {
+    // sweep through the menus and check permissions for each. store this in a variable and only update it when the
+    // user changes
     const nextMenuEnabled: any = {};
     for(const nextMenu of this.metaMenuService.menu.menuList) {
       nextMenuEnabled[nextMenu.label] = this.authorizationService.checkPermission(ActionType.Menu, nextMenu.label);

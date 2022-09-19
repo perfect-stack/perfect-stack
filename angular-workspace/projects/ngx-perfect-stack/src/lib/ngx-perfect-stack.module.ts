@@ -134,6 +134,10 @@ import { MetaRoleSearchComponent } from './meta/role/meta-role-search/meta-role-
 import { MetaRoleEditComponent } from './meta/role/meta-role-edit/meta-role-edit.component';
 import {MetaRoleService} from './meta/role/meta-role-service/meta-role.service';
 import { PermissionCheckComponent } from './data/controller/layout/permission-check/permission-check.component';
+import { AuthorizationErrorComponent } from './authentication/authorization-error/authorization-error.component';
+import {AuthorizationService} from './authentication/authorization.service';
+import {Observable, tap} from 'rxjs';
+import {MetaRole} from './domain/meta.role';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -157,6 +161,7 @@ const routes: Routes = [
   // No AuthGuard on these
   { path: 'login-callback', component: LoginCallbackComponent},
   { path: 'session-timeout', component: SessionTimeOutComponent},
+  { path: 'authorization-error', component: AuthorizationErrorComponent},
 
   // Just for Controller development purposes
   { path: 'controller', component: ControllerComponent},
@@ -265,9 +270,11 @@ const routes: Routes = [
     ControllerListComponent,
     MetaRoleSearchComponent,
     MetaRoleEditComponent,
-    PermissionCheckComponent
+    PermissionCheckComponent,
+    AuthorizationErrorComponent
   ],
   providers: [
+    {provide: APP_INITIALIZER, useFactory: initPermissions2, deps: [HttpClient, AuthorizationService], multi: true},
     AuthenticationService,
     ClientConfigService,
     MetaRoleService,
@@ -281,6 +288,8 @@ const routes: Routes = [
     {provide: 'SearchController', useExisting: SearchControllerService},
     {provide: STANDARD_CONTROLLERS, useValue: standardControllers},
     //{provide: APP_INITIALIZER, useFactory: () => initializeAuth, multi: true},
+//    {provide: APP_INITIALIZER, useFactory: () => initPermissions, deps: [HttpClient, AuthorizationService], multi: true},
+    //{provide: APP_INITIALIZER, useFactory: initPermissions2, deps: [HttpClient, AuthorizationService], multi: true},
     {provide: APP_INITIALIZER, useFactory: () => inject(INJECTOR).get(MetaMenuService).initMenu(), deps: [HttpClient, MetaMenuService], multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true},
@@ -311,3 +320,26 @@ const routes: Routes = [
 })
 export class NgxPerfectStackModule {}
 
+
+// function initPermissions(authorizationService: AuthorizationService): () => Observable<any> {
+//   return () => {
+//     return authorizationService.loadPermissions().pipe(tap((permissions) => {
+//       authorizationService.permissionMap$.next(permissions);
+//     }));
+//   }
+// }
+
+// function initPermissions1(http: HttpClient): () => Observable<any> {
+//   return () => http.get('http://localhost:3080/meta/role').pipe(tap((response) => {
+//     console.log('Application: initPermissions!!', response);
+//   }));
+// }
+
+function initPermissions2(http: HttpClient, authorizationService: AuthorizationService): () => Observable<any> {
+  return () => http.get('http://localhost:3080/meta/role').pipe(tap((response) => {
+    const metaRoleList = response as MetaRole[];
+    const permissions = authorizationService.loadPermissionsFromMetaRoleList(metaRoleList);
+    authorizationService.permissionMap$.next(permissions);
+    console.log('Application: initPermissions!!', response);
+  }));
+}

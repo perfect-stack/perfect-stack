@@ -23,11 +23,19 @@ fetch('/client.json')
       dateTimeFormat: configJson.DATE_TIME_FORMAT,
       timeFormat: configJson.TIME_FORMAT,
       debug: configJson.DEBUG,
+      metaRoleList: [],
     };
 
-    platformBrowserDynamic([
-      { provide: STACK_CONFIG, useValue: stackConfig}
-    ])
-      .bootstrapModule(AppModule)
-      .catch(err => console.error(err))
+    fetch(`${configJson.API_URL}/meta/role`)
+      .then((metaRoleResponse) => metaRoleResponse.json())
+      .then((metaRoleJson) => {
+        console.log('Downloaded metaRoleJson:', metaRoleJson);
+        stackConfig.metaRoleList = metaRoleJson;
+
+        platformBrowserDynamic([
+          { provide: STACK_CONFIG, useValue: stackConfig}
+        ])
+          .bootstrapModule(AppModule)
+          .catch(err => console.error(err))
+      });
 });

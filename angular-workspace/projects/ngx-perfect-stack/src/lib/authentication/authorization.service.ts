@@ -1,8 +1,9 @@
 import { MetaRoleService } from '../meta/role/meta-role-service/meta-role.service';
 import { MetaRole } from '../domain/meta.role';
 import {BehaviorSubject, Observable, of, switchMap} from 'rxjs';
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {AuthenticationService} from './authentication.service';
+import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +13,30 @@ export class AuthorizationService {
   permissionMap$ = new BehaviorSubject<Map<string, string[]>|null>(null);
 
   constructor(protected readonly metaRoleService: MetaRoleService,
-              protected readonly authenticationService: AuthenticationService) {
-    this.loadPermissions().subscribe((permissionMap) => {
-      console.log('GOT permissionMap');
-      this.permissionMap$.next(permissionMap);
-    });
+              protected readonly authenticationService: AuthenticationService,
+              @Inject(STACK_CONFIG)
+              protected readonly stackConfig: NgxPerfectStackConfig) {
+    // this.loadPermissions().subscribe((permissionMap) => {
+    //   console.log('GOT permissionMap');
+    //   this.permissionMap$.next(permissionMap);
+    // });
+    const nextPermissionMap = this.loadPermissionsFromMetaRoleList(stackConfig.metaRoleList);
+    this.permissionMap$.next(nextPermissionMap);
+  }
+
+  // initApplication(): any {
+  //   return new Promise((resolve, reject) => {
+  //     this.loadPermissions().pipe(switchMap( (permissionMap) => {
+  //       console.log('GOT permissionMap');
+  //       this.permissionMap$.next(permissionMap);
+  //       resolve(true);
+  //       return of(true);
+  //     }));
+  //   });
+  // }
+
+  init() {
+    console.log('init()');
   }
 
   loadPermissions(): Observable<Map<string, string[]>> {
@@ -34,6 +54,20 @@ export class AuthorizationService {
 
       return of(permissionMap);
     }));
+  }
+
+  loadPermissionsFromMetaRoleList(metaRoleList: MetaRole[]) {
+    const permissionMap = new Map<string, string[]>();
+    for (const nextMetaRole of metaRoleList) {
+      const groupNames = nextMetaRole.group.split(',');
+      for (const nextGroupName of groupNames) {
+        permissionMap.set(
+          nextGroupName,
+          this.loadPermissionsForRole(nextMetaRole, metaRoleList),
+        );
+      }
+    }
+    return permissionMap;
   }
 
   private loadPermissionsForRole(
@@ -80,14 +114,17 @@ export class AuthorizationService {
         if (permissionMap) {
           return this.checkPermissionWithMap(userGroups, permissionMap, action, subject);
         } else {
+          console.log('CheckPermission: FALSE, no permissionMap');
           return false;
         }
       }
       else {
+        console.log('CheckPermission: FALSE, no user');
         return false;
       }
     }
     else {
+      console.log('CheckPermission: FALSE, no subject');
       return false;
     }
   }
@@ -132,4 +169,5 @@ export class AuthorizationService {
       (subject === permitSubject || permitSubject === 'Any')
     );
   }
+
 }
