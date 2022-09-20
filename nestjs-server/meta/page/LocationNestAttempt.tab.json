@@ -1,0 +1,24 @@
+{
+  "name": "LocationNestAttempt.tab",
+  "title": "Find nest attempt",
+  "type": "view_edit",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "nest_attempt"
+          }
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "form",
+      "binding": "event"
+    }
+  ]
+}

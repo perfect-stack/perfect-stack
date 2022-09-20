@@ -1,0 +1,84 @@
+{
+  "name": "NestAttempt.search",
+  "title": "$PageTitle",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "nest_type",
+            "component": "Select"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "season",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "NestAttempt",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "nest_type"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "season"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "NestAttempt",
+      "type": "table",
+      "orderByName": "name",
+      "orderByDir": "ASC"
+    }
+  ]
+}

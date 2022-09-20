@@ -34,6 +34,29 @@
       ]
     },
     {
+      "label": "Nesting",
+      "items": [
+        {
+          "label": "Nest Attempts",
+          "route": "/data/NestAttempt/search",
+          "editable": true,
+          "roles": []
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Nest Type",
+          "route": "/data/NestType/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Season",
+          "route": "/data/Season/search_edit"
+        }
+      ]
+    },
+    {
       "label": "People",
       "items": [
         {

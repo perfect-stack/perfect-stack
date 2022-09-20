@@ -364,6 +364,22 @@
         "Night",
         "Unknown"
       ]
+    },
+    {
+      "name": "nest_attempt",
+      "label": "Nest attempt",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "NestAttempt",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
     }
   ]
 }

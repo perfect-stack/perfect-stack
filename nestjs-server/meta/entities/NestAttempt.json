@@ -1,0 +1,192 @@
+{
+  "name": "NestAttempt",
+  "pluralName": "Nest Attempts",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "name",
+      "label": "Name",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        },
+        {
+          "type": "UniqueInsensitive",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "nest_type",
+      "label": "Nest type",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "NestType",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
+    },
+    {
+      "name": "season",
+      "label": "Season",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Season",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "location",
+      "label": "Location",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "easting",
+      "label": "Easting",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "0",
+      "type": "Double",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "northing",
+      "label": "Northing",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "0",
+      "type": "Double",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "notes",
+      "label": "Notes",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Html",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "altitude",
+      "label": "Altitude",
+      "description": "",
+      "unitOfMeasure": "m",
+      "scale": "0",
+      "type": "Double",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0"
+        }
+      ]
+    },
+    {
+      "name": "start_date",
+      "label": "Start date",
+      "description": "The estimated date the nesting attempt started",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Date",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        },
+        {
+          "type": "Range",
+          "config": ",$today"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "Administrator",
-  "group": "admins",
+  "group": "admins,ap-southeast-2_CIl5VvfWD_doc-azuread-sso",
   "inherits": "Manager",
   "description": "<p>Controls admin menu, add projects, set project manager role, Add/Edit people (non-user)</p>",
   "permissions": [
@@ -27,6 +27,14 @@
     {
       "action": "Edit",
       "subject": "Species"
+    },
+    {
+      "action": "Edit",
+      "subject": "Season"
+    },
+    {
+      "action": "Edit",
+      "subject": "NestType"
     },
     {
       "action": "Menu",

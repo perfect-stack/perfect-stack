@@ -1,0 +1,214 @@
+{
+  "name": "NestAttempt.view_edit",
+  "title": "Nest Attempt",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [
+    {
+      "dataName": "nestAttempt",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "NestAttempt",
+      "fieldName": "id",
+      "parameter": "id"
+    },
+    {
+      "dataName": "nestAttemptEvents",
+      "resultCardinality": "QueryMany",
+      "queryType": "Entity",
+      "queryName": "Event",
+      "metaEntityName": "Event",
+      "fieldName": "nest_attempt_id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "Map",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "easting": "easting",
+              "northing": "northing"
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "NestAttempt",
+      "type": "form",
+      "binding": "nestAttempt"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "nest_type",
+            "component": "Select"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "component": "Select",
+            "attributeName": "start_date"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "season"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "3",
+            "attributeName": "notes",
+            "component": "TextArea"
+          }
+        ]
+      ],
+      "metaEntityName": "NestAttempt",
+      "type": "form",
+      "templateHeading": "Nest details",
+      "binding": "nestAttempt"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "easting"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "northing"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "altitude"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "NestAttempt",
+      "type": "form",
+      "templateHeading": "Location",
+      "binding": "nestAttempt"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "text": "Table of birds related to this nest event from querying the Events"
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "NestAttempt",
+      "type": "form",
+      "binding": "nestAttempt",
+      "templateHeading": "Birds"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "template": {
+              "binding": "nestAttemptEvents",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "Event",
+              "cells": [
+                [
+                  {
+                    "width": "6",
+                    "height": "1",
+                    "attributeName": "date_time"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "bird"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "event_type"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "activities"
+                  }
+                ]
+              ],
+              "styles": "",
+              "orderByName": "",
+              "orderByDir": "",
+              "noItemsHtml": "",
+              "locations": {}
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "form",
+      "binding": "nestAttemptEvents",
+      "templateHeading": "Events"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "text": "Summary of outcomes for each egg/chick found by querying \"Outcome\" activities from the Events above."
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Person",
+      "type": "form",
+      "templateHeading": "Outcomes"
+    }
+  ]
+}
