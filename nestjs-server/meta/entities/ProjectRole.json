@@ -23,7 +23,7 @@
     {
       "name": "name",
       "label": "Name",
-      "description": "",
+      "description": "Name of project role",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -37,7 +37,7 @@
     {
       "name": "description",
       "label": "Description",
-      "description": "",
+      "description": "Description of project role",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -51,7 +51,7 @@
     {
       "name": "start_date",
       "label": "Start date",
-      "description": "",
+      "description": "Date this role first available ",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -65,7 +65,7 @@
     {
       "name": "end_date",
       "label": "End date",
-      "description": "",
+      "description": "Last date this role available",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -79,7 +79,7 @@
     {
       "name": "sort_index",
       "label": "Sort index",
-      "description": "",
+      "description": "The position of this item in the dropdown list",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Integer",
@@ -93,7 +93,7 @@
     {
       "name": "role",
       "label": "role",
-      "description": "",
+      "description": "The role the team member has within the project ",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",

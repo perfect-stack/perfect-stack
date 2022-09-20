@@ -23,7 +23,7 @@
     {
       "name": "project",
       "label": "Project",
-      "description": "",
+      "description": "The project id that a bird belongs to",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",

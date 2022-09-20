@@ -23,7 +23,7 @@
     {
       "name": "name",
       "label": "Name",
-      "description": "",
+      "description": "Location name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -37,7 +37,7 @@
     {
       "name": "location_type",
       "label": "Location type",
-      "description": "",
+      "description": "Type of location",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -58,7 +58,7 @@
     {
       "name": "description",
       "label": "Description",
-      "description": "",
+      "description": "Description of the location",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Html",
@@ -72,7 +72,7 @@
     {
       "name": "easting",
       "label": "Easting",
-      "description": "",
+      "description": "Grid coordinate Easting using NZTM",
       "unitOfMeasure": "",
       "scale": "0",
       "type": "Double",
@@ -95,7 +95,7 @@
     {
       "name": "northing",
       "label": "Northing",
-      "description": "",
+      "description": "Grid coordinate northing using NZTM",
       "unitOfMeasure": "",
       "scale": "0",
       "type": "Double",
@@ -118,7 +118,7 @@
     {
       "name": "location_name",
       "label": "Location name",
-      "description": "",
+      "description": "Location name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -137,7 +137,7 @@
     {
       "name": "altitude",
       "label": "Altitude",
-      "description": "",
+      "description": "Altitude of the location",
       "unitOfMeasure": "m",
       "scale": "0",
       "type": "Double",

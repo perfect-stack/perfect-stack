@@ -23,7 +23,7 @@
     {
       "name": "date",
       "label": "Date",
-      "description": "",
+      "description": "Date of the event",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -37,7 +37,7 @@
     {
       "name": "comments",
       "label": "Comments",
-      "description": "",
+      "description": "General comments regarding the event",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Html",
@@ -51,7 +51,7 @@
     {
       "name": "observers",
       "label": "Observers",
-      "description": "",
+      "description": "Observers at the event",
       "unitOfMeasure": "",
       "scale": "",
       "type": "OneToMany",
@@ -65,7 +65,7 @@
     {
       "name": "location",
       "label": "Location",
-      "description": "",
+      "description": "Location of the event",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -81,7 +81,7 @@
     {
       "name": "activities",
       "label": "Activities",
-      "description": "",
+      "description": "Activities for the event",
       "unitOfMeasure": "",
       "scale": "",
       "type": "OneToPoly",
@@ -125,7 +125,7 @@
     {
       "name": "northing",
       "label": "Northing",
-      "description": "",
+      "description": "Grid coordinate Northing using NZTM",
       "unitOfMeasure": "",
       "scale": "0",
       "type": "Double",
@@ -148,7 +148,7 @@
     {
       "name": "easting",
       "label": "Easting",
-      "description": "",
+      "description": "Grid coordinate easting using NZTM",
       "unitOfMeasure": "",
       "scale": "0",
       "type": "Double",
@@ -190,7 +190,7 @@
     {
       "name": "event_type",
       "label": "Event type",
-      "description": "",
+      "description": "Type of event",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Enumeration",
@@ -216,7 +216,7 @@
     {
       "name": "species",
       "label": "Species",
-      "description": "",
+      "description": "Species of the bird for this event",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -232,7 +232,7 @@
     {
       "name": "form",
       "label": "Form",
-      "description": "",
+      "description": "Form of the bird for this event",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -287,7 +287,7 @@
     {
       "name": "sex",
       "label": "Sex",
-      "description": "",
+      "description": "Sex",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Enumeration",
@@ -329,7 +329,7 @@
     {
       "name": "altitude",
       "label": "Altitude",
-      "description": "",
+      "description": "Altitude",
       "unitOfMeasure": "m",
       "scale": "0",
       "type": "Double",

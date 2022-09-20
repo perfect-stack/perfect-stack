@@ -9,7 +9,7 @@
     {
       "name": "date_from",
       "label": "Date from",
-      "description": "",
+      "description": "Starting date used for search",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -23,7 +23,7 @@
     {
       "name": "date_to",
       "label": "Date to",
-      "description": "",
+      "description": "Ending date used for search",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -37,7 +37,7 @@
     {
       "name": "event_type",
       "label": "Event type",
-      "description": "",
+      "description": "Event type for search",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Enumeration",
@@ -58,7 +58,7 @@
     {
       "name": "activity_type",
       "label": "Activity type",
-      "description": "",
+      "description": "Activity type for search",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Enumeration",

@@ -23,7 +23,7 @@
     {
       "name": "band",
       "label": "Band",
-      "description": "",
+      "description": "Band number used",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -37,7 +37,7 @@
     {
       "name": "activity_type",
       "label": "Activity type",
-      "description": "",
+      "description": "Activity type used",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",

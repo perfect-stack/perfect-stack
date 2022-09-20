@@ -1,6 +1,6 @@
 {
   "name": "ObserverRole",
-  "pluralName": "Observer roles",
+  "pluralName": "Observer Roles",
   "icon": "",
   "type": "Database",
   "rootNode": true,
@@ -51,7 +51,7 @@
     {
       "name": "start_date",
       "label": "Start date",
-      "description": "",
+      "description": "Date role first available",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -65,7 +65,7 @@
     {
       "name": "end_date",
       "label": "End date",
-      "description": "",
+      "description": "Last date observer role available ",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -79,7 +79,7 @@
     {
       "name": "sort_index",
       "label": "Sort index",
-      "description": "",
+      "description": "The position of this item in the dropdown list",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Integer",

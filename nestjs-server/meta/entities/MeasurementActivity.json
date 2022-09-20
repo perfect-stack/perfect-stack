@@ -23,7 +23,7 @@
     {
       "name": "bill_length",
       "label": "Bill length",
-      "description": "",
+      "description": "Length of the bird's bill",
       "unitOfMeasure": "mm",
       "scale": "1",
       "type": "Double",
@@ -42,7 +42,7 @@
     {
       "name": "tarsus_length",
       "label": "Tarsus length",
-      "description": "",
+      "description": "Length of the bird's tarsus",
       "unitOfMeasure": "mm",
       "scale": "1",
       "type": "Double",
@@ -61,7 +61,7 @@
     {
       "name": "tarsus_width",
       "label": "Tarsus width",
-      "description": "",
+      "description": "Width of the bird's tarsus",
       "unitOfMeasure": "mm",
       "scale": "1",
       "type": "Double",
@@ -80,7 +80,7 @@
     {
       "name": "tarsus_depth",
       "label": "Tarsus depth",
-      "description": "",
+      "description": "Depth of the bird's tarsus",
       "unitOfMeasure": "mm",
       "scale": "1",
       "type": "Double",
@@ -99,7 +99,7 @@
     {
       "name": "activity_type",
       "label": "Activity type",
-      "description": "",
+      "description": "Activity type",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",

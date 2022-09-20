@@ -42,7 +42,7 @@
     {
       "name": "activity_type",
       "label": "Activity type",
-      "description": "",
+      "description": "Type of activity",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",

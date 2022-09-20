@@ -23,7 +23,7 @@
     {
       "name": "name",
       "label": "Name",
-      "description": "",
+      "description": "Team member name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -37,7 +37,7 @@
     {
       "name": "email_address",
       "label": "Email Address",
-      "description": "",
+      "description": "Email address of team member",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -51,7 +51,7 @@
     {
       "name": "role",
       "label": "Role",
-      "description": "",
+      "description": "Role of team member",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -65,7 +65,7 @@
     {
       "name": "last_sign_in",
       "label": "Last sign in",
-      "description": "",
+      "description": "Date team member last signed on",
       "unitOfMeasure": "",
       "scale": "",
       "type": "DateTime",

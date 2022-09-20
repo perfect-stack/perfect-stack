@@ -51,7 +51,7 @@
     {
       "name": "species",
       "label": "Species",
-      "description": "",
+      "description": "Species name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -65,7 +65,7 @@
     {
       "name": "form",
       "label": "Form",
-      "description": "",
+      "description": "Form name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -79,7 +79,7 @@
     {
       "name": "band",
       "label": "Band",
-      "description": "",
+      "description": "Band number",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -93,7 +93,7 @@
     {
       "name": "microchip",
       "label": "Microchip",
-      "description": "",
+      "description": "Microchip number",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -107,7 +107,7 @@
     {
       "name": "wing_tag",
       "label": "Wing tag",
-      "description": "",
+      "description": "Wing tag number",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -121,7 +121,7 @@
     {
       "name": "status",
       "label": "Status",
-      "description": "",
+      "description": "Status of bird",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -135,7 +135,7 @@
     {
       "name": "sex",
       "label": "Sex",
-      "description": "",
+      "description": "Bird sex",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -149,7 +149,7 @@
     {
       "name": "project_id",
       "label": "Project id",
-      "description": "",
+      "description": "Project id",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Identifier",

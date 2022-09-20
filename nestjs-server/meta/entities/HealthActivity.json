@@ -47,7 +47,7 @@
     {
       "name": "lice",
       "label": "Lice",
-      "description": "",
+      "description": "Are there any lice present",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Boolean",
@@ -61,7 +61,7 @@
     {
       "name": "whisker_fungus",
       "label": "Whisker fungus",
-      "description": "",
+      "description": "Is there whisker fungus",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Boolean",
@@ -75,7 +75,7 @@
     {
       "name": "activity_type",
       "label": "Activity type",
-      "description": "",
+      "description": "Type of activity",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -89,7 +89,7 @@
     {
       "name": "eyes_checked",
       "label": "Eyes checked",
-      "description": "",
+      "description": "Were the eyes checked",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Boolean",
@@ -103,7 +103,7 @@
     {
       "name": "legs_checked",
       "label": "Legs checked",
-      "description": "",
+      "description": "Were the legs checked",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Boolean",
@@ -117,7 +117,7 @@
     {
       "name": "health_notes",
       "label": "Health notes",
-      "description": "",
+      "description": "Any health notes to record for the bird",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Html",

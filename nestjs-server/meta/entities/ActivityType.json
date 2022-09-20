@@ -1,15 +1,14 @@
 {
   "name": "ActivityType",
-  "pluralName": "Activity types",
+  "pluralName": "Activity Types",
   "icon": "",
   "type": "Database",
-  "rootNode": true,
   "timestamps": true,
   "attributes": [
     {
       "name": "id",
       "label": "Id",
-      "description": "",
+      "description": "Id",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Identifier",
@@ -23,7 +22,7 @@
     {
       "name": "name",
       "label": "Name",
-      "description": "",
+      "description": "Activity name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -37,7 +36,7 @@
     {
       "name": "description",
       "label": "Description",
-      "description": "",
+      "description": "Description of activity",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -51,7 +50,7 @@
     {
       "name": "start_date",
       "label": "Start date",
-      "description": "",
+      "description": "Date when activity type starts",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -65,7 +64,7 @@
     {
       "name": "end_date",
       "label": "End date",
-      "description": "",
+      "description": "Date when activity type ends",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -79,7 +78,7 @@
     {
       "name": "sort_index",
       "label": "Sort index",
-      "description": "",
+      "description": "The position of this item in the dropdown list",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Integer",

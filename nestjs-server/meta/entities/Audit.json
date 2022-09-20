@@ -9,7 +9,7 @@
     {
       "name": "id",
       "label": "Id",
-      "description": "",
+      "description": "Id",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Identifier",
@@ -23,7 +23,7 @@
     {
       "name": "date_time",
       "label": "Date time",
-      "description": "",
+      "description": "Date time for audit action",
       "unitOfMeasure": "",
       "scale": "",
       "type": "DateTime",
@@ -37,7 +37,7 @@
     {
       "name": "action",
       "label": "Action",
-      "description": "",
+      "description": "Type of change",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Enumeration",
@@ -57,7 +57,7 @@
     {
       "name": "meta_entity",
       "label": "Meta entity",
-      "description": "",
+      "description": "Which entity has been changed",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -71,7 +71,7 @@
     {
       "name": "entity_id",
       "label": "Entity id",
-      "description": "",
+      "description": "Id of entity changed",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -85,7 +85,7 @@
     {
       "name": "person_name",
       "label": "Person name",
-      "description": "",
+      "description": "Name of person making the change",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -99,7 +99,7 @@
     {
       "name": "person_id",
       "label": "Person id",
-      "description": "",
+      "description": "Id of person making the change",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -113,7 +113,7 @@
     {
       "name": "duration",
       "label": "Duration",
-      "description": "",
+      "description": "Time taken to make the change",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Integer",

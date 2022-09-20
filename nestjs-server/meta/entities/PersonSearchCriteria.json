@@ -23,7 +23,7 @@
     {
       "name": "organisation",
       "label": "Organisation",
-      "description": "",
+      "description": "Person's organisation they belong to",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -39,7 +39,7 @@
     {
       "name": "email_address",
       "label": "Email address",
-      "description": "",
+      "description": "Email address of the person",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",

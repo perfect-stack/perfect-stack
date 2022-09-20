@@ -23,7 +23,7 @@
     {
       "name": "member",
       "label": "Member",
-      "description": "",
+      "description": "Name of member ",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -40,7 +40,7 @@
     {
       "name": "join_date",
       "label": "Join Date",
-      "description": "",
+      "description": "Date the member joined the project",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -54,7 +54,7 @@
     {
       "name": "left_date",
       "label": "Left Date",
-      "description": "",
+      "description": "Date the member left the project ",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -68,7 +68,7 @@
     {
       "name": "role",
       "label": "Role",
-      "description": "",
+      "description": "Role of member on the project",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",

@@ -23,7 +23,7 @@
     {
       "name": "name",
       "label": "Name",
-      "description": "",
+      "description": "Name of bird",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -61,7 +61,7 @@
     {
       "name": "lay_date",
       "label": "Lay date",
-      "description": "",
+      "description": "Date egg was layed",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -75,7 +75,7 @@
     {
       "name": "hatch_date",
       "label": "Hatch date",
-      "description": "",
+      "description": "Date chick was hatched",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -89,7 +89,7 @@
     {
       "name": "demise_date",
       "label": "Demise date",
-      "description": "",
+      "description": "Date of death",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -144,7 +144,7 @@
     {
       "name": "mother",
       "label": "Mother",
-      "description": "",
+      "description": "Mother of the bird",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -161,7 +161,7 @@
     {
       "name": "father",
       "label": "Father",
-      "description": "",
+      "description": "Father of the bird",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -192,7 +192,7 @@
     {
       "name": "comments",
       "label": "Comments",
-      "description": "",
+      "description": "General comments on the bird",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Html",

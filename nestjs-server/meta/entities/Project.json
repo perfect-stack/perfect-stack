@@ -23,7 +23,7 @@
     {
       "name": "name",
       "label": "Name",
-      "description": "",
+      "description": "Project name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -46,7 +46,7 @@
     {
       "name": "description",
       "label": "Description",
-      "description": "",
+      "description": "Project description",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Html",
@@ -60,7 +60,7 @@
     {
       "name": "start_date",
       "label": "Start Date",
-      "description": "",
+      "description": "Date this project first available for use",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -79,7 +79,7 @@
     {
       "name": "end_date",
       "label": "End Date",
-      "description": "",
+      "description": "Last date project can be used",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -93,7 +93,7 @@
     {
       "name": "status",
       "label": "Status",
-      "description": "",
+      "description": "Status of project",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -109,7 +109,7 @@
     {
       "name": "organisation",
       "label": "Organisation",
-      "description": "",
+      "description": "Organisation the project is associated with",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -130,7 +130,7 @@
     {
       "name": "members",
       "label": "Members",
-      "description": "",
+      "description": "Members that belong to this project",
       "unitOfMeasure": "",
       "scale": "",
       "type": "OneToMany",

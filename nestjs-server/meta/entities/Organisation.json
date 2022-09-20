@@ -23,7 +23,7 @@
     {
       "name": "name",
       "label": "Name",
-      "description": "",
+      "description": "Name of Organisation",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
