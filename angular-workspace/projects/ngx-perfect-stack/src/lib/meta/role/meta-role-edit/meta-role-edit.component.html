@@ -5,7 +5,7 @@
 
     <form class="form mb-2" #form="ngForm" [formGroup]="metaRoleForm">
       <div class="row">
-        <div class="col-3">
+        <div class="col-2">
           <label class="form-label" for="name">Name</label>
           <input class="form-control" type="text" id="name" formControlName="name">
         </div>
@@ -15,7 +15,7 @@
           <input class="form-control" type="text" id="group" formControlName="group">
         </div>
 
-        <div class="col-3" *ngIf="inheritsOptions$|async as inheritsOptions">
+        <div class="col-2" *ngIf="inheritsOptions$|async as inheritsOptions">
           <label class="form-label" for="inherits">Inherits</label>
           <select class="form-select" id="inherits" formControlName="inherits">
             <option *ngFor="let o of inheritsOptions" [ngValue]="o.name">{{o.name}}</option>
@@ -24,7 +24,7 @@
       </div>
 
       <div class="row">
-        <div class="col-9">
+        <div class="col-7">
           <label class="form-label">Description</label>
 
           <editor class="flex-grow-1"
@@ -52,7 +52,7 @@
 
       <div class="row mt-4">
         <div class="row">
-          <div class="col-6">
+          <div class="col-7">
 
             <h3>Permissions</h3>
 
@@ -99,12 +99,26 @@
             </div>
           </div>
 
-          <div class="col-3">
+          <div class="col-5">
 
             <h3 class="pb-4">Subjects</h3>
 
             <div class="row">
-              <div class="col-6" *ngIf="menuSubjectOptions$|async as menuSubjectOptions">
+              <div class="col-4" *ngIf="entitySubjectOptions$|async as entitySubjectOptions">
+                <h4>Entities</h4>
+                <div *ngFor="let subject of entitySubjectOptions">
+                  <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                    <ng-container [ngSwitch]="subject.type">
+                      <span *ngSwitchCase="SubjectType.Special" class="material-symbols-outlined align-middle">emergency</span>
+                      <span *ngSwitchCase="SubjectType.Entity" class="material-symbols-outlined align-middle">category</span>
+                      <span *ngSwitchCase="SubjectType.Menu" class="material-symbols-outlined align-middle">menu</span>
+                    </ng-container>
+                    {{subject.name}}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-4" *ngIf="menuSubjectOptions$|async as menuSubjectOptions">
                 <h4>Menus</h4>
                 <div *ngFor="let subject of menuSubjectOptions">
                   <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
@@ -118,9 +132,9 @@
                 </div>
               </div>
 
-              <div class="col-6" *ngIf="entitySubjectOptions$|async as entitySubjectOptions">
-                <h4>Entities</h4>
-                <div *ngFor="let subject of entitySubjectOptions">
+              <div class="col-4" *ngIf="specialSubjectOptions$|async as specialSubjectOptions">
+                <h4>Specials</h4>
+                <div *ngFor="let subject of specialSubjectOptions">
                   <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
                     <ng-container [ngSwitch]="subject.type">
                       <span *ngSwitchCase="SubjectType.Special" class="material-symbols-outlined align-middle">emergency</span>
@@ -131,6 +145,7 @@
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>

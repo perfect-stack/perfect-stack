@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Observable, of, switchMap, tap} from 'rxjs';
+import {Observable, of, Subject, switchMap, tap} from 'rxjs';
 import {ActionType, MetaRole} from '../../../domain/meta.role';
 import {FormArray, UntypedFormArray, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {MetaRoleService} from '../meta-role-service/meta-role.service';
@@ -32,6 +32,7 @@ export class MetaRoleEditComponent implements OnInit {
 
   entitySubjectOptions$: Observable<SubjectOption[]>;
   menuSubjectOptions$: Observable<SubjectOption[]>;
+  specialSubjectOptions$: Observable<SubjectOption[]>;
 
   constructor(protected readonly metaRoleService: MetaRoleService,
               protected readonly metaEntityService: MetaEntityService,
@@ -57,10 +58,10 @@ export class MetaRoleEditComponent implements OnInit {
     this.entitySubjectOptions$ = this.metaEntityService.findAll().pipe(switchMap( (metaEntityList: MetaEntity[]) => {
       const subjectOptions: SubjectOption[] = [];
 
-      subjectOptions.push({
-        type: SubjectType.Special,
-        name: String(ActionType.Any)
-      });
+      // subjectOptions.push({
+      //   type: SubjectType.Special,
+      //   name: String(ActionType.Any)
+      // });
 
       for(const nextMetaEntity of metaEntityList) {
         if(nextMetaEntity.rootNode) {
@@ -85,6 +86,13 @@ export class MetaRoleEditComponent implements OnInit {
       }
       return of(subjectOptions);
     }));
+
+    this.specialSubjectOptions$ = of([
+      {
+        type: SubjectType.Special,
+        name: String(ActionType.Any)
+      }
+    ])
   }
 
   newMetaRole() {
