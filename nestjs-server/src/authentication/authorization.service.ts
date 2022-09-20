@@ -9,18 +9,38 @@ export class AuthorizationService {
   constructor(protected readonly metaRoleService: MetaRoleService) {}
 
   async loadPermissions(): Promise<Map<string, string[]>> {
-    const permissionMap = new Map<string, string[]>();
     const metaRoleList = await this.metaRoleService.findAll();
+    const permissionMap = this.loadPermissionsFromMetaRoleList(metaRoleList);
+    return permissionMap;
+  }
+
+  loadPermissionsFromMetaRoleList(metaRoleList: MetaRole[]) {
+    const permissionMap = new Map<string, string[]>();
     for (const nextMetaRole of metaRoleList) {
+      // calculate the permissions of the current Role document (we can use this more than once below)
+      const rolePermissions = this.loadPermissionsForRole(
+        nextMetaRole,
+        metaRoleList,
+      );
+
       const groupNames = nextMetaRole.group.split(',');
       for (const nextGroupName of groupNames) {
-        permissionMap.set(
-          nextGroupName,
-          this.loadPermissionsForRole(nextMetaRole, metaRoleList),
+        // get existing groupPermissions (if any)
+        const existingGroupPermissions = permissionMap.has(nextGroupName)
+          ? permissionMap.get(nextGroupName)
+          : [];
+
+        // the new group permissions is the intersection of any existing permissions from other roles and the
+        // permissions from this role
+        const newGroupPermissions = this.mergePermissions(
+          existingGroupPermissions!,
+          rolePermissions,
         );
+
+        // update the map and overwrite any existing value
+        permissionMap.set(nextGroupName, newGroupPermissions);
       }
     }
-
     return permissionMap;
   }
 
@@ -54,50 +74,35 @@ export class AuthorizationService {
     return permissions.findIndex((s) => s === permission) >= 0;
   }
 
-  dumpPermissions(permissions: Map<string, string[]>) {
-    for (const nextKey of permissions.keys()) {
-      this.logger.log(
-        `${nextKey}: ${JSON.stringify(permissions.get(nextKey))}`,
-      );
-    }
-  }
-
-  async checkPermission(
+  checkPermissionWithMap(
     userGroups: string[],
     permissionMap: Map<string, string[]>,
     action: string,
     subject: string,
-  ): Promise<boolean> {
-    let foundMatch = false;
-    for (let i = 0; i < userGroups.length && !foundMatch; i++) {
+  ): boolean {
+    let permitted = false;
+    for (let i = 0; i < userGroups.length && !permitted; i++) {
       const group = userGroups[i];
       const groupPermissions = permissionMap.get(group);
-      for (let j = 0; j < groupPermissions.length && !foundMatch; j++) {
-        const permits = groupPermissions[j].split('.');
-        const permitAction = permits[0];
-        const permitSubject = permits[1];
-        foundMatch = this.isPermittedMatch(
-          action,
-          subject,
-          permitAction,
-          permitSubject,
-        );
-
-        if (foundMatch) {
-          console.log(`FOUND: ${groupPermissions[j]}`);
-          return true;
+      if (groupPermissions) {
+        for (let j = 0; j < groupPermissions.length && !permitted; j++) {
+          const permits = groupPermissions[j].split('.');
+          const permitAction = permits[0];
+          const permitSubject = permits[1];
+          permitted = this.isPermittedMatch(
+            action,
+            subject,
+            permitAction,
+            permitSubject,
+          );
         }
       }
     }
 
-    if (!foundMatch) {
-      console.log(`NOT FOUND: ${action}.${subject}`);
-      return false;
-    } else {
-      throw new Error(
-        'Unexpected code path. Should have returned from method by now',
-      );
-    }
+    console.log(
+      `CheckPermission: ${action}.${subject} for ${userGroups} = ${permitted}`,
+    );
+    return permitted;
   }
 
   private isPermittedMatch(
@@ -110,5 +115,20 @@ export class AuthorizationService {
       action === permitAction &&
       (subject === permitSubject || permitSubject === 'Any')
     );
+  }
+
+  /**
+   * Add the two arrays of permissions together and do not include duplicates.
+   *
+   * https://codeburst.io/how-to-merge-arrays-without-duplicates-in-javascript-91c66e7b74cf
+   * @param existingGroupPermissions
+   * @param rolePermissions
+   * @private
+   */
+  private mergePermissions(
+    existingGroupPermissions: string[],
+    rolePermissions: string[],
+  ): string[] {
+    return [...new Set([...existingGroupPermissions, ...rolePermissions])];
   }
 }

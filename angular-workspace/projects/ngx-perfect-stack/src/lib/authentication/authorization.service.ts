@@ -41,12 +41,20 @@ export class AuthorizationService {
   loadPermissionsFromMetaRoleList(metaRoleList: MetaRole[]) {
     const permissionMap = new Map<string, string[]>();
     for (const nextMetaRole of metaRoleList) {
+      // calculate the permissions of the current Role document (we can use this more than once below)
+      const rolePermissions = this.loadPermissionsForRole(nextMetaRole, metaRoleList);
+
       const groupNames = nextMetaRole.group.split(',');
       for (const nextGroupName of groupNames) {
-        permissionMap.set(
-          nextGroupName,
-          this.loadPermissionsForRole(nextMetaRole, metaRoleList),
-        );
+        // get existing groupPermissions (if any)
+        const existingGroupPermissions = permissionMap.has(nextGroupName) ? permissionMap.get(nextGroupName) : [];
+
+        // the new group permissions is the intersection of any existing permissions from other roles and the
+        // permissions from this role
+        const newGroupPermissions = this.mergePermissions(existingGroupPermissions!, rolePermissions);
+
+        // update the map and overwrite any existing value
+        permissionMap.set( nextGroupName, newGroupPermissions);
       }
     }
     return permissionMap;
@@ -152,4 +160,15 @@ export class AuthorizationService {
     );
   }
 
+  /**
+   * Add the two arrays of permissions together and do not include duplicates.
+   *
+   * https://codeburst.io/how-to-merge-arrays-without-duplicates-in-javascript-91c66e7b74cf
+   * @param existingGroupPermissions
+   * @param rolePermissions
+   * @private
+   */
+  private mergePermissions(existingGroupPermissions: string[], rolePermissions: string[]): string[] {
+    return [...new Set([...existingGroupPermissions, ...rolePermissions])];
+  }
 }

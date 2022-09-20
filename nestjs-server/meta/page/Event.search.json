@@ -34,13 +34,15 @@
       "metaEntityName": "EventSearchCriteria",
       "type": "form",
       "locations": {
-        "OuterTopRight": {
+        "TopRight": {
           "type": "Button",
           "containerStyles": "",
           "styles": "btn btn-success",
           "label": "Add event",
           "action": "addEvent",
-          "route": "/route/go/here"
+          "route": "/route/go/here",
+          "actionPermit": "Edit",
+          "subjectPermit": "Event"
         }
       }
     },

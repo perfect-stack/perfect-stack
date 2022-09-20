@@ -51,7 +51,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       const permissionMap = await this.authorizationService.loadPermissions();
 
-      const permitted = await this.authorizationService.checkPermission(
+      const permitted = this.authorizationService.checkPermissionWithMap(
         userGroups,
         permissionMap,
         actionPermit,
