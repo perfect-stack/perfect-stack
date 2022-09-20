@@ -47,7 +47,7 @@ export class MapToolComponent implements OnInit {
   updateLocation() {
     const eastingAttribute = this.mapTool.easting;
     const northingAttribute = this.mapTool.northing;
-    const locationForm = this.ctx.formMap.get('location') as FormGroup;
+    const locationForm = this.getLocationForm();
     if(eastingAttribute && northingAttribute && locationForm) {
       const easting = locationForm.controls[eastingAttribute].value;
       const northing = locationForm.controls[northingAttribute].value;
@@ -76,6 +76,21 @@ export class MapToolComponent implements OnInit {
     this.propertySheetService.edit('Map', this.mapTool);
   }
 
+  getLocationForm() {
+    let locationForm = this.ctx.formMap.get('location') as FormGroup;
+
+    if(!locationForm) {
+      locationForm = this.ctx.formMap.get('nestAttempt') as FormGroup;
+    }
+
+    if(!locationForm) {
+      console.warn('UNABLE to find a form to update with location coordinates');
+    }
+
+    return locationForm;
+  }
+
+
   onMapClick(event: LeafletMouseEvent) {
     const editMode = this.ctx.mode === 'edit';
     const metaKeyPressed = event.originalEvent.metaKey;
@@ -86,7 +101,7 @@ export class MapToolComponent implements OnInit {
 
       const eastingAttribute = this.mapTool.easting;
       const northingAttribute = this.mapTool.northing;
-      const locationForm = this.ctx.formMap.get('location') as FormGroup;
+      const locationForm = this.getLocationForm();
       if(eastingAttribute && northingAttribute && locationForm) {
         locationForm.controls[eastingAttribute].patchValue(nztm.easting);
         locationForm.controls[northingAttribute].patchValue(nztm.northing);
