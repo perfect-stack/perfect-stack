@@ -13,6 +13,7 @@ import {DataSearchActionEvent} from './data-search-action-event';
 import {v4 as uuidv4} from 'uuid';
 import {MessageDialogComponent} from '../../utils/message-dialog/message-dialog.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ActionType} from '../../domain/meta.role';
 
 @Component({
   selector: 'app-data-search-edit',
@@ -138,5 +139,9 @@ export class DataSearchEditComponent implements OnInit {
 
     rowData.resultList.push(newEntity);
     this.onStartEdit(newEntity.id);
+  }
+
+  get ActionType() {
+    return ActionType;
   }
 }

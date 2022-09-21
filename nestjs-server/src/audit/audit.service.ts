@@ -41,7 +41,7 @@ export class AuditService {
         }
 
         // Cognito (Plain Cognito group)
-        if (user.username) {
+        if (!personName && user.username) {
           personName = user.username;
           personId = user.username;
         }

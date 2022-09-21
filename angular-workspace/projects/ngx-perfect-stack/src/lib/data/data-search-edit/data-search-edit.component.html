@@ -10,7 +10,9 @@
         <th>Description</th>
         <th>Start date</th>
         <th>End date</th>
-        <th>Actions</th>
+        <lib-permission-check [action]="ActionType.Edit" [subject]="metaEntity.name">
+          <th>Actions</th>
+        </lib-permission-check>
       </tr>
       </thead>
       <tbody>
@@ -28,7 +30,9 @@
 
     <div class="d-flex">
       <div class="flex-grow-1"></div>
-      <button class="btn btn-outline-success" (click)="onNew(rowData)" id="newBtn">New...</button>
+      <lib-permission-check [action]="ActionType.Edit" [subject]="metaEntity.name">
+        <button class="btn btn-outline-success" (click)="onNew(rowData)" id="newBtn">New...</button>
+      </lib-permission-check>
     </div>
   </ng-container>
 

@@ -29,6 +29,22 @@
       "subject": "Species"
     },
     {
+      "action": "Delete",
+      "subject": "LocationType"
+    },
+    {
+      "action": "Delete",
+      "subject": "ObserverRole"
+    },
+    {
+      "action": "Delete",
+      "subject": "ProjectRole"
+    },
+    {
+      "action": "Delete",
+      "subject": "ProjectStatus"
+    },
+    {
       "action": "Menu",
       "subject": "Admin"
     }

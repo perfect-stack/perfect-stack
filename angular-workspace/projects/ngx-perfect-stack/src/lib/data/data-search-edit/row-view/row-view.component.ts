@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MetaEntity} from '../../../domain/meta.entity';
 import {DataSearchActionEvent} from '../data-search-action-event';
+import {ActionType} from '../../../domain/meta.role';
 
 @Component({
   selector: '[app-row-view]',  // NOTE: using [] syntax here so cells are nested inside "tr" correctly
@@ -43,5 +44,9 @@ export class RowViewComponent implements OnInit {
       action: 'delete',
       id: this.entity.id
     });
+  }
+
+  get ActionType() {
+    return ActionType;
   }
 }

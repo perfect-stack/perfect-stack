@@ -3,6 +3,7 @@
   "pluralName": "Activity Types",
   "icon": "",
   "type": "Database",
+  "rootNode": true,
   "timestamps": true,
   "attributes": [
     {

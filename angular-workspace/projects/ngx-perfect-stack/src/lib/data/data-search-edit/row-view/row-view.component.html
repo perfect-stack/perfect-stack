@@ -4,9 +4,21 @@
 <td id="start_date">{{entity.start_date}}</td>
 <td id="end_date">{{entity.end_date}}</td>
 
-<td class="btn-group">
-  <span class="btn-sm btn-outline-primary material-symbols-outlined" (click)="onMove(-1)" id="upBtn">arrow_upward</span>
-  <span class="btn-sm btn-outline-primary material-symbols-outlined" (click)="onMove(+1)" id="downBtn">arrow_downward</span>
-  <span class="btn-sm btn-success material-symbols-outlined" (click)="onEdit()" id="editBtn">edit</span>
-  <span class="btn-sm btn-danger material-symbols-outlined" (click)="onDelete()" id="deleteBtn">delete</span>
+<td>
+  <!-- The div's and btn-group's are all a little bit weird here so that it looks nice on the page. The lib-permission-check
+  is causing problems for the btn-group and table layout that it sits in. If you removed all of the "unecessary" styling
+  it would look funny -->
+  <lib-permission-check [action]="ActionType.Edit" [subject]="metaEntity.name">
+    <div class="btn-group pe-1">
+      <span class="btn-sm btn-outline-primary material-symbols-outlined" (click)="onMove(-1)" id="upBtn">arrow_upward</span>
+      <span class="btn-sm btn-outline-primary material-symbols-outlined" (click)="onMove(+1)" id="downBtn">arrow_downward</span>
+      <span class="btn-sm btn-success material-symbols-outlined" (click)="onEdit()" id="editBtn">edit</span>
+    </div>
+
+    <lib-permission-check [action]="ActionType.Delete" [subject]="metaEntity.name">
+      <div class="btn-group">
+        <span class="btn-sm btn-danger material-symbols-outlined" (click)="onDelete()" id="deleteBtn">delete</span>
+      </div>
+    </lib-permission-check>
+  </lib-permission-check>
 </td>
