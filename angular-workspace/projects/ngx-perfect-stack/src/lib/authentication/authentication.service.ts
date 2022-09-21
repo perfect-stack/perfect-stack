@@ -53,7 +53,6 @@ export class AuthenticationService {
         user.saveTokens();
 
         this.expiryTime = expiryTime;
-        this.sendNotification(idToken, accessToken);
         this.navigateToFirstPage();
 
         this.isLoggedIn = true;
@@ -68,7 +67,16 @@ export class AuthenticationService {
       this.isLoggedIn = false;
       console.log(`Create user: null tokens.`);
     }
+
     this.user$.next(user);
+
+    // If there is a User created then send a login notification to the server, but do that after the User has been
+    // assigned to the variable otherwise the token doesn't get added to the http request.
+    if(user) {
+      this.sendNotification(idToken!, accessToken!).subscribe(() => {
+        console.log('Login notification has been sent')
+      });
+    }
   }
 
   get redirectUrl(): string | null {

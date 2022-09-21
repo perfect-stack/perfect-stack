@@ -107,20 +107,17 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
     if(item) {
       this.selectedModelId = item.id;
       this.selectedModel = item;
-
       this.onChange(this.selectedModelId)
-      //this.onTouch(this.selectedModelId)
     }
     else {
       this.selectedModelId = null;
       this.selectedModel = null;
-
-      this.onChange('')
-      //this.onTouch('')
+      this.onChange(null);
     }
   }
 
   setValueById(id: string) {
+    console.log('setValueById', id);
     if(id) {
       this.typeaheadService.searchById(id, this.metaEntity, this.attribute).subscribe((items) => {
         if(items && items.length === 1) {

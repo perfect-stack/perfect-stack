@@ -76,7 +76,7 @@
           "config": ""
         },
         {
-          "type": "Unique",
+          "type": "UniqueInsensitive",
           "config": ""
         },
         {

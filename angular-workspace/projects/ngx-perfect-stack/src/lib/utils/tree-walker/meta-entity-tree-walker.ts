@@ -156,3 +156,12 @@ export class IdentifierVisitor implements Visitor {
     node[attribute.name] = value ? value : null;
   }
 }
+
+/**
+ * For each AttributeType.ManyToOne, convert empty strings and other falsy values into nulls
+ */
+export class ManyToOneVisitor implements Visitor {
+  visit(node: any, value: number, metaEntity: MetaEntity, attribute: MetaAttribute): void {
+    node[attribute.name + '_id'] = value ? value : null;
+  }
+}

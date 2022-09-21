@@ -8,7 +8,7 @@ import {AttributeType} from '../../domain/meta.entity';
 import {
   DoubleVisitor,
   IdentifierVisitor,
-  IntegerVisitor,
+  IntegerVisitor, ManyToOneVisitor,
   MetaEntityTreeWalker
 } from '../../utils/tree-walker/meta-entity-tree-walker';
 import {DebugService} from '../../utils/debug/debug.service';
@@ -159,6 +159,7 @@ export class DataEditComponent implements OnInit {
       treeWalker.byType(AttributeType.Double, new DoubleVisitor());
       treeWalker.byType(AttributeType.Integer, new IntegerVisitor());
       treeWalker.byType(AttributeType.Identifier, new IdentifierVisitor());
+      //treeWalker.byType(AttributeType.ManyToOne, new ManyToOneVisitor());
       treeWalker.walk(entityData, ctx.metaEntity);
       console.log(`DataEdit: save value:`, entityData);
 
