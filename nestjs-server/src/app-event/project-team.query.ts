@@ -40,7 +40,7 @@ export class ProjectTeamQuery implements CustomQuery {
       '    concat("Person".given_name, \' \', "Person".family_name) as name,\n' +
       '    "Person".email_address,\n' +
       '    "ProjectRole".name as role,\n' +
-      '    max("Authentication".auth_time)\n' +
+      '    max("Authentication".auth_time) as last_sign_in\n' +
       'FROM "ProjectMember"\n' +
       '    left outer join "Person" on "ProjectMember".member_id = "Person".id\n' +
       '    left outer join "ProjectRole" on "ProjectMember".role_id = "ProjectRole".id\n' +
