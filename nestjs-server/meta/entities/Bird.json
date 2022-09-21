@@ -70,7 +70,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": ",$today"
+        }
+      ]
     },
     {
       "name": "hatch_date",
@@ -84,7 +89,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": ",$today"
+        }
+      ]
     },
     {
       "name": "demise_date",
@@ -98,7 +108,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": ",$today"
+        }
+      ]
     },
     {
       "name": "status",
@@ -187,7 +202,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": ",$today"
+        }
+      ]
     },
     {
       "name": "comments",
