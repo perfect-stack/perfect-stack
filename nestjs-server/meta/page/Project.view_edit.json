@@ -3,6 +3,17 @@
   "title": "$PageTitle",
   "type": "view_edit",
   "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "project",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Project",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -85,6 +96,12 @@
                     "height": "1",
                     "attributeName": "role",
                     "component": "Select"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "team_status",
+                    "component": "Select"
                   }
                 ]
               ],
@@ -101,16 +118,6 @@
       "type": "form",
       "templateHeading": "Project team",
       "binding": "project"
-    }
-  ],
-  "dataQueryList": [
-    {
-      "dataName": "project",
-      "resultCardinality": "QueryOne",
-      "queryType": "Entity",
-      "queryName": "Project",
-      "fieldName": "id",
-      "parameter": "id"
     }
   ]
 }

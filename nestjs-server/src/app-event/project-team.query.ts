@@ -40,10 +40,12 @@ export class ProjectTeamQuery implements CustomQuery {
       '    concat("Person".given_name, \' \', "Person".family_name) as name,\n' +
       '    "Person".email_address,\n' +
       '    "ProjectRole".name as role,\n' +
+      '    "ProjectTeamStatus".name as team_status,\n' +
       '    max("Authentication".auth_time) as last_sign_in\n' +
       'FROM "ProjectMember"\n' +
       '    left outer join "Person" on "ProjectMember".member_id = "Person".id\n' +
       '    left outer join "ProjectRole" on "ProjectMember".role_id = "ProjectRole".id\n' +
+      '    left outer join "ProjectTeamStatus" on "ProjectMember".team_status_id = "ProjectTeamStatus".id\n' +
       '    left outer join "Authentication" on "Authentication".email_address = "Person".email_address\n' +
       'WHERE\n' +
       '    "ProjectMember"."ProjectId" = $1\n' +
@@ -51,7 +53,8 @@ export class ProjectTeamQuery implements CustomQuery {
       '         "Person".given_name,\n' +
       '         "Person".family_name,\n' +
       '         "Person".email_address,\n' +
-      '         "ProjectRole".name\n' +
+      '         "ProjectRole".name,\n' +
+      '         "ProjectTeamStatus".name\n' +
       'ORDER BY "name" ASC\n' + // ignoring the query criteria on this for now
       'OFFSET $2\n' +
       'LIMIT $3;\n';

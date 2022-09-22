@@ -97,6 +97,12 @@
         {
           "editable": true,
           "roles": [],
+          "label": "Project Team Status",
+          "route": "/data/ProjectTeamStatus/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
           "label": "Species",
           "route": "/data/Species/search"
         }

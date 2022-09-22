@@ -1,6 +1,6 @@
 {
   "name": "Administrator",
-  "group": "admins",
+  "group": "admins,ap-southeast-2_CIl5VvfWD_doc-azuread-sso",
   "inherits": "Manager",
   "description": "<p>Controls admin menu, add projects, set project manager role, Add/Edit people (non-user)</p>",
   "permissions": [
@@ -33,6 +33,10 @@
       "subject": "Organisation"
     },
     {
+      "action": "Edit",
+      "subject": "ProjectTeamStatus"
+    },
+    {
       "action": "Delete",
       "subject": "LocationType"
     },
@@ -47,6 +51,10 @@
     {
       "action": "Delete",
       "subject": "ProjectStatus"
+    },
+    {
+      "action": "Delete",
+      "subject": "ProjectTeamStatus"
     },
     {
       "action": "Menu",

@@ -27,6 +27,11 @@
           {
             "width": "3",
             "height": "1",
+            "attributeName": "team_status"
+          },
+          {
+            "width": "1",
+            "height": "1",
             "attributeName": "last_sign_in"
           }
         ],
