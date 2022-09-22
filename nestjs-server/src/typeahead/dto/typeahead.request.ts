@@ -5,4 +5,5 @@ export class TypeaheadRequest {
   metaAttribute: MetaAttribute;
   searchText: string | null;
   searchId: string | null;
+  searchIdList: string[] | null;
 }

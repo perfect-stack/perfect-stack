@@ -2,10 +2,11 @@ import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output,
 import {Cell, Template, TemplateLocationType, TemplateType, Tool} from '../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
-import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import {FormGroup, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Observable} from 'rxjs';
 import {PropertySheetService} from '../property-sheet/property-sheet.service';
+import {OneToManyChoiceDialogComponent} from './one-to-many-choice-dialog/one-to-many-choice-dialog.component';
 
 // This file contains many Components because they have a circular dependency on the top-level component of
 // TemplateControllerComponent. When Angular builds this as a library it doesn't allow this sort of circular dependency to
@@ -209,7 +210,7 @@ export class CellViewComponent implements OnInit, OnChanges {
 
   closeResult = '';
 
-  constructor(private modalService: NgbModal,
+  constructor(protected readonly modalService: NgbModal,
               protected readonly propertySheetService: PropertySheetService) { }
 
   ngOnInit(): void {
@@ -360,30 +361,53 @@ export class CellViewComponent implements OnInit, OnChanges {
     this.onClearCell();
 
     if(attribute.type === AttributeType.OneToMany) {
-      this.cell.template = {
-        binding: attribute.name,
-        templateHeading: '',
-        type: TemplateType.table,
-        metaEntityName: attribute.relationshipTarget,
-        cells: [[
-          {
-            width: '12',
-            height: '1',
-            attributeName: attribute.name,
-          },
-        ]],
-        styles: '',
-        orderByName: 'UNKNOWN',
-        orderByDir: 'ASC',
-        noItemsHtml: '',
-        locations: {},
-      };
+      const modalRef = this.modalService.open(OneToManyChoiceDialogComponent).closed.subscribe((controlType: string) => {
+        console.log(`OneToManyChoiceDialogComponent picked: ${controlType}`);
+        switch (controlType) {
+          case 'Table':
+            this.addTableTemplate(attribute);
+            break;
+          case 'Links':
+            this.addLinkControl(attribute);
+            break;
+          default:
+            throw new Error(`Unknown controlType of ${controlType}`);
+        }
+      });
     }
     else {
       this._attribute = attribute;
       this.cell.attributeName = attribute.name;
     }
   }
+
+  private addTableTemplate(attribute: MetaAttribute) {
+    this.cell.template = {
+      binding: attribute.name,
+      templateHeading: '',
+      type: TemplateType.table,
+      metaEntityName: attribute.relationshipTarget,
+      cells: [[
+        {
+          width: '12',
+          height: '1',
+          attributeName: attribute.name,
+        },
+      ]],
+      styles: '',
+      orderByName: 'UNKNOWN',
+      orderByDir: 'ASC',
+      noItemsHtml: '',
+      locations: {},
+    };
+  }
+
+  private addLinkControl(attribute: MetaAttribute) {
+    this._attribute = attribute;
+    this.cell.attributeName = attribute.name;
+    this.cell.component = 'LinkList'
+  }
+
 
   private addTool(toolPrototype: Tool) {
     console.log('addTool', toolPrototype);

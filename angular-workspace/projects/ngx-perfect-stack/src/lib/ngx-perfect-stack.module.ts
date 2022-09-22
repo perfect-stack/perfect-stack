@@ -134,6 +134,8 @@ import { MetaRoleEditComponent } from './meta/role/meta-role-edit/meta-role-edit
 import {MetaRoleService} from './meta/role/meta-role-service/meta-role.service';
 import { PermissionCheckComponent } from './data/controller/layout/permission-check/permission-check.component';
 import { AuthorizationErrorComponent } from './authentication/authorization-error/authorization-error.component';
+import { LinkListControlComponent } from './data/controller/layout/controls/link-list-control/link-list-control.component';
+import { OneToManyChoiceDialogComponent } from './template/template-controller/one-to-many-choice-dialog/one-to-many-choice-dialog.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -267,7 +269,9 @@ const routes: Routes = [
     MetaRoleSearchComponent,
     MetaRoleEditComponent,
     PermissionCheckComponent,
-    AuthorizationErrorComponent
+    AuthorizationErrorComponent,
+    LinkListControlComponent,
+    OneToManyChoiceDialogComponent
   ],
   providers: [
     AuthenticationService,

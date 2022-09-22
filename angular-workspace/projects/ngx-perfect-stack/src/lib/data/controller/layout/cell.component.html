@@ -47,7 +47,12 @@
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToMany'">
-      <lib-one-to-many-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
+      <ng-container *ngIf="cell.component === 'LinkList'">
+        <lib-link-list-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-link-list-control>
+      </ng-container>
+      <ng-container *ngIf="cell.component !== 'LinkList'">
+        <lib-one-to-many-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
+      </ng-container>
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToOne'">
@@ -74,7 +79,7 @@
 
         <ng-container *ngSwitchDefault>
           <ng-container *ngIf="cell.metaEntity">
-            <app-many-to-one-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [ctx]="ctx" [formGroup]="formGroup" [metaEntity]="cell.metaEntity" [attribute]="cell.attribute"></app-many-to-one-control>
+            <lib-many-to-one-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [ctx]="ctx" [formGroup]="formGroup" [metaEntity]="cell.metaEntity" [attribute]="cell.attribute"></lib-many-to-one-control>
           </ng-container>
         </ng-container>
       </ng-container>

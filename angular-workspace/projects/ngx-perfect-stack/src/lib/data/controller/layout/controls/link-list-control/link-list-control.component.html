@@ -1,0 +1,10 @@
+<ng-container [formGroup]="formGroup" *ngIf="cell.metaEntity && cell.attribute">
+  <ng-container *ngIf="entityList$|async as entityList">
+    <ng-container *ngFor="let item of entityList; index as i; count as totalCount">
+      <a [routerLink]="['/data', linkAttribute?.relationshipTarget, 'view', item.id]" href="#" [id]="cell.attribute.name">{{item.displayText}}</a>
+      <ng-container *ngIf="i < totalCount - 1">
+        ,
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>

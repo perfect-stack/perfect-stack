@@ -19,7 +19,7 @@ import {EventService} from '../../../../../event/event.service';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 
 @Component({
-  selector: 'app-many-to-one-control',
+  selector: 'lib-many-to-one-control',
   templateUrl: './many-to-one-control.component.html',
   styleUrls: ['./many-to-one-control.component.css'],
 })

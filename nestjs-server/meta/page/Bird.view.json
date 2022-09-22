@@ -236,6 +236,15 @@
                   {
                     "width": "12",
                     "height": "1",
+                    "component": "LinkList",
+                    "attributeName": "projects",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
                     "attributeName": "comments",
                     "component": "TextArea"
                   }

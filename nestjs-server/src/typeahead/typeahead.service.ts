@@ -39,18 +39,14 @@ export class TypeaheadService {
 
     const tableName = metaAttribute.relationshipTarget;
 
-    // const whereClause = {
-    //   id: {
-    //     [Op.in]: this.ormService.sequelize.literal(
-    //       `(Select id from "${tableName}" where concat(${searchFieldList}) ilike '${searchValue}')`,
-    //     ),
-    //   },
-    // };
-
     const whereClause = {};
     if (request.searchId) {
       whereClause['id'] = {
         [Op.eq]: request.searchId,
+      };
+    } else if (request.searchIdList) {
+      whereClause['id'] = {
+        [Op.in]: request.searchIdList,
       };
     } else if (request.searchText) {
       const searchFieldList = metaAttribute.typeaheadSearch.join(", ' ', ");
@@ -74,6 +70,7 @@ export class TypeaheadService {
     const model = this.ormService.sequelize.model(
       metaAttribute.relationshipTarget,
     );
+
     const rows = await model.findAll({
       where: whereClause,
       order: orderClause,

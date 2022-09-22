@@ -7,6 +7,10 @@
     {
       "action": "Edit",
       "subject": "Project"
+    },
+    {
+      "action": "Edit",
+      "subject": "Person"
     }
   ]
 }

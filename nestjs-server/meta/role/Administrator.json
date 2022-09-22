@@ -29,6 +29,10 @@
       "subject": "Species"
     },
     {
+      "action": "Edit",
+      "subject": "Organisation"
+    },
+    {
       "action": "Delete",
       "subject": "LocationType"
     },
