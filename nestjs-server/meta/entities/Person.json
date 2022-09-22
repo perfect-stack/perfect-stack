@@ -114,6 +114,25 @@
         "name"
       ],
       "rules": []
+    },
+    {
+      "name": "kah",
+      "label": "KAH",
+      "description": "Kiwi accredited handler number from the Kiwi Recovery Group",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "UniqueInsensitive",
+          "config": ""
+        }
+      ]
     }
   ]
 }

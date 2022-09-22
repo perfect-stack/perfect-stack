@@ -3,6 +3,17 @@
   "title": "$PageTitle",
   "type": "view_edit",
   "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "person",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Person",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
   "templates": [
     {
       "metaEntityName": "Person",
@@ -65,20 +76,17 @@
             "height": "1",
             "attributeName": "organisation"
           }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "kah"
+          }
         ]
       ],
       "templateHeading": "Personal details",
       "binding": "person"
-    }
-  ],
-  "dataQueryList": [
-    {
-      "dataName": "person",
-      "resultCardinality": "QueryOne",
-      "queryType": "Entity",
-      "queryName": "Person",
-      "fieldName": "id",
-      "parameter": "id"
     }
   ]
 }
