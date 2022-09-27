@@ -9,6 +9,10 @@
       "subject": "Meta"
     },
     {
+      "action": "Delete",
+      "subject": "Meta"
+    },
+    {
       "action": "Edit",
       "subject": "Person"
     },
