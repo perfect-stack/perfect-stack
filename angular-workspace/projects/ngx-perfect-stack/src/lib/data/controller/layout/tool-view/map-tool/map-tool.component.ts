@@ -31,7 +31,7 @@ export class MapToolComponent implements OnInit {
   options: any = null;
   center = latLng(-41.20588830649284, 174.91502957335638);
   baseLayers = {
-    'tileLayer': tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' }),
+    'tileLayer': tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: 'OpenStreetMap' }),
   }
 
   layers: any[] = [];
@@ -93,8 +93,8 @@ export class MapToolComponent implements OnInit {
 
   onMapClick(event: LeafletMouseEvent) {
     const editMode = this.ctx.mode === 'edit';
-    const metaKeyPressed = event.originalEvent.metaKey;
-    if(editMode && metaKeyPressed) {
+    const shiftKeyPressed = event.originalEvent.shiftKey;
+    if(editMode && shiftKeyPressed) {
       console.log(`Map Click at: ${event.latlng}`);
       const nztm = this.mapService.toNZTM(event.latlng);
       console.log(`Converted to; ${nztm.easting}, ${nztm.northing}`);

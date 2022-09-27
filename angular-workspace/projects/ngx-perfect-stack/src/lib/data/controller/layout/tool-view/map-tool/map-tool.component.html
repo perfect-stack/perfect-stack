@@ -12,5 +12,11 @@
        (leafletClick)="onMapClick($event)"
   >
     <div *ngFor="let l of layers" [leafletLayer]="l"></div>
+
+    <div class="overlay-bottom-left">
+      Shift+Click to set coordinates
+    </div>
   </div>
+
 </ng-container>
+
