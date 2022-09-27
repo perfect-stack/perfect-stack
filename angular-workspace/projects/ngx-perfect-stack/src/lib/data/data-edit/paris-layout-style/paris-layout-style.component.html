@@ -1,10 +1,11 @@
 <div class="container-fluid paris-layout-style" *ngIf="ctx">
   <div class="d-flex justify-content-between">
     <div>
-      <a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
+      <!--<a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
         <span class="material-symbols-outlined align-middle">keyboard_backspace</span>
         <span class="align-middle">Search {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
-      </a>
+      </a>-->
+      <lib-back-link [ctx]="ctx"></lib-back-link>
 
       <!--<h2 class="my-3" *ngIf="ctx.formMap">
         <lib-expression-control [mode]="ctx.mode" [formMap]="ctx.formMap" [expression]="ctx.metaPage.title" ></lib-expression-control>

@@ -206,9 +206,12 @@ export class TableLayoutComponent implements OnInit {
           const id = idControl.value;
           console.log('got id value: ', id);
           if(id) {
-            const r = route.replace('${id}', id);
-            console.log(`Navigating to route: ${r}`);
-            this.router.navigate([r]);
+            let url = route.replace('${id}', id);
+            if(url.includes('?')) {
+              url += `&fromId=${this.ctx.id}`;
+            }
+            console.log(`Navigating to route: ${url}`);
+            this.router.navigateByUrl(url);
           }
           else {
             console.warn(`Unable to find id for row ${rowIdx} in rowData ${JSON.stringify(this.formGroup.value)}`)

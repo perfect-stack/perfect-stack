@@ -136,6 +136,7 @@ import { PermissionCheckComponent } from './data/controller/layout/permission-ch
 import { AuthorizationErrorComponent } from './authentication/authorization-error/authorization-error.component';
 import { LinkListControlComponent } from './data/controller/layout/controls/link-list-control/link-list-control.component';
 import { OneToManyChoiceDialogComponent } from './template/template-controller/one-to-many-choice-dialog/one-to-many-choice-dialog.component';
+import { BackLinkComponent } from './data/controller/layout/back-link/back-link.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -271,7 +272,8 @@ const routes: Routes = [
     PermissionCheckComponent,
     AuthorizationErrorComponent,
     LinkListControlComponent,
-    OneToManyChoiceDialogComponent
+    OneToManyChoiceDialogComponent,
+    BackLinkComponent
   ],
   providers: [
     AuthenticationService,

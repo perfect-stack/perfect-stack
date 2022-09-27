@@ -126,7 +126,7 @@
                   }
                 ]
               ],
-              "route": "/data/Event/view/${id}",
+              "route": "/data/Event/view/${id}?backTo=Bird",
               "navigation": "Enabled",
               "locations": {
                 "BottomMiddle": {

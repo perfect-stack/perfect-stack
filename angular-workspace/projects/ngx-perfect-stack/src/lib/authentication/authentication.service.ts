@@ -119,10 +119,9 @@ export class AuthenticationService {
       this.redirectUrl = null;
     }
     else {
-      // TODO: needs to support query parameters once the app starts using them
-      const currentUrl = new URL(window.location.href);
-      console.log(`navigateToFirstPage: by currentUrl ${currentUrl} `);
-      this.router.navigate([currentUrl.pathname]);
+      // There was some code in here about extracting the current location from the Window object, but it wasn't actually
+      // needed. If we don't need to navigate to using the redirectUrl above then we just need to do nothing.
+      console.log(`navigateToFirstPage:`, window.location);
     }
   }
 

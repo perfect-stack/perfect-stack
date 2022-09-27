@@ -57,6 +57,10 @@
       "subject": "ProjectTeamStatus"
     },
     {
+      "action": "Delete",
+      "subject": "ActivityType"
+    },
+    {
       "action": "Menu",
       "subject": "Admin"
     }

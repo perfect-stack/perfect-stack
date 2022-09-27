@@ -82,14 +82,14 @@ export class RangeRuleValidator extends RuleValidator {
     let minDateValue = null;
     if (rangeRuleConfig.minValue) {
       if (rangeRuleConfig.minValue === '$today') {
-        minDateValue = LocalDate.now();
+        minDateValue = this.getLocalDateToday();
       }
     }
 
     let maxDateValue = null;
     if (rangeRuleConfig.maxValue) {
       if (rangeRuleConfig.maxValue === '$today') {
-        maxDateValue = LocalDate.now();
+        maxDateValue = this.getLocalDateToday();
       }
     }
 
@@ -117,6 +117,18 @@ export class RangeRuleValidator extends RuleValidator {
     }
 
     return null;
+  }
+
+  /**
+   * This needs to dependent on the application's timezone and not where the server is running. LocalDate.now() was
+   * returning the wrong value. We need to do a more complicated conversion using the
+   * ZonedDateTime.now(ZoneId.of('Pacific/Auckland')). The method toLocalDate() seems to do the right thing. You can
+   * test this by changing it to 'America/Los_Angeles' and it will usually return the "previous" day. Which should
+   * mean that 'Pacific/Auckland' will also return the right value if the server is running in an earlier timezone.
+   */
+  getLocalDateToday() {
+    const timeNow = ZonedDateTime.now(ZoneId.of('Pacific/Auckland'));
+    return timeNow.toLocalDate();
   }
 
   async validateDateTimeValue(
