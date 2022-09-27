@@ -1,10 +1,12 @@
 <ng-container *ngIf="ctx">
 
   <div class="container-fluid venice-layout-style p-5">
-    <a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
+    <!--<a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
       <span class="material-symbols-outlined align-middle">keyboard_backspace</span>
       <span class="align-middle">Search {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
-    </a>
+    </a>-->
+    <lib-back-link [ctx]="ctx"></lib-back-link>
+
 
     <ng-container *ngFor="let template of headerTemplates; index as i">
       <div class="d-flex justify-content-between my-3">

@@ -37,6 +37,7 @@ export class ProjectTeamQuery implements CustomQuery {
 
     const selectDataSQL =
       'Select\n' +
+      '    "Person".id,\n' +
       '    concat("Person".given_name, \' \', "Person".family_name) as name,\n' +
       '    "Person".email_address,\n' +
       '    "ProjectRole".name as role,\n' +
@@ -50,6 +51,7 @@ export class ProjectTeamQuery implements CustomQuery {
       'WHERE\n' +
       '    "ProjectMember"."ProjectId" = $1\n' +
       'GROUP BY "ProjectMember"."ProjectId",\n' +
+      '         "Person".id\n,' +
       '         "Person".given_name,\n' +
       '         "Person".family_name,\n' +
       '         "Person".email_address,\n' +

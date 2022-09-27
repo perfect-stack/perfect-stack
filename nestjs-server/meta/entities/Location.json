@@ -27,12 +27,17 @@
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "StartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "location_type",

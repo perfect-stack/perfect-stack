@@ -60,7 +60,9 @@
           "modes": "",
           "criteriaForm": "teamCriteriaForm"
         }
-      }
+      },
+      "navigation": "Enabled",
+      "route": "/data/Person/view/${id}?backTo=Project"
     }
   ]
 }

@@ -24,10 +24,8 @@ export class BackLinkComponent implements OnInit {
       console.log(`GOT backTo ${backTo}: override back link to ...`);
       // This isn't ideal because it hard-codes things specifically for Bird, but the meta-data requirements will be
       // easier once we know what the additional use cases look like
-      if(backTo === 'Bird') {
-        this.backToLabel = `View bird`;
-        this.backToRoute = `/data/Bird/view/${fromId}`;
-      }
+      this.backToLabel = `View ${backTo.toLowerCase()}`;
+      this.backToRoute = `/data/${backTo}/view/${fromId}`;
     }
     else {
       this.backToLabel = `Search ${this.ctx.metaEntity.pluralName.toLowerCase()}`;
