@@ -20,6 +20,9 @@
               {{nextCell.tool.label}}
             </ng-container>
           </th>
+          <th *ngIf="mode === 'edit'">
+            <!-- This is an empty th element to act as a header for the delete action below -->
+          </th>
         </tr>
       </thead>
       <tbody>

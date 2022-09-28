@@ -25,7 +25,7 @@
       <ng-container *ngIf="template.templateHeading">
         <div class="row template">
           <div class="col-4">
-            <h4 id="template[{{i}}].sectionHdg">{{template.templateHeading}}</h4>
+            <div class="panel-heading" id="template[{{i}}].sectionHdg">{{template.templateHeading}}</div>
           </div>
           <div class="col-8">
             <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>

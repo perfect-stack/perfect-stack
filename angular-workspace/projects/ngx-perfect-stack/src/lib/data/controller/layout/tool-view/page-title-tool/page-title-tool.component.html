@@ -1,31 +1,31 @@
-<div class="pt-4">
+<div class="pt-2">
   <ng-container *ngIf="editorMode">
-    <h2 (click)="onEditorModeClick()">Page title here</h2>
+    <h1 (click)="onEditorModeClick()">Page title here</h1>
   </ng-container>
 
   <ng-container *ngIf="!editorMode">
     <ng-container *ngIf="isStaticTitle()">
-      <h2>{{this.ctx.metaPage.title}}</h2>
+      <h1>{{this.ctx.metaPage.title}}</h1>
     </ng-container>
 
     <ng-container *ngIf="!isStaticTitle()">
       <ng-container [ngSwitch]="pageMode">
         <ng-container *ngSwitchCase="'search'">
-          <h2>Search {{entityNamePlural}}</h2>
+          <h1>Search {{entityNamePlural}}</h1>
         </ng-container>
 
         <ng-container *ngSwitchCase="'add'">
-          <h2>Add {{entityNameSingular}}</h2>
+          <h1>Add {{entityNameSingular}}</h1>
         </ng-container>
 
         <ng-container *ngSwitchCase="'view'">
-          <h2 *ngIf="usingNames">{{fullName}}</h2>
-          <h2 *ngIf="!usingNames">{{entityNameSingular}}</h2>
+          <h1 *ngIf="usingNames">{{fullName}}</h1>
+          <h1 *ngIf="!usingNames">{{entityNameSingular}}</h1>
         </ng-container>
 
         <ng-container *ngSwitchCase="'update'">
-          <h2 *ngIf="usingNames">Update {{firstName}}&apos;s details</h2>
-          <h2 *ngIf="!usingNames">Update {{entityNameSingular}}</h2>
+          <h1 *ngIf="usingNames">Update {{firstName}}&apos;s details</h1>
+          <h1 *ngIf="!usingNames">Update {{entityNameSingular}}</h1>
         </ng-container>
       </ng-container>
     </ng-container>

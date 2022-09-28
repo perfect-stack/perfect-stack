@@ -1,22 +1,10 @@
 <ng-container *ngIf="ctx && template">
 
   <ng-container *ngIf="showTemplateHeadings && template.templateHeading && mode">
-    <!--<ng-container *ngIf="template.templateHeading === '${bird.name}'">
-      <h3 class="text-center">
-        &lt;!&ndash; TODO: this one is here to center the Bird view heading, needs to be removed and turned into something like a Text Tool with meta data styles for text-center &ndash;&gt;
+    <div class="border-bottom pt-2 px-2">
+      <div class="panel-heading">
         <lib-expression-control [mode]="mode" [formMap]="ctx.formMap" [expression]="template.templateHeading"></lib-expression-control>
-      </h3>
-    </ng-container>-->
-    <!--<ng-container *ngIf="template.templateHeading !== '${bird.name}'">
-      <h3>
-        <lib-expression-control [mode]="mode" [formMap]="ctx.formMap" [expression]="template.templateHeading"></lib-expression-control>
-      </h3>
-    </ng-container>-->
-
-    <div class="border-bottom pt-3 px-4">
-      <h3>
-        <lib-expression-control [mode]="mode" [formMap]="ctx.formMap" [expression]="template.templateHeading"></lib-expression-control>
-      </h3>
+      </div>
     </div>
   </ng-container>
 
@@ -56,8 +44,8 @@
     </lib-card-layout>
   </ng-container>
 
-  <div *ngIf="template.locations">
-    <div class="d-flex justify-content-between p-3">
+  <div *ngIf="hasBottomLocations">
+    <div class="d-flex justify-content-between px-3 py-4">
       <!-- Having ng-container inside of the div is important because without it then there is no placeholder element and so
        the justify-content-between doesn't have anything to create space "around". What happens is a single middle tool like
        pagination ends up being displayed on the left rather than in the middle -->

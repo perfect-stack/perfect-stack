@@ -152,6 +152,29 @@ a {
   text-decoration: none;
 }
 
+h1 {
+  font-size: 36px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+h3 {
+  font-size: 24px;
+}
+
+h4 {
+  font-size: 18px;
+}
+
+// At the top of a panel, or the side headings (not a h3 and not a h4, it's in-between)
+.panel-heading {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
 .paris-layout-style .form-row {
   padding-bottom: 32px;
 }
