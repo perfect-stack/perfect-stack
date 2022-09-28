@@ -1,7 +1,7 @@
 <ng-container *ngIf="ctx && template">
 
   <ng-container *ngIf="showTemplateHeadings && template.templateHeading && mode">
-    <div class="border-bottom pt-2 px-2">
+    <div class="border-bottom py-4 px-2">
       <div class="panel-heading">
         <lib-expression-control [mode]="mode" [formMap]="ctx.formMap" [expression]="template.templateHeading"></lib-expression-control>
       </div>
