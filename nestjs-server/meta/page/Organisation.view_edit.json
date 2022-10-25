@@ -2,7 +2,18 @@
   "name": "Organisation.view_edit",
   "title": "Organisation View/Edit",
   "type": "view_edit",
-  "layoutStyle": "",
+  "layoutStyle": "NewYork",
+  "dataQueryList": [
+    {
+      "dataName": "organisation",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Organisation",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -17,16 +28,6 @@
       "metaEntityName": "Organisation",
       "type": "form",
       "binding": "organisation"
-    }
-  ],
-  "dataQueryList": [
-    {
-      "dataName": "organisation",
-      "resultCardinality": "QueryOne",
-      "queryType": "Entity",
-      "queryName": "Organisation",
-      "fieldName": "id",
-      "parameter": "id"
     }
   ]
 }

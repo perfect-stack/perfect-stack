@@ -1,6 +1,6 @@
 <div class="container-fluid mt-3" *ngIf="metaEntity$ | async as metaEntity">
 
-  <h2 class="mb-3">Search/Edit {{metaEntity.name}}</h2>
+  <h2 class="mb-3">Search/Edit of {{metaEntity.pluralName}}</h2>
 
   <ng-container *ngIf="rowData$ | async as rowData">
     <table class="table table-striped">

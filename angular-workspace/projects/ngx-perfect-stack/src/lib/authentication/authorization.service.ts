@@ -49,8 +49,7 @@ export class AuthorizationService {
         // get existing groupPermissions (if any)
         const existingGroupPermissions = permissionMap.has(nextGroupName) ? permissionMap.get(nextGroupName) : [];
 
-        // the new group permissions is the intersection of any existing permissions from other roles and the
-        // permissions from this role
+        // the new group permissions is union of both permission sets
         const newGroupPermissions = this.mergePermissions(existingGroupPermissions!, rolePermissions);
 
         // update the map and overwrite any existing value

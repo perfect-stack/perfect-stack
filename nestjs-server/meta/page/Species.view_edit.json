@@ -2,7 +2,18 @@
   "name": "Species.view_edit",
   "title": "Species View/Edit",
   "type": "view_edit",
-  "layoutStyle": "",
+  "layoutStyle": "NewYork",
+  "dataQueryList": [
+    {
+      "dataName": "species",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Species",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -42,16 +53,6 @@
       "metaEntityName": "Species",
       "type": "form",
       "binding": "species"
-    }
-  ],
-  "dataQueryList": [
-    {
-      "dataName": "species",
-      "resultCardinality": "QueryOne",
-      "queryType": "Entity",
-      "queryName": "Species",
-      "fieldName": "id",
-      "parameter": "id"
     }
   ]
 }

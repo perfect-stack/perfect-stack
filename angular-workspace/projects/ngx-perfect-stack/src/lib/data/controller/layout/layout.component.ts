@@ -68,7 +68,12 @@ export class LayoutComponent implements OnInit {
   constructor(public readonly debugService: DebugService) { }
 
   ngOnInit(): void {
-    this.hasBottomLocations = this.template.locations[TemplateLocationType.BottomLeft] != null || this.template.locations[TemplateLocationType.BottomMiddle] != null || this.template.locations[TemplateLocationType.BottomRight] != null;
+    if(this.template && this.template.locations) {
+      this.hasBottomLocations =
+        this.template.locations[TemplateLocationType.BottomLeft] !== null
+        || this.template.locations[TemplateLocationType.BottomMiddle] !== null
+        || this.template.locations[TemplateLocationType.BottomRight] !== null;
+    }
 
     if(this.ctx) {
       this.mode = this.ctx.mode;
