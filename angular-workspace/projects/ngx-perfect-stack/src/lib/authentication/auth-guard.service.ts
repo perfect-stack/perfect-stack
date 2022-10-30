@@ -4,7 +4,6 @@ import {Observable} from 'rxjs';
 import {AuthenticationService} from './authentication.service';
 import {ActionType} from '../domain/meta.role';
 import {AuthorizationService} from './authorization.service';
-import {Action} from 'rxjs/internal/scheduler/Action';
 
 @Injectable({
   providedIn: 'root'
@@ -28,14 +27,18 @@ export class AuthGuard implements CanActivate {
       let canActivate = true;
       const actionSubject = this.findActionAndSubjectFromURL(state.url);
       if(actionSubject) {
-        console.log(`findActionAndSubjectFromURL: ${actionSubject.action}.${actionSubject.subject}`);
-        canActivate = this.authorizationService.checkPermission(actionSubject.action, actionSubject.subject);
+        //console.log(`findActionAndSubjectFromURL: ${actionSubject.action}.${actionSubject.subject}`);
+        const actionSubjectPermission = this.authorizationService.checkPermission(actionSubject.action, actionSubject.subject);
+        const menuSubject = this.findMenuSubject(actionSubject);
+        const menuSubjectPermission = this.authorizationService.checkPermission(ActionType.Menu, menuSubject);
+        //console.log(`canActivate.0: action = ${actionSubject.subject}, menu = ${menuSubject}`);
+        canActivate = actionSubjectPermission && menuSubjectPermission;
       }
       else {
         console.log(`findActionAndSubjectFromURL: NO Action or subject found. Keep calm and carry on.`)
       }
 
-      console.log(`canActivate.1: ${canActivate} ${state.url}`);
+      //console.log(`canActivate.1: ${canActivate} ${state.url}`);
       if(canActivate) {
         return canActivate;
       }
@@ -78,6 +81,36 @@ export class AuthGuard implements CanActivate {
     }
 
     return null;
+  }
+
+  findMenuSubject(actionSubject: ActionSubject): string | null {
+    if(actionSubject) {
+
+      if(actionSubject.subject === 'Person') {
+        return 'People';
+      }
+
+      const adminSubjects = [
+        'ActivityType',
+        'LocationType',
+        'ObserverRole',
+        'Organisation',
+        'ProjectStatus',
+        'ProjectRole',
+        'ProjectTeamStatus',
+        'Species',
+      ];
+
+      if(adminSubjects.indexOf(actionSubject.subject) >= 0) {
+        return 'Admin'
+      }
+      else  {
+        return actionSubject.subject;
+      }
+    }
+    else {
+      return  null;
+    }
   }
 }
 
