@@ -3,6 +3,8 @@
   "title": "Health",
   "type": "view_edit",
   "layoutStyle": "Paris",
+  "dataQueryList": [],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -37,6 +39,11 @@
             "width": "4",
             "height": "1",
             "attributeName": "legs_checked"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "gravid"
           }
         ],
         [
@@ -77,6 +84,5 @@
       "type": "form",
       "templateHeading": "Health"
     }
-  ],
-  "dataQueryList": []
+  ]
 }
