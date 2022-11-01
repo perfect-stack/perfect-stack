@@ -12,6 +12,13 @@ import { PersonSearchQuery } from './app-event/person-search.query';
 import { ProjectBirdsQuery } from './app-event/project-birds.query';
 import { ProjectTeamQuery } from './app-event/project-team.query';
 import { SettingsService } from './settings/settings.service';
+import { CustomRuleService } from './data/rule/custom-rule.service';
+import {
+  ResultType,
+  RuleValidator,
+  ValidationResult,
+} from './domain/meta.rule';
+import { MetaAttribute } from './domain/meta.entity';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -23,6 +30,7 @@ export class AppService implements OnApplicationBootstrap {
     protected readonly dataService: DataService,
     protected readonly queryService: QueryService,
     protected readonly customQueryService: CustomQueryService,
+    protected readonly customRuleService: CustomRuleService,
     protected readonly knexService: KnexService,
     protected readonly eventService: EventService,
     protected readonly settingsService: SettingsService,
@@ -37,11 +45,15 @@ export class AppService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap(): Promise<any> {
     await this.metaEntityService.syncMetaModelWithDatabase(false);
+
     this.addEventSearchCriteriaQuery();
     this.addPersonSearchQuery();
     this.addBandingActivityListener();
     this.addProjectBirdsQuery();
     this.addProjectTeamQuery();
+
+    this.addCustomRules();
+
     return;
   }
 
@@ -86,5 +98,36 @@ export class AppService implements OnApplicationBootstrap {
         this.settingsService,
       ),
     );
+  }
+
+  private addCustomRules() {
+    this.customRuleService.addCustomRule(
+      'EventTypeCaptureRule',
+      new EventTypeCaptureRule(null, null, null),
+    );
+  }
+}
+
+class EventTypeCaptureRule extends RuleValidator {
+  async validate(
+    entity: any,
+    attribute: MetaAttribute,
+  ): Promise<ValidationResult | null> {
+    console.log('EventTypeCaptureRule GOT Called!!');
+
+    const eventType = entity['event_type'];
+    if (eventType === 'Capture') {
+      const observers = entity['observers'];
+      if (observers.length < 1) {
+        return {
+          name: attribute.name,
+          resultType: ResultType.Error,
+          message:
+            'If event type is "Capture" then there must be at least one Observer',
+        };
+      }
+    }
+
+    return null;
   }
 }

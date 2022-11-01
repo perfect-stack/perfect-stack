@@ -78,6 +78,15 @@ export class EventPageListenerService implements PageListener {
         console.log(`onPageLoad: eventType setValue completed.`)
       }
     }
+
+    // If there are errors attached to the event_type field then we need to clear them if the user "fixes" the error
+    // by making changes to the observers
+    const eventFormGroup = ctx.formMap.get('event') as UntypedFormGroup;
+    if(eventFormGroup) {
+      eventFormGroup.controls['observers'].valueChanges.subscribe(() => {
+        this.clearControlErrors(eventFormGroup, 'event_type');
+      });
+    }
   }
 
   loadBird(birdId: string, formGroup: UntypedFormGroup, emitEvent: boolean) {

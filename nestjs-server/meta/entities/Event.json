@@ -203,6 +203,10 @@
         {
           "type": "Required",
           "config": ""
+        },
+        {
+          "type": "Custom",
+          "config": "EventTypeCaptureRule"
         }
       ],
       "enumeration": [

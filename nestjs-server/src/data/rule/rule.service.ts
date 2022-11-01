@@ -17,12 +17,16 @@ import { UniqueRuleValidator } from './rules/unique-rule-validator';
 import { KnexService } from '../../knex/knex.service';
 import { UniqueInsensitiveRuleValidator } from './rules/unique-insensitive-rule-validator';
 import { EmailRuleValidator } from './rules/email-rule-validator';
+import { CustomRuleService } from './custom-rule.service';
 
 @Injectable()
 export class RuleService implements MetaEntityRuleValidator {
   private readonly logger = new Logger(RuleService.name);
 
-  constructor(protected readonly knexService: KnexService) {}
+  constructor(
+    protected readonly customRuleService: CustomRuleService,
+    protected readonly knexService: KnexService,
+  ) {}
 
   async validate(
     entity: any,
@@ -160,6 +164,8 @@ export class RuleService implements MetaEntityRuleValidator {
     attribute: MetaAttribute,
   ): RuleValidator | null {
     switch (ruleData.type) {
+      case RuleType.Custom:
+        return this.createCustomRuleValidator(metaEntity, attribute, ruleData);
       case RuleType.Email:
         return new EmailRuleValidator(metaEntity, attribute, ruleData);
       case RuleType.Required:
@@ -182,9 +188,22 @@ export class RuleService implements MetaEntityRuleValidator {
         );
       default:
         throw new Error(
-          `Unknown rule type of ${ruleData.type}. Unable to fine RuleValidator`,
+          `Unknown rule type of "${ruleData.type}". Unable to fine RuleValidator`,
         );
     }
+  }
+
+  private createCustomRuleValidator(
+    metaEntity: MetaEntity,
+    attribute: MetaAttribute,
+    ruleData: RuleData,
+  ): RuleValidator {
+    const rulePrototype = this.customRuleService.getCustomRule(ruleData.config);
+    const rule = Object.create(rulePrototype);
+    rule.metaEntity = metaEntity;
+    rule.metaAttribute = attribute;
+    rule.ruleData = ruleData;
+    return rule;
   }
 
   private getMetaEntityFromAttributeValue(
