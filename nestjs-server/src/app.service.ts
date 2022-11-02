@@ -105,6 +105,36 @@ export class AppService implements OnApplicationBootstrap {
       'EventTypeCaptureRule',
       new EventTypeCaptureRule(null, null, null),
     );
+
+    this.customRuleService.addCustomRule(
+      'BirdNameRule',
+      new BirdNameRule(null, null, null),
+    );
+  }
+}
+
+class BirdNameRule extends RuleValidator {
+  async validate(
+    entity: any,
+    attribute: MetaAttribute,
+  ): Promise<ValidationResult | null> {
+    const birdName = entity['name'];
+    if (birdName === null || birdName.length === 0) {
+      // at least one marking must be supplied
+      const band = entity['band'];
+      const microchip = entity['microchip'];
+      const wing_tag = entity['wing_tag'];
+      if (band || microchip || wing_tag) {
+        return null;
+      } else {
+        return {
+          name: attribute.name,
+          resultType: ResultType.Error,
+          message:
+            'If the bird name is not supplied then one marking of; band, microchip or wing tag must be supplied',
+        };
+      }
+    }
   }
 }
 
@@ -113,8 +143,6 @@ class EventTypeCaptureRule extends RuleValidator {
     entity: any,
     attribute: MetaAttribute,
   ): Promise<ValidationResult | null> {
-    console.log('EventTypeCaptureRule GOT Called!!');
-
     const eventType = entity['event_type'];
     if (eventType === 'Capture') {
       const observers = entity['observers'];

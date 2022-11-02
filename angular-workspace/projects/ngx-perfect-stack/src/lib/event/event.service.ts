@@ -56,6 +56,7 @@ export class EventService {
   }
 
   dispatchOnPageLoad(pageName: string, ctx: FormContext, params: ParamMap, queryParams: ParamMap): void {
+    console.log(`Dispatch onPageLoad to page listeners: ${pageName}`);
     const listenerList = this.getListenerList(ListenerType.PageListener, pageName);
     for(const listener of listenerList) {
       const pageListener = listener as PageListener;

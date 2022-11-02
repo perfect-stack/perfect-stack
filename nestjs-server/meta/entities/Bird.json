@@ -32,7 +32,12 @@
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Custom",
+          "config": "BirdNameRule"
+        }
+      ]
     },
     {
       "name": "sex",
