@@ -10,6 +10,7 @@ import {DataService} from '../../../../ngx-perfect-stack/src/lib/data/data-servi
 import {FormGroup, UntypedFormGroup} from '@angular/forms';
 import {AddLocationDialogComponent} from './add-location-dialog/add-location-dialog.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {SaveResponse} from '../../../../ngx-perfect-stack/src/lib/data/data-service/save.response';
 
 @Injectable({
   providedIn: 'root'
@@ -157,7 +158,7 @@ export class EventPageListenerService implements PageListener {
     });
   }
 
-  onCompletion(ctx: FormContext): string {
+  onCompletion(ctx: FormContext, saveResponse: SaveResponse | null): string {
     console.log('Got onCompletionEvent() queryParams:', ctx.queryParamMap);
     const queryParamMap = ctx.queryParamMap;
     if(queryParamMap) {
@@ -170,11 +171,12 @@ export class EventPageListenerService implements PageListener {
         const paramMap = ctx.paramMap;
         if(paramMap) {
           const eventId = paramMap.get('id');
-          if(eventId === '**NEW**') {
-            route = `/data/Event/search`;
+          const entityIdToView = eventId && eventId != '**NEW**' ? eventId : saveResponse && saveResponse.entity ? saveResponse.entity.id : null;
+          if(entityIdToView) {
+            route = `/data/Event/view/${eventId}`;
           }
           else {
-            route = `/data/Event/view/${eventId}`;
+            route = `/data/Event/search`;
           }
         }
       }

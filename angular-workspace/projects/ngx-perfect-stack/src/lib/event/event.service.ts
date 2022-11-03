@@ -6,6 +6,7 @@ import {MetaAttribute} from '../domain/meta.entity';
 import {PerfectStackEventListener} from './perfect-stack-event-listener';
 import {UntypedFormGroup} from '@angular/forms';
 import {ActionListener} from './action-listener';
+import {SaveResponse} from '../data/data-service/save.response';
 
 enum ListenerType {
   ActionListener = 'ActionListener',
@@ -97,13 +98,13 @@ export class EventService {
 
   }
 
-  dispatchOnCompletion(pageName: string, ctx: FormContext): string {
+  dispatchOnCompletion(pageName: string, ctx: FormContext, saveResponse: SaveResponse | null): string {
     console.log(`Dispatch event , {emitEvent: false} to meta page listeners: ${pageName}`);
     let completionResult: string = CompletionResult.Continue;
     const listenerList = this.getListenerList(ListenerType.PageListener, pageName);
     for(const listener of listenerList) {
       const pageListener = listener as PageListener;
-      const pageResult = pageListener.onCompletion(ctx);
+      const pageResult = pageListener.onCompletion(ctx, saveResponse);
       completionResult = pageResult > completionResult ? pageResult : completionResult;
     }
     return completionResult;

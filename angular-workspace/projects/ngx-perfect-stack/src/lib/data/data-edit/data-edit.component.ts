@@ -117,15 +117,16 @@ export class DataEditComponent implements OnInit {
     this.router.navigate([`/data/${this.metaName}/edit`, this.entityId]);
   }
 
-  onCancel(ctx: FormContext): Promise<boolean> {
+  onCancel(ctx: FormContext, saveResponse: SaveResponse | null): Promise<boolean> {
 
-    let completionResult = this.eventService.dispatchOnCompletion(ctx.metaPage.name, ctx);
+    let completionResult = this.eventService.dispatchOnCompletion(ctx.metaPage.name, ctx, saveResponse);
     if(completionResult === CompletionResult.Stop) {
       return new Promise(() => false);
     }
 
-    if(this.entityId) {
-      return this.router.navigate([`/data/${this.metaName}/view`, this.entityId]);
+    const entityIdToView = this.entityId ? this.entityId : saveResponse && saveResponse.entity ? saveResponse.entity.id : null;
+    if(entityIdToView) {
+      return this.router.navigate([`/data/${this.metaName}/view`, entityIdToView]);
     }
     else {
       return this.router.navigate([`/data/${this.metaName}/search`]);
@@ -171,11 +172,11 @@ export class DataEditComponent implements OnInit {
               this.saveRejected(ctx, response);
             }
             else {
-              this.saveCompleted(ctx);
+              this.saveCompleted(ctx, response);
             }
           }
           else {
-            this.saveCompleted(ctx)
+            this.saveCompleted(ctx, response);
           }
         });
       }
@@ -202,8 +203,8 @@ export class DataEditComponent implements OnInit {
     });
   }
 
-  saveCompleted(ctx: FormContext) {
-    this.onCancel(ctx).then(() => {
+  saveCompleted(ctx: FormContext, response: SaveResponse) {
+    this.onCancel(ctx, response).then(() => {
       this.toastService.showSuccess('Save is successful');
     });
   }

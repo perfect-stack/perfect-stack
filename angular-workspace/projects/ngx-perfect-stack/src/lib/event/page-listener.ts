@@ -3,6 +3,7 @@ import {ParamMap} from '@angular/router';
 import {MetaAttribute} from '../domain/meta.entity';
 import {PerfectStackEventListener} from './perfect-stack-event-listener';
 import {UntypedFormGroup} from '@angular/forms';
+import {SaveResponse} from '../data/data-service/save.response';
 
 export interface PageListener extends PerfectStackEventListener {
   onPageLoad(ctx: FormContext, params: ParamMap, queryParams: ParamMap): void;
@@ -10,7 +11,7 @@ export interface PageListener extends PerfectStackEventListener {
   onManyToOneItemSelected(formGroup: UntypedFormGroup, attribute: MetaAttribute, itemSelected: any): void;
   onBeforeSave(ctx: FormContext): void;
   onAfterSave(ctx: FormContext): void;
-  onCompletion(ctx: FormContext): string;
+  onCompletion(ctx: FormContext, saveResponse: SaveResponse | null): string;
 }
 
 export class CompletionResult {
