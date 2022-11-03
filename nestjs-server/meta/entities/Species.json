@@ -119,8 +119,8 @@
       "rules": []
     },
     {
-      "name": "māori_name",
-      "label": "Māori name",
+      "name": "maori_name",
+      "label": "Maori name",
       "description": "Any additional Māori names if not already defined in the common name",
       "unitOfMeasure": "",
       "scale": "",

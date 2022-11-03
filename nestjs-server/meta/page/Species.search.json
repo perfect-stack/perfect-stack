@@ -3,6 +3,8 @@
   "title": "$PageTitle",
   "type": "search",
   "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -41,7 +43,7 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "māori_name"
+            "attributeName": "maori_name"
           },
           {
             "width": "3",
@@ -65,6 +67,5 @@
       "orderByName": "name",
       "orderByDir": "ASC"
     }
-  ],
-  "dataQueryList": []
+  ]
 }
