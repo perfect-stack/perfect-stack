@@ -1,4 +1,4 @@
-import {Injectable, TemplateRef} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
 
 @Injectable({
@@ -19,8 +19,9 @@ export class ToastService {
   }
 
   showSuccess(message: string) {
-    this.show( message, {
+    this.show( {
       header: 'Success',
+      message: message,
       classname: 'bg-success text-light',
       delay: 5000,
       autohide: true
@@ -28,8 +29,9 @@ export class ToastService {
   }
 
   showWarning(message: string) {
-    this.show( message, {
+    this.show( {
       header: 'Warning',
+      message: message,
       classname: 'bg-warning',
       delay: 5000,
       autohide: true
@@ -37,16 +39,17 @@ export class ToastService {
   }
 
   showError(message: string, autohide: boolean) {
-    this.show( message, {
+    this.show( {
       header: 'Error',
+      message: message,
       classname: 'bg-danger text-light',
       delay: 5000,
       autohide: autohide
     });
   }
 
-  show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
-    this.toasts.push({ textOrTpl, ...options });
+  show(toastData: any = {}) {
+    this.toasts.push(toastData);
   }
 
   remove(toast: any) {

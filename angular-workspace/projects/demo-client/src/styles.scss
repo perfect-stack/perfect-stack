@@ -365,3 +365,24 @@ h4 {
   box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
   border-radius: 8px;
 }
+
+
+
+.toast-header {
+  color: #FFF;
+  background-color: unset;
+  border-bottom: unset;
+}
+
+.toast-header .btn-close {
+  display: none;
+}
+
+.toast-header .my-btn-close {
+  cursor: pointer;
+}
+
+.toast-body {
+  padding: 0px 44px 12px 44px;
+}
+

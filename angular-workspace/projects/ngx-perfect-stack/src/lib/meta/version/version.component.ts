@@ -2,6 +2,7 @@ import {Component, Inject, Input, OnInit} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-config';
 import {HttpClient} from '@angular/common/http';
 import {DebugService} from '../../utils/debug/debug.service';
+import {ToastService} from '../../utils/toasts/toast.service';
 
 @Component({
   selector: 'lib-version',
@@ -19,6 +20,7 @@ export class VersionComponent implements OnInit {
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
               public readonly debugService: DebugService,
+              protected readonly toastService: ToastService,
               protected readonly http: HttpClient) { }
 
   ngOnInit(): void {
@@ -31,5 +33,17 @@ export class VersionComponent implements OnInit {
 
   onToggleDebug() {
     this.debugService.toggleDebug();
+  }
+
+  onToastSuccess() {
+    this.toastService.showSuccess('This is a success message');
+  }
+
+  onToastWarning() {
+    this.toastService.showWarning('This is a warning message');
+  }
+
+  onToastError() {
+    this.toastService.showError('This is a error message', false);
   }
 }

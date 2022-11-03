@@ -1,14 +1,20 @@
 <ngb-toast
+  #myToast
   *ngFor="let toast of toastService.toasts"
   [class]="toast.classname"
-  [header]="toast.header"
   [autohide]="toast.autohide"
   [delay]="toast.delay || 7000"
   (hidden)="toastService.remove(toast)"
 >
-  <ng-template [ngIf]="isTemplate(toast)" [ngIfElse]="text">
-    <ng-template [ngTemplateOutlet]="toast.textOrTpl"></ng-template>
+  <ng-template class="align-items-center" ngbToastHeader>
+    <span class="material-symbols-outlined" *ngIf="toast.header === 'Success'">check_circle</span>
+    <span class="material-symbols-outlined" *ngIf="toast.header === 'Warning'">warning</span>
+    <span class="material-symbols-outlined" *ngIf="toast.header === 'Error'">error_circle_rounded</span>
+    <strong class="ms-2">{{toast.header}}</strong>
+    <span class="me-auto"></span>
+    <span class="material-symbols-outlined my-btn-close" (click)="onClose(myToast)">close</span>
   </ng-template>
 
-  <ng-template #text>{{ toast.textOrTpl }}</ng-template>
+  {{toast.message}}
+
 </ngb-toast>

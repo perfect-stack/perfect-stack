@@ -1,5 +1,6 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ToastService} from './toast.service';
+import {NgbToast} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-toasts',
@@ -13,7 +14,7 @@ export class ToastsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  isTemplate(toast: any) {
-    return toast.textOrTpl instanceof TemplateRef;
+  onClose(toastComponent: NgbToast) {
+    toastComponent.hide();
   }
 }
