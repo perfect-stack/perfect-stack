@@ -13,7 +13,7 @@ export class AuthenticationController {
   @SubjectName('Authentication')
   @Post('/notification')
   notification(@Body() loginNotification: LoginNotification) {
-    this.service.notification(loginNotification);
+    return this.service.notification(loginNotification);
   }
 
   @ActionPermit(ActionType.Read)
