@@ -38,6 +38,8 @@ export class DataSearchComponent implements OnInit {
 
   resultsMessage = '';
 
+  showPagination = false;
+
   constructor(protected readonly customDateParserFormatter: CustomDateParserFormatter,
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
@@ -133,6 +135,8 @@ export class DataSearchComponent implements OnInit {
         const totalRows = response.totalCount;
         const pluralName = this.resultTableMetaEntity.pluralName ? this.resultTableMetaEntity.pluralName.toLowerCase() : '';
         this.resultsMessage = `Showing ${startRow}-${endRow} of ${totalRows} ${pluralName}`;
+
+        this.showPagination = totalRows > this.pageSize;
       });
     }
   }

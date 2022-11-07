@@ -27,8 +27,8 @@
           <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate"></lib-controller>
         </div>
         <div class="action-buttons-right align-self-end">
-          <button type="button" class="btn btn-outline-primary me-2" (click)="onReset(ctx)" id="resetBtn">Reset</button>
-          <button type="submit" class="btn btn-primary" (click)="onSearch(ctx)" id="searchBtn">Search</button>
+          <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)" id="searchBtn">Search</button>
+          <button type="button" class="btn btn-outline-primary" (click)="onReset(ctx)" id="resetBtn">Reset</button>
         </div>
       </div>
     </form>
@@ -51,14 +51,16 @@
     </ng-container>
 
 
-    <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx)">
-      <ng-template ngbPaginationFirst>First</ng-template>
-      <ng-template ngbPaginationLast>Last</ng-template>
-      <ng-template ngbPaginationPrevious>Previous</ng-template>
-      <ng-template ngbPaginationNext>Next</ng-template>
-      <ng-template ngbPaginationEllipsis>...</ng-template>
-      <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
-    </ngb-pagination>
+    <ng-container *ngIf="showPagination">
+      <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx)">
+        <ng-template ngbPaginationFirst>First</ng-template>
+        <ng-template ngbPaginationLast>Last</ng-template>
+        <ng-template ngbPaginationPrevious>Previous</ng-template>
+        <ng-template ngbPaginationNext>Next</ng-template>
+        <ng-template ngbPaginationEllipsis>...</ng-template>
+        <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+      </ngb-pagination>
+    </ng-container>
   </div>
 
   <lib-version [style]="'Footer'"></lib-version>

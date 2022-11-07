@@ -242,12 +242,12 @@ h4 {
 /*********** Status badge **********/
 
 @mixin badge-mixin {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   justify-content: center;
-  flex-grow: 0;
   align-items: center;
   height: 24px;
+  padding: 0px 16px;
   border-radius: 16px;
 }
 
