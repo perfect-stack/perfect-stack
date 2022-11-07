@@ -7,16 +7,23 @@
 }
 
 .tile-btn:focus {
-  background-color: #f8e12f75;
+  background: #F7FBFF;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
+
 .tile-btn:hover {
+  background: #f2f4f7;
   color: unset;
 }
 
 .tile-btn:disabled {
   background: #EAECF0;
   color: #D0D5DD;
+}
+
+.btn-icon {
+  color: #056EBA;
 }
 
 .btn-icon-disabled {
