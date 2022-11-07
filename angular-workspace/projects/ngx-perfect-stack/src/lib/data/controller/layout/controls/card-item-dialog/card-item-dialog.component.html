@@ -8,6 +8,6 @@
 </div>
 
 <div class="modal-footer d-flex justify-content-between">
-  <button type="button" class="btn btn-outline-primary" ngbAutofocus (click)="onCancel()" id="cancelBtn">Cancel</button>
+  <button type="button" class="btn btn-outline-primary" (click)="onCancel()" id="cancelBtn">Cancel</button>
   <button type="button" class="btn btn-primary" (click)="onAdd()" [disabled]="!isAddEnabled()" id="addBtn">Add</button>
 </div>

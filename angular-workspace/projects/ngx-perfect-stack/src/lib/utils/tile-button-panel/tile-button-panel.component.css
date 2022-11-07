@@ -6,6 +6,10 @@
   border-radius: 8px;
 }
 
+.tile-btn:focus {
+  background-color: #f8e12f75;
+}
+
 .tile-btn:hover {
   color: unset;
 }
