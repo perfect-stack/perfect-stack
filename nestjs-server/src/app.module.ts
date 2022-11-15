@@ -22,6 +22,7 @@ import { SettingsModule } from './settings/settings.module';
 import { MetaRoleModule } from './meta/meta-role/meta-role.module';
 import { JwtStrategy } from './authentication/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
+import { MapModule } from './map/map.module';
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -48,6 +49,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     EventModule,
     KnexModule,
     OrmModule,
+    MapModule,
     MetaMenuModule,
     MetaEntityModule,
     MetaPageModule,

@@ -19,6 +19,8 @@ import {
   ValidationResult,
 } from './domain/meta.rule';
 import { MetaAttribute } from './domain/meta.entity';
+import { EventDataListener } from './app-event/event.data-listener';
+import { MapService } from './map/map.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -27,6 +29,7 @@ export class AppService implements OnApplicationBootstrap {
   constructor(
     protected readonly metaEntityService: MetaEntityService,
     protected readonly metaMenuService: MetaMenuService,
+    protected readonly mapService: MapService,
     protected readonly dataService: DataService,
     protected readonly queryService: QueryService,
     protected readonly customQueryService: CustomQueryService,
@@ -48,9 +51,11 @@ export class AppService implements OnApplicationBootstrap {
 
     this.addEventSearchCriteriaQuery();
     this.addPersonSearchQuery();
-    this.addBandingActivityListener();
     this.addProjectBirdsQuery();
     this.addProjectTeamQuery();
+
+    this.addBandingActivityListener();
+    this.addEventDataListener();
 
     this.addCustomRules();
 
@@ -79,6 +84,13 @@ export class AppService implements OnApplicationBootstrap {
         this.queryService,
         this.knexService,
       ),
+    );
+  }
+
+  private addEventDataListener() {
+    this.eventService.addDataEventListener(
+      'Event',
+      new EventDataListener(this.mapService),
     );
   }
 

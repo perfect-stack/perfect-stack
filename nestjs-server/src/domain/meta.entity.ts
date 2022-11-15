@@ -1,4 +1,5 @@
 import { RuleData } from './meta.rule';
+import { ApiProperty } from '@nestjs/swagger';
 
 export enum AttributeType {
   Text = 'Text',
@@ -35,23 +36,65 @@ export enum VisibilityType {
   Required = 'Required',
 }
 
+export class DiscriminatorEntityMapping {
+  discriminatorValue: string;
+  metaEntityName: string;
+}
+
+export class DiscriminatorAttribute {
+  @ApiProperty()
+  discriminatorName: string;
+
+  @ApiProperty()
+  discriminatorType: string;
+
+  @ApiProperty()
+  entityMappingList: DiscriminatorEntityMapping[] = [];
+}
+
 export class MetaAttribute {
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   label: string;
+
+  @ApiProperty()
   description: string;
+
+  @ApiProperty()
   type = AttributeType.Text;
+
+  @ApiProperty()
   visibility = VisibilityType.Visible;
+
+  @ApiProperty()
   comparisonField: string;
+
+  @ApiProperty()
   comparisonOperator: ComparisonOperator; // Only used by Criteria objects
+
+  @ApiProperty()
   relationshipTarget: string;
+
   // List of attribute names in the relationshipTarget entity used for Typeahead components
+  @ApiProperty()
   typeaheadSearch: string[];
+
+  @ApiProperty()
   discriminator: DiscriminatorAttribute;
+
   // List of the enumerated values (if attribute type === enumeration)
+  @ApiProperty()
   enumeration: string[];
+
+  @ApiProperty()
   unitOfMeasure: string;
+
+  @ApiProperty()
   scale: string;
 
+  @ApiProperty()
   rules: RuleData[];
 
   static isMetaAttribute(something: any) {
@@ -62,17 +105,6 @@ export class MetaAttribute {
   }
 }
 
-export class DiscriminatorAttribute {
-  discriminatorName: string;
-  discriminatorType: string;
-  entityMappingList: DiscriminatorEntityMapping[] = [];
-}
-
-export class DiscriminatorEntityMapping {
-  discriminatorValue: string;
-  metaEntityName: string;
-}
-
 export enum EntityType {
   Basic = 'Basic',
   Criteria = 'Criteria',
@@ -80,10 +112,21 @@ export enum EntityType {
 }
 
 export class MetaEntity {
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   pluralName: string;
+
+  @ApiProperty()
   type: EntityType;
+
+  @ApiProperty()
   icon: string; // icon name for this MetaEntity
+
+  @ApiProperty()
   timestamps: boolean; // Controls if Sequelize will add createdAt and updatedAt timestamps to each record (if undefined defaults to true)
+
+  @ApiProperty()
   attributes: MetaAttribute[];
 }
