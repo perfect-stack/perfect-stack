@@ -14,6 +14,10 @@
     <button class="btn btn-warning me-2" (click)="onToastWarning()">Warning</button>
     <button class="btn btn-danger" (click)="onToastError()">Error</button>
   </div>
+
+  <div class="py-3">
+    <div>Events that need WGS84 conversion: {{conversionRemainingCount}} <button class="btn btn-warning ms-2" (click)="onConvert()">Convert Now</button></div>
+  </div>
 </div>
 
 <div *ngIf="style === 'Footer'">

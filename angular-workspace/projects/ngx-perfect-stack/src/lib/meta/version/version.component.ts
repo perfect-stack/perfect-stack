@@ -3,6 +3,7 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-confi
 import {HttpClient} from '@angular/common/http';
 import {DebugService} from '../../utils/debug/debug.service';
 import {ToastService} from '../../utils/toasts/toast.service';
+import {CoordinateConverterService} from './coordinate-converter.service';
 
 @Component({
   selector: 'lib-version',
@@ -17,9 +18,12 @@ export class VersionComponent implements OnInit {
   @Input()
   style: 'Page' | 'Footer' = 'Page';
 
+  conversionRemainingCount = -1;
+
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
               public readonly debugService: DebugService,
+              protected readonly coordinateConverterService: CoordinateConverterService,
               protected readonly toastService: ToastService,
               protected readonly http: HttpClient) { }
 
@@ -28,6 +32,10 @@ export class VersionComponent implements OnInit {
 
     this.http.get(`${this.stackConfig.apiUrl}/meta/menu/version`).subscribe((a: any) => {
       this.serverVersion = a.serverRelease;
+    });
+
+    this.coordinateConverterService.getSummary().subscribe((summary: any) => {
+      this.conversionRemainingCount = summary.remainingCount;
     });
   }
 
@@ -45,5 +53,12 @@ export class VersionComponent implements OnInit {
 
   onToastError() {
     this.toastService.showError('This is a error message', false);
+  }
+
+  onConvert() {
+    console.log('Convert now');
+    this.coordinateConverterService.convert().subscribe((summary: any) => {
+      this.conversionRemainingCount = summary.remainingCount;
+    });
   }
 }

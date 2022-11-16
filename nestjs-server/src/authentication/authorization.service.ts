@@ -85,6 +85,7 @@ export class AuthorizationService {
       const group = userGroups[i];
       const groupPermissions = permissionMap.get(group);
       if (groupPermissions) {
+        console.log(`Group Permissions: ${JSON.stringify(groupPermissions)}`);
         for (let j = 0; j < groupPermissions.length && !permitted; j++) {
           const permits = groupPermissions[j].split('.');
           const permitAction = permits[0];
