@@ -21,7 +21,9 @@ import { CustomQueryService } from './custom-query.service';
 import { ActionPermit } from '../authentication/action-permit';
 import { ActionType } from '../domain/meta.role';
 import { SubjectKey } from '../authentication/subject';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('data')
 @Controller('data')
 export class DataController {
   constructor(
@@ -33,6 +35,7 @@ export class DataController {
 
   @ActionPermit(ActionType.Read)
   @SubjectKey('entityName')
+  @ApiOperation({ summary: 'Find all data rows for the supplied entity name' })
   @Get('/:entityName')
   findAll(
     @Param('entityName') entityName: string,
@@ -44,6 +47,10 @@ export class DataController {
 
   @ActionPermit(ActionType.Read)
   @SubjectKey('metaEntityName')
+  @ApiOperation({
+    summary:
+      'Find all data rows for the supplied query request containing entity name and other criteria',
+  })
   @Post('/query')
   findByCriteria(@Body() queryRequest: QueryRequest) {
     if (queryRequest.customQuery) {
@@ -55,6 +62,7 @@ export class DataController {
 
   @ActionPermit(ActionType.Read)
   @SubjectKey('entityName')
+  @ApiOperation({ summary: 'Find one entity by entity name and id' })
   @Get('/:entityName/:id')
   findOne(
     @Param('entityName') entityName: string,
@@ -65,6 +73,10 @@ export class DataController {
 
   @ActionPermit(ActionType.Edit)
   @SubjectKey('entityName')
+  @ApiOperation({
+    summary:
+      'Save (create/update) the supplied request body as the specified entity with the supplied id',
+  })
   @Post('/:entityName/:id')
   async save(
     @Req() request: Request,
@@ -90,6 +102,9 @@ export class DataController {
 
   @ActionPermit(ActionType.Edit)
   @SubjectKey('entityName')
+  @ApiOperation({
+    summary: 'Update the sort index value for certain reference data types',
+  })
   @Post('/:entityName/:id/sort_index')
   async updateSortIndex(
     @Req() request: Request,
@@ -122,6 +137,10 @@ export class DataController {
 
   @ActionPermit(ActionType.Delete)
   @SubjectKey('entityName')
+  @ApiOperation({
+    summary:
+      'Permanently deletes the supplied entity with the supplied id value',
+  })
   @Delete('/:entityName/:id')
   async destroy(
     @Req() request: Request,

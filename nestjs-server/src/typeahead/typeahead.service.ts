@@ -27,6 +27,12 @@ export class TypeaheadService {
       );
     }
 
+    // A high level check was already done at the API level but our current Subject name capability doesn't have
+    // the ability to read the right subject name out of incoming request payloads so since we know what the right
+    // subject/entity name is now we can do a proper check now.
+    //const subjectName = request.metaEntityName;
+    //this.authorizationService.checkPermissionWithMap();
+
     // we should not trust the data in the TypeaheadRequest as part of the sequelize.literal() statement below, so use
     // the data from the TypeaheadRequest as parameters to look up the MetaAttribute from our own internal store and
     // use that instead of what we have been sent.

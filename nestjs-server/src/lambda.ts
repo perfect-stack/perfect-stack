@@ -9,6 +9,7 @@ import { AppModule } from './app.module';
 import sequelize, { Sequelize } from 'sequelize';
 import { Logger } from '@nestjs/common';
 import { OrmService } from './orm/orm.service';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 const express = require('express');
 
@@ -33,6 +34,18 @@ async function bootstrapServer(): Promise<any> {
     );
     nestApp.enableCors();
     nestApp.use(eventContext());
+
+    // OpenAPI documentation
+    const config = new DocumentBuilder()
+      .setTitle('Web API documentation')
+      .setDescription('The API documentation for the web services interface')
+      .setVersion('1.x')
+      .addTag('TAG')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(nestApp, config);
+    SwaggerModule.setup('api-docs', nestApp, document);
+
     await nestApp.init();
 
     cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
