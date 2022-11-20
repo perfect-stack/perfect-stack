@@ -3,7 +3,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 @Component({
   selector: 'lib-tile-button-panel',
   templateUrl: './tile-button-panel.component.html',
-  styleUrls: ['./tile-button-panel.component.css']
+  styleUrls: ['./tile-button-panel.component.scss']
 })
 export class TileButtonPanelComponent implements OnInit {
 

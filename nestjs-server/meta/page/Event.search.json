@@ -32,19 +32,7 @@
         ]
       ],
       "metaEntityName": "EventSearchCriteria",
-      "type": "form",
-      "locations": {
-        "TopRight": {
-          "type": "Button",
-          "containerStyles": "",
-          "styles": "btn btn-success",
-          "label": "Add event",
-          "action": "addEvent",
-          "route": "/route/go/here",
-          "actionPermit": "Edit",
-          "subjectPermit": "Event"
-        }
-      }
+      "type": "form"
     },
     {
       "cells": [
