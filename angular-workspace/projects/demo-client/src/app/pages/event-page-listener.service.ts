@@ -11,6 +11,7 @@ import {FormGroup, UntypedFormGroup} from '@angular/forms';
 import {AddLocationDialogComponent} from './add-location-dialog/add-location-dialog.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SaveResponse} from '../../../../ngx-perfect-stack/src/lib/data/data-service/save.response';
+import {ToastService} from '../../../../ngx-perfect-stack/src/lib/utils/toasts/toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ import {SaveResponse} from '../../../../ngx-perfect-stack/src/lib/data/data-serv
 export class EventPageListenerService implements PageListener {
 
   constructor(protected readonly dataService: DataService,
+              protected readonly toastService: ToastService,
               private modalService: NgbModal,
               protected readonly router: Router) {
   }
@@ -173,14 +175,19 @@ export class EventPageListenerService implements PageListener {
           const eventId = paramMap.get('id');
           const entityIdToView = eventId && eventId != '**NEW**' ? eventId : saveResponse && saveResponse.entity ? saveResponse.entity.id : null;
           if(entityIdToView) {
-            route = `/data/Event/view/${eventId}`;
+            route = `/data/Event/view/${entityIdToView}`;
           }
           else {
             route = `/data/Event/search`;
           }
         }
+        else {
+          throw new Error('No entity to view');
+        }
       }
-      this.router.navigateByUrl(route);
+      this.router.navigateByUrl(route).then(() => {
+        this.toastService.showSuccess('Save is successful');
+      });
     }
 
     return CompletionResult.Stop;

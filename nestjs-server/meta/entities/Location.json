@@ -152,6 +152,34 @@
           "config": "0"
         }
       ]
+    },
+    {
+      "name": "lat",
+      "label": "lat",
+      "description": "Latitude in WGS84 coordinates",
+      "unitOfMeasure": "",
+      "scale": "5",
+      "type": "Double",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "lng",
+      "label": "lng",
+      "description": "Longitude in WGS84 coordinates",
+      "unitOfMeasure": "",
+      "scale": "5",
+      "type": "Double",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }
