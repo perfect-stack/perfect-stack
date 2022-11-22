@@ -282,7 +282,7 @@ const routes: Routes = [
     MetaMenuService,
     MetaPageService,
     MetaEntityService,
-    ToastService,
+//    ToastService,
     CustomDateAdapterService,
     CustomDateParserFormatter,
     SearchControllerService,
