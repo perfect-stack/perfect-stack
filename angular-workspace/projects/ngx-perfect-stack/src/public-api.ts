@@ -13,5 +13,6 @@ export * from './lib/event/event.service';
 export * from './lib/event/page-listener';
 export * from './lib/utils/tile-button-panel/tile-button-panel.component';
 export * from './lib/utils/toasts/toasts.component';
+export * from './lib/utils/toasts/toast.service';
 export * from './lib/utils/tree-walker/meta-entity-tree-walker'
 export * from './lib/domain/meta.entity';
