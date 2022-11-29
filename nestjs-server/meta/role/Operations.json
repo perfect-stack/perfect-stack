@@ -1,15 +1,11 @@
 {
   "name": "Operations",
-  "group": "operators,ap-southeast-2_CIl5VvfWD_doc-azuread-sso,ap-southeast-2_wnejPAddx_doc-azuread-sso",
+  "group": "KIMS_Operations,operators,ap-southeast-2_CIl5VvfWD_doc-azuread-sso,ap-southeast-2_wnejPAddx_doc-azuread-sso",
   "inherits": "Viewer",
   "description": "<p>Can edit meta but not system, add projects, set project manager role,</p>",
   "permissions": [
     {
       "action": "Edit",
-      "subject": "Meta"
-    },
-    {
-      "action": "Delete",
       "subject": "Meta"
     },
     {
@@ -19,6 +15,10 @@
     {
       "action": "Edit",
       "subject": "Project"
+    },
+    {
+      "action": "Delete",
+      "subject": "Meta"
     },
     {
       "action": "Menu",
