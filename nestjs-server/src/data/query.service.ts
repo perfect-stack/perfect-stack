@@ -13,6 +13,7 @@ import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
 import { Op } from 'sequelize';
 import { QueryResponse } from './query.response';
 import { getCriteriaValue } from './query-utils';
+import { DataNotFound } from './data.exception';
 
 @Injectable()
 export class QueryService {
@@ -69,16 +70,18 @@ export class QueryService {
       include: { all: true, nested: true },
     });
 
-    const entity = entityModel.toJSON();
-
-    const metaEntity = await this.metaEntityService.findOne(entityName);
-    for (const attribute of metaEntity.attributes) {
-      if (attribute.type === AttributeType.OneToPoly) {
-        await this.loadOneToPoly(metaEntity, entity, attribute);
+    if (entityModel) {
+      const entity = entityModel.toJSON();
+      const metaEntity = await this.metaEntityService.findOne(entityName);
+      for (const attribute of metaEntity.attributes) {
+        if (attribute.type === AttributeType.OneToPoly) {
+          await this.loadOneToPoly(metaEntity, entity, attribute);
+        }
       }
+      return entity;
+    } else {
+      throw new DataNotFound();
     }
-
-    return entity;
   }
 
   private async loadOneToPoly(
