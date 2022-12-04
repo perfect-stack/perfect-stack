@@ -70,9 +70,9 @@ export class LayoutComponent implements OnInit {
   ngOnInit(): void {
     if(this.template && this.template.locations) {
       this.hasBottomLocations =
-        this.template.locations[TemplateLocationType.BottomLeft] !== null
-        || this.template.locations[TemplateLocationType.BottomMiddle] !== null
-        || this.template.locations[TemplateLocationType.BottomRight] !== null;
+        this.template.locations[TemplateLocationType.BottomLeft] !== undefined
+        || this.template.locations[TemplateLocationType.BottomMiddle] !== undefined
+        || this.template.locations[TemplateLocationType.BottomRight] !== undefined;
     }
 
     if(this.ctx) {
