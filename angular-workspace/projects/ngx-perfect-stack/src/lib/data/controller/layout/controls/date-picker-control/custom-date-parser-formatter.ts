@@ -13,6 +13,7 @@ import { Locale } from '@js-joda/locale_en' // Get `Locale` from the prebuilt pa
 @Injectable()
 export class CustomDateParserFormatter extends NgbDateParserFormatter {
 
+  dateFormat: string;
   dateFormatter: DateTimeFormatter;
 
   constructor(
@@ -20,17 +21,22 @@ export class CustomDateParserFormatter extends NgbDateParserFormatter {
     protected readonly stackConfig: NgxPerfectStackConfig,
   ) {
     super();
-    const dateFormat = stackConfig.dateFormat ? stackConfig.dateFormat : 'yyyy-MM-dd';
-    this.dateFormatter = DateTimeFormatter.ofPattern(dateFormat).withLocale(Locale.ENGLISH);
+    this.dateFormat = stackConfig.dateFormat ? stackConfig.dateFormat : 'yyyy-MM-dd';
+    this.dateFormatter = DateTimeFormatter.ofPattern(this.dateFormat).withLocale(Locale.ENGLISH);
   }
 
   parse(value: string): NgbDateStruct | null {
     if (value) {
-      const date = LocalDateTime.parse(value, this.dateFormatter);
-      return {
-        year: date.year(),
-        month: date.monthValue(),
-        day: date.dayOfMonth()
+      try {
+        const date = LocalDate.parse(value, this.dateFormatter);
+        return {
+          year: date.year(),
+          month: date.monthValue(),
+          day: date.dayOfMonth()
+        }
+      }
+      catch (e) {
+        // TODO: should only suppress parsing exceptions and rethrow others
       }
     }
     return null;

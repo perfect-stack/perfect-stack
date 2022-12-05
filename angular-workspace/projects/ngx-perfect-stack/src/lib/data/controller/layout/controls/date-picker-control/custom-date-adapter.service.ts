@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import {DateTimeFormatter, LocalDate} from '@js-joda/core';
 
 /**
  * This Service handles how the date is represented in scripts i.e. ngModel.
@@ -22,6 +23,6 @@ export class CustomDateAdapterService extends NgbDateAdapter<string> {
   }
 
   toModel(date: NgbDateStruct | null): string | null {
-    return date ? date.year + this.DELIMITER + date.month + this.DELIMITER + date.day : null;
+    return date ? DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.of(date.year, date.month, date.day)) : null;
   }
 }
