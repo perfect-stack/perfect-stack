@@ -92,8 +92,10 @@ export class MenuItemViewComponent implements OnInit {
 
   onSave(modal: any) {
     modal.close('Save click')
-    const editedItem = this.menuItemForm.value;
-    console.log(`Edited item: ${JSON.stringify(editedItem)}`);
-    this.menuItem = Object.assign(this.menuItem, editedItem);
+    if(this.menuItem) {
+      const editedItem = this.menuItemForm.value;
+      console.log(`Edited item: ${JSON.stringify(editedItem)}`);
+      this.menuItem = Object.assign(this.menuItem, editedItem);
+    }
   }
 }

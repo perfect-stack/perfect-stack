@@ -72,7 +72,9 @@ export class MenuHeaderViewComponent implements OnInit {
 
   onSave(modal: any) {
     modal.close('Save click')
-    const editedItem = this.menuForm.value;
-    this.menu = Object.assign(this.menu, editedItem);
+    if(this.menu) {
+      const editedItem = this.menuForm.value;
+      this.menu = Object.assign(this.menu, editedItem);
+    }
   }
 }
