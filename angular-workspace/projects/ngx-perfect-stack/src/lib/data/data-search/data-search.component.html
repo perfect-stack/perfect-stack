@@ -52,7 +52,7 @@
 
 
     <ng-container *ngIf="showPagination">
-      <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx)">
+      <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx, false)">
         <ng-template ngbPaginationFirst>First</ng-template>
         <ng-template ngbPaginationLast>Last</ng-template>
         <ng-template ngbPaginationPrevious>Previous</ng-template>

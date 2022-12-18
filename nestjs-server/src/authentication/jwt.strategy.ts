@@ -126,36 +126,51 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  getCognitoGroups(payload: any): string[] {
+    return payload['cognito:groups'];
+  }
+
+  /**
+   * The Azure AD groups appear in the token with the following format;
+   *
+   * "custom:group": "[KIMS_Viewer, KIMS_Business_Admin, KIMS_Project_Manager, KIMS_Operations, KIMS_Editor]"
+   * @param payload
+   */
+  getCustomGroups(payload: any): string[] {
+    const customGroupsStr = payload['custom:group'];
+    if (customGroupsStr) {
+      const tokens = customGroupsStr.replace(/[\[\]]/g, '');
+      const tokenList = tokens.split(',');
+      return tokenList.map((s) => s.trim());
+    } else {
+      return [];
+    }
+  }
+
   async validate(payload: any) {
     // Uncomment the following line for a quick easy way of seeing the JWT payload in clear text (which is safe)
     // without having to muck about grabbing the Base64 encoded version and decoding that
     console.log(`\nPASSPORT: validate token: ${JSON.stringify(payload)}`);
 
-    return {
-      groups: payload['cognito:groups'],
-      username: payload['cognito:username'],
-      given_name: payload['given_name'],
-      family_name: payload['family_name'],
-      email: payload['email'],
-    };
-
-    //return payload;
-
-    /*const issuerValid = payload.iss === this.expectedIssuer;
+    const issuerValid = payload.iss === this.expectedIssuer;
     if (issuerValid) {
-      return payload;
+      return {
+        groups: [
+          ...this.getCognitoGroups(payload),
+          ...this.getCustomGroups(payload),
+        ],
+        username: payload['cognito:username'],
+        given_name: payload['given_name'],
+        family_name: payload['family_name'],
+        email: payload['email'],
+      };
     } else {
-      console.log(
-        `Invalid token, issuerValue = ${issuerValid}, for: ${JSON.stringify(
-          payload,
-        )}`,
-      );
       jwtLogger.error(
         `Invalid token, issuerValue = ${issuerValid}, for: ${JSON.stringify(
           payload,
         )}`,
       );
       throw new UnauthorizedException();
-    }*/
+    }
   }
 }

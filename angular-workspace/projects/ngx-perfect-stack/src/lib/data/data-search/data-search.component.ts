@@ -96,9 +96,13 @@ export class DataSearchComponent implements OnInit {
     });
   }
 
-  onSearch(ctx: FormContext) {
+  onSearch(ctx: FormContext, resetToFirstPage = true) {
     if(this.metaName) {
       this.searchResultsFormGroup = null;
+
+      if(resetToFirstPage) {
+        this.pageNumber = 1;
+      }
 
       const queryRequest: QueryRequest = {
         metaEntityName: this.metaName,
