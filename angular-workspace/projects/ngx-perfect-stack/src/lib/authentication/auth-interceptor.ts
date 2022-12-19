@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {catchError, switchMap, throwError} from 'rxjs';
+import {catchError, throwError} from 'rxjs';
 import {AuthenticationService} from './authentication.service';
 import {ToastService} from '../utils/toasts/toast.service';
 
@@ -47,7 +47,7 @@ export class AuthInterceptor implements HttpInterceptor {
             this.toastService.showError(toastErrorMessage, false);
           }
 
-          return throwError('Application Intercepted HTTP Error');
+          return throwError(() => new Error('Application Intercepted HTTP Error'));
         })
       );
     }

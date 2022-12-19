@@ -69,7 +69,9 @@
               "./node_modules/leaflet/dist/leaflet.css",
               "projects/demo-client/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/tinymce/tinymce.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -139,7 +141,9 @@
             "styles": [
               "projects/demo-client/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/tinymce/tinymce.min.js"
+            ]
           }
         }
       }

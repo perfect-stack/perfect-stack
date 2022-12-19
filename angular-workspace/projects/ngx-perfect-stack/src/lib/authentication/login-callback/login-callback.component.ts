@@ -20,7 +20,7 @@ export class LoginCallbackComponent implements OnInit {
       const accessToken = this.parseToken('access_token=', '&', url);
       console.log(`Got idToken = `, idToken);
       console.log(`Got accessToken = `, accessToken);
-      this.authenticationService.createUser(idToken, accessToken);
+      this.authenticationService.createUser(idToken, accessToken, true);
     }
   }
 

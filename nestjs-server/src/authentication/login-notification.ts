@@ -1,4 +1,3 @@
 export class LoginNotification {
-  idToken: string;
-  accessToken: string;
+  bearerToken: string;
 }

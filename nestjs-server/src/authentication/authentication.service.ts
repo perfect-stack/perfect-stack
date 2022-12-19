@@ -10,6 +10,7 @@ import { Entity } from '../domain/entity';
 import { QueryService } from '../data/query.service';
 import { QueryRequest } from '../data/query.request';
 import { AttributeType, ComparisonOperator } from '../domain/meta.entity';
+import { UserNameService } from './user-name.service';
 
 @Injectable()
 export class AuthenticationService {
@@ -20,6 +21,7 @@ export class AuthenticationService {
     protected readonly configService: ConfigService,
     protected readonly dataService: DataService,
     protected readonly queryService: QueryService,
+    protected readonly userNameService: UserNameService,
   ) {
     this.jwksClient = jwksClient({
       jwksUri: configService.get('AUTHENTICATION_PUBLIC_KEY_URL'),
@@ -34,44 +36,30 @@ export class AuthenticationService {
    * source of authentication is Cognito and AzureAD logs themselves.
    */
   async notification(loginNotification: LoginNotification) {
-    // console.log(`idToken: ${loginNotification.idToken}`);
-    // console.log(`accessToken: ${loginNotification.accessToken}`);
-
-    const idToken = await this.decodeAndVerify(loginNotification.idToken);
-    const accessToken = await this.decodeAndVerify(
-      loginNotification.accessToken,
+    const bearerToken = await this.decodeAndVerify(
+      loginNotification.bearerToken,
     );
 
     const auth_time = ZonedDateTime.from(
-      nativeJs(new Date(idToken.auth_time * 1000)),
+      nativeJs(new Date(bearerToken.auth_time * 1000)),
     );
 
+    const username = this.userNameService.getUsername(bearerToken);
     this.logger.log(
-      `Login notification, saving... ${idToken.given_name} ${idToken.family_name}, ${idToken.email}, ${accessToken.username} - ${auth_time}`,
+      `Login notification, saving... ${bearerToken.given_name} ${bearerToken.family_name}, ${bearerToken.email}, ${username} - ${auth_time}`,
     );
 
-    this.logger.log(`Login notification, save with transaction`);
     await this.dataService.save('Authentication', {
       id: null,
       auth_time: auth_time.toInstant().toString(),
-      given_name: idToken.given_name,
-      family_name: idToken.family_name,
-      email_address: idToken.email, // subtle name change here!
-      username: accessToken.username,
+      given_name: bearerToken.given_name,
+      family_name: bearerToken.family_name,
+      email_address: bearerToken.email, // subtle name change here!
+      username: username,
     } as Entity);
 
-    // this.logger.log(`Login notification, bypass transaction and save directly`);
-    // await this.dataService.saveInTransaction('Authentication', {
-    //   id: null,
-    //   auth_time: auth_time.toInstant().toString(),
-    //   given_name: idToken.given_name,
-    //   family_name: idToken.family_name,
-    //   email_address: idToken.email, // subtle name change here!
-    //   username: accessToken.username,
-    // } as Entity);
-
     this.logger.log(
-      `Login notification Saved ok: ${idToken.given_name} ${idToken.family_name}, ${idToken.email}, ${accessToken.username} - ${auth_time}`,
+      `Login notification Saved ok: ${bearerToken.given_name} ${bearerToken.family_name}, ${bearerToken.email}, ${username} - ${auth_time}`,
     );
 
     return;

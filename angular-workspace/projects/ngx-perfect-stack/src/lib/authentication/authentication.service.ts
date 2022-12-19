@@ -6,9 +6,12 @@ import {CognitoUser} from './user/cognito-user';
 import {BehaviorSubject} from 'rxjs';
 import {nativeJs, ZonedDateTime, ZoneId} from '@js-joda/core';
 import jwt_decode from "jwt-decode";
-import {HttpClient} from '@angular/common/http';
-import {LoginNotification} from './login-notification';
 
+/**
+ * Important: Don't make any HTTP calls from this class or anything else that it invokes, you will probably get an
+ * error about circular references for HTTP_INTERCEPTORS at that point.
+ *
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -17,6 +20,7 @@ export class AuthenticationService {
   isLoggedIn: boolean | null = null;
 
   user$ = new BehaviorSubject<User|null>(null);
+  notifyUser$ = new BehaviorSubject<User|null>(null);
 
   expiryTime: ZonedDateTime | null = null;
 
@@ -25,7 +29,6 @@ export class AuthenticationService {
 
   constructor(protected readonly router: Router,
               protected readonly route: ActivatedRoute,
-              protected readonly http: HttpClient,
               @Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig) {
 
@@ -37,11 +40,11 @@ export class AuthenticationService {
     const idToken = localStorage.getItem('idToken');
     const accessToken = localStorage.getItem('accessToken');
     if(idToken && accessToken) {
-      this.createUser(idToken, accessToken);
+      this.createUser(idToken, accessToken, false);
     }
   }
 
-  createUser(idToken: string | null, accessToken: string | null) {
+  createUser(idToken: string | null, accessToken: string | null, sendNotification: boolean) {
     let user = null;
     if(idToken && accessToken) {
       const decodedToken: any = jwt_decode(idToken);
@@ -68,14 +71,12 @@ export class AuthenticationService {
       console.log(`Create user: null tokens.`);
     }
 
+    // "normal" user event
     this.user$.next(user);
 
-    // If there is a User created then send a login notification to the server, but do that after the User has been
-    // assigned to the variable otherwise the token doesn't get added to the http request.
-    if(user) {
-      this.sendNotification(idToken!, accessToken!).subscribe(() => {
-        console.log('Login notification has been sent')
-      });
+    // "notify" user event, only used when login clicked
+    if(sendNotification) {
+      this.notifyUser$.next(user);
     }
   }
 
@@ -98,18 +99,6 @@ export class AuthenticationService {
     const url = this.stackConfig.cognitoLoginUrl;
     console.log('Login started: ');
     window.open(url, "_self");
-  }
-
-  sendNotification(idToken: string, accessToken: string) {
-    console.log(`Sending login notification`);
-    return this.http.post<LoginNotification>(`${this.stackConfig.apiUrl}/authentication/notification`, {
-      idToken: idToken,
-      accessToken: accessToken,
-    });
-  }
-
-  findLastSignIn(username: string) {
-    return this.http.get(`${this.stackConfig.apiUrl}/authentication/last-sign-in/${username}`);
   }
 
   navigateToFirstPage() {

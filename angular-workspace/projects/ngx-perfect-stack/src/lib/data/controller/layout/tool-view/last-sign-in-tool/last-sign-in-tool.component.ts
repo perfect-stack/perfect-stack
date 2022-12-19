@@ -2,11 +2,11 @@ import {Component, Inject, Input, OnInit} from '@angular/core';
 import {LastSignInTool} from '../../../../../domain/meta.page';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
-import {AuthenticationService} from '../../../../../authentication/authentication.service';
 import {ExpressionService} from '../../controls/expression-control/expression.service';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 import {Locale} from '@js-joda/locale_en';
 import {DateTimeFormatter, Instant, LocalTime, ZonedDateTime, ZoneId} from '@js-joda/core';
+import {AuthenticationClientService} from '../../../../../authentication/authentication-client.service';
 
 @Component({
   selector: 'lib-last-sign-in-tool',
@@ -31,7 +31,7 @@ export class LastSignInToolComponent implements OnInit {
   constructor(protected readonly propertySheetService: PropertySheetService,
               @Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly expressionService: ExpressionService,
-              protected readonly authenticationService: AuthenticationService) {
+              protected readonly authenticationClientService: AuthenticationClientService) {
     Locale.getAvailableLocales();
   }
 
@@ -47,7 +47,7 @@ export class LastSignInToolComponent implements OnInit {
         this.username = this.lastSignInTool.username;
       }
 
-      this.authenticationService.findLastSignIn(this.username).subscribe((authentication: any) => {
+      this.authenticationClientService.findLastSignIn(this.username).subscribe((authentication: any) => {
         this.authentication = authentication;
         if(authentication) {
           const utc = Instant.parse(authentication.auth_time);

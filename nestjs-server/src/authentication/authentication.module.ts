@@ -9,6 +9,7 @@ import { DataModule } from '../data/data.module';
 import { PassportModule } from '@nestjs/passport';
 import { AuthorizationService } from './authorization.service';
 import { MetaRoleModule } from '../meta/meta-role/meta-role.module';
+import { UserNameService } from './user-name.service';
 
 @Module({
   imports: [
@@ -19,7 +20,12 @@ import { MetaRoleModule } from '../meta/meta-role/meta-role.module';
     PassportModule,
     JwtModule.register({}),
   ],
-  providers: [AuthenticationService, AuthorizationService, JwtStrategy],
+  providers: [
+    AuthenticationService,
+    AuthorizationService,
+    JwtStrategy,
+    UserNameService,
+  ],
   controllers: [AuthenticationController],
   exports: [AuthenticationService, AuthorizationService],
 })
