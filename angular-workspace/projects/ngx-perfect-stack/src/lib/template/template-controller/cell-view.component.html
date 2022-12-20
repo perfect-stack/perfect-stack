@@ -19,7 +19,9 @@
 
         <div [ngSwitch]="attribute.type">
           <ng-container *ngSwitchCase="'Date'">
-            <app-date-picker-control [attribute]="attribute"></app-date-picker-control>
+            <ng-container [formGroup]="entityForm">
+              <app-date-picker-control [mode]="'edit'" [attribute]="attribute" [formControlName]="attribute.name"></app-date-picker-control>
+            </ng-container>
           </ng-container>
 
           <ng-container *ngSwitchCase="'DateTime'">
@@ -75,7 +77,8 @@
               </ng-container>
 
               <ng-container *ngSwitchDefault>
-                <lib-many-to-one-control [formGroup]="entityForm" [mode]="'edit'" [attribute]="attribute"></lib-many-to-one-control>
+                <!-- just present a default input field if no other more specific component available -->
+                <input class="form-control">
               </ng-container>
             </ng-container>
           </ng-container>

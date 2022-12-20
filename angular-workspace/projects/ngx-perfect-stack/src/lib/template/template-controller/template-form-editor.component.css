@@ -29,3 +29,19 @@
 .drag-transit {
   border: #3500FF dashed 2px;
 }
+
+
+.add-cell {
+  width: 32px;
+  margin: 8px 0 4px  4px;
+  background: #e5e5e5;
+}
+
+.hover-highlight:hover {
+  background: lavender;
+}
+
+.hover-highlight:active {
+  background: #ffe8a1;
+}
+

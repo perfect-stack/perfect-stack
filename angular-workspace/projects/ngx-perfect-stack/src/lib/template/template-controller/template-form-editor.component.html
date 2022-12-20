@@ -1,6 +1,6 @@
 <ng-container *ngIf="template">
   <ng-container *ngIf="metaEntityMap$ | async as metaEntityMap">
-    <div class="row" *ngFor="let nextRow of template.cells">
+    <div class="row g-1" *ngFor="let nextRow of template.cells">
       <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
         <!--{{nextCell.attributeName}}: {{getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName) | json}}-->
         <!--{{getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName) | json}}-->
@@ -14,14 +14,8 @@
         </lib-cell-view>
       </div>
       <ng-container *ngIf="getTotalWidth(nextRow) < 12">
-        <div class="bg-light">
-          <table class="h-100">
-            <tbody>
-            <td>
-              <span class="material-symbols-outlined hover-highlight no_selection" (click)="onAddCell(nextRow)">add_circle_outline</span>
-            </td>
-            </tbody>
-          </table>
+        <div class="add-cell cell-highlight hover-highlight rounded-2 d-flex align-items-center justify-content-center" (click)="onAddCell(nextRow)">
+          <div class="material-symbols-outlined no_selection">add_circle_outline</div>
         </div>
       </ng-container>
     </div>

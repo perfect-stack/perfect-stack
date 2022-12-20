@@ -1,6 +1,7 @@
 .cell-highlight {
   background: lightgray;
   border: #343a40 solid thin;
+  margin: 2px 2px;
 }
 
 .hover-highlight:hover {

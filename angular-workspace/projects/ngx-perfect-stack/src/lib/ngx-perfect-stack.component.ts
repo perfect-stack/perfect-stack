@@ -39,16 +39,12 @@ export class NgxPerfectStackComponent implements OnInit {
   ngOnInit(): void {
     this.authenticationService.notifyUser$.subscribe((user) => {
       if(user) {
-        console.log('XXX got new user event with user XXX');
         const bearerToken = user.getBearerToken();
         if(bearerToken) {
           this.authenticationClientService.sendNotification(bearerToken).subscribe(() => {
             console.log('login notification sent');
           });
         }
-      }
-      else {
-        console.log('XXX got new user event user is falsey XXX');
       }
     });
   }

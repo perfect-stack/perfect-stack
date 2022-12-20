@@ -306,7 +306,6 @@ const routes: Routes = [
     EditorModule,
     LeafletModule,
     RouterModule.forChild(routes),
-    ReactiveFormsModule,
     LoadingBarHttpClientModule,
   ],
   exports: [

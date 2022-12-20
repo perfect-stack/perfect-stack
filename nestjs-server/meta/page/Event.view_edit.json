@@ -3,6 +3,17 @@
   "title": "Event View/Edit",
   "type": "view_edit",
   "layoutStyle": "Paris",
+  "dataQueryList": [
+    {
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Event",
+      "fieldName": "id",
+      "parameter": "id",
+      "dataName": "event"
+    }
+  ],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -161,16 +172,6 @@
       "type": "form",
       "templateHeading": "Activities",
       "binding": "event"
-    }
-  ],
-  "dataQueryList": [
-    {
-      "resultCardinality": "QueryOne",
-      "queryType": "Entity",
-      "queryName": "Event",
-      "fieldName": "id",
-      "parameter": "id",
-      "dataName": "event"
     }
   ]
 }
