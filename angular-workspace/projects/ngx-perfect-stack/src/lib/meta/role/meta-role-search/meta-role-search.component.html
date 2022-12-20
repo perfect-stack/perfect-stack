@@ -1,6 +1,15 @@
 <div class="container-fluid mt-3">
-  <h2>Meta Role Search</h2>
-
+  <div class="row">
+    <div class="col-6">
+      <h2>Meta Role Search</h2>
+    </div>
+    <div class="col-6">
+      <div class="d-flex">
+        <div class="flex-grow-1"></div>
+        <button class="btn btn-outline-success" (click)="onNew()">New Role...</button>
+      </div>
+    </div>
+  </div>
 
   <table class="table table-striped table-hover mt-3">
     <thead>
@@ -18,9 +27,4 @@
     </tr>
     </tbody>
   </table>
-
-  <div class="d-flex">
-    <div class="flex-grow-1"></div>
-    <button class="btn btn-outline-success" (click)="onNew()">New Role...</button>
-  </div>
 </div>
