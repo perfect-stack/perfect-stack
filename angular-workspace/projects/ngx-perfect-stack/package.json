@@ -13,7 +13,7 @@
     "@angular/platform-browser": "^15.0.2",
     "@angular/platform-browser-dynamic": "^15.0.2",
     "@angular/router": "^15.0.2",
-    "@asymmetrik/ngx-leaflet": "^14.0.0",
+    "@asymmetrik/ngx-leaflet": "^15.0.1",
     "@js-joda/core": "^5.2.0",
     "@js-joda/locale_en": "^4.7.0",
     "@js-joda/timezone": "^2.12.0",
