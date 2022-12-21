@@ -8,7 +8,7 @@ import {AttributeType} from '../../domain/meta.entity';
 import {
   DoubleVisitor,
   IdentifierVisitor,
-  IntegerVisitor, ManyToOneVisitor,
+  IntegerVisitor,
   MetaEntityTreeWalker
 } from '../../utils/tree-walker/meta-entity-tree-walker';
 import {DebugService} from '../../utils/debug/debug.service';

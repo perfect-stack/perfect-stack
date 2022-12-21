@@ -185,8 +185,14 @@ export class EventPageListenerService implements PageListener {
           throw new Error('No entity to view');
         }
       }
+
       this.router.navigateByUrl(route).then(() => {
-        this.toastService.showSuccess('Save is successful');
+        if(saveResponse) {
+          this.toastService.showSuccess('Save is successful');
+        }
+        else {
+          console.log('No saveResponse, so will not show toast message');
+        }
       });
     }
 
