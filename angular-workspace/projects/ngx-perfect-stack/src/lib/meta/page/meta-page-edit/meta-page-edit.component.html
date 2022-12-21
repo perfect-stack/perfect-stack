@@ -37,13 +37,12 @@
 
   <div class="container-border-radius m-3 p-3">
     <div class="row">
-      <div class="col-2">
+      <div class="col-10">
         <h4>Tools</h4>
-        <lib-tool-palette></lib-tool-palette>
-        <lib-attribute-palette></lib-attribute-palette>
-      </div>
+        <div class="pb-2">
+          <lib-tool-palette></lib-tool-palette>
+        </div>
 
-      <div class="col-8">
         <h4>Templates</h4>
         <!--<div class="d-flex justify-content-between" *ngIf="templates && templates.length > 0">
           <div></div>
@@ -56,6 +55,7 @@
 
       <div class="col-2">
         <lib-property-sheet></lib-property-sheet>
+        <lib-attribute-palette></lib-attribute-palette>
       </div>
     </div>
   </div>

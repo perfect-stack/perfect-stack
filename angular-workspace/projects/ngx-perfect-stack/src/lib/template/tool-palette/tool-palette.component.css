@@ -5,6 +5,11 @@
 
 .tool {
   padding: 6px;
+  margin-right: 4px;
+  width: 48px;
   white-space: nowrap;
   overflow: clip;
+  border: #2c2c2c solid thin;
+  border-radius: 4px;
+  text-align: center !important;
 }
