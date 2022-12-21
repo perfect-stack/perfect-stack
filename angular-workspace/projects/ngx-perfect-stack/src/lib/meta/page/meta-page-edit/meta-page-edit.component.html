@@ -45,10 +45,10 @@
 
       <div class="col-8">
         <h4>Templates</h4>
-        <div class="d-flex justify-content-between" *ngIf="templates && templates.length > 0">
+        <!--<div class="d-flex justify-content-between" *ngIf="templates && templates.length > 0">
           <div></div>
           <lib-tool-drop-zone [template]="templates[0]" [templateLocationType]="TemplateLocationType.OuterTopRight" [editorMode]="true"></lib-tool-drop-zone>
-        </div>
+        </div>-->
         <div class="mb-4" *ngFor="let nextTemplate of templates">
           <lib-template-controller [template]="nextTemplate"></lib-template-controller>
         </div>

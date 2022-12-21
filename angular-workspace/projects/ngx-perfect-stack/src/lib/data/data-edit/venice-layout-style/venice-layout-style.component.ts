@@ -34,7 +34,7 @@ export class VeniceLayoutStyleComponent implements OnInit {
     return TemplateLocationType;
   }
 
-  get outerTopRightTool() {
+  /*get outerTopRightTool() {
     if(this.ctx.metaPage.templates && this.ctx.metaPage.templates.length > 0) {
       const firstTemplate = this.ctx.metaPage?.templates[0];
       if(firstTemplate?.locations) {
@@ -42,5 +42,5 @@ export class VeniceLayoutStyleComponent implements OnInit {
       }
     }
     return undefined;
-  }
+  }*/
 }
