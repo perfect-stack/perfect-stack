@@ -36,16 +36,18 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   }
 
   ngOnInit(): void {
-    this.optionListSubscription = this.dataService.findAll(this.attribute.relationshipTarget).subscribe((response) => {
-      this.optionList = response.resultList;
-      if(this.optionList && this.optionList.length > 0) {
-        const firstElement = this.optionList[0];
-        if(firstElement && firstElement.sort_index) {
-          this.optionList.sort((a, b) => a.sort_index - b.sort_index);
+    if(this.mode !== 'view') {
+      this.optionListSubscription = this.dataService.findAll(this.attribute.relationshipTarget).subscribe((response) => {
+        this.optionList = response.resultList;
+        if(this.optionList && this.optionList.length > 0) {
+          const firstElement = this.optionList[0];
+          if(firstElement && firstElement.sort_index) {
+            this.optionList.sort((a, b) => a.sort_index - b.sort_index);
+          }
         }
-      }
-      this.updateSelectedEntity();
-    });
+        this.updateSelectedEntity();
+      });
+    }
   }
 
   get attribute_name_id() {
@@ -89,8 +91,15 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
       else {
         this.selectedEntity = null;
       }
-
       this.selectedEntityEvent.next(this.selectedEntity);
+    }
+    else {
+      // we may not ever get an optionList (e.g. view mode) but if we have the id then just do a look of the entity that way
+      if(this.selectedEntityId) {
+        this.dataService.findByIdUsingCache(this.attribute.relationshipTarget, this.selectedEntityId).subscribe((response) => {
+          this.selectedEntity = response;
+        });
+      }
     }
   }
 
