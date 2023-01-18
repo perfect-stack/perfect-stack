@@ -6,5 +6,7 @@
   "DATE_FORMAT": "dd-MMM-yyyy",
   "DATE_TIME_FORMAT": "dd-MMM-yyyy HH:mm",
   "TIME_FORMAT": "HH:mm",
-  "DEBUG": false
+  "DEBUG": false,
+  "COPYRIGHT_FOOTER": "Copyright ©2022 Company",
+  "SUPPORT_EMAIL": "support@company.com"
 }

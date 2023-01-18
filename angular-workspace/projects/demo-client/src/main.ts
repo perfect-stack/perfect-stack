@@ -24,6 +24,8 @@ fetch('/client.json')
       timeFormat: configJson.TIME_FORMAT,
       debug: configJson.DEBUG,
       metaRoleList: [],
+      copyrightFooter: configJson.COPYRIGHT_FOOTER,
+      supportEmail: configJson.SUPPORT_EMAIL
     };
 
     fetch(`${configJson.API_URL}/meta/role`)

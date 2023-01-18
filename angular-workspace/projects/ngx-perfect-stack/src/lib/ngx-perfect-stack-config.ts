@@ -13,4 +13,6 @@ export interface NgxPerfectStackConfig {
   timeFormat: string;
   debug: boolean;
   metaRoleList: MetaRole[],
+  supportEmail: string;
+  copyrightFooter: string;
 }

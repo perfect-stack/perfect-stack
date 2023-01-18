@@ -23,6 +23,10 @@
 <div *ngIf="style === 'Footer'">
   <div class="d-flex justify-content-between small text-footer py-3">
     <div>Version: {{clientVersion}} / {{serverVersion}}</div>
-    <div>Copyright ©2022 Department of Conservation</div>
+    <div *ngIf="supportEmail || copyrightFooter">
+      <span *ngIf="supportEmail">Contact the team by email - <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></span>
+      <span class="copyright-separator" *ngIf="supportEmail && copyrightFooter">|</span>
+      <span *ngIf="copyrightFooter">{{copyrightFooter}}</span>
+    </div>
   </div>
 </div>
