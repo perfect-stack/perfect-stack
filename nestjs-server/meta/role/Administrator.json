@@ -61,6 +61,18 @@
       "subject": "ActivityType"
     },
     {
+      "action": "Delete",
+      "subject": "Species"
+    },
+    {
+      "action": "Delete",
+      "subject": "Organisation"
+    },
+    {
+      "action": "Delete",
+      "subject": "Location"
+    },
+    {
       "action": "Menu",
       "subject": "Admin"
     }

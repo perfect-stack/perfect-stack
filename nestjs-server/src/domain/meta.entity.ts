@@ -132,5 +132,8 @@ export class MetaEntity {
   cacheExpiryInSecs: number;
 
   @ApiProperty()
+  permanentDelete: boolean; // Can instances of this entity be permanently deleted
+
+  @ApiProperty()
   attributes: MetaAttribute[];
 }

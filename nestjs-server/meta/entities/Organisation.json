@@ -5,6 +5,8 @@
   "type": "Database",
   "rootNode": true,
   "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": true,
   "attributes": [
     {
       "name": "id",

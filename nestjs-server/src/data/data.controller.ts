@@ -162,6 +162,19 @@ export class DataController {
     return response;
   }
 
+  @ActionPermit(ActionType.Delete)
+  @SubjectKey('entityName')
+  @ApiOperation({
+    summary: 'Check if the entity with the supplied id value can be deleted',
+  })
+  @Delete('/check/:entityName/:id')
+  async destroyCheck(
+    @Param('entityName') entityName: string,
+    @Param('id') id: string,
+  ): Promise<any> {
+    return this.dataService.destroyCheck(entityName, id);
+  }
+
   purge(): Promise<void> {
     return;
   }

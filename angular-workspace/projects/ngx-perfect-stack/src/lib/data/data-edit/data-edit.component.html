@@ -18,6 +18,20 @@
               </lib-permission-check>
             </div>
           </ng-container>
+          <ng-container BottomLeftActions>
+            <div class="mt-2" *ngIf="mode === 'edit' && deleteAvailable">
+              <lib-permission-check [action]="ActionType.Delete" [subject]="metaName">
+                <ng-container *ngIf="deleteCheck === DeleteCheckType.No">
+                  <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
+                    <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn">Delete</button>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="deleteCheck === DeleteCheckType.Yes">
+                  <button type="button" class="btn btn-outline-danger me-2" (click)="onDeletePrompt(ctx)" id="deleteBtn" placement="top" ngbTooltip="This entity can be deleted safely">Delete</button>
+                </ng-container>
+              </lib-permission-check>
+            </div>
+          </ng-container>
           <ng-container BottomRightActions>
             <div class="mt-2" *ngIf="mode === 'edit'">
               <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">

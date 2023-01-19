@@ -85,4 +85,8 @@ export class DataService {
   destroy(entityName: string, id: string) {
     return this.http.delete(`${this.stackConfig.apiUrl}/data/${entityName}/${id}`);
   }
+
+  destroyCheck(entityName: string, id: string) {
+    return this.http.delete(`${this.stackConfig.apiUrl}/data/check/${entityName}/${id}`);
+  }
 }

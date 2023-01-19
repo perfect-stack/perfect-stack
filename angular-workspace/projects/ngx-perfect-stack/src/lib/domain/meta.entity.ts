@@ -87,5 +87,6 @@ export class MetaEntity {
   rootNode: boolean;
   timestamps: boolean; // Controls if Sequelize will add createdAt and updatedAt timestamps to each record (if undefined defaults to true)
   cacheExpiryInSecs: number; // How long to cache instances of this entity on the client in seconds (no value means don't cache)
+  permanentDelete: boolean; // Can instances of this entity be permanently deleted
   attributes: MetaAttribute[];
 }

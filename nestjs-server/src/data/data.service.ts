@@ -7,6 +7,7 @@ import {
   AttributeType,
   ComparisonOperator,
   DiscriminatorAttribute,
+  EntityType,
   MetaAttribute,
   MetaEntity,
 } from '../domain/meta.entity';
@@ -648,11 +649,86 @@ export class DataService {
   }
 
   async destroy(entityName: string, id: string) {
-    const model = this.ormService.sequelize.model(entityName);
-    return model.destroy({
-      where: {
-        id: id,
-      },
+    const destroyCheckOk = await this.destroyCheck(entityName, id);
+    if (destroyCheckOk) {
+      const model = this.ormService.sequelize.model(entityName);
+      return model.destroy({
+        where: {
+          id: id,
+        },
+      });
+    } else {
+      throw new Error(
+        `Unable to destroy ${entityName} (${id}) since there are related entities`,
+      );
+    }
+  }
+
+  async destroyCheck(entityName: string, id: string) {
+    this.logger.log(`Destroy check for ${entityName}: ${id}`);
+
+    // find all entities that have a relationship to this entity
+    const relatedEntities = await this.findRelatedEntities(entityName);
+
+    // query each type entity to see if any of them are pointing to the entity we want to delete
+    let hasRelationships = false;
+    for (const nextEntity of relatedEntities) {
+      this.logger.log(`Destroy check checking relationship ${nextEntity.name}`);
+      if (await this.hasRelationships(nextEntity, entityName, id)) {
+        hasRelationships = true;
+        break;
+      }
+    }
+
+    this.logger.log(
+      `Destroy check says destroy allowed is ${!hasRelationships}`,
+    );
+
+    // entity instance can be destroyed if is has no relationships
+    return !hasRelationships;
+  }
+
+  private async findRelatedEntities(entityName: string): Promise<MetaEntity[]> {
+    let entityList = await this.metaEntityService.findAll();
+    entityList = entityList.filter((s) => {
+      let hasRelationship = false;
+      if (s.type === EntityType.Database) {
+        for (const attribute of s.attributes) {
+          if (attribute.relationshipTarget === entityName) {
+            hasRelationship = true;
+            break;
+          }
+        }
+      }
+      return hasRelationship;
     });
+
+    return entityList;
+  }
+
+  private async hasRelationships(
+    fromMetaEntity: MetaEntity,
+    toTargetEntityName: string,
+    id: string,
+  ): Promise<boolean> {
+    const queryRequest = new QueryRequest();
+    queryRequest.metaEntityName = fromMetaEntity.name;
+    queryRequest.criteria = [
+      {
+        name: `${toTargetEntityName.toLowerCase()}_id`,
+        attributeType: AttributeType.ManyToOne,
+        operator: ComparisonOperator.Equals,
+        value: id,
+      },
+    ];
+
+    const queryResponse = await this.queryService.findByCriteria(queryRequest);
+    const hasRelationships = queryResponse.totalCount > 0;
+
+    this.logger.log(
+      `Destroy check hasRelationships() from ${fromMetaEntity.name} to ${toTargetEntityName} for ${id} is ${hasRelationships}`,
+    );
+
+    return hasRelationships;
   }
 }

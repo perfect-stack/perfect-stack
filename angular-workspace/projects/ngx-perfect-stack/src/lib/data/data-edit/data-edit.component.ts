@@ -20,6 +20,8 @@ import {ValidationResultMapController} from '../../domain/meta.rule';
 import {ToastService} from '../../utils/toasts/toast.service';
 import {SearchControllerService} from '../controller/search-controller.service';
 import {ActionType} from '../../domain/meta.role';
+import {MessageDialogComponent} from '../../utils/message-dialog/message-dialog.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -35,6 +37,9 @@ export class DataEditComponent implements OnInit {
 
   ctx$: Observable<FormContext>;
 
+  deleteAvailable = false;
+  deleteCheck: DeleteCheckType = DeleteCheckType.Unknown;
+
   constructor(public readonly debugService: DebugService,
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
@@ -42,6 +47,7 @@ export class DataEditComponent implements OnInit {
               protected readonly dataService: DataService,
               protected readonly toastService: ToastService,
               protected readonly eventService: EventService,
+              protected readonly modalService: NgbModal,
               protected readonly injector: Injector) {}
 
   ngOnInit(): void {
@@ -57,6 +63,15 @@ export class DataEditComponent implements OnInit {
 
       if(this.metaName && this.mode) {
         this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, this.entityId, paramMap, queryParamMap).pipe(tap((ctx) => {
+
+          this.deleteAvailable = ctx.metaEntity.permanentDelete;
+          if(this.deleteAvailable && this.mode !== 'view' && this.metaName && this.entityId) {
+            this.dataService.destroyCheck(this.metaName, this.entityId).subscribe((destroyEnabled) => {
+              console.log('destroyCheck got response', destroyEnabled);
+              this.deleteCheck = destroyEnabled ? DeleteCheckType.Yes : DeleteCheckType.No;
+            });
+          }
+
           this.attachControllers(ctx);
           this.eventService.dispatchOnAction(ctx.metaPage.name, '*', ctx, 'init');
           this.eventService.dispatchOnPageLoad(ctx.metaPage.name, ctx, paramMap, queryParamMap);
@@ -243,5 +258,41 @@ export class DataEditComponent implements OnInit {
   get ActionType() {
     return ActionType;
   }
+
+  onDeletePrompt(ctx: FormContext) {
+    console.log('On Delete Prompt');
+    const modalRef = this.modalService.open(MessageDialogComponent)
+    const modalComponent: MessageDialogComponent = modalRef.componentInstance;
+    modalComponent.title = `Delete ${this.metaName} Confirmation`;
+    modalComponent.text = `This action will delete this ${this.metaName}. It cannot be undone.`;
+    modalComponent.actions = [
+      {name: 'Cancel', style: 'btn btn-outline-primary'},
+      {name: 'Delete', style: 'btn btn-danger'},
+    ];
+
+    modalRef.closed.subscribe((closedResult) => {
+      console.log(`Message Dialog closedResult = ${closedResult}`);
+      if(this.metaName && this.entityId && closedResult === 'Delete') {
+        this.dataService.destroy(this.metaName, this.entityId).subscribe((result) => {
+          console.log(`Entity ${this.metaName} destroy requested.`, result);
+          if(result > 0) {
+            this.toastService.showSuccess(`${this.metaName} deleted successfully`);
+            this.onBack();
+          }
+          // else some other error should pop up (?)
+        });
+      }
+    });
+  }
+
+  get DeleteCheckType() {
+    return DeleteCheckType;
+  }
 }
 
+
+enum DeleteCheckType {
+  Unknown = 'Unknown',
+  Yes = 'Yes',
+  No = 'No'
+}

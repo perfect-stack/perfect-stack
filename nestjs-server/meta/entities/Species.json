@@ -6,6 +6,7 @@
   "rootNode": true,
   "timestamps": true,
   "cacheExpiryInSecs": 300,
+  "permanentDelete": true,
   "attributes": [
     {
       "name": "id",
@@ -30,7 +31,7 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonField": "",
-      "comparisonOperator": "",
+      "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []

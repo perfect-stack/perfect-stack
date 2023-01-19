@@ -66,6 +66,17 @@
                 <input class="form-control" type="number" formControlName="cacheExpiryInSecs">
               </div>
             </div>
+
+            <div class="row mt-2">
+              <div class="col-3">Permanent Delete</div>
+              <div class="col-9">
+                <select class="form-select" formControlName="permanentDelete">
+                  <option [ngValue]="true">true</option>
+                  <option [ngValue]="false">false</option>
+                </select>
+              </div>
+            </div>
+
           </div>
         </div>
 
