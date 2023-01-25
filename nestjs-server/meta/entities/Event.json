@@ -5,6 +5,8 @@
   "type": "Database",
   "rootNode": true,
   "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
   "attributes": [
     {
       "name": "id",
@@ -76,7 +78,12 @@
       "typeaheadSearch": [
         "location_name"
       ],
-      "rules": []
+      "rules": [
+        {
+          "type": "Custom",
+          "config": "EventLocationRule"
+        }
+      ]
     },
     {
       "name": "activities",

@@ -17,6 +17,7 @@ import {NgbTypeaheadSelectItemEvent} from '@ng-bootstrap/ng-bootstrap';
 import {DataService} from '../../../../data-service/data.service';
 import {EventService} from '../../../../../event/event.service';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
+import {ValidationResult} from '../../../../../domain/meta.rule';
 
 @Component({
   selector: 'lib-many-to-one-control',
@@ -155,5 +156,13 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   onFocusOut($event: FocusEvent) {
     console.log(`onFocusOut`, $event);
     this.writeValue(this.selectedModelId);
+  }
+
+  hasErrors() {
+    return this.ngControl.errors !== null;
+  }
+
+  get validationResult() {
+    return this.ngControl.errors as ValidationResult;
   }
 }

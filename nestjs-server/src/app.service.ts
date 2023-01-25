@@ -122,6 +122,11 @@ export class AppService implements OnApplicationBootstrap {
       'BirdNameRule',
       new BirdNameRule(null, null, null),
     );
+
+    this.customRuleService.addCustomRule(
+      'EventLocationRule',
+      new EventLocationRule(null, null, null),
+    );
   }
 }
 
@@ -168,6 +173,26 @@ class EventTypeCaptureRule extends RuleValidator {
       }
     }
 
+    return null;
+  }
+}
+
+class EventLocationRule extends RuleValidator {
+  async validate(
+    entity: any,
+    attribute: MetaAttribute,
+  ): Promise<ValidationResult | null> {
+    const northing = entity['northing'];
+    const easting = entity['easting'];
+    const location_id = entity['location_id'];
+    if ((!northing || !easting) && !location_id) {
+      return {
+        name: attribute.name,
+        resultType: ResultType.Error,
+        message:
+          'If Northing and Easting are not supplied then a saved location must be picked.',
+      };
+    }
     return null;
   }
 }

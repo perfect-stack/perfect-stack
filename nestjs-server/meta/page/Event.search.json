@@ -3,6 +3,8 @@
   "title": "$PageTitle",
   "type": "search",
   "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -32,7 +34,22 @@
         ]
       ],
       "metaEntityName": "EventSearchCriteria",
-      "type": "form"
+      "type": "form",
+      "locations": {
+        "TopRight": {
+          "type": "Button",
+          "channel": "",
+          "containerStyles": "",
+          "styles": "btn btn-success",
+          "label": "Add event",
+          "modes": "",
+          "action": "MyButton",
+          "route": "/route/go/here",
+          "icon": "",
+          "actionPermit": "Edit",
+          "subjectPermit": "Event"
+        }
+      }
     },
     {
       "cells": [
@@ -158,6 +175,5 @@
       "orderByDir": "DESC",
       "customQuery": "EventSearchByCriteria"
     }
-  ],
-  "dataQueryList": []
+  ]
 }

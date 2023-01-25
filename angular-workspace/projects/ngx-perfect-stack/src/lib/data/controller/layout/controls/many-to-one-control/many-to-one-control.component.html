@@ -25,8 +25,13 @@
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
     </div>
-    <!--valid: {{ngControl.valid}}
-    value: {{ngControl.value}}-->
+    <ng-container *ngIf="hasErrors() && attribute">
+      <lib-validation-result-label [attribute]="attribute" [validationResult]="validationResult"></lib-validation-result-label>
+    </ng-container>
+    <!--ManyToOneControl
+    valid: {{ngControl.valid}}
+    value: {{ngControl.value}}
+    errors: {{validationResult | json}}-->
   </fieldset>
 </ng-container>
 

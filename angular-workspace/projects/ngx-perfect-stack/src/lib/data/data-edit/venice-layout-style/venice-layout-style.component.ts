@@ -33,14 +33,4 @@ export class VeniceLayoutStyleComponent implements OnInit {
   get TemplateLocationType() {
     return TemplateLocationType;
   }
-
-  /*get outerTopRightTool() {
-    if(this.ctx.metaPage.templates && this.ctx.metaPage.templates.length > 0) {
-      const firstTemplate = this.ctx.metaPage?.templates[0];
-      if(firstTemplate?.locations) {
-        return firstTemplate.locations[TemplateLocationType.OuterTopRight];
-      }
-    }
-    return undefined;
-  }*/
 }

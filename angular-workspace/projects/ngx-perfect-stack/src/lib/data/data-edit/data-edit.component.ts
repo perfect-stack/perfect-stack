@@ -213,7 +213,15 @@ export class DataEditComponent implements OnInit {
         //control.markAsTouched();
       }
       else {
-        console.log(`Did not find control; ${k}`);
+        console.log(`Did not find control; ${k} looking for control with _id suffix`);
+
+        const control_id_key =`${k}_id`;
+        const control_id = form.get(control_id_key);
+        if(control_id) {
+          console.log('set error', response.validationResults[control_id_key]);
+          console.log('set error control', control);
+          control_id.setErrors(response.validationResults[k]); // this is without the _id so that location => location_id
+        }
       }
     });
   }

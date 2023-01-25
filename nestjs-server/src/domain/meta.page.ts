@@ -35,7 +35,6 @@ export enum TemplateType {
 }
 
 export enum TemplateLocationType {
-  OuterTopRight = 'OuterTopRight',
   TopRight = 'TopRight',
   BottomLeft = 'BottomLeft',
   BottomMiddle = 'BottomMiddle',

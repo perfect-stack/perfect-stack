@@ -60,6 +60,7 @@ export class DataSearchComponent implements OnInit {
         this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, null, paramMap, queryParamMap).pipe(switchMap((ctx) => {
           this.searchCriteriaTemplate = ctx.metaPage.templates[0];
           this.searchCriteriaTemplate.binding = 'criteria';
+          console.log('Criteria template:', this.searchCriteriaTemplate);
           if (!ctx.formMap) {
             ctx.formMap = new Map<string, AbstractControl>();
           }

@@ -9,12 +9,11 @@
         <!-- There is a tool view here and so at some point that may have something in it that isn't an Add button, that
         needs better permission management but we will cross that bridge when we get there -->
         <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
-          <ng-container *ngIf="!(searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['OuterTopRight'])">
+          <ng-container *ngIf="!(searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight'])">
             <button type="button" class="btn btn-success" (click)="onAdd(ctx)" id="addBtn">{{addButtonLbl}}</button>
           </ng-container>
-          <ng-container *ngIf="searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['OuterTopRight']">
-            <!--<lib-tool-view [ctx]="ctx" [tool]="searchCriteriaTemplate.locations['OuterTopRight']"></lib-tool-view>-->
-            REMOVED: OuterTopRight
+          <ng-container *ngIf="searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight']">
+            <lib-tool-view [ctx]="ctx" [tool]="searchCriteriaTemplate.locations['TopRight']"></lib-tool-view>
           </ng-container>
         </lib-permission-check>
       </div>
