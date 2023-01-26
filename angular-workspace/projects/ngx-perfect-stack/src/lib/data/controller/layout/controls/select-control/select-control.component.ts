@@ -1,8 +1,10 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {DataService} from '../../../../data-service/data.service';
 import {Subscription} from 'rxjs';
+import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
+import {ToastService} from '../../../../../utils/toasts/toast.service';
 
 @Component({
   selector: 'lib-select-control',
@@ -31,18 +33,36 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   // Comparison function; local variable equals exported function
   byEntityOrId = byEntityOrId;
 
-  constructor(protected readonly dataService: DataService, public ngControl: NgControl) {
+  constructor(protected readonly dataService: DataService,
+              public ngControl: NgControl) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
     if(this.mode !== 'view') {
-      this.optionListSubscription = this.dataService.findAll(this.attribute.relationshipTarget).subscribe((response) => {
+      this.optionListSubscription = this.dataService.findAll(this.attribute.relationshipTarget, '', 1, 999).subscribe((response) => {
         this.optionList = response.resultList;
         if(this.optionList && this.optionList.length > 0) {
           const firstElement = this.optionList[0];
-          if(firstElement && firstElement.sort_index) {
-            this.optionList.sort((a, b) => a.sort_index - b.sort_index);
+          if(firstElement) {
+            if(firstElement.sort_index) {
+              this.optionList.sort((a, b) => a.sort_index - b.sort_index);
+            }
+            else {
+              this.optionList.sort((a,b) => {
+                const displayA =this.getDisplayText(a).toUpperCase();
+                const displayB = this.getDisplayText(b).toUpperCase();
+                if(displayA < displayB ) {
+                  return -1;
+                }
+                else if(displayA > displayB) {
+                  return 1;
+                }
+                else {
+                  return 0;
+                }
+              });
+            }
           }
         }
         this.updateSelectedEntity();
