@@ -104,6 +104,10 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
     }
   }
 
+  onClear() {
+    this.setValueById(null);
+  }
+
   setValueByItem(item: Item | null) {
     if(item) {
       this.selectedModelId = item.id;
@@ -117,8 +121,7 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
     }
   }
 
-  setValueById(id: string) {
-    console.log('setValueById', id);
+  setValueById(id: string | null) {
     if(id) {
       this.typeaheadService.searchById(id, this.metaEntity, this.attribute).subscribe((items) => {
         if(items && items.length === 1) {
@@ -165,4 +168,9 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   get validationResult() {
     return this.ngControl.errors as ValidationResult;
   }
+
+  get showClear(): boolean {
+    return this.selectedModelId !== null;
+  }
+
 }
