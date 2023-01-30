@@ -135,7 +135,8 @@
                   {
                     "width": "1",
                     "height": "1",
-                    "attributeName": "person"
+                    "attributeName": "person",
+                    "showClear": "false"
                   },
                   {
                     "width": "1",

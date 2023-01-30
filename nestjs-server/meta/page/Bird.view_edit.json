@@ -161,7 +161,8 @@
                   {
                     "width": "12",
                     "height": "1",
-                    "attributeName": "project"
+                    "attributeName": "project",
+                    "showClear": "false"
                   }
                 ]
               ],

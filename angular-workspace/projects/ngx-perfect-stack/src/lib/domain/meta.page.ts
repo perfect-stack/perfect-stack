@@ -28,6 +28,7 @@ export class Cell {
   labelLayout?: LabelLayoutType;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   componentData?: ComponentData;
+  showClear?: string;
   noItemsHtml?: string; // Html displayed when no items
   footerHtml?: string; // Footer html that appears under the component (only in edit mode)
   tool?: Tool;

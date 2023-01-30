@@ -18,6 +18,7 @@ import {DataService} from '../../../../data-service/data.service';
 import {EventService} from '../../../../../event/event.service';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {ValidationResult} from '../../../../../domain/meta.rule';
+import {Cell} from '../../../../../domain/meta.page';
 
 @Component({
   selector: 'lib-many-to-one-control',
@@ -40,6 +41,9 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
 
   @Input()
   attribute: MetaAttribute;
+
+  @Input()
+  cell: Cell;
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
@@ -170,7 +174,7 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   }
 
   get showClear(): boolean {
-    return this.selectedModelId !== null;
+    return this.selectedModelId !== null && (this.cell && this.cell.showClear !== 'false');
   }
 
 }

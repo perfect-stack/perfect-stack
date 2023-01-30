@@ -89,7 +89,8 @@
                   {
                     "width": "12",
                     "height": "1",
-                    "attributeName": "member"
+                    "attributeName": "member",
+                    "showClear": "false"
                   },
                   {
                     "width": "1",

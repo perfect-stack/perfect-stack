@@ -218,6 +218,7 @@ export const CellPropertyList = [
   { name: 'hideLabel', type: PropertyType.boolean},
   { name: 'labelLayout', type: PropertyType.string, options: LabelLayoutType},
   { name: 'secondaryAttributeName', type: PropertyType.string},
+  { name: 'showClear', type: PropertyType.string, options: ['true', 'false', '']},
   { name: 'noItemsHtml', type: PropertyType.string},
   { name: 'footerHtml', type: PropertyType.string},
   { name: 'spyTemplate', type: PropertyType.metaPage},

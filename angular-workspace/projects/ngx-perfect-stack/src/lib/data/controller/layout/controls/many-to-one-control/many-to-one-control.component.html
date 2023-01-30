@@ -4,7 +4,7 @@
 
 <ng-container *ngIf="mode === 'edit'">
   <fieldset class="form-inline">
-    <div class="d-flex w-100">
+    <div class="d-flex w-100 wrapper">
       <input #searchInput type="text" class="form-control" placeholder="Search..."
              [ngClass]="{
                'ng-invalid': ngControl.invalid,
@@ -25,7 +25,7 @@
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
       <ng-container *ngIf="showClear">
-        <div class="ps-1 link-primary" (click)="onClear()">Clear&nbsp;search</div>
+        <div class="ps-1 link-primary overlay-top-right" (click)="onClear()">Clear</div>
       </ng-container>
     </div>
     <ng-container *ngIf="hasErrors() && attribute">
