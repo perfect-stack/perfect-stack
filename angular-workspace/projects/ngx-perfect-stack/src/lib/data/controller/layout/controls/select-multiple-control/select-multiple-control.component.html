@@ -1,0 +1,22 @@
+
+<div ngbDropdown *ngIf="mode === 'view'">
+  <ng-container *ngIf="selectedOptions.length > 0">
+    <span class="badge bg-primary me-1" *ngFor="let option of selectedOptions">
+      <span class="option-label align-top">{{option}}</span>
+    </span>
+  </ng-container>
+</div>
+
+
+<div ngbDropdown *ngIf="mode !== 'view'">
+  <div class="form-select w-100" style="white-space: normal;" id="dropdownBasic1" ngbDropdownToggle>
+    <span *ngIf="selectedOptions.length === 0">&nbsp;</span>
+    <span class="badge bg-primary me-1" *ngFor="let option of selectedOptions" (click)="onItemDeleted(option, $event)">
+      <span class="option-label align-top">{{option}}</span>
+      <span class="option-delete material-symbols-outlined ms-1">close</span>
+    </span>
+  </div>
+  <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+    <button ngbDropdownItem *ngFor="let option of optionList" (click)="onItemSelected(option)">{{option}}</button>
+  </div>
+</div>

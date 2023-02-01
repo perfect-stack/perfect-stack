@@ -1,0 +1,12 @@
+.dropdown-toggle::after{
+  display: none;
+}
+
+.option-label {
+  font-weight: 400;
+  font-size: 1.2em;
+}
+
+.option-delete {
+  font-size: 1.4em;
+}

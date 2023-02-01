@@ -137,6 +137,7 @@ import { AuthorizationErrorComponent } from './authentication/authorization-erro
 import { LinkListControlComponent } from './data/controller/layout/controls/link-list-control/link-list-control.component';
 import { OneToManyChoiceDialogComponent } from './template/template-controller/one-to-many-choice-dialog/one-to-many-choice-dialog.component';
 import { BackLinkComponent } from './data/controller/layout/back-link/back-link.component';
+import { SelectMultipleControlComponent } from './data/controller/layout/controls/select-multiple-control/select-multiple-control.component';
 
 const routes: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -273,7 +274,8 @@ const routes: Routes = [
     AuthorizationErrorComponent,
     LinkListControlComponent,
     OneToManyChoiceDialogComponent,
-    BackLinkComponent
+    BackLinkComponent,
+    SelectMultipleControlComponent
   ],
   providers: [
     AuthenticationService,

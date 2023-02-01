@@ -11,6 +11,7 @@ export enum ComponentType {
   TextInput = 'TextInput',
   Select = 'Select',
   SelectTwo = 'SelectTwo',
+  SelectMultiple = 'SelectMultiple',
   Spy = 'Spy',
 }
 
