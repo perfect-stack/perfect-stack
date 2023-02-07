@@ -25,6 +25,7 @@
               <span class="text-danger ps-1" *ngIf="cell.attribute.visibility == 'Required'">*</span>
             </ng-container>
           </label>
+
           <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [parentDisplaysError]="true" [disabled]="timeInputDisabled" [includesDate]="true"></lib-time-control>
 
           <ng-container *ngIf="hasTimeErrors() && cell.attribute">

@@ -48,6 +48,8 @@ export class DatePickerControlComponent implements OnInit, OnDestroy, ControlVal
   touchSubscription: Subscription;
   subscription: Subscription | undefined;
 
+  internalFormModel: string;
+
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly timeService: TimeService,
@@ -66,10 +68,10 @@ export class DatePickerControlComponent implements OnInit, OnDestroy, ControlVal
       console.warn(`This component is NOT using a FormControlWithAttribute`);
     }
 
-    // this.subscription = this.ngControl.valueChanges?.subscribe((nextValue: any) => {
-    //   console.log('GOT date valueChange', nextValue);
-    //   this.updateValue(nextValue, false);
-    // });
+    this.subscription = this.ngControl.valueChanges?.subscribe((nextValue: any) => {
+      console.log('DATE valueChange', nextValue);
+      this.writeValue(nextValue);
+    });
   }
 
   get isReadOnly() {
@@ -89,28 +91,39 @@ export class DatePickerControlComponent implements OnInit, OnDestroy, ControlVal
   onDateSelect(date: NgbDate) {
     console.log(`onDateSelect(): ${JSON.stringify(date)}`);
     console.log(` - currentValue = ${this.ngControl.value}`);
+    console.log(` - internalFormModel = ${this.internalFormModel}`);
+
     if(this.includesTimeValue) {
-      const formValue = this.ngControl.value;
+      const formValue = this.internalFormModel;
       const newFormValue = this.timeService.mergeDate(formValue, LocalDate.of(date.year, date.month, date.day));
       console.log(` - newFormValue = ${newFormValue}`);
-      this.writeValue(newFormValue);
+      this.onChange(newFormValue);
     }
     else {
       const localDate = LocalDate.of(date.year, date.month, date.day);
       const dateFormat = DateTimeFormatter.ofPattern('yyyy-MM-dd'); // This is always this format because it's a database value
-      const formValue = dateFormat.format(localDate);
-      this.writeValue(formValue);
+      const newFormValue = dateFormat.format(localDate);
+      console.log(` - newFormValue = ${newFormValue}`);
+      this.onChange(newFormValue);
     }
   }
 
-  updateValue(value: string, emitEvent = true){
-    console.log(`@@@-D ${this.attribute?.name} set value "${value}"`)
+  writeValue(value: any): void {
+    console.log(`@@@-D ${this.attribute?.name} writeValue() "${value}"`)
+    this.internalFormModel = value;
+
     if(value) {
       if(value.length > 10) {
-        let zonedDateTime = ZonedDateTime.parse(value);
-        zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of('Pacific/Auckland'));
-        const controlFormat = DateTimeFormatter.ofPattern('yyyy-MM-dd');
-        this.dateModel = controlFormat.format(zonedDateTime);
+        try {
+          let zonedDateTime = ZonedDateTime.parse(value);
+          zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of('Pacific/Auckland'));
+          const controlFormat = DateTimeFormatter.ofPattern('yyyy-MM-dd');
+          this.dateModel = controlFormat.format(zonedDateTime);
+          console.log(`dateModel = ${this.dateModel}`);
+        }
+        catch (e) {
+          this.dateModel = null;
+        }
       }
       else {
         // TODO: we need to migrate all of the date values in the database??
@@ -120,11 +133,6 @@ export class DatePickerControlComponent implements OnInit, OnDestroy, ControlVal
     else {
       this.dateModel = null;
     }
-
-    if(emitEvent) {
-     this.onChange(value)
-    }
-    //this.onTouch(val)
   }
 
   onChange: any = () => {}
@@ -140,10 +148,6 @@ export class DatePickerControlComponent implements OnInit, OnDestroy, ControlVal
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
-  }
-
-  writeValue(obj: any): void {
-    this.updateValue(obj);
   }
 
   hasErrors() {

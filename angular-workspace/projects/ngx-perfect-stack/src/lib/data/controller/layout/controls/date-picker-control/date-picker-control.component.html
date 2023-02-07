@@ -4,7 +4,6 @@
        [id]="attribute.name"
        [readonly]="isReadOnly"
        [autoClose]="true"
-       (ngModelChange)="onChange($event)"
        (dateSelect)="onDateSelect($event)"
        (click)="toggle(datePicker)"
        [ngModel]="dateModel"

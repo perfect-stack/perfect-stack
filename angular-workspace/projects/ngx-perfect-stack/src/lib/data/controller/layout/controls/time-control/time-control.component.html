@@ -6,6 +6,10 @@
        [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}"
        type="time">
 
+<span class="badge bg-primary me-1" *ngFor="let modifier of modifierList" (click)="onModify(modifier, $event)">
+  <span role="button">{{modifier.label}}</span>
+</span>
+
 <ng-container *ngIf="!parentDisplaysError && hasErrors() && cell.attribute">
   <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
 </ng-container>

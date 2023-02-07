@@ -1,15 +1,10 @@
 import {Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, NgControl, UntypedFormGroup} from '@angular/forms';
 import {
-  ChronoField,
-  DateTimeFormatter,
-  Instant, LocalDate,
-  LocalDateTime,
+  DateTimeFormatter, Duration,
   LocalTime,
-  TemporalAdjusters,
   ZonedDateTime,
   ZoneId,
-  ZoneOffset
 } from '@js-joda/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
@@ -52,6 +47,12 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
   touchSubscription: Subscription;
   subscription: Subscription | undefined;
 
+  modifierList: Modifier[] = [
+    {label: '+1 hr', duration: 'PT1H'},
+    {label: '+2 hrs', duration: 'PT2H'},
+    {label: '+3hrs', duration: 'PT3H'},
+  ];
+
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly timeService: TimeService,
@@ -69,59 +70,100 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
       console.warn(`This component is NOT using a FormControlWithAttribute`);
     }
 
-    // this.subscription = this.ngControl.valueChanges?.subscribe((nextValue) => {
-    //   console.log('GOT time valueChange', nextValue);
-    //   this.updateValue(nextValue, false);
-    // });
+    this.subscription = this.ngControl.valueChanges?.subscribe((nextValue) => {
+      console.log('TIME valueChange', nextValue);
+      this.writeValue(nextValue);
+    });
   }
 
   get isReadOnly() {
     return this.mode === 'view' || this.disabled ? true : null;
   }
 
+  /**
+   * This is called by the "modifier" shortcuts beneath the input field.
+   */
+  onModify(modifier: Modifier, $event: MouseEvent) {
+    console.log(`Modify time: `, modifier);
+
+    if(this.includesDate) {
+      const controlValue = this.ngControl.value;
+
+      console.log(`Current controlValue:`, controlValue);
+      if(controlValue) {
+        let dateTimeComponents = this.timeService.parseDateTimeFormValue(controlValue);
+        console.log(`dateTimeComponents:`, dateTimeComponents);
+
+        if(dateTimeComponents.dateTime) {
+          const duration = Duration.parse(modifier.duration);
+          let newDateTime = dateTimeComponents.dateTime.plus(duration).toString();
+
+          // The modifier needs to change both the form value and the UI value
+          this.onChange(newDateTime);
+          this.writeValue(newDateTime);
+          console.log(`newDateTime:`, newDateTime);
+        }
+      }
+    }
+    else {
+      throw new Error('TODO: not implemented yet for this use case');
+      // const dateFormat = DateTimeFormatter.ofPattern('HH:mm:ss'); // This is always this format because it's a database value
+      // const newFormValue = dateFormat.format(localTime);
+      // console.log(` - newFormValue = ${newFormValue}`);
+      // this.writeValue(newFormValue);
+    }
+  }
+
   onTimeChanged(event$: any) {
     const value = event$.target.value;
+    console.log(`onTimeChanged: value = ${value}`);
     const localTime = LocalTime.parse(value);
-    console.log(`onTimeChanged: ${localTime}`);
+    console.log(`onTimeChanged: localTime = ${localTime}`);
 
     if(this.includesDate) {
       const formValue = this.ngControl.value;
+      console.log(` - formValue = ${formValue}`);
       const newFormValue = this.timeService.mergeTime(formValue, localTime);
       console.log(` - newFormValue = ${newFormValue}`);
-      this.writeValue(newFormValue);
+      this.onChange(newFormValue);
     }
     else {
       const dateFormat = DateTimeFormatter.ofPattern('HH:mm:ss'); // This is always this format because it's a database value
       const newFormValue = dateFormat.format(localTime);
       console.log(` - newFormValue = ${newFormValue}`);
-      this.writeValue(newFormValue);
+      this.onChange(newFormValue);
     }
   }
 
-  updateValue(value: string, emitEvent = true){
+  writeValue(value: any): void {
     console.log(`@@@-T ${this.cell.attribute?.name} set value "${value}"`)
-
     if(value) {
       if(value.length < 10) {
-        let localTime = LocalTime.parse(value);
-        const timeFormat = DateTimeFormatter.ofPattern('HH:mm');
-        this.timeModel = timeFormat.format(localTime);
+        // This might be; empty string, just a time or just a date. Try to parse, but if it fails then that ok and just set to null
+        try {
+          let localTime = LocalTime.parse(value);
+          const timeFormat = DateTimeFormatter.ofPattern('HH:mm');
+          this.timeModel = timeFormat.format(localTime);
+        }
+        catch (e) {
+          this.timeModel = null;
+        }
       }
       else {
-        let zonedDateTime = ZonedDateTime.parse(value);
-        zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of('Pacific/Auckland'));
-        const timeFormat = DateTimeFormatter.ofPattern('HH:mm');
-        this.timeModel = timeFormat.format(zonedDateTime);
+        try {
+          let zonedDateTime = ZonedDateTime.parse(value);
+          zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of('Pacific/Auckland'));
+          const timeFormat = DateTimeFormatter.ofPattern('HH:mm');
+          this.timeModel = timeFormat.format(zonedDateTime);
+        }
+        catch (e) {
+          this.timeModel = null;
+        }
       }
     }
     else {
       this.timeModel = null;
     }
-
-    if(emitEvent) {
-      this.onChange(value)
-    }
-    //this.onTouch(val)
   }
 
   onChange: any = () => {}
@@ -137,10 +179,6 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
-  }
-
-  writeValue(obj: any): void {
-    this.updateValue(obj);
   }
 
   hasErrors() {
@@ -160,4 +198,11 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
       this.subscription.unsubscribe();
     }
   }
+
+}
+
+
+class Modifier {
+  label: string;
+  duration: string;
 }
