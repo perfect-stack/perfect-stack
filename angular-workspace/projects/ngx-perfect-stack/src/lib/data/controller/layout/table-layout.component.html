@@ -1,7 +1,5 @@
 <ng-container *ngIf="cells$ | async as cells">
 
-  <!--Cells: {{cells|json}}-->
-
   <ng-container *ngIf="cells && attributes && (attributes.length > 0 || mode === 'edit')">
 
     <div class="results-summary" *ngIf="hasResultsSummary()">

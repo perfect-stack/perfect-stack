@@ -1,0 +1,84 @@
+{
+  "name": "CallCountActivity",
+  "pluralName": "Call Counts",
+  "icon": "hearing",
+  "type": "Database",
+  "rootNode": false,
+  "timestamps": false,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "calls",
+      "label": "Calls",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "CallInstance",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "activity_type",
+      "label": "Activity type",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "habitat",
+      "label": "Habitat",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "count_type",
+      "label": "Count type",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "CountType",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
+    }
+  ]
+}

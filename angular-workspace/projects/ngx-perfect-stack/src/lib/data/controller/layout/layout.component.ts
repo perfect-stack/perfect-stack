@@ -353,6 +353,18 @@ export class CardLayoutComponent implements OnInit {
       metaEntityName: 'WingTagActivity',
       metaPageName: 'WingTagActivity.view_edit'
     });
+
+    this.cardItemMap.set('Call count', {
+      discriminatorValue: 'Call count',
+      metaEntityName: 'CallCountActivity',
+      metaPageName: 'CallCountActivity.view_edit'
+    });
+
+    this.cardItemMap.set('Weather', {
+      discriminatorValue: 'Weather',
+      metaEntityName: 'WeatherActivity',
+      metaPageName: 'WeatherActivity.view_edit'
+    });
   }
 
   get attributes() {
@@ -459,7 +471,7 @@ export class CardLayoutComponent implements OnInit {
           itemFormGroup.addControl('activity_type', this.fb.control(''));
 
           // create the new mostly empty item
-          const item = {
+          const item:any = {
             activity_type: discriminatorValue
           };
 
@@ -468,6 +480,10 @@ export class CardLayoutComponent implements OnInit {
 
           // add the populated item formGroup to our parent form based on the relationshipTarget "attributes"
           this.attributes.push(itemFormGroup);
+          console.log('Created formGroup and added new item successfully.');
+          console.log(' - ctx:', this.ctx);
+          console.log(' - item:', item);
+          console.log(' - itemFormGroup:', itemFormGroup);
         }
       }
     }
@@ -514,11 +530,16 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     if(this.ctx && this.ctx.formMap) {
       console.log('FormLayoutComponent: initialising things the new way');
+      console.log(' - formGroup:', this.formGroup);
       if(!this.template) {
         throw new Error('No template defined, cannot proceed sensibly');
       }
 
       this.mode = this.ctx.mode;
+      if(this.formGroup) {
+        console.log(' - formGroup is supplied return early');
+        return;
+      }
 
       let formLookupKey;
       let form;
@@ -533,8 +554,9 @@ export class FormLayoutComponent implements OnInit, OnChanges {
         }
         else {
           formLookupKey = binding;
-          console.log(`Binding ROOT - ${binding}`)
           form = this.ctx.formMap.get(formLookupKey) as UntypedFormGroup;
+          console.log(`Binding ROOT - ${binding}`);
+          console.log(' - form:', form);
         }
 
         this.formGroup = form;
@@ -750,6 +772,9 @@ export class OneToManyControlComponent implements OnInit {
   mode: string | null;
 
   @Input()
+  ctx: FormContext;
+
+  @Input()
   cell: CellAttribute;
 
   @Input()
@@ -758,6 +783,8 @@ export class OneToManyControlComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    console.log('OneToManyControlComponent - init');
+    console.log(' - formGroup:', this.formGroup);
   }
 }
 
@@ -771,6 +798,9 @@ export class OneToPolyControlComponent implements OnInit {
 
   @Input()
   mode: string | null;
+
+  @Input()
+  ctx: FormContext;
 
   @Input()
   cell: CellAttribute;

@@ -125,6 +125,14 @@
           {
             "discriminatorValue": "Wing tag",
             "metaEntityName": "WingTagActivity"
+          },
+          {
+            "discriminatorValue": "Call count",
+            "metaEntityName": "CallCountActivity"
+          },
+          {
+            "discriminatorValue": "Weather",
+            "metaEntityName": "WeatherActivity"
           }
         ]
       }

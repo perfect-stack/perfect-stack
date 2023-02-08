@@ -26,18 +26,26 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
   touchSubscription: Subscription;
 
   optionList = [
-    'Cat',
-    'Dog',
-    'Cow',
-    'Horse',
-    'Chicken'
-  ]
-
-  selectedOptions: string[] = [
-    'Cat',
-    'Dog',
-    'Cow',
+    'Beech forest',
+    'Podocarp forest',
+    'Broadleaf forest',
+    'Exotic',
+    'Scrub',
+    'Logged',
+    'Burnt',
+    'Undeveloped farmland',
+    'Developed farmland',
+    'Grassland',
+    'Tussock',
+    'Swamp',
+    'Coastal',
+    'Beach',
+    'River terrace',
+    'Alpine',
+    'Other',
   ];
+
+  selectedOptions: string[] = [];
 
   constructor(public ngControl: NgControl) {
     ngControl.valueAccessor = this;

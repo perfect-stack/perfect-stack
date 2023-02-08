@@ -109,7 +109,13 @@ export class QueryService {
       const queryResponse = await this.findByCriteria(queryRequest);
 
       if (queryResponse.resultList.length > 0) {
-        entity[attribute.name].push(...queryResponse.resultList);
+        for (const childEntitySearchResult of queryResponse.resultList) {
+          const childEntity = await this.findOne(
+            queryRequest.metaEntityName,
+            childEntitySearchResult.id,
+          );
+          entity[attribute.name].push(childEntity);
+        }
       }
     }
   }

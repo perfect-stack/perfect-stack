@@ -1,0 +1,60 @@
+{
+  "name": "WeatherActivity.view_edit",
+  "title": "Weather & conditions",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "wind_direction"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "wind_state"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "rain"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "temperature"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "cloud_cover"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "ground_conditions"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "noise"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "moonlight"
+          }
+        ]
+      ],
+      "metaEntityName": "WeatherActivity",
+      "type": "form"
+    }
+  ]
+}

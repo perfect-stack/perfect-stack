@@ -67,6 +67,12 @@
         {
           "editable": true,
           "roles": [],
+          "label": "Count Type",
+          "route": "/data/CountType/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
           "label": "Location Type",
           "route": "/data/LocationType/search_edit"
         },

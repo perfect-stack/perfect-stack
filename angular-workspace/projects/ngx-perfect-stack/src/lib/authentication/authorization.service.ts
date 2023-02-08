@@ -144,6 +144,10 @@ export class AuthorizationService {
     }
 
     console.log(`CheckPermission: ${action}.${subject} for ${userGroups} = ${permitted}`);
+    if(!permitted) {
+      console.log(' - userGroups:', userGroups);
+      console.log(' - permissionMap:', permissionMap);
+    }
     return permitted;
   }
 
