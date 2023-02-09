@@ -12,6 +12,13 @@
         Hide audit records
       </div>
 
+      <div class="row pt-1" [formGroup]="formGroup">
+        <div class="col-2">Data Source:</div>
+        <div class="col-2">
+          <lib-enumeration-control [mode]="mode" [formControlName]="'data_source'" [attribute]="dataSourceControl.attribute"></lib-enumeration-control>
+        </div>
+      </div>
+
       <ng-container *ngIf="auditRecords$ | async as auditRecords">
         <table class="table table-sm mt-3" style="width: 24em;">
           <thead>

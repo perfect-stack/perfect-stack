@@ -27,7 +27,7 @@
       <lib-controller [ctx]="ctx" [template]="template"></lib-controller>
     </ng-container>
 
-    <lib-audit-view [mode]="'view'" [entityId]="ctx.id"></lib-audit-view>
+    <lib-audit-view [mode]="'view'" [ctx]="ctx" [entityId]="ctx.id"></lib-audit-view>
 
     <lib-version [style]="'Footer'"></lib-version>
   </div>

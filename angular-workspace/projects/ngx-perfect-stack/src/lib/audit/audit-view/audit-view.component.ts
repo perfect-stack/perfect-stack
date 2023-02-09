@@ -9,6 +9,8 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-confi
 // when date time formats use text days and months and not just numerical values
 import {Locale} from '@js-joda/locale_en';
 import '@js-joda/timezone';
+import {FormContext, FormControlWithAttribute} from '../../data/data-edit/form-service/form.service';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'lib-audit-view',
@@ -21,11 +23,16 @@ export class AuditViewComponent implements OnInit {
   mode: string;
 
   @Input()
+  ctx: FormContext;
+
+  @Input()
   entityId: string | null;
 
   showRecords = false;
-
   auditRecords$: Observable<Audit[]>;
+
+  formGroup: FormGroup;
+  dataSourceControl: FormControlWithAttribute;
 
   private zoneId = ZoneId.of('Pacific/Auckland');
   private displayFormatter: DateTimeFormatter;
@@ -40,6 +47,13 @@ export class AuditViewComponent implements OnInit {
   ngOnInit(): void {
     if(this.entityId) {
       this.auditRecords$ = this.auditService.findAll(this.entityId);
+    }
+
+    if(this.ctx) {
+      // WARNING: Same logic in DateEditComponent
+      this.formGroup = this.ctx.formMap.values().next().value;
+      this.dataSourceControl = this.formGroup.controls['data_source'] as any;
+      console.log('AUDIT: got dataSourceControl', this.dataSourceControl);
     }
   }
 

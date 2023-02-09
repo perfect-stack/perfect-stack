@@ -153,6 +153,8 @@ export class DataEditComponent implements OnInit {
     // only has one form and so we can get the one and only form out of the formMap. Once this changes to some sort
     // of template approach then the template binding will be needed here to find the form to get the entityData
     return ctx.formMap.values().next().value;
+
+    // WARNING: Same logic in AuditViewComponent
   }
 
 

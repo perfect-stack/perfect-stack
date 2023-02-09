@@ -92,7 +92,12 @@ export class AuthorizationService {
   checkPermission(
     action: string,
     subject: string | null,
+    dataSource = ''
   ): boolean {
+
+    const dataSourcePermission = dataSource ? dataSource === 'KIMS': true;
+    console.log('dataSourcePermission:', dataSourcePermission)
+
     // For both the user and permissionMap$ streams below we depend on the latest value which may be null but
     // that's ok because if there is no current user logged in then the right answer is to return false.
     if(subject) {
@@ -101,7 +106,8 @@ export class AuthorizationService {
         const userGroups = user.getGroups();
         const permissionMap = this.permissionMap$.getValue();
         if (permissionMap) {
-          return this.checkPermissionWithMap(userGroups, permissionMap, action, subject);
+          const actionSubjectPermission = this.checkPermissionWithMap(userGroups, permissionMap, action, subject);
+          return actionSubjectPermission && dataSourcePermission;
         } else {
           console.log('CheckPermission: FALSE, no permissionMap');
           return false;
