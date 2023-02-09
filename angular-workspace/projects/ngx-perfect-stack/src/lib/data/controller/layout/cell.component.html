@@ -31,7 +31,7 @@
         </ng-container>
 
         <!-- There are two usages of this, here and ManyToOne, not sure which is right yet -->
-        <ng-container *ngSwitchCase="'SelectMultiple'">
+        <ng-container [formGroup]="formGroup" *ngSwitchCase="'SelectMultiple'">
           <lib-select-multiple-control [mode]="mode" [formControlName]="cell.attribute.name" [cell]="cell" ></lib-select-multiple-control>
         </ng-container>
 
@@ -82,7 +82,7 @@
           <lib-select-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
         </ng-container>
 
-        <ng-container *ngSwitchCase="'SelectMultiple'">
+        <ng-container [formGroup]="formGroup" *ngSwitchCase="'SelectMultiple'"> <!-- this one has [formGroup] the others don't because this is a ControlValueAccessor -->
           <lib-select-multiple-control [mode]="mode" [formControlName]="cell.attribute.name" [cell]="cell" ></lib-select-multiple-control>
         </ng-container>
 

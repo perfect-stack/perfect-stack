@@ -5,6 +5,11 @@
       <span class="option-label align-top">{{option}}</span>
     </span>
   </ng-container>
+  <ng-container *ngIf="selectedOptions.length === 0">
+    <div class="input-group">
+      <span class="form-control empty-value" readonly [id]="name">&mdash;</span>
+    </div>
+  </ng-container>
 </div>
 
 

@@ -70,15 +70,20 @@
       "name": "distance",
       "label": "Distance",
       "description": "",
-      "unitOfMeasure": "",
+      "unitOfMeasure": "m",
       "scale": "",
-      "type": "Text",
+      "type": "Integer",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0,10000"
+        }
+      ]
     },
     {
       "name": "sex",

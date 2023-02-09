@@ -411,6 +411,20 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "data_source",
+      "label": "Data source",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

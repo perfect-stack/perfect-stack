@@ -31,7 +31,12 @@
                   {
                     "width": "1",
                     "height": "1",
-                    "attributeName": "species"
+                    "attributeName": "species",
+                    "labelLayout": "Left",
+                    "component": "SelectTwo",
+                    "componentData": {
+                      "secondaryAttributeName": "form"
+                    }
                   },
                   {
                     "width": "1",

@@ -46,6 +46,8 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
       this.options = this.attribute.enumeration;
     }
     // if no enumeration supplied by the MetaAttribute then the options can be @Input() directly. See "SelectTwoControl"
+
+    //this.selectedOption = this.ngControl.value;
   }
 
   isReadOnly() {

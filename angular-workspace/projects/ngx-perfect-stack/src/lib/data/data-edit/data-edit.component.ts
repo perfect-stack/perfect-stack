@@ -222,6 +222,9 @@ export class DataEditComponent implements OnInit {
           console.log('set error control', control);
           control_id.setErrors(response.validationResults[k]); // this is without the _id so that location => location_id
         }
+        else {
+          console.warn(`Unable to find control; "${k}". Validation error will not be displayed.`);
+        }
       }
     });
   }
