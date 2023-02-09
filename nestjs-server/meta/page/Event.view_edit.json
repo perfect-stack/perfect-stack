@@ -23,7 +23,9 @@
             "height": "1",
             "attributeName": "event_type",
             "component": "Select"
-          },
+          }
+        ],
+        [
           {
             "width": "9",
             "height": "1",

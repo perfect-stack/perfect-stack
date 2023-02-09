@@ -1,0 +1,82 @@
+{
+  "name": "CallCountActivity.view_edit",
+  "title": "Call Count",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "5",
+            "height": "1",
+            "attributeName": "count_type",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "attributeName": "calls",
+            "hideLabel": true,
+            "template": {
+              "templateHeading": "Calls",
+              "type": "table",
+              "metaEntityName": "CallInstance",
+              "cells": [
+                [
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "species",
+                    "labelLayout": "Left",
+                    "component": "SelectTwo",
+                    "componentData": {
+                      "secondaryAttributeName": "form"
+                    }
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "bearing"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "distance"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "sex"
+                  }
+                ]
+              ],
+              "styles": "",
+              "orderByName": "UNKNOWN",
+              "orderByDir": "ASC",
+              "noItemsHtml": "",
+              "locations": {}
+            }
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "attributeName": "habitat",
+            "component": "SelectMultiple",
+            "footerHtml": "Add one or more habitats"
+          }
+        ]
+      ],
+      "metaEntityName": "CallCountActivity",
+      "type": "form",
+      "templateHeading": "Call Count",
+      "binding": "calls"
+    }
+  ]
+}

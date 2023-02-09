@@ -37,6 +37,10 @@
       "subject": "ProjectTeamStatus"
     },
     {
+      "action": "Edit",
+      "subject": "CountType"
+    },
+    {
       "action": "Delete",
       "subject": "LocationType"
     },
@@ -71,6 +75,10 @@
     {
       "action": "Delete",
       "subject": "Location"
+    },
+    {
+      "action": "Delete",
+      "subject": "CountType"
     },
     {
       "action": "Menu",

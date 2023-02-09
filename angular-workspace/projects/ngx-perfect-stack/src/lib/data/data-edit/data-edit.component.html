@@ -13,14 +13,14 @@
         <lib-paris-layout-style [ctx]="ctx">
           <ng-container TopRightActions>
             <div class="h-100 d-flex align-items-center" *ngIf="mode === 'view'" >
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
+              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
                 <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">Edit {{ctx.metaEntity.name.toLowerCase()}}</button>
               </lib-permission-check>
             </div>
           </ng-container>
           <ng-container BottomLeftActions>
             <div class="mt-2" *ngIf="mode === 'edit' && deleteAvailable">
-              <lib-permission-check [action]="ActionType.Delete" [subject]="metaName">
+              <lib-permission-check [action]="ActionType.Delete" [subject]="metaName" [ctx]="ctx">
                 <ng-container *ngIf="deleteCheck === DeleteCheckType.No">
                   <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
                     <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn">Delete</button>
@@ -34,7 +34,7 @@
           </ng-container>
           <ng-container BottomRightActions>
             <div class="mt-2" *ngIf="mode === 'edit'">
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
+              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
                 <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn">Cancel</button>
                 <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save details</button>
               </lib-permission-check>
@@ -48,14 +48,14 @@
         <lib-stockholm-layout-style [ctx]="ctx">
           <ng-container TopRightActions>
             <div class="h-100 d-flex align-items-center" *ngIf="mode === 'view'" >
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
+              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
                 <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">Edit {{ctx.metaEntity.name.toLowerCase()}}</button>
               </lib-permission-check>
             </div>
           </ng-container>
           <ng-container BottomRightActions>
             <div class="mt-2" *ngIf="mode === 'edit'">
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
+              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
                 <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn">Cancel</button>
                 <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save details</button>
               </lib-permission-check>
@@ -75,12 +75,12 @@
           <ng-container BottomRightActions [ngSwitch]="mode">
             <div class="mt-2" *ngSwitchCase="'view'">
               <button type="button" class="btn btn-outline-primary me-2" (click)="onBack()" id="backBtn">Back</button>
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
+              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
                 <button type="submit" class="btn btn-primary me-2" (click)="onEdit()" id="editBtn">Edit</button>
               </lib-permission-check>
             </div>
             <div class="mt-2" *ngSwitchCase="'edit'">
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
+              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
                 <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn">Cancel</button>
                 <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save</button>
               </lib-permission-check>

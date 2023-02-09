@@ -5,6 +5,8 @@
   "type": "Database",
   "rootNode": true,
   "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
   "attributes": [
     {
       "name": "id",
@@ -347,6 +349,24 @@
       "relationshipTarget": "ProjectBird",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "data_source",
+      "label": "Data source",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "KIMS",
+        "SkyRanger"
+      ]
     }
   ]
 }

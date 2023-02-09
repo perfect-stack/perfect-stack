@@ -153,6 +153,8 @@ export class DataEditComponent implements OnInit {
     // only has one form and so we can get the one and only form out of the formMap. Once this changes to some sort
     // of template approach then the template binding will be needed here to find the form to get the entityData
     return ctx.formMap.values().next().value;
+
+    // WARNING: Same logic in AuditViewComponent
   }
 
 
@@ -221,6 +223,9 @@ export class DataEditComponent implements OnInit {
           console.log('set error', response.validationResults[control_id_key]);
           console.log('set error control', control);
           control_id.setErrors(response.validationResults[k]); // this is without the _id so that location => location_id
+        }
+        else {
+          console.warn(`Unable to find control; "${k}". Validation error will not be displayed.`);
         }
       }
     });

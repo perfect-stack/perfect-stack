@@ -18,7 +18,6 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
   @Input()
   cell: CellAttribute;
 
-  internalValue: any;
 
   disabled = false;
 
@@ -26,18 +25,26 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
   touchSubscription: Subscription;
 
   optionList = [
-    'Cat',
-    'Dog',
-    'Cow',
-    'Horse',
-    'Chicken'
-  ]
-
-  selectedOptions: string[] = [
-    'Cat',
-    'Dog',
-    'Cow',
+    'Beech forest',
+    'Podocarp forest',
+    'Broadleaf forest',
+    'Exotic',
+    'Scrub',
+    'Logged',
+    'Burnt',
+    'Undeveloped farmland',
+    'Developed farmland',
+    'Grassland',
+    'Tussock',
+    'Swamp',
+    'Coastal',
+    'Beach',
+    'River terrace',
+    'Alpine',
+    'Other',
   ];
+
+  selectedOptions: string[] = [];
 
   constructor(public ngControl: NgControl) {
     ngControl.valueAccessor = this;
@@ -62,17 +69,6 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
     return this.cell.attribute ? this.cell.attribute.name : '';
   }
 
-  set value(val: string) {
-
-    let nextValue = val;
-    if(this.cell && this.cell.attribute) {
-    }
-
-    this.internalValue = nextValue
-    this.onChange(val)
-    //this.onTouch(val)
-  }
-
   onChange: any = () => {}
   onTouch: any = () => {}
 
@@ -88,8 +84,8 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
     this.disabled = isDisabled;
   }
 
-  writeValue(obj: any): void {
-    this.value = obj;
+  writeValue(entityValue: any): void {
+    this.selectedOptions = this.convertToOptionList(entityValue);
   }
 
   hasErrors() {
@@ -106,15 +102,32 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
     }
   }
 
-  onItemSelected(s: string) {
-    console.log(`Item selected: ${s}`);
-    this.selectedOptions.push(s);
+  onItemSelected(item: string) {
+    console.log(`Item selected: ${item}`);
+    const alreadySelected = this.selectedOptions.findIndex(s => s === item) > -1;
+    if(!alreadySelected) {
+      this.selectedOptions.push(item);
+      this.updateEntityValue();
+    }
   }
 
   onItemDeleted(option: string, $event :MouseEvent) {
     $event.stopPropagation();
     console.log('onItemDeleted', $event);
     this.selectedOptions = this.selectedOptions.filter( s => s !== option);
+    this.updateEntityValue();
   }
 
+  updateEntityValue() {
+    const entityValue = this.convertToEntityValue(this.selectedOptions);
+    this.onChange(entityValue);
+  }
+
+  convertToOptionList(entityValue: string): string[] {
+    return entityValue.length > 0 ? entityValue.split(',') : [];
+  }
+
+  convertToEntityValue(optionList: string[]): string {
+    return optionList.join(',');
+  }
 }

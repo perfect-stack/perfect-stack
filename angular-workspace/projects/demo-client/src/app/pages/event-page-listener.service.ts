@@ -79,6 +79,10 @@ export class EventPageListenerService implements PageListener {
         console.log(`onPageLoad: eventType = ${eventType}`)
         eventFormGroup.controls['event_type'].setValue(eventType);
         console.log(`onPageLoad: eventType setValue completed.`)
+
+        if(eventType === 'Audio') {
+          console.log('Audio Event detected');
+        }
       }
     }
 

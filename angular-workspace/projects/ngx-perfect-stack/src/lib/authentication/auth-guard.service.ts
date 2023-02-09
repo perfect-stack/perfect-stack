@@ -92,6 +92,7 @@ export class AuthGuard implements CanActivate {
 
       const adminSubjects = [
         'ActivityType',
+        'CountType',
         'LocationType',
         'ObserverRole',
         'Organisation',

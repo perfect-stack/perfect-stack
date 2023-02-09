@@ -125,6 +125,14 @@
           {
             "discriminatorValue": "Wing tag",
             "metaEntityName": "WingTagActivity"
+          },
+          {
+            "discriminatorValue": "Call count",
+            "metaEntityName": "CallCountActivity"
+          },
+          {
+            "discriminatorValue": "Weather",
+            "metaEntityName": "WeatherActivity"
           }
         ]
       }
@@ -403,6 +411,24 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "data_source",
+      "label": "Data source",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "KIMS",
+        "SkyRanger"
+      ]
     }
   ]
 }

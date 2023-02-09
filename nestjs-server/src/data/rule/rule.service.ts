@@ -82,7 +82,13 @@ export class RuleService implements MetaEntityRuleValidator {
         const validationResult = await rule.validate(entity, attribute);
 
         if (validationResult) {
-          validationResultMap[path + validationResult.name] = validationResult;
+          let key;
+          if (path.length > 0) {
+            key = `${path}.${validationResult.name}`;
+          } else {
+            key = validationResult.name;
+          }
+          validationResultMap[key] = validationResult;
           this.logger.log(
             `Validation result: ${JSON.stringify(validationResult)}`,
           );
@@ -98,7 +104,7 @@ export class RuleService implements MetaEntityRuleValidator {
       const attributeValue = entity[attribute.name] as [];
 
       for (let i = 0; i < attributeValue.length; i++) {
-        const nextPath = this.appendPath(path, `${attribute.name}.${i}.`);
+        const nextPath = this.appendPath(path, `${attribute.name}.${i}`);
         const nextEntity = attributeValue[i];
 
         let nextMetaEntity = null;

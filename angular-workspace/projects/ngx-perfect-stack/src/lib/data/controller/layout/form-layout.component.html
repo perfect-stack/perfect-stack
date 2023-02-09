@@ -1,5 +1,7 @@
 <ng-container *ngIf="cells$ | async as cells">
 
+  <!--Cells: {{cells|json}}-->
+
   <!-- If template has a binding to the form -->
   <ng-container *ngIf="template && template.binding">
     <div [ngClass]="template.styles" [formGroup]="formGroup">

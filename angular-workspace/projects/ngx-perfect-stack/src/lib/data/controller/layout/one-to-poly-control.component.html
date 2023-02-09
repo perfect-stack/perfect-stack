@@ -2,6 +2,7 @@
   <ng-container *ngIf="cell && cell.attribute && cell.attribute.name">
     <lib-card-layout
       [mode]="mode"
+      [ctx]="ctx"
       [cell]="cell"
       [formGroup]="formGroup"
       [relationshipProperty]="cell.attribute.name">

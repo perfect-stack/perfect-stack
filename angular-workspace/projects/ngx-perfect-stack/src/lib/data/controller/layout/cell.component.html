@@ -30,6 +30,11 @@
           <lib-badge-list  [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-badge-list>
         </ng-container>
 
+        <!-- There are two usages of this, here and ManyToOne, not sure which is right yet -->
+        <ng-container [formGroup]="formGroup" *ngSwitchCase="'SelectMultiple'">
+          <lib-select-multiple-control [mode]="mode" [formControlName]="cell.attribute.name" [cell]="cell" ></lib-select-multiple-control>
+        </ng-container>
+
         <ng-container *ngSwitchDefault>
           <ng-container [formGroup]="formGroup">
             <lib-text-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-text-field-control>
@@ -51,7 +56,7 @@
         <lib-link-list-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-link-list-control>
       </ng-container>
       <ng-container *ngIf="cell.component !== 'LinkList'">
-        <lib-one-to-many-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
+        <lib-one-to-many-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
       </ng-container>
     </ng-container>
 
@@ -77,7 +82,7 @@
           <lib-select-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
         </ng-container>
 
-        <ng-container *ngSwitchCase="'SelectMultiple'">
+        <ng-container [formGroup]="formGroup" *ngSwitchCase="'SelectMultiple'"> <!-- this one has [formGroup] the others don't because this is a ControlValueAccessor -->
           <lib-select-multiple-control [mode]="mode" [formControlName]="cell.attribute.name" [cell]="cell" ></lib-select-multiple-control>
         </ng-container>
 
@@ -90,7 +95,7 @@
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToPoly'">
-      <lib-one-to-poly-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-poly-control>
+      <lib-one-to-poly-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-poly-control>
     </ng-container>
 
     <ng-container *ngSwitchDefault>
