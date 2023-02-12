@@ -1,21 +1,23 @@
 <div class="d-flex flex-column pt-3 h-100">
-  <div class="flex-grow-1 border-footer pb-4" *ngIf="mode == 'view'">
-    <div class="d-flex align-items-center link-primary" (click)="toggleShowRecords()" id="showAuditRecords" *ngIf="!showRecords">
-      <span class="p-0 material-symbols-outlined">chevron_right</span>
-      Show audit records
-    </div>
+  <div class="flex-grow-1 border-footer pb-4">
+
+    <ng-container *ngIf="!showRecords">
+      <div class="d-flex align-items-center link-primary" (click)="toggleShowRecords()" id="showAuditRecords">
+        <span class="p-0 material-symbols-outlined">chevron_right</span>
+        Show audit records
+      </div>
+    </ng-container>
 
     <ng-container *ngIf="showRecords">
-
       <div class="d-flex align-items-center link-primary" (click)="toggleShowRecords()" id="hideAuditRecords">
         <span class="material-symbols-outlined">expand_more</span>
         Hide audit records
       </div>
 
-      <div class="row pt-1" [formGroup]="formGroup">
+      <div class="row pt-1" [formGroup]="formGroup" *ngIf="dataSourceControl">
         <div class="col-2">Data Source:</div>
         <div class="col-2">
-          <lib-enumeration-control [mode]="mode" [formControlName]="'data_source'" [attribute]="dataSourceControl.attribute"></lib-enumeration-control>
+          <lib-enumeration-control [mode]="ctx.mode" [formControlName]="'data_source'" [attribute]="dataSourceControl.attribute"></lib-enumeration-control>
         </div>
       </div>
 
@@ -41,7 +43,6 @@
           </tbody>
         </table>
       </ng-container>
-
     </ng-container>
   </div>
 

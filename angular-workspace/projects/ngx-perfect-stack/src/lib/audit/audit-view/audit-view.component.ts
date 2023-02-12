@@ -20,13 +20,7 @@ import {FormGroup} from '@angular/forms';
 export class AuditViewComponent implements OnInit {
 
   @Input()
-  mode: string;
-
-  @Input()
   ctx: FormContext;
-
-  @Input()
-  entityId: string | null;
 
   showRecords = false;
   auditRecords$: Observable<Audit[]>;
@@ -45,15 +39,19 @@ export class AuditViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.entityId) {
-      this.auditRecords$ = this.auditService.findAll(this.entityId);
-    }
-
     if(this.ctx) {
+      if(this.ctx.id) {
+        this.auditRecords$ = this.auditService.findAll(this.ctx.id);
+      }
+
       // WARNING: Same logic in DateEditComponent
       this.formGroup = this.ctx.formMap.values().next().value;
       this.dataSourceControl = this.formGroup.controls['data_source'] as any;
       console.log('AUDIT: got dataSourceControl', this.dataSourceControl);
+      if(this.dataSourceControl && !this.dataSourceControl.value) {
+        // TODO: this could upgraded to some sort of generic "default initial value" feature in the future
+        this.dataSourceControl.setValue('KIMS');
+      }
     }
   }
 
