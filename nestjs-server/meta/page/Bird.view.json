@@ -52,12 +52,12 @@
             }
           },
           {
-            "width": "2",
+            "width": "1",
             "height": "1",
             "attributeName": "band"
           },
           {
-            "width": "2",
+            "width": "1",
             "height": "1",
             "attributeName": "microchip"
           },
@@ -70,6 +70,11 @@
             "width": "4",
             "height": "1",
             "attributeName": "status"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "data_source"
           }
         ]
       ],

@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormContext} from '../form-service/form.service';
+import {TemplateLocationType, TemplateType} from '../../../domain/meta.page';
 
 @Component({
   selector: 'lib-paris-layout-style',
@@ -16,4 +17,19 @@ export class ParisLayoutStyleComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  hasHeaderTemplates() {
+    return this.headerTemplates?.length > 0;
+  }
+
+  get headerTemplates() {
+    return this.ctx.metaPage.templates.filter(s => s.type === TemplateType.header);
+  }
+
+  get contentTemplates() {
+    return this.ctx.metaPage.templates.filter(s => s.type !== TemplateType.header);
+  }
+
+  get TemplateLocationType() {
+    return TemplateLocationType;
+  }
 }

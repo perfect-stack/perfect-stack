@@ -20,9 +20,13 @@ export class PermissionCheckComponent implements OnInit {
   @Input()
   ctx: FormContext;
 
+  @Input()
+  enabledIf = true;
+
+
   private _subject: string | null;
 
-  permissionEnabled = false;
+  displayEnabled = false;
   dataSource = '';
 
   constructor(protected readonly authorizationService: AuthorizationService) { }
@@ -32,8 +36,7 @@ export class PermissionCheckComponent implements OnInit {
       // WARNING: Same logic in DateEditComponent
       const formGroup = this.ctx.formMap.values().next().value;
       const dataSourceControl = formGroup.controls['data_source'] as any;
-      this.dataSource = dataSourceControl.value;
-      console.log('PermissionCheck: got dataSource', this.dataSource);
+      this.dataSource = dataSourceControl?.value;
       this.checkPermission();
     }
   }
@@ -49,6 +52,11 @@ export class PermissionCheckComponent implements OnInit {
   }
 
   checkPermission() {
-    this.permissionEnabled = this.authorizationService.checkPermission(this.action, this._subject, this.dataSource);
+    if(this.enabledIf) {
+      this.displayEnabled = this.authorizationService.checkPermission(this.action, this._subject, this.dataSource);
+    }
+    else {
+      this.displayEnabled = !this.authorizationService.checkPermission(this.action, this._subject, this.dataSource);
+    }
   }
 }

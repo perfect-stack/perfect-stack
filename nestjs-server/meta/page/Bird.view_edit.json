@@ -2,7 +2,7 @@
   "name": "Bird.view_edit",
   "title": "$PageTitle",
   "type": "view_edit",
-  "layoutStyle": "Stockholm",
+  "layoutStyle": "Paris",
   "dataQueryList": [
     {
       "dataName": "bird",
@@ -30,6 +30,11 @@
               "modes": "",
               "nameAttributes": "name"
             }
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "data_source"
           }
         ]
       ],

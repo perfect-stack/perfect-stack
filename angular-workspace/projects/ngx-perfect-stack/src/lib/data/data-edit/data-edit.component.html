@@ -16,6 +16,12 @@
               <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
                 <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">Edit {{ctx.metaEntity.name.toLowerCase()}}</button>
               </lib-permission-check>
+              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx" [enabledIf]="false">
+                <div class="read-only-badge small text-muted" [ngbTooltip]="'You have insufficient permissions to edit this data, or the data source is read-only.'">
+                  <div class="material-symbols-outlined icon-filled pe-1">visibility</div>
+                  Read only
+                </div>
+              </lib-permission-check>
             </div>
           </ng-container>
           <ng-container BottomLeftActions>

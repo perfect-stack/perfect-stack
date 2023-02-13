@@ -7,11 +7,12 @@ import {
 import {ParamMap, Router} from '@angular/router';
 import {MetaAttribute} from '../../../../ngx-perfect-stack/src/lib/domain/meta.entity';
 import {DataService} from '../../../../ngx-perfect-stack/src/lib/data/data-service/data.service';
-import {FormGroup, UntypedFormGroup} from '@angular/forms';
+import {FormGroup, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {AddLocationDialogComponent} from './add-location-dialog/add-location-dialog.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SaveResponse} from '../../../../ngx-perfect-stack/src/lib/data/data-service/save.response';
 import {ToastService} from '../../../../ngx-perfect-stack/src/lib/utils/toasts/toast.service';
+import {FormGroupService} from '../../../../ngx-perfect-stack/src/lib/data/data-edit/form-service/form-group.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,8 @@ export class EventPageListenerService implements PageListener {
   constructor(protected readonly dataService: DataService,
               protected readonly toastService: ToastService,
               private modalService: NgbModal,
+              private fb: UntypedFormBuilder,
+              private formGroupService: FormGroupService,
               protected readonly router: Router) {
   }
 
@@ -74,16 +77,7 @@ export class EventPageListenerService implements PageListener {
 
     const eventType = queryParams.get('event_type');
     if(eventType) {
-      const eventFormGroup = ctx.formMap.get('event') as UntypedFormGroup;
-      if(eventFormGroup) {
-        console.log(`onPageLoad: eventType = ${eventType}`)
-        eventFormGroup.controls['event_type'].setValue(eventType);
-        console.log(`onPageLoad: eventType setValue completed.`)
-
-        if(eventType === 'Audio') {
-          console.log('Audio Event detected');
-        }
-      }
+      this.updateEventTypeDefaults(ctx, eventType);
     }
 
     // If there are errors attached to the event_type field then we need to clear them if the user "fixes" the error
@@ -94,6 +88,43 @@ export class EventPageListenerService implements PageListener {
         this.clearControlErrors(eventFormGroup, 'event_type');
       });
     }
+  }
+
+  updateEventTypeDefaults(ctx: FormContext, eventType: string) {
+    const eventFormGroup = ctx.formMap.get('event') as UntypedFormGroup;
+    if(eventFormGroup) {
+      console.log(`onPageLoad: eventType = ${eventType}`)
+      eventFormGroup.controls['event_type'].setValue(eventType);
+      console.log(`onPageLoad: eventType setValue completed.`)
+
+
+
+      if(eventType === 'Audio') {
+        console.log('Audio Event detected');
+
+        this.addActivity(ctx, 'CallCountActivity', {
+          activity_type: 'Call count',
+          count_type_id: 'd704c184-c9d5-480e-9e1a-42fbf2fd2e66',
+          calls: []
+        });
+
+        this.addActivity(ctx, 'WeatherActivity', {
+          activity_type: 'Weather',
+        });
+      }
+    }
+  }
+
+  addActivity(ctx: FormContext, activityEntityName: string, activityItem: any) {
+    const itemFormGroup = this.formGroupService.createFormGroup(ctx.mode, activityEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
+    itemFormGroup.addControl('activity_type', this.fb.control(''));
+    // update the item formGroup
+    itemFormGroup.patchValue(activityItem);
+
+    const eventFormGroup = ctx.formMap.get('event') as UntypedFormGroup;
+    const activitiesControl = eventFormGroup.controls['activities'] as FormArrayWithAttribute;
+    activitiesControl.push(itemFormGroup);
+    itemFormGroup.patchValue(activityItem);
   }
 
   loadBird(birdId: string, formGroup: UntypedFormGroup, emitEvent: boolean) {

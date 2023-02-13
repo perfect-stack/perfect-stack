@@ -21,6 +21,33 @@
           {
             "width": "3",
             "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "name"
+            }
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "data_source"
+          }
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "header",
+      "binding": "event",
+      "styles": ""
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
             "attributeName": "event_type",
             "component": "Select"
           }

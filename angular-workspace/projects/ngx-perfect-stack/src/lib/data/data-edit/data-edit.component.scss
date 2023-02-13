@@ -1,0 +1,18 @@
+@import "../../library-styles.scss";
+
+@mixin badge-mixin {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 24px;
+  padding: 0px 16px;
+  border-radius: 16px;
+}
+
+
+.read-only-badge {
+  @include badge-mixin;
+  background: #bbbbbb;
+  //color: $primary;
+}

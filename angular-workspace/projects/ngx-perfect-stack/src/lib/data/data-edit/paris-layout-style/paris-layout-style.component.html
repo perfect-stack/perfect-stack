@@ -1,18 +1,19 @@
 <div class="container-fluid paris-layout-style" *ngIf="ctx">
-  <div class="d-flex justify-content-between">
-    <div>
-      <!--<a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
-        <span class="material-symbols-outlined align-middle">keyboard_backspace</span>
-        <span class="align-middle">Search {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
-      </a>-->
-      <lib-back-link [ctx]="ctx"></lib-back-link>
 
-      <!--<h2 class="my-3" *ngIf="ctx.formMap">
-        <lib-expression-control [mode]="ctx.mode" [formMap]="ctx.formMap" [expression]="ctx.metaPage.title" ></lib-expression-control>
-      </h2>-->
-      <div class="my-3">
-        <lib-page-title-tool [ctx]="ctx"></lib-page-title-tool>
-      </div>
+  <lib-back-link [ctx]="ctx"></lib-back-link>
+
+  <div class="d-flex justify-content-between my-3">
+    <div>
+      <ng-container *ngIf="!hasHeaderTemplates()">
+        <div class="my-3">
+          <lib-page-title-tool [ctx]="ctx"></lib-page-title-tool>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="hasHeaderTemplates()">
+        <ng-container *ngFor="let template of headerTemplates; index as i">
+          <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
+        </ng-container>
+      </ng-container>
     </div>
     <div>
       <ng-content select="[TopRightActions]"></ng-content>
@@ -20,7 +21,7 @@
   </div>
 
   <div class="container-fluid container-border-radius">
-    <div class="row" *ngFor="let template of ctx.metaPage.templates; index as i">
+    <div class="row" *ngFor="let template of contentTemplates; index as i">
 
       <ng-container *ngIf="template.templateHeading">
         <div class="row template">
