@@ -429,6 +429,20 @@
         "KIMS",
         "SkyRanger"
       ]
+    },
+    {
+      "name": "end_date_time",
+      "label": "End date time",
+      "description": "When the event ended",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "DateTime",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

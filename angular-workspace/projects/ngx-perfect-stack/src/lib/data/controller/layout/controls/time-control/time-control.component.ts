@@ -47,6 +47,7 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
   touchSubscription: Subscription;
   subscription: Subscription | undefined;
 
+  showModifiers = false;
   modifierList: Modifier[] = [
     {label: '+1 hr', duration: 'PT1H'},
     {label: '+2 hrs', duration: 'PT2H'},
@@ -68,6 +69,10 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
     }
     else {
       console.warn(`This component is NOT using a FormControlWithAttribute`);
+    }
+
+    if(this.cell && this.cell.showModifiers) {
+      this.showModifiers = this.cell.showModifiers === 'true';
     }
 
     this.subscription = this.ngControl.valueChanges?.subscribe((nextValue) => {

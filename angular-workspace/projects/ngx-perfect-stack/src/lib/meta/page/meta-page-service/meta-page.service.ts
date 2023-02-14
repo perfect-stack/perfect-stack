@@ -13,6 +13,8 @@ export class CellAttribute {
   hideLabel?: boolean;
   labelLayout?: LabelLayoutType;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
+  showClear?: string;
+  showModifiers?: string;
   tool?: Tool;
   metaEntity?: MetaEntity;
   attribute?: MetaAttribute;

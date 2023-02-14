@@ -13,6 +13,10 @@
         <lib-button-tabs-tool [buttonTabsTool]="asButtonTabsTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-button-tabs-tool>
       </ng-container>
 
+      <ng-container *ngSwitchCase="'Duration'">
+        <lib-duration-tool [durationTool]="asDurationTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-duration-tool>
+      </ng-container>
+
       <ng-container *ngSwitchCase="'Image'">
         <lib-image-tool [imageTool]="asImageTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-image-tool>
       </ng-container>

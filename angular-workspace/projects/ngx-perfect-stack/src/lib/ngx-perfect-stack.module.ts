@@ -72,7 +72,7 @@ import {
   OneToPolyControlComponent,
   SpyControlComponent,
   ButtonTabsToolComponent,
-  ToolViewComponent, HeaderLayoutComponent, TabToolComponent
+  ToolViewComponent, HeaderLayoutComponent, TabToolComponent, DurationToolComponent
 } from './data/controller/layout/layout.component';
 import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
@@ -275,7 +275,8 @@ const routes: Routes = [
     LinkListControlComponent,
     OneToManyChoiceDialogComponent,
     BackLinkComponent,
-    SelectMultipleControlComponent
+    SelectMultipleControlComponent,
+    DurationToolComponent
   ],
   providers: [
     AuthenticationService,

@@ -2,15 +2,22 @@ import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@an
 import {
   ButtonGroupTool,
   ButtonTabsTool, ButtonTool,
-  Cell, IconTool, ImageTool, LabelLayoutType, LastSignInTool, LinkTool, MapTool,
+  Cell, DurationTool, IconTool, ImageTool, LabelLayoutType, LastSignInTool, LinkTool, MapTool,
   MetaPage, PageTitleTool, PaginateTool, TabTool,
   Template,
   TemplateLocationType,
   TemplateType, TextTool, Tool,
   ToolType
 } from '../../../domain/meta.page';
-import {ControlValueAccessor, NgControl, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
-import {Observable, of, Subscription, switchMap} from 'rxjs';
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  NgControl,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import {combineLatest, map, Observable, of, Subscription, switchMap} from 'rxjs';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 import {
@@ -27,6 +34,7 @@ import {Router} from '@angular/router';
 import {FormGroupService} from '../../data-edit/form-service/form-group.service';
 import {PropertySheetService} from '../../../template/property-sheet/property-sheet.service';
 import {EventService} from '../../../event/event.service';
+import {Duration, Instant} from '@js-joda/core';
 
 
 // This file contains many Components because they have a circular dependency on the top-level component of
@@ -1007,6 +1015,10 @@ export class ToolViewComponent implements OnInit {
     return this.tool as ButtonTabsTool;
   }
 
+  asDurationTool() {
+    return this.tool as DurationTool;
+  }
+
   asImageTool() {
     return this.tool as ImageTool;
   }
@@ -1158,6 +1170,87 @@ export class ButtonTabContext {
   buttonGroupTool = new ButtonGroupTool();
   tabMap = new Map<string, MetaPage>();
 }
+
+@Component({
+  selector: 'lib-duration-tool',
+  templateUrl: './tool-view/duration-tool/duration-tool.component.html',
+  styleUrls: ['./tool-view/duration-tool/duration-tool.component.css']
+})
+export class DurationToolComponent implements OnInit, OnDestroy {
+
+  @Input()
+  durationTool: DurationTool;
+
+  @Input()
+  ctx: FormContext;
+
+  @Input()
+  editorMode = false;
+
+  startDateTimeControl: AbstractControl;
+  endDateTimeControl: AbstractControl;
+
+  startDateTimeSubscription: Subscription;
+  endDateTimeSubscription: Subscription;
+
+  durationLabel: string = '-';
+
+  constructor() {
+  }
+
+  ngOnInit(): void {
+    const formGroup = this.ctx.formMap.values().next().value as UntypedFormGroup;
+    this.startDateTimeControl = formGroup.controls['date_time'];
+    this.endDateTimeControl = formGroup.controls['end_date_time'];
+
+    this.startDateTimeSubscription = this.startDateTimeControl.valueChanges.subscribe(() => {
+      this.updateDuration();
+    });
+
+    this.endDateTimeSubscription = this.endDateTimeControl.valueChanges.subscribe(() => {
+      this.updateDuration();
+    });
+
+    // pump once to get started
+    this.updateDuration();
+  }
+
+  updateDuration() {
+    try {
+      const startDateTime = Instant.parse(this.startDateTimeControl.value);
+      const endDateTime = Instant.parse(this.endDateTimeControl.value);
+      const duration = Duration.between(startDateTime, endDateTime);
+
+      const days = duration.toDays();
+      const hours = duration.toHours() - (days * 24);
+      const mins = duration.toMinutes() - (days * 24 * 60) - (hours * 60);
+
+      if(days > 0) {
+        this.durationLabel = `${days} days ${hours} hours ${mins} mins`;
+      }
+      else if(hours > 0) {
+        this.durationLabel = `${hours} hours ${mins} mins`;
+      }
+      else {
+        this.durationLabel = `${mins} mins`;
+      }
+    }
+    catch (e) {
+      // ok to swallow and keep going
+    }
+  }
+
+  ngOnDestroy(): void {
+    if(this.startDateTimeSubscription) {
+      this.startDateTimeSubscription.unsubscribe();
+    }
+
+    if(this.endDateTimeSubscription) {
+      this.endDateTimeSubscription.unsubscribe();
+    }
+  }
+}
+
 
 @Component({
   selector: 'lib-tab-tool',

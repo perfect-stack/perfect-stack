@@ -87,6 +87,10 @@ export class EventPageListenerService implements PageListener {
       eventFormGroup.controls['observers'].valueChanges.subscribe(() => {
         this.clearControlErrors(eventFormGroup, 'event_type');
       });
+
+      eventFormGroup.controls['date_time'].valueChanges.subscribe((nextValue) => {
+        this.updateEndDateTime(eventFormGroup, nextValue);
+      });
     }
   }
 
@@ -125,6 +129,14 @@ export class EventPageListenerService implements PageListener {
     const activitiesControl = eventFormGroup.controls['activities'] as FormArrayWithAttribute;
     activitiesControl.push(itemFormGroup);
     itemFormGroup.patchValue(activityItem);
+  }
+
+  updateEndDateTime(eventFormGroup: FormGroup<any>, nextValue: any) {
+    const endDateTimeControl = eventFormGroup.controls['end_date_time'];
+    const endDateTimeValue = endDateTimeControl.value;
+    if(nextValue.length > 10 && !endDateTimeValue) {
+      endDateTimeControl.setValue(nextValue);
+    }
   }
 
   loadBird(birdId: string, formGroup: UntypedFormGroup, emitEvent: boolean) {

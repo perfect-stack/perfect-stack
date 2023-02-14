@@ -30,6 +30,7 @@ export class Cell {
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   componentData?: ComponentData;
   showClear?: string;
+  showModifiers?: string;
   noItemsHtml?: string; // Html displayed when no items
   footerHtml?: string; // Footer html that appears under the component (only in edit mode)
   tool?: Tool;
@@ -111,6 +112,10 @@ export class ButtonTabsTool extends Tool {
   template5: string;
   template6: string;
   template7: string;
+}
+
+export class DurationTool extends Tool {
+
 }
 
 export class ImageTool extends Tool {
