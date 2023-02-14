@@ -196,6 +196,7 @@ export class Template {
   noItemsHtml: string; // Html displayed when no items
   navigation?: TemplateNavigationType;
   route?: string;
+  visible?: boolean; // Dynamically display/hide this template (true by default)
 }
 
 export enum TemplateShowSideHeadingsType {

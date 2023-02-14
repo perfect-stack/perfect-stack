@@ -23,12 +23,12 @@
   <div class="container-fluid container-border-radius">
     <div class="row" *ngFor="let template of contentTemplates; index as i">
 
-      <ng-container *ngIf="template.templateHeading">
+      <ng-container *ngIf="template.templateHeading && template.visible !== false">
         <div class="row template">
-          <div class="col-4">
+          <div class="col-3">
             <div class="panel-heading" id="template[{{i}}].sectionHdg">{{template.templateHeading}}</div>
           </div>
-          <div class="col-8">
+          <div class="col-9">
             <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
           </div>
         </div>

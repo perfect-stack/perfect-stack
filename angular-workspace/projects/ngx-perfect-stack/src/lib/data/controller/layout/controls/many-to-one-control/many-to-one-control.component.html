@@ -25,7 +25,7 @@
       <small *ngIf="searching" class="form-text text-muted">searching...</small>
       <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
       <ng-container *ngIf="showClear">
-        <div class="ps-1 link-primary overlay-top-right" (click)="onClear()">Clear</div>
+        <div class="ps-1 link-primary overlay-top-right" (click)="onClear($event)">Clear</div>
       </ng-container>
     </div>
     <ng-container *ngIf="hasErrors() && attribute">

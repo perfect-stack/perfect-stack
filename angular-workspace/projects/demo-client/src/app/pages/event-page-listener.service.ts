@@ -106,6 +106,11 @@ export class EventPageListenerService implements PageListener {
       if(eventType === 'Audio') {
         console.log('Audio Event detected');
 
+        const birdDetailsTemplate = ctx.metaPage.templates.find(s => s.templateHeading && s.templateHeading.indexOf('Bird details') > -1);
+        if(birdDetailsTemplate) {
+          birdDetailsTemplate.visible = false;
+        }
+
         this.addActivity(ctx, 'CallCountActivity', {
           activity_type: 'Call count',
           count_type_id: 'd704c184-c9d5-480e-9e1a-42fbf2fd2e66',

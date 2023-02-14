@@ -108,7 +108,9 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
     }
   }
 
-  onClear() {
+  onClear($event: MouseEvent) {
+    // don't let the Clear link grab focus otherwise it upsets the onfocusOut() behaviour below
+    $event.preventDefault();
     this.setValueById(null);
   }
 

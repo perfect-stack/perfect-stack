@@ -91,13 +91,14 @@ export class FormService {
     ctx.queryParamMap = queryParamMap;
 
     return this.metaPageService.metaPageMap$.pipe(switchMap((metaPageMap) => {
-      ctx.metaPageMap = metaPageMap;
+      // clone the MetaPages, so we can dynamically change values with custom code
+      ctx.metaPageMap = structuredClone(metaPageMap);
       const metaPageName = this.calculatePageTemplate(ctx.metaName, ctx.mode, metaPageMap);
       ctx.metaPage = ctx.metaPageMap.get(metaPageName) as MetaPage;
 
       return this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
-
-        ctx.metaEntityMap = metaEntityMap;
+        // clone the MetaEntities, so we can dynamically change values with custom code
+        ctx.metaEntityMap = structuredClone(metaEntityMap);
 
         const rootTemplate = ctx.metaPage.templates[0];
         const metaEntityName = rootTemplate.metaEntityName
