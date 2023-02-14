@@ -20,6 +20,10 @@
       </ng-container>
     </ng-container>
 
+    <ng-container [formGroup]="formGroup" *ngSwitchCase="'Time'">
+      <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="false"></lib-time-control>
+    </ng-container>
+
     <ng-container *ngSwitchCase="['Text', 'Html', 'Double', 'Integer'].includes(cell.attribute.type) ? cell.attribute.type : ''">
       <ng-container [ngSwitch]="cell.component">
         <ng-container *ngSwitchCase="'TextArea'">

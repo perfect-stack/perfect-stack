@@ -10,6 +10,7 @@ export enum AttributeType {
   Identifier = 'Identifier',
   Date = 'Date',
   DateTime = 'DateTime',
+  Time = 'Time',
   Enumeration = 'Enumeration',
   OneToMany = 'OneToMany',
   OneToOne = 'OneToOne',

@@ -103,6 +103,20 @@
         "Male",
         "Unknown"
       ]
+    },
+    {
+      "name": "time",
+      "label": "Time",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Time",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

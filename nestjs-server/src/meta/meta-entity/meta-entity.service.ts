@@ -190,6 +190,23 @@ export class MetaEntityService {
           };
         }
 
+        if (nextMetaAttribute.type === AttributeType.Time) {
+          modelAttribute = {
+            type: DataTypes.TIME,
+            allowNull: true,
+
+            // This little bit of ugly is needed to deal with how the FormGroups need to be
+            // initialised with a value (e.g. '') but the current sequelize logic doesn't
+            // convert empty string date/time values into null.
+            set(value: any) {
+              if (value != null && value.length === 0) {
+                value = null;
+              }
+              this.setDataValue(nextMetaAttribute.name, value);
+            },
+          };
+        }
+
         if (nextMetaAttribute.type === AttributeType.Double) {
           modelAttribute = {
             type: DataTypes.DOUBLE,
