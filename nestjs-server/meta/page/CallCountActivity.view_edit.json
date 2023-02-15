@@ -32,14 +32,17 @@
                     "width": "1",
                     "height": "1",
                     "attributeName": "species",
-                    "labelLayout": "Left",
-                    "component": "SelectTwo",
-                    "componentData": {
-                      "secondaryAttributeName": "form"
-                    }
+                    "component": "Select"
                   },
                   {
                     "width": "1",
+                    "height": "1",
+                    "attributeName": "form",
+                    "component": "Enumeration",
+                    "dependsOn": "species_id"
+                  },
+                  {
+                    "width": "0",
                     "height": "1",
                     "attributeName": "bearing"
                   },

@@ -25,8 +25,8 @@ export class AuditViewComponent implements OnInit {
   showRecords = false;
   auditRecords$: Observable<Audit[]>;
 
-  formGroup: FormGroup;
-  dataSourceControl: FormControlWithAttribute;
+  //formGroup: FormGroup;
+  //dataSourceControl: FormControlWithAttribute;
 
   private zoneId = ZoneId.of('Pacific/Auckland');
   private displayFormatter: DateTimeFormatter;
@@ -45,13 +45,13 @@ export class AuditViewComponent implements OnInit {
       }
 
       // WARNING: Same logic in DateEditComponent
-      this.formGroup = this.ctx.formMap.values().next().value;
-      this.dataSourceControl = this.formGroup.controls['data_source'] as any;
-      console.log('AUDIT: got dataSourceControl', this.dataSourceControl);
-      if(this.dataSourceControl && !this.dataSourceControl.value) {
-        // TODO: this could upgraded to some sort of generic "default initial value" feature in the future
-        this.dataSourceControl.setValue('KIMS');
-      }
+      // this.formGroup = this.ctx.formMap.values().next().value;
+      // this.dataSourceControl = this.formGroup.controls['data_source'] as any;
+      // console.log('AUDIT: got dataSourceControl', this.dataSourceControl);
+      // if(this.dataSourceControl && !this.dataSourceControl.value) {
+      //   // TODO: this could upgraded to some sort of generic "default initial value" feature in the future
+      //   this.dataSourceControl.setValue('KIMS');
+      // }
     }
   }
 

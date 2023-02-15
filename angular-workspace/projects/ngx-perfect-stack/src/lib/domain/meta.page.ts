@@ -29,6 +29,7 @@ export class Cell {
   labelLayout?: LabelLayoutType;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   componentData?: ComponentData;
+  dependsOn?: string; // Another attribute that the Component in this Cell will listen to value changes of
   showClear?: string;
   showModifiers?: string;
   noItemsHtml?: string; // Html displayed when no items

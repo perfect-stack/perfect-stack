@@ -29,18 +29,29 @@ export class BirdEditPageListenerService implements PageListener {
   onPageLoad(ctx: FormContext, params: ParamMap, queryParams: ParamMap): void {
     const formGroup = ctx.formMap.get('bird') as UntypedFormGroup;
     if(formGroup) {
-      formGroup.controls['band'].valueChanges.subscribe(() => {
-        this.clearControlErrors(formGroup, 'name');
-      });
-
-      formGroup.controls['microchip'].valueChanges.subscribe(() => {
-        this.clearControlErrors(formGroup, 'name');
-      });
-
-      formGroup.controls['wing_tag'].valueChanges.subscribe(() => {
-        this.clearControlErrors(formGroup, 'name');
-      });
+      this.createBirdDefaults(formGroup);
+      this.addValueListeners(formGroup);
     }
+  }
+
+  createBirdDefaults(formGroup: FormGroup) {
+    if(!formGroup.controls['data_source'].value) {
+      formGroup.controls['data_source'].setValue('KIMS');
+    }
+  }
+
+  addValueListeners(formGroup: FormGroup) {
+    formGroup.controls['band'].valueChanges.subscribe(() => {
+      this.clearControlErrors(formGroup, 'name');
+    });
+
+    formGroup.controls['microchip'].valueChanges.subscribe(() => {
+      this.clearControlErrors(formGroup, 'name');
+    });
+
+    formGroup.controls['wing_tag'].valueChanges.subscribe(() => {
+      this.clearControlErrors(formGroup, 'name');
+    });
   }
 
   clearControlErrors(formGroup: FormGroup, controlName: string) {

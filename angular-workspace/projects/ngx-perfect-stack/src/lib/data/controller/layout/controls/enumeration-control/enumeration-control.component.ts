@@ -1,9 +1,13 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl} from '@angular/forms';
+import {AbstractControl, ControlValueAccessor, FormGroup, NG_VALUE_ACCESSOR, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {ValidationResult} from '../../../../../domain/meta.rule';
 import {Subscription} from 'rxjs';
-import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
+import {FormContext, FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
+import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {SelectControlComponent} from '../select-control/select-control.component';
+import {control} from 'leaflet';
+import {DataService} from '../../../../data-service/data.service';
 
 @Component({
   selector: 'lib-enumeration-control',
@@ -17,18 +21,29 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
   mode: string | null;
 
   @Input()
+  ctx: FormContext;
+
+  @Input()
+  cell: CellAttribute;
+
+  @Input()
   attribute: MetaAttribute;
+
+  // This one is needed because sometimes we need to lookup a sibling control for the "dependsOn" relationships
+  @Input()
+  formGroup: FormGroup;
 
   @Input()
   options: string[] = [];
 
-  selectedOption: string;
+  selectedOption: string | null;
   disabled = false;
 
   touched = false;
   touchSubscription: Subscription;
 
-  constructor(public ngControl: NgControl) {
+  constructor(public ngControl: NgControl,
+              protected readonly dataService: DataService) {
     ngControl.valueAccessor = this;
   }
 
@@ -45,9 +60,61 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
     if(this.attribute && this.attribute.enumeration) {
       this.options = this.attribute.enumeration;
     }
+    else if(this.cell && this.cell.dependsOn) {
+      if(this.formGroup) {
+        const control = this.getSourceControl();
+        if(control) {
+          control.valueChanges.subscribe((value) => {
+            console.warn(`EnumerationControl: new dependent value; ${value}`, control);
+            this.updateOptionList();
+          });
+
+          // pump once to initialise
+          this.updateOptionList();
+        }
+        else {
+          console.warn(`Unable to find control for ${this.cell.dependsOn}`);
+        }
+      }
+      else {
+        console.warn(`Unable to find form`);
+      }
+    }
     // if no enumeration supplied by the MetaAttribute then the options can be @Input() directly. See "SelectTwoControl"
 
-    //this.selectedOption = this.ngControl.value;
+  }
+
+  getSourceControl(): FormControlWithAttribute | null {
+    if(this.cell.dependsOn) {
+      return this.formGroup.controls[this.cell.dependsOn] as FormControlWithAttribute;
+    }
+    else {
+      return null;
+    }
+  }
+
+  updateOptionList() {
+    const control = this.getSourceControl();
+    if(control && control.attribute) {
+      const sourceEntityName = control.attribute.relationshipTarget;
+      this.dataService.findById(sourceEntityName, control.value).subscribe((sourceEntity: any) => {
+        console.log('sourceEntity:', sourceEntity);
+        this.options = [];
+        // TODO: need to have a meta value here to define which bit of data contains the "secondaryAttributeName"
+        const secondaryAttributeName = 'form';
+        if(sourceEntity[secondaryAttributeName]) {
+          const valueList: string = sourceEntity[secondaryAttributeName];
+          if(valueList) {
+            this.options = valueList.split(',').map(value => value.trim());
+          }
+        }
+
+        // blank the selectedOption if it does not exist in the list
+        if(this.selectedOption && this.options.indexOf(this.selectedOption) < 0) {
+          this.selectedOption = null;
+        }
+      });
+    }
   }
 
   isReadOnly() {

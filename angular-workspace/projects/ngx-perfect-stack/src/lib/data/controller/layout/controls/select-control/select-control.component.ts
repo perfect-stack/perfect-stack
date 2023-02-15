@@ -88,7 +88,7 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   }
 
   onModelChange(selectedEntity: any) {
-    console.log('onModelChange()', selectedEntity);
+    console.log(`onModelChange() ${this.attribute.name}`, selectedEntity);
     //this.value = selectedEntity ? selectedEntity.id : null;
     this.value = selectedEntity ? selectedEntity.id : '';
   }
@@ -126,6 +126,8 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   set value(val: string){
     this.selectedEntityId = val
     this.updateSelectedEntity();
+
+    console.log(`onChange() ${val}`);
     this.onChange(val)
     //this.onTouch(val)
   }

@@ -271,6 +271,10 @@ export class TableLayoutComponent implements OnInit {
   hasResultsSummary() {
     return this.formGroup.get('resultsSummary') !== null && this.formGroup.get('resultsSummary')?.value.length > 0;
   }
+
+  getCellWidth(nextCell: CellAttribute) {
+    return nextCell.width === '0' ? '0%' : 'auto';
+  }
 }
 
 export interface CardItem {

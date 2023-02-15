@@ -75,9 +75,9 @@ export class EventPageListenerService implements PageListener {
       }
     }
 
-    const eventType = queryParams.get('event_type');
-    if(eventType) {
-      this.updateEventTypeDefaults(ctx, eventType);
+    const eventTypeParam = queryParams.get('event_type');
+    if(eventTypeParam) {
+      this.createEventDefaults(ctx, eventTypeParam);
     }
 
     // If there are errors attached to the event_type field then we need to clear them if the user "fixes" the error
@@ -91,25 +91,27 @@ export class EventPageListenerService implements PageListener {
       eventFormGroup.controls['date_time'].valueChanges.subscribe((nextValue) => {
         this.updateEndDateTime(eventFormGroup, nextValue);
       });
+
+      const eventType = eventFormGroup.controls['event_type']?.value;
+      if(eventType === 'Audio') {
+        // This can't go into the "createEventDefaults()" method since the bird details need to be hidden if the
+        // event is edited (updated) and not just when it's created.
+        this.hideBirdDetailsTemplate(ctx);
+      }
     }
   }
 
-  updateEventTypeDefaults(ctx: FormContext, eventType: string) {
+  createEventDefaults(ctx: FormContext, eventType: string) {
     const eventFormGroup = ctx.formMap.get('event') as UntypedFormGroup;
     if(eventFormGroup) {
       console.log(`onPageLoad: eventType = ${eventType}`)
       eventFormGroup.controls['event_type'].setValue(eventType);
       console.log(`onPageLoad: eventType setValue completed.`)
 
-
+      eventFormGroup.controls['data_source'].setValue('KIMS');
 
       if(eventType === 'Audio') {
         console.log('Audio Event detected');
-
-        const birdDetailsTemplate = ctx.metaPage.templates.find(s => s.templateHeading && s.templateHeading.indexOf('Bird details') > -1);
-        if(birdDetailsTemplate) {
-          birdDetailsTemplate.visible = false;
-        }
 
         this.addActivity(ctx, 'CallCountActivity', {
           activity_type: 'Call count',
@@ -121,6 +123,13 @@ export class EventPageListenerService implements PageListener {
           activity_type: 'Weather',
         });
       }
+    }
+  }
+
+  hideBirdDetailsTemplate(ctx: FormContext) {
+    const birdDetailsTemplate = ctx.metaPage.templates.find(s => s.templateHeading && s.templateHeading.indexOf('Bird details') > -1);
+    if(birdDetailsTemplate) {
+      birdDetailsTemplate.visible = false;
     }
   }
 

@@ -26,9 +26,9 @@
       <tbody>
         <ng-container *ngFor="let group of attributes.controls; let i=index">
           <tr class="align-middle" (click)="onRowClicked(i)">
-            <td *ngFor="let nextCell of cells[0]">
+            <td [ngStyle]="{'width': getCellWidth(nextCell) }" *ngFor="let nextCell of cells[0]">
               <ng-container *ngIf="nextCell.attribute || nextCell.tool">
-                <lib-cell [mode]="mode" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!"></lib-cell>
+                <lib-cell [mode]="mode" [ctx]="ctx" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!"></lib-cell>
               </ng-container>
             </td>
             <td *ngIf="mode === 'edit'">
