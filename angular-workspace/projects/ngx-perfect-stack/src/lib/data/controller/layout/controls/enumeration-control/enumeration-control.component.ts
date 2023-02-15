@@ -97,23 +97,25 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
     const control = this.getSourceControl();
     if(control && control.attribute) {
       const sourceEntityName = control.attribute.relationshipTarget;
-      this.dataService.findById(sourceEntityName, control.value).subscribe((sourceEntity: any) => {
-        console.log('sourceEntity:', sourceEntity);
-        this.options = [];
-        // TODO: need to have a meta value here to define which bit of data contains the "secondaryAttributeName"
-        const secondaryAttributeName = 'form';
-        if(sourceEntity[secondaryAttributeName]) {
-          const valueList: string = sourceEntity[secondaryAttributeName];
-          if(valueList) {
-            this.options = valueList.split(',').map(value => value.trim());
+      if(control.value) {
+        this.dataService.findById(sourceEntityName, control.value).subscribe((sourceEntity: any) => {
+          console.log('sourceEntity:', sourceEntity);
+          this.options = [];
+          // TODO: need to have a meta value here to define which bit of data contains the "secondaryAttributeName"
+          const secondaryAttributeName = 'form';
+          if(sourceEntity[secondaryAttributeName]) {
+            const valueList: string = sourceEntity[secondaryAttributeName];
+            if(valueList) {
+              this.options = valueList.split(',').map(value => value.trim());
+            }
           }
-        }
 
-        // blank the selectedOption if it does not exist in the list
-        if(this.selectedOption && this.options.indexOf(this.selectedOption) < 0) {
-          this.selectedOption = null;
-        }
-      });
+          // blank the selectedOption if it does not exist in the list
+          if(this.selectedOption && this.options.indexOf(this.selectedOption) < 0) {
+            this.selectedOption = null;
+          }
+        });
+      }
     }
   }
 
