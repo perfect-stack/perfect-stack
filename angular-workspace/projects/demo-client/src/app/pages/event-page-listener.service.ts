@@ -19,12 +19,24 @@ import {FormGroupService} from '../../../../ngx-perfect-stack/src/lib/data/data-
 })
 export class EventPageListenerService implements PageListener {
 
+  defaultCountType: any;
+
   constructor(protected readonly dataService: DataService,
               protected readonly toastService: ToastService,
               private modalService: NgbModal,
               private fb: UntypedFormBuilder,
               private formGroupService: FormGroupService,
               protected readonly router: Router) {
+
+    this.dataService.findAll('CountType').subscribe(response => {
+      const manualCountType = response.resultList.find((s:any) => s['name'] === 'Manual');
+      if(manualCountType) {
+        this.defaultCountType = manualCountType;
+      }
+      else {
+        console.error('UNABLE to find Manual CountType. Audio events will not work properly');
+      }
+    });
   }
 
   onAfterSave(ctx: FormContext): void {
@@ -115,7 +127,7 @@ export class EventPageListenerService implements PageListener {
 
         this.addActivity(ctx, 'CallCountActivity', {
           activity_type: 'Call count',
-          count_type_id: 'd704c184-c9d5-480e-9e1a-42fbf2fd2e66',
+          count_type_id: this.defaultCountType ? this.defaultCountType.id : '',
           calls: []
         });
 
