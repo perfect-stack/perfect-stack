@@ -56,12 +56,14 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "SelectMultiple",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
+      "relationshipTarget": "HabitatType",
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": [
         {
           "type": "Required",

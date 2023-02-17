@@ -73,6 +73,12 @@
         {
           "editable": true,
           "roles": [],
+          "label": "Habitat Type",
+          "route": "/data/HabitatType/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
           "label": "Location Type",
           "route": "/data/LocationType/search_edit"
         },

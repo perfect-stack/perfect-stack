@@ -42,13 +42,24 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "Calm",
+        "N",
+        "NE",
+        "E",
+        "SE",
+        "S",
+        "SW",
+        "W",
+        "NW"
+      ]
     },
     {
       "name": "wind_state",
@@ -56,13 +67,19 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "Calm",
+        "Light",
+        "Moderate",
+        "Strong"
+      ]
     },
     {
       "name": "rain",
@@ -70,13 +87,18 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "Nil",
+        "Light/Showers",
+        "Moderate"
+      ]
     },
     {
       "name": "temperature",
@@ -84,13 +106,18 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "Cold",
+        "Mild",
+        "Warm"
+      ]
     },
     {
       "name": "cloud_cover",
@@ -98,13 +125,18 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "Clear",
+        "Partly Cloudy",
+        "Overcast"
+      ]
     },
     {
       "name": "ground_conditions",
@@ -112,13 +144,18 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "Dry",
+        "Damp",
+        "Wet"
+      ]
     },
     {
       "name": "noise",
@@ -126,13 +163,18 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "None",
+        "Slight",
+        "Moderate"
+      ]
     },
     {
       "name": "moonlight",
@@ -140,13 +182,18 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "Bright",
+        "Dark",
+        "Black"
+      ]
     }
   ]
 }

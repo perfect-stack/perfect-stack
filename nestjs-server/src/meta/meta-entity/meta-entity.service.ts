@@ -221,6 +221,13 @@ export class MetaEntityService {
           };
         }
 
+        if (nextMetaAttribute.type === AttributeType.SelectMultiple) {
+          modelAttribute = {
+            type: DataTypes.STRING,
+            allowNull: true,
+          };
+        }
+
         if (modelAttribute) {
           modelAttributeList[nextMetaAttribute.name] = modelAttribute;
         }

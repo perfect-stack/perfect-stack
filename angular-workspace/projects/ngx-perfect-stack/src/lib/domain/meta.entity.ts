@@ -11,10 +11,11 @@ export enum AttributeType {
   DateTime = 'DateTime',
   Time = 'Time',
   Enumeration = 'Enumeration',
+  ManyToOne = 'ManyToOne',
   OneToMany = 'OneToMany',
   OneToOne = 'OneToOne',
-  ManyToOne = 'ManyToOne',
   OneToPoly = 'OneToPoly',
+  SelectMultiple = 'SelectMultiple',
 }
 
 export enum ComparisonOperator {

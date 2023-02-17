@@ -77,7 +77,7 @@
             "height": "1",
             "attributeName": "habitat",
             "component": "SelectMultiple",
-            "footerHtml": "Add one or more habitats"
+            "footerHtml": "Add one or more habitats. If ‘Other’ then please add description to ‘Notes’ section"
           }
         ]
       ],

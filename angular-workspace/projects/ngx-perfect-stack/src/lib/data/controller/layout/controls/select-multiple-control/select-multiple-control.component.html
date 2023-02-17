@@ -2,7 +2,7 @@
 <div ngbDropdown *ngIf="mode === 'view'">
   <ng-container *ngIf="selectedOptions.length > 0">
     <span class="badge bg-primary me-1" *ngFor="let option of selectedOptions">
-      <span class="option-label align-top">{{option}}</span>
+      <span class="option-label align-top">{{getDisplayLabel(option)}}</span>
     </span>
   </ng-container>
   <ng-container *ngIf="selectedOptions.length === 0">
@@ -17,11 +17,15 @@
   <div class="form-select w-100" style="white-space: normal;" id="dropdownBasic1" ngbDropdownToggle>
     <span *ngIf="selectedOptions.length === 0">&nbsp;</span>
     <span class="badge bg-primary me-1" *ngFor="let option of selectedOptions" (click)="onItemDeleted(option, $event)">
-      <span class="option-label align-top">{{option}}</span>
+      <span class="option-label align-top">{{getDisplayLabel(option)}}</span>
       <span class="option-delete material-symbols-outlined ms-1">close</span>
     </span>
   </div>
   <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-    <button ngbDropdownItem *ngFor="let option of optionList" (click)="onItemSelected(option)">{{option}}</button>
+    <button ngbDropdownItem *ngFor="let option of optionList" (click)="onItemSelected(option)">{{getDisplayLabel(option)}}</button>
   </div>
+
+  <ng-container *ngIf="hasErrors() && cell.attribute">
+    <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+  </ng-container>
 </div>

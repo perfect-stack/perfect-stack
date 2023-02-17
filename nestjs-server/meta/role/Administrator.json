@@ -41,6 +41,10 @@
       "subject": "CountType"
     },
     {
+      "action": "Edit",
+      "subject": "HabitatType"
+    },
+    {
       "action": "Delete",
       "subject": "LocationType"
     },
@@ -79,6 +83,10 @@
     {
       "action": "Delete",
       "subject": "CountType"
+    },
+    {
+      "action": "Delete",
+      "subject": "HabitatType"
     },
     {
       "action": "Menu",

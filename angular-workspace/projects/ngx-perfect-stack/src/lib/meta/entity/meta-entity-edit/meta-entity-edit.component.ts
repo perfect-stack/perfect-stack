@@ -230,7 +230,7 @@ export class MetaEntityEditComponent implements OnInit {
   isRelationshipType(rowIdx: number) {
     const rowFormGroup = this.attributes.at(rowIdx) as UntypedFormGroup;
     const type = rowFormGroup.controls['type'].value;
-    const relationshipTypes = [AttributeType.OneToMany, AttributeType.OneToOne, AttributeType.ManyToOne];
+    const relationshipTypes = [AttributeType.ManyToOne, AttributeType.OneToMany, AttributeType.OneToOne, AttributeType.SelectMultiple];
     return relationshipTypes.includes(type);
   }
 

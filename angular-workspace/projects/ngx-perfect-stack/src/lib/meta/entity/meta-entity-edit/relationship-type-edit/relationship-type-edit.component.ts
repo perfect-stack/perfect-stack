@@ -35,8 +35,8 @@ export class RelationshipTypeEditComponent implements OnInit {
   }
 
   isManyToOne() {
-    const type = this.formGroup.controls['type'].value;
-    return type === AttributeType.ManyToOne;
+    const manyToOneTypes = [AttributeType.ManyToOne, AttributeType.SelectMultiple];
+    return manyToOneTypes.includes(this.formGroup.controls['type'].value);
   }
 
   get typeaheadSearchControl() {

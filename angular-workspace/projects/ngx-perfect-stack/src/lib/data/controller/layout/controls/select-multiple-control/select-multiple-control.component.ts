@@ -4,6 +4,7 @@ import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-pag
 import {Subscription} from 'rxjs';
 import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
 import {ValidationResult} from '../../../../../domain/meta.rule';
+import {DataService} from '../../../../data-service/data.service';
 
 @Component({
   selector: 'lib-select-multiple-control',
@@ -18,35 +19,18 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
   @Input()
   cell: CellAttribute;
 
-
   disabled = false;
 
   touched = false;
   touchSubscription: Subscription;
 
-  optionList = [
-    'Beech forest',
-    'Podocarp forest',
-    'Broadleaf forest',
-    'Exotic',
-    'Scrub',
-    'Logged',
-    'Burnt',
-    'Undeveloped farmland',
-    'Developed farmland',
-    'Grassland',
-    'Tussock',
-    'Swamp',
-    'Coastal',
-    'Beach',
-    'River terrace',
-    'Alpine',
-    'Other',
-  ];
+  optionList: any[] = [];
+  optionListSubscription: Subscription;
 
   selectedOptions: string[] = [];
 
-  constructor(public ngControl: NgControl) {
+  constructor(public ngControl: NgControl,
+              protected dataService: DataService) {
     ngControl.valueAccessor = this;
   }
 
@@ -58,6 +42,14 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
     }
     else {
       console.warn(`This component is NOT using a FormControlWithAttribute`);
+    }
+
+    if(this.cell && this.cell.attribute && this.cell.attribute.relationshipTarget) {
+      this.optionListSubscription = this.dataService.findAll(this.cell.attribute.relationshipTarget, '', 1, 999)
+      .subscribe((response) => {
+        this.optionList = response.resultList;
+        this.updateSelectedOptions();
+      });
     }
   }
 
@@ -102,6 +94,15 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
     }
   }
 
+  getDisplayLabel(item: any): string {
+    if(item && this.cell && this.cell.attribute) {
+      if(this.cell.attribute.typeaheadSearch) {
+        return item[this.cell.attribute.typeaheadSearch[0]];
+      }
+    }
+    return '';
+  }
+
   onItemSelected(item: string) {
     console.log(`Item selected: ${item}`);
     const alreadySelected = this.selectedOptions.findIndex(s => s === item) > -1;
@@ -123,11 +124,23 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
     this.onChange(entityValue);
   }
 
-  convertToOptionList(entityValue: string): string[] {
-    return entityValue.length > 0 ? entityValue.split(',') : [];
+  updateSelectedOptions() {
+    this.selectedOptions = this.convertToOptionList(this.ngControl.value);
   }
 
-  convertToEntityValue(optionList: string[]): string {
-    return optionList.join(',');
+  convertToOptionList(entityValue: string): any[] {
+    const nameList: string[] = entityValue && entityValue.length > 0 ? entityValue.split(',') : [];
+    const nextOptionList: any[] = [];
+
+    for(const nextName of nameList) {
+      const option = this.optionList.find(s => s.name === nextName);
+      nextOptionList.push(option);
+    }
+
+    return nextOptionList;
+  }
+
+  convertToEntityValue(optionList: any[]): string {
+    return optionList.map(value => value.name).join(',');
   }
 }

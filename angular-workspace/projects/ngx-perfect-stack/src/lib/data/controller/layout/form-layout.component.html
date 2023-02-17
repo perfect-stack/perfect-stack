@@ -38,12 +38,7 @@
             <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
           </ng-container>
 
-          <div *ngIf="mode === 'edit' && cell.footerHtml" [innerHtml]="cell.footerHtml"></div>
-
-          <!-- this got moved into the Cell -->
-          <!--<ng-container *ngIf="cell.tool">
-            <lib-tool-view [tool]="cell.tool"></lib-tool-view>
-          </ng-container>-->
+          <div *ngIf="mode !== 'view' && cell.footerHtml" [innerHtml]="cell.footerHtml">WOOF</div>
 
           <!-- If the cell has it's own template then we recursively nest the template inside of the cell. Which means
            we need to pass down the formGroup of the cell and name of the property for that formGroup -->
@@ -74,7 +69,7 @@
 
             <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
 
-            <!-- TODO: there's probably a tool one here, and in fact these have probably evolved into being just one block (same as above) -->
+            <div *ngIf="mode !== 'view' && cell.footerHtml" [innerHtml]="cell.footerHtml"></div>
           </div>
         </div>
       </div>

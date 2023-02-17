@@ -12,7 +12,8 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "wind_direction"
+            "attributeName": "wind_direction",
+            "footerHtml": ""
           },
           {
             "width": "3",
@@ -50,6 +51,21 @@
             "width": "3",
             "height": "1",
             "attributeName": "moonlight"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "text": "If the weather or noise conditions change markedly during a count a new event should be created"
+            }
           }
         ]
       ],
