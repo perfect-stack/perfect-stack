@@ -73,6 +73,39 @@
         ],
         [
           {
+            "width": "6",
+            "height": "1",
+            "attributeName": "other_animals_heard",
+            "hideLabel": true,
+            "template": {
+              "templateHeading": "Other animals heard",
+              "type": "table",
+              "metaEntityName": "OtherAnimalsHeard",
+              "cells": [
+                [
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "animal"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "number_heard",
+                    "component": "Enumeration"
+                  }
+                ]
+              ],
+              "styles": "",
+              "orderByName": "UNKNOWN",
+              "orderByDir": "ASC",
+              "noItemsHtml": "",
+              "locations": {}
+            }
+          }
+        ],
+        [
+          {
             "width": "12",
             "height": "1",
             "attributeName": "habitat",

@@ -1,0 +1,59 @@
+{
+  "name": "OtherAnimalsHeard",
+  "pluralName": "Other animals heard",
+  "icon": "",
+  "type": "Database",
+  "rootNode": false,
+  "timestamps": false,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "animal",
+      "label": "Animal",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "number_heard",
+      "label": "Number heard",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "Few 1-2",
+        "Moderate 3-6",
+        "Many 6+"
+      ]
+    }
+  ]
+}

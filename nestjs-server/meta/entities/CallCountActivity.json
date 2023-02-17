@@ -86,6 +86,20 @@
         "name"
       ],
       "rules": []
+    },
+    {
+      "name": "other_animals_heard",
+      "label": "Other animals heard",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "OtherAnimalsHeard",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }
