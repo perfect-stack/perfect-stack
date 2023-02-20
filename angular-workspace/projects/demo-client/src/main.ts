@@ -25,6 +25,7 @@ fetch('/client.json')
       debug: configJson.DEBUG,
       metaRoleList: [],
       copyrightFooter: configJson.COPYRIGHT_FOOTER,
+      showMenuLoginBtn: configJson.SHOW_MENU_LOGIN_BTN,
       supportEmail: configJson.SUPPORT_EMAIL
     };
 

@@ -8,5 +8,6 @@
   "TIME_FORMAT": "HH:mm",
   "DEBUG": false,
   "COPYRIGHT_FOOTER": "Copyright ©2022 Company",
-  "SUPPORT_EMAIL": "support@company.com"
+  "SUPPORT_EMAIL": "support@company.com",
+  "SHOW_MENU_LOGIN_BTN": false
 }

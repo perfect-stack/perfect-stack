@@ -139,7 +139,7 @@ import { OneToManyChoiceDialogComponent } from './template/template-controller/o
 import { BackLinkComponent } from './data/controller/layout/back-link/back-link.component';
 import { SelectMultipleControlComponent } from './data/controller/layout/controls/select-multiple-control/select-multiple-control.component';
 
-const routes: Routes = [
+export const STACK_ROUTES: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/search_edit', component: DataSearchEditComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/:mode/:id', component: DataEditComponent, canActivate: [AuthGuard] },
@@ -168,7 +168,7 @@ const routes: Routes = [
 
   // Just for Testing Components
   { path: 'select-test', component: SelectTestPageComponent},
-  { path: 'map-test', component: MapTestPageComponent}
+  { path: 'map-test', component: MapTestPageComponent},
 ];
 
 @NgModule({
@@ -285,7 +285,6 @@ const routes: Routes = [
     MetaMenuService,
     MetaPageService,
     MetaEntityService,
-//    ToastService,
     CustomDateAdapterService,
     CustomDateParserFormatter,
     SearchControllerService,
@@ -308,7 +307,7 @@ const routes: Routes = [
     CommonModule,
     EditorModule,
     LeafletModule,
-    RouterModule.forChild(routes),
+    RouterModule.forChild(STACK_ROUTES),
     LoadingBarHttpClientModule,
   ],
   exports: [

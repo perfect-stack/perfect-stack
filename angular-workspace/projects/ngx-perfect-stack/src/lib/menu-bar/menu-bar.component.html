@@ -1,4 +1,3 @@
-
 <ngx-loading-bar [color]="'#32d583'" [height]="'3px'" [includeSpinner]="false"></ngx-loading-bar>
 
 <div class="menu-bar d-flex justify-content-between" [ngStyle]="{'background-color': menuBarBackgroundColor}" id="ngxMenuBar">
@@ -38,8 +37,9 @@
     </div>
   </div>
 
-  <div class="menu-profile" [ngStyle]="{'border-left': menuBarDividerColor}" >
-    <lib-login-button></lib-login-button>
-  </div>
-
+  <ng-container *ngIf="showDefaultLoginButton()">
+    <div class="menu-profile" [ngStyle]="{'border-left': menuBarDividerColor}" >
+      <lib-login-button></lib-login-button>
+    </div>
+  </ng-container>
 </div>

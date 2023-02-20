@@ -1,0 +1,33 @@
+
+.landing-page {
+  background: #999999;
+  height: 100%;
+}
+
+.landing-panel {
+  min-width: 1200px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: block;
+}
+
+.landing-page-title {
+  text-transform: uppercase;
+  padding-top: 56px;
+  font-size: 9pt;
+  color: #3c763d;
+}
+
+.landing-image {
+  background-image: url('/assets/Kiwi-landing.jpg');
+  background-position: calc(50% - 200px) 0%;
+  background-repeat: no-repeat;
+}
+
+.landing-page-heading {
+  font-size: 24pt;
+}
+
+.landing-page-support {
+  font-size: 12pt;
+}

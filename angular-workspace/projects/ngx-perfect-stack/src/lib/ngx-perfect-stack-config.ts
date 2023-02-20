@@ -14,5 +14,6 @@ export interface NgxPerfectStackConfig {
   debug: boolean;
   metaRoleList: MetaRole[],
   supportEmail: string;
+  showMenuLoginBtn: boolean;
   copyrightFooter: string;
 }

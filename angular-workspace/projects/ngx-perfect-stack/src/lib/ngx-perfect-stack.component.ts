@@ -10,8 +10,7 @@ import {AuthenticationClientService} from './authentication/authentication-clien
                            [applicationLogoWidth]="applicationLogoWidth"
                            [menuBarDividerColor]="menuBarDividerColor"
                            [menuBarBackgroundColor]="menuBarBackgroundColor"></lib-menu-bar>`,
-  styles: [
-  ]
+  styles: []
 })
 export class NgxPerfectStackComponent implements OnInit {
 

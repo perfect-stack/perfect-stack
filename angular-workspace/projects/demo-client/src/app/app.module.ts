@@ -12,6 +12,7 @@ import {
   CONTROLLER_LIST,
   NgxPerfectControllerList
 } from '../../../ngx-perfect-stack/src/lib/ngx-perfect-stack-controller-list';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 
 
 const controllerList: NgxPerfectControllerList = {
@@ -24,14 +25,15 @@ const controllerList: NgxPerfectControllerList = {
   declarations: [
     AppComponent,
     AddEventDialogComponent,
-    AddLocationDialogComponent
+    AddLocationDialogComponent,
+    LandingPageComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    NgxPerfectStackModule,
     NgbModule,
     ReactiveFormsModule,
+    NgxPerfectStackModule,
+    AppRoutingModule,
   ],
   providers: [
     {provide: 'DemoController', useExisting: DemoControllerService},
