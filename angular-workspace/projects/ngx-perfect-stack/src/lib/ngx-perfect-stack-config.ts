@@ -16,4 +16,5 @@ export interface NgxPerfectStackConfig {
   supportEmail: string;
   showMenuLoginBtn: boolean;
   copyrightFooter: string;
+  dataSourceEditable: boolean
 }

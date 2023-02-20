@@ -6,7 +6,7 @@
 
 .landing-panel {
   min-width: 1200px;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   display: block;
 }
@@ -20,12 +20,15 @@
 
 .landing-image {
   background-image: url('/assets/Kiwi-landing.jpg');
-  background-position: calc(50% - 200px) 0%;
+  background-position: calc(50% - 225px) 0%;
   background-repeat: no-repeat;
 }
 
+.landing-login {
+  max-height: 600px;
+}
+
 .landing-page-heading {
-  font-size: 24pt;
 }
 
 .landing-page-support {

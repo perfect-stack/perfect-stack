@@ -1,13 +1,12 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {AbstractControl, ControlValueAccessor, FormGroup, NG_VALUE_ACCESSOR, NgControl} from '@angular/forms';
+import {Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
+import {ControlValueAccessor, FormGroup, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {ValidationResult} from '../../../../../domain/meta.rule';
 import {Subscription} from 'rxjs';
 import {FormContext, FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
-import {SelectControlComponent} from '../select-control/select-control.component';
-import {control} from 'leaflet';
 import {DataService} from '../../../../data-service/data.service';
+import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
 @Component({
   selector: 'lib-enumeration-control',
@@ -43,6 +42,8 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
   touchSubscription: Subscription;
 
   constructor(public ngControl: NgControl,
+              @Inject(STACK_CONFIG)
+              protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly dataService: DataService) {
     ngControl.valueAccessor = this;
   }
@@ -120,7 +121,20 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
   }
 
   isReadOnly() {
-    return this.mode === 'view';
+    return this.mode === 'view' || (this.isDataSource() && !this.isDataSourceEditable());
+  }
+
+  isDataSource() : boolean {
+    if(this.cell && this.cell.attribute && this.cell.attribute) {
+      return this.cell.attribute.name === 'data_source';
+    }
+    else {
+      return false;
+    }
+  }
+
+  isDataSourceEditable() {
+    return this.stackConfig.dataSourceEditable;
   }
 
   set value(val: string){

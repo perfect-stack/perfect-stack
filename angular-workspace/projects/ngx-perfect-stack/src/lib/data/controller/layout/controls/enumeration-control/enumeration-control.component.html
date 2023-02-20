@@ -1,6 +1,6 @@
 <ng-container *ngIf="options">
   <ng-container *ngIf="mode !== 'view' || selectedOption">
-    <select [ngClass]="{'form-control': isReadOnly(), 'form-select': !isReadOnly(), 'ng-invalid': this.hasErrors(), 'ng-touched': touched}" [id]="ngControl.name" [disabled]="disabled"
+    <select [ngClass]="{'form-control': isReadOnly(), 'form-select': !isReadOnly(), 'ng-invalid': this.hasErrors(), 'ng-touched': touched}" [id]="ngControl.name" [disabled]="disabled || isReadOnly()"
             [ngModel]="selectedOption" (ngModelChange)="onSelectOption($event)" [ngModelOptions]="{standalone: true}">
       <option *ngFor="let o of options" [ngValue]="o">{{o}}</option>
       <option [ngValue]="null"></option>

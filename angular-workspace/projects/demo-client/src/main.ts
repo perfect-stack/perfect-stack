@@ -26,7 +26,8 @@ fetch('/client.json')
       metaRoleList: [],
       copyrightFooter: configJson.COPYRIGHT_FOOTER,
       showMenuLoginBtn: configJson.SHOW_MENU_LOGIN_BTN,
-      supportEmail: configJson.SUPPORT_EMAIL
+      supportEmail: configJson.SUPPORT_EMAIL,
+      dataSourceEditable: configJson.DATA_SOURCE_EDITABLE,
     };
 
     fetch(`${configJson.API_URL}/meta/role`)
