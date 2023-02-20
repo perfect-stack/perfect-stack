@@ -7,7 +7,7 @@ import {
   distinctUntilChanged,
   Observable,
   of,
-  OperatorFunction,
+  OperatorFunction, Subscription,
   switchMap,
   tap
 } from 'rxjs';
@@ -53,6 +53,7 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
 
   searching = false;
   searchFailed = false;
+  typeaheadSubscription: Subscription;
 
   disabled = false;
 
@@ -128,8 +129,12 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   }
 
   setValueById(id: string | null) {
+    if(this.typeaheadSubscription) {
+      this.typeaheadSubscription.unsubscribe();
+    }
+
     if(id) {
-      this.typeaheadService.searchById(id, this.metaEntity, this.attribute).subscribe((items) => {
+      this.typeaheadSubscription = this.typeaheadService.searchById(id, this.metaEntity, this.attribute).subscribe((items) => {
         if(items && items.length === 1) {
           this.setValueByItem(items[0]);
         }
