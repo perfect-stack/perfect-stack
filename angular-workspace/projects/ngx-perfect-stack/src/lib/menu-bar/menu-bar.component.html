@@ -3,12 +3,12 @@
 <div class="menu-bar d-flex justify-content-between" [ngStyle]="{'background-color': menuBarBackgroundColor}" id="ngxMenuBar">
   <div class="menu-heading">
     <img class="menu-heading-logo" [src]="applicationLogo" [width]="applicationLogoWidth" *ngIf="applicationLogo" id="logoImage">
-    <a class="menu-heading-title"
+    <span class="menu-heading-title"
        id="applicationTitle"
        [ngStyle]="{
           'font-family': applicationTitleFont,
           'border-left': menuBarDividerColor
-       }" href="#">{{applicationTitle}}</a>
+       }">{{applicationTitle}}</span>
   </div>
 
   <div class="d-flex justify-content-between w-50">
