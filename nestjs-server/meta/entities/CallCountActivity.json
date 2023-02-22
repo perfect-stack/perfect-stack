@@ -57,7 +57,7 @@
       "unitOfMeasure": "",
       "scale": "",
       "type": "SelectMultiple",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "HabitatType",
@@ -78,14 +78,19 @@
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
-      "visibility": "Visible",
+      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "CountType",
       "typeaheadSearch": [
         "name"
       ],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "other_animals_heard",
