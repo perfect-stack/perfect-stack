@@ -17,3 +17,4 @@ export * from './lib/utils/toasts/toasts.component';
 export * from './lib/utils/toasts/toast.service';
 export * from './lib/utils/tree-walker/meta-entity-tree-walker'
 export * from './lib/domain/meta.entity';
+export * from './lib/domain/meta.page';
