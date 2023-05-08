@@ -5,6 +5,8 @@
   "type": "Criteria",
   "rootNode": false,
   "timestamps": false,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
   "attributes": [
     {
       "name": "date_from",
@@ -74,7 +76,9 @@
         "Weight",
         "Banding",
         "Microchip",
-        "Wing tag"
+        "Wing tag",
+        "Call count",
+        "Weather"
       ]
     }
   ]

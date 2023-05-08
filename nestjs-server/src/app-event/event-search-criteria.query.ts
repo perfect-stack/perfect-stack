@@ -51,8 +51,10 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         'BandingActivity.activity_type as banding_activity',
         'MicrochipActivity.activity_type as microchip_activity',
         'WingTagActivity.activity_type as wing_tag_activity',
+        'CallCountActivity.activity_type as call_count_activity',
+        'WeatherActivity.activity_type as weather_activity',
         knex.raw(
-          'concat("HealthActivity".activity_type, \',\', "WeightActivity".activity_type, \',\', "MeasurementActivity".activity_type, \',\', "BandingActivity".activity_type, \',\', "MicrochipActivity".activity_type, \',\', "WingTagActivity".activity_type) as activities',
+          'concat("HealthActivity".activity_type, \',\', "WeightActivity".activity_type, \',\', "MeasurementActivity".activity_type, \',\', "BandingActivity".activity_type, \',\', "MicrochipActivity".activity_type, \',\', "WingTagActivity".activity_type, \',\', "CallCountActivity".activity_type, \',\', "WeatherActivity".activity_type) as activities',
         ),
       );
 
@@ -83,6 +85,16 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         .leftOuterJoin(
           'WingTagActivity',
           'WingTagActivity.event_id',
+          'Event.id',
+        )
+        .leftOuterJoin(
+          'CallCountActivity',
+          'CallCountActivity.event_id',
+          'Event.id',
+        )
+        .leftOuterJoin(
+          'WeatherActivity',
+          'WeatherActivity.event_id',
           'Event.id',
         );
 
