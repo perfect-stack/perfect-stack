@@ -46,7 +46,7 @@ export class BirdViewPageListenerService implements PageListener {
     const birdFormGroup = ctx.formMap.get('bird') as UntypedFormGroup;
     if(birdFormGroup) {
       const birdDataSource = birdFormGroup.controls['data_source'];
-      if (birdDataSource && birdDataSource.value === 'SkyRanger') {
+      if (birdDataSource && birdDataSource.value === 'SKYRANGER') {
         this.hideBirdEditButton(ctx);
       }
     }
