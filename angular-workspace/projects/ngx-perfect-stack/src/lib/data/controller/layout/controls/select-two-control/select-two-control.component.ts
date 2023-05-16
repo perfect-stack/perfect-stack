@@ -35,10 +35,13 @@ export class SelectTwoControlComponent implements OnInit {
 
   ngOnInit(): void {
     this.secondaryAttributeName = (this.cell.componentData as any).secondaryAttributeName;
-
     const id = this.formGroup.get(this.attribute.name + '_id')?.value;
     if(id) {
       this.dataService.findById(this.attribute.relationshipTarget, id).subscribe((response: any) => {
+        // always run the onSelectedEntity() function so that secondaryOptions gets updated
+        this.onSelectedEntity(response)
+
+        // calculate the combined value
         this.combinedValue = response.name;
         const secondaryAttributeControl = this.formGroup.get(this.secondaryAttributeName);
         if(secondaryAttributeControl && secondaryAttributeControl.value) {
@@ -60,9 +63,7 @@ export class SelectTwoControlComponent implements OnInit {
   }
 
   onSelectedEntity(entity: any) {
-    //console.log(`onSelectedEntity() touched = ${this.formGroup.touched}`);
     console.log(`onSelectedEntity() entity: `, entity);
-
     if(entity && this.secondaryAttributeName) {
       const secondaryValues: string = entity[this.secondaryAttributeName];
       if(secondaryValues) {
@@ -71,21 +72,10 @@ export class SelectTwoControlComponent implements OnInit {
       else {
         this.secondaryOptions = [];
       }
-
-      // // This bit is important and was the cause of a bug. Only enable the form control if we are not isReadOnly()
-      // if(!this.isReadOnly()) {
-      //   this.formGroup.controls[this.secondaryAttributeName].enable({
-      //     onlySelf: true
-      //   });
-      // }
     }
     else {
       this.secondaryOptions = [];
-      // this.formGroup.controls[this.secondaryAttributeName].disable({
-      //   onlySelf: true
-      // });
     }
-    //console.log(`onSelectedEntity() touched = ${this.formGroup.touched}`);
   }
 
   isShowLabelTop(cell: CellAttribute): boolean {
