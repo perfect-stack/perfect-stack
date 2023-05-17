@@ -1,4 +1,4 @@
-<ng-container *ngIf="!(isShowLabelLeft(cell) && mode === 'view')">
+<ng-container *ngIf="!isShowLabelLeft(cell)">
   <div class="row" [formGroup]="formGroup">
     <div class="col-6">
       <lib-select-control [mode]="mode" [formControlName]="attribute.name + '_id'" [attribute]="attribute" (selectedEntityEvent)="onSelectedEntity($event)"></lib-select-control>
@@ -9,7 +9,7 @@
   </div>
 </ng-container>
 
-<ng-container *ngIf="isShowLabelLeft(cell) && mode === 'view'">
+<ng-container *ngIf="isShowLabelLeft(cell)">
   <div class="row" [formGroup]="formGroup">
     <div class="col-12">
       <!--{{formGroup.controls[attribute.name + '_id']?.value|json}}-->

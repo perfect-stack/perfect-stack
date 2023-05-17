@@ -21,6 +21,8 @@ export class EventPageListenerService implements PageListener {
 
   defaultCountType: any;
 
+  skyRangerId: string;
+
   constructor(protected readonly dataService: DataService,
               protected readonly toastService: ToastService,
               private modalService: NgbModal,
@@ -43,6 +45,15 @@ export class EventPageListenerService implements PageListener {
   }
 
   onBeforeSave(ctx: FormContext): void {
+    const eventFormGroup = ctx.formMap.get('event') as UntypedFormGroup;
+    if(eventFormGroup) {
+      const dataSource = eventFormGroup.controls['data_source']?.value;
+      if(dataSource && dataSource.toUpperCase() == 'SKYRANGER') {
+        if(this.skyRangerId) {
+          eventFormGroup.controls['data_source'].setValue(this.skyRangerId);
+        }
+      }
+    }
   }
 
   onAction(ctx: FormContext, channel: string, action: string): void {
@@ -109,6 +120,13 @@ export class EventPageListenerService implements PageListener {
         // This can't go into the "createEventDefaults()" method since the bird details need to be hidden if the
         // event is edited (updated) and not just when it's created.
         this.hideBirdDetailsTemplate(ctx);
+      }
+
+      const dataSource = eventFormGroup.controls['data_source']?.value;
+      if(dataSource && dataSource.toUpperCase().startsWith('SKYRANGER_')) {
+        this.skyRangerId = dataSource;
+        console.log('SKYRANGER ID: ', this.skyRangerId)
+        eventFormGroup.controls['data_source']?.setValue('SKYRANGER');
       }
     }
   }
