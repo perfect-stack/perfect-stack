@@ -1,6 +1,6 @@
 {
   "name": "Operations",
-  "group": "KIMS_Operations,operators,ap-southeast-2_CIl5VvfWD_doc-azuread-sso,ap-southeast-2_wnejPAddx_doc-azuread-sso",
+  "group": "DevKiwiMgmtSystem",
   "inherits": "Viewer",
   "description": "<p>Can edit meta but not system, add projects, set project manager role,</p>",
   "permissions": [

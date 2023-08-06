@@ -154,7 +154,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const issuerValid = payload.iss === this.expectedIssuer;
     if (issuerValid) {
-      return {
+      const userDataStructure = {
         groups: [
           ...this.getCognitoGroups(payload),
           ...this.getCustomGroups(payload),
@@ -164,6 +164,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         family_name: payload['family_name'],
         email: payload['email'],
       };
+      console.log('PASSPORT: userDataStructure: ', userDataStructure);
+      return userDataStructure;
     } else {
       jwtLogger.error(
         `Invalid token, issuerValue = ${issuerValid}, for: ${JSON.stringify(

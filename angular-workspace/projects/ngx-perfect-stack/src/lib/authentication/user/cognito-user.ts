@@ -21,10 +21,20 @@ export class CognitoUser  implements User {
     this._idToken = value;
     if(this._idToken) {
       const decodedToken: any = jwt_decode(this._idToken);
-      this.groups = decodedToken['cognito:groups'];
+      this.groups = [ ...decodedToken['cognito:groups'], ...this.convertToArray(decodedToken['custom:group']) ];
     }
     else {
       this.groups = [];
+    }
+  }
+
+  convertToArray(input: string | null | string[]): string[] {
+    if (input === null) {
+      return []; // Return an empty array when the input is null.
+    } else if (Array.isArray(input)) {
+      return input; // Return the input array as it is when it's already an array.
+    } else {
+      return [input]; // Wrap the input string in an array when it's a single string.
     }
   }
 
