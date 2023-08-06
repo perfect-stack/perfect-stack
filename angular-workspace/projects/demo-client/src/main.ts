@@ -28,6 +28,7 @@ fetch('/client.json')
       showMenuLoginBtn: configJson.SHOW_MENU_LOGIN_BTN,
       supportEmail: configJson.SUPPORT_EMAIL,
       dataSourceEditable: configJson.DATA_SOURCE_EDITABLE,
+      environmentBannerText: configJson.ENVIRONMENT_BANNER_TEXT,
     };
 
     fetch(`${configJson.API_URL}/meta/role`)

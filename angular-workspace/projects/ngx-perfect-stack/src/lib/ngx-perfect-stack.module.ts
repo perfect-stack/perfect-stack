@@ -138,6 +138,7 @@ import { LinkListControlComponent } from './data/controller/layout/controls/link
 import { OneToManyChoiceDialogComponent } from './template/template-controller/one-to-many-choice-dialog/one-to-many-choice-dialog.component';
 import { BackLinkComponent } from './data/controller/layout/back-link/back-link.component';
 import { SelectMultipleControlComponent } from './data/controller/layout/controls/select-multiple-control/select-multiple-control.component';
+import { EnvironmentBannerComponent } from './menu-bar/environment-banner/environment-banner.component';
 
 export const STACK_ROUTES: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -276,7 +277,8 @@ export const STACK_ROUTES: Routes = [
     OneToManyChoiceDialogComponent,
     BackLinkComponent,
     SelectMultipleControlComponent,
-    DurationToolComponent
+    DurationToolComponent,
+    EnvironmentBannerComponent
   ],
   providers: [
     AuthenticationService,

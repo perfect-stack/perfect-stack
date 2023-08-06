@@ -1,5 +1,10 @@
+<!-- Loading bard goes above the menu -->
 <ngx-loading-bar [color]="'#32d583'" [height]="'3px'" [includeSpinner]="false"></ngx-loading-bar>
 
+<!-- Environment banner goes above the menu -->
+<lib-environment-banner></lib-environment-banner>
+
+<!-- This is the main menu bar the application -->
 <div class="menu-bar d-flex justify-content-between" [ngStyle]="{'background-color': menuBarBackgroundColor}" id="ngxMenuBar">
   <div class="menu-heading">
     <img class="menu-heading-logo" [src]="applicationLogo" [width]="applicationLogoWidth" *ngIf="applicationLogo" id="logoImage">
