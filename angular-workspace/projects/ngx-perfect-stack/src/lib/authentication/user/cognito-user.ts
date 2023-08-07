@@ -34,7 +34,21 @@ export class CognitoUser  implements User {
     } else if (Array.isArray(input)) {
       return input; // Return the input array as it is when it's already an array.
     } else {
-      return [input]; // Wrap the input string in an array when it's a single string.
+
+      // "custom:group" was coming through from cognito as ** "custom:group": "[KIMS_Operations_DEV_TEST, DevKiwiMgmtSystem]" **
+      // Notice how it is a string pretending to be an array. We want the elements from that string as an array.
+      if(input.startsWith("[") && input.endsWith("]")) {
+        let trimmedInput = input.slice(1, input.length - 1)
+        if(trimmedInput.indexOf(", ") > 0) {
+          return trimmedInput.split(", ");
+        }
+        else {
+          return trimmedInput.split(",");
+        }
+      }
+      else {
+        return [input]; // Wrap the input string in an array when it's a single string.
+      }
     }
   }
 
