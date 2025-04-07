@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build ngx-perfect-stack",
     "watch": "ng build --watch",
-    "publish:github": "./npm-publish-github.sh",
+    "publish:github": "./publish-github.sh",
     "test": "ng test"
   },
   "private": true,

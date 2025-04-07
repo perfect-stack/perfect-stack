@@ -18,4 +18,5 @@ export interface NgxPerfectStackConfig {
   copyrightFooter: string;
   dataSourceEditable: boolean;
   environmentBannerText: string;
+  supplementaryGroupRoles: string;
 }

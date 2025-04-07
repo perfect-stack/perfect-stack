@@ -22,6 +22,12 @@ export class CognitoUser  implements User {
     if(this._idToken) {
       const decodedToken: any = jwt_decode(this._idToken);
       this.groups = [ ...decodedToken['cognito:groups'], ...this.convertToArray(decodedToken['custom:group']) ];
+
+      // Add supplementary roles for local dev purposes. Won't do anything on server unless server has "auth disabled"
+      if(this.stackConfig.supplementaryGroupRoles) {
+        const supplementaryGroupRoles = this.stackConfig.supplementaryGroupRoles.split(",");
+        this.groups.push(...supplementaryGroupRoles);
+      }
     }
     else {
       this.groups = [];

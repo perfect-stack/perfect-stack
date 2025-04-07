@@ -1,6 +1,6 @@
 {
   "name": "Editor",
-  "group": "KIMS_Editor,editors",
+  "group": "KIMS_Editor_DEV_TEST,KIMS_Editor,editors",
   "inherits": "Viewer",
   "description": "<p>Works on one or more projects, can add/edit Birds, Events and Locations but not People or Projects, or reference data</p>",
   "permissions": [

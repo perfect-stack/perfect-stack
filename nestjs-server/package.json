@@ -1,6 +1,6 @@
 {
   "name": "@perfect-stack/nestjs-server",
-  "version": "0.0.213",
+  "version": "0.0.215",
   "description": "",
   "author": "Richard Perfect",
   "license": "MIT",
@@ -18,7 +18,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "publish:github": "npm publish"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.46.0",
