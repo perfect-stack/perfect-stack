@@ -190,6 +190,55 @@
         [
           {
             "width": "12",
+            "height": "1",
+            "template": {
+              "binding": "media_files",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "BirdMediaFile",
+              "cells": [
+                [
+                  {
+                    "width": "6",
+                    "height": "1",
+                    "attributeName": "path"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "mime_type"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "comments"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "checksum"
+                  }
+                ]
+              ],
+              "styles": "table-borderless",
+              "orderByName": "UNKNOWN",
+              "orderByDir": "ASC",
+              "noItemsHtml": "<span class=\"text-secondary\"><i><b>No observers added</b> - You can add observers by editing this event</i></span>",
+              "locations": {}
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "form",
+      "templateHeading": "Media",
+      "binding": "bird"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
             "height": "3",
             "attributeName": "comments",
             "component": "TextArea"
@@ -199,6 +248,23 @@
       "metaEntityName": "Bird",
       "type": "form",
       "templateHeading": "Comments",
+      "binding": "bird"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "attributeName": "media_files",
+            "component": "Media",
+            "hideLabel": true
+          }
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "form",
+      "templateHeading": "Media 2",
       "binding": "bird"
     }
   ]

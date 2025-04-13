@@ -1,0 +1,27 @@
+.upload-circle {
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 60px; /* Adjust size as needed */
+  height: 60px; /* Adjust size as needed */
+  background-color: #e9ecef; /* Light grey background */
+  border: 1px dashed #ced4da; /* Dashed border */
+  border-radius: 50%; /* Makes it round */
+  cursor: pointer; /* Indicates it's clickable */
+  transition: background-color 0.2s ease-in-out; /* Smooth hover effect */
+}
+
+.upload-circle:hover {
+  background-color: #dee2e6; /* Slightly darker on hover */
+}
+
+.upload-icon {
+  font-size: 24px; /* Adjust icon size */
+  color: #6c757d; /* Icon color */
+}
+
+/* Optional: Style for when a file is being dragged over */
+.upload-circle.dragover {
+  background-color: #cfe2ff;
+  border-color: #0d6efd;
+}

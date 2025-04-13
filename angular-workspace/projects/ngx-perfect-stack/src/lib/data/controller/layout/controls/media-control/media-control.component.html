@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col align-self-center text-end">
+    <button class="btn btn-outline-secondary" (click)="decrementIndex()">&lt;</button>
+  </div>
+  <div class="col-8">
+    <img src="{{currentPath}}" width="100%" alt="Media file">
+  </div>
+  <div class="col align-self-center">
+    <button class="btn btn-outline-secondary" (click)="incrementIndex()">&gt;</button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+  </div>
+  <div class="col-8">
+    <div class="row pt-2">
+      <div class="col">
+        <button class="btn btn-danger">Delete</button>
+      </div>
+      <div class="col text-end">
+        <button class="btn btn-outline-primary text-end" (click)="onUpload()">Upload...</button>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+  </div>
+</div>
+

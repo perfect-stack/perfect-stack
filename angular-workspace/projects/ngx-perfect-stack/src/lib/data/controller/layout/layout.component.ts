@@ -17,7 +17,7 @@ import {
   UntypedFormBuilder,
   UntypedFormGroup
 } from '@angular/forms';
-import {combineLatest, map, Observable, of, Subscription, switchMap} from 'rxjs';
+import {Observable, of, Subscription, switchMap} from 'rxjs';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 import {
@@ -166,10 +166,10 @@ export class TableLayoutComponent implements OnInit {
       this.relationshipProperty = this.template.binding;
     }
     else {
-      `TableLayoutComponent: did not get formGroup from formMap`
+      `TableLayoutComponent: template.binding = ${this.template.binding} did not get formGroup from formMap`
     }
 
-    console.log('TableLayoutComponent: found formGroup: ', this.formGroup);
+    console.log(`TableLayoutComponent: template.binding = ${this.template.binding} found formGroup:`, this.formGroup);
 
     if(!this.template.metaEntityName) {
       throw new Error(`The template; ${JSON.stringify(this.template)} has no metaEntityName`);
@@ -202,6 +202,9 @@ export class TableLayoutComponent implements OnInit {
       if(this.attributes) {
         console.log('onAddRow()');
         this.attributes.push(formGroup);
+      }
+      else {
+        console.warn('Unable to find the attributes for this relationship. Is the binding name correct? For example media_files instead of mediaFiles');
       }
     }
   }

@@ -233,7 +233,7 @@
     {
       "name": "age_class",
       "label": "Age class",
-      "description": "Adult, Sub adult, Chick, Egg",
+      "description": "Adult, Subadult, Chick, Egg",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Enumeration",
@@ -245,10 +245,10 @@
       "rules": [],
       "enumeration": [
         "Adult",
-        "Sub adult",
+        "Subadult",
+        "Juvenile",
         "Chick",
-        "Egg",
-        "Juvenile"
+        "Egg"
       ]
     },
     {
@@ -282,7 +282,7 @@
     {
       "name": "band",
       "label": "Band",
-      "description": "The latest Band for this available",
+      "description": "The latest Band for this bird",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -367,6 +367,20 @@
         "KIMS",
         "SKYRANGER"
       ]
+    },
+    {
+      "name": "media_files",
+      "label": "Media files",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "BirdMediaFile",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

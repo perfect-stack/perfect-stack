@@ -1,0 +1,33 @@
+
+<div class="modal-header">
+  <h4 class="modal-title">Upload Files</h4>
+</div>
+
+<div class="modal-body">
+  <p>Select one or more files to add</p>
+  <div class="d-flex justify-content-center align-items-center p-3">
+
+    <label for="fileUploadInput" class="upload-circle">
+      <span class="material-symbols-outlined">upload</span>
+    </label>
+
+    <!-- The actual file input, hidden visually -->
+    <input
+      type="file"
+      id="fileUploadInput"
+      multiple
+      (change)="onFileSelected($event)"
+      style="display: none;"
+    />
+  </div>
+
+  <div *ngFor="let nextFile of selectedFiles">
+    {{nextFile.name}} - <small><i>{{nextFile.type}}</i></small>
+  </div>
+
+</div>
+
+<div class="modal-footer d-flex justify-content-between">
+  <button type="button" class="btn btn-outline-primary" (click)="onCancel()" id="cancelBtn">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onUpload()" [disabled]="!isUploadEnabled()" id="uploadBtn">Upload</button>
+</div>
