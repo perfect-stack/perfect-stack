@@ -30,6 +30,12 @@ export class EventDataListener implements DataEventListener {
   }
 
   onAfterSave(entity: any, metaEntity: MetaEntity) {
+
+    if(entity['media_files']) {
+      const mediaFiles = entity['media_files'];
+      console.log('mediaFiles:', mediaFiles);
+    }
+
     return;
   }
 }

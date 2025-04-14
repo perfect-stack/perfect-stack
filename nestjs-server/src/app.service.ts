@@ -21,6 +21,7 @@ import {
 import { MetaAttribute } from './domain/meta.entity';
 import { EventDataListener } from './app-event/event.data-listener';
 import { MapService } from './map/map.service';
+import {BirdDataListener} from "./app-event/bird.data-listener";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -55,6 +56,7 @@ export class AppService implements OnApplicationBootstrap {
     this.addProjectTeamQuery();
 
     this.addBandingActivityListener();
+    this.addBirdDataListener()
     this.addEventDataListener();
 
     this.addCustomRules();
@@ -85,6 +87,13 @@ export class AppService implements OnApplicationBootstrap {
         this.knexService,
       ),
     );
+  }
+
+  private addBirdDataListener() {
+    this.eventService.addDataEventListener(
+        'Bird',
+        new BirdDataListener(),
+    )
   }
 
   private addEventDataListener() {

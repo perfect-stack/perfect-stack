@@ -85,6 +85,11 @@ export class MediaControlComponent implements OnInit, ControlValueAccessor {
     const uploadDialog = modalRef.componentInstance as UploadDialogComponent;
     modalRef.closed.subscribe((files) => {
       console.log('Upload files:', files);
+      if(this.rows) {
+        this.rows.push({
+          path: files[0]
+        });
+      }
     })
   }
 }

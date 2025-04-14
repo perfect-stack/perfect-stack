@@ -23,6 +23,7 @@
 
   <div *ngFor="let nextFile of selectedFiles">
     {{nextFile.name}} - <small><i>{{nextFile.type}}</i></small>
+    <ngb-progressbar class="" [showValue]="true" type="info" [value]="uploadProgress" *ngIf="uploadProgress"></ngb-progressbar>
   </div>
 
 </div>
