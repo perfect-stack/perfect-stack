@@ -21,14 +21,23 @@
     />
   </div>
 
-  <div *ngFor="let nextFile of selectedFiles">
-    {{nextFile.name}} - <small><i>{{nextFile.type}}</i></small>
-    <ngb-progressbar class="" [showValue]="true" type="info" [value]="uploadProgress" *ngIf="uploadProgress"></ngb-progressbar>
+  <div *ngFor="let nextFileItem of fileItems">
+    <div class="row">
+      <div class="col-8">
+        {{nextFileItem.file.name}}
+      </div>
+      <div class="col-4 text-end">
+        <span class="material-symbols-outlined text-secondary" *ngIf="nextFileItem.status === 'loading'">hourglass</span>
+        <span class="material-symbols-outlined text-success" *ngIf="nextFileItem.status === 'success'">check_circle</span>
+        <span class="material-symbols-outlined text-danger" *ngIf="nextFileItem.status === 'error'">error</span>
+      </div>
+    </div>
+    <ngb-progressbar class="" [showValue]="true" type="info" [value]="nextFileItem.uploadProgress" *ngIf="nextFileItem.uploadProgress"></ngb-progressbar>
   </div>
 
 </div>
 
 <div class="modal-footer d-flex justify-content-between">
   <button type="button" class="btn btn-outline-primary" (click)="onCancel()" id="cancelBtn">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="onUpload()" [disabled]="!isUploadEnabled()" id="uploadBtn">Upload</button>
+  <button type="button" class="btn btn-primary" (click)="onDone()" [disabled]="!isDoneEnabled()" id="doneBtn">Done</button>
 </div>

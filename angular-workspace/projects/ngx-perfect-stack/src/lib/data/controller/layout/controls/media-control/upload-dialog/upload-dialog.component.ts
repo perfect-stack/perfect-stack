@@ -4,6 +4,14 @@ import {HttpClient, HttpEventType} from "@angular/common/http";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../../../../ngx-perfect-stack-config";
 import {finalize, Subscription} from "rxjs";
 
+
+export class FileItem {
+  file: File;
+  status: string;
+  uploadProgress: number | null;
+  remotePath: string
+}
+
 @Component({
   selector: 'lib-upload-dialog',
   templateUrl: './upload-dialog.component.html',
@@ -11,8 +19,7 @@ import {finalize, Subscription} from "rxjs";
 })
 export class UploadDialogComponent {
 
-  selectedFiles: File[] = [];
-  uploadProgress: number | null;
+  fileItems: FileItem[] = [];
   private uploadSub: Subscription | null;
 
   constructor(public activeModal: NgbActiveModal,
@@ -31,40 +38,48 @@ export class UploadDialogComponent {
     const files: FileList | null = element.files;
 
     if(files) {
-      this.selectedFiles.push(...Array.from(files));
-      console.log('Files selected:', this.selectedFiles);
-      // Optionally, you could immediately trigger the upload here
-      // or update the UI to show selected file names
+      for(const nextFile of Array.from(files)) {
+        const nextFileItem = {
+          file: nextFile,
+          status: 'loading',
+          uploadProgress: 0,
+          remotePath: ''
+        };
 
-      const file: File = this.selectedFiles[0];
-      const formData = new FormData();
-      formData.append('file', file);
-      const upload$ = this.http.put(`${this.stackConfig.apiUrl}/media/upload/`, formData, {
-        reportProgress: true,
-        observe: 'events'
-      })
-      .pipe(
-        finalize(() => this.reset())
-      );
+        this.fileItems.push(nextFileItem);
 
-      this.uploadSub = upload$.subscribe(event => {
-        if (event.type == HttpEventType.UploadProgress && event.total) {
-          this.uploadProgress = Math.round(100 * (event.loaded / event.total));
-        }
+        const formData = new FormData();
+        formData.append('file', nextFile);
+        const upload$ = this.http.put(`${this.stackConfig.apiUrl}/media/upload/`, formData, {
+          reportProgress: true,
+          observe: 'events'
+        }).pipe(
+          finalize(() => this.reset())
+        );
 
-        if(event.type == HttpEventType.Response) {
-          const result: any = event.body;
-          console.log('uploaded file:', result.path );
-          this.activeModal.close([result.path]);
-        }
-      });
+        this.uploadSub = upload$.subscribe(event => {
+          if (event.type == HttpEventType.UploadProgress && event.total) {
+            nextFileItem.uploadProgress = Math.round(100 * (event.loaded / event.total));
+          }
+
+          if(event.type == HttpEventType.Response) {
+            const result: any = event.body;
+            nextFileItem.status = "success";
+            nextFileItem.remotePath = result.path;
+            console.log('uploaded file:', result.path );
+          }
+        });
+      }
     }
   }
 
-  onUpload() {
+  onDone() {
+    const filePaths = this.fileItems.map(nextFileItem => nextFileItem.remotePath);
+    console.log('onDone()', filePaths);
+    this.activeModal.close(filePaths);
   }
 
-  isUploadEnabled() {
+  isDoneEnabled() {
     return true;
   }
 
@@ -76,7 +91,6 @@ export class UploadDialogComponent {
   }
 
   reset() {
-    this.uploadProgress = null;
     this.uploadSub = null;
   }
 }

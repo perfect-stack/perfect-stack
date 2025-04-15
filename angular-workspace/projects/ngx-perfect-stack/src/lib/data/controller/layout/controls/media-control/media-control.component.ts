@@ -36,11 +36,12 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
   private destroy$ = new Subject<void>(); // Subject to trigger unsubscription
 
   private _index = 0;
-  rows: any[]
   imageSrc: SafeUrl | null = null; // Property to hold the safe URL for the image
   isLoading = false; // Flag for loading state
   private imageSubscription: Subscription | null = null; // To manage the HTTP subscription
   currentObjectUrl: string | null = null; // To store the raw object URL for revocation
+
+  private _valueInitialized = false;
 
   constructor(private modalService: NgbModal,
               private http: HttpClient,
@@ -54,18 +55,8 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
       takeUntil(this.destroy$) // Automatically unsubscribe when destroy$ emits
     ).subscribe(map => {
       this.metaEntityMap = map;
-      // Now you can use this.metaEntityMap, for example, in onUpload
-      console.log('MetaEntityMap loaded in MediaControlComponent:', this.metaEntityMap);
     });
-
-    if(this.formGroup && this.cell && this.cell.attribute) {
-      const control = this.formGroup.get(this.cell.attribute.name);
-      if(control) {
-        console.log("XXX-MEDIA", control.value)
-        this.rows = control.value;
-        this.loadImage();
-      }
-    }
+    this.loadImage();
   }
 
   ngOnDestroy(): void {
@@ -85,17 +76,21 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
     return this.formGroup && this.cell && this.cell.attribute ? this.formGroup.get(this.cell.attribute.name) as UntypedFormArray : null;
   }
 
+  get imageCount(): number {
+    return this.attributes ? this.attributes.length : 0;
+  }
+
   get index(): number {
     return this._index;
   }
 
   set index(value: number) {
-    if (this.rows && this.rows.length > 0) {
+    if (this.attributes && this.attributes.length > 0) {
       let newIndex = value;
-      if (newIndex >= this.rows.length) {
+      if (newIndex >= this.attributes.length) {
         newIndex = 0;
       } else if (newIndex < 0) {
-        newIndex = this.rows.length - 1;
+        newIndex = this.attributes.length - 1;
       }
 
       if (this._index !== newIndex) {
@@ -109,15 +104,16 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   get currentPath(): string | null {
-    const row = this.currentRow;
-    if (row && row.path) {
-      let path = row.path;
+    const rowData = this.currentRow;
+    if (rowData && rowData.controls['path']) {
+      let path = rowData.controls['path'].value;
+      //console.log('path', path)
       // Assuming path is relative to the media endpoint
       if (path && !path.startsWith("http")) {
         // Use your configured API URL if available, otherwise fallback
         // TODO: Inject STACK_CONFIG or similar to get the base API URL
         //const baseUrl = (this.ctx?.config?.apiUrl || 'http://localhost:3080') + '/media/';
-        const baseUrl = 'http://localhost:3080' + '/media/';
+        const baseUrl = 'http://localhost:3080' + '/media';
         path = baseUrl + path;
       }
       return path;
@@ -126,7 +122,7 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   get currentRow(): any | null {
-    return this.rows && this.rows.length > this.index ? this.rows[this.index] : null;
+    return this.attributes && this.attributes.length > this.index ? this.attributes.at(this.index) : null;
   }
 
   incrementIndex(): void {
@@ -151,9 +147,16 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
     this.imageSubscription?.unsubscribe(); // Cancel any pending request
     this.revokeCurrentImageUrl(); // Revoke previous URL
 
+    if (!this._valueInitialized && !this.attributes?.length) {
+      console.log('loadImage called before value initialization, skipping.');
+      // Optionally set isLoading to false if you know it won't load yet
+      // this.isLoading = false;
+      return;
+    }
+
     const path = this.currentPath;
     if (!path) {
-      console.warn('No path available for current media item.');
+      console.warn(`No path available for current media item. currentPath = ${this.currentPath}`);
       this.isLoading = false;
       return; // No path to load
     }
@@ -180,16 +183,51 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
       });
   }
 
+  onChange: any = () => {}
+  onTouch: any = () => {}
+
   registerOnChange(fn: any): void {
+    this.onChange = fn;
   }
 
   registerOnTouched(fn: any): void {
+    this.onTouch = fn;
   }
 
   setDisabledState(isDisabled: boolean): void {
   }
 
-  writeValue(obj: any): void {
+  writeValue(obj: any[]): void {
+    console.log('MediaControlComponent writeValue:', obj);
+    // Check if obj is the expected array structure for your media files
+    if (Array.isArray(obj) && this.attributes) {
+      // Clear existing controls first
+      this.attributes.clear();
+      // Create and push new FormGroups for each item in obj
+      obj.forEach(itemData => {
+        if (this.mode && this.metaEntityName) {
+          // Assuming itemData contains the necessary fields (like 'path')
+          const formGroup = this.formGroupService.createFormGroup(this.mode, this.metaEntityName, this.metaPageMap, this.metaEntityMap, itemData);
+          if(this.attributes) {
+            this.attributes.push(formGroup);
+          }
+        }
+      });
+
+      this._valueInitialized = true;
+      this.index = 0; // Reset index
+      this.loadImage(); // Load image AFTER data is processed
+    }
+    else if (!obj) {
+      // Handle null/undefined value if necessary
+      this.attributes?.clear();
+      this._valueInitialized = true;
+      this.index = 0;
+      this.loadImage(); // Attempt load even if empty (will likely show placeholder)
+    }
+    else {
+      console.warn('MediaControlComponent writeValue received unexpected data:', obj);
+    }
   }
 
   onUpload() {
@@ -205,6 +243,7 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
               formGroup.controls['path'].setValue(nextFilePath);
               this.attributes.push(formGroup);
               this.index = this.attributes.length - 1;
+              this.loadImage();
             }
           });
         }
@@ -213,5 +252,13 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
         console.log('Upload dialog closed without files.');
       }
     });
+  }
+
+  onDelete() {
+    console.log(`onDelete() ${this.index}`);
+    if(this.attributes) {
+      this.attributes.removeAt(this.index);
+      this.loadImage();
+    }
   }
 }
