@@ -126,7 +126,7 @@ export class MediaController {
     @ActionPermit(ActionType.Edit)
     @SubjectName('Media')
     @Patch(':filePath')
-    async commitFile(filePath: string): Promise<void> {
+    async commitFile(filePath: string): Promise<string> {
         return this.mediaRepositoryService.commitFile(filePath);
     }
 

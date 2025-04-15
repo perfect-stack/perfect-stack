@@ -12,6 +12,14 @@ export class LocalMediaRepository implements MediaRepositoryInterface {
 
     private mediaDir = './media'
 
+    async fileExists(filePath: string): Promise<boolean> {
+        if(!filePath.startsWith('/')) {
+            filePath = '/' + filePath;
+        }
+        const actualFilePath = this.mediaDir + filePath;
+        return fs.existsSync(actualFilePath);
+    }
+
     async downloadFile(filePath: string): Promise<Buffer> {
         if(!filePath.startsWith('/')) {
             filePath = '/' + filePath;
@@ -35,20 +43,26 @@ export class LocalMediaRepository implements MediaRepositoryInterface {
         fs.writeFileSync(this.mediaDir + filePath, content);
     }
 
-    async commitFile(filePath: string): Promise<void> {
-        const actualFilePath = this.mediaDir + filePath;
+    async commitFile(filePath: string): Promise<string> {
         // check filePath is a temp path
-        if(actualFilePath.startsWith('/Temp/')) {
+        if(filePath.startsWith('/Temp/')) {
             // check file at filePath exists
+            const actualFilePath = this.mediaDir + filePath;
             if (fs.existsSync(actualFilePath)) {
                 // calculate final path from temp path
                 const mediaPath = this.convertTempPathToMediaPath(filePath);
 
                 // copy file from temp to destination (but don't delete)
                 fs.copyFileSync(actualFilePath, this.mediaDir + mediaPath);
+                return mediaPath;
+            }
+            else {
+                this.logger.error(`File ${actualFilePath} does not exist`);
             }
         }
-        return Promise.resolve(undefined);
+        else {
+            this.logger.error(`File ${filePath} does not start with /Temp/`)
+        }
     }
 
     async deleteFile(filePath: string): Promise<void> {

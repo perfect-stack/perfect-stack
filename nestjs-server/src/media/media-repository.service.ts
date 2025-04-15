@@ -29,7 +29,11 @@ export class MediaRepositoryService {
         return this.mediaRepository.createFile(filename);
     }
 
-    async commitFile(filePath: string): Promise<void> {
+    async fileExists(filePath: string): Promise<boolean> {
+        return this.mediaRepository.fileExists(filePath);
+    }
+
+    async commitFile(filePath: string): Promise<string> {
         return this.mediaRepository.commitFile(filePath);
     }
 

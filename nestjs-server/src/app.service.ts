@@ -22,6 +22,7 @@ import { MetaAttribute } from './domain/meta.entity';
 import { EventDataListener } from './app-event/event.data-listener';
 import { MapService } from './map/map.service';
 import {BirdDataListener} from "./app-event/bird.data-listener";
+import {MediaRepositoryService} from "./media/media-repository.service";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -36,6 +37,7 @@ export class AppService implements OnApplicationBootstrap {
     protected readonly customQueryService: CustomQueryService,
     protected readonly customRuleService: CustomRuleService,
     protected readonly knexService: KnexService,
+    protected readonly mediaRepositoryService: MediaRepositoryService,
     protected readonly eventService: EventService,
     protected readonly settingsService: SettingsService,
   ) {}
@@ -92,7 +94,7 @@ export class AppService implements OnApplicationBootstrap {
   private addBirdDataListener() {
     this.eventService.addDataEventListener(
         'Bird',
-        new BirdDataListener(),
+        new BirdDataListener(this.mediaRepositoryService),
     )
   }
 
