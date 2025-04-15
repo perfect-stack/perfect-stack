@@ -6,13 +6,16 @@
   </div>
   <div class="col-8">
     <div class="row">
-      <div class="col-12" *ngIf="!isLoading && imageSrc">
+      <div class="placeholder-image col-12 bg-light text-center py-5" *ngIf="!imageSrc">
+        <span class="material-symbols-outlined">image</span>
+      </div>
+      <div class="col-12" *ngIf="imageSrc">
         <img [src]="imageSrc" width="100%" alt="Media file">
       </div>
     </div>
     <div class="row pt-2">
-      <div class="col-6" *ngIf="imageSrc">
-        <button class="btn btn-danger" (click)="onDelete()">Delete</button>
+      <div class="col-6">
+        <button class="btn btn-danger" (click)="onDelete()" *ngIf="imageSrc">Delete</button>
       </div>
       <div class="col-6 text-end">
         <button class="btn btn-outline-primary" (click)="onUpload()">Upload...</button>
