@@ -4,7 +4,12 @@
 </div>
 
 <div class="modal-body">
-  <div class="upload-dropzone border border-dashed border-secondary border-3 rounded">
+  <div class="upload-dropzone border border-dashed border-secondary border-3 rounded"
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave($event)"
+       (drop)="onDrop($event)"
+       [class.dragover]="isDraggingOver">
+
     <div class="d-flex flex-column justify-content-center align-items-center p-3">
 
       <div class="mb-2">
