@@ -1,3 +1,7 @@
+.upload-dropzone {
+  border-style: dashed !important;
+}
+
 .upload-circle {
   display: flex; /* Use flexbox for centering */
   justify-content: center; /* Center horizontally */

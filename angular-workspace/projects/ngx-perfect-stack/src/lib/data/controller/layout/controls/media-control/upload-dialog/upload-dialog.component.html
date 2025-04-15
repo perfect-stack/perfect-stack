@@ -4,21 +4,26 @@
 </div>
 
 <div class="modal-body">
-  <p>Select one or more files to add</p>
-  <div class="d-flex justify-content-center align-items-center p-3">
+  <div class="upload-dropzone border border-dashed border-secondary border-3 rounded">
+    <div class="d-flex flex-column justify-content-center align-items-center p-3">
 
-    <label for="fileUploadInput" class="upload-circle">
-      <span class="material-symbols-outlined">upload</span>
-    </label>
+      <div class="mb-2">
+        <label for="fileUploadInput" class="upload-circle">
+          <span class="material-symbols-outlined">upload</span>
+        </label>
+      </div>
 
-    <!-- The actual file input, hidden visually -->
-    <input
-      type="file"
-      id="fileUploadInput"
-      multiple
-      (change)="onFileSelected($event)"
-      style="display: none;"
-    />
+      <div>Drop files here, or click to upload...</div>
+
+      <!-- The actual file input, hidden visually -->
+      <input
+        type="file"
+        id="fileUploadInput"
+        multiple
+        (change)="onFileSelected($event)"
+        style="display: none;"
+      />
+    </div>
   </div>
 
   <div *ngFor="let nextFileItem of fileItems">
