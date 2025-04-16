@@ -20,7 +20,7 @@ export class LocalMediaRepository implements MediaRepositoryInterface {
     }
 
     async locateFile(filePath: string): Promise<string> {
-        return;
+        return '/' + filePath;
     }
 
     async downloadFile(filePath: string): Promise<Buffer> {

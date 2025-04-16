@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {CellAttribute} from "../../../../../meta/page/meta-page-service/meta-page.service";
 import {ControlValueAccessor, UntypedFormArray, UntypedFormGroup} from "@angular/forms";
 import {FormContext, FormService} from "../../../../data-edit/form-service/form.service";
@@ -11,6 +11,7 @@ import {FormGroupService} from "../../../../data-edit/form-service/form-group.se
 import {MetaEntity} from "../../../../../domain/meta.entity";
 import {Cell, MetaPage} from "../../../../../domain/meta.page";
 import {MetaEntityService} from "../../../../../meta/entity/meta-entity-service/meta-entity.service";
+import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../../../ngx-perfect-stack-config";
 
 @Component({
   selector: 'lib-media-control',
@@ -48,6 +49,8 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
   constructor(private modalService: NgbModal,
               private http: HttpClient,
               private sanitizer: DomSanitizer,
+              @Inject(STACK_CONFIG)
+              protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly formService: FormService,
               protected readonly formGroupService: FormGroupService)
@@ -117,20 +120,7 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
 
   get currentPath(): string | null {
     const rowData = this.currentRow;
-    if (rowData && rowData.controls['path']) {
-      let path = rowData.controls['path'].value;
-      //console.log('path', path)
-      // Assuming path is relative to the media endpoint
-      if (path && !path.startsWith("http")) {
-        // Use your configured API URL if available, otherwise fallback
-        // TODO: Inject STACK_CONFIG or similar to get the base API URL
-        //const baseUrl = (this.ctx?.config?.apiUrl || 'http://localhost:3080') + '/media/';
-        const baseUrl = 'http://localhost:3080' + '/media';
-        path = baseUrl + path;
-      }
-      return path;
-    }
-    return null;
+    return (rowData && rowData.controls['path']) ? rowData.controls['path'].value : null;
   }
 
   get currentRow(): any | null {
@@ -167,13 +157,27 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
     }
 
     const path = this.currentPath;
+    console.log(`Load Image: ${path}`);
     if (!path) {
       console.warn(`No path available for current media item. currentPath = ${this.currentPath}`);
       this.isLoading = false;
       return; // No path to load
     }
 
-    this.imageSubscription = this.http.get(path, { responseType: 'blob' })
+    this.http.get(this.stackConfig.apiUrl + '/media/locate' + path, { responseType: 'text'}).subscribe((downloadPath: string) => {
+      if(downloadPath) {
+        this.downloadImage(downloadPath);
+      }
+      else {
+        console.error(`Unable to download file: ${path} at located downloadPath of ${downloadPath}`);
+      }
+    });
+
+  }
+
+  private downloadImage(path: string): void {
+    const downloadPath = path.startsWith('http') ? path : this.stackConfig.apiUrl + "/media" + path;
+    this.imageSubscription = this.http.get(downloadPath, { responseType: 'blob' })
       .pipe(
         map(blob => {
           this.currentObjectUrl = URL.createObjectURL(blob);
@@ -184,15 +188,15 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
         next: (safeUrl) => {
           this.imageSrc = safeUrl;
           this.isLoading = false;
-          console.log(`Image loaded for path: ${path}`);
+          console.log(`Image loaded for path: ${downloadPath}`);
         },
         error: (err) => {
-          console.error(`Failed to load image from path: ${path}`, err);
+          console.error(`Failed to load image from path: ${downloadPath}`, err);
           this.isLoading = false;
           // Optionally set a placeholder error image source here
           // this.imageSrc = 'path/to/error-placeholder.png';
         }
-      });
+    });
   }
 
   onChange: any = () => {}

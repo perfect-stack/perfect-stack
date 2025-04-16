@@ -25,6 +25,10 @@ export class MediaRepositoryService {
         return this.mediaRepository.fileExists(filePath);
     }
 
+    async locateFile(filePath: string): Promise<string> {
+        return this.mediaRepository.locateFile(filePath);
+    }
+
     async downloadFile(filePath: string): Promise<Buffer | string> {
         return this.mediaRepository.downloadFile(filePath);
     }

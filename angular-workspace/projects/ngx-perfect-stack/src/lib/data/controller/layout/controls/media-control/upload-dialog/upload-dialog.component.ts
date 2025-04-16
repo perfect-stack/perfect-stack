@@ -104,7 +104,8 @@ export class UploadDialogComponent implements OnDestroy {
     const formData = new FormData();
     formData.append('file', fileItem.file);
 
-    const upload$ = this.http.put<{ path: string }>(`${this.stackConfig.apiUrl}${fileUrl}`, formData, {
+    const uploadUrl = fileUrl.startsWith('http') ? fileUrl : this.stackConfig.apiUrl + fileUrl;
+    const upload$ = this.http.put<{ path: string }>(uploadUrl, formData, {
       reportProgress: true,
       observe: 'events'
     }).pipe(

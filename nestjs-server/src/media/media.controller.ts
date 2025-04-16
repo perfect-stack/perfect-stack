@@ -46,6 +46,13 @@ export class MediaController {
 
     @ActionPermit(ActionType.Read)
     @SubjectName('Media')
+    @Get('/locate/*')
+    async locateFile(@Param('0') filePath: string) {
+        return this.mediaRepositoryService.locateFile(filePath);
+    }
+
+    @ActionPermit(ActionType.Read)
+    @SubjectName('Media')
     @Get('*')
     async downloadFile(@Param('0') filePath: string, @Res() res: Response) {
         const fileBufferOrUrl  = await this.mediaRepositoryService.downloadFile(filePath);
