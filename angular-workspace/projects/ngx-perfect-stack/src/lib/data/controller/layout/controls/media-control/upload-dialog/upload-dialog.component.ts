@@ -86,17 +86,25 @@ export class UploadDialogComponent implements OnDestroy {
         uploadProgress: 0,
       };
       this.fileItems.push(nextFileItem);
-      this.startUpload(nextFileItem); // Start upload for this item
+      this.createURLForUpload(nextFileItem); // Start upload processing for this item
     }
   }
 
   // --- Upload Logic ---
 
-  startUpload(fileItem: FileItem): void {
+  createURLForUpload(fileItem: FileItem): void {
+    this.http.post(`${this.stackConfig.apiUrl}/media/create/${fileItem.file.name}`, null, {responseType: 'text'}).subscribe(fileUrl => {
+      console.log(`create file URL: ${fileUrl}`);
+      this.startUpload(fileItem, fileUrl);
+    });
+  }
+
+  startUpload(fileItem: FileItem, fileUrl: string): void {
+
     const formData = new FormData();
     formData.append('file', fileItem.file);
 
-    const upload$ = this.http.put<{ path: string }>(`${this.stackConfig.apiUrl}/media/upload/`, formData, {
+    const upload$ = this.http.put<{ path: string }>(`${this.stackConfig.apiUrl}${fileUrl}`, formData, {
       reportProgress: true,
       observe: 'events'
     }).pipe(

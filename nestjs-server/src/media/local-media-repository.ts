@@ -9,8 +9,7 @@ import {Logger} from "@nestjs/common";
 export class LocalMediaRepository implements MediaRepositoryInterface {
 
     private readonly logger = new Logger(LocalMediaRepository.name);
-
-    private mediaDir = './media'
+    private readonly mediaDir = './media';
 
     async fileExists(filePath: string): Promise<boolean> {
         if(!filePath.startsWith('/')) {
@@ -20,14 +19,20 @@ export class LocalMediaRepository implements MediaRepositoryInterface {
         return fs.existsSync(actualFilePath);
     }
 
+    async locateFile(filePath: string): Promise<string> {
+        return;
+    }
+
     async downloadFile(filePath: string): Promise<Buffer> {
         if(!filePath.startsWith('/')) {
             filePath = '/' + filePath;
         }
+
         const actualFilePath = this.mediaDir + filePath;
         if (fs.existsSync(actualFilePath)) {
             return fs.readFileSync(actualFilePath);
-        } else {
+        }
+        else {
             throw new Error(`Unable to read file ${actualFilePath}`);
         }
     }
@@ -36,7 +41,7 @@ export class LocalMediaRepository implements MediaRepositoryInterface {
         const suffix = this.toSuffix(filename);
         const mediaType = this.toMediaType(suffix);
         const fileId = uuid();
-        return `/temp/${mediaType}/${fileId}.${suffix}`;
+        return `/media/upload/Temp/${mediaType}/${fileId}.${suffix}`;
     }
 
     async uploadFile(filePath: string, content: string): Promise<void> {

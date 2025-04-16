@@ -21,7 +21,11 @@ export class MediaRepositoryService {
         this.mediaRepository = local;
     }
 
-    async downloadFile(filePath: string): Promise<Buffer> {
+    async fileExists(filePath: string): Promise<boolean> {
+        return this.mediaRepository.fileExists(filePath);
+    }
+
+    async downloadFile(filePath: string): Promise<Buffer | string> {
         return this.mediaRepository.downloadFile(filePath);
     }
 
@@ -29,8 +33,8 @@ export class MediaRepositoryService {
         return this.mediaRepository.createFile(filename);
     }
 
-    async fileExists(filePath: string): Promise<boolean> {
-        return this.mediaRepository.fileExists(filePath);
+    async uploadFile(filePath: string, content: string): Promise<void> {
+        return this.mediaRepository.uploadFile(filePath, content);
     }
 
     async commitFile(filePath: string): Promise<string> {
@@ -39,10 +43,6 @@ export class MediaRepositoryService {
 
     async deleteFile(filePath: string): Promise<void> {
         return this.mediaRepository.deleteFile(filePath);
-    }
-
-    async uploadFile(filePath: string, content: string): Promise<void> {
-        return this.mediaRepository.uploadFile(filePath, content);
     }
 
 }

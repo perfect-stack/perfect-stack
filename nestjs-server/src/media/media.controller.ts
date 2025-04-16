@@ -6,7 +6,6 @@ import {
     Patch,
     Post,
     Put,
-    Req,
     Res,
     UploadedFile,
     UseInterceptors
@@ -19,40 +18,22 @@ import {ActionType} from "../domain/meta.role";
 import {SubjectName} from "../authentication/subject";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
-import { v4 as uuidv4 } from 'uuid';
-import {MEDIA_TYPE_MAP, MediaType} from "./media-type";
 
 
-const toMediaType = (suffix: string): MediaType => {
-    if(MEDIA_TYPE_MAP.has(suffix)) {
-        return MEDIA_TYPE_MAP.get(suffix);
+const convertUrl = (req, file, callback) => {
+    const prefix = '/media/upload';
+    if(req.path.startsWith(prefix)) {
+        const pathWithoutPrefix = req.path.substring(prefix.length);
+        callback(null, pathWithoutPrefix);
     }
     else {
-        throw new Error(`Unsupported media type: ${suffix}`);
+        throw new Error(`Invalid path: ${req.path}`);
     }
 }
-
-const toSuffix = (filename: string): string => {
-    if(filename.indexOf('.') > -1) {
-        const parts = filename.split('.');
-        return parts[parts.length - 1];
-    }
-    else {
-        throw new Error('filename does not contain a suffix')
-    }
-}
-
-const generateUniqueFilename = (req, file, callback) => {
-    const name = file.originalname.split('.')[0];
-    const fileSuffix = toSuffix(file.originalname);
-    const uniqueName = uuidv4();
-    const mediaType = toMediaType(fileSuffix);
-    callback(null, `${mediaType}/${uniqueName}.${fileSuffix}`);
-};
 
 const storageOptions = diskStorage({
-    destination: './media/Temp', // IMPORTANT: Create this directory or choose another existing one
-    filename: generateUniqueFilename, // Use the helper function for unique names
+    destination: './media', // IMPORTANT: Create this directory or choose another existing one
+    filename: convertUrl,
 });
 
 
@@ -61,30 +42,26 @@ const storageOptions = diskStorage({
 @Controller('media')
 export class MediaController {
 
-    constructor(
-        protected mediaRepositoryService: MediaRepositoryService
-    ) {
-    }
+    constructor(protected mediaRepositoryService: MediaRepositoryService) {}
 
     @ActionPermit(ActionType.Read)
     @SubjectName('Media')
     @Get('*')
-    async getMedia(@Param('0') filePath: string, @Res() res: Response) {
-        console.log('getMedia: ', filePath);
-        const file = await this.mediaRepositoryService.downloadFile(filePath);
-        res.send(file);
+    async downloadFile(@Param('0') filePath: string, @Res() res: Response) {
+        const fileBufferOrUrl  = await this.mediaRepositoryService.downloadFile(filePath);
+        res.send(fileBufferOrUrl);
     }
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Media')
-    @Post(':filename')
-    async createFile(filename: string): Promise<string> {
-        return this.mediaRepositoryService.createFile(filename);
+    @Post('/create/*')
+    async createFile(@Param('0') rawFilename: string): Promise<string> {
+        return this.mediaRepositoryService.createFile(rawFilename);
     }
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Media')
-    @Put('/upload')
+    @Put('/upload/*')
     @UseInterceptors(FileInterceptor('file', {storage: storageOptions}))
     @ApiConsumes('multipart/form-data') // Document that this endpoint consumes multipart/form-data
     @ApiBody({ // Document the expected body structure
@@ -106,9 +83,9 @@ export class MediaController {
                 ], fileIsRequired: true}
         )
     ) file: Express.Multer.File): Promise<any> {
-        //console.log('uploadFile:', req);
-        //return this.mediaRepositoryService.uploadFile(null, null);
 
+        // The interceptor takes care of creating the file on the server and then just gives us
+        // the "File" handle to that file.
         if(file) {
             console.log('File uploaded successfully:', file);
             console.log('Saved to path:', file.path); // Path where multer saved the file
@@ -116,7 +93,7 @@ export class MediaController {
             console.log('Mimetype:', file.mimetype);
             console.log('Size:', file.size);
             return {
-                path: `/Temp/${file.filename}`
+                path: `${file.filename}`
             };
         }
 

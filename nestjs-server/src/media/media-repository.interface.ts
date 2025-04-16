@@ -1,10 +1,12 @@
 export interface MediaRepositoryInterface {
-    downloadFile(filePath: string): Promise<Buffer>;   // file bytes, or presigned URL
-    createFile(filename: string): Promise<string>;   // convert filename to mediaType and a unique id... mediaType, id, <path = mediaType/id.suffix>,  returns "handle" for the file
-                                                     // returns the filePath e.g   "temp/image/123-3345-A34-E567.jpeg"
+    fileExists(filePath: string): Promise<boolean>;
+    locateFile(filePath: string): Promise<string>;    // convert the logical database filePath into a URL for download (might be API or S3)
+    downloadFile(filePath: string): Promise<Buffer>;  // download file bytes through the API. Presigned URLs go direct.
+
+    createFile(filename: string): Promise<string>;    // convert raw filename to a Temp location of mediaType and a unique id (path = /Temp/mediaType/uniqueId.suffix), returns URL for the file (which can be API or S3)
     uploadFile(filePath: string, content: string): Promise<void>;  // uploads to a temporary location (only needed for API uploads, pre-signed will go to S3)
-    commitFile(filePath: string): Promise<string>;  // moves from temporary location to permanent location (editing flows could mean it's discarded)
+    commitFile(filePath: string): Promise<string>;    // moves from temporary location to permanent location (editing flows could mean it's discarded)
+
     deleteFile(filePath: string): Promise<void>;
 
-    fileExists(filePath: string): Promise<boolean>;
 }
