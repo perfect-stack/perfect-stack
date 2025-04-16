@@ -256,9 +256,11 @@ export class TableLayoutComponent implements OnInit {
 
   getStyleClasses() {
     let styleClasses = '';
-    if(this.template.styles) {
-      styleClasses += this.template.styles;
-    }
+
+    // Commented this bit out as part of adding MediaComponent, it was wrapping the event table inside of a contain-bord-radius
+    // if(this.template.styles) {
+    //   styleClasses += this.template.styles;
+    // }
 
     if(this.template.navigation === 'Enabled') {
       styleClasses += ' table-hover row-navigation';

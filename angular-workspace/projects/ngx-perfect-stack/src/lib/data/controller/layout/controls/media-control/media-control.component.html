@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row m-4">
   <div class="col align-self-center text-end">
     <ng-container *ngIf="imageCount > 1">
       <button class="btn btn-outline-secondary" (click)="decrementIndex()">&lt;</button>
@@ -13,7 +13,7 @@
         <img [src]="imageSrc" width="100%" alt="Media file">
       </div>
     </div>
-    <div class="row pt-2">
+    <div class="row pt-2" *ngIf="mode === 'edit'">
       <div class="col-6">
         <button class="btn btn-danger" (click)="onDelete()" *ngIf="imageSrc">Delete</button>
       </div>
