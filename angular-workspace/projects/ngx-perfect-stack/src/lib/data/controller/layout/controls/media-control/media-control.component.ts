@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {CellAttribute} from "../../../../../meta/page/meta-page-service/meta-page.service";
 import {ControlValueAccessor, UntypedFormArray, UntypedFormGroup} from "@angular/forms";
-import {FormContext} from "../../../../data-edit/form-service/form.service";
+import {FormContext, FormService} from "../../../../data-edit/form-service/form.service";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {UploadDialogComponent} from "./upload-dialog/upload-dialog.component";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
@@ -9,7 +9,7 @@ import {map, Subject, Subscription, takeUntil} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {FormGroupService} from "../../../../data-edit/form-service/form-group.service";
 import {MetaEntity} from "../../../../../domain/meta.entity";
-import {MetaPage} from "../../../../../domain/meta.page";
+import {Cell, MetaPage} from "../../../../../domain/meta.page";
 import {MetaEntityService} from "../../../../../meta/entity/meta-entity-service/meta-entity.service";
 
 @Component({
@@ -43,10 +43,13 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
 
   private _valueInitialized = false;
 
+  commentCell: CellAttribute;
+
   constructor(private modalService: NgbModal,
               private http: HttpClient,
               private sanitizer: DomSanitizer,
               protected readonly metaEntityService: MetaEntityService,
+              protected readonly formService: FormService,
               protected readonly formGroupService: FormGroupService)
   {}
 
@@ -55,6 +58,15 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
       takeUntil(this.destroy$) // Automatically unsubscribe when destroy$ emits
     ).subscribe(map => {
       this.metaEntityMap = map;
+
+      if(this.cell.metaEntity) {
+        this.commentCell = this.formService.toCellAttribute({
+          width: "1",
+          height: "3",
+          attributeName: "comments",
+          component: "TextArea"
+        }, this.cell.metaEntity);
+      }
     });
     this.loadImage();
   }

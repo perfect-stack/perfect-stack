@@ -190,7 +190,7 @@
         [
           {
             "width": "12",
-            "height": "1",
+            "height": "2",
             "attributeName": "media_files",
             "component": "Media",
             "hideLabel": true
