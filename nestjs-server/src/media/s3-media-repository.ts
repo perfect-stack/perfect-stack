@@ -2,6 +2,7 @@ import {MediaRepositoryInterface} from "./media-repository.interface";
 import * as Buffer from "node:buffer";
 
 export class S3MediaRepository implements MediaRepositoryInterface {
+
     fileExists(filePath: string): Promise<boolean> {
         return Promise.resolve(false);
     }

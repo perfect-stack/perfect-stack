@@ -1,3 +1,4 @@
 
 /.idea
 /angular-workspace/projects/demo-client/src/client-overrides.json
+/aws-get-caller-identity.sh
