@@ -164,7 +164,7 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
       return; // No path to load
     }
 
-    this.http.get(this.stackConfig.apiUrl + '/media/locate' + path, { responseType: 'text'}).subscribe((downloadPath: string) => {
+    this.http.get(this.stackConfig.apiUrl + '/media/locate/' + path, { responseType: 'text'}).subscribe((downloadPath: string) => {
       if(downloadPath) {
         this.downloadImage(downloadPath);
       }

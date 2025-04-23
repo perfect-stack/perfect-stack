@@ -18,6 +18,7 @@ import {ActionType} from "../domain/meta.role";
 import {SubjectName} from "../authentication/subject";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
+import {CreateFileResponse} from "./create-file-response";
 
 
 const convertUrl = (req, file, callback) => {
@@ -62,7 +63,7 @@ export class MediaController {
     @ActionPermit(ActionType.Edit)
     @SubjectName('Media')
     @Post('/create/*')
-    async createFile(@Param('0') rawFilename: string): Promise<string> {
+    async createFile(@Param('0') rawFilename: string): Promise<CreateFileResponse> {
         return this.mediaRepositoryService.createFile(rawFilename);
     }
 

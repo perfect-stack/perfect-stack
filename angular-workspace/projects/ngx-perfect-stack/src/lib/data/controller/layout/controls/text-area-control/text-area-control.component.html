@@ -10,6 +10,7 @@
 
   <ng-container *ngIf="!isReadOnly()">
     <editor class="flex-grow-1"
+     [id]=componentId
      [formControlName]="attribute.name"
      [init]="{
        base_url: '/tinymce',

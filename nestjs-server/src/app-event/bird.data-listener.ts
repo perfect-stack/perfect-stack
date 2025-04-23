@@ -14,7 +14,7 @@ export class BirdDataListener implements DataEventListener {
         if (entity['media_files']) {
             const mediaFiles = entity['media_files'] as MediaFile[];
             for(const nextMediaFile of mediaFiles) {
-                if(nextMediaFile.path.startsWith('/Temp/')) {
+                if(nextMediaFile.path.startsWith('Temp/')) {
                     const newPath = await this.mediaRepositoryService.commitFile(nextMediaFile.path);
                     if (newPath) {
                         console.log(`onBeforeSave() ${nextMediaFile.path} commit file to ${newPath}`);

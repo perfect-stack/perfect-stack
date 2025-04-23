@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy} from '@angular/core';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
-import {HttpClient, HttpEventType} from "@angular/common/http";
+import {HttpClient, HttpEventType, HttpHeaders} from "@angular/common/http";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../../../../ngx-perfect-stack-config";
 import {finalize, Subscription} from "rxjs";
 
@@ -11,6 +11,11 @@ export class FileItem {
   uploadProgress: number | null;
   remotePath?: string
   uploadSub?: Subscription
+}
+
+export interface CreateFileResponse {
+  resourceKey: string;
+  resourceUrl: string;
 }
 
 @Component({
@@ -93,19 +98,18 @@ export class UploadDialogComponent implements OnDestroy {
   // --- Upload Logic ---
 
   createURLForUpload(fileItem: FileItem): void {
-    this.http.post(`${this.stackConfig.apiUrl}/media/create/${fileItem.file.name}`, null, {responseType: 'text'}).subscribe(fileUrl => {
-      console.log(`create file URL: ${fileUrl}`);
-      this.startUpload(fileItem, fileUrl);
+    this.http.post<CreateFileResponse>(`${this.stackConfig.apiUrl}/media/create/${fileItem.file.name}`, null).subscribe(createFileResponse => {
+      console.log(`create file URL: ${createFileResponse}`);
+      this.startUpload(fileItem, createFileResponse);
     });
   }
 
-  startUpload(fileItem: FileItem, fileUrl: string): void {
+  startUpload(fileItem: FileItem, createFileResponse: CreateFileResponse): void {
 
-    const formData = new FormData();
-    formData.append('file', fileItem.file);
-
-    const uploadUrl = fileUrl.startsWith('http') ? fileUrl : this.stackConfig.apiUrl + fileUrl;
-    const upload$ = this.http.put<{ path: string }>(uploadUrl, formData, {
+    const uploadUrl = createFileResponse.resourceUrl.startsWith('http') ? createFileResponse.resourceUrl : this.stackConfig.apiUrl + createFileResponse.resourceUrl;
+    const headers = new HttpHeaders({'Content-Type': fileItem.file.type});
+    const upload$ = this.http.put<{ path: string }>(uploadUrl, fileItem.file, {
+      headers: headers,
       reportProgress: true,
       observe: 'events'
     }).pipe(
@@ -121,18 +125,12 @@ export class UploadDialogComponent implements OnDestroy {
       next: event => {
         if (event.type == HttpEventType.UploadProgress && event.total) {
           fileItem.uploadProgress = Math.round(100 * (event.loaded / event.total));
-        } else if (event.type == HttpEventType.Response) {
-          if (event.body?.path) {
-            const resultPath = event.body.path;
-            console.log(`Uploaded ${fileItem.file.name}:`, resultPath);
-            fileItem.status = 'success';
-            fileItem.remotePath = resultPath;
-            fileItem.uploadProgress = 100;
-          } else {
-            console.error(`Upload successful for ${fileItem.file.name}, but path missing in response.`);
-            fileItem.status = 'error';
-            fileItem.uploadProgress = null;
-          }
+        }
+        else if (event.type == HttpEventType.Response) {
+          console.log(`Upload successful for ${fileItem.file.name}`);
+          fileItem.status = 'success';
+          fileItem.remotePath = createFileResponse.resourceKey;
+          fileItem.uploadProgress = 100;
         }
       },
       error: err => {

@@ -4,6 +4,7 @@ import {MediaUtils} from "./media-utils";
 import {Injectable, Logger} from "@nestjs/common";
 import * as Buffer from "node:buffer";
 import * as fs from "node:fs";
+import {CreateFileResponse} from "./create-file-response";
 
 
 @Injectable()
@@ -41,8 +42,10 @@ export class LocalMediaRepository implements MediaRepositoryInterface {
         }
     }
 
-    async createFile(filename: string): Promise<string> {
-        return '/media/upload/' + this.mediaUtils.createTempFile(filename);
+    async createFile(filename: string): Promise<CreateFileResponse> {
+        const resourceKey = this.mediaUtils.createTempFile(filename);
+        const resourceUrl = '/media/upload/' + resourceKey;
+        return { resourceKey, resourceUrl };
     }
 
     async uploadFile(filePath: string, content: string): Promise<void> {

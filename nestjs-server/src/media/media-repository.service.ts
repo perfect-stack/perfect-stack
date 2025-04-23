@@ -3,6 +3,7 @@ import {MediaRepositoryInterface} from "./media-repository.interface";
 import {ConfigService} from "@nestjs/config";
 import {LocalMediaRepository} from "./local-media-repository";
 import {S3MediaRepository} from "./s3-media-repository";
+import {CreateFileResponse} from "./create-file-response";
 
 
 
@@ -18,7 +19,9 @@ export class MediaRepositoryService {
         protected s3: S3MediaRepository,
     ) {
         // TODO: make this configurable
-        this.mediaRepository = local;
+        //this.mediaRepository = local;
+        this.mediaRepository = s3;
+
     }
 
     async fileExists(filePath: string): Promise<boolean> {
@@ -33,7 +36,7 @@ export class MediaRepositoryService {
         return this.mediaRepository.downloadFile(filePath);
     }
 
-    async createFile(filename: string): Promise<string> {
+    async createFile(filename: string): Promise<CreateFileResponse> {
         return this.mediaRepository.createFile(filename);
     }
 

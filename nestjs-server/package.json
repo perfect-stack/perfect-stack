@@ -22,8 +22,9 @@
     "publish:github": "npm publish"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.46.0",
-    "@aws-sdk/client-secrets-manager": "^3.46.0",
+    "@aws-sdk/client-s3": "^3.556.0",
+    "@aws-sdk/client-secrets-manager": "^3.556.0",
+    "@aws-sdk/s3-request-presigner": "^3.556.0",
     "@js-joda/core": "^5.2.0",
     "@js-joda/locale_en": "^4.7.0",
     "@js-joda/timezone": "^2.12.0",
@@ -43,6 +44,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^2.1.4",
     "knex": "^2.1.0",
+    "mime-types": "^3.0.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.1",
@@ -60,6 +62,7 @@
     "@nestjs/testing": "^9.0.0",
     "@types/express": "^4.17.13",
     "@types/jest": "28.1.8",
+    "@types/mime-types": "^2.1.4",
     "@types/multer": "^1.4.12",
     "@types/node": "^16.0.0",
     "@types/passport-jwt": "^3.0.6",
