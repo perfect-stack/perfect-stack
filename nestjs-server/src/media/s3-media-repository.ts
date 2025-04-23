@@ -120,8 +120,34 @@ export class S3MediaRepository implements MediaRepositoryInterface {
         }
     }
 
-    deleteFile(filePath: string): Promise<void> {
-        return Promise.resolve(undefined);
-    }
+    async deleteFile(filePath: string): Promise<void> {
+        // filePath here is the S3 object key
+        this.logger.warn(`Attempting to delete S3 object: ${filePath}`);
 
+        const deleteCmd = new DeleteObjectCommand({
+            Bucket: this.BUCKET_NAME,
+            Key: filePath,
+        });
+
+        try {
+            // Send the command using the class's S3 client instance
+            await this.client.send(deleteCmd);
+            this.logger.warn(`Successfully deleted S3 object: ${filePath}`);
+        } catch (error) {
+            // It is acceptable if the file is already gone.
+            // Check for the specific error name (usually 'NotFound' or 'NoSuchKey' depending on context/version)
+            // For SDK v3, 'NotFound' is common for HeadObject, but DeleteObject might not error if the key doesn't exist,
+            // or it might throw a different error. Let's log a warning but not fail hard if it's likely a "not found" scenario.
+            // A more robust check might involve a HeadObject first, but that adds latency/cost.
+            if (error.name === 'NoSuchKey' || error.name === 'NotFound') { // Check common names for "not found"
+                this.logger.warn(`Attempted to delete S3 object, but it does not exist (or was already deleted): ${filePath}`);
+                // Resolve successfully as the desired state (object doesn't exist) is achieved.
+                return;
+            } else {
+                // Log and re-throw other unexpected errors
+                this.logger.error(`Error deleting S3 object ${filePath}:`, error);
+                throw new Error(`Unable to delete file ${filePath}: ${error.message || 'Unknown S3 error'}`);
+            }
+        }
+    }
 }

@@ -271,6 +271,8 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   onDelete() {
+    // Only remove the attribute/value for now. Files will be deleted once the request is processed on the server, just
+    // in case the user clicks "cancel".
     console.log(`onDelete() ${this.index}`);
     if(this.attributes) {
       this.attributes.removeAt(this.index);
