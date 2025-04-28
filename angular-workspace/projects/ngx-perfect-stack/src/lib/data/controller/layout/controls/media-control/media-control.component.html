@@ -12,17 +12,20 @@
           </div>
         </div>
         <div class="row pt-2">
-          <div class="col-6">
+          <div class="col-4">
             <div class="btn-group" role="group" *ngIf="imageCount > 1">
               <button class="btn btn-outline-secondary" (click)="decrementIndex()">&lt;</button>
               <button class="btn btn-outline-secondary" (click)="incrementIndex()">&gt;</button>
             </div>
           </div>
-          <div class="col-6 text-end">
-            <div class="btn-group" role="group" *ngIf="mode === 'edit'">
-              <button class="btn btn-danger" (click)="onDelete()" *ngIf="imageSrc">Delete</button>
+          <div class="col-4">
+            {{index + 1}} of {{imageCount}}
+          </div>
+          <div class="col-4 text-end">
+            <ng-container *ngIf="mode === 'edit'">
+              <button class="btn btn-danger me-2" (click)="onDelete()" *ngIf="imageSrc">Delete</button>
               <button class="btn btn-outline-primary" (click)="onUpload()">Upload...</button>
-            </div>
+            </ng-container>
           </div>
         </div>
       </div>
