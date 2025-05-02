@@ -33,7 +33,7 @@ const convertUrl = (req, file, callback) => {
 }
 
 const storageOptions = diskStorage({
-    destination: './media', // IMPORTANT: Create this directory or choose another existing one
+    destination: '/tmp/media', // IMPORTANT: Create this directory or choose another existing one
     filename: convertUrl,
 });
 
