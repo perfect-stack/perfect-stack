@@ -15,6 +15,9 @@ import { TypeaheadModule } from './typeahead/typeahead.module';
 import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
 import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 import { MetaPageModule } from './meta/meta-page/meta-page.module';
+import { MediaRepositoryModule } from './media/media-repository.module';
+import { MediaRepositoryService } from './media/media-repository.service';
+
 
 export { AuthenticationModule, AuthenticationService, PublicApi, JwtAuthGuard };
 export { ClientConfigModule, ClientConfigService };
@@ -23,6 +26,7 @@ export { FileRepositoryModule, FileRepositoryService };
 export { OrmModule, OrmService };
 export { TypeaheadModule, TypeaheadService };
 
+export { MediaRepositoryModule, MediaRepositoryService };
 export { MetaEntityModule };
 export { MetaMenuModule };
 export { MetaPageModule };

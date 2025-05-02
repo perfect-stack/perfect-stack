@@ -91,6 +91,10 @@ export class MetaRoleEditComponent implements OnInit {
       {
         type: SubjectType.Special,
         name: String(ActionType.Any)
+      },
+      {
+        type: SubjectType.Special,
+        name: "Media"
       }
     ])
   }

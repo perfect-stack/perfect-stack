@@ -105,47 +105,84 @@
             "width": "8",
             "height": "1",
             "template": {
-              "binding": "eventPanelSearchResults",
-              "templateHeading": "Events",
-              "type": "table",
-              "metaEntityName": "EventSearchResult",
-              "orderByName": "date_time",
-              "orderByDir": "DESC",
+              "binding": "",
+              "templateHeading": "",
+              "type": "form",
+              "metaEntityName": "",
               "cells": [
                 [
                   {
-                    "width": "6",
+                    "width": "12",
                     "height": "1",
-                    "attributeName": "date_time"
-                  },
+                    "template": {
+                      "binding": "eventPanelSearchResults",
+                      "templateHeading": "Events",
+                      "type": "table",
+                      "metaEntityName": "EventSearchResult",
+                      "cells": [
+                        [
+                          {
+                            "width": "6",
+                            "height": "1",
+                            "attributeName": "date_time"
+                          },
+                          {
+                            "width": "1",
+                            "height": "1",
+                            "attributeName": "event_type"
+                          },
+                          {
+                            "width": "1",
+                            "height": "1",
+                            "attributeName": "activities",
+                            "component": "BadgeList"
+                          }
+                        ]
+                      ],
+                      "styles": "container-border-radius",
+                      "orderByName": "date_time",
+                      "orderByDir": "DESC",
+                      "noItemsHtml": "<div class=\"text-center\">No events recorded yet</div> <div class=\"text-center text-secondary\">Click \"Add event\" to create a new event for this bird</div>",
+                      "locations": {},
+                      "route": "/data/Event/view/${id}?backTo=Bird",
+                      "navigation": "Enabled"
+                    }
+                  }
+                ],
+                [
                   {
-                    "width": "1",
+                    "width": "12",
                     "height": "1",
-                    "attributeName": "event_type"
-                  },
-                  {
-                    "width": "1",
-                    "height": "1",
-                    "attributeName": "activities",
-                    "component": "BadgeList"
+                    "template": {
+                      "binding": "bird",
+                      "templateHeading": "Media",
+                      "type": "form",
+                      "metaEntityName": "Bird",
+                      "cells": [
+                        [
+                          {
+                            "width": "12",
+                            "height": "1",
+                            "attributeName": "media_files",
+                            "component": "Media",
+                            "hideLabel": true
+                          }
+                        ]
+                      ],
+                      "styles": "container-border-radius",
+                      "orderByName": "",
+                      "orderByDir": "",
+                      "noItemsHtml": "",
+                      "locations": {}
+                    }
                   }
                 ]
               ],
-              "route": "/data/Event/view/${id}?backTo=Bird",
-              "navigation": "Enabled",
-              "locations": {
-                "BottomMiddle": {
-                  "type": "Paginate",
-                  "channel": "eventPanel",
-                  "containerStyles": "",
-                  "styles": "",
-                  "label": "",
-                  "modes": "",
-                  "criteriaForm": "eventPanelCriteria"
-                }
-              },
-              "noItemsHtml": "<div class=\"text-center\">No events recorded yet</div> <div class=\"text-center text-secondary\">Click \"Add event\" to create a new event for this bird</div>",
-              "styles": ""
+              "styles": "",
+              "orderByName": "",
+              "orderByDir": "",
+              "noItemsHtml": "",
+              "locations": {}
             }
           },
           {
@@ -279,14 +316,15 @@
                   "subjectPermit": "Bird"
                 }
               },
-              "styles": "bird-view"
+              "styles": "bird-view container-border-radius"
             }
           }
         ]
       ],
       "metaEntityName": "Bird",
       "type": "form",
-      "styles": ""
+      "styles": "",
+      "binding": ""
     }
   ]
 }

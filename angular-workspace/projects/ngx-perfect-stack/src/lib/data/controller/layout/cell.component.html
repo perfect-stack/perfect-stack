@@ -56,11 +56,16 @@
     </ng-container>
 
     <ng-container *ngSwitchCase="'OneToMany'">
-      <ng-container *ngIf="cell.component === 'LinkList'">
-        <lib-link-list-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-link-list-control>
-      </ng-container>
-      <ng-container *ngIf="cell.component !== 'LinkList'">
-        <lib-one-to-many-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
+      <ng-container [ngSwitch]="cell.component">
+        <ng-container *ngSwitchCase="'LinkList'">
+          <lib-link-list-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-link-list-control>
+        </ng-container>
+        <ng-container *ngSwitchCase="'Media'">
+          <lib-media-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-media-control>
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          <lib-one-to-many-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
+        </ng-container>
       </ng-container>
     </ng-container>
 

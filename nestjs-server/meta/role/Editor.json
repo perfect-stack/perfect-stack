@@ -15,6 +15,10 @@
     {
       "action": "Edit",
       "subject": "Location"
+    },
+    {
+      "action": "Edit",
+      "subject": "Media"
     }
   ]
 }

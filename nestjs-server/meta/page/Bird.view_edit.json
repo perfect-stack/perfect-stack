@@ -190,6 +190,23 @@
         [
           {
             "width": "12",
+            "height": "2",
+            "attributeName": "media_files",
+            "component": "Media",
+            "hideLabel": true
+          }
+        ]
+      ],
+      "metaEntityName": "Bird",
+      "type": "form",
+      "templateHeading": "Media",
+      "binding": "bird"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
             "height": "3",
             "attributeName": "comments",
             "component": "TextArea"

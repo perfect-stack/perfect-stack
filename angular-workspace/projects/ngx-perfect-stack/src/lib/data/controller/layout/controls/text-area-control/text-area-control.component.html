@@ -1,18 +1,19 @@
-<div class="input-group" [formGroup]="formGroup">
-  <ng-container *ngIf="isReadOnly()">
-    <div class="overflow-auto form-control" readonly [id]="attribute.name" *ngIf="formGroup.controls[attribute.name].value">
-      <div [innerHtml]="formGroup.controls[attribute.name].value"></div>
-    </div>
-    <div class="overflow-auto form-control" readonly [id]="attribute.name" *ngIf="!formGroup.controls[attribute.name].value">
-      <div>&mdash;</div>
-    </div>
-  </ng-container>
+<ng-container *ngIf="formGroup">
+  <div class="input-group" [formGroup]="formGroup">
+    <ng-container *ngIf="isReadOnly()">
+      <div class="overflow-auto form-control" readonly [id]="attribute.name" *ngIf="formGroup.controls[attribute.name].value">
+        <div [innerHtml]="formGroup.controls[attribute.name].value"></div>
+      </div>
+      <div class="overflow-auto form-control" readonly [id]="attribute.name" *ngIf="!formGroup.controls[attribute.name].value">
+        <div>&mdash;</div>
+      </div>
+    </ng-container>
 
-  <ng-container *ngIf="!isReadOnly()">
-    <editor class="flex-grow-1"
-     [id]="attribute.name"
-     [formControlName]="attribute.name"
-     [init]="{
+    <ng-container *ngIf="!isReadOnly()">
+      <editor class="flex-grow-1"
+              [id]=componentId
+              [formControlName]="attribute.name"
+              [init]="{
        base_url: '/tinymce',
        suffix: '.min',
        height: getCSSHeight(cell),
@@ -20,7 +21,8 @@
        plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
        toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
      }"
-    ></editor>
-  </ng-container>
+      ></editor>
+    </ng-container>
 
-</div>
+  </div>
+</ng-container>

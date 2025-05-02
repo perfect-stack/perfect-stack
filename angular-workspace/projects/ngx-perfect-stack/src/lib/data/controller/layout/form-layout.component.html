@@ -4,7 +4,7 @@
 
   <!-- If template has a binding to the form -->
   <ng-container *ngIf="template && template.binding">
-    <div [ngClass]="template.styles" [formGroup]="formGroup">
+    <div [formGroup]="formGroup">
       <div class="row" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">
 
@@ -51,9 +51,9 @@
   </ng-container>
 
   <!-- If this template doesn't have a binding (normally this means it's a root level template with nested child templates, so no binding means no form group) -->
-  <ng-container *ngIf="template && !template.binding">
+  <!--<ng-container *ngIf="template && !template.binding">
     <div [formGroup]="formGroup">
-      <div [ngClass]="template.styles">  <!-- NO Binding means NO formGroup -->
+      <div [ngClass]="template.styles">  &lt;!&ndash; NO Binding means NO formGroup &ndash;&gt;
         <div class="row" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
           <div [class]="getCSS(cell)" *ngFor="let cell of row">
 
@@ -74,6 +74,21 @@
         </div>
       </div>
     </div>
-  </ng-container>
+  </ng-container>-->
 
+</ng-container>
+
+<!-- If this template doesn't have a binding (normally this means it's a root level template with nested child templates, so no binding means no form group) -->
+<ng-container *ngIf="template && !template.binding"> <!-- NO Binding means NO formGroup -->
+  <div class="row" *ngFor="let row of template.cells">
+    <div [class]="getCSS(cell)" *ngFor="let cell of row">
+
+      <ng-container *ngIf="cell.template">
+        <div *ngIf="cell.template">
+          <lib-layout [ctx]="ctx" [template]="cell.template"></lib-layout>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
 </ng-container>

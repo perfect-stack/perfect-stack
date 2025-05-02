@@ -38,7 +38,7 @@ async function getJwtKey(
     const httpResponse = await axios.get(publicKeyUrl);
     const rawKeys = httpResponse.data;
 
-    jwtLogger.log(`Got JWT keys from ${publicKeyUrl}`);
+    jwtLogger.warn(`Got JWT keys from ${publicKeyUrl}`);
 
     const authenticationProvider = configService.get('AUTHENTICATION_PROVIDER');
     switch (authenticationProvider) {
@@ -150,7 +150,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     // Uncomment the following line for a quick easy way of seeing the JWT payload in clear text (which is safe)
     // without having to muck about grabbing the Base64 encoded version and decoding that
-    console.log(`\nPASSPORT: validate token: ${JSON.stringify(payload)}`);
+    //jwtLogger.info(`\nPASSPORT: validate token: ${JSON.stringify(payload)}`);
 
     const issuerValid = payload.iss === this.expectedIssuer;
     if (issuerValid) {
@@ -164,7 +164,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         family_name: payload['family_name'],
         email: payload['email'],
       };
-      console.log('PASSPORT: userDataStructure: ', userDataStructure);
+      //jwtLogger.debug('PASSPORT: userDataStructure: ', userDataStructure);
       return userDataStructure;
     } else {
       jwtLogger.error(
