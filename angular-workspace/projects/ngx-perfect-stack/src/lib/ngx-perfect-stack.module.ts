@@ -8,7 +8,7 @@ import {MenuItemEditComponent} from './meta/menu/meta-menu-view/menu-item-edit/m
 import {MenuHeaderViewComponent} from './meta/menu/meta-menu-view/menu-header-view/menu-header-view.component';
 import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
 import {NgbDateAdapter, NgbDateParserFormatter, NgbDropdown, NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {CommonModule} from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {BrowserModule} from '@angular/platform-browser';
@@ -139,6 +139,8 @@ import { OneToManyChoiceDialogComponent } from './template/template-controller/o
 import { BackLinkComponent } from './data/controller/layout/back-link/back-link.component';
 import { SelectMultipleControlComponent } from './data/controller/layout/controls/select-multiple-control/select-multiple-control.component';
 import { EnvironmentBannerComponent } from './menu-bar/environment-banner/environment-banner.component';
+import { MediaControlComponent } from './data/controller/layout/controls/media-control/media-control.component';
+import { UploadDialogComponent } from './data/controller/layout/controls/media-control/upload-dialog/upload-dialog.component';
 
 export const STACK_ROUTES: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -278,7 +280,9 @@ export const STACK_ROUTES: Routes = [
     BackLinkComponent,
     SelectMultipleControlComponent,
     DurationToolComponent,
-    EnvironmentBannerComponent
+    EnvironmentBannerComponent,
+    MediaControlComponent,
+    UploadDialogComponent
   ],
   providers: [
     AuthenticationService,
@@ -300,18 +304,19 @@ export const STACK_ROUTES: Routes = [
     {provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js'},
     NgbDropdown,
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbModule,
-    HttpClientModule,
-    CommonModule,
-    EditorModule,
-    LeafletModule,
-    RouterModule.forChild(STACK_ROUTES),
-    LoadingBarHttpClientModule,
-  ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbModule,
+        HttpClientModule,
+        CommonModule,
+        EditorModule,
+        LeafletModule,
+        RouterModule.forChild(STACK_ROUTES),
+        LoadingBarHttpClientModule,
+        NgOptimizedImage,
+    ],
   exports: [
     NgxPerfectStackComponent,
     ToastsComponent,

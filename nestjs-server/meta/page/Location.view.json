@@ -1,6 +1,6 @@
 {
-  "name": "Location.view_edit",
-  "title": "Location Edit",
+  "name": "Location.view",
+  "title": "Location View",
   "type": "view_edit",
   "layoutStyle": "Paris",
   "dataQueryList": [
@@ -10,6 +10,14 @@
       "queryType": "Entity",
       "queryName": "Location",
       "fieldName": "id",
+      "parameter": "id"
+    },
+    {
+      "dataName": "event",
+      "resultCardinality": "QueryMany",
+      "queryType": "Entity",
+      "queryName": "Event",
+      "fieldName": "location_id",
       "parameter": "id"
     }
   ],
@@ -90,6 +98,48 @@
       "type": "form",
       "templateHeading": "Coordinates",
       "binding": "location"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "date_time",
+            "component": "DatePicker"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "bird"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "event_type"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "table",
+      "templateHeading": "Events",
+      "binding": "event",
+      "navigation": "Enabled",
+      "route": "/data/Event/view/${id}?backTo=Location"
     }
   ]
 }

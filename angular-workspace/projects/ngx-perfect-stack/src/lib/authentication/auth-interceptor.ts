@@ -18,6 +18,12 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
+    // Also bypass authentication logic for S3 because these URL's will be presigned and so can't also use Bearer token
+    if(req.url.includes('s3.') && req.url.includes('amazonaws.com')) {
+      return next.handle(req);
+    }
+
+
     if(this.authenticationService.isLoggedIn && this.authenticationService.user$.getValue()) {
       const bearerToken = this.authenticationService.user$.getValue()?.getBearerToken();
       // Clone the request and replace the original headers with

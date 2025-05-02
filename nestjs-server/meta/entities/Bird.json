@@ -9,13 +9,13 @@
   "permanentDelete": false,
   "attributes": [
     {
+      "type": "Identifier",
+      "visibility": "Hidden",
       "name": "id",
       "label": "Id",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Identifier",
-      "visibility": "Hidden",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -23,13 +23,13 @@
       "rules": []
     },
     {
+      "type": "Text",
+      "visibility": "Optional",
       "name": "name",
       "label": "Name",
       "description": "Name of bird",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
-      "visibility": "Optional",
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
@@ -42,13 +42,13 @@
       ]
     },
     {
+      "type": "Enumeration",
+      "visibility": "Required",
       "name": "sex",
       "label": "Sex",
       "description": "Male, Female, Unknown",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Enumeration",
-      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
@@ -66,13 +66,13 @@
       ]
     },
     {
+      "type": "Date",
+      "visibility": "Visible",
       "name": "lay_date",
       "label": "Lay date",
       "description": "Date egg was layed",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Date",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -85,13 +85,13 @@
       ]
     },
     {
+      "type": "Date",
+      "visibility": "Visible",
       "name": "hatch_date",
       "label": "Hatch date",
       "description": "Date chick was hatched",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Date",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -104,13 +104,13 @@
       ]
     },
     {
+      "type": "Date",
+      "visibility": "Visible",
       "name": "demise_date",
       "label": "Demise date",
       "description": "Date of death",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Date",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -123,13 +123,13 @@
       ]
     },
     {
+      "type": "Enumeration",
+      "visibility": "Visible",
       "name": "status",
       "label": "Status",
       "description": "Status of the bird (alive or otherwise)",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Enumeration",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
@@ -143,13 +143,13 @@
       ]
     },
     {
+      "type": "ManyToOne",
+      "visibility": "Required",
       "name": "species",
       "label": "Species",
       "description": "The species of the bird",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "ManyToOne",
-      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "Species",
@@ -164,13 +164,13 @@
       ]
     },
     {
+      "type": "ManyToOne",
+      "visibility": "Visible",
       "name": "mother",
       "label": "Mother",
       "description": "Mother of the bird",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "ManyToOne",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Bird",
@@ -181,13 +181,13 @@
       "rules": []
     },
     {
+      "type": "ManyToOne",
+      "visibility": "Visible",
       "name": "father",
       "label": "Father",
       "description": "Father of the bird",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "ManyToOne",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Bird",
@@ -198,13 +198,13 @@
       "rules": []
     },
     {
+      "type": "Date",
+      "visibility": "Visible",
       "name": "first_found_date",
       "label": "First found date",
       "description": "Date that the bird was first found in the wild",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Date",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -217,13 +217,13 @@
       ]
     },
     {
+      "type": "Html",
+      "visibility": "Visible",
       "name": "comments",
       "label": "Comments",
       "description": "General comments on the bird",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Html",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "InsensitiveLike",
       "relationshipTarget": "",
@@ -231,13 +231,13 @@
       "rules": []
     },
     {
-      "name": "age_class",
-      "label": "Age class",
-      "description": "Adult, Sub adult, Chick, Egg",
-      "unitOfMeasure": "",
-      "scale": "",
       "type": "Enumeration",
       "visibility": "Visible",
+      "name": "age_class",
+      "label": "Age class",
+      "description": "Adult, Subadult, Chick, Egg",
+      "unitOfMeasure": "",
+      "scale": "",
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
@@ -245,34 +245,20 @@
       "rules": [],
       "enumeration": [
         "Adult",
-        "Sub adult",
+        "Subadult",
+        "Juvenile",
         "Chick",
-        "Egg",
-        "Juvenile"
+        "Egg"
       ]
     },
     {
-      "name": "fate",
-      "label": "Fate",
-      "description": "Code values for how the bird died",
-      "unitOfMeasure": "",
-      "scale": "",
       "type": "Text",
       "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
       "name": "form",
       "label": "Form",
       "description": "The taxa within the Species",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
@@ -280,13 +266,13 @@
       "rules": []
     },
     {
-      "name": "band",
-      "label": "Band",
-      "description": "The latest Band for this available",
-      "unitOfMeasure": "",
-      "scale": "",
       "type": "Text",
       "visibility": "Visible",
+      "name": "band",
+      "label": "Band",
+      "description": "The latest Band for this bird",
+      "unitOfMeasure": "",
+      "scale": "",
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
@@ -299,13 +285,13 @@
       ]
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "microchip",
       "label": "Microchip",
       "description": "The latest Microchip for this bird",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
@@ -318,13 +304,13 @@
       ]
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "wing_tag",
       "label": "Wing tag",
       "description": "The latest Wing Tag for this bird",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
@@ -337,13 +323,13 @@
       ]
     },
     {
+      "type": "OneToMany",
+      "visibility": "Visible",
       "name": "projects",
       "label": "Projects",
       "description": "The various projects this bird has been associated with",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "OneToMany",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "ProjectBird",
@@ -351,13 +337,13 @@
       "rules": []
     },
     {
+      "type": "Enumeration",
+      "visibility": "Visible",
       "name": "data_source",
       "label": "Data source",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Enumeration",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -367,6 +353,20 @@
         "KIMS",
         "SKYRANGER"
       ]
+    },
+    {
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "name": "media_files",
+      "label": "Media files",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "BirdMediaFile",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

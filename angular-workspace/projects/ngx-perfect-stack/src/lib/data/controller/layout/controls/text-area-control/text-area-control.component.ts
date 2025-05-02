@@ -23,6 +23,9 @@ export class TextAreaControlComponent implements OnInit {
   @Input()
   cell: Cell;
 
+  @Input()
+  idSuffix: string;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -30,6 +33,10 @@ export class TextAreaControlComponent implements OnInit {
 
   isReadOnly() {
     return this.mode === 'view' ? true : null;
+  }
+
+  get componentId() : string {
+    return this.idSuffix && this.attribute ? `${this.attribute.name}-${this.idSuffix}` : `${this.attribute.name}`;
   }
 
   getCSSHeight(cell: Cell) {

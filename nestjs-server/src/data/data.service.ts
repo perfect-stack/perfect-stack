@@ -20,6 +20,7 @@ import { RuleService } from './rule/rule.service';
 import { ValidationResultMapController } from '../domain/meta.rule';
 import { EventService } from '../event/event.service';
 import { Transaction } from 'sequelize';
+import {MediaRepositoryService} from "../media/media-repository.service";
 
 @Injectable()
 export class DataService {
@@ -31,6 +32,7 @@ export class DataService {
     protected readonly queryService: QueryService,
     protected readonly ruleService: RuleService,
     protected readonly eventService: EventService,
+    protected readonly mediaRepositoryService: MediaRepositoryService,
   ) {}
 
   validateUuid(value: string) {
@@ -421,6 +423,9 @@ export class DataService {
     relationshipAttribute: MetaAttribute,
     existingChildren: Map<string, any>,
   ) {
+
+    const isChildMediaFile = relationshipAttribute && relationshipAttribute.relationshipTarget && relationshipAttribute.relationshipTarget.endsWith("MediaFile");
+
     // for each existing child, if it doesn't exist in the new parent's list of child then we now need to delete it from the database and the map
     const incomingChildList = parentEntity[relationshipAttribute.name] as any[];
     for (const childKey of existingChildren.keys()) {
@@ -429,6 +434,11 @@ export class DataService {
         const existingChild = existingChildren.get(childKey);
         existingChildren.delete(childKey);
         existingChild.destroy();
+
+        if(isChildMediaFile) {
+          this.logger.warn(`Delete media file: ${existingChild['path']}`);
+          await this.mediaRepositoryService.deleteFile(existingChild['path']);
+        }
       }
     }
   }

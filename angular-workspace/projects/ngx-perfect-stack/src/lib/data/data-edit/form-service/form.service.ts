@@ -305,7 +305,7 @@ export class FormService {
     return cells;
   }
 
-  private toCellAttribute(cell: Cell, metaEntity: MetaEntity) {
+  public toCellAttribute(cell: Cell, metaEntity: MetaEntity) {
 
     const cellAttribute: CellAttribute = {
       ...cell,

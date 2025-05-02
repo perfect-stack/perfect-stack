@@ -12,6 +12,7 @@ export class OneToManyChoiceDialogComponent implements OnInit {
   buttonList: ButtonDefinition[] = [
     {name: 'Table', icon: 'table', enabled: true},
     {name: 'Links', icon: 'link', enabled: true},
+    {name: 'Media', icon: 'image', enabled: true},
   ]
 
   controlType: string | null = null;

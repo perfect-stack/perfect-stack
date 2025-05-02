@@ -5,6 +5,7 @@ export enum ComponentType {
   DatePicker = 'DatePicker',
   FlexibleDateTime = 'FlexibleDateTime',
   LinkList = 'LinkList',
+  Media = 'Media',
   ManyToOnePlain = 'ManyToOnePlain',
   ManyToOneLink = 'ManyToOneLink',
   TextArea = 'TextArea',

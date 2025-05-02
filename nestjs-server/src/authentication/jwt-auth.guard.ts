@@ -1,6 +1,6 @@
 import {
   ExecutionContext,
-  Injectable,
+  Injectable, Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -15,6 +15,9 @@ import { User } from './user';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
+
+  private readonly logger = new Logger(JwtAuthGuard.name);
+
   constructor(
     protected readonly reflector: Reflector,
     protected readonly configService: ConfigService,
@@ -25,15 +28,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const contextName = this.getContextName(context);
-    console.log(`\nGUARD: STARTED - ${contextName}`);
+    this.logger.debug(`GUARD: STARTED - ${contextName}`);
 
     if (this.configService.get('AUTH_DISABLE_FOR_DEV') === 'true') {
-      console.log('GUARD: Auth Disabled');
+      this.logger.debug('GUARD: Auth Disabled');
       return true;
     }
 
     if (this.isPublic(context)) {
-      console.log('GUARD: isPublic');
+      this.logger.debug('GUARD: isPublic');
       return true;
     }
 
@@ -45,7 +48,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const subject = this.getSubject(context);
 
     if (actionPermit && subject) {
-      console.log(
+      this.logger.debug(
         `GUARD: Permission Check: ${contextName}: ACTION_PERMIT = ${actionPermit}.${subject}`,
       );
 
@@ -67,7 +70,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         );
       }
     } else {
-      console.log(
+      this.logger.debug(
         `GUARD: Permission Check: UNABLE to find action.subject for ${contextName}`,
       );
     }
@@ -101,10 +104,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (user) {
       userGroups = user.groups;
       if (userGroups) {
-        console.log(`GUARD: Found user groups: ${JSON.stringify(userGroups)}`);
+        this.logger.debug(`GUARD: Found user groups: ${JSON.stringify(userGroups)}`);
       }
     } else {
-      console.log(`GUARD: NO USER FOUND`);
+      this.logger.debug(`GUARD: NO USER FOUND`);
       throw new UnauthorizedException(
         `GUARD: NO USER FOUND. ${this.getContextName(context)}`,
       );
@@ -156,7 +159,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const subject = this.evaluatePath(subjectKey.split('.'), target);
 
     if (!subject) {
-      console.log(
+      this.logger.debug(
         `!! UNABLE: to find subjectKey ${subjectKey} for ${this.getContextName(
           context,
         )}`,
@@ -174,7 +177,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest(err, user, info, context, status): any {
-    console.log(`GUARD: handle request`);
+    this.logger.debug(`GUARD: handle request`);
 
     // if (err || !user) {
     //   throw err || new UnauthorizedException();

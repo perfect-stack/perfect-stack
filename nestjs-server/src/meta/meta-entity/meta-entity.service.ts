@@ -266,11 +266,9 @@ export class MetaEntityService {
       }
     }
 
-    // Now that the models are fully defined ask Sequelize to sync the model schema with the database
+    // Now that the models are fully defined, ask Sequelize to sync the model schema with the database
     if (alterDatabase) {
-      for (const nextModel of entityModelMap.values()) {
-        await nextModel.sync({ alter: true });
-      }
+      await this.ormService.sequelize.sync({alter: true});
     }
   }
 
