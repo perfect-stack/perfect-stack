@@ -3,7 +3,7 @@
   <!--Cells: {{cells|json}}-->
 
   <!-- If template has a binding to the form -->
-  <ng-container *ngIf="template && template.binding">
+  <ng-container *ngIf="(template && template.binding) || (template && formGroup)">
     <div [formGroup]="formGroup">
       <div class="row" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
         <div [class]="getCSS(cell)" *ngFor="let cell of row">

@@ -17,6 +17,10 @@
       "subject": "Project"
     },
     {
+      "action": "Edit",
+      "subject": "Migrate"
+    },
+    {
       "action": "Delete",
       "subject": "Meta"
     },

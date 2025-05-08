@@ -239,6 +239,7 @@ export class MetaEntityService {
         {
           freezeTableName: true,
           timestamps: timestamps,
+          // underscored: true,
         },
       );
 
