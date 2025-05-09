@@ -1,6 +1,6 @@
 {
   "name": "@perfect-stack/nestjs-server",
-  "version": "0.0.219",
+  "version": "0.0.220",
   "description": "",
   "author": "Richard Perfect",
   "license": "MIT",
@@ -45,6 +45,7 @@
     "jwks-rsa": "^2.1.4",
     "knex": "^2.1.0",
     "mime-types": "^3.0.1",
+    "nest-commander": "^3.17.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.1",

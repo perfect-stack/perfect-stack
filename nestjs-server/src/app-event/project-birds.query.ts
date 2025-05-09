@@ -61,7 +61,7 @@ export class ProjectBirdsQuery implements CustomQuery {
     const from = (select) => {
       select = select
         .from('Bird')
-        .leftOuterJoin('ProjectBird', 'ProjectBird.BirdId', 'Bird.id')
+        .leftOuterJoin('ProjectBird', 'ProjectBird.Bird_Id', 'Bird.id')
         .leftOuterJoin('Species', 'Species.id', 'Bird.species_id');
 
       select = select.where('ProjectBird.project_id', '=', projectId);

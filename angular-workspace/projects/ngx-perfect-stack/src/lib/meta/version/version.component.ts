@@ -67,4 +67,10 @@ export class VersionComponent implements OnInit {
       this.conversionRemainingCount = summary.remainingCount;
     });
   }
+
+  onMigrateData() {
+    this.http.post(`${this.stackConfig.apiUrl}/migrate/data`, null).subscribe((a: any) => {
+      this.toastService.showSuccess('Migration complete');
+    });
+  }
 }
