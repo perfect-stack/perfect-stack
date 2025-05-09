@@ -2,16 +2,14 @@ import * as csv from 'fast-csv';
 import * as uuid from 'uuid';
 import {Pool, PoolClient} from 'pg';
 import {Injectable} from "@nestjs/common";
-import {LocalDateTime} from "@js-joda/core";
-import {AttributeType, MetaEntity} from "../domain/meta.entity";
+import {AttributeType, MetaAttribute, MetaEntity} from "../domain/meta.entity";
 import {MetaEntityService} from "../meta/meta-entity/meta-entity.service";
 import * as path from "node:path";
 import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
-import {DatabaseSettings} from "../orm/database.providers";
 
 // --- Configuration ---
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration-2025-05-07';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-09';
 const BATCH_SIZE = 100; // Number of rows to insert in a single batch query
 
 
@@ -84,15 +82,10 @@ export class MigrateService {
         tableName: string,
         rowProcessor: RowProcessor
     ): Promise<number> {
-        let csvHeadersInternal: string[] | undefined;
-        let dbColumnNamesForInsert: string[] | undefined; // Determined by the first successfully processed row
-
         return new Promise(async (resolve, reject) => {
-            const client = await dbPool.connect();
-            let rowsBatch: any[][] = [];
-            let processedRowCount = 0;
-
             console.log(`[${tableName}] Starting processing for ${filePath}`);
+
+            const client = await dbPool.connect();
             try {
                 try {
                     console.log(`[${tableName}] Truncating table before import...`);
@@ -104,6 +97,15 @@ export class MigrateService {
                     reject(truncateError);
                     return; // Stop processing this file
                 }
+
+                // Disable FK checks and other user triggers for this session's operations
+                await client.query(`SET session_replication_role = 'replica';`);
+                console.log(`[${tableName}] Session replication role set to 'replica' to bypass triggers.`);
+
+                let csvHeadersInternal: string[] | undefined;
+                let dbColumnNamesForInsert: string[] | undefined; // Determined by the first successfully processed row
+                let rowsBatch: any[][] = [];
+                let processedRowCount = 0;
 
                 await client.query('BEGIN');
 
@@ -231,29 +233,33 @@ export class MigrateService {
 
             const filesToProcess: FileProcessingConfig[] = [
                 {
-                    fileName: 'mgn_kims__location_type_0_0_0.csv',
+                    fileName: 'MGN_KIMS__LOCATION_TYPE_.csv',
                     tableName: 'LocationType',
                 },
                 {
-                    fileName: 'mgn_kims__organisation_0_0_0.csv',
+                    fileName: 'MGN_KIMS__ORGANISATION_.csv',
                     tableName: 'Organisation',
                 },
                 {
-                    fileName: 'mgn_kims__species_0_0_0.csv',
+                    fileName: 'MGN_KIMS__SPECIES_.csv',
                     tableName: 'Species',
                 },
                 {
-                    fileName: 'mgn_kims__person_0_0_0.csv',
+                    fileName: 'MGN_KIMS__PERSON_.csv',
                     tableName: 'Person',
                 },
                 {
-                    fileName: 'mgn_kims__location_0_0_0.csv',
+                    fileName: 'MGN_KIMS__LOCATION_.csv',
                     tableName: 'Location',
                 },
-                // {
-                //     fileName: 'mgn_kims__bird_0_0_0.csv',
-                //     tableName: 'Bird',
-                // },
+                {
+                    fileName: 'MGN_KIMS__BIRD_.csv',
+                    tableName: 'Bird',
+                },
+                {
+                    fileName: 'MGN_KIMS__EVENT_.csv',
+                    tableName: 'Event',
+                },
             ];
 
             for(const config of filesToProcess) {
@@ -323,6 +329,25 @@ class MetaEntityRowProcessor {
 
     constructor(private readonly metaEntity: MetaEntity) {}
 
+    private processValue(attribute: MetaAttribute, value: string): any {
+        // If value is empty string then convert to a null
+        if(value === '') {
+            value = null;
+        }
+
+        if(attribute.type === AttributeType.Identifier) {
+            if(value === null || !uuid.validate(value)) {
+                const fullAttributeName = this.metaEntity.name + "." + attribute.name;
+                throw new Error("Unable to convert value of " + value + " to a valid UUID for " + fullAttributeName );
+            }
+        }
+
+        // If attribute is numeric convert to a number...
+        // If attribute is a date convert to a date...
+
+        return value;
+    }
+
     public readonly processRow: RowProcessor = (
         csvRow: { [key: string]: string },
         csvHeaders: string[]
@@ -339,9 +364,11 @@ class MetaEntityRowProcessor {
         for (const attribute of this.metaEntity.attributes) {
 
             const ignoreForNow = [
-                "Location.location_name",
-                "Location.description",
-                "Location.location_type",
+                // "Location.location_name",
+                // "Location.description",
+                // "Location.location_type",
+                "Event.activities",
+                "Event.end_date_time"
             ];
 
             const fullAttributeName = this.metaEntity.name + "." + attribute.name;
@@ -350,44 +377,35 @@ class MetaEntityRowProcessor {
                 continue;
             }
 
-            let csvColumnName = attribute.name.toUpperCase();
-            if (!(csvColumnName in csvRow)) {
-                csvColumnName = csvColumnName + '_ID';
+            let csvColName = attribute.name.toUpperCase();
+            if (!(csvColName in csvRow)) {
+                csvColName = csvColName + '_ID';
 
-                if (!(csvColumnName in csvRow)) {
-                    throw new Error("Unable to find column for csvColumnName of " + csvColumnName + " and " + fullAttributeName );
+                if (!(csvColName in csvRow)) {
+                    throw new Error("Unable to find column for csvColName of " + csvColName + " and " + fullAttributeName );
                 }
             }
 
-            columns.push(csvColumnName.toLowerCase());
+            const dbColName = csvColName.toLowerCase();
+            const csvValue = csvRow[csvColName];
 
-            // Convert Values
-            let value = csvRow[csvColumnName];
+            const dbValue = this.processValue(attribute, csvValue);
 
-            // If value is empty string then convert to a null
-            if(value === '') {
-                value = null;
-            }
-
-            if(attribute.type === AttributeType.Identifier) {
-                if(value === null || !uuid.validate(value)) {
-                    throw new Error("Unable to convert value of " + value + " to a valid UUID for " + fullAttributeName );
-                }
-            }
-
-            // If attribute is numeric convert to a number...
-            // If attribute is a date convert to a date...
-
-            values.push(value);
+            columns.push(dbColName);
+            values.push(dbValue);
         }
 
+        if(this.metaEntity.timestamps) {
+            columns.push('created_at');
+            columns.push('updated_at');
+            values.push(csvRow['CREATED_AT']);
+            values.push(csvRow['UPDATED_AT']);
+        }
 
-        const result: { columns: string[]; values: any[] } | null =  {
-            columns: [...columns, 'created_at', 'updated_at'],
-            values: [...values, LocalDateTime.now().toString(), LocalDateTime.now().toString()],
+        return {
+            columns: [...columns],
+            values: [...values],
         };
-
-        return result;
     };
 }
 
