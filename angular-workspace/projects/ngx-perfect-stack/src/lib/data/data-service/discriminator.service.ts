@@ -80,7 +80,7 @@ export class DiscriminatorService {
     const discriminator = attribute.discriminator;
     if(discriminator && discriminator.discriminatorType) {
 
-      return this.dataService.findAll(attribute.discriminator.discriminatorType).pipe(
+      return this.dataService.findAll(attribute.discriminator.discriminatorType, '', 1, 1000).pipe(
         map(response => {
 
           const discriminatorMap = new Map<string, DiscriminatorMapping>();

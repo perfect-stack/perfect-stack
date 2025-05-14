@@ -23,6 +23,7 @@ import { EventDataListener } from './app-event/event.data-listener';
 import { MapService } from './map/map.service';
 import {BirdDataListener} from "./app-event/bird.data-listener";
 import {MediaRepositoryService} from "./media/media-repository.service";
+import {DiscriminatorService} from "./data/discriminator.service";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -37,6 +38,7 @@ export class AppService implements OnApplicationBootstrap {
     protected readonly customQueryService: CustomQueryService,
     protected readonly customRuleService: CustomRuleService,
     protected readonly knexService: KnexService,
+    protected readonly discriminatorService: DiscriminatorService,
     protected readonly mediaRepositoryService: MediaRepositoryService,
     protected readonly eventService: EventService,
     protected readonly settingsService: SettingsService,
@@ -69,7 +71,7 @@ export class AppService implements OnApplicationBootstrap {
   private addEventSearchCriteriaQuery() {
     this.customQueryService.addCustomQuery(
       'EventSearchByCriteria',
-      new EventSearchCriteriaQuery(this.knexService, this.metaEntityService),
+      new EventSearchCriteriaQuery(this.knexService, this.metaEntityService, this.discriminatorService),
     );
   }
 

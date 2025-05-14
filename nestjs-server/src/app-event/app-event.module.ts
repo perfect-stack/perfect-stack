@@ -8,6 +8,7 @@ import { MapModule } from '../map/map.module';
 import { CoordinateConverterController } from './coordinate-converter.controller';
 import { CoordinateConverterService } from './coordinate-converter.service';
 import { SettingsModule } from '../settings/settings.module';
+import {DataModule} from "../data/data.module";
 
 @Module({
   controllers: [CoordinateConverterController],
@@ -15,6 +16,7 @@ import { SettingsModule } from '../settings/settings.module';
     KnexModule,
     EventModule,
     MapModule,
+    DataModule,
     MetaEntityModule,
     SettingsModule,
   ],

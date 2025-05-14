@@ -4,6 +4,7 @@ import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {UntypedFormBuilder} from '@angular/forms';
 import {ButtonDefinition} from '../../../../../utils/tile-button-panel/tile-button-panel.component';
 import {MetaEntityService} from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
+import {DiscriminatorService} from "../../../../data-service/discriminator.service";
 
 @Component({
   selector: 'lib-card-item-dialog',
@@ -24,20 +25,34 @@ export class CardItemDialogComponent implements OnInit {
 
   constructor(protected readonly fb: UntypedFormBuilder,
               protected readonly metaEntityService: MetaEntityService,
+              protected readonly discriminatorService: DiscriminatorService,
               public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
     this.metaEntityService.metaEntityMap$.subscribe((metaEntityMap) => {
-      if(this.metaAttribute) {
-        for(const entityMapping of this.metaAttribute.discriminator.entityMappingList) {
-          const metaEntity = metaEntityMap.get(entityMapping.metaEntityName);
-          this.buttonList.push({
-            name: entityMapping.discriminatorValue,
-            icon: metaEntity ? metaEntity.icon : 'error',
-            enabled: this.disabledList.indexOf(entityMapping.discriminatorValue) < 0
-          });
+      this.discriminatorService.discriminatorMap$.subscribe((discriminatorMap) => {
+        if(this.metaAttribute) {
+          const discriminatorMapping = discriminatorMap.get(this.metaAttribute.name);
+
+          console.log('Check disabled: ', discriminatorMapping, this.disabledList);
+          if(discriminatorMapping) {
+            for(const entityMapping of this.metaAttribute.discriminator.entityMappingList) {
+              const metaEntity = metaEntityMap.get(entityMapping.metaEntityName);
+              const discriminatorItem = discriminatorMapping.get(entityMapping.discriminatorValue);
+              console.log(' - discriminatorItem: ', discriminatorItem);
+
+              if(discriminatorItem) {
+                this.buttonList.push({
+                  name: entityMapping.discriminatorValue,
+                  icon: metaEntity ? metaEntity.icon : 'error',
+                  //enabled: this.disabledList.indexOf(entityMapping.discriminatorValue) < 0
+                  enabled: this.disabledList.indexOf(discriminatorItem.discriminatorId) < 0
+                });
+              }
+            }
+          }
         }
-      }
+      });
     });
   }
 

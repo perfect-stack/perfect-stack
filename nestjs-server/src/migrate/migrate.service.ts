@@ -9,7 +9,7 @@ import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
 // --- Configuration ---
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-13.1';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-15.1';
 const BATCH_SIZE = 100; // Number of rows to insert in a single batch query
 
 const filesToProcess: FileProcessingConfig[] = [
@@ -57,6 +57,14 @@ const filesToProcess: FileProcessingConfig[] = [
         fileName: 'MGN_KIMS__BANDING_ACTIVITY_.csv',
         tableName: 'BandingActivity',
     },
+    {
+        fileName: 'MGN_KIMS__MEASUREMENT_ACTIVITY_.csv',
+        tableName: 'MeasurementActivity',
+    },
+    {
+        fileName: 'MGN_KIMS__MICROCHIP_ACTIVITY_.csv',
+        tableName: 'MicrochipActivity',
+    },
 ];
 
 const ignoreForNow = [
@@ -64,6 +72,10 @@ const ignoreForNow = [
     "Bird.FATE",
     "Event.activities",
     "EventObserver.INSTRUMENT_ID",
+    "MeasurementActivity.HEAD_CIRCUMFERENCE",
+    "MeasurementActivity.PLUMAGE_STATE",
+    "MeasurementActivity.CROWN_LENGTH",
+    "MeasurementActivity.CERE_AND_EYELID_COLOUR",
 ];
 
 

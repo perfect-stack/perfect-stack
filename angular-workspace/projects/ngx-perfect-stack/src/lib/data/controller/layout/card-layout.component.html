@@ -1,10 +1,8 @@
-<br>CARD-LAYOUT
 <ng-container *ngIf="metaEntityMap$ | async as metaEntityMap">
   <ng-container *ngIf="metaPageMap$ | async as metaPageMap">
     <ng-container *ngIf="discriminatorMap$ | async as discriminatorMap">
 
       <ng-container *ngIf="attributes.length > 0 || mode === 'edit'">
-        <br>Card Items: {{attributes.controls.length}}
         <div class="mt-2" *ngFor="let nextItem of attributes.controls; let i=index">
 
           <div class="d-flex justify-content-between">
