@@ -61,7 +61,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         // ),
 
         knex.raw(
-            "concat(at_mea.name, ',', at_baa.name, ',', at_mia.name, ',') as activities",
+            "concat(at_mea.name, ',', at_baa.name, ',', at_mia.name, ',', at_wea.name, ',', at_wei.name) as activities",
         ),
       );
 
@@ -76,7 +76,6 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         .leftOuterJoin('Bird', 'Bird.id', 'Event.bird_id')
         .leftOuterJoin('Species', 'Species.id', 'Event.species_id')
 //        .leftOuterJoin('HealthActivity', 'HealthActivity.event_id', 'Event.id')
-//        .leftOuterJoin('WeightActivity', 'WeightActivity.event_id', 'Event.id')
         .leftOuterJoin('MeasurementActivity as mea', 'mea.event_id', 'Event.id')
         .leftOuterJoin('ActivityType as     at_mea', 'at_mea.id', 'mea.activity_type_id')
         .leftOuterJoin('BandingActivity as baa', 'baa.event_id', 'Event.id')
@@ -85,7 +84,12 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         .leftOuterJoin('ActivityType as   at_mia', 'at_mia.id', 'mia.activity_type_id')
         // .leftOuterJoin('WingTagActivity', 'WingTagActivity.event_id', 'Event.id')
         // .leftOuterJoin('CallCountActivity', 'CallCountActivity.event_id','Event.id')
-        // .leftOuterJoin('WeatherActivity', 'WeatherActivity.event_id','Event.id');
+        .leftOuterJoin('WeatherActivity as wea', 'wea.event_id','Event.id')
+        .leftOuterJoin('ActivityType as at_wea', 'at_wea.id', 'wea.activity_type_id')
+        .leftOuterJoin('WeightActivity as wei', 'wei.event_id', 'Event.id')
+        .leftOuterJoin('ActivityType as at_wei', 'at_wei.id', 'wei.activity_type_id')
+
+
 
       const comparisonOperatorMap = KnexComparisonOperatorMap();
 
@@ -100,6 +104,9 @@ export class EventSearchCriteriaQuery implements CustomQuery {
           activityTypeMap.set('Banding', 'at_baa');
           activityTypeMap.set('Measurement', 'at_mea');
           activityTypeMap.set('Microchip', 'at_mia');
+          activityTypeMap.set('Weather', 'at_wea');
+          activityTypeMap.set('Weight', 'at_wei');
+
 
           select = select.where(
             activityTypeMap.get(value) + ".name",

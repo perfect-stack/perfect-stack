@@ -4,7 +4,7 @@
   "icon": "cloudy_snowing",
   "type": "Database",
   "rootNode": false,
-  "timestamps": false,
+  "timestamps": true,
   "cacheExpiryInSecs": "",
   "permanentDelete": false,
   "attributes": [
@@ -28,12 +28,14 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "ManyToOne",
       "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
+      "comparisonField": "name",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "ActivityType",
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": []
     },
     {

@@ -65,6 +65,14 @@ const filesToProcess: FileProcessingConfig[] = [
         fileName: 'MGN_KIMS__MICROCHIP_ACTIVITY_.csv',
         tableName: 'MicrochipActivity',
     },
+    {
+        fileName: 'MGN_KIMS__WEATHER_ACTIVITY_.csv',
+        tableName: 'WeatherActivity',
+    },
+    {
+        fileName: 'MGN_KIMS__WEIGHT_ACTIVITY_.csv',
+        tableName: 'WeightActivity',
+    },
 ];
 
 const ignoreForNow = [
