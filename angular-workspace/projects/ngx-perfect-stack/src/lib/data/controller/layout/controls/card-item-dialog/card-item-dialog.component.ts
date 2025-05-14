@@ -38,9 +38,8 @@ export class CardItemDialogComponent implements OnInit {
           });
         }
       }
-    })
+    });
   }
-
 
   onButtonClicked(itemsSelected: string[]) {
     this.itemsSelected = itemsSelected;

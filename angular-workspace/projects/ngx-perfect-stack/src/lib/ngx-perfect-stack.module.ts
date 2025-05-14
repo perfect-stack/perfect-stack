@@ -141,6 +141,7 @@ import { SelectMultipleControlComponent } from './data/controller/layout/control
 import { EnvironmentBannerComponent } from './menu-bar/environment-banner/environment-banner.component';
 import { MediaControlComponent } from './data/controller/layout/controls/media-control/media-control.component';
 import { UploadDialogComponent } from './data/controller/layout/controls/media-control/upload-dialog/upload-dialog.component';
+import {DiscriminatorService} from "./data/data-service/discriminator.service";
 
 export const STACK_ROUTES: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -287,6 +288,7 @@ export const STACK_ROUTES: Routes = [
   providers: [
     AuthenticationService,
     ClientConfigService,
+    DiscriminatorService,
     MetaRoleService,
     MetaMenuService,
     MetaPageService,

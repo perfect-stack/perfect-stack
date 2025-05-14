@@ -9,8 +9,63 @@ import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
 // --- Configuration ---
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-09';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-13.1';
 const BATCH_SIZE = 100; // Number of rows to insert in a single batch query
+
+const filesToProcess: FileProcessingConfig[] = [
+    {
+        fileName: 'MGN_KIMS__LOCATION_TYPE_.csv',
+        tableName: 'LocationType',
+    },
+    {
+        fileName: 'MGN_KIMS__ORGANISATION_.csv',
+        tableName: 'Organisation',
+    },
+    {
+        fileName: 'MGN_KIMS__SPECIES_.csv',
+        tableName: 'Species',
+    },
+    {
+        fileName: 'MGN_KIMS__PERSON_.csv',
+        tableName: 'Person',
+    },
+    {
+        fileName: 'MGN_KIMS__LOCATION_.csv',
+        tableName: 'Location',
+    },
+    {
+        fileName: 'MGN_KIMS__BIRD_.csv',
+        tableName: 'Bird',
+    },
+    {
+        fileName: 'MGN_KIMS__EVENT_.csv',
+        tableName: 'Event',
+    },
+    {
+        fileName: 'MGN_KIMS__OBSERVER_ROLE_.csv',
+        tableName: 'ObserverRole',
+    },
+    {
+        fileName: 'MGN_KIMS__EVENT_OBSERVER_.csv',
+        tableName: 'EventObserver',
+    },
+    {
+        fileName: 'MGN_KIMS__ACTIVITY_TYPE_.csv',
+        tableName: 'ActivityType',
+    },
+    {
+        fileName: 'MGN_KIMS__BANDING_ACTIVITY_.csv',
+        tableName: 'BandingActivity',
+    },
+];
+
+const ignoreForNow = [
+    "Location.REGION",
+    "Bird.FATE",
+    "Event.activities",
+    "EventObserver.INSTRUMENT_ID",
+];
+
 
 
 
@@ -231,37 +286,6 @@ export class MigrateService {
         try {
             console.log('Starting CSV data import process...');
 
-            const filesToProcess: FileProcessingConfig[] = [
-                {
-                    fileName: 'MGN_KIMS__LOCATION_TYPE_.csv',
-                    tableName: 'LocationType',
-                },
-                {
-                    fileName: 'MGN_KIMS__ORGANISATION_.csv',
-                    tableName: 'Organisation',
-                },
-                {
-                    fileName: 'MGN_KIMS__SPECIES_.csv',
-                    tableName: 'Species',
-                },
-                {
-                    fileName: 'MGN_KIMS__PERSON_.csv',
-                    tableName: 'Person',
-                },
-                {
-                    fileName: 'MGN_KIMS__LOCATION_.csv',
-                    tableName: 'Location',
-                },
-                {
-                    fileName: 'MGN_KIMS__BIRD_.csv',
-                    tableName: 'Bird',
-                },
-                {
-                    fileName: 'MGN_KIMS__EVENT_.csv',
-                    tableName: 'Event',
-                },
-            ];
-
             for(const config of filesToProcess) {
                 const metaEntity = await this.metaEntityService.findOne(config.tableName);
                 if(metaEntity) {
@@ -361,15 +385,20 @@ class MetaEntityRowProcessor {
         const columns: string[] = [];
         const values: any[] = [];
 
-        for (const attribute of this.metaEntity.attributes) {
+        // create a map of the column names from csvRow so that can track which ones we don't find
+        let csvRowKeys = Object.keys(csvRow);
 
-            const ignoreForNow = [
-                // "Location.location_name",
-                // "Location.description",
-                // "Location.location_type",
-                "Event.activities",
-                "Event.end_date_time"
-            ];
+        ignoreForNow.forEach(ignore => {
+            const tokens = ignore.split('.');
+            const entityName = tokens[0];
+            const csvColName = tokens[1].toUpperCase(); // if we ignore the attribute then need to remove it from the CSV col check too
+            if(this.metaEntity.name === entityName) {
+                csvRowKeys = csvRowKeys.filter(key => key !== csvColName);
+            }
+        });
+
+
+        for (const attribute of this.metaEntity.attributes) {
 
             const fullAttributeName = this.metaEntity.name + "." + attribute.name;
             const isRelation = attribute.type === AttributeType.OneToMany;
@@ -386,10 +415,10 @@ class MetaEntityRowProcessor {
                 }
             }
 
-            const dbColName = csvColName.toLowerCase();
             const csvValue = csvRow[csvColName];
-
+            csvRowKeys = csvRowKeys.filter(key => key !== csvColName);
             const dbValue = this.processValue(attribute, csvValue);
+            const dbColName = csvColName.toLowerCase();
 
             columns.push(dbColName);
             values.push(dbValue);
@@ -398,8 +427,41 @@ class MetaEntityRowProcessor {
         if(this.metaEntity.timestamps) {
             columns.push('created_at');
             columns.push('updated_at');
-            values.push(csvRow['CREATED_AT']);
-            values.push(csvRow['UPDATED_AT']);
+
+            const createdAt = csvRow['CREATED_AT'];
+            const updatedAt = csvRow['UPDATED_AT'];
+
+            if(createdAt === null || createdAt === '') {
+                throw new Error("In file for " + this.metaEntity.name + " Unable to find CREATED_AT value for " + this.metaEntity.name + " at row; " + JSON.stringify(csvRow) );
+            }
+
+            if(updatedAt === null || updatedAt === '') {
+                throw new Error("In file for " + this.metaEntity.name + " Unable to find UPDATED_AT value for " + this.metaEntity.name + " at row; " + JSON.stringify(csvRow) );
+            }
+
+            values.push(createdAt);
+            values.push(updatedAt);
+
+            csvRowKeys = csvRowKeys.filter(key => key !== 'CREATED_AT');
+            csvRowKeys = csvRowKeys.filter(key => key !== 'UPDATED_AT');
+        }
+
+        // Any leftover CSV column names are probably FK for parents of this child (e.g EVENT_ID of EVENT_OBSERVER)
+        // But let's check that and only process them if they end in "_ID" and we can't find the meta entity for the name
+        for(const csvColName of csvRowKeys) {
+            const idSuffix = "_ID";
+            if(csvColName.endsWith(idSuffix)) {
+                const entityName = csvColName.substring(0, csvColName.length - idSuffix.length);
+                if(["EVENT"].includes(entityName)) {
+                    columns.push(csvColName.toLowerCase());
+                    values.push(csvRow[csvColName]);
+                    csvRowKeys = csvRowKeys.filter(key => key !== csvColName);
+                }
+            }
+        }
+
+        if(csvRowKeys.length > 0) {
+            throw new Error("Unable to find attributes for one or more columns: " + csvRowKeys.join(', ') + " of entity " + this.metaEntity.name );
         }
 
         return {

@@ -28,7 +28,7 @@ import {
 import {AttributeType, MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CardItemDialogComponent} from './controls/card-item-dialog/card-item-dialog.component';
-import {DataService} from '../../data-service/data.service';
+import {DiscriminatorMapping, DiscriminatorService} from '../../data-service/discriminator.service';
 import {DebugService} from '../../../utils/debug/debug.service';
 import {Router} from '@angular/router';
 import {FormGroupService} from '../../data-edit/form-service/form-group.service';
@@ -282,11 +282,6 @@ export class TableLayoutComponent implements OnInit {
   }
 }
 
-export interface CardItem {
-  discriminatorValue: string;
-  metaEntityName: string;
-  metaPageName: string;
-}
 
 @Component({
   selector: 'lib-card-layout',
@@ -316,13 +311,12 @@ export class CardLayoutComponent implements OnInit {
 
   metaEntityMap$: Observable<Map<string, MetaEntity>>;
   metaPageMap$: Observable<Map<string, MetaPage>>;
-
-  cardItemMap = new Map<string, CardItem>();
+  discriminatorMap$ = this.discriminatorService.discriminatorMap$;
 
   constructor(private modalService: NgbModal,
               private metaEntityService: MetaEntityService,
               private metaPageService: MetaPageService,
-              private dataService: DataService,
+              private discriminatorService: DiscriminatorService,
               private fb: UntypedFormBuilder,
               private formGroupService: FormGroupService) {}
 
@@ -333,87 +327,73 @@ export class CardLayoutComponent implements OnInit {
 
     this.metaEntityMap$ = this.metaEntityService.metaEntityMap$;
     this.metaPageMap$ = this.metaPageService.metaPageMap$;
-
-    // TODO: make this more dynamic and allow the user to define it themselves
-    this.cardItemMap.set('Health', {
-      discriminatorValue: 'Health',
-      metaEntityName: 'HealthActivity',
-      metaPageName: 'HealthActivity.view_edit'
-    });
-
-    this.cardItemMap.set('Measurement', {
-      discriminatorValue: 'Measurement',
-      metaEntityName: 'MeasurementActivity',
-      metaPageName: 'MeasurementActivity.view_edit'
-    });
-
-    this.cardItemMap.set('Weight', {
-      discriminatorValue: 'Weight',
-      metaEntityName: 'WeightActivity',
-      metaPageName: 'WeightActivity.view_edit'
-    });
-
-    this.cardItemMap.set('Banding', {
-      discriminatorValue: 'Banding',
-      metaEntityName: 'BandingActivity',
-      metaPageName: 'BandingActivity.view_edit'
-    });
-
-    this.cardItemMap.set('Microchip', {
-      discriminatorValue: 'Microchip',
-      metaEntityName: 'MicrochipActivity',
-      metaPageName: 'MicrochipActivity.view_edit'
-    });
-
-    this.cardItemMap.set('Wing tag', {
-      discriminatorValue: 'Wing tag',
-      metaEntityName: 'WingTagActivity',
-      metaPageName: 'WingTagActivity.view_edit'
-    });
-
-    this.cardItemMap.set('Call count', {
-      discriminatorValue: 'Call count',
-      metaEntityName: 'CallCountActivity',
-      metaPageName: 'CallCountActivity.view_edit'
-    });
-
-    this.cardItemMap.set('Weather', {
-      discriminatorValue: 'Weather',
-      metaEntityName: 'WeatherActivity',
-      metaPageName: 'WeatherActivity.view_edit'
-    });
+    this.discriminatorMap$ = this.discriminatorService.discriminatorMap$;
   }
 
   get attributes() {
     return this.formGroup.get(this.relationshipProperty) as FormArrayWithAttribute;
   }
 
+  get attributeDiscriminator() {
+    const attribute = this.attributes.attribute;
+    if(attribute) {
+      const discriminator = attribute.discriminator;
+      if (discriminator) {
+        return discriminator;
+      }
+      else {
+        throw new Error(`No discriminator defined for attribute ${attribute.name}`);
+      }
+    }
+    else {
+      throw new Error(`No attribute found`);
+    }
+  }
+
   getFormGroupForRow(rowIdx: number) {
     return this.attributes.at(rowIdx) as UntypedFormGroup;
   }
 
-  getCardItem(rowIdx: number) {
-    //const formControlWithAttribute = (this.getFormGroupForRow(rowIdx) as unknown) as FormControlWithAttribute;
-    //const item = formControlWithAttribute.value;
-
+  getCardItem(rowIdx: number, discriminatorMap: Map<string, Map<string, DiscriminatorMapping>>) {
     const attribute = this.attributes.attribute;
     if(attribute) {
       const discriminator = attribute.discriminator;
       if(discriminator) {
-        //const discriminatorValue = item[attribute.discriminator.discriminatorName];
-        const discriminatorValue = this.getFormGroupForRow(rowIdx).controls[discriminator.discriminatorName].value
-
-        if(discriminatorValue) {
-          const cardItem = this.cardItemMap.get(discriminatorValue);
-          if(cardItem) {
-            return cardItem;
+        const formGroup = this.getFormGroupForRow(rowIdx);
+        if(formGroup) {
+          const discriminatorControl = formGroup.controls[discriminator.discriminatorName + '_id'];
+          if(discriminatorControl) {
+            const discriminatorValue = discriminatorControl.value
+            if (discriminatorValue) {
+              const discriminator = discriminatorMap.get(attribute.name);
+              if(discriminator) {
+                const discriminatorMapping = discriminator.get(discriminatorValue);
+                if(discriminatorMapping) {
+                  return {
+                    discriminatorId: discriminatorMapping.discriminatorId,
+                    discriminatorValue: discriminatorValue,
+                    metaEntityName: discriminatorMapping.metaEntityName,
+                    metaPageName: discriminatorMapping.metaPageName
+                  }
+                }
+                else {
+                  throw new Error(`Unable to find discriminatorMapping for rowIdx ${rowIdx}, discriminatorValue = ${JSON.stringify(discriminatorValue)}`);
+                }
+              }
+              else {
+                throw new Error(`Unable to find discriminatorMap for ${attribute.name}`);
+              }
+            }
+            else {
+              throw new Error(`Unable to find discriminatorValue for ${attribute.discriminator.discriminatorName}`);
+            }
           }
           else {
-            throw new Error(`Unable to find cardItem for rowIdx ${rowIdx}, discriminatorValue = ${JSON.stringify(discriminatorValue)}`);
+            throw new Error(`Unable to find discriminatorControl for ${attribute.discriminator.discriminatorName}`);
           }
         }
         else {
-         throw new Error(`Unable to find discriminatorValue for ${attribute.discriminator.discriminatorName}`);
+          throw new Error(`Unable to find formGroup for rowIdx ${rowIdx}`);
         }
       }
       else {
@@ -425,8 +405,10 @@ export class CardLayoutComponent implements OnInit {
     }
   }
 
-  getMetaPageForRow(rowIdx: number, metaPageMap: Map<string, MetaPage>): MetaPage {
-    const cardItem = this.getCardItem(rowIdx)
+  getMetaPageForRow(rowIdx: number,
+                    metaPageMap: Map<string, MetaPage>,
+                    discriminatorMap: Map<string, Map<string, DiscriminatorMapping>>): MetaPage {
+    const cardItem = this.getCardItem(rowIdx, discriminatorMap)
     const metaPage = metaPageMap.get(cardItem.metaPageName);
     if(metaPage) {
       return metaPage;
@@ -436,21 +418,27 @@ export class CardLayoutComponent implements OnInit {
     }
   }
 
-  getHeadingForRow(rowIdx: number, metaPageMap: Map<string, MetaPage>): string {
-    return this.getMetaPageForRow(rowIdx, metaPageMap)?.title;
+  getHeadingForRow(rowIdx: number,
+                   metaPageMap: Map<string, MetaPage>,
+                   discriminatorMap: Map<string, Map<string, DiscriminatorMapping>>): string {
+    return this.getMetaPageForRow(rowIdx, metaPageMap, discriminatorMap)?.title;
   }
 
-  getTemplateForRow(rowIdx: number, metaPageMap: Map<string, MetaPage>): Template {
-    return this.getMetaPageForRow(rowIdx, metaPageMap).templates[0];
+  getTemplateForRow(rowIdx: number,
+                    metaPageMap: Map<string, MetaPage>,
+                    discriminatorMap: Map<string, Map<string, DiscriminatorMapping>>): Template {
+    return this.getMetaPageForRow(rowIdx, metaPageMap, discriminatorMap).templates[0];
   }
 
-  onAddItem(metaPageMap: Map<string, MetaPage>, metaEntityMap: Map<string, MetaEntity>) {
+  onAddItem(metaPageMap: Map<string, MetaPage>,
+            metaEntityMap: Map<string, MetaEntity>,
+            discriminatorMap: Map<string, Map<string, DiscriminatorMapping>>) {
     if(this.mode === 'edit') {
 
       const disabledList: string[] = [];
       for(const formGroupRow of this.attributes.controls) {
         if(formGroupRow instanceof UntypedFormGroup) {
-          disabledList.push(formGroupRow.controls['activity_type'].value);
+          disabledList.push(formGroupRow.controls['activity_type_id'].value);
         }
       }
 
@@ -466,17 +454,38 @@ export class CardLayoutComponent implements OnInit {
         console.log(`Adding card items; ${cardItems}`);
         if(cardItems) {
           for(const nextItemName of cardItems) {
-            this.addOneItem(self.mode, nextItemName, metaPageMap, metaEntityMap);
+            this.addOneItem(self.mode, nextItemName, metaPageMap, metaEntityMap, discriminatorMap);
           }
         }
       });
     }
   }
 
-  addOneItem(mode: string | null, discriminatorValue: string, metaPageMap: Map<string, MetaPage>, metaEntityMap: Map<string, MetaEntity>) {
-    const cardItem = this.cardItemMap.get(discriminatorValue);
-    console.log(`CardItem`, cardItem);
+  addOneItem(mode: string | null,
+             discriminatorValue: string,
+             metaPageMap: Map<string, MetaPage>,
+             metaEntityMap: Map<string, MetaEntity>,
+             discriminatorMap: Map<string, Map<string, DiscriminatorMapping>>) {
 
+    const cardItemList = [];
+    const attributeDiscriminator = this.attributeDiscriminator;
+    const discriminator = discriminatorMap.get(this.relationshipProperty);
+    if(discriminator) {
+      for(const nextMapping of attributeDiscriminator.entityMappingList) {
+        if(nextMapping.discriminatorValue == discriminatorValue) {
+          cardItemList.push(discriminator.get(nextMapping.discriminatorValue));
+        }
+      }
+    }
+    else {
+      throw new Error(`Unable to find discriminator for ${this.relationshipProperty}`)
+    }
+
+    if(cardItemList.length === 0 || cardItemList.length > 1) {
+      throw new Error(`Unable to find cardItem for discriminatorValue ${discriminatorValue}`);
+    }
+
+    const cardItem = cardItemList[0];
     if(cardItem && cardItem.metaPageName) {
       const metaPage = metaPageMap.get(cardItem.metaPageName);
       if(metaPage && metaPage.templates.length > 0) {
@@ -485,11 +494,14 @@ export class CardLayoutComponent implements OnInit {
         if(mode) {
           // create the new item formGroup
           const itemFormGroup = this.formGroupService.createFormGroup(mode, template.metaEntityName, metaPageMap, metaEntityMap, null);
-          itemFormGroup.addControl('activity_type', this.fb.control(''));
+          itemFormGroup.addControl('activity_type_id', this.fb.control(''));
+
+          const discriminatorId = cardItem.discriminatorId;
 
           // create the new mostly empty item
           const item:any = {
-            activity_type: discriminatorValue
+            activity_type_id: discriminatorId,
+            //activity_type: discriminatorValue
           };
 
           // update the item formGroup

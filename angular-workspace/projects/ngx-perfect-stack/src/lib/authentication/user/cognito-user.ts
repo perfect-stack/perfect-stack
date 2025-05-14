@@ -35,7 +35,7 @@ export class CognitoUser  implements User {
   }
 
   convertToArray(input: string | null | string[]): string[] {
-    if (input === null) {
+    if (input === null || input === undefined) {
       return []; // Return an empty array when the input is null.
     } else if (Array.isArray(input)) {
       return input; // Return the input array as it is when it's already an array.

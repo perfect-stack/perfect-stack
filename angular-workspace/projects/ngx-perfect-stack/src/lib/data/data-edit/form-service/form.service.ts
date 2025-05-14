@@ -19,6 +19,7 @@ import {DataMapService} from './data-map.service';
 import {ParamMap} from '@angular/router';
 import {FormGroupService} from './form-group.service';
 import {SearchControllerService} from '../../controller/search-controller.service';
+import {DiscriminatorMapping, DiscriminatorService} from "../../data-service/discriminator.service";
 
 
 export class FormContext {
@@ -29,6 +30,7 @@ export class FormContext {
   metaPageMap: Map<string, MetaPage>;
   metaEntity: MetaEntity;
   metaEntityMap: Map<string, MetaEntity>;
+  discriminatorMap: Map<string, Map<string, DiscriminatorMapping>>;
   dataMap: Map<string, any>;
   formMap: Map<string, AbstractControl>;
   paramMap: ParamMap | null;
@@ -77,6 +79,7 @@ export class FormService {
   constructor(protected readonly formGroupService: FormGroupService,
               protected readonly metaPageService: MetaPageService,
               protected readonly metaEntityService: MetaEntityService,
+              protected readonly discriminatorService: DiscriminatorService,
               protected readonly dataMapService: DataMapService,
               protected readonly dataService: DataService) {
   }
@@ -96,41 +99,45 @@ export class FormService {
       const metaPageName = this.calculatePageTemplate(ctx.metaName, ctx.mode, metaPageMap);
       ctx.metaPage = ctx.metaPageMap.get(metaPageName) as MetaPage;
 
-      return this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
-        // clone the MetaEntities, so we can dynamically change values with custom code
-        ctx.metaEntityMap = structuredClone(metaEntityMap);
+      return this.discriminatorService.discriminatorMap$.pipe(switchMap((discriminatorMap) => {
+        ctx.discriminatorMap = discriminatorMap;
 
-        const rootTemplate = ctx.metaPage.templates[0];
-        const metaEntityName = rootTemplate.metaEntityName
+        return this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
+          // clone the MetaEntities, so we can dynamically change values with custom code
+          ctx.metaEntityMap = structuredClone(metaEntityMap);
 
-        const me = ctx.metaEntityMap.get(metaEntityName);
-        if (!me) {
-          throw new Error(`Unable to find MetaEntity for ${metaName}`);
-        }
-        ctx.metaEntity = me;
+          const rootTemplate = ctx.metaPage.templates[0];
+          const metaEntityName = rootTemplate.metaEntityName
 
-        if(ctx.metaPage.dataQueryList?.length > 0) {
-          console.log('FormService: load dataQueryList:', ctx.metaPage.dataQueryList);
-          return this.dataMapService.toDataMap(ctx.metaPage.dataQueryList, {id: id}).pipe(switchMap((dataMap: Map<string, any>) => {
-            ctx.dataMap = dataMap;
-            console.log('FormService: dataMap:', dataMap);
-            ctx.formMap = this.createFormMap(ctx, ctx.metaPage.templates, ctx.metaPage.dataQueryList, dataMap);
+          const me = ctx.metaEntityMap.get(metaEntityName);
+          if (!me) {
+            throw new Error(`Unable to find MetaEntity for ${metaName}`);
+          }
+          ctx.metaEntity = me;
 
-            // create forms for controllers if not already created by the dataMap (e.g. criteria forms)
-            if(ctx.metaPage.controllers) {
-              this.createControllerForms(ctx, ctx.metaPage, ctx.formMap);
-            }
+          if(ctx.metaPage.dataQueryList?.length > 0) {
+            console.log('FormService: load dataQueryList:', ctx.metaPage.dataQueryList);
+            return this.dataMapService.toDataMap(ctx.metaPage.dataQueryList, {id: id}).pipe(switchMap((dataMap: Map<string, any>) => {
+              ctx.dataMap = dataMap;
+              console.log('FormService: dataMap:', dataMap);
+              ctx.formMap = this.createFormMap(ctx, ctx.metaPage.templates, ctx.metaPage.dataQueryList, dataMap);
 
-            console.log('FormService: formMap:', ctx.formMap);
+              // create forms for controllers if not already created by the dataMap (e.g. criteria forms)
+              if(ctx.metaPage.controllers) {
+                this.createControllerForms(ctx, ctx.metaPage, ctx.formMap);
+              }
+
+              console.log('FormService: formMap:', ctx.formMap);
+              return of(ctx);
+            }));
+          } else if (id) {
+            throw new Error('TODO: anything with an "id" should be doing a dataQuery now');
+          } else {
+            // No data to load, but that's ok various forms get created without any data loading
+            console.log('FormService: load form with no data loaded:');
             return of(ctx);
-          }));
-        } else if (id) {
-          throw new Error('TODO: anything with an "id" should be doing a dataQuery now');
-        } else {
-          // No data to load, but that's ok various forms get created without any data loading
-          console.log('FormService: load form with no data loaded:');
-          return of(ctx);
-        }
+          }
+        }));
       }));
     }));
   }

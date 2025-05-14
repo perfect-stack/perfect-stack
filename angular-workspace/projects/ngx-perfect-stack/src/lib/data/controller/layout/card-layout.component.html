@@ -1,37 +1,41 @@
+<br>CARD-LAYOUT
 <ng-container *ngIf="metaEntityMap$ | async as metaEntityMap">
   <ng-container *ngIf="metaPageMap$ | async as metaPageMap">
+    <ng-container *ngIf="discriminatorMap$ | async as discriminatorMap">
 
-    <ng-container *ngIf="attributes.length > 0 || mode === 'edit'">
-      <div class="mt-2" *ngFor="let nextItem of attributes.controls; let i=index">
+      <ng-container *ngIf="attributes.length > 0 || mode === 'edit'">
+        <br>Card Items: {{attributes.controls.length}}
+        <div class="mt-2" *ngFor="let nextItem of attributes.controls; let i=index">
 
-        <div class="d-flex justify-content-between">
-          <h5 id="cards[{{i}}].cardHdg">{{getHeadingForRow(i, metaPageMap)}}</h5>
-          <a class="text-primary" role="button" (click)="onDeleteItem(i)" *ngIf="mode === 'edit'" id="cards[{{i}}].deleteBtn">Remove</a>
+          <div class="d-flex justify-content-between">
+            <h5 id="cards[{{i}}].cardHdg">{{getHeadingForRow(i, metaPageMap, discriminatorMap)}}</h5>
+            <a class="text-primary" role="button" (click)="onDeleteItem(i)" *ngIf="mode === 'edit'" id="cards[{{i}}].deleteBtn">Remove</a>
+          </div>
+
+          <lib-form-layout
+            [mode]="mode"
+            [ctx]="ctx"
+            [template]="getTemplateForRow(i, metaPageMap, discriminatorMap)"
+            [formGroup]="getFormGroupForRow(i)">
+          </lib-form-layout>
+
+          <br>
         </div>
 
-        <lib-form-layout
-          [mode]="mode"
-          [ctx]="ctx"
-          [template]="getTemplateForRow(i, metaPageMap)"
-          [formGroup]="getFormGroupForRow(i)">
-        </lib-form-layout>
-
-        <br>
-      </div>
-
-      <ng-container *ngIf="mode === 'edit'">
-        <button class="btn btn-outline-success mt-2" (click)="onAddItem(metaPageMap, metaEntityMap)" id="cardAddItemBtn">Add Item</button>
+        <ng-container *ngIf="mode === 'edit'">
+          <button class="btn btn-outline-success mt-2" (click)="onAddItem(metaPageMap, metaEntityMap, discriminatorMap)" id="cardAddItemBtn">Add Item</button>
+        </ng-container>
       </ng-container>
+
+      <ng-container *ngIf="attributes.length === 0 && mode !== 'edit'">
+        <div [innerHtml]="getNoItemsHtml()"></div>
+      </ng-container>
+
+      <!--<br>
+      <p>formGroup: {{formGroup.value | json}}</p>
+      <p>metaAttribute: {{ attributes.attribute | json}}</p>-->
+      <!--<p>Got metaEntityList: {{metaEntityList.length}}</p>-->
+
     </ng-container>
-
-    <ng-container *ngIf="attributes.length === 0 && mode !== 'edit'">
-      <div [innerHtml]="getNoItemsHtml()"></div>
-    </ng-container>
-
-    <!--<br>
-    <p>formGroup: {{formGroup.value | json}}</p>
-    <p>metaAttribute: {{ attributes.attribute | json}}</p>-->
-    <!--<p>Got metaEntityList: {{metaEntityList.length}}</p>-->
-
   </ng-container>
 </ng-container>

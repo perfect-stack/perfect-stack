@@ -9,13 +9,13 @@
   "permanentDelete": false,
   "attributes": [
     {
+      "type": "Identifier",
+      "visibility": "Hidden",
       "name": "id",
       "label": "Id",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Identifier",
-      "visibility": "Hidden",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -23,27 +23,13 @@
       "rules": []
     },
     {
-      "name": "date",
-      "label": "Date",
-      "description": "Date of the event",
-      "unitOfMeasure": "",
-      "scale": "",
-      "type": "Date",
+      "type": "Html",
       "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
       "name": "comments",
       "label": "Comments",
       "description": "General comments regarding the event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Html",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -51,13 +37,13 @@
       "rules": []
     },
     {
+      "type": "OneToMany",
+      "visibility": "Visible",
       "name": "observers",
       "label": "Observers",
       "description": "Observers at the event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "OneToMany",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "EventObserver",
@@ -65,13 +51,13 @@
       "rules": []
     },
     {
+      "type": "ManyToOne",
+      "visibility": "Visible",
       "name": "location",
       "label": "Location",
       "description": "Location of the event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "ManyToOne",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Location",
@@ -86,13 +72,13 @@
       ]
     },
     {
+      "type": "OneToPoly",
+      "visibility": "Visible",
       "name": "activities",
       "label": "Activities",
       "description": "Activities for the event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "OneToPoly",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -123,14 +109,6 @@
             "metaEntityName": "MicrochipActivity"
           },
           {
-            "discriminatorValue": "Wing tag",
-            "metaEntityName": "WingTagActivity"
-          },
-          {
-            "discriminatorValue": "Call count",
-            "metaEntityName": "CallCountActivity"
-          },
-          {
             "discriminatorValue": "Weather",
             "metaEntityName": "WeatherActivity"
           }
@@ -138,13 +116,13 @@
       }
     },
     {
+      "type": "Double",
+      "visibility": "Required",
       "name": "northing",
       "label": "Northing",
       "description": "Grid coordinate Northing using NZTM",
       "unitOfMeasure": "",
       "scale": "0",
-      "type": "Double",
-      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -161,13 +139,13 @@
       ]
     },
     {
+      "type": "Double",
+      "visibility": "Required",
       "name": "easting",
       "label": "Easting",
       "description": "Grid coordinate easting using NZTM",
       "unitOfMeasure": "",
       "scale": "0",
-      "type": "Double",
-      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -184,13 +162,13 @@
       ]
     },
     {
+      "type": "ManyToOne",
+      "visibility": "Visible",
       "name": "bird",
       "label": "Bird",
       "description": "The bird (optional) that this event is for",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "ManyToOne",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Bird",
@@ -203,13 +181,13 @@
       "rules": []
     },
     {
+      "type": "Enumeration",
+      "visibility": "Required",
       "name": "event_type",
       "label": "Event type",
       "description": "Type of event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Enumeration",
-      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -233,13 +211,13 @@
       ]
     },
     {
+      "type": "ManyToOne",
+      "visibility": "Visible",
       "name": "species",
       "label": "Species",
       "description": "Species of the bird for this event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "ManyToOne",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Species",
@@ -249,13 +227,13 @@
       "rules": []
     },
     {
+      "type": "Text",
+      "visibility": "Visible",
       "name": "form",
       "label": "Form",
       "description": "Form of the bird for this event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -263,13 +241,13 @@
       "rules": []
     },
     {
+      "type": "Enumeration",
+      "visibility": "Visible",
       "name": "status",
       "label": "Status",
       "description": "The status of this Bird at the time of the Event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Enumeration",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -283,13 +261,13 @@
       ]
     },
     {
+      "type": "Enumeration",
+      "visibility": "Visible",
       "name": "age_class",
       "label": "Age class",
       "description": "The age class of the Bird at the time of the Event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Enumeration",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -304,13 +282,13 @@
       ]
     },
     {
+      "type": "Enumeration",
+      "visibility": "Visible",
       "name": "sex",
       "label": "Sex",
       "description": "Sex",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Enumeration",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -323,13 +301,13 @@
       ]
     },
     {
+      "type": "DateTime",
+      "visibility": "Required",
       "name": "date_time",
       "label": "Date time",
       "description": "The date and time of the event",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "DateTime",
-      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -346,13 +324,13 @@
       ]
     },
     {
+      "type": "Double",
+      "visibility": "Visible",
       "name": "altitude",
       "label": "Altitude",
       "description": "Altitude",
       "unitOfMeasure": "m",
       "scale": "0",
-      "type": "Double",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -365,13 +343,13 @@
       ]
     },
     {
+      "type": "Enumeration",
+      "visibility": "Visible",
       "name": "time_precision",
       "label": "Time precision",
       "description": "How accurate is the time value",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Enumeration",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -385,13 +363,13 @@
       ]
     },
     {
+      "type": "Double",
+      "visibility": "Visible",
       "name": "lat",
       "label": "lat",
       "description": "Latitude in WGS84 coordinates",
       "unitOfMeasure": "",
       "scale": "5",
-      "type": "Double",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -399,13 +377,13 @@
       "rules": []
     },
     {
+      "type": "Double",
+      "visibility": "Visible",
       "name": "lng",
       "label": "lng",
       "description": "Longitude in WGS84 coordinates",
       "unitOfMeasure": "",
       "scale": "5",
-      "type": "Double",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -413,13 +391,13 @@
       "rules": []
     },
     {
+      "type": "Enumeration",
+      "visibility": "Visible",
       "name": "data_source",
       "label": "Data source",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Enumeration",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -431,13 +409,13 @@
       ]
     },
     {
+      "type": "DateTime",
+      "visibility": "Visible",
       "name": "end_date_time",
       "label": "End date time",
       "description": "When the event ended",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "DateTime",
-      "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",

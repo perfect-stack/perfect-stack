@@ -1,6 +1,6 @@
 {
   "name": "Administrator",
-  "group": "KIMS_Business_Admin,DevKiwiMgmtSystem",
+  "group": "KIMS_Editor_DEV_TEST,KIMS_Business_Admin,DevKiwiMgmtSystem",
   "inherits": "Manager",
   "description": "<p>Controls admin menu, add projects, set project manager role, Add/Edit people (non-user)</p>",
   "permissions": [

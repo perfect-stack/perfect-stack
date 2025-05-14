@@ -21,6 +21,7 @@ import { ValidationResultMapController } from '../domain/meta.rule';
 import { EventService } from '../event/event.service';
 import { Transaction } from 'sequelize';
 import {MediaRepositoryService} from "../media/media-repository.service";
+import {DiscriminatorService} from "./discriminator.service";
 
 @Injectable()
 export class DataService {
@@ -32,6 +33,7 @@ export class DataService {
     protected readonly queryService: QueryService,
     protected readonly ruleService: RuleService,
     protected readonly eventService: EventService,
+    protected readonly discriminatorService: DiscriminatorService,
     protected readonly mediaRepositoryService: MediaRepositoryService,
   ) {}
 
@@ -247,14 +249,15 @@ export class DataService {
       discriminator,
     );
 
+    const discriminatorMap = await this.discriminatorService.findDiscriminatorMap(attribute)
+
     const listOfChildren = parentEntity[attribute.name] as [];
     for (let i = 0; i < listOfChildren.length; i++) {
       const childEntity: any = listOfChildren[i];
-      const discriminatorValue = childEntity[discriminatorName];
+      const discriminatorValue = childEntity[discriminatorName + "_id"];
+
       if (discriminatorValue) {
-        const childEntityMapping = discriminator.entityMappingList.find(
-          (a) => a.discriminatorValue === discriminatorValue,
-        );
+        const childEntityMapping = discriminatorMap.get(discriminatorValue);
 
         if (childEntityMapping) {
           const childFk = parentMetaEntity.name.toLowerCase() + '_id';

@@ -65,6 +65,7 @@ export class MetaAttribute {
 }
 
 export class DiscriminatorAttribute {
+  discriminatorId?: string;
   discriminatorName: string;
   discriminatorType: string;
   entityMappingList: DiscriminatorEntityMapping[] = [];

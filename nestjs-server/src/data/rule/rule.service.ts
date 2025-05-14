@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {forwardRef, Inject, Injectable, Logger} from '@nestjs/common';
 import {
   AttributeType,
   MetaAttribute,
@@ -18,6 +18,7 @@ import { KnexService } from '../../knex/knex.service';
 import { UniqueInsensitiveRuleValidator } from './rules/unique-insensitive-rule-validator';
 import { EmailRuleValidator } from './rules/email-rule-validator';
 import { CustomRuleService } from './custom-rule.service';
+import {DiscriminatorService} from "../discriminator.service";
 
 @Injectable()
 export class RuleService implements MetaEntityRuleValidator {
@@ -26,6 +27,8 @@ export class RuleService implements MetaEntityRuleValidator {
   constructor(
     protected readonly customRuleService: CustomRuleService,
     protected readonly knexService: KnexService,
+    @Inject(forwardRef(() => DiscriminatorService))
+    protected discriminatorService: DiscriminatorService
   ) {}
 
   async validate(
@@ -115,13 +118,15 @@ export class RuleService implements MetaEntityRuleValidator {
               `Unable to find MetaEntity for attribute ${attribute.name} with relationshipTarget of ${attribute.relationshipTarget}`,
             );
           }
-        } else if (attribute.type === AttributeType.OneToPoly) {
-          nextMetaEntity = this.getMetaEntityFromAttributeValue(
+        }
+        else if (attribute.type === AttributeType.OneToPoly) {
+          nextMetaEntity = await this.getMetaEntityFromAttributeValue(
             attribute,
             nextEntity,
             metaEntityMap,
           );
-        } else {
+        }
+        else {
           throw new Error('Unexpected situation');
         }
 
@@ -212,16 +217,23 @@ export class RuleService implements MetaEntityRuleValidator {
     return rule;
   }
 
-  private getMetaEntityFromAttributeValue(
+  private async getMetaEntityFromAttributeValue(
     attribute: MetaAttribute,
     childItem: any,
     metaEntityMap: Map<string, MetaEntity>,
   ) {
+
+    const discriminatorMap = await this.discriminatorService.findDiscriminatorMap(attribute);
     const discriminator = attribute.discriminator;
-    const discriminatorValue = childItem[discriminator.discriminatorName];
-    const entityMapping = discriminator.entityMappingList.find(
-      (s) => s.discriminatorValue === discriminatorValue,
-    );
-    return metaEntityMap.get(entityMapping.metaEntityName);
+    const discriminatorValue = childItem[discriminator.discriminatorName + "_id"];
+
+    const discriminatorMapping = discriminatorMap.get(discriminatorValue);
+    const metaEntity = metaEntityMap.get(discriminatorMapping.metaEntityName);
+    if(metaEntity) {
+      return metaEntity;
+    }
+    else {
+      throw new Error(`Unable to find MetaEntity for discriminator value ${discriminatorValue}`);
+    }
   }
 }

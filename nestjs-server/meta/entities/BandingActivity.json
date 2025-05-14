@@ -4,7 +4,9 @@
   "icon": "circle",
   "type": "Database",
   "rootNode": false,
-  "timestamps": false,
+  "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
   "attributes": [
     {
       "name": "id",
@@ -40,12 +42,14 @@
       "description": "Activity type used",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "ManyToOne",
       "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
+      "comparisonField": "name",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "ActivityType",
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": []
     }
   ]

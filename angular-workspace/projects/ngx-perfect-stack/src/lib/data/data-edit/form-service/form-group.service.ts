@@ -143,14 +143,18 @@ export class FormGroupService {
         const childEntity = itemArray[i];
         const discriminator = attribute.discriminator;
         const childDiscriminatorValue = childEntity[discriminator.discriminatorName];
-        const childEntityMapping = discriminator.entityMappingList.find(a => a.discriminatorValue === childDiscriminatorValue);
-        if(childEntityMapping) {
-          const childPageName = childEntityMapping.metaEntityName + ".view_edit"
-          const childPage = metaPageMap.get(childPageName);
-          if(childPage) {
-            const childTemplate = childPage.templates[0];
-            console.log(`Adding formGroup for; ${attribute.name}, ${childDiscriminatorValue}, ${childPageName}`);
-            formControl.push(this.createFormGroup(mode, childTemplate.metaEntityName, metaPageMap, metaEntityMap, childEntity))
+
+        if(childDiscriminatorValue) {
+          const discriminatorValue = childDiscriminatorValue['name'];
+          const childEntityMapping = discriminator.entityMappingList.find(a => a.discriminatorValue === discriminatorValue);
+          if (childEntityMapping) {
+            const childPageName = childEntityMapping.metaEntityName + ".view_edit"
+            const childPage = metaPageMap.get(childPageName);
+            if (childPage) {
+              const childTemplate = childPage.templates[0];
+              console.log(`Adding formGroup for; ${attribute.name}, ${childDiscriminatorValue}, ${childPageName}`);
+              formControl.push(this.createFormGroup(mode, childTemplate.metaEntityName, metaPageMap, metaEntityMap, childEntity))
+            }
           }
         }
       }

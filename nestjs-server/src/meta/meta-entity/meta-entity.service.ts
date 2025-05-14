@@ -236,40 +236,40 @@ export class MetaEntityService {
       // Manually add the created_at and updated_at attributes, because otherwise sequelize gets tangled up with the
       // different naming conventions  (model/column) and attempts to create them as "createdAt/created_at" but we only
       // want "created_at/created_id".
+      if(timestamps) {
+        const createdAt = {
+          type: DataTypes.DATE,
+          allowNull: true,
 
-      const createdAt = {
-        type: DataTypes.DATE,
-        allowNull: true,
+          // This little bit of ugly is needed to deal with how the FormGroups need to be
+          // initialised with a value (e.g. '') but the current sequelize logic doesn't
+          // convert empty string date values into null.
+          set(value: any) {
+            if (value != null && value.length === 0) {
+              value = null;
+            }
+            this.setDataValue("created_at", value);
+          },
+        };
 
-        // This little bit of ugly is needed to deal with how the FormGroups need to be
-        // initialised with a value (e.g. '') but the current sequelize logic doesn't
-        // convert empty string date values into null.
-        set(value: any) {
-          if (value != null && value.length === 0) {
-            value = null;
-          }
-          this.setDataValue("created_at", value);
-        },
-      };
+        const updatedAt = {
+          type: DataTypes.DATE,
+          allowNull: true,
 
-      const updatedAt = {
-        type: DataTypes.DATE,
-        allowNull: true,
+          // This little bit of ugly is needed to deal with how the FormGroups need to be
+          // initialised with a value (e.g. '') but the current sequelize logic doesn't
+          // convert empty string date values into null.
+          set(value: any) {
+            if (value != null && value.length === 0) {
+              value = null;
+            }
+            this.setDataValue("updated_at", value);
+          },
+        };
 
-        // This little bit of ugly is needed to deal with how the FormGroups need to be
-        // initialised with a value (e.g. '') but the current sequelize logic doesn't
-        // convert empty string date values into null.
-        set(value: any) {
-          if (value != null && value.length === 0) {
-            value = null;
-          }
-          this.setDataValue("updated_at", value);
-        },
-      };
-
-      modelAttributeList["created_at"] = createdAt;
-      modelAttributeList["updated_at"] = createdAt;
-
+        modelAttributeList["created_at"] = createdAt;
+        modelAttributeList["updated_at"] = updatedAt;
+      }
 
 
       const entityModel = this.ormService.sequelize.define(

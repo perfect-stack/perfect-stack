@@ -1,4 +1,5 @@
 import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
+import {DiscriminatorMapping} from "../../data/data-service/discriminator.service";
 
 /**
  *
@@ -6,12 +7,14 @@ import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity
 export class MetaEntityTreeWalker {
 
   entityMap: Map<string, MetaEntity>;
+  discriminatorMap: Map<string, Map<string, DiscriminatorMapping>>;
 
   nameVisitors = new Map<string, Visitor>();
   typeVisitors = new Map<AttributeType, Visitor>();
 
-  constructor(entityMap: Map<string, MetaEntity>) {
+  constructor(entityMap: Map<string, MetaEntity>, discriminatorMap: Map<string, Map<string, DiscriminatorMapping>>) {
     this.entityMap = entityMap;
+    this.discriminatorMap = discriminatorMap;
   }
 
   byName<T>(attributeName: string, visitor: Visitor) {
@@ -91,15 +94,33 @@ export class MetaEntityTreeWalker {
   private determineMetaEntity(value: any, attribute: MetaAttribute): string {
     const discriminator = attribute.discriminator;
     if(discriminator) {
-      const discriminatorValue = value[discriminator.discriminatorName];
+      const discriminatorValue = value[discriminator.discriminatorName + "_id"];
       if(discriminatorValue) {
-        const entityMapping = discriminator.entityMappingList.find(a => a.discriminatorValue === discriminatorValue);
-        if(entityMapping) {
-          return entityMapping.metaEntityName;
+
+        const discriminatorMapForAttribute = this.discriminatorMap.get('activities');
+        if(!discriminatorMapForAttribute) {
+          throw new Error(`Unable to find discriminatorMap for attribute ${attribute.name}`);
+        }
+
+        const discriminatorMapping = discriminatorMapForAttribute.get(discriminatorValue);
+        if(!discriminatorMapping) {
+          throw new Error(`Unable to find discriminatorMapping for discriminatorValue ${discriminatorValue}`);
+        }
+
+        if(discriminatorMapping) {
+          return discriminatorMapping.metaEntityName;
+        }
+        else {
+          throw new Error('Unable to find entityMapping for discriminatorValue; ' + discriminatorValue);
         }
       }
+      else {
+        throw new Error('Unable to find discriminatorValue found for discriminator;' + discriminator.discriminatorName);
+      }
     }
-    throw new Error(`Unable to determineMetaEntity() for attribute ${attribute.name} and value ${JSON.stringify(value)}`);
+    else {
+      throw new Error(`Unable to determineMetaEntity() for attribute ${attribute.name} and value ${JSON.stringify(value)} attribute is;`);
+    }
   }
 
   private walkToSingleObject(node: any, value: any, metaEntity: MetaEntity, attribute: MetaAttribute) {

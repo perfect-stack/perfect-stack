@@ -43,7 +43,7 @@ export class AddLocationDialogComponent implements OnInit {
       const entityData = form.value;
       console.log(`DataEdit: form value:`, entityData);
 
-      const treeWalker = new MetaEntityTreeWalker(ctx.metaEntityMap);
+      const treeWalker = new MetaEntityTreeWalker(ctx.metaEntityMap, ctx.discriminatorMap);
       treeWalker.byType(AttributeType.Double, new DoubleVisitor());
       treeWalker.byType(AttributeType.Integer, new IntegerVisitor());
       treeWalker.byType(AttributeType.Identifier, new IdentifierVisitor());
