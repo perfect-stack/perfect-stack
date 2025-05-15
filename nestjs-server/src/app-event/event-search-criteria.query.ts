@@ -35,7 +35,10 @@ export class EventSearchCriteriaQuery implements CustomQuery {
     }
     const offset = (pageNumber - 1) * pageSize;
 
-    const metaEntity = await this.metaEntityService.findOne('Event');
+    //const metaEntity = await this.metaEntityService.findOne('Event');
+    //const activitiesAttribute = metaEntity.attributes['activities'];
+    //const discriminatorMap = await this.discriminatorService.findDiscriminatorMap(activitiesAttribute);
+
 
     const knex = await this.knexService.getKnex();
     const selectData = () =>
@@ -47,39 +50,25 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         'Species.name as species',
         'Event.form as form',
         'Event.event_type as event_type',
-        // 'HealthActivity.activity_type as health_activity',
-        // 'WeightActivity.activity_type as weight_activity',
-        // 'MeasurementActivity.activity_type as measurement_activity',
-        // 'BandingActivity.activity_type_id as banding_activity',
-        // 'MicrochipActivity.activity_type as microchip_activity',
-        // 'WingTagActivity.activity_type as wing_tag_activity',
-        // 'CallCountActivity.activity_type as call_count_activity',
-        // 'WeatherActivity.activity_type as weather_activity',
-
-        // knex.raw(
-        //   'concat("HealthActivity".activity_type, \',\', "WeightActivity".activity_type, \',\', "MeasurementActivity".activity_type, \',\', "BandingActivity".activity_type_id, \',\', "MicrochipActivity".activity_type, \',\', "WingTagActivity".activity_type, \',\', "CallCountActivity".activity_type, \',\', "WeatherActivity".activity_type) as activities',
-        // ),
 
         knex.raw(
-            "concat(at_mea.name, ',', at_baa.name, ',', at_mia.name, ',', at_wea.name, ',', at_wei.name) as activities",
+            "concat(at_baa.name, ',', at_hea.name, ',', at_mea.name, ',', at_mia.name, ',', at_wea.name, ',', at_wei.name) as activities",
         ),
       );
 
     const selectCount = () => knex.select().count();
-
-    const activitiesAttribute = metaEntity.attributes['activities'];
-    //const discriminatorMap = await this.discriminatorService.findDiscriminatorMap(activitiesAttribute);
 
     const from = (select) => {
       select = select
         .from('Event')
         .leftOuterJoin('Bird', 'Bird.id', 'Event.bird_id')
         .leftOuterJoin('Species', 'Species.id', 'Event.species_id')
-//        .leftOuterJoin('HealthActivity', 'HealthActivity.event_id', 'Event.id')
         .leftOuterJoin('MeasurementActivity as mea', 'mea.event_id', 'Event.id')
         .leftOuterJoin('ActivityType as     at_mea', 'at_mea.id', 'mea.activity_type_id')
         .leftOuterJoin('BandingActivity as baa', 'baa.event_id', 'Event.id')
         .leftOuterJoin('ActivityType as at_baa', 'at_baa.id', 'baa.activity_type_id')
+        .leftOuterJoin('HealthActivity as hea', 'hea.event_id', 'Event.id')
+        .leftOuterJoin('ActivityType as at_hea', 'at_hea.id', 'hea.activity_type_id')
         .leftOuterJoin('MicrochipActivity as mia', 'mia.event_id', 'Event.id')
         .leftOuterJoin('ActivityType as   at_mia', 'at_mia.id', 'mia.activity_type_id')
         // .leftOuterJoin('WingTagActivity', 'WingTagActivity.event_id', 'Event.id')
@@ -102,6 +91,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
 
           const activityTypeMap = new Map<string, string>();
           activityTypeMap.set('Banding', 'at_baa');
+          activityTypeMap.set('Health', 'at_hea');
           activityTypeMap.set('Measurement', 'at_mea');
           activityTypeMap.set('Microchip', 'at_mia');
           activityTypeMap.set('Weather', 'at_wea');

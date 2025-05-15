@@ -5,6 +5,8 @@
   "type": "Database",
   "rootNode": false,
   "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
   "attributes": [
     {
       "name": "id",
@@ -77,12 +79,14 @@
       "description": "Type of activity",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "ManyToOne",
       "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
+      "comparisonField": "name",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "ActivityType",
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": []
     },
     {

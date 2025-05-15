@@ -58,6 +58,10 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'BandingActivity',
     },
     {
+        fileName: 'MGN_KIMS__HEALTH_ACTIVITY_.csv',
+        tableName: 'HealthActivity',
+    },
+    {
         fileName: 'MGN_KIMS__MEASUREMENT_ACTIVITY_.csv',
         tableName: 'MeasurementActivity',
     },
@@ -385,6 +389,10 @@ class MetaEntityRowProcessor {
         // If attribute is numeric convert to a number...
         // If attribute is a date convert to a date...
 
+        if(attribute.name === 'health_notes') {
+            console.log("health_notes", value);
+        }
+
         return value;
     }
 
@@ -431,10 +439,11 @@ class MetaEntityRowProcessor {
                 }
             }
 
-            const csvValue = csvRow[csvColName];
-            csvRowKeys = csvRowKeys.filter(key => key !== csvColName);
-            const dbValue = this.processValue(attribute, csvValue);
             const dbColName = csvColName.toLowerCase();
+            csvRowKeys = csvRowKeys.filter(key => key !== csvColName);
+
+            const csvValue = csvRow[csvColName];
+            const dbValue = this.processValue(attribute, csvValue);
 
             columns.push(dbColName);
             values.push(dbValue);
