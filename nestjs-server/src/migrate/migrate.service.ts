@@ -80,10 +80,6 @@ const ignoreForNow = [
     "Bird.FATE",
     "Event.activities",
     "EventObserver.INSTRUMENT_ID",
-    "MeasurementActivity.HEAD_CIRCUMFERENCE",
-    "MeasurementActivity.PLUMAGE_STATE",
-    "MeasurementActivity.CROWN_LENGTH",
-    "MeasurementActivity.CERE_AND_EYELID_COLOUR",
 ];
 
 

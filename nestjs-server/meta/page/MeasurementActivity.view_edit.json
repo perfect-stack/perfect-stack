@@ -3,6 +3,8 @@
   "title": "Measurement",
   "type": "view_edit",
   "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
   "templates": [
     {
       "cells": [
@@ -31,13 +33,30 @@
           },
           {
             "width": "4",
-            "height": "1"
+            "height": "1",
+            "attributeName": "head_circumference"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "crown_length"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "plumage_state"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "cere_and_eyelid_colour"
           }
         ]
       ],
       "metaEntityName": "MeasurementActivity",
       "type": "form"
     }
-  ],
-  "dataQueryList": []
+  ]
 }

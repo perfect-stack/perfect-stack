@@ -113,6 +113,72 @@
         "name"
       ],
       "rules": []
+    },
+    {
+      "name": "head_circumference",
+      "label": "Head circumference",
+      "description": "",
+      "unitOfMeasure": "mm",
+      "scale": "1",
+      "type": "Double",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0"
+        }
+      ]
+    },
+    {
+      "name": "plumage_state",
+      "label": "Plumage state",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "crown_length",
+      "label": "Crown length",
+      "description": "",
+      "unitOfMeasure": "mm",
+      "scale": "1",
+      "type": "Double",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Range",
+          "config": "0"
+        }
+      ]
+    },
+    {
+      "name": "cere_and_eyelid_colour",
+      "label": "Cere and eyelid colour",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }
