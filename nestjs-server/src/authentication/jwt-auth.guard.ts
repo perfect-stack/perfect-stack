@@ -91,7 +91,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   getUser(context: ExecutionContext): User {
-    return context.switchToHttp().getRequest().user;
+    const request = context.switchToHttp().getRequest();
+    this.logger.debug('GUARD: http headers: ', request.headers);
+    return request.user;
   }
 
   getUsername(context: ExecutionContext): string {
