@@ -9,7 +9,7 @@ import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
 // --- Configuration ---
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-15.1';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-19.2';
 const BATCH_SIZE = 100; // Number of rows to insert in a single batch query
 
 const filesToProcess: FileProcessingConfig[] = [
@@ -58,6 +58,10 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'BandingActivity',
     },
     {
+        fileName: 'MGN_KIMS__DEATH_ACTIVITY_.csv',
+        tableName: 'DeathActivity',
+    },
+    {
         fileName: 'MGN_KIMS__HEALTH_ACTIVITY_.csv',
         tableName: 'HealthActivity',
     },
@@ -76,6 +80,34 @@ const filesToProcess: FileProcessingConfig[] = [
     {
         fileName: 'MGN_KIMS__WEIGHT_ACTIVITY_.csv',
         tableName: 'WeightActivity',
+    },
+    {
+        fileName: 'MGN_KIMS__HABITAT_TYPE_.csv',
+        tableName: 'HabitatType',
+    },
+    {
+        fileName: 'MGN_KIMS__PROJECT_STATUS_.csv',
+        tableName: 'ProjectStatus',
+    },
+    {
+        fileName: 'MGN_KIMS__PROJECT_TEAM_STATUS_.csv',
+        tableName: 'ProjectTeamStatus',
+    },
+    {
+        fileName: 'MGN_KIMS__PROJECT_ROLE_.csv',
+        tableName: 'ProjectRole',
+    },
+    {
+        fileName: 'MGN_KIMS__PROJECT_.csv',
+        tableName: 'Project',
+    },
+    {
+        fileName: 'MGN_KIMS__PROJECT_BIRD_.csv',
+        tableName: 'ProjectBird',
+    },
+    {
+        fileName: 'MGN_KIMS__PROJECT_MEMBER_.csv',
+        tableName: 'ProjectMember',
     },
 ];
 
@@ -373,7 +405,7 @@ class MetaEntityRowProcessor {
 
     constructor(private readonly metaEntity: MetaEntity) {}
 
-    private processValue(attribute: MetaAttribute, value: string): any {
+    private processValue(attribute: MetaAttribute, value: string, csvRow: { [key: string]: string }): any {
         // If value is empty string then convert to a null
         if(value === '') {
             value = null;
@@ -389,9 +421,9 @@ class MetaEntityRowProcessor {
         // If attribute is numeric convert to a number...
         // If attribute is a date convert to a date...
 
-        if(attribute.name === 'health_notes') {
-            console.log("health_notes", value);
-        }
+        // if(attribute.name === 'health_notes' && value !== null) {
+        //     console.log(`${csvRow['EVENT_ID']} health_notes: ${value}`);
+        // }
 
         return value;
     }
@@ -443,7 +475,11 @@ class MetaEntityRowProcessor {
             csvRowKeys = csvRowKeys.filter(key => key !== csvColName);
 
             const csvValue = csvRow[csvColName];
-            const dbValue = this.processValue(attribute, csvValue);
+            const dbValue = this.processValue(attribute, csvValue, csvRow);
+
+            // if(this.metaEntity.name === 'HealthActivity' && attribute.name === 'activity_type' && dbValue === 'Health') {
+            //     console.log(`${csvRow['EVENT_ID']} : ${dbValue}`);
+            // }
 
             columns.push(dbColName);
             values.push(dbValue);

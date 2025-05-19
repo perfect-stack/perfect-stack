@@ -15,12 +15,6 @@ const axios = require('axios');
 const jwtKeys = {};
 const jwtLogger = new Logger('JWTFunctions');
 
-async function getFirebaseKeys(keyMap: any) {
-  for (const kid of Object.keys(keyMap)) {
-    jwtKeys[kid] = keyMap[kid];
-  }
-}
-
 async function getCognitoKeys(keyMap: any) {
   const keyList = keyMap['keys'];
   for (const nextKey of keyList) {
@@ -42,9 +36,6 @@ async function getJwtKey(
 
     const authenticationProvider = configService.get('AUTHENTICATION_PROVIDER');
     switch (authenticationProvider) {
-      case 'FIREBASE':
-        await getFirebaseKeys(rawKeys);
-        break;
       case 'COGNITO':
         await getCognitoKeys(rawKeys);
         break;
@@ -69,18 +60,8 @@ async function getJwtKey(
 
 export function getKeyIdFromToken(rawJwtToken: string): string {
   const tokenElements = rawJwtToken.split('.');
-  const header = JSON.parse(
-    Buffer.from(tokenElements[0], 'base64').toString('utf8'),
-  );
+  const header = JSON.parse(Buffer.from(tokenElements[0], 'base64').toString('utf8'));
   return header['kid'];
-}
-
-function getFirebaseKeyProvider(configService: ConfigService) {
-  return async (request, rawJwtToken, done) => {
-    const keyId = getKeyIdFromToken(rawJwtToken);
-    const keyValue = await getJwtKey(keyId, configService);
-    done(null, keyValue);
-  };
 }
 
 function getCognitoKeyProvider(configService: ConfigService) {
@@ -100,8 +81,6 @@ function getCognitoKeyProvider(configService: ConfigService) {
 function getKeyProvider(configService: ConfigService) {
   const authenticationProvider = configService.get('AUTHENTICATION_PROVIDER');
   switch (authenticationProvider) {
-    case 'FIREBASE':
-      return getFirebaseKeyProvider(configService);
     case 'COGNITO':
       return getCognitoKeyProvider(configService);
     default:
@@ -150,7 +129,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     // Uncomment the following line for a quick easy way of seeing the JWT payload in clear text (which is safe)
     // without having to muck about grabbing the Base64 encoded version and decoding that
-    //jwtLogger.info(`\nPASSPORT: validate token: ${JSON.stringify(payload)}`);
+    //jwtLogger.log(`PASSPORT: validate token: ${JSON.stringify(payload)}`);
 
     const issuerValid = payload.iss === this.expectedIssuer;
     if (issuerValid) {
@@ -164,14 +143,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         family_name: payload['family_name'],
         email: payload['email'],
       };
-      //jwtLogger.debug('PASSPORT: userDataStructure: ', userDataStructure);
+      //jwtLogger.log('PASSPORT: userDataStructure: ', userDataStructure);
       return userDataStructure;
-    } else {
-      jwtLogger.error(
-        `Invalid token, issuerValue = ${issuerValid}, for: ${JSON.stringify(
-          payload,
-        )}`,
-      );
+    }
+    else {
+      jwtLogger.error(`Invalid token, issuerValue = ${issuerValid}, for: ${JSON.stringify(payload)}`);
       throw new UnauthorizedException();
     }
   }

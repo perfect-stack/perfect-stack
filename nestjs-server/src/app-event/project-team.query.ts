@@ -49,8 +49,8 @@ export class ProjectTeamQuery implements CustomQuery {
       '    left outer join "ProjectTeamStatus" on "ProjectMember".team_status_id = "ProjectTeamStatus".id\n' +
       '    left outer join "Authentication" on "Authentication".email_address = "Person".email_address\n' +
       'WHERE\n' +
-      '    "ProjectMember"."ProjectId" = $1\n' +
-      'GROUP BY "ProjectMember"."ProjectId",\n' +
+      '    "ProjectMember"."project_id" = $1\n' +
+      'GROUP BY "ProjectMember"."project_id",\n' +
       '         "Person".id\n,' +
       '         "Person".given_name,\n' +
       '         "Person".family_name,\n' +
@@ -72,7 +72,7 @@ export class ProjectTeamQuery implements CustomQuery {
     );
 
     const selectCountSQL =
-      'Select count(*) as total_count FROM "ProjectMember" WHERE "ProjectMember"."ProjectId" = $1';
+      'Select count(*) as total_count FROM "ProjectMember" WHERE "ProjectMember"."project_id" = $1';
 
     const selectCountResponse = await pool.query(selectCountSQL, [projectId]);
 

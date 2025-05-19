@@ -5,6 +5,8 @@
   "type": "Database",
   "rootNode": false,
   "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
   "attributes": [
     {
       "name": "id",
@@ -102,6 +104,27 @@
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "ProjectTeamStatus",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "project",
+      "label": "Project",
+      "description": "The project of this relationship",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Project",
       "typeaheadSearch": [
         "name"
       ],

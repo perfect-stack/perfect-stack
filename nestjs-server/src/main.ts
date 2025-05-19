@@ -1,11 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import axios from "axios";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: ['log', 'error', 'warn', 'debug'],
-    //logger: [ 'log', 'error', 'warn'],
+    //logger: ['log', 'error', 'warn', 'debug'],
+    logger: [ 'log', 'error', 'warn'],
     //logger: [ 'error', 'warn'],
   });
 

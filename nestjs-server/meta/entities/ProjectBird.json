@@ -5,6 +5,8 @@
   "type": "Database",
   "rootNode": false,
   "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
   "attributes": [
     {
       "name": "id",
@@ -31,6 +33,27 @@
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "Project",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "bird",
+      "label": "Bird",
+      "description": "The Bird that is part of this relationship",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Bird",
       "typeaheadSearch": [
         "name"
       ],
