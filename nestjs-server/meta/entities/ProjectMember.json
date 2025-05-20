@@ -128,12 +128,7 @@
       "typeaheadSearch": [
         "name"
       ],
-      "rules": [
-        {
-          "type": "Required",
-          "config": ""
-        }
-      ]
+      "rules": []
     }
   ]
 }
