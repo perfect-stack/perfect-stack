@@ -1,0 +1,64 @@
+{
+  "name": "DeathActivity.view_edit",
+  "title": "Death",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "9",
+            "height": "3",
+            "attributeName": "field_sign_description",
+            "component": "TextArea"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "dna_tested"
+          }
+        ],
+        [
+          {
+            "width": "9",
+            "height": "1",
+            "attributeName": "diagnosis"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "template": {
+              "binding": "predators",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "PredatorDNA",
+              "cells": [
+                [
+                  {
+                    "width": "6",
+                    "height": "1",
+                    "attributeName": "predator_type"
+                  }
+                ]
+              ],
+              "styles": "",
+              "orderByName": "",
+              "orderByDir": "",
+              "noItemsHtml": "",
+              "locations": {},
+              "showSideHeadings": "Disabled"
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "DeathActivity",
+      "type": "form",
+      "templateHeading": "Death"
+    }
+  ]
+}

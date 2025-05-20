@@ -62,6 +62,10 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'DeathActivity',
     },
     {
+        fileName: 'MGN_KIMS__PREDATOR_DNA_.csv',
+        tableName: 'PredatorDNA',
+    },
+    {
         fileName: 'MGN_KIMS__HEALTH_ACTIVITY_.csv',
         tableName: 'HealthActivity',
     },
@@ -467,7 +471,7 @@ class MetaEntityRowProcessor {
                 csvColName = csvColName + '_ID';
 
                 if (!(csvColName in csvRow)) {
-                    throw new Error("Unable to find column for csvColName of " + csvColName + " and " + fullAttributeName );
+                    throw new Error("Unable to find column for csvColName of " + csvColName + " and " + fullAttributeName + " attribute: " + JSON.stringify(attribute) );
                 }
             }
 
@@ -513,7 +517,7 @@ class MetaEntityRowProcessor {
             const idSuffix = "_ID";
             if(csvColName.endsWith(idSuffix)) {
                 const entityName = csvColName.substring(0, csvColName.length - idSuffix.length);
-                if(["EVENT"].includes(entityName)) {
+                if(["EVENT", "DEATH_ACTIVITY"].includes(entityName)) {
                     columns.push(csvColName.toLowerCase());
                     values.push(csvRow[csvColName]);
                     csvRowKeys = csvRowKeys.filter(key => key !== csvColName);

@@ -1,5 +1,8 @@
 <ng-container *ngIf="ctx">
   <ng-container *ngIf="ctx.formMap">
+    <ng-container *ngIf="debugService.ON">
+      [CONTROLLER]
+    </ng-container>
     <lib-layout [ctx]="ctx" [template]="template" [showTemplateHeadings]="showTemplateHeadings"></lib-layout>
   </ng-container>
 

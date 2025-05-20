@@ -1,3 +1,6 @@
+<ng-container *ngIf="debugService.ON">
+  [LAYOUT - {{template.templateHeading}} - {{template.binding}}]
+</ng-container>
 <ng-container *ngIf="ctx && template">
 
   <div [ngClass]="template.styles">

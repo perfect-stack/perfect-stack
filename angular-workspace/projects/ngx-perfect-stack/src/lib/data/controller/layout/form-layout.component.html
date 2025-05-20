@@ -1,3 +1,6 @@
+<ng-container *ngIf="debugService.ON">
+  [FORM_LAYOUT {{template.templateHeading}} - {{template.binding}}]
+</ng-container>
 <ng-container *ngIf="cells$ | async as cells">
 
   <!--Cells: {{cells|json}}-->
@@ -43,6 +46,9 @@
           <!-- If the cell has it's own template then we recursively nest the template inside of the cell. Which means
            we need to pass down the formGroup of the cell and name of the property for that formGroup -->
           <ng-container *ngIf="cell.template && cell.template.binding">
+            <ng-container *ngIf="debugService.ON">
+              [NESTED]
+            </ng-container>
             <lib-layout [ctx]="ctx" [template]="cell.template" [formGroup]="formGroup" [relationshipProperty]="cell.template.binding"></lib-layout>
           </ng-container>
         </div>
@@ -85,6 +91,9 @@
 
       <ng-container *ngIf="cell.template">
         <div *ngIf="cell.template">
+          <ng-container *ngIf="debugService.ON">
+            [OTHER-FORM]
+          </ng-container>
           <lib-layout [ctx]="ctx" [template]="cell.template"></lib-layout>
         </div>
       </ng-container>

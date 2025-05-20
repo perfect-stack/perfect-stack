@@ -154,6 +154,7 @@ export class TableLayoutComponent implements OnInit {
   metaPageMap: Map<string, MetaPage>;
 
   constructor(protected readonly metaEntityService: MetaEntityService,
+              protected readonly debugService: DebugService,
               protected readonly router: Router,
               protected readonly formService: FormService,
               protected readonly formGroupService: FormGroupService) { }

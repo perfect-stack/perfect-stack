@@ -1,3 +1,7 @@
+<ng-container *ngIf="debugService.ON">
+  [TABLE_LAYOUT - {{template.templateHeading}} - {{template.binding}}]
+</ng-container>
+
 <ng-container *ngIf="cells$ | async as cells">
 
   <ng-container *ngIf="cells && attributes && (attributes.length > 0 || mode === 'edit')">
@@ -51,7 +55,7 @@
     </div>
   </ng-container>
 
-  <div class="d-flex" *ngIf="mode === 'edit'">
+  <div class="d-flex" *ngIf="mode === 'edit' && attributes">
     <a class="text-primary" (click)="onAddRow()" id="addRowBtn" role="button">
       <span class="material-symbols-outlined icon-filled align-middle">add_circle</span>
       Add another

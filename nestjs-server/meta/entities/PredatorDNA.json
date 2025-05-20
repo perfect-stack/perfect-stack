@@ -1,0 +1,40 @@
+{
+  "name": "PredatorDNA",
+  "pluralName": "Predators",
+  "icon": "",
+  "type": "Database",
+  "rootNode": false,
+  "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": true,
+  "attributes": [
+    {
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "type": "Text",
+      "visibility": "Visible",
+      "name": "predator_type",
+      "label": "Predator type",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}

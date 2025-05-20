@@ -1,0 +1,98 @@
+{
+  "name": "DeathActivity",
+  "pluralName": "Death",
+  "icon": "skull",
+  "type": "Database",
+  "rootNode": false,
+  "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "activity_type",
+      "label": "Activity type",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "name",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "ActivityType",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
+    },
+    {
+      "name": "dna_tested",
+      "label": "DNA tested",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Boolean",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "field_sign_description",
+      "label": "Field sign description",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Html",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "diagnosis",
+      "label": "Diagnosis",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "predators",
+      "label": "Predators",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "PredatorDNA",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}
