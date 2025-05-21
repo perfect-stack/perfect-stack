@@ -71,14 +71,15 @@
       "typeaheadSearch": [],
       "rules": [],
       "enumeration": [
+        "Banding",
+        "Call count",
+        "Death",
         "Health",
         "Measurement",
-        "Weight",
-        "Banding",
         "Microchip",
-        "Wing tag",
-        "Call count",
-        "Weather"
+        "Weather",
+        "Weight",
+        "Wing tag"
       ]
     }
   ]
