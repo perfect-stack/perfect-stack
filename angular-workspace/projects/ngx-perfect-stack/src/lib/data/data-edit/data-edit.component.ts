@@ -159,6 +159,7 @@ export class DataEditComponent implements OnInit {
 
 
   onSave(ctx: FormContext) {
+    console.log('onSave() - STARTED');
 
     // TODO: this is wrong since it now depends on entityForm
     //const entityData = ctx.entityForm.value;
@@ -167,9 +168,13 @@ export class DataEditComponent implements OnInit {
     // only has one form and so we can get the one and only form out of the formMap. Once this changes to some sort
     // of template approach then the template binding will be needed here to find the form to get the entityData
     const form = this.getDataForm(ctx);
+    console.log('onSave() - GOT FORM');
+
     this.validateAllFields('root', form);
+    console.log('onSave() - VALIDATION');
 
     if(form.valid) {
+      console.log('onSave() - VALID');
       const entityData = form.value;
       console.log(`DataEdit: form value:`, entityData);
 
@@ -197,6 +202,9 @@ export class DataEditComponent implements OnInit {
           }
         });
       }
+    }
+    else {
+      console.log('onSave() - INVALID');
     }
   }
 
@@ -255,16 +263,22 @@ export class DataEditComponent implements OnInit {
     }
 
     if (abstractControl instanceof UntypedFormGroup) {
+      console.log(`validateAllFields: ${name} - UntypedFormGroup`, abstractControl.validator);
       const fg = abstractControl as UntypedFormGroup;
       Object.keys(fg.controls).forEach(key => {
         this.validateAllFields(key, fg.controls[key]);
       });
-    } else if( abstractControl instanceof  UntypedFormArray) {
+    }
+    else if( abstractControl instanceof  UntypedFormArray) {
+      console.log(`validateAllFields: ${name} - UntypedFormArray`, abstractControl.validator);
       const formArray = abstractControl as UntypedFormArray;
       for(let i = 0; i < formArray.length; i++) {
         const nextChildControl = formArray.at(i);
         this.validateAllFields(`${name}[${i}]`, nextChildControl);
       }
+    }
+    else {
+      console.log(`validateAllFields: ${name} - Unknown type`, abstractControl.validator);
     }
   }
 

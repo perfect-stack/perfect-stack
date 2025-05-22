@@ -48,7 +48,7 @@ export class FormGroupService {
           const formControl = new FormControlWithAttribute(null);
           formControl.attribute = nextAttribute;
           if(nextAttribute.visibility === VisibilityType.Required) {
-            formControl.addValidators(Validators.required)
+            this.addValidators(formControl, Validators.required);
           }
           formGroup.addControl(manyToOneControlName, formControl);
           break;
@@ -80,10 +80,9 @@ export class FormGroupService {
         // the attributes that the user can't edit on the ManyToOne
 //        if(nextAttribute.visibility === VisibilityType.Required && !suppressValidators && nextAttribute.type !== AttributeType.ManyToOne) {
 
-        // 4-Aug, disable client validators for now while testing server validation
-        // if(nextAttribute.visibility === VisibilityType.Required) {
-        //   abstractControl.addValidators(Validators.required);
-        // }
+        if(nextAttribute.visibility === VisibilityType.Required) {
+          this.addValidators(abstractControl, Validators.required);
+        }
 
         (abstractControl as any).attribute = nextAttribute;
         //controls[nextAttribute.name] = abstractControl;
@@ -183,6 +182,16 @@ export class FormGroupService {
   private formControlForBoolean(): UntypedFormControl {
     // It's important to set this to false as the default value because otherwise the database will reject the default value of ''
     return new FormControlWithAttribute(false);
+  }
+
+  private addValidators(control: AbstractControl, validators: ValidatorFn | ValidatorFn[]) {
+    // May-2025: During Kea project it was discovered that data validation errors did not appear on the UI for basic
+    // data validation like mandatory fields. It turns out that the client-side validation has a problem where validation
+    // is performed and will mark the form as invalid, but this does not appear on the UI. The simple workaround at the
+    // moment was to disable adding clientside validators and defer all validation to the server, which does result in
+    // validation messages being displayed correctly. This method was added to capture the situation, and provide a
+    // single place where all validators are added to controls.
+    //control.addValidators(validators);
   }
 }
 
