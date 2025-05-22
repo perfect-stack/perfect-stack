@@ -14,6 +14,14 @@ const BATCH_SIZE = 100; // Number of rows to insert in a single batch query
 
 const filesToProcess: FileProcessingConfig[] = [
     {
+        fileName: 'MGN_KIMS__AUDIT_.csv',
+        tableName: 'Audit',
+    },
+    {
+        fileName: 'MGN_KIMS__Authentication_.csv',
+        tableName: 'Authentication',
+    },
+    {
         fileName: 'MGN_KIMS__LOCATION_TYPE_.csv',
         tableName: 'LocationType',
     },
