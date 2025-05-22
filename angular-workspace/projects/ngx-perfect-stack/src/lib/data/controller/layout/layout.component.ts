@@ -312,7 +312,7 @@ export class CardLayoutComponent implements OnInit {
 
   metaEntityMap$: Observable<Map<string, MetaEntity>>;
   metaPageMap$: Observable<Map<string, MetaPage>>;
-  discriminatorMap$ = this.discriminatorService.discriminatorMap$;
+  discriminatorMap$: Observable<Map<string, Map<string, DiscriminatorMapping>>>;
 
   constructor(private modalService: NgbModal,
               private metaEntityService: MetaEntityService,

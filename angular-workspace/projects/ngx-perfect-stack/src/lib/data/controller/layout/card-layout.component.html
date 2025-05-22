@@ -10,12 +10,14 @@
             <a class="text-primary" role="button" (click)="onDeleteItem(i)" *ngIf="mode === 'edit'" id="cards[{{i}}].deleteBtn">Remove</a>
           </div>
 
-          <lib-form-layout
-            [mode]="mode"
-            [ctx]="ctx"
-            [template]="getTemplateForRow(i, metaPageMap, discriminatorMap)"
-            [formGroup]="getFormGroupForRow(i)">
-          </lib-form-layout>
+          <ng-container *ngIf="getTemplateForRow(i, metaPageMap, discriminatorMap) as template">
+            <lib-form-layout
+              [mode]="mode"
+              [ctx]="ctx"
+              [template]="template"
+              [formGroup]="getFormGroupForRow(i)">
+            </lib-form-layout>
+          </ng-container>
 
           <br>
         </div>

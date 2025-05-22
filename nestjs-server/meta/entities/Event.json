@@ -115,6 +115,10 @@
           {
             "discriminatorValue": "Death",
             "metaEntityName": "DeathActivity"
+          },
+          {
+            "discriminatorValue": "Call count",
+            "metaEntityName": "CallCountActivity"
           }
         ]
       }

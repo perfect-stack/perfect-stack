@@ -86,7 +86,8 @@ export class DiscriminatorService {
           const discriminatorMap = new Map<string, DiscriminatorMapping>();
           const entityResultList: any[] = response.resultList;
           if(entityResultList) {
-            console.log('entityResultList', entityResultList);
+            console.log('$$$ entityMappingList', discriminator.entityMappingList);
+            console.log('$$$ entityResultList', entityResultList);
             discriminator.entityMappingList.forEach(entityMapping => {
 
               // find the entity that has the same name as the entityMapping
@@ -114,6 +115,7 @@ export class DiscriminatorService {
             throw new Error(`Unable to find entity collection from database with name ${attribute.discriminator.discriminatorType}`);
           }
 
+          console.log(`$$$ discriminatorMap:`, discriminatorMap)
           return discriminatorMap;
         }));
     }

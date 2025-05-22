@@ -52,7 +52,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         'Event.event_type as event_type',
 
         knex.raw(
-            "concat(at_baa.name, ',', at_dea.name, ',', at_hea.name, ',', at_mea.name, ',', at_mia.name, ',', at_wea.name, ',', at_wei.name) as activities",
+            "concat(at_baa.name, ',', at_cal.name, ',', at_dea.name, ',', at_hea.name, ',', at_mea.name, ',', at_mia.name, ',', at_wea.name, ',', at_wei.name) as activities",
         ),
       );
 
@@ -66,6 +66,9 @@ export class EventSearchCriteriaQuery implements CustomQuery {
 
         .leftOuterJoin('BandingActivity as baa', 'baa.event_id', 'Event.id')
         .leftOuterJoin('ActivityType as at_baa', 'at_baa.id', 'baa.activity_type_id')
+
+        .leftOuterJoin('CallCountActivity as cal', 'cal.event_id', 'Event.id')
+        .leftOuterJoin('ActivityType as at_cal', 'at_cal.id', 'baa.activity_type_id')
 
         .leftOuterJoin('DeathActivity as dea', 'dea.event_id', 'Event.id')
         .leftOuterJoin('ActivityType as at_dea', 'at_dea.id', 'dea.activity_type_id')
@@ -101,6 +104,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
 
           const activityTypeMap = new Map<string, string>();
           activityTypeMap.set('Banding', 'at_baa');
+          activityTypeMap.set('Call count', 'at_cal');
           activityTypeMap.set('Death', 'at_dea');
           activityTypeMap.set('Health', 'at_hea');
           activityTypeMap.set('Measurement', 'at_mea');
@@ -108,12 +112,16 @@ export class EventSearchCriteriaQuery implements CustomQuery {
           activityTypeMap.set('Weather', 'at_wea');
           activityTypeMap.set('Weight', 'at_wei');
 
-
-          select = select.where(
-            activityTypeMap.get(value) + ".name",
-            '=',
-            `${value}`,
-          );
+          if(activityTypeMap.get(value)) {
+            select = select.where(
+                activityTypeMap.get(value) + ".name",
+                '=',
+                `${value}`,
+            );
+          }
+          else {
+            console.error(`Unknown activity type: ${value}`);
+          }
         }
         else {
           select = select.where(name, operator, value);

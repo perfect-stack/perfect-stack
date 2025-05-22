@@ -142,16 +142,17 @@ export class EventPageListenerService implements PageListener {
 
       if(eventType === 'Audio') {
         console.log('Audio Event detected');
+        if(ctx.discriminatorMap) {
+            this.addActivity(ctx, 'CallCountActivity', 'Call count', {
+              count_type_id: this.defaultCountType ? this.defaultCountType.id : '',
+              calls: []
+            });
 
-        this.addActivity(ctx, 'CallCountActivity', {
-          activity_type: 'Call count',
-          count_type_id: this.defaultCountType ? this.defaultCountType.id : '',
-          calls: []
-        });
-
-        this.addActivity(ctx, 'WeatherActivity', {
-          activity_type: 'Weather',
-        });
+            this.addActivity(ctx, 'WeatherActivity', 'Weather', {});
+        }
+        else {
+          console.error('Unable to find discriminatorMap Audio default activities have not been added');
+        }
       }
     }
   }
@@ -163,10 +164,26 @@ export class EventPageListenerService implements PageListener {
     }
   }
 
-  addActivity(ctx: FormContext, activityEntityName: string, activityItem: any) {
+  addActivity(ctx: FormContext, activityEntityName: string, discriminatorValue: string, activityItem: any) {
+
+    console.log(`addActivity: activityEntityName = ${activityEntityName} discriminatorMap: `, ctx.discriminatorMap);
+
+    const discriminatorMap = ctx.discriminatorMap.get('activities');
+    if(discriminatorMap) {
+      const discriminatorMapping = discriminatorMap.get(discriminatorValue);
+      if(discriminatorMapping) {
+        activityItem.activity_type_id = discriminatorMapping.discriminatorId;
+      }
+      else {
+        console.error('Unable to find discriminatorMapping for ', activityEntityName);
+      }
+    }
+    else {
+      console.error('Unable to find discriminatorMap for activities');
+    }
+
     const itemFormGroup = this.formGroupService.createFormGroup(ctx.mode, activityEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
     itemFormGroup.addControl('activity_type', this.fb.control(''));
-    // update the item formGroup
     itemFormGroup.patchValue(activityItem);
 
     const eventFormGroup = ctx.formMap.get('event') as UntypedFormGroup;

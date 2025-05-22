@@ -9,7 +9,7 @@ import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
 // --- Configuration ---
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-19.2';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-21.1';
 const BATCH_SIZE = 100; // Number of rows to insert in a single batch query
 
 const filesToProcess: FileProcessingConfig[] = [
@@ -56,6 +56,18 @@ const filesToProcess: FileProcessingConfig[] = [
     {
         fileName: 'MGN_KIMS__BANDING_ACTIVITY_.csv',
         tableName: 'BandingActivity',
+    },
+    {
+        fileName: 'MGN_KIMS__COUNT_TYPE_.csv',
+        tableName: 'CountType',
+    },
+    {
+        fileName: 'MGN_KIMS__CALL_COUNT_ACTIVITY_.csv',
+        tableName: 'CallCountActivity',
+    },
+    {
+        fileName: 'MGN_KIMS__CALL_INSTANCE_.csv',
+        tableName: 'CallInstance',
     },
     {
         fileName: 'MGN_KIMS__DEATH_ACTIVITY_.csv',
@@ -356,8 +368,7 @@ export class MigrateService {
             for (const config of filesToProcess) {
                 const filePath = path.join(CSV_DIRECTORY, config.fileName);
                 if (!fs.existsSync(filePath)) {
-                    console.warn(`File not found: ${filePath}. Skipping.`);
-                    continue;
+                    throw new Error(`File not found: ${filePath}.`);
                 }
 
                 try {
