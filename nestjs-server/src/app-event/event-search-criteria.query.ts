@@ -52,7 +52,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         'Event.event_type as event_type',
 
         knex.raw(
-            "concat(at_baa.name, ',', at_cal.name, ',', at_cap.name, ',', at_dea.name, ',', at_hea.name, ',', at_mea.name, ',', at_mia.name, ',', at_wea.name, ',', at_wei.name) as activities",
+            "concat(at_baa.name, ',', at_cal.name, ',', at_cap.name, ',', at_dea.name, ',', at_hea.name, ',', at_mea.name, ',', at_mia.name, ',', at_nes.name, ',', at_wea.name, ',', at_wei.name) as activities",
         ),
       );
 
@@ -85,6 +85,9 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         .leftOuterJoin('MicrochipActivity as mia', 'mia.event_id', 'Event.id')
         .leftOuterJoin('ActivityType as   at_mia', 'at_mia.id', 'mia.activity_type_id')
 
+        .leftOuterJoin('NestingActivity as nes', 'nes.event_id', 'Event.id')
+        .leftOuterJoin('ActivityType as     at_nes', 'at_nes.id', 'nes.activity_type_id')
+
         // .leftOuterJoin('WingTagActivity', 'WingTagActivity.event_id', 'Event.id')
 
         .leftOuterJoin('WeatherActivity as wea', 'wea.event_id','Event.id')
@@ -112,6 +115,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
           activityTypeMap.set('Health', 'at_hea');
           activityTypeMap.set('Measurement', 'at_mea');
           activityTypeMap.set('Microchip', 'at_mia');
+          activityTypeMap.set('Nesting', 'at_nes');
           activityTypeMap.set('Weather', 'at_wea');
           activityTypeMap.set('Weight', 'at_wei');
 

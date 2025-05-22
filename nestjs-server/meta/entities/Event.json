@@ -89,32 +89,8 @@
         "discriminatorType": "ActivityType",
         "entityMappingList": [
           {
-            "discriminatorValue": "Health",
-            "metaEntityName": "HealthActivity"
-          },
-          {
-            "discriminatorValue": "Measurement",
-            "metaEntityName": "MeasurementActivity"
-          },
-          {
-            "discriminatorValue": "Weight",
-            "metaEntityName": "WeightActivity"
-          },
-          {
             "discriminatorValue": "Banding",
             "metaEntityName": "BandingActivity"
-          },
-          {
-            "discriminatorValue": "Microchip",
-            "metaEntityName": "MicrochipActivity"
-          },
-          {
-            "discriminatorValue": "Weather",
-            "metaEntityName": "WeatherActivity"
-          },
-          {
-            "discriminatorValue": "Death",
-            "metaEntityName": "DeathActivity"
           },
           {
             "discriminatorValue": "Call count",
@@ -123,6 +99,34 @@
           {
             "discriminatorValue": "Capture",
             "metaEntityName": "CaptureActivity"
+          },
+          {
+            "discriminatorValue": "Death",
+            "metaEntityName": "DeathActivity"
+          },
+          {
+            "discriminatorValue": "Health",
+            "metaEntityName": "HealthActivity"
+          },
+          {
+            "discriminatorValue": "Nesting",
+            "metaEntityName": "NestingActivity"
+          },
+          {
+            "discriminatorValue": "Measurement",
+            "metaEntityName": "MeasurementActivity"
+          },
+          {
+            "discriminatorValue": "Microchip",
+            "metaEntityName": "MicrochipActivity"
+          },
+          {
+            "discriminatorValue": "Weight",
+            "metaEntityName": "WeightActivity"
+          },
+          {
+            "discriminatorValue": "Weather",
+            "metaEntityName": "WeatherActivity"
           }
         ]
       }

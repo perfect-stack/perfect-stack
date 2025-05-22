@@ -102,6 +102,10 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'MicrochipActivity',
     },
     {
+        fileName: 'MGN_KIMS__NESTING_ACTIVITY_.csv',
+        tableName: 'NestingActivity',
+    },
+    {
         fileName: 'MGN_KIMS__WEATHER_ACTIVITY_.csv',
         tableName: 'WeatherActivity',
     },
