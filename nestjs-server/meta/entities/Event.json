@@ -119,6 +119,10 @@
           {
             "discriminatorValue": "Call count",
             "metaEntityName": "CallCountActivity"
+          },
+          {
+            "discriminatorValue": "Capture",
+            "metaEntityName": "CaptureActivity"
           }
         ]
       }

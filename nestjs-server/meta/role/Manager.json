@@ -1,6 +1,6 @@
 {
   "name": "Manager",
-  "group": "KIMS_Project_Manager,managers",
+  "group": "KIMS_Project_Manager_DEV_TEST,KIMS_Project_Manager,managers",
   "inherits": "Editor",
   "description": "<p>Can add/remove people to project they are a manager of</p>",
   "permissions": [

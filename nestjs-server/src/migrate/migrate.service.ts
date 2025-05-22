@@ -66,6 +66,10 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'BandingActivity',
     },
     {
+        fileName: 'MGN_KIMS__CAPTURE_ACTIVITY_.csv',
+        tableName: 'CaptureActivity',
+    },
+    {
         fileName: 'MGN_KIMS__COUNT_TYPE_.csv',
         tableName: 'CountType',
     },
@@ -140,6 +144,7 @@ const ignoreForNow = [
     "Bird.FATE",
     "Event.activities",
     "EventObserver.INSTRUMENT_ID",
+    "CaptureActivity.IS_RECAPTURE",
 ];
 
 

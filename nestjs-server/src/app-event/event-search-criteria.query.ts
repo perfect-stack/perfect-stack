@@ -52,7 +52,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         'Event.event_type as event_type',
 
         knex.raw(
-            "concat(at_baa.name, ',', at_cal.name, ',', at_dea.name, ',', at_hea.name, ',', at_mea.name, ',', at_mia.name, ',', at_wea.name, ',', at_wei.name) as activities",
+            "concat(at_baa.name, ',', at_cal.name, ',', at_cap.name, ',', at_dea.name, ',', at_hea.name, ',', at_mea.name, ',', at_mia.name, ',', at_wea.name, ',', at_wei.name) as activities",
         ),
       );
 
@@ -68,7 +68,10 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         .leftOuterJoin('ActivityType as at_baa', 'at_baa.id', 'baa.activity_type_id')
 
         .leftOuterJoin('CallCountActivity as cal', 'cal.event_id', 'Event.id')
-        .leftOuterJoin('ActivityType as at_cal', 'at_cal.id', 'baa.activity_type_id')
+        .leftOuterJoin('ActivityType as at_cal', 'at_cal.id', 'cal.activity_type_id')
+
+        .leftOuterJoin('CaptureActivity as cap', 'cap.event_id', 'Event.id')
+        .leftOuterJoin('ActivityType as at_cap', 'at_cap.id', 'cap.activity_type_id')
 
         .leftOuterJoin('DeathActivity as dea', 'dea.event_id', 'Event.id')
         .leftOuterJoin('ActivityType as at_dea', 'at_dea.id', 'dea.activity_type_id')
@@ -83,7 +86,6 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         .leftOuterJoin('ActivityType as   at_mia', 'at_mia.id', 'mia.activity_type_id')
 
         // .leftOuterJoin('WingTagActivity', 'WingTagActivity.event_id', 'Event.id')
-        // .leftOuterJoin('CallCountActivity', 'CallCountActivity.event_id','Event.id')
 
         .leftOuterJoin('WeatherActivity as wea', 'wea.event_id','Event.id')
         .leftOuterJoin('ActivityType as at_wea', 'at_wea.id', 'wea.activity_type_id')
@@ -105,6 +107,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
           const activityTypeMap = new Map<string, string>();
           activityTypeMap.set('Banding', 'at_baa');
           activityTypeMap.set('Call count', 'at_cal');
+          activityTypeMap.set('Capture', 'at_cap');
           activityTypeMap.set('Death', 'at_dea');
           activityTypeMap.set('Health', 'at_hea');
           activityTypeMap.set('Measurement', 'at_mea');
