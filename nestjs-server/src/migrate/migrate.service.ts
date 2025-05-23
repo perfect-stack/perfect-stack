@@ -106,6 +106,10 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'NestingActivity',
     },
     {
+        fileName: 'MGN_KIMS__SAMPLE_ACTIVITY_.csv',
+        tableName: 'SampleActivity',
+    },
+    {
         fileName: 'MGN_KIMS__WEATHER_ACTIVITY_.csv',
         tableName: 'WeatherActivity',
     },

@@ -121,6 +121,10 @@
             "metaEntityName": "MicrochipActivity"
           },
           {
+            "discriminatorValue": "Sample",
+            "metaEntityName": "SampleActivity"
+          },
+          {
             "discriminatorValue": "Weight",
             "metaEntityName": "WeightActivity"
           },

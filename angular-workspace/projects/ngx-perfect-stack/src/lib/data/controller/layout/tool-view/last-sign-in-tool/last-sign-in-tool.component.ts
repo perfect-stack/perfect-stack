@@ -39,7 +39,8 @@ export class LastSignInToolComponent implements OnInit {
     if(this.editorMode) {
       const zonedDateTime = ZonedDateTime.now(ZoneId.of('Pacific/Auckland'));
       this.updateLastSignInTime(zonedDateTime);
-    } else {
+    }
+    else {
       if(this.ctx && this.ctx.dataMap) {
         this.username = this.expressionService.evaluate(this.lastSignInTool.username, this.ctx.dataMap);
       }
@@ -47,18 +48,23 @@ export class LastSignInToolComponent implements OnInit {
         this.username = this.lastSignInTool.username;
       }
 
-      this.authenticationClientService.findLastSignIn(this.username).subscribe((authentication: any) => {
-        this.authentication = authentication;
-        if(authentication) {
-          const utc = Instant.parse(authentication.auth_time);
-          const zonedDateTime = ZonedDateTime.ofInstant(utc, ZoneId.of('Pacific/Auckland'));
-          this.updateLastSignInTime(zonedDateTime);
-        }
-      });
+      if(this.username) {
+        this.authenticationClientService.findLastSignIn(this.username).subscribe((authentication: any) => {
+          this.authentication = authentication;
+          if (authentication) {
+            const utc = Instant.parse(authentication.auth_time);
+            const zonedDateTime = ZonedDateTime.ofInstant(utc, ZoneId.of('Pacific/Auckland'));
+            this.updateLastSignInTime(zonedDateTime);
+          }
+        });
+      }
+      else {
+        this.updateLastSignInTime(null);
+      }
     }
   }
 
-  updateLastSignInTime(zonedDateTime: ZonedDateTime) {
+  updateLastSignInTime(zonedDateTime: ZonedDateTime | null) {
     if(zonedDateTime) {
       const dateTimeFormat = this.stackConfig.dateTimeFormat;
       const dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormat).withLocale(Locale.US);

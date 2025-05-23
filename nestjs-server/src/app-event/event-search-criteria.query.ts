@@ -39,6 +39,32 @@ export class EventSearchCriteriaQuery implements CustomQuery {
     //const activitiesAttribute = metaEntity.attributes['activities'];
     //const discriminatorMap = await this.discriminatorService.findDiscriminatorMap(activitiesAttribute);
 
+    const activityTypeMap = new Map<string, string>();
+    activityTypeMap.set('Banding', 'at_baa');
+    activityTypeMap.set('Call count', 'at_cal');
+    activityTypeMap.set('Capture', 'at_cap');
+    activityTypeMap.set('Death', 'at_dea');
+    activityTypeMap.set('Health', 'at_hea');
+    activityTypeMap.set('Measurement', 'at_mea');
+    activityTypeMap.set('Microchip', 'at_mia');
+    activityTypeMap.set('Nesting', 'at_nes');
+    activityTypeMap.set('Sample', 'at_sam');
+    activityTypeMap.set('Weather', 'at_wea');
+    activityTypeMap.set('Weight', 'at_wei');
+
+
+    // Get the values (the short codes) from the map
+    const shortCodes = Array.from(activityTypeMap.values());
+
+    // Construct the concat string
+    const concatString = shortCodes.map(code => `${code}.name`).join(", ',', ");
+
+    // Add the prefix and suffix
+    const target_NEW = `concat(${concatString}) as activities`;
+    //const target_OLD = "concat(at_baa.name, ',', at_cal.name, ',', at_cap.name, ',', at_dea.name, ',', at_hea.name, ',', at_mea.name, ',', at_mia.name, ',', at_nes.name, ',', at_wea.name, ',', at_wei.name) as activities";
+
+    //console.log(target_OLD);
+    console.log(target_NEW);
 
     const knex = await this.knexService.getKnex();
     const selectData = () =>
@@ -50,10 +76,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         'Species.name as species',
         'Event.form as form',
         'Event.event_type as event_type',
-
-        knex.raw(
-            "concat(at_baa.name, ',', at_cal.name, ',', at_cap.name, ',', at_dea.name, ',', at_hea.name, ',', at_mea.name, ',', at_mia.name, ',', at_nes.name, ',', at_wea.name, ',', at_wei.name) as activities",
-        ),
+        knex.raw(target_NEW),
       );
 
     const selectCount = () => knex.select().count();
@@ -86,9 +109,12 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         .leftOuterJoin('ActivityType as   at_mia', 'at_mia.id', 'mia.activity_type_id')
 
         .leftOuterJoin('NestingActivity as nes', 'nes.event_id', 'Event.id')
-        .leftOuterJoin('ActivityType as     at_nes', 'at_nes.id', 'nes.activity_type_id')
+        .leftOuterJoin('ActivityType as at_nes', 'at_nes.id', 'nes.activity_type_id')
 
-        // .leftOuterJoin('WingTagActivity', 'WingTagActivity.event_id', 'Event.id')
+        .leftOuterJoin('SampleActivity as sam', 'sam.event_id', 'Event.id')
+        .leftOuterJoin('ActivityType as     at_sam', 'at_sam.id', 'sam.activity_type_id')
+
+          // .leftOuterJoin('WingTagActivity', 'WingTagActivity.event_id', 'Event.id')
 
         .leftOuterJoin('WeatherActivity as wea', 'wea.event_id','Event.id')
         .leftOuterJoin('ActivityType as at_wea', 'at_wea.id', 'wea.activity_type_id')
@@ -106,19 +132,6 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         const value: any = getCriteriaValue(criteria);
 
         if (name === 'activity_type') {
-
-          const activityTypeMap = new Map<string, string>();
-          activityTypeMap.set('Banding', 'at_baa');
-          activityTypeMap.set('Call count', 'at_cal');
-          activityTypeMap.set('Capture', 'at_cap');
-          activityTypeMap.set('Death', 'at_dea');
-          activityTypeMap.set('Health', 'at_hea');
-          activityTypeMap.set('Measurement', 'at_mea');
-          activityTypeMap.set('Microchip', 'at_mia');
-          activityTypeMap.set('Nesting', 'at_nes');
-          activityTypeMap.set('Weather', 'at_wea');
-          activityTypeMap.set('Weight', 'at_wei');
-
           if(activityTypeMap.get(value)) {
             select = select.where(
                 activityTypeMap.get(value) + ".name",
