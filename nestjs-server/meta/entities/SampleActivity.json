@@ -1,0 +1,42 @@
+{
+  "name": "SampleActivity",
+  "pluralName": "Samples",
+  "icon": "science",
+  "type": "Database",
+  "rootNode": false,
+  "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "activity_type",
+      "label": "Activity type",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "name",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "ActivityType",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
+    }
+  ]
+}

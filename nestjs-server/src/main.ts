@@ -11,11 +11,12 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: [
-        'http://localhost:4200',
-        'http://localhost:3080',
-        'https://dev2-kims-media.s3.ap-southeast-2.amazonaws.com'
-    ],
+    // origin: [
+    //     'http://localhost:4200',
+    //     'http://localhost:3080',
+    //     'https://dev2-kims-media.s3.ap-southeast-2.amazonaws.com'
+    // ],
+    origin: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: '*',
     credentials: true, // Set to true if your client needs to send cookies or Authorization headers
