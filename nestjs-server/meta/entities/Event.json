@@ -131,6 +131,10 @@
           {
             "discriminatorValue": "Weather",
             "metaEntityName": "WeatherActivity"
+          },
+          {
+            "discriminatorValue": "Wing tag",
+            "metaEntityName": "WingTagActivity"
           }
         ]
       }

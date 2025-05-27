@@ -6,6 +6,8 @@ import { DataEventListener } from '../event/event.service';
 import { ResultType, ValidationResultMap } from '../domain/meta.rule';
 import { MetaEntity } from '../domain/meta.entity';
 import { Entity } from '../domain/entity';
+import {DiscriminatorMapping, DiscriminatorService} from "../data/discriminator.service";
+import {MetaEntityService} from "../meta/meta-entity/meta-entity.service";
 
 export class BandingActivityDataEventListener implements DataEventListener {
   private readonly logger = new Logger(BandingActivityDataEventListener.name);
@@ -25,20 +27,40 @@ export class BandingActivityDataEventListener implements DataEventListener {
     },
   ];
 
+  private _discriminatorMap: Map<string, DiscriminatorMapping>;
+
   constructor(
     protected readonly dataService: DataService,
     protected readonly queryService: QueryService,
     protected readonly knexService: KnexService,
+    protected readonly metaEntityService: MetaEntityService,
+    protected readonly discriminatorService: DiscriminatorService,
   ) {}
 
-  private findActivityIndex(
+  private async getDiscriminatorMap() {
+    if(!this._discriminatorMap) {
+      const eventMetaEntity = await this.metaEntityService.findOne("Event");
+      console.log('eventMetaEntity:', eventMetaEntity);
+      let activitiesAttribute = eventMetaEntity.attributes.find(s => s.name === 'activities');
+      console.log(`activitiesAttribute: ${activitiesAttribute}`)
+      this._discriminatorMap = await this.discriminatorService.findDiscriminatorMap(activitiesAttribute);
+    }
+    return this._discriminatorMap;
+  }
+
+  private async findActivityIndex(
     activityList: any[],
     activity_type: string,
-  ): number | null {
+  ): Promise<number | null> {
     if (activityList) {
-      return activityList.findIndex(
-        (s: any) => s.activity_type === activity_type,
-      );
+      const discriminatorMap = await this.getDiscriminatorMap();
+      const activityType = discriminatorMap.get(activity_type);
+      if(activityType) {
+        return activityList.findIndex((s: any) => s.activity_type_id === activityType.discriminatorId);
+      }
+      else {
+        throw new Error(`Unable to find discriminator for ${activity_type}`);
+      }
     } else {
       return null;
     }
@@ -90,7 +112,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
     activity_type: string,
     validationResultMap: ValidationResultMap,
   ) {
-    const activityIndex = this.findActivityIndex(
+    const activityIndex = await this.findActivityIndex(
       entity.activities,
       activity_type,
     );
@@ -143,7 +165,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
     this.logger.log(`BandingActivityDataEventListener: onAfterSave()`);
 
     // check if there are any marking activities to worry about
-    if (this.hasMarkingActivities(entity)) {
+    if (await this.hasMarkingActivities(entity)) {
       // if there are load the bird once at the start
       const bird = await this.loadBird(entity);
 
@@ -162,13 +184,11 @@ export class BandingActivityDataEventListener implements DataEventListener {
     }
   }
 
-  hasMarkingActivities(entity: any) {
+  async hasMarkingActivities(entity: any) {
     const activityList: [] = entity.activities;
     if (activityList) {
       for (const nextMarking of this.markings) {
-        if (
-          this.findActivityIndex(activityList, nextMarking.activity_type) >= 0
-        ) {
+        if ((await this.findActivityIndex(activityList, nextMarking.activity_type)) >= 0) {
           return true;
         }
       }
@@ -186,7 +206,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
     activity_type: string,
     bird: any,
   ) {
-    const activityIdx = this.findActivityIndex(
+    const activityIdx = await this.findActivityIndex(
       entity.activities,
       activity_type,
     );

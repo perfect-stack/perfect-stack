@@ -74,6 +74,10 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'CountType',
     },
     {
+        fileName: 'MGN_KIMS__HABITAT_TYPE_.csv',
+        tableName: 'HabitatType',
+    },
+    {
         fileName: 'MGN_KIMS__CALL_COUNT_ACTIVITY_.csv',
         tableName: 'CallCountActivity',
     },
@@ -118,8 +122,8 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'WeightActivity',
     },
     {
-        fileName: 'MGN_KIMS__HABITAT_TYPE_.csv',
-        tableName: 'HabitatType',
+        fileName: 'MGN_KIMS__WING_TAG_ACTIVITY_.csv',
+        tableName: 'WingTagActivity',
     },
     {
         fileName: 'MGN_KIMS__PROJECT_STATUS_.csv',
@@ -144,7 +148,7 @@ const filesToProcess: FileProcessingConfig[] = [
     {
         fileName: 'MGN_KIMS__PROJECT_MEMBER_.csv',
         tableName: 'ProjectMember',
-    },
+    }
 ];
 
 const ignoreForNow = [

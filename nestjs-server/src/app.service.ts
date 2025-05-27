@@ -89,6 +89,8 @@ export class AppService implements OnApplicationBootstrap {
         this.dataService,
         this.queryService,
         this.knexService,
+        this.metaEntityService,
+        this.discriminatorService
       ),
     );
   }
