@@ -1,0 +1,37 @@
+{
+  "name": "NestingActivity.view_edit",
+  "title": "Nesting",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "nest_status"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "egg_count"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "chick_count"
+          }
+        ]
+      ],
+      "metaEntityName": "NestingActivity",
+      "type": "form"
+    }
+  ]
+}

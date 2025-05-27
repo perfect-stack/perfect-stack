@@ -72,6 +72,11 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
       }
     }
 
+    // Reset any error messages now that the user has made a change in the UI
+    if(this.ngControl.control && this.ngControl.errors) {
+      this.ngControl.control.setErrors(null);
+    }
+
     this.internalValue = nextValue
     this.onChange(val)
     //this.onTouch(val)

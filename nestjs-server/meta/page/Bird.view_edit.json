@@ -92,7 +92,7 @@
       ],
       "metaEntityName": "Bird",
       "type": "form",
-      "templateHeading": "Kiwi details",
+      "templateHeading": "Bird details",
       "binding": "bird"
     },
     {

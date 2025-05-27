@@ -1,0 +1,44 @@
+{
+  "name": "SampleActivity.view_edit",
+  "title": "Sample",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "SampleActivity",
+      "type": "form"
+    }
+  ]
+}
