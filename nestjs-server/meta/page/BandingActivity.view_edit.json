@@ -3,20 +3,43 @@
   "title": "Banding",
   "type": "view_edit",
   "layoutStyle": "Paris",
+  "dataQueryList": [],
+  "controllers": [],
   "templates": [
     {
       "cells": [
         [
           {
-            "width": "6",
+            "width": "3",
             "height": "1",
             "attributeName": "band"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "band_colour"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "band_location"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "colour_band"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "removed_band"
           }
         ]
       ],
       "metaEntityName": "BandingActivity",
       "type": "form"
     }
-  ],
-  "dataQueryList": []
+  ]
 }

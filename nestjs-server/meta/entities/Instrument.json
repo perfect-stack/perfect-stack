@@ -1,12 +1,12 @@
 {
-  "name": "BandingActivity",
-  "pluralName": "Bandings",
-  "icon": "circle",
+  "name": "Instrument",
+  "pluralName": "Instruments",
+  "icon": "",
   "type": "Database",
-  "rootNode": false,
+  "rootNode": true,
   "timestamps": true,
   "cacheExpiryInSecs": "",
-  "permanentDelete": false,
+  "permanentDelete": true,
   "attributes": [
     {
       "type": "Identifier",
@@ -25,38 +25,8 @@
     {
       "type": "Text",
       "visibility": "Visible",
-      "name": "band",
-      "label": "Band",
-      "description": "Band number used",
-      "unitOfMeasure": "",
-      "scale": "",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
-      "type": "ManyToOne",
-      "visibility": "Visible",
-      "name": "activity_type",
-      "label": "Activity type",
-      "description": "Activity type used",
-      "unitOfMeasure": "",
-      "scale": "",
-      "comparisonField": "name",
-      "comparisonOperator": "Equals",
-      "relationshipTarget": "ActivityType",
-      "typeaheadSearch": [
-        "name"
-      ],
-      "rules": []
-    },
-    {
-      "type": "Text",
-      "visibility": "Visible",
-      "name": "band_colour",
-      "label": "Band colour",
+      "name": "instrument_identifier",
+      "label": "Instrument identifier",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
@@ -69,8 +39,8 @@
     {
       "type": "Text",
       "visibility": "Visible",
-      "name": "band_location",
-      "label": "Band location",
+      "name": "instrument_description",
+      "label": "Instrument description",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
@@ -83,8 +53,8 @@
     {
       "type": "Text",
       "visibility": "Visible",
-      "name": "colour_band",
-      "label": "Colour band",
+      "name": "instrument_type",
+      "label": "Instrument type",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
@@ -95,10 +65,24 @@
       "rules": []
     },
     {
-      "type": "Text",
+      "type": "Double",
       "visibility": "Visible",
-      "name": "removed_band",
-      "label": "Removed band",
+      "name": "latest_easting",
+      "label": "Latest easting",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "type": "Double",
+      "visibility": "Visible",
+      "name": "latest_northing",
+      "label": "Latest northing",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",

@@ -41,7 +41,7 @@ export class BirdEditPageListenerService implements PageListener {
   }
 
   addValueListeners(formGroup: FormGroup) {
-    formGroup.controls['band'].valueChanges.subscribe(() => {
+    formGroup.controls['band_number'].valueChanges.subscribe(() => {
       this.clearControlErrors(formGroup, 'name');
     });
 

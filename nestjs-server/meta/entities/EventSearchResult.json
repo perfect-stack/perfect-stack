@@ -49,9 +49,9 @@
       "rules": []
     },
     {
-      "name": "band",
-      "label": "Band",
-      "description": "Bird band",
+      "name": "band_number",
+      "label": "Band number",
+      "description": "Bird band number",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",

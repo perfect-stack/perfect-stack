@@ -8,9 +8,8 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
-// --- Configuration ---
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-26.1';
-const BATCH_SIZE = 100; // Number of rows to insert in a single batch query
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-27.1';
+const BATCH_SIZE = 200;
 
 const filesToProcess: FileProcessingConfig[] = [
     {

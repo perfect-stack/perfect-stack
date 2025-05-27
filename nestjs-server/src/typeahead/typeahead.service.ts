@@ -36,9 +36,7 @@ export class TypeaheadService {
     // we should not trust the data in the TypeaheadRequest as part of the sequelize.literal() statement below, so use
     // the data from the TypeaheadRequest as parameters to look up the MetaAttribute from our own internal store and
     // use that instead of what we have been sent.
-    const metaEntity = await this.metaEntityService.findOne(
-      request.metaEntityName,
-    );
+    const metaEntity = await this.metaEntityService.findOne(request.metaEntityName);
     const metaAttribute = metaEntity.attributes.find(
       (x) => x.name === request.metaAttribute.name,
     );
@@ -50,11 +48,13 @@ export class TypeaheadService {
       whereClause['id'] = {
         [Op.eq]: request.searchId,
       };
-    } else if (request.searchIdList) {
+    }
+    else if (request.searchIdList) {
       whereClause['id'] = {
         [Op.in]: request.searchIdList,
       };
-    } else if (request.searchText) {
+    }
+    else if (request.searchText) {
       const searchFieldList = metaAttribute.typeaheadSearch.join(", ' ', ");
       const searchValue = wrapWithWildcards(request.searchText);
       whereClause['id'] = {
@@ -62,7 +62,8 @@ export class TypeaheadService {
           `(Select id from "${tableName}" where concat(${searchFieldList}) ilike '${searchValue}')`,
         ),
       };
-    } else {
+    }
+    else {
       throw new Error(
         'Invalid TypeaheadRequest searchId XOR searchText must be supplied',
       );

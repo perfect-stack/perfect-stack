@@ -198,7 +198,7 @@
       "relationshipTarget": "Bird",
       "typeaheadSearch": [
         "name",
-        "band",
+        "band_number",
         "microchip",
         "wing_tag"
       ],

@@ -99,17 +99,22 @@
       "cells": [
         [
           {
-            "width": "4",
+            "width": "3",
             "height": "1",
-            "attributeName": "band"
+            "attributeName": "band_number"
           },
           {
-            "width": "4",
+            "width": "3",
+            "height": "1",
+            "attributeName": "colour_band"
+          },
+          {
+            "width": "3",
             "height": "1",
             "attributeName": "microchip"
           },
           {
-            "width": "4",
+            "width": "3",
             "height": "1",
             "attributeName": "wing_tag"
           }

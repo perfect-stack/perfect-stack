@@ -228,7 +228,7 @@ export class EventPageListenerService implements PageListener {
 
               switch (activityType) {
                 case 'Banding':
-                  this.clearControlErrors(nextActivityFormGroup, 'band');
+                  this.clearControlErrors(nextActivityFormGroup, 'band_number');
                   break;
                 case 'Microchip':
                   this.clearControlErrors(nextActivityFormGroup, 'microchip');

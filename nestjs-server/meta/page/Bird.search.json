@@ -22,7 +22,12 @@
           {
             "width": "2",
             "height": "1",
-            "attributeName": "status"
+            "attributeName": "band_number"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "colour_band"
           }
         ],
         [
@@ -38,7 +43,7 @@
           {
             "width": "2",
             "height": "1",
-            "attributeName": "band"
+            "attributeName": "status"
           },
           {
             "width": "2",
@@ -66,7 +71,12 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "band"
+            "attributeName": "band_number"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "colour_band"
           },
           {
             "width": "1",

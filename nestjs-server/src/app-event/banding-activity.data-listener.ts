@@ -9,20 +9,34 @@ import { Entity } from '../domain/entity';
 import {DiscriminatorMapping, DiscriminatorService} from "../data/discriminator.service";
 import {MetaEntityService} from "../meta/meta-entity/meta-entity.service";
 
+interface Marking {
+  activity_attribute_name: string;
+  bird_attribute_name: string;
+  activity_type: string;
+}
+
 export class BandingActivityDataEventListener implements DataEventListener {
   private readonly logger = new Logger(BandingActivityDataEventListener.name);
 
-  private readonly markings = [
+  private readonly markings: Marking[] = [
     {
-      attribute_name: 'band',
+      activity_attribute_name: 'band',
+      bird_attribute_name: 'band_number',
       activity_type: 'Banding',
     },
     {
-      attribute_name: 'microchip',
+      activity_attribute_name: 'colour_band',
+      bird_attribute_name: 'colour_band',
+      activity_type: 'Banding',
+    },
+    {
+      activity_attribute_name: 'microchip',
+      bird_attribute_name: 'microchip',
       activity_type: 'Microchip',
     },
     {
-      attribute_name: 'wing_tag',
+      activity_attribute_name: 'wing_tag',
+      bird_attribute_name: 'wing_tag',
       activity_type: 'Wing tag',
     },
   ];
@@ -97,8 +111,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
     for (const nextMarking of this.markings) {
       await this.validateMarking(
         entity,
-        nextMarking.attribute_name,
-        nextMarking.activity_type,
+        nextMarking,
         validationResultMap,
       );
     }
@@ -108,13 +121,12 @@ export class BandingActivityDataEventListener implements DataEventListener {
 
   private async validateMarking(
     entity: any,
-    attribute_name: string,
-    activity_type: string,
+    markingAttribute: Marking,
     validationResultMap: ValidationResultMap,
   ) {
     const activityIndex = await this.findActivityIndex(
       entity.activities,
-      activity_type,
+      markingAttribute.activity_type,
     );
 
     if (activityIndex >= 0) {
@@ -122,37 +134,37 @@ export class BandingActivityDataEventListener implements DataEventListener {
       if (activity) {
         const bird_id = entity.bird_id;
         if (!bird_id) {
-          validationResultMap[`activities.${activityIndex}.${attribute_name}`] =
+          validationResultMap[`activities.${activityIndex}.${markingAttribute.activity_attribute_name}`] =
             {
-              name: attribute_name,
+              name: markingAttribute.activity_attribute_name,
               resultType: ResultType.Error,
               message:
                 'Unable to validate activity, no Bird is attached to the event',
             };
         }
 
-        const marking = activity[attribute_name];
+        const marking = activity[markingAttribute.activity_attribute_name];
         if (marking) {
           const unique = await this.isAttributeValueUniqueForBird(
-            attribute_name,
+            markingAttribute.bird_attribute_name,
             marking,
             bird_id,
           );
 
           if (!unique) {
             validationResultMap[
-              `activities.${activityIndex}.${attribute_name}`
+              `activities.${activityIndex}.${markingAttribute.activity_attribute_name}`
             ] = {
-              name: attribute_name,
+              name: markingAttribute.activity_attribute_name,
               resultType: ResultType.Error,
               message:
                 'The value supplied already exists on another Bird (case insensitive)',
             };
           }
         } else {
-          validationResultMap[`activities.${activityIndex}.${attribute_name}`] =
+          validationResultMap[`activities.${activityIndex}.${markingAttribute.activity_attribute_name}`] =
             {
-              name: attribute_name,
+              name: markingAttribute.activity_attribute_name,
               resultType: ResultType.Error,
               message: 'Value is mandatory if activity has been added',
             };
@@ -173,8 +185,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
       for (const nextMarking of this.markings) {
         await this.updateMarking(
           entity,
-          nextMarking.attribute_name,
-          nextMarking.activity_type,
+          nextMarking,
           bird,
         );
       }
@@ -202,30 +213,29 @@ export class BandingActivityDataEventListener implements DataEventListener {
 
   private async updateMarking(
     entity: any,
-    attribute_name: string,
-    activity_type: string,
+    markingAttribute: Marking,
     bird: any,
   ) {
     const activityIdx = await this.findActivityIndex(
       entity.activities,
-      activity_type,
+      markingAttribute.activity_type,
     );
 
     if (activityIdx >= 0) {
       const activity = entity.activities[activityIdx];
       if (activity) {
         this.logger.log(
-          `Found ${activity_type} activity with ${attribute_name} = ${activity[attribute_name]}.`,
+          `Found ${activity.activity_type} activity with ${markingAttribute.activity_attribute_name} = ${activity[markingAttribute.activity_attribute_name]}.`,
         );
         const bird_id = entity.bird_id;
         if (bird_id) {
           if (bird) {
             this.logger.log(`Found Bird: ${bird.name}, ${bird.id}`);
-            if (bird[attribute_name] !== activity[attribute_name]) {
+            if (bird[markingAttribute.bird_attribute_name] !== activity[markingAttribute.activity_attribute_name]) {
               this.logger.log(
-                `Detected different ${attribute_name}. Update Bird: ${bird.name} ${attribute_name} from ${bird[attribute_name]} to ${activity[attribute_name]}`,
+                `Detected different ${markingAttribute.activity_attribute_name}. Update Bird: ${bird.name} ${markingAttribute.bird_attribute_name} from ${bird[markingAttribute.bird_attribute_name]} to ${activity[markingAttribute.activity_attribute_name]}`,
               );
-              bird[attribute_name] = activity[attribute_name];
+              bird[markingAttribute.bird_attribute_name] = activity[markingAttribute.activity_attribute_name];
             } else {
               // This can happen if someone updates an event as well as funny situations where they updated the Bird
               // directly with a new Band and then added the Event. The net effect should be the same, the right band
@@ -237,7 +247,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
           }
         }
       } else {
-        this.logger.log(`No ${activity_type} activity found`);
+        this.logger.log(`No ${activity.activity_type} activity found`);
       }
     }
   }

@@ -69,7 +69,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
         'Event.id',
         'Event.date_time',
         'Bird.name as bird',
-        'Bird.band as band',
+        'Bird.band_number as band_number',
         'Species.name as species',
         'Event.form as form',
         'Event.event_type as event_type',
