@@ -24,6 +24,7 @@ import { MapService } from './map/map.service';
 import {BirdDataListener} from "./app-event/bird.data-listener";
 import {MediaRepositoryService} from "./media/media-repository.service";
 import {DiscriminatorService} from "./data/discriminator.service";
+import {BirdQuery} from "./app-event/bird.query";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -54,6 +55,7 @@ export class AppService implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<any> {
     await this.metaEntityService.syncMetaModelWithDatabase(false);
 
+    this.addBirdQuery();
     this.addEventSearchCriteriaQuery();
     this.addPersonSearchQuery();
     this.addProjectBirdsQuery();
@@ -66,6 +68,13 @@ export class AppService implements OnApplicationBootstrap {
     this.addCustomRules();
 
     return;
+  }
+
+  private addBirdQuery() {
+    this.customQueryService.addCustomQuery(
+        "BirdQuery",
+        new BirdQuery(this.knexService, this.metaEntityService)
+    );
   }
 
   private addEventSearchCriteriaQuery() {

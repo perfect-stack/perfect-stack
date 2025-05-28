@@ -9,6 +9,7 @@ import { CoordinateConverterController } from './coordinate-converter.controller
 import { CoordinateConverterService } from './coordinate-converter.service';
 import { SettingsModule } from '../settings/settings.module';
 import {DataModule} from "../data/data.module";
+import {BirdQuery} from "./bird.query";
 
 @Module({
   controllers: [CoordinateConverterController],
@@ -21,11 +22,13 @@ import {DataModule} from "../data/data.module";
     SettingsModule,
   ],
   providers: [
+    BirdQuery,
     EventSearchCriteriaQuery,
     BandingActivityDataEventListener,
     CoordinateConverterService,
   ],
   exports: [
+    BirdQuery,
     EventSearchCriteriaQuery,
     BandingActivityDataEventListener,
     CoordinateConverterService,

@@ -202,7 +202,8 @@
       "metaEntityName": "Bird",
       "type": "table",
       "orderByName": "name",
-      "orderByDir": "ASC"
+      "orderByDir": "ASC",
+      "customQuery": "BirdQuery"
     }
   ]
 }

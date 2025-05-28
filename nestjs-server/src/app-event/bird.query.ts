@@ -4,9 +4,10 @@ import { CustomQuery } from '../data/custom-query.service';
 import { QueryRequest } from '../data/query.request';
 import { QueryResponse } from '../data/query.response';
 import { Logger } from '@nestjs/common';
+import {getCriteriaValue, KnexComparisonOperatorMap} from "../data/query-utils";
 
-export class ProjectBirdsQuery implements CustomQuery {
-  private readonly logger = new Logger(ProjectBirdsQuery.name);
+export class BirdQuery implements CustomQuery {
+  private readonly logger = new Logger(BirdQuery.name);
 
   constructor(
     protected readonly knexService: KnexService,
@@ -35,43 +36,40 @@ export class ProjectBirdsQuery implements CustomQuery {
       knex.select(
         'Bird.id',
         'Bird.name',
+        'Bird.band_number',
+        'Bird.colour_band',
         'Species.id as species_id',
         'Species.name as species',
         'Bird.form',
-        'Bird.band_number',
         'Bird.microchip',
         'Bird.wing_tag',
         'Bird.status',
-        'Bird.sex',
-        'ProjectBird.project_id',
+        'Bird.sex'
       );
 
     const selectCount = () => knex.select().count();
+    const comparisonOperatorMap = KnexComparisonOperatorMap();
 
-    const projectIdCriteria = queryRequest.criteria.find(
-      (s) => s.name === 'id',
-    );
-    if (!projectIdCriteria || !projectIdCriteria.value) {
-      throw new Error(
-        'No project "id" has been supplied unable to execute the query',
-      );
-    }
-
-    const projectId = projectIdCriteria.value;
-    const from = (select) => {
+    let from = (select) => {
       select = select
         .from('Bird')
-        .leftOuterJoin('ProjectBird', 'ProjectBird.bird_id', 'Bird.id')
         .leftOuterJoin('Species', 'Species.id', 'Bird.species_id');
 
-      select = select.where('ProjectBird.project_id', '=', projectId);
+      for (const criteria of queryRequest.criteria) {
+        const name = criteria.name === 'name' ? 'Bird.name' : criteria.name;
+        const operator = comparisonOperatorMap.get(criteria.operator);
+        const value: any = getCriteriaValue(criteria);
+
+        select = select.where(name, operator, value);
+      }
 
       return select;
     };
 
+
     // specify the pagination properties
     let dataQuery = from(selectData()).offset(offset).limit(pageSize);
-    this.knexService.logQuery(this.logger, ProjectBirdsQuery.name, dataQuery);
+    this.knexService.logQuery(this.logger, BirdQuery.name, dataQuery);
 
     // specify the ordering properties
     if (queryRequest.orderByName && queryRequest.orderByDir) {
