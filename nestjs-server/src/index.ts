@@ -6,6 +6,7 @@ import { ClientConfigModule } from './client/config/client-config.module';
 import { ClientConfigService } from './client/config/client-config.service';
 import { DataModule } from './data/data.module';
 import { DataService } from './data/data.service';
+import { DiscriminatorService } from './data/discriminator.service';
 import { FileRepositoryModule } from './file/file-repository.module';
 import { FileRepositoryService } from './file/file-repository.service';
 import { OrmModule } from './orm/orm.module';
@@ -21,7 +22,7 @@ import { MediaRepositoryService } from './media/media-repository.service';
 
 export { AuthenticationModule, AuthenticationService, PublicApi, JwtAuthGuard };
 export { ClientConfigModule, ClientConfigService };
-export { DataModule, DataService };
+export { DataModule, DataService, DiscriminatorService };
 export { FileRepositoryModule, FileRepositoryService };
 export { OrmModule, OrmService };
 export { TypeaheadModule, TypeaheadService };
