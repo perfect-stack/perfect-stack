@@ -450,6 +450,20 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "instruments",
+      "label": "Instruments",
+      "description": "Any instruments that were used to gather this event data",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "EventInstrument",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

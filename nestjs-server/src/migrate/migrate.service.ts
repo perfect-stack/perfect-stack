@@ -61,6 +61,10 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'EventObserver',
     },
     {
+        fileName: 'MGN_KIMS__EVENT_INSTRUMENT_.csv',
+        tableName: 'EventInstrument',
+    },
+    {
         fileName: 'MGN_KIMS__ACTIVITY_TYPE_.csv',
         tableName: 'ActivityType',
     },

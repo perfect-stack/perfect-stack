@@ -207,6 +207,41 @@
       "cells": [
         [
           {
+            "width": "6",
+            "height": "1",
+            "template": {
+              "binding": "instruments",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "EventInstrument",
+              "orderByName": "UNKNOWN",
+              "orderByDir": "ASC",
+              "cells": [
+                [
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "instrument",
+                    "showClear": "false"
+                  }
+                ]
+              ],
+              "locations": {},
+              "styles": "table-borderless",
+              "noItemsHtml": "<span class=\"text-secondary\"><i><b>No instruments added</b> - You can add instruments by editing this event</i></span>"
+            }
+          }
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "form",
+      "templateHeading": "Instruments",
+      "binding": "event"
+    },
+    {
+      "cells": [
+        [
+          {
             "width": "12",
             "height": "1",
             "attributeName": "activities",
