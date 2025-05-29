@@ -135,6 +135,10 @@
           {
             "discriminatorValue": "Wing tag",
             "metaEntityName": "WingTagActivity"
+          },
+          {
+            "discriminatorValue": "Transmitter",
+            "metaEntityName": "TransmitterActivity"
           }
         ]
       }

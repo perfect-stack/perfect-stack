@@ -67,6 +67,12 @@
         {
           "editable": true,
           "roles": [],
+          "label": "Capture Type",
+          "route": "/data/CaptureType/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
           "label": "Count Type",
           "route": "/data/CountType/search_edit"
         },
@@ -79,8 +85,20 @@
         {
           "editable": true,
           "roles": [],
+          "label": "Instrument",
+          "route": "/data/Instrument/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
           "label": "Location Type",
           "route": "/data/LocationType/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Nesting Status",
+          "route": "/data/NestingStatus/search_edit"
         },
         {
           "editable": true,

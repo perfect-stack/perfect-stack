@@ -64,12 +64,12 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "microchip"
+            "attributeName": "transmitter_channel"
           },
           {
             "width": "1",
             "height": "1",
-            "attributeName": "wing_tag"
+            "attributeName": "transmitter_frequency"
           },
           {
             "width": "1",
@@ -276,6 +276,22 @@
                     "width": "12",
                     "height": "1",
                     "attributeName": "father",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "microchip",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "wing_tag",
                     "labelLayout": "Left"
                   }
                 ],

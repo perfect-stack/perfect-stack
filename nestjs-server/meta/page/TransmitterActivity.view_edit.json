@@ -1,6 +1,6 @@
 {
-  "name": "BandingActivity.view_edit",
-  "title": "Banding",
+  "name": "TransmitterActivity.view_edit",
+  "title": "Transmitter",
   "type": "view_edit",
   "layoutStyle": "Paris",
   "dataQueryList": [],
@@ -12,33 +12,26 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "band_number"
+            "attributeName": "transmitter_identifier"
           },
           {
             "width": "3",
             "height": "1",
-            "attributeName": "band_colour"
+            "attributeName": "vhf_tr4_channel"
           },
           {
             "width": "3",
             "height": "1",
-            "attributeName": "band_location"
-          }
-        ],
-        [
-          {
-            "width": "3",
-            "height": "1",
-            "attributeName": "colour_band"
+            "attributeName": "vhf_frequency_mhz"
           },
           {
             "width": "3",
             "height": "1",
-            "attributeName": "removed_band"
+            "attributeName": "expiry_date"
           }
         ]
       ],
-      "metaEntityName": "BandingActivity",
+      "metaEntityName": "TransmitterActivity",
       "type": "form"
     }
   ]

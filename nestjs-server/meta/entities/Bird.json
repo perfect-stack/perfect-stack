@@ -377,7 +377,7 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonField": "",
-      "comparisonOperator": "",
+      "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
@@ -391,7 +391,7 @@
       "type": "Text",
       "visibility": "Visible",
       "comparisonField": "",
-      "comparisonOperator": "",
+      "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []

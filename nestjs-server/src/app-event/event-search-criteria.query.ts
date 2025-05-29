@@ -49,6 +49,7 @@ export class EventSearchCriteriaQuery implements CustomQuery {
     activityTypeMap.set('Microchip', 'at_mia');
     activityTypeMap.set('Nesting', 'at_nes');
     activityTypeMap.set('Sample', 'at_sam');
+    activityTypeMap.set('Transmitter', 'at_tra');
     activityTypeMap.set('Weather', 'at_wea');
     activityTypeMap.set('Weight', 'at_wei');
     activityTypeMap.set('Wing tag', 'at_win');
@@ -110,6 +111,9 @@ export class EventSearchCriteriaQuery implements CustomQuery {
 
         .leftOuterJoin('SampleActivity as sam', 'sam.event_id', 'Event.id')
         .leftOuterJoin('ActivityType as     at_sam', 'at_sam.id', 'sam.activity_type_id')
+
+        .leftOuterJoin('TransmitterActivity as tra', 'tra.event_id', 'Event.id')
+        .leftOuterJoin('ActivityType as     at_tra', 'at_tra.id', 'tra.activity_type_id')
 
         .leftOuterJoin('WeatherActivity as wea', 'wea.event_id','Event.id')
         .leftOuterJoin('ActivityType as at_wea', 'at_wea.id', 'wea.activity_type_id')

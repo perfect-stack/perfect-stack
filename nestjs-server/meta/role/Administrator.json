@@ -45,6 +45,18 @@
       "subject": "HabitatType"
     },
     {
+      "action": "Edit",
+      "subject": "NestingStatus"
+    },
+    {
+      "action": "Edit",
+      "subject": "CaptureType"
+    },
+    {
+      "action": "Edit",
+      "subject": "Instrument"
+    },
+    {
       "action": "Delete",
       "subject": "LocationType"
     },
@@ -87,6 +99,18 @@
     {
       "action": "Delete",
       "subject": "HabitatType"
+    },
+    {
+      "action": "Delete",
+      "subject": "NestingStatus"
+    },
+    {
+      "action": "Delete",
+      "subject": "CaptureType"
+    },
+    {
+      "action": "Delete",
+      "subject": "Instrument"
     },
     {
       "action": "Menu",

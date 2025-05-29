@@ -1,0 +1,59 @@
+{
+  "name": "Instrument.view_edit",
+  "title": "Instrument View/Edit",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [
+    {
+      "dataName": "instrument",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Instrument",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "instrument_identifier"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "instrument_type"
+          }
+        ],
+        [
+          {
+            "width": "8",
+            "height": "1",
+            "attributeName": "instrument_description"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "latest_easting"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "latest_northing"
+          }
+        ]
+      ],
+      "metaEntityName": "Instrument",
+      "type": "form",
+      "binding": "instrument",
+      "templateHeading": "Details",
+      "showSideHeadings": "Enabled"
+    }
+  ]
+}

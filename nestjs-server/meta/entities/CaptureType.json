@@ -1,12 +1,12 @@
 {
-  "name": "BandingActivity",
-  "pluralName": "Bandings",
-  "icon": "circle",
+  "name": "CaptureType",
+  "pluralName": "Capture types",
+  "icon": "",
   "type": "Database",
-  "rootNode": false,
+  "rootNode": true,
   "timestamps": true,
-  "cacheExpiryInSecs": "",
-  "permanentDelete": false,
+  "cacheExpiryInSecs": 3600,
+  "permanentDelete": true,
   "attributes": [
     {
       "name": "id",
@@ -23,38 +23,8 @@
       "rules": []
     },
     {
-      "name": "band_number",
-      "label": "Band number",
-      "description": "Band number used",
-      "unitOfMeasure": "",
-      "scale": "",
-      "type": "Text",
-      "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
-      "name": "activity_type",
-      "label": "Activity type",
-      "description": "Activity type used",
-      "unitOfMeasure": "",
-      "scale": "",
-      "type": "ManyToOne",
-      "visibility": "Visible",
-      "comparisonField": "name",
-      "comparisonOperator": "Equals",
-      "relationshipTarget": "ActivityType",
-      "typeaheadSearch": [
-        "name"
-      ],
-      "rules": []
-    },
-    {
-      "name": "band_colour",
-      "label": "Band colour",
+      "name": "name",
+      "label": "Name",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
@@ -67,8 +37,8 @@
       "rules": []
     },
     {
-      "name": "band_location",
-      "label": "Band location",
+      "name": "description",
+      "label": "Description",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
@@ -81,12 +51,12 @@
       "rules": []
     },
     {
-      "name": "colour_band",
-      "label": "Colour band",
+      "name": "start_date",
+      "label": "Start date",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Date",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
@@ -95,12 +65,26 @@
       "rules": []
     },
     {
-      "name": "removed_band",
-      "label": "Removed band",
+      "name": "end_date",
+      "label": "End date",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "sort_index",
+      "label": "Sort Index",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Integer",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",

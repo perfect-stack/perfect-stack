@@ -8,7 +8,7 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-27.1';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-29.1';
 const BATCH_SIZE = 200;
 
 const filesToProcess: FileProcessingConfig[] = [
@@ -37,6 +37,10 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'Person',
     },
     {
+        fileName: 'MGN_KIMS__INSTRUMENT_.csv',
+        tableName: 'Instrument',
+    },
+    {
         fileName: 'MGN_KIMS__LOCATION_.csv',
         tableName: 'Location',
     },
@@ -63,6 +67,10 @@ const filesToProcess: FileProcessingConfig[] = [
     {
         fileName: 'MGN_KIMS__BANDING_ACTIVITY_.csv',
         tableName: 'BandingActivity',
+    },
+    {
+        fileName: 'MGN_KIMS__CAPTURE_TYPE_.csv',
+        tableName: 'CaptureType',
     },
     {
         fileName: 'MGN_KIMS__CAPTURE_ACTIVITY_.csv',
@@ -105,8 +113,16 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'MicrochipActivity',
     },
     {
+        fileName: 'MGN_KIMS__NESTING_STATUS_.csv',
+        tableName: 'NestingStatus',
+    },
+    {
         fileName: 'MGN_KIMS__NESTING_ACTIVITY_.csv',
         tableName: 'NestingActivity',
+    },
+    {
+        fileName: 'MGN_KIMS__TRANSMITTER_ACTIVITY_.csv',
+        tableName: 'TransmitterActivity',
     },
     {
         fileName: 'MGN_KIMS__SAMPLE_ACTIVITY_.csv',
@@ -158,6 +174,7 @@ const ignoreForNow = [
     "Event.activities",
     "EventObserver.INSTRUMENT_ID",
     "CaptureActivity.IS_RECAPTURE",
+    "TransmitterActivity.VHF_FREQUENCY_FT",
 ];
 
 

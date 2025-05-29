@@ -107,7 +107,21 @@
             "width": "3",
             "height": "1",
             "attributeName": "colour_band"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "transmitter_channel"
           },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "transmitter_frequency"
+          }
+        ],
+        [
           {
             "width": "3",
             "height": "1",
