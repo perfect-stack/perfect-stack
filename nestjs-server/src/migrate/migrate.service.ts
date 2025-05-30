@@ -133,6 +133,14 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'SampleActivity',
     },
     {
+        fileName: 'MGN_KIMS__SAMPLE_TAKEN_.csv',
+        tableName: 'SampleTaken',
+    },
+    {
+        fileName: 'MGN_KIMS__TEST_RESULT_.csv',
+        tableName: 'TestResult',
+    },
+    {
         fileName: 'MGN_KIMS__WEATHER_ACTIVITY_.csv',
         tableName: 'WeatherActivity',
     },
@@ -575,7 +583,7 @@ class MetaEntityRowProcessor {
             const idSuffix = "_ID";
             if(csvColName.endsWith(idSuffix)) {
                 const entityName = csvColName.substring(0, csvColName.length - idSuffix.length);
-                if(["EVENT", "DEATH_ACTIVITY"].includes(entityName)) {
+                if(["EVENT", "DEATH_ACTIVITY", "SAMPLE_ACTIVITY", "SAMPLE_TAKEN"].includes(entityName)) {
                     columns.push(csvColName.toLowerCase());
                     values.push(csvRow[csvColName]);
                     csvRowKeys = csvRowKeys.filter(key => key !== csvColName);

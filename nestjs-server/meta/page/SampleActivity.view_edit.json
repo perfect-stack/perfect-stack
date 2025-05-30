@@ -10,30 +10,90 @@
       "cells": [
         [
           {
-            "width": "3",
-            "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1"
-          }
-        ],
-        [
-          {
-            "width": "6",
-            "height": "1"
-          },
-          {
-            "width": "6",
-            "height": "1"
+            "width": "12",
+            "height": "1",
+            "attributeName": "samples",
+            "hideLabel": true,
+            "template": {
+              "binding": "",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "SampleTaken",
+              "cells": [
+                [
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "sample_type"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "notes"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "sample_value"
+                  },
+                  {
+                    "width": "1",
+                    "height": "1",
+                    "attributeName": "sample_unit"
+                  },
+                  {
+                    "width": "8",
+                    "height": "1",
+                    "attributeName": "test_results",
+                    "template": {
+                      "binding": "",
+                      "templateHeading": "",
+                      "type": "table",
+                      "metaEntityName": "TestResult",
+                      "cells": [
+                        [
+                          {
+                            "width": "1",
+                            "height": "1",
+                            "attributeName": "result_type"
+                          },
+                          {
+                            "width": "1",
+                            "height": "1",
+                            "attributeName": "notes"
+                          },
+                          {
+                            "width": "1",
+                            "height": "1",
+                            "attributeName": "result_value"
+                          },
+                          {
+                            "width": "1",
+                            "height": "1",
+                            "attributeName": "result_unit"
+                          },
+                          {
+                            "width": "1",
+                            "height": "1",
+                            "attributeName": "result_date"
+                          }
+                        ]
+                      ],
+                      "styles": "",
+                      "orderByName": "UNKNOWN",
+                      "orderByDir": "ASC",
+                      "noItemsHtml": "",
+                      "locations": {}
+                    }
+                  }
+                ]
+              ],
+              "styles": "",
+              "orderByName": "UNKNOWN",
+              "orderByDir": "ASC",
+              "noItemsHtml": "",
+              "locations": {}
+            }
           }
         ]
       ],

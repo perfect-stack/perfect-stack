@@ -20,7 +20,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
 
   private readonly markings: Marking[] = [
     {
-      activity_attribute_name: 'band',
+      activity_attribute_name: 'band_number',
       bird_attribute_name: 'band_number',
       activity_type: 'Banding',
     },

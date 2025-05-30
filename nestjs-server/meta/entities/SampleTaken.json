@@ -77,6 +77,20 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "test_results",
+      "label": "Test results",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "TestResult",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

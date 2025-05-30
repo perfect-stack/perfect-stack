@@ -37,6 +37,20 @@
         "name"
       ],
       "rules": []
+    },
+    {
+      "name": "samples",
+      "label": "Samples",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "SampleTaken",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }
