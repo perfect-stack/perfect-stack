@@ -34,6 +34,12 @@
           <lib-badge-list  [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-badge-list>
         </ng-container>
 
+        <ng-container *ngSwitchCase="'ColourBand'">
+          <ng-container [formGroup]="formGroup">
+            <lib-colour-band-component [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-colour-band-component>
+          </ng-container>
+        </ng-container>
+
         <!-- There are two usage of this. Enumeration can be a text attribute or a relationship -->
         <ng-container [formGroup]="formGroup" *ngSwitchCase="'Enumeration'">
           <lib-enumeration-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>

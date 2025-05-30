@@ -1,0 +1,39 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit colour band</h4>
+</div>
+
+<div class="modal-body">
+  <p>Colour bands have a specific format...</p>
+
+  <div class="d-flex flex-row mb-3">
+    <div class="p-2">
+      <label for="firstColour" class="form-label">Colour</label>
+      <select class="form-control" id="firstColour" [ngModel]="firstColour" (ngModelChange)="onSelectFirstColour($event)" [ngModelOptions]="{standalone: true}">
+        <option *ngFor="let c1 of colourList" [ngValue]="c1">{{c1}}</option>
+        <option [ngValue]="null"></option>
+      </select>
+    </div>
+
+    <div class="p-2">
+      <label for="identifier" class="form-label">Identifier</label>
+      <input type="text" class="form-control" id="identifier" [(ngModel)]="identifier" [ngModelOptions]="{standalone: true}">
+    </div>
+
+    <div class="p-2 align-self-end">
+      <label class="form-label">on</label>
+    </div>
+
+    <div class="p-2">
+      <label for="secondColour" class="form-label">Colour</label>
+      <select class="form-control" id="secondColour" [ngModel]="secondColour" (ngModelChange)="onSelectSecondColour($event)" [ngModelOptions]="{standalone: true}">
+        <option *ngFor="let c2 of colourList" [ngValue]="c2">{{c2}}</option>
+        <option [ngValue]="null"></option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer d-flex justify-content-between">
+  <button type="button" class="btn btn-outline-primary" (click)="onCancel()" id="cancelBtn">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onAdd()" [disabled]="!isAddEnabled()" id="addBtn">Add</button>
+</div>

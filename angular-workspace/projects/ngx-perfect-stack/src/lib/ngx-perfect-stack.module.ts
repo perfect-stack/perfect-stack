@@ -142,6 +142,8 @@ import { EnvironmentBannerComponent } from './menu-bar/environment-banner/enviro
 import { MediaControlComponent } from './data/controller/layout/controls/media-control/media-control.component';
 import { UploadDialogComponent } from './data/controller/layout/controls/media-control/upload-dialog/upload-dialog.component';
 import {DiscriminatorService} from "./data/data-service/discriminator.service";
+import { ColourBandComponentComponent } from './data/controller/layout/controls/colour-band-component/colour-band-component.component';
+import { ColourBandDialogComponent } from './data/controller/layout/controls/colour-band-component/colour-band-dialog/colour-band-dialog.component';
 
 export const STACK_ROUTES: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
@@ -283,7 +285,9 @@ export const STACK_ROUTES: Routes = [
     DurationToolComponent,
     EnvironmentBannerComponent,
     MediaControlComponent,
-    UploadDialogComponent
+    UploadDialogComponent,
+    ColourBandComponentComponent,
+    ColourBandDialogComponent
   ],
   providers: [
     AuthenticationService,

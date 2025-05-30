@@ -2,6 +2,7 @@ import {ActionType} from './meta.role';
 
 export enum ComponentType {
   BadgeList = 'BadgeList',
+  ColourBand = 'ColourBand',
   DatePicker = 'DatePicker',
   FlexibleDateTime = 'FlexibleDateTime',
   LinkList = 'LinkList',

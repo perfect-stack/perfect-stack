@@ -106,7 +106,8 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "colour_band"
+            "attributeName": "colour_band",
+            "component": "ColourBand"
           }
         ],
         [

@@ -1,0 +1,16 @@
+<ng-container *ngIf="mode !== 'view'">
+  <div class="input-group flex-nowrap">
+    <input class="form-control"
+           [id]="name"
+           placeholder="Colour A1 on Colour"
+           [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}" [readonly]="isReadOnly()"
+           [ngModel]="internalValue"
+           (ngModelChange)="onModelChange($event)" [ngModelOptions]="{standalone: true}">
+    <span class="input-group-text" style="padding: 0" [id]="name + '_btn'" *ngIf="cell && cell.attribute">
+      <button class="btn btn-outline-secondary" (click)="onBandDialogClick()" type="button">B</button>
+    </span>
+  </div>
+  <ng-container *ngIf="hasErrors() && cell.attribute">
+    <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+  </ng-container>
+</ng-container>
