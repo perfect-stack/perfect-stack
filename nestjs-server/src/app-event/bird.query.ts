@@ -41,6 +41,8 @@ export class BirdQuery implements CustomQuery {
         'Species.id as species_id',
         'Species.name as species',
         'Bird.form',
+        'Bird.transmitter_channel',
+        'Bird.transmitter_frequency',
         'Bird.microchip',
         'Bird.wing_tag',
         'Bird.status',

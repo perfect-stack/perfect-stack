@@ -84,6 +84,10 @@ export class MapToolComponent implements OnInit {
     }
 
     if(!locationForm) {
+      locationForm = this.ctx.formMap.get('event') as FormGroup;
+    }
+
+    if(!locationForm) {
       console.warn('UNABLE to find a form to update with location coordinates');
     }
 

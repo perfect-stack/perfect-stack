@@ -91,6 +91,16 @@
           {
             "width": "1",
             "height": "1",
+            "attributeName": "species"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "form"
+          },
+          {
+            "width": "1",
+            "height": "1",
             "attributeName": "band_number"
           },
           {
@@ -101,23 +111,12 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "species",
-            "component": "ManyToOnePlain"
+            "attributeName": "transmitter_channel"
           },
           {
             "width": "1",
             "height": "1",
-            "attributeName": "form"
-          },
-          {
-            "width": "1",
-            "height": "1",
-            "attributeName": "microchip"
-          },
-          {
-            "width": "1",
-            "height": "1",
-            "attributeName": "wing_tag"
+            "attributeName": "transmitter_frequency"
           },
           {
             "width": "1",
