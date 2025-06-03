@@ -12,7 +12,8 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "capture_method_type"
+            "attributeName": "capture_method_type",
+            "component": "Select"
           }
         ]
       ],

@@ -27,7 +27,8 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "nest_status_type"
+            "attributeName": "nest_status_type",
+            "component": "Select"
           }
         ]
       ],
