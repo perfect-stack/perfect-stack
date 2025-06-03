@@ -12,11 +12,7 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "nest_status"
-          },
-          {
-            "width": "3",
-            "height": "1"
+            "attributeName": "brood_number"
           },
           {
             "width": "3",
@@ -27,6 +23,11 @@
             "width": "3",
             "height": "1",
             "attributeName": "chick_count"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "nest_status_type"
           }
         ]
       ],

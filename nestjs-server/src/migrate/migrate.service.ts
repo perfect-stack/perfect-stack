@@ -8,7 +8,7 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-05-29.1';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-06-03.1';
 const BATCH_SIZE = 200;
 
 const filesToProcess: FileProcessingConfig[] = [
@@ -73,8 +73,8 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'BandingActivity',
     },
     {
-        fileName: 'MGN_KIMS__CAPTURE_TYPE_.csv',
-        tableName: 'CaptureType',
+        fileName: 'MGN_KIMS__CAPTURE_METHOD_TYPE_.csv',
+        tableName: 'CaptureMethodType',
     },
     {
         fileName: 'MGN_KIMS__CAPTURE_ACTIVITY_.csv',
@@ -117,8 +117,8 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'MicrochipActivity',
     },
     {
-        fileName: 'MGN_KIMS__NESTING_STATUS_.csv',
-        tableName: 'NestingStatus',
+        fileName: 'MGN_KIMS__NEST_STATUS_TYPE_.csv',
+        tableName: 'NestStatusType',
     },
     {
         fileName: 'MGN_KIMS__NESTING_ACTIVITY_.csv',

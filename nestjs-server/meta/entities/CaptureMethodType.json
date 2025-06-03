@@ -1,6 +1,6 @@
 {
-  "name": "CaptureType",
-  "pluralName": "Capture types",
+  "name": "CaptureMethodType",
+  "pluralName": "Capture method types",
   "icon": "",
   "type": "Database",
   "rootNode": true,

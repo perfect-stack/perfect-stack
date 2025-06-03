@@ -1149,9 +1149,27 @@ export class ButtonTabsToolComponent implements OnInit {
       buttonGroupTool.label = tabNames.join(',');
       buttonGroupTool.action = tabNames.join(',');
 
+      // find out which tab has data and which tabs do not
+      let initialTab = 0;
+      const dataMap = this.ctx.dataMap;
+      const eventResult = dataMap.get("event");
+      if(eventResult) {
+        const event = eventResult.result;
+        console.log(' - event:', event);
+        const hasEventCoordinates = event['easting'] && event['northing'];
+        const hasLocation = event['location'];
+
+        console.log(' - hasEventCoordinates:', hasEventCoordinates);
+        console.log(' - hasLocation:', hasLocation);
+
+        if(hasLocation) {
+          initialTab = 1;
+        }
+      }
+
       // set the initial tab
-      console.log(`Set initial tab = ${tabNames[0]}`);
-      this.onTabSelected(tabNames[0], tabContext);
+      console.log(`Set initial tab = ${tabNames[initialTab]}`);
+      this.onTabSelected(tabNames[initialTab], tabContext);
 
       return of(tabContext);
     }));

@@ -49,8 +49,18 @@ export class MapToolComponent implements OnInit {
     const northingAttribute = this.mapTool.northing;
     const locationForm = this.getLocationForm();
     if(eastingAttribute && northingAttribute && locationForm) {
-      const easting = locationForm.controls[eastingAttribute].value;
-      const northing = locationForm.controls[northingAttribute].value;
+      let easting = locationForm.controls[eastingAttribute].value;
+      let northing = locationForm.controls[northingAttribute].value;
+
+      if(!(easting && northing)) {
+        const eventResult = this.ctx.dataMap.get('event');
+        if(eventResult && eventResult.result && eventResult.result.location) {
+          const location = eventResult.result.location;
+          easting = location.easting;
+          northing = location.northing;
+        }
+      }
+
       if(easting && northing) {
         console.log(`Move map to location; (${easting}, ${northing})`)
         this.center = this.mapService.toLatLng({easting: easting, northing: northing});

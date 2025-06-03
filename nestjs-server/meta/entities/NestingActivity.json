@@ -39,17 +39,19 @@
       "rules": []
     },
     {
-      "name": "nest_status",
-      "label": "Nest status",
+      "name": "nest_status_type",
+      "label": "Nest status type",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "ManyToOne",
       "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
+      "comparisonField": "name",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "NestStatusType",
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": []
     },
     {
@@ -87,6 +89,25 @@
         {
           "type": "Range",
           "config": "0"
+        }
+      ]
+    },
+    {
+      "name": "brood_number",
+      "label": "Brood number",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Range",
+          "config": "1,6"
         }
       ]
     }

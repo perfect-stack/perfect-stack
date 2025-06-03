@@ -39,17 +39,19 @@
       "rules": []
     },
     {
-      "name": "capture_method",
-      "label": "Capture method",
+      "name": "capture_method_type",
+      "label": "Capture method type",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "ManyToOne",
       "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
+      "comparisonField": "name",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "CaptureMethodType",
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": []
     }
   ]
