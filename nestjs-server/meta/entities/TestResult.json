@@ -28,12 +28,14 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "ManyToOne",
       "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
+      "comparisonField": "name",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "ResultType",
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": []
     },
     {

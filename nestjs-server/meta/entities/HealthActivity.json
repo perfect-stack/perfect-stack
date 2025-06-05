@@ -144,6 +144,20 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "tapeworm",
+      "label": "Tapeworm",
+      "description": "There is evidence of tapeworms",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Boolean",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

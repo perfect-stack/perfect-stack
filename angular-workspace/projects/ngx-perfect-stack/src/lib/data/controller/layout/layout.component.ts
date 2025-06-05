@@ -1156,14 +1156,16 @@ export class ButtonTabsToolComponent implements OnInit {
       if(eventResult) {
         const event = eventResult.result;
         console.log(' - event:', event);
-        const hasEventCoordinates = event['easting'] && event['northing'];
-        const hasLocation = event['location'];
+        if(event) {
+          const hasEventCoordinates = event['easting'] && event['northing'];
+          const hasLocation = event['location'];
 
-        console.log(' - hasEventCoordinates:', hasEventCoordinates);
-        console.log(' - hasLocation:', hasLocation);
+          console.log(' - hasEventCoordinates:', hasEventCoordinates);
+          console.log(' - hasLocation:', hasLocation);
 
-        if(hasLocation) {
-          initialTab = 1;
+          if(hasLocation) {
+            initialTab = 1;
+          }
         }
       }
 

@@ -24,7 +24,8 @@
                   {
                     "width": "1",
                     "height": "1",
-                    "attributeName": "sample_type"
+                    "attributeName": "sample_type",
+                    "component": "Select"
                   },
                   {
                     "width": "1",
@@ -55,7 +56,8 @@
                           {
                             "width": "1",
                             "height": "1",
-                            "attributeName": "result_type"
+                            "attributeName": "result_type",
+                            "component": "Select"
                           },
                           {
                             "width": "1",

@@ -13,17 +13,21 @@ import {MediaUtils} from "./media-utils";
 import * as Buffer from "node:buffer";
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 import {CreateFileResponse} from "./create-file-response";
+import {ConfigService} from "@nestjs/config";
 
 @Injectable()
 export class S3MediaRepository implements MediaRepositoryInterface {
 
     private readonly logger = new Logger(S3MediaRepository.name);
 
-    readonly BUCKET_NAME = "dev2-kims-media";
+    readonly BUCKET_NAME;
     readonly client = new S3Client({});
 
 
-    constructor(protected mediaUtils: MediaUtils) {
+    constructor(protected configService: ConfigService,
+                protected mediaUtils: MediaUtils) {
+        this.BUCKET_NAME = configService.get('MEDIA_BUCKET_NAME');
+        this.logger.log('Media BUCKET_NAME: ' + this.BUCKET_NAME);
     }
 
     fileExists(filePath: string): Promise<boolean> {

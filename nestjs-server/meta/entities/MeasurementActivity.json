@@ -172,13 +172,18 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "Bright yellow",
+        "Dull yellow",
+        "Dark"
+      ]
     }
   ]
 }

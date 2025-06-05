@@ -99,6 +99,21 @@
       "cells": [
         [
           {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "text": "These markings are updated with the latest activity data for this bird but may be edited to correct errors if needed. They will then be overwritten by the next related activity event."
+            }
+          }
+        ],
+        [
+          {
             "width": "3",
             "height": "1",
             "attributeName": "band_number"
@@ -120,6 +135,11 @@
             "width": "3",
             "height": "1",
             "attributeName": "transmitter_frequency"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "transmitter_fine_tune"
           }
         ],
         [

@@ -25,7 +25,7 @@
     {
       "name": "transmitter_identifier",
       "label": "Transmitter identifier",
-      "description": "",
+      "description": "The unique identifier from the device itself",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -67,7 +67,7 @@
     {
       "name": "expiry_date",
       "label": "Expiry date",
-      "description": "",
+      "description": "The date when the transmitter/battery is estimated to expiry",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Date",
@@ -92,6 +92,20 @@
       "typeaheadSearch": [
         "name"
       ],
+      "rules": []
+    },
+    {
+      "name": "vhf_frequency_ft",
+      "label": "VHF Frequency FT",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
       "rules": []
     }
   ]

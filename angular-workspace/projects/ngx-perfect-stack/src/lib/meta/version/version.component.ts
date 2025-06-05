@@ -70,7 +70,13 @@ export class VersionComponent implements OnInit {
 
   onMigrateData() {
     this.http.post(`${this.stackConfig.apiUrl}/migrate/data`, null).subscribe((a: any) => {
-      this.toastService.showSuccess('Migration complete');
+      this.toastService.showSuccess('Migrate Data complete');
+    });
+  }
+
+  onMigrateImages() {
+    this.http.post(`${this.stackConfig.apiUrl}/migrate/images`, null).subscribe((a: any) => {
+      this.toastService.showSuccess('Migrate Images complete');
     });
   }
 }

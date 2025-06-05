@@ -8,7 +8,7 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-06-03.1';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-06-05.1';
 const BATCH_SIZE = 200;
 
 const filesToProcess: FileProcessingConfig[] = [
@@ -129,12 +129,20 @@ const filesToProcess: FileProcessingConfig[] = [
         tableName: 'TransmitterActivity',
     },
     {
+        fileName: 'MGN_KIMS__SAMPLE_TYPE_.csv',
+        tableName: 'SampleType',
+    },
+    {
         fileName: 'MGN_KIMS__SAMPLE_ACTIVITY_.csv',
         tableName: 'SampleActivity',
     },
     {
         fileName: 'MGN_KIMS__SAMPLE_TAKEN_.csv',
         tableName: 'SampleTaken',
+    },
+    {
+        fileName: 'MGN_KIMS__RESULT_TYPE_.csv',
+        tableName: 'ResultType',
     },
     {
         fileName: 'MGN_KIMS__TEST_RESULT_.csv',
@@ -181,12 +189,10 @@ const filesToProcess: FileProcessingConfig[] = [
 const ignoreForNow = [
     "Location.REGION",
     "Bird.FATE",
-    "Bird.TRANSMITTER_CHANNEL",
-    "Bird.TRANSMITTER_FREQUENCY",
     "Event.activities",
     "EventObserver.INSTRUMENT_ID",
     "CaptureActivity.IS_RECAPTURE",
-    "TransmitterActivity.VHF_FREQUENCY_FT",
+    "TransmitterActivity.TRANSMITTER_TYPE",
 ];
 
 
@@ -533,26 +539,28 @@ class MetaEntityRowProcessor {
             }
 
             let csvColName = attribute.name.toUpperCase();
-            if (!(csvColName in csvRow)) {
-                csvColName = csvColName + '_ID';
-
+            if( !(['TRANSMITTER_TYPE', 'TRANSMITTER_FINE_TUNE'].includes(csvColName))) {
                 if (!(csvColName in csvRow)) {
-                    throw new Error("Unable to find column for csvColName of " + csvColName + " and " + fullAttributeName + " attribute: " + JSON.stringify(attribute) );
+                    csvColName = csvColName + '_ID';
+                    if (!(csvColName in csvRow)) {
+                        throw new Error("Unable to find column for csvColName of " + csvColName + " and " + fullAttributeName + " attribute: " + JSON.stringify(attribute));
+                    }
                 }
+
+                const dbColName = csvColName.toLowerCase();
+                csvRowKeys = csvRowKeys.filter(key => key !== csvColName);
+
+                const csvValue = csvRow[csvColName];
+                const dbValue = this.processValue(attribute, csvValue, csvRow);
+
+                columns.push(dbColName);
+                values.push(dbValue);
             }
-
-            const dbColName = csvColName.toLowerCase();
-            csvRowKeys = csvRowKeys.filter(key => key !== csvColName);
-
-            const csvValue = csvRow[csvColName];
-            const dbValue = this.processValue(attribute, csvValue, csvRow);
-
-            // if(this.metaEntity.name === 'HealthActivity' && attribute.name === 'activity_type' && dbValue === 'Health') {
-            //     console.log(`${csvRow['EVENT_ID']} : ${dbValue}`);
-            // }
-
-            columns.push(dbColName);
-            values.push(dbValue);
+            else {
+                const dbColName = csvColName.toLowerCase();
+                columns.push(dbColName);
+                values.push(null);
+            }
         }
 
         if(this.metaEntity.timestamps) {

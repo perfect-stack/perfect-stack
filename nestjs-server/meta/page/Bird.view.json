@@ -283,6 +283,14 @@
                   {
                     "width": "12",
                     "height": "1",
+                    "attributeName": "transmitter_fine_tune",
+                    "labelLayout": "Left"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
                     "attributeName": "microchip",
                     "labelLayout": "Left"
                   }

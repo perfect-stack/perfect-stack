@@ -10,10 +10,32 @@
       "cells": [
         [
           {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "text": "A transmitter activity is the act of adding a transmitter to a bird and does not related to data gathered by the transmitter."
+            }
+          }
+        ],
+        [
+          {
             "width": "3",
             "height": "1",
             "attributeName": "transmitter_identifier"
           },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "expiry_date"
+          }
+        ],
+        [
           {
             "width": "3",
             "height": "1",
@@ -27,7 +49,7 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "expiry_date"
+            "attributeName": "vhf_frequency_ft"
           }
         ]
       ],
