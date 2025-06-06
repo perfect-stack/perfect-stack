@@ -40,12 +40,12 @@ export class BirdQuery implements CustomQuery {
         'Bird.colour_band',
         'Species.id as species_id',
         'Species.name as species',
-        'Bird.form',
+        'Bird.form as bird_form',
         'Bird.transmitter_channel',
         'Bird.transmitter_frequency',
         'Bird.microchip',
         'Bird.wing_tag',
-        'Bird.status',
+        'Bird.status as status',
         'Bird.sex'
       );
 

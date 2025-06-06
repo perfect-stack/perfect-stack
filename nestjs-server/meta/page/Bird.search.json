@@ -96,7 +96,7 @@
           {
             "width": "1",
             "height": "1",
-            "attributeName": "form"
+            "attributeName": "bird_form"
           },
           {
             "width": "1",
@@ -140,85 +140,9 @@
               "label": "Sex"
             }
           }
-        ],
-        [
-          {
-            "width": "6",
-            "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            }
-          },
-          {
-            "width": "6",
-            "height": "1",
-            "template": {
-              "cells": [
-                [
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1"
-                  }
-                ],
-                [
-                  {
-                    "width": "6",
-                    "height": "1"
-                  },
-                  {
-                    "width": "6",
-                    "height": "1"
-                  }
-                ]
-              ],
-              "type": "table"
-            }
-          }
         ]
       ],
-      "metaEntityName": "Bird",
+      "metaEntityName": "BirdSearchResult",
       "type": "table",
       "orderByName": "name",
       "orderByDir": "ASC",
