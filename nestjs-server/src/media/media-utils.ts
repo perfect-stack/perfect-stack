@@ -19,11 +19,16 @@ export class MediaUtils {
     }
 
     private toMediaType(suffix: string): MediaType {
-        if(MEDIA_TYPE_MAP.has(suffix)) {
-            return MEDIA_TYPE_MAP.get(suffix);
+        if(suffix) {
+            if(MEDIA_TYPE_MAP.has(suffix.toLowerCase())) {
+                return MEDIA_TYPE_MAP.get(suffix.toLowerCase());
+            }
+            else {
+                throw new Error(`Unsupported media type: ${suffix}`);
+            }
         }
         else {
-            throw new Error(`Unsupported media type: ${suffix}`);
+            throw new Error('File suffix must be supplied');
         }
     }
 
@@ -31,7 +36,7 @@ export class MediaUtils {
         const suffix = this.toSuffix(filename);
         const mediaType = this.toMediaType(suffix);
         if(mediaType) {
-            const contentType = mime.lookup(filename);
+            const contentType = mime.lookup(filename.toLowerCase());
             if(contentType) {
                 return contentType;
             }

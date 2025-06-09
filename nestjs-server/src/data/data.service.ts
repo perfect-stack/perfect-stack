@@ -744,4 +744,8 @@ export class DataService {
 
     return hasRelationships;
   }
+
+  truncateTable(tableName: string) {
+    return this.ormService.sequelize.query(`TRUNCATE TABLE "${tableName}" CASCADE;`);
+  }
 }

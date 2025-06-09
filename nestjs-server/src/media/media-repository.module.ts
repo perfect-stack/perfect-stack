@@ -10,7 +10,7 @@ import {MediaUtils} from "./media-utils";
   imports: [ConfigModule],
   controllers: [MediaController],
   providers: [MediaRepositoryService, LocalMediaRepository, S3MediaRepository, MediaUtils],
-  exports: [MediaRepositoryService],
+  exports: [MediaRepositoryService, MediaUtils],
 })
 export class MediaRepositoryModule {}
 

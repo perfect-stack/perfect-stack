@@ -38,10 +38,8 @@ export class S3MediaRepository implements MediaRepositoryInterface {
         // TODO: should we validate that the file exists using S3 directly first?
         this.logger.log(`locateFile: ${filePath}`);
         const resourceKey = filePath;
-
-        const client = new S3Client({ region: "ap-southeast-2" });
         const command = new GetObjectCommand({ Bucket: this.BUCKET_NAME, Key: resourceKey });
-        return getSignedUrl(client, command, { expiresIn: 3600 });
+        return getSignedUrl(this.client, command, { expiresIn: 3600 });
     }
 
     downloadFile(filePath: string): Promise<Buffer> {
@@ -51,14 +49,18 @@ export class S3MediaRepository implements MediaRepositoryInterface {
     async createFile(filename: string): Promise<CreateFileResponse> {
         const contentType = this.mediaUtils.toContentType(filename);
         const resourceKey = this.mediaUtils.createTempFile(filename);
-        const client = new S3Client({ region: "ap-southeast-2" });
-        const command = new PutObjectCommand({
-            Bucket: this.BUCKET_NAME,
-            Key: resourceKey,
-            ContentType: contentType
-        });
-        const resourceUrl = await getSignedUrl(client, command, { expiresIn: 3600 });
-        return { resourceKey, resourceUrl };
+        if(contentType && resourceKey) {
+            const command = new PutObjectCommand({
+                Bucket: this.BUCKET_NAME,
+                Key: resourceKey,
+                ContentType: contentType
+            });
+            const resourceUrl = await getSignedUrl(this.client, command, {expiresIn: 3600});
+            return {resourceKey, resourceUrl};
+        }
+        else {
+            throw new Error(`ContentType or resourceKey is not defined: ${contentType}, ${resourceKey}`);
+        }
     }
 
     uploadFile(filePath: string, content: string): Promise<void> {
@@ -120,7 +122,7 @@ export class S3MediaRepository implements MediaRepositoryInterface {
             }
         }
         else {
-            this.logger.error(`File ${filePath} does not start with Temp/`)
+            throw new Error(`File ${filePath} does not start with Temp/`)
         }
     }
 
