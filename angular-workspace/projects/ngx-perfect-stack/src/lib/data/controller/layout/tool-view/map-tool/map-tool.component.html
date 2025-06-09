@@ -13,7 +13,7 @@
   >
     <div *ngFor="let l of layers" [leafletLayer]="l"></div>
 
-    <div class="overlay-bottom-left">
+    <div [ngClass]="{'overlay-bottom-left': ctx.mode === 'edit'}">
       Shift+Click to set coordinates
     </div>
   </div>

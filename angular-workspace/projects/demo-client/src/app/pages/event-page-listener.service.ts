@@ -260,10 +260,12 @@ export class EventPageListenerService implements PageListener {
       console.log(`GOT location entity`, locationEntity);
       const locationControl = formGroup.controls['location_id'];
       if(locationControl) {
-        locationControl.patchValue(locationEntity.id, {emitEvent: false});
         formGroup.controls['easting'].setValue(locationEntity.easting);
         formGroup.controls['northing'].setValue(locationEntity.northing);
         formGroup.controls['altitude'].setValue(locationEntity.altitude);
+
+        // This must come second otherwise the easting/northing set value above will clear it
+        locationControl.patchValue(locationEntity.id, {emitEvent: false});
       }
     });
   }

@@ -99,19 +99,58 @@
           {
             "width": "6",
             "height": "1",
-            "tool": {
-              "type": "ButtonTabs",
-              "containerStyles": "",
-              "styles": "btn btn-secondary",
-              "label": "Select how to capture location",
-              "templateIndex": 1,
-              "template1": "LocationCoordinates.tab",
-              "template2": "LocationFinder.tab",
-              "template3": "",
-              "template4": "",
-              "template5": "",
-              "template6": "",
-              "template7": ""
+            "template": {
+              "binding": "event",
+              "templateHeading": "",
+              "type": "form",
+              "metaEntityName": "Event",
+              "cells": [
+                [
+                  {
+                    "width": "4",
+                    "height": "1",
+                    "attributeName": "easting"
+                  },
+                  {
+                    "width": "4",
+                    "height": "1",
+                    "attributeName": "northing"
+                  },
+                  {
+                    "width": "4",
+                    "height": "1",
+                    "attributeName": "altitude"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "location"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "tool": {
+                      "type": "Link",
+                      "containerStyles": "",
+                      "styles": "",
+                      "label": "",
+                      "action": "CreateLocation",
+                      "route": "/route/go/here",
+                      "text": "Linked locations are only used for well known fixed locations. Don't use them for random trees/rocks. Not seeing a saved location? <a>Create new saved location</a>",
+                      "modes": "edit"
+                    }
+                  }
+                ]
+              ],
+              "styles": "",
+              "orderByName": "",
+              "orderByDir": "",
+              "noItemsHtml": "",
+              "locations": {}
             }
           },
           {

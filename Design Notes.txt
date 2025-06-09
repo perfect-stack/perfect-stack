@@ -1,4 +1,31 @@
 
+Map Component - Dynamic Behaviours
+----------------------------------
+
+* Changing a easting/northing will clear the linked Location
+* Changing a easting/northing field will update the Map location (but you may get "ocean" until the numbers are right)
+* Shift+Click on the map will clear the linked Location
+* Shift+Click will update the easting/northing coordinates
+* Selecting a Location will update the easting/northing and the map
+* Clearing the Location (click the "Clear" link in the field) will clear the location but won't change the easting/northing or the map
+* The "Shift+Click to set coordinates" help text in the bottom left of the map depends on the form being in edit mode and will not appear in view mode.
+
+* You can still create a new "Saved Location" from the Event page without having to leave the Event form edit mode. Once
+allocated to the Event it will then follow all the other "Location" entity behaviors outlined above and won't be deleted
+if the user abandons their Event data entry.
+
+* In view mode you can still zoom the map with the scroll wheel and drag the map to change location. The pink dot should
+never change position even if the Location is updated (in another tab) and you refresh this Event. Event locations are
+only updated if you edit the Event after the Location has had the coordinates changed.
+
+* Altitude isn't really used and probably should be made read-only. Ground altitude should be determined from the
+easting/northing and doing a GIS lookup. KIMS does not want to model Aerial altitudes.
+
+
+
+
+
+
 Angular Template Forms with Async pipe
 https://stackblitz.com/edit/angular-form-with-async-pipe?file=src%2Fapp%2Fapp.component.ts
 
