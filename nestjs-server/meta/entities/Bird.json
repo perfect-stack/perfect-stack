@@ -268,7 +268,7 @@
     {
       "name": "band_number",
       "label": "Band number",
-      "description": "The latest Band for this bird",
+      "description": "The latest band number (primary mark) for this bird",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -399,7 +399,7 @@
     {
       "name": "colour_band",
       "label": "Colour band",
-      "description": "",
+      "description": "Supplementary colour bands (if present)",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",

@@ -80,9 +80,10 @@
       "typeaheadSearch": [],
       "rules": [],
       "enumeration": [
-        "Left",
-        "Right",
-        "Wing"
+        "Left leg",
+        "Right leg",
+        "Left wing",
+        "Right wing"
       ]
     },
     {

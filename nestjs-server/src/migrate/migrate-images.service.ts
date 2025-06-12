@@ -28,7 +28,7 @@ interface BadFile {
 export class MigrateImagesService {
 
     IMAGE_FOLDERS = [
-        "/Users/richardperfect/dev/perfect-consulting/Kea Images/Cutdown"
+        "/Users/richardperfect/dev/perfect-consulting/Kea Images/Kerry"
     ]
 
     birdCount = 0;

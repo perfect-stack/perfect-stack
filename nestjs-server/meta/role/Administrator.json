@@ -6,10 +6,6 @@
   "permissions": [
     {
       "action": "Edit",
-      "subject": "ActivityType"
-    },
-    {
-      "action": "Edit",
       "subject": "LocationType"
     },
     {
@@ -50,11 +46,15 @@
     },
     {
       "action": "Edit",
-      "subject": "CaptureType"
+      "subject": "Instrument"
     },
     {
       "action": "Edit",
-      "subject": "Instrument"
+      "subject": "NestStatusType"
+    },
+    {
+      "action": "Edit",
+      "subject": "CaptureMethodType"
     },
     {
       "action": "Delete",
@@ -75,10 +75,6 @@
     {
       "action": "Delete",
       "subject": "ProjectTeamStatus"
-    },
-    {
-      "action": "Delete",
-      "subject": "ActivityType"
     },
     {
       "action": "Delete",
@@ -102,15 +98,15 @@
     },
     {
       "action": "Delete",
-      "subject": "NestingStatus"
-    },
-    {
-      "action": "Delete",
-      "subject": "CaptureType"
-    },
-    {
-      "action": "Delete",
       "subject": "Instrument"
+    },
+    {
+      "action": "Delete",
+      "subject": "NestStatusType"
+    },
+    {
+      "action": "Delete",
+      "subject": "CaptureMethodType"
     },
     {
       "action": "Menu",

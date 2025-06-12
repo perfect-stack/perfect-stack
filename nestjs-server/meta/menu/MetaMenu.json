@@ -67,8 +67,8 @@
         {
           "editable": true,
           "roles": [],
-          "label": "Capture Type",
-          "route": "/data/CaptureType/search_edit"
+          "label": "Capture Method Type",
+          "route": "/data/CaptureMethodType/search_edit"
         },
         {
           "editable": true,
@@ -97,8 +97,8 @@
         {
           "editable": true,
           "roles": [],
-          "label": "Nesting Status",
-          "route": "/data/NestingStatus/search_edit"
+          "label": "Nest Status Type",
+          "route": "/data/NestStatusType/search_edit"
         },
         {
           "editable": true,

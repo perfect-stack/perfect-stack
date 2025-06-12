@@ -92,12 +92,12 @@ export class AuthGuard  {
 
       const adminSubjects = [
         'ActivityType',
-        'CaptureType',
+        'CaptureMethodType',
         'CountType',
         'HabitatType',
         'Instrument',
         'LocationType',
-        'NestingStatus',
+        'NestStatusType',
         'ObserverRole',
         'Organisation',
         'ProjectStatus',
