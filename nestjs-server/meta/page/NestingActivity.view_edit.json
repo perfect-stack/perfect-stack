@@ -30,6 +30,14 @@
             "attributeName": "nest_status_type",
             "component": "Select"
           }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "3",
+            "attributeName": "nesting_notes",
+            "component": "TextArea"
+          }
         ]
       ],
       "metaEntityName": "NestingActivity",

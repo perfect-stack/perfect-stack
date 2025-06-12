@@ -8,7 +8,7 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-06-05.1';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-06-12.1';
 const BATCH_SIZE = 200;
 
 const filesToProcess: FileProcessingConfig[] = [
@@ -191,6 +191,7 @@ const ignoreForNow = [
     "Bird.FATE",
     "Event.activities",
     "EventObserver.INSTRUMENT_ID",
+    "NestingActivity.NESTING_NOTES",
     "CaptureActivity.IS_RECAPTURE",
     "TransmitterActivity.TRANSMITTER_TYPE",
 ];
@@ -539,7 +540,7 @@ class MetaEntityRowProcessor {
             }
 
             let csvColName = attribute.name.toUpperCase();
-            if( !(['TRANSMITTER_TYPE', 'TRANSMITTER_FINE_TUNE'].includes(csvColName))) {
+            if( !(['TRANSMITTER_TYPE', 'TRANSMITTER_FINE_TUNE', "NESTING_NOTES"].includes(csvColName))) {
                 if (!(csvColName in csvRow)) {
                     csvColName = csvColName + '_ID';
                     if (!(csvColName in csvRow)) {
