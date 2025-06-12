@@ -14,6 +14,9 @@ Map Component - Dynamic Behaviours
 allocated to the Event it will then follow all the other "Location" entity behaviors outlined above and won't be deleted
 if the user abandons their Event data entry.
 
+* If a user creates a new "Saved Location" from the Event page then the Event will be updated with that location when
+the user saves (successfully) and closes the Create location dialog to return to the Event.
+
 * In view mode you can still zoom the map with the scroll wheel and drag the map to change location. The pink dot should
 never change position even if the Location is updated (in another tab) and you refresh this Event. Event locations are
 only updated if you edit the Event after the Location has had the coordinates changed.

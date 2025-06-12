@@ -13,6 +13,7 @@ interface Marking {
   activity_attribute_name: string;
   bird_attribute_name: string;
   activity_type: string;
+  unique: boolean;
 }
 
 export class BandingActivityDataEventListener implements DataEventListener {
@@ -23,21 +24,43 @@ export class BandingActivityDataEventListener implements DataEventListener {
       activity_attribute_name: 'band_number',
       bird_attribute_name: 'band_number',
       activity_type: 'Banding',
+      unique: true
     },
     {
       activity_attribute_name: 'colour_band',
       bird_attribute_name: 'colour_band',
       activity_type: 'Banding',
+      unique: false
     },
     {
       activity_attribute_name: 'microchip',
       bird_attribute_name: 'microchip',
       activity_type: 'Microchip',
+      unique: true
     },
     {
       activity_attribute_name: 'wing_tag',
       bird_attribute_name: 'wing_tag',
       activity_type: 'Wing tag',
+      unique: true
+    },
+    {
+      activity_attribute_name: 'vhf_tr4_channel',
+      bird_attribute_name: 'transmitter_channel',
+      activity_type: 'Transmitter',
+      unique: false
+    },
+    {
+      activity_attribute_name: 'vhf_frequency_mhz',
+      bird_attribute_name: 'transmitter_frequency',
+      activity_type: 'Transmitter',
+      unique: false
+    },
+    {
+      activity_attribute_name: 'vhf_frequency_ft',
+      bird_attribute_name: 'transmitter_fine_tune',
+      activity_type: 'Transmitter',
+      unique: false
     },
   ];
 
@@ -109,11 +132,13 @@ export class BandingActivityDataEventListener implements DataEventListener {
     const validationResultMap = {};
 
     for (const nextMarking of this.markings) {
-      await this.validateMarking(
-        entity,
-        nextMarking,
-        validationResultMap,
-      );
+      if(nextMarking.unique) {
+        await this.validateMarking(
+            entity,
+            nextMarking,
+            validationResultMap,
+        );
+      }
     }
 
     return validationResultMap;
