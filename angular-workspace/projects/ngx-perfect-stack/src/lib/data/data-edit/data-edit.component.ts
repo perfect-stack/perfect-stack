@@ -170,10 +170,12 @@ export class DataEditComponent implements OnInit {
     const form = this.getDataForm(ctx);
     console.log('onSave() - GOT FORM');
 
-    this.validateAllFields('root', form);
-    console.log('onSave() - VALIDATION');
+    if(form) {
+      this.validateAllFields('root', form);
+      console.log('onSave() - VALIDATION');
+    }
 
-    if(form.valid) {
+    if(form && form.valid) {
       console.log('onSave() - VALID');
       const entityData = form.value;
       console.log(`DataEdit: form value:`, entityData);
@@ -252,7 +254,7 @@ export class DataEditComponent implements OnInit {
    */
   isSaveDisabled(ctx: FormContext) {
     const dataForm = this.getDataForm(ctx);
-    return dataForm.touched && !dataForm.valid;
+    return dataForm && dataForm.touched && !dataForm.valid;
   }
 
   validateAllFields(name: string, abstractControl: AbstractControl) {
@@ -302,7 +304,8 @@ export class DataEditComponent implements OnInit {
       if(this.metaName && this.entityId && closedResult === 'Delete') {
         this.dataService.destroy(this.metaName, this.entityId).subscribe((result) => {
           console.log(`Entity ${this.metaName} destroy requested.`, result);
-          if(result > 0) {
+          const resultNumber = Number(result);
+          if(resultNumber > 0) {
             this.toastService.showSuccess(`${this.metaName} deleted successfully`);
             this.onBack();
           }
