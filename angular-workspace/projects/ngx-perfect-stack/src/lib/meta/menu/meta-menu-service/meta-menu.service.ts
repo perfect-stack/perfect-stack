@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {MenuItem, MetaMenu} from '../../../domain/meta.menu';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {tap} from 'rxjs';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
 

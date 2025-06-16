@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-config';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {DebugService} from '../../utils/debug/debug.service';
 import {ToastService} from '../../utils/toasts/toast.service';
 import {CoordinateConverterService} from './coordinate-converter.service';

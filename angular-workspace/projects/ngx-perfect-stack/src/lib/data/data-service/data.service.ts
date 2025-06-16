@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {PageQueryResponse} from '../../domain/response/page-query.response';
 import {Entity} from '../../domain/entity';
 import {QueryRequest} from './query.request';

@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Audit} from '../domain/audit';
 
 @Injectable({

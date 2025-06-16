@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {LoginNotification} from './login-notification';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'

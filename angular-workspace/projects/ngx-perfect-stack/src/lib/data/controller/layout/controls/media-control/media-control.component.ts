@@ -6,7 +6,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {UploadDialogComponent} from "./upload-dialog/upload-dialog.component";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {map, Subject, Subscription, takeUntil} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {FormGroupService} from "../../../../data-edit/form-service/form-group.service";
 import {MetaEntity} from "../../../../../domain/meta.entity";
 import {Cell, MetaPage} from "../../../../../domain/meta.page";

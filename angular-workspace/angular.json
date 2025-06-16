@@ -49,13 +49,16 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "preserveSymlinks": true,
-            "outputPath": "dist/demo-client",
+            "outputPath": {
+              "base": "dist/demo-client"
+            },
             "index": "projects/demo-client/src/index.html",
-            "main": "projects/demo-client/src/main.ts",
-            "polyfills": "projects/demo-client/src/polyfills.ts",
+            "polyfills": [
+              "projects/demo-client/src/polyfills.ts"
+            ],
             "tsConfig": "projects/demo-client/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -72,7 +75,8 @@
             ],
             "scripts": [
               "node_modules/tinymce/tinymce.min.js"
-            ]
+            ],
+            "browser": "projects/demo-client/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -98,9 +102,7 @@
               "preserveSymlinks": true
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true,

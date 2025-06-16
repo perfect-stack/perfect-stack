@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {ComponentData, LabelLayoutType, MetaPage, Template, Tool} from '../../../domain/meta.page';
 import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';

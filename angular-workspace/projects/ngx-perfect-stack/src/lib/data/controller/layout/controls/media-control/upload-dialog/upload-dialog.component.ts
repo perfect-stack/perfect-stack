@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy} from '@angular/core';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
-import {HttpClient, HttpEventType, HttpHeaders} from "@angular/common/http";
+import { HttpClient, HttpEventType, HttpHeaders } from "@angular/common/http";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../../../../ngx-perfect-stack-config";
 import {finalize, Subscription} from "rxjs";
 

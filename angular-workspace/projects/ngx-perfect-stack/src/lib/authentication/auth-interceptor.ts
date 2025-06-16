@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import { HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import {catchError, throwError} from 'rxjs';
 import {AuthenticationService} from './authentication.service';
 import {ToastService} from '../utils/toasts/toast.service';
