@@ -12,7 +12,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/ngx-perfect-stack/ng-package.json",
+            "project": "projects/ngx-perfect-stack/ng-package.json"
           },
           "configurations": {
             "production": {
