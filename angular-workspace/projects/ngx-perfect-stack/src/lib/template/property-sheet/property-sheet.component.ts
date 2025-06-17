@@ -7,9 +7,10 @@ import {MetaPage, Template} from '../../domain/meta.page';
 import {MetaPageService} from '../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
-  selector: 'lib-property-sheet',
-  templateUrl: './property-sheet.component.html',
-  styleUrls: ['./property-sheet.component.css']
+    selector: 'lib-property-sheet',
+    templateUrl: './property-sheet.component.html',
+    styleUrls: ['./property-sheet.component.css'],
+    standalone: false
 })
 export class PropertySheetComponent implements OnInit, OnDestroy {
 

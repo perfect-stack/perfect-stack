@@ -16,9 +16,10 @@ import {CriteriaService} from './criteria.service';
 import {ActionType} from '../../domain/meta.role';
 
 @Component({
-  selector: 'app-data-search',
-  templateUrl: './data-search.component.html',
-  styleUrls: ['./data-search.component.scss']
+    selector: 'app-data-search',
+    templateUrl: './data-search.component.html',
+    styleUrls: ['./data-search.component.scss'],
+    standalone: false
 })
 export class DataSearchComponent implements OnInit {
 

@@ -25,9 +25,10 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
-  selector: 'app-data-edit',
-  templateUrl: './data-edit.component.html',
-  styleUrls: ['./data-edit.component.scss']
+    selector: 'app-data-edit',
+    templateUrl: './data-edit.component.html',
+    styleUrls: ['./data-edit.component.scss'],
+    standalone: false
 })
 export class DataEditComponent implements OnInit {
 

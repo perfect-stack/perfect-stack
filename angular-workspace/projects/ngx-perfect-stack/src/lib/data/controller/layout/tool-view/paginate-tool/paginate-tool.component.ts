@@ -6,9 +6,10 @@ import {PropertySheetService} from '../../../../../template/property-sheet/prope
 import {Subscription} from 'rxjs';
 
 @Component({
-  selector: 'lib-paginate-tool',
-  templateUrl: './paginate-tool.component.html',
-  styleUrls: ['./paginate-tool.component.css']
+    selector: 'lib-paginate-tool',
+    templateUrl: './paginate-tool.component.html',
+    styleUrls: ['./paginate-tool.component.css'],
+    standalone: false
 })
 export class PaginateToolComponent implements OnInit, OnDestroy {
 

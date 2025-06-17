@@ -3,14 +3,15 @@ import {AuthenticationService} from './authentication/authentication.service';
 import {AuthenticationClientService} from './authentication/authentication-client.service';
 
 @Component({
-  selector: 'lib-ngx-perfect-stack',
-  template: `<lib-menu-bar [applicationTitle]="applicationTitle"
+    selector: 'lib-ngx-perfect-stack',
+    template: `<lib-menu-bar [applicationTitle]="applicationTitle"
                            [applicationTitleFont]="applicationTitleFont"
                            [applicationLogo]="applicationLogo"
                            [applicationLogoWidth]="applicationLogoWidth"
                            [menuBarDividerColor]="menuBarDividerColor"
                            [menuBarBackgroundColor]="menuBarBackgroundColor"></lib-menu-bar>`,
-  styles: []
+    styles: [],
+    standalone: false
 })
 export class NgxPerfectStackComponent implements OnInit {
 

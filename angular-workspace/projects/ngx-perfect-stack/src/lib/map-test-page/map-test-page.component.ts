@@ -4,9 +4,10 @@ import {circle, latLng, polygon, tileLayer} from 'leaflet';
 import * as proj4 from 'proj4';
 
 @Component({
-  selector: 'lib-map-test-page',
-  templateUrl: './map-test-page.component.html',
-  styleUrls: ['./map-test-page.component.css']
+    selector: 'lib-map-test-page',
+    templateUrl: './map-test-page.component.html',
+    styleUrls: ['./map-test-page.component.css'],
+    standalone: false
 })
 export class MapTestPageComponent implements OnInit {
 

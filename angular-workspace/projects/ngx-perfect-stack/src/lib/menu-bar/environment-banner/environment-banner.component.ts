@@ -2,9 +2,10 @@ import {Component, Inject} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
 
 @Component({
-  selector: 'lib-environment-banner',
-  templateUrl: './environment-banner.component.html',
-  styleUrls: ['./environment-banner.component.css']
+    selector: 'lib-environment-banner',
+    templateUrl: './environment-banner.component.html',
+    styleUrls: ['./environment-banner.component.css'],
+    standalone: false
 })
 export class EnvironmentBannerComponent {
 

@@ -7,9 +7,10 @@ import {MetaEntityService} from '../../../../../meta/entity/meta-entity-service/
 import {DiscriminatorService} from "../../../../data-service/discriminator.service";
 
 @Component({
-  selector: 'lib-card-item-dialog',
-  templateUrl: './card-item-dialog.component.html',
-  styleUrls: ['./card-item-dialog.component.css']
+    selector: 'lib-card-item-dialog',
+    templateUrl: './card-item-dialog.component.html',
+    styleUrls: ['./card-item-dialog.component.css'],
+    standalone: false
 })
 export class CardItemDialogComponent implements OnInit {
 

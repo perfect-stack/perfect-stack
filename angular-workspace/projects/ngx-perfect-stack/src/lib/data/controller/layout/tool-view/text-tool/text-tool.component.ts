@@ -6,9 +6,10 @@ import {UntypedFormGroup} from '@angular/forms';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
 
 @Component({
-  selector: 'lib-text-tool',
-  templateUrl: './text-tool.component.html',
-  styleUrls: ['./text-tool.component.css']
+    selector: 'lib-text-tool',
+    templateUrl: './text-tool.component.html',
+    styleUrls: ['./text-tool.component.css'],
+    standalone: false
 })
 export class TextToolComponent implements OnInit {
 

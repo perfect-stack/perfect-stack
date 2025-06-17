@@ -4,9 +4,10 @@ import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {AttributeType, MetaAttribute} from '../../../domain/meta.entity';
 
 @Component({
-  selector: 'app-attribute-delete-dialog',
-  templateUrl: './attribute-delete-dialog.component.html',
-  styleUrls: ['./attribute-delete-dialog.component.css']
+    selector: 'app-attribute-delete-dialog',
+    templateUrl: './attribute-delete-dialog.component.html',
+    styleUrls: ['./attribute-delete-dialog.component.css'],
+    standalone: false
 })
 export class AttributeDeleteDialogComponent implements OnInit {
 

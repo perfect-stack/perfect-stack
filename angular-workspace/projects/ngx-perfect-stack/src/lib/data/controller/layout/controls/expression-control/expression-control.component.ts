@@ -4,9 +4,10 @@ import {Subscription} from 'rxjs';
 import {ExpressionService} from './expression.service';
 
 @Component({
-  selector: 'lib-expression-control',
-  templateUrl: './expression-control.component.html',
-  styleUrls: ['./expression-control.component.css']
+    selector: 'lib-expression-control',
+    templateUrl: './expression-control.component.html',
+    styleUrls: ['./expression-control.component.css'],
+    standalone: false
 })
 export class ExpressionControlComponent implements OnChanges, OnDestroy {
 

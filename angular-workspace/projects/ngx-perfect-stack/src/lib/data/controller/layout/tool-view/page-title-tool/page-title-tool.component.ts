@@ -2,12 +2,13 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {PageTitleTool} from '../../../../../domain/meta.page';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
-import {FormGroup} from '@angular/forms';
+import {AbstractControl, FormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'lib-page-title-tool',
-  templateUrl: './page-title-tool.component.html',
-  styleUrls: ['./page-title-tool.component.css']
+    selector: 'lib-page-title-tool',
+    templateUrl: './page-title-tool.component.html',
+    styleUrls: ['./page-title-tool.component.css'],
+    standalone: false
 })
 export class PageTitleToolComponent implements OnInit {
 
@@ -35,12 +36,15 @@ export class PageTitleToolComponent implements OnInit {
       // ALSO - during initial development tried to get the "value" of the FormGroup to then get the name values but
       // that only worked for Edit and not for View. Wasn't able to figure out why, so asked the Controls for their
       // values instead
-      this.formGroup = this.ctx.formMap.values().next().value;
+      const abstractControl = this.ctx.formMap.values().next().value;
+      if(abstractControl instanceof FormGroup) {
+        this.formGroup = abstractControl;
 
-      const isNew = !this.formGroup.get('id')?.value;
-      this.pageMode = PageTitleToolComponent.toPageMode(this.ctx.mode, isNew);
-      if(this.pageTitleTool && this.pageTitleTool.nameAttributes) {
-        this.nameAttributes = this.pageTitleTool.nameAttributes.split(',');
+        const isNew = !this.formGroup.get('id')?.value;
+        this.pageMode = PageTitleToolComponent.toPageMode(this.ctx.mode, isNew);
+        if(this.pageTitleTool && this.pageTitleTool.nameAttributes) {
+          this.nameAttributes = this.pageTitleTool.nameAttributes.split(',');
+        }
       }
     }
   }

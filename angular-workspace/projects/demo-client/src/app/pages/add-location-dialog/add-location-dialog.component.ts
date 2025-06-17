@@ -14,9 +14,10 @@ import {AttributeType} from '../../../../../ngx-perfect-stack/src/lib/domain/met
 import {DataService} from '../../../../../ngx-perfect-stack/src/lib/data/data-service/data.service';
 
 @Component({
-  selector: 'app-add-location-dialog',
-  templateUrl: './add-location-dialog.component.html',
-  styleUrls: ['./add-location-dialog.component.scss']
+    selector: 'app-add-location-dialog',
+    templateUrl: './add-location-dialog.component.html',
+    styleUrls: ['./add-location-dialog.component.scss'],
+    standalone: false
 })
 export class AddLocationDialogComponent implements OnInit {
 

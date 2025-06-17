@@ -7,9 +7,10 @@ import {MessageDialogComponent} from '../../utils/message-dialog/message-dialog.
 import {MetaMenuService} from '../../meta/menu/meta-menu-service/meta-menu.service';
 
 @Component({
-  selector: 'lib-login-button',
-  templateUrl: './login-button.component.html',
-  styleUrls: ['./login-button.component.css']
+    selector: 'lib-login-button',
+    templateUrl: './login-button.component.html',
+    styleUrls: ['./login-button.component.css'],
+    standalone: false
 })
 export class LoginButtonComponent implements OnInit {
 

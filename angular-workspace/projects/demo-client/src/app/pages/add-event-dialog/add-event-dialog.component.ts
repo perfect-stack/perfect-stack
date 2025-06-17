@@ -5,9 +5,10 @@ import {
 } from '../../../../../ngx-perfect-stack/src/lib/utils/tile-button-panel/tile-button-panel.component';
 
 @Component({
-  selector: 'app-add-event-dialog',
-  templateUrl: './add-event-dialog.component.html',
-  styleUrls: ['./add-event-dialog.component.scss']
+    selector: 'app-add-event-dialog',
+    templateUrl: './add-event-dialog.component.html',
+    styleUrls: ['./add-event-dialog.component.scss'],
+    standalone: false
 })
 export class AddEventDialogComponent implements OnInit {
 

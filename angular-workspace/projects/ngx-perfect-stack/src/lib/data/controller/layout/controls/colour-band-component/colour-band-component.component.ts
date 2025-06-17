@@ -11,9 +11,10 @@ import {ColourBandDialogComponent} from "./colour-band-dialog/colour-band-dialog
 
 
 @Component({
-  selector: 'lib-colour-band-component',
-  templateUrl: './colour-band-component.component.html',
-  styleUrls: ['./colour-band-component.component.css']
+    selector: 'lib-colour-band-component',
+    templateUrl: './colour-band-component.component.html',
+    styleUrls: ['./colour-band-component.component.css'],
+    standalone: false
 })
 export class ColourBandComponentComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

@@ -16,9 +16,10 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ActionType} from '../../domain/meta.role';
 
 @Component({
-  selector: 'app-data-search-edit',
-  templateUrl: './data-search-edit.component.html',
-  styleUrls: ['./data-search-edit.component.css']
+    selector: 'app-data-search-edit',
+    templateUrl: './data-search-edit.component.html',
+    styleUrls: ['./data-search-edit.component.css'],
+    standalone: false
 })
 export class DataSearchEditComponent implements OnInit {
 

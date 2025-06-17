@@ -18,9 +18,10 @@ import {MessageDialogComponent} from '../../../utils/message-dialog/message-dial
 import {TemplateLocationType} from '../../../domain/meta.page';
 
 @Component({
-  selector: 'app-meta-page-edit',
-  templateUrl: './meta-page-edit.component.html',
-  styleUrls: ['./meta-page-edit.component.css']
+    selector: 'app-meta-page-edit',
+    templateUrl: './meta-page-edit.component.html',
+    styleUrls: ['./meta-page-edit.component.css'],
+    standalone: false
 })
 export class MetaPageEditComponent implements OnInit {
 

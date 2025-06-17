@@ -7,9 +7,10 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-st
 import {ToastService} from '../../../../../utils/toasts/toast.service';
 
 @Component({
-  selector: 'lib-select-control',
-  templateUrl: './select-control.component.html',
-  styleUrls: ['./select-control.component.css'],
+    selector: 'lib-select-control',
+    templateUrl: './select-control.component.html',
+    styleUrls: ['./select-control.component.css'],
+    standalone: false
 })
 export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

@@ -21,9 +21,10 @@ import {ValidationResult} from '../../../../../domain/meta.rule';
 import {Cell} from '../../../../../domain/meta.page';
 
 @Component({
-  selector: 'lib-many-to-one-control',
-  templateUrl: './many-to-one-control.component.html',
-  styleUrls: ['./many-to-one-control.component.css'],
+    selector: 'lib-many-to-one-control',
+    templateUrl: './many-to-one-control.component.html',
+    styleUrls: ['./many-to-one-control.component.css'],
+    standalone: false
 })
 export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

@@ -2,15 +2,17 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ActionType} from '../../../../domain/meta.role';
 import {AuthorizationService} from '../../../../authentication/authorization.service';
 import {FormContext} from '../../../data-edit/form-service/form.service';
+import {AbstractControl, FormGroup} from "@angular/forms";
 
 /**
  * This PermissionCheckComponent makes it easy to control the display of a component based on the current User's
  * permissions. If the current user has the required permissions then the nested child component will be displayed.
  */
 @Component({
-  selector: 'lib-permission-check',
-  templateUrl: './permission-check.component.html',
-  styleUrls: ['./permission-check.component.css']
+    selector: 'lib-permission-check',
+    templateUrl: './permission-check.component.html',
+    styleUrls: ['./permission-check.component.css'],
+    standalone: false
 })
 export class PermissionCheckComponent implements OnInit {
 
@@ -34,10 +36,13 @@ export class PermissionCheckComponent implements OnInit {
   ngOnInit(): void {
     if(this.ctx) {
       // WARNING: Same logic in DateEditComponent
-      const formGroup = this.ctx.formMap.values().next().value;
-      const dataSourceControl = formGroup.controls['data_source'] as any;
-      this.dataSource = dataSourceControl?.value;
-      this.checkPermission();
+      const abstractControl = this.ctx.formMap.values().next().value;
+      if(abstractControl instanceof FormGroup) {
+        const formGroup = abstractControl as FormGroup;
+        const dataSourceControl = formGroup.controls['data_source'] as any;
+        this.dataSource = dataSourceControl?.value;
+        this.checkPermission();
+      }
     }
   }
 

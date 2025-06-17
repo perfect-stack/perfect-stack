@@ -6,9 +6,10 @@ import {ToastService} from '../../utils/toasts/toast.service';
 import {CoordinateConverterService} from './coordinate-converter.service';
 
 @Component({
-  selector: 'lib-version',
-  templateUrl: './version.component.html',
-  styleUrls: ['./version.component.css']
+    selector: 'lib-version',
+    templateUrl: './version.component.html',
+    styleUrls: ['./version.component.css'],
+    standalone: false
 })
 export class VersionComponent implements OnInit {
 

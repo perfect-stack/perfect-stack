@@ -4,9 +4,10 @@ import {Template} from '../../domain/meta.page';
 import {DebugService} from "../../utils/debug/debug.service";
 
 @Component({
-  selector: 'lib-controller',
-  templateUrl: './controller.component.html',
-  styleUrls: ['./controller.component.css']
+    selector: 'lib-controller',
+    templateUrl: './controller.component.html',
+    styleUrls: ['./controller.component.css'],
+    standalone: false
 })
 export class ControllerComponent implements OnInit {
 

@@ -5,7 +5,8 @@ import {DragService} from './drag.service';
  * https://medium.com/@mithun_daa/drag-and-drop-in-angular-2-using-native-html5-api-f628ce4edc3b
  */
 @Directive({
-  selector: '[my-draggable]'
+    selector: '[my-draggable]',
+    standalone: false
 })
 export class DraggableDirective {
 

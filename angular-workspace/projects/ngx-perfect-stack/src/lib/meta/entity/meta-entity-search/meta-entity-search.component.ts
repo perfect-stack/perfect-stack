@@ -5,9 +5,10 @@ import {Router} from '@angular/router';
 import {ToastService} from '../../../utils/toasts/toast.service';
 
 @Component({
-  selector: 'app-meta-entity-search',
-  templateUrl: './meta-entity-search.component.html',
-  styleUrls: ['./meta-entity-search.component.css']
+    selector: 'app-meta-entity-search',
+    templateUrl: './meta-entity-search.component.html',
+    styleUrls: ['./meta-entity-search.component.css'],
+    standalone: false
 })
 export class MetaEntitySearchComponent implements OnInit {
 

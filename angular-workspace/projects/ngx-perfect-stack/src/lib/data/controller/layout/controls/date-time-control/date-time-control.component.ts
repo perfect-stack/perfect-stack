@@ -10,9 +10,10 @@ import '@js-joda/timezone';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
-  selector: 'lib-date-time-control',
-  templateUrl: './date-time-control.component.html',
-  styleUrls: ['./date-time-control.component.css']
+    selector: 'lib-date-time-control',
+    templateUrl: './date-time-control.component.html',
+    styleUrls: ['./date-time-control.component.css'],
+    standalone: false
 })
 export class DateTimeControlComponent implements OnInit {
 

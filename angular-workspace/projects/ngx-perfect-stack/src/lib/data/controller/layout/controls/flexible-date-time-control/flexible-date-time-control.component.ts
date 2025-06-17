@@ -8,9 +8,10 @@ import {ValidationResult} from '../../../../../domain/meta.rule';
 import {TimeService} from '../../../../../utils/time/time.service';
 
 @Component({
-  selector: 'lib-flexible-date-time-control',
-  templateUrl: './flexible-date-time-control.component.html',
-  styleUrls: ['./flexible-date-time-control.component.css']
+    selector: 'lib-flexible-date-time-control',
+    templateUrl: './flexible-date-time-control.component.html',
+    styleUrls: ['./flexible-date-time-control.component.css'],
+    standalone: false
 })
 export class FlexibleDateTimeControlComponent implements OnInit {
 

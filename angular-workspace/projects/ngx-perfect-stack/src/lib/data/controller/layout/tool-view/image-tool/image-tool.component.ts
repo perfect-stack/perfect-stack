@@ -5,9 +5,10 @@ import {ToolPaletteComponent} from '../../../../../template/tool-palette/tool-pa
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 
 @Component({
-  selector: 'lib-image-tool',
-  templateUrl: './image-tool.component.html',
-  styleUrls: ['./image-tool.component.css']
+    selector: 'lib-image-tool',
+    templateUrl: './image-tool.component.html',
+    styleUrls: ['./image-tool.component.css'],
+    standalone: false
 })
 export class ImageToolComponent implements OnInit {
 

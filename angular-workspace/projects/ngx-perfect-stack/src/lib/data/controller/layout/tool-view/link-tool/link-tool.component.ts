@@ -7,9 +7,10 @@ import {EventService} from '../../../../../event/event.service';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'lib-link-tool',
-  templateUrl: './link-tool.component.html',
-  styleUrls: ['./link-tool.component.css']
+    selector: 'lib-link-tool',
+    templateUrl: './link-tool.component.html',
+    styleUrls: ['./link-tool.component.css'],
+    standalone: false
 })
 export class LinkToolComponent implements OnInit {
 

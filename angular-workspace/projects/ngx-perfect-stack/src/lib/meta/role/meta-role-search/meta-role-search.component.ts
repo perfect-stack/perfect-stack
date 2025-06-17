@@ -4,9 +4,10 @@ import {MetaRoleService} from '../meta-role-service/meta-role.service';
 import {MetaRole} from '../../../domain/meta.role';
 
 @Component({
-  selector: 'lib-meta-role-search',
-  templateUrl: './meta-role-search.component.html',
-  styleUrls: ['./meta-role-search.component.css']
+    selector: 'lib-meta-role-search',
+    templateUrl: './meta-role-search.component.html',
+    styleUrls: ['./meta-role-search.component.css'],
+    standalone: false
 })
 export class MetaRoleSearchComponent implements OnInit {
 

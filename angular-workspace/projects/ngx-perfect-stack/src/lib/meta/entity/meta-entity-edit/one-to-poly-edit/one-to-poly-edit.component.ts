@@ -6,9 +6,10 @@ import {MetaEntityService} from '../../meta-entity-service/meta-entity.service';
 import {DataService} from '../../../../data/data-service/data.service';
 
 @Component({
-  selector: 'lib-one-to-poly-edit',
-  templateUrl: './one-to-poly-edit.component.html',
-  styleUrls: ['./one-to-poly-edit.component.css']
+    selector: 'lib-one-to-poly-edit',
+    templateUrl: './one-to-poly-edit.component.html',
+    styleUrls: ['./one-to-poly-edit.component.css'],
+    standalone: false
 })
 export class OneToPolyEditComponent implements OnInit {
 

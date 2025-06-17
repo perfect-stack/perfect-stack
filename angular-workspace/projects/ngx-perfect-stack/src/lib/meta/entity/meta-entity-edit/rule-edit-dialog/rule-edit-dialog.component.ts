@@ -4,9 +4,10 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'lib-rule-edit-dialog',
-  templateUrl: './rule-edit-dialog.component.html',
-  styleUrls: ['./rule-edit-dialog.component.css']
+    selector: 'lib-rule-edit-dialog',
+    templateUrl: './rule-edit-dialog.component.html',
+    styleUrls: ['./rule-edit-dialog.component.css'],
+    standalone: false
 })
 export class RuleEditDialogComponent implements OnInit {
 

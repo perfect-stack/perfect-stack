@@ -44,9 +44,10 @@ import {Duration, Instant} from '@js-joda/core';
 // is solving. NG3003: One or more import cycles would need to be created to compile this component
 
 @Component({
-  selector: 'lib-layout',
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css']
+    selector: 'lib-layout',
+    templateUrl: './layout.component.html',
+    styleUrls: ['./layout.component.css'],
+    standalone: false
 })
 export class LayoutComponent implements OnInit {
 
@@ -127,9 +128,10 @@ export class LayoutComponent implements OnInit {
 
 
 @Component({
-  selector: 'lib-table-layout',
-  templateUrl: './table-layout.component.html',
-  styleUrls: ['./table-layout.component.css']
+    selector: 'lib-table-layout',
+    templateUrl: './table-layout.component.html',
+    styleUrls: ['./table-layout.component.css'],
+    standalone: false
 })
 export class TableLayoutComponent implements OnInit {
 
@@ -285,9 +287,10 @@ export class TableLayoutComponent implements OnInit {
 
 
 @Component({
-  selector: 'lib-card-layout',
-  templateUrl: './card-layout.component.html',
-  styleUrls: ['./card-layout.component.css']
+    selector: 'lib-card-layout',
+    templateUrl: './card-layout.component.html',
+    styleUrls: ['./card-layout.component.css'],
+    standalone: false
 })
 export class CardLayoutComponent implements OnInit {
 
@@ -530,9 +533,10 @@ export class CardLayoutComponent implements OnInit {
 
 
 @Component({
-  selector: 'lib-form-layout',
-  templateUrl: './form-layout.component.html',
-  styleUrls: ['./form-layout.component.css']
+    selector: 'lib-form-layout',
+    templateUrl: './form-layout.component.html',
+    styleUrls: ['./form-layout.component.css'],
+    standalone: false
 })
 export class FormLayoutComponent implements OnInit, OnChanges {
 
@@ -658,9 +662,10 @@ export class FormLayoutComponent implements OnInit, OnChanges {
 }
 
 @Component({
-  selector: 'lib-header-layout',
-  templateUrl: './header-layout.component.html',
-  styleUrls: ['./header-layout.component.css']
+    selector: 'lib-header-layout',
+    templateUrl: './header-layout.component.html',
+    styleUrls: ['./header-layout.component.css'],
+    standalone: false
 })
 export class HeaderLayoutComponent implements OnInit, OnChanges {
 
@@ -766,9 +771,10 @@ export class HeaderLayoutComponent implements OnInit, OnChanges {
 }
 
 @Component({
-  selector: 'lib-cell',
-  templateUrl: './cell.component.html',
-  styleUrls: ['./cell.component.css']
+    selector: 'lib-cell',
+    templateUrl: './cell.component.html',
+    styleUrls: ['./cell.component.css'],
+    standalone: false
 })
 export class CellComponent implements OnInit {
 
@@ -792,9 +798,10 @@ export class CellComponent implements OnInit {
 
 
 @Component({
-  selector: 'lib-one-to-many-control',
-  templateUrl: './one-to-many-control.component.html',
-  styleUrls: ['./one-to-many-control.component.css']
+    selector: 'lib-one-to-many-control',
+    templateUrl: './one-to-many-control.component.html',
+    styleUrls: ['./one-to-many-control.component.css'],
+    standalone: false
 })
 export class OneToManyControlComponent implements OnInit {
 
@@ -820,9 +827,10 @@ export class OneToManyControlComponent implements OnInit {
 
 
 @Component({
-  selector: 'lib-one-to-poly-control',
-  templateUrl: './one-to-poly-control.component.html',
-  styleUrls: ['./one-to-poly-control.component.css']
+    selector: 'lib-one-to-poly-control',
+    templateUrl: './one-to-poly-control.component.html',
+    styleUrls: ['./one-to-poly-control.component.css'],
+    standalone: false
 })
 export class OneToPolyControlComponent implements OnInit {
 
@@ -847,9 +855,10 @@ export class OneToPolyControlComponent implements OnInit {
 
 
 @Component({
-  selector: 'lib-one-to-one-control',
-  templateUrl: './one-to-one-control.component.html',
-  styleUrls: ['./one-to-one-control.component.css']
+    selector: 'lib-one-to-one-control',
+    templateUrl: './one-to-one-control.component.html',
+    styleUrls: ['./one-to-one-control.component.css'],
+    standalone: false
 })
 export class OneToOneControlComponent implements OnInit {
 
@@ -906,9 +915,10 @@ export class OneToOneControlComponent implements OnInit {
 }
 
 @Component({
-  selector: 'lib-spy-control',
-  templateUrl: './controls/spy-control/spy-control.component.html',
-  styleUrls: ['./controls/spy-control/spy-control.component.css']
+    selector: 'lib-spy-control',
+    templateUrl: './controls/spy-control/spy-control.component.html',
+    styleUrls: ['./controls/spy-control/spy-control.component.css'],
+    standalone: false
 })
 export class SpyControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
@@ -1002,9 +1012,10 @@ export class SpyControlComponent implements OnInit, OnDestroy, ControlValueAcces
 }
 
 @Component({
-  selector: 'lib-tool-view',
-  templateUrl: './tool-view/tool-view.component.html',
-  styleUrls: ['./tool-view/tool-view.component.css']
+    selector: 'lib-tool-view',
+    templateUrl: './tool-view/tool-view.component.html',
+    styleUrls: ['./tool-view/tool-view.component.css'],
+    standalone: false
 })
 export class ToolViewComponent implements OnInit {
 
@@ -1091,9 +1102,10 @@ export class ToolViewComponent implements OnInit {
 }
 
 @Component({
-  selector: 'lib-button-tabs-tool',
-  templateUrl: './tool-view/button-tabs-tool/button-tabs-tool.component.html',
-  styleUrls: ['./tool-view/button-tabs-tool/button-tabs-tool.component.css']
+    selector: 'lib-button-tabs-tool',
+    templateUrl: './tool-view/button-tabs-tool/button-tabs-tool.component.html',
+    styleUrls: ['./tool-view/button-tabs-tool/button-tabs-tool.component.css'],
+    standalone: false
 })
 export class ButtonTabsToolComponent implements OnInit {
 
@@ -1214,9 +1226,10 @@ export class ButtonTabContext {
 }
 
 @Component({
-  selector: 'lib-duration-tool',
-  templateUrl: './tool-view/duration-tool/duration-tool.component.html',
-  styleUrls: ['./tool-view/duration-tool/duration-tool.component.css']
+    selector: 'lib-duration-tool',
+    templateUrl: './tool-view/duration-tool/duration-tool.component.html',
+    styleUrls: ['./tool-view/duration-tool/duration-tool.component.css'],
+    standalone: false
 })
 export class DurationToolComponent implements OnInit, OnDestroy {
 
@@ -1295,9 +1308,10 @@ export class DurationToolComponent implements OnInit, OnDestroy {
 
 
 @Component({
-  selector: 'lib-tab-tool',
-  templateUrl: './tool-view/tab-tool/tab-tool.component.html',
-  styleUrls: ['./tool-view/tab-tool/tab-tool.component.scss']
+    selector: 'lib-tab-tool',
+    templateUrl: './tool-view/tab-tool/tab-tool.component.html',
+    styleUrls: ['./tool-view/tab-tool/tab-tool.component.scss'],
+    standalone: false
 })
 export class TabToolComponent implements OnInit {
 

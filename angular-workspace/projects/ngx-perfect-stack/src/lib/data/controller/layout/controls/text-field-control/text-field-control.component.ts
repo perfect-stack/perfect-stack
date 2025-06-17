@@ -7,9 +7,10 @@ import {Subscription} from 'rxjs';
 import {ValidationResult} from '../../../../../domain/meta.rule';
 
 @Component({
-  selector: 'lib-text-field-control',
-  templateUrl: './text-field-control.component.html',
-  styleUrls: ['./text-field-control.component.css']
+    selector: 'lib-text-field-control',
+    templateUrl: './text-field-control.component.html',
+    styleUrls: ['./text-field-control.component.css'],
+    standalone: false
 })
 export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

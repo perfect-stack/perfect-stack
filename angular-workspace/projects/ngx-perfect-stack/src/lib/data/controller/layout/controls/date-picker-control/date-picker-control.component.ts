@@ -20,10 +20,11 @@ import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.
 import {TimeService} from '../../../../../utils/time/time.service';
 
 @Component({
-  selector: 'app-date-picker-control',
-  templateUrl: './date-picker-control.component.html',
-  styleUrls: ['./date-picker-control.component.css'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-date-picker-control',
+    templateUrl: './date-picker-control.component.html',
+    styleUrls: ['./date-picker-control.component.css'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class DatePickerControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

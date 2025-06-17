@@ -4,10 +4,11 @@ import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {Cell} from '../../../../../domain/meta.page';
 
 @Component({
-  selector: 'app-text-area-control',
-  templateUrl: './text-area-control.component.html',
-  styleUrls: ['./text-area-control.component.css'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-text-area-control',
+    templateUrl: './text-area-control.component.html',
+    styleUrls: ['./text-area-control.component.css'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class TextAreaControlComponent implements OnInit {
 

@@ -6,9 +6,10 @@ import {ActionType} from '../domain/meta.role';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
 
 @Component({
-  selector: 'lib-menu-bar',
-  templateUrl: './menu-bar.component.html',
-  styleUrls: ['./menu-bar.component.css']
+    selector: 'lib-menu-bar',
+    templateUrl: './menu-bar.component.html',
+    styleUrls: ['./menu-bar.component.css'],
+    standalone: false
 })
 export class MenuBarComponent implements OnInit {
 

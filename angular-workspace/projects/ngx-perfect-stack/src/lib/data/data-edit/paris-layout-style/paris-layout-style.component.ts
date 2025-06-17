@@ -3,9 +3,10 @@ import {FormContext} from '../form-service/form.service';
 import {TemplateLocationType, TemplateType} from '../../../domain/meta.page';
 
 @Component({
-  selector: 'lib-paris-layout-style',
-  templateUrl: './paris-layout-style.component.html',
-  styleUrls: ['./paris-layout-style.component.css']
+    selector: 'lib-paris-layout-style',
+    templateUrl: './paris-layout-style.component.html',
+    styleUrls: ['./paris-layout-style.component.css'],
+    standalone: false
 })
 export class ParisLayoutStyleComponent implements OnInit {
 

@@ -4,9 +4,10 @@ import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {Cell} from '../../../../../domain/meta.page';
 
 @Component({
-  selector: 'lib-badge-list',
-  templateUrl: './badge-list.component.html',
-  styleUrls: ['./badge-list.component.css']
+    selector: 'lib-badge-list',
+    templateUrl: './badge-list.component.html',
+    styleUrls: ['./badge-list.component.css'],
+    standalone: false
 })
 export class BadgeListComponent implements OnInit {
 

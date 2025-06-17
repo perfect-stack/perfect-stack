@@ -4,9 +4,10 @@ import {AttributeType, ComparisonOperator, MetaAttribute, VisibilityType} from '
 import {CellAttribute} from '../meta/page/meta-page-service/meta-page.service';
 
 @Component({
-  selector: 'lib-select-test-page',
-  templateUrl: './select-test-page.component.html',
-  styleUrls: ['./select-test-page.component.css']
+    selector: 'lib-select-test-page',
+    templateUrl: './select-test-page.component.html',
+    styleUrls: ['./select-test-page.component.css'],
+    standalone: false
 })
 export class SelectTestPageComponent implements OnInit {
 

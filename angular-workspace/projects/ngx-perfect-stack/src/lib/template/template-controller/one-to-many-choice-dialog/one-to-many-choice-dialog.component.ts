@@ -3,9 +3,10 @@ import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ButtonDefinition} from '../../../utils/tile-button-panel/tile-button-panel.component';
 
 @Component({
-  selector: 'lib-one-to-many-choice-dialog',
-  templateUrl: './one-to-many-choice-dialog.component.html',
-  styleUrls: ['./one-to-many-choice-dialog.component.css']
+    selector: 'lib-one-to-many-choice-dialog',
+    templateUrl: './one-to-many-choice-dialog.component.html',
+    styleUrls: ['./one-to-many-choice-dialog.component.css'],
+    standalone: false
 })
 export class OneToManyChoiceDialogComponent implements OnInit {
 

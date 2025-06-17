@@ -7,9 +7,10 @@ import {ValidationResult} from '../../../../../domain/meta.rule';
 import {DataService} from '../../../../data-service/data.service';
 
 @Component({
-  selector: 'lib-select-multiple-control',
-  templateUrl: './select-multiple-control.component.html',
-  styleUrls: ['./select-multiple-control.component.css']
+    selector: 'lib-select-multiple-control',
+    templateUrl: './select-multiple-control.component.html',
+    styleUrls: ['./select-multiple-control.component.css'],
+    standalone: false
 })
 export class SelectMultipleControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

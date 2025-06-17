@@ -5,9 +5,10 @@ import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {UntypedFormBuilder} from '@angular/forms';
 
 @Component({
-  selector: 'lib-cell-settings',
-  templateUrl: './cell-settings.component.html',
-  styleUrls: ['./cell-settings.component.css']
+    selector: 'lib-cell-settings',
+    templateUrl: './cell-settings.component.html',
+    styleUrls: ['./cell-settings.component.css'],
+    standalone: false
 })
 export class CellSettingsComponent implements OnInit {
 

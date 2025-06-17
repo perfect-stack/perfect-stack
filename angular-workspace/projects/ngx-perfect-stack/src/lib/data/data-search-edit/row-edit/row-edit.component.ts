@@ -7,9 +7,10 @@ import {FormControlWithAttribute} from '../../data-edit/form-service/form.servic
 import {CellAttribute} from '../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
-  selector: '[app-row-edit]',  // NOTE: using [] syntax here so cells are nested inside "tr" correctly
-  templateUrl: './row-edit.component.html',
-  styleUrls: ['./row-edit.component.css']
+    selector: '[app-row-edit]', // NOTE: using [] syntax here so cells are nested inside "tr" correctly
+    templateUrl: './row-edit.component.html',
+    styleUrls: ['./row-edit.component.css'],
+    standalone: false
 })
 export class RowEditComponent implements OnInit {
 

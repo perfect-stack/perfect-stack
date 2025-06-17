@@ -9,10 +9,10 @@ import {DataService} from '../../../../data-service/data.service';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
 @Component({
-  selector: 'lib-enumeration-control',
-  templateUrl: './enumeration-control.component.html',
-  styleUrls: ['./enumeration-control.component.css'],
-  //providers: [{provide: NG_VALUE_ACCESSOR, useExisting: EnumerationControlComponent, multi: true}]
+    selector: 'lib-enumeration-control',
+    templateUrl: './enumeration-control.component.html',
+    styleUrls: ['./enumeration-control.component.css'],
+    standalone: false
 })
 export class EnumerationControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

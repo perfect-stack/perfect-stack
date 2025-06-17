@@ -4,9 +4,10 @@ import {FormsModule, ReactiveFormsModule, UntypedFormBuilder} from '@angular/for
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'lib-menu-header-view',
-  templateUrl: './menu-header-view.component.html',
-  styleUrls: ['./menu-header-view.component.css']
+    selector: 'lib-menu-header-view',
+    templateUrl: './menu-header-view.component.html',
+    styleUrls: ['./menu-header-view.component.css'],
+    standalone: false
 })
 export class MenuHeaderViewComponent implements OnInit {
 

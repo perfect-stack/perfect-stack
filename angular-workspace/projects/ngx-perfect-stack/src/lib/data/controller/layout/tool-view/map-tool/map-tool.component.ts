@@ -7,9 +7,10 @@ import {AbstractControl, FormGroup} from '@angular/forms';
 import {MapService} from './map.service';
 
 @Component({
-  selector: 'lib-map-tool',
-  templateUrl: './map-tool.component.html',
-  styleUrls: ['./map-tool.component.css']
+    selector: 'lib-map-tool',
+    templateUrl: './map-tool.component.html',
+    styleUrls: ['./map-tool.component.css'],
+    standalone: false
 })
 export class MapToolComponent implements OnInit {
 

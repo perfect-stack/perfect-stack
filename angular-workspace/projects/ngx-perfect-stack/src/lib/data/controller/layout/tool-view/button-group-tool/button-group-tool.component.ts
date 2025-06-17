@@ -7,9 +7,10 @@ import {EventService} from '../../../../../event/event.service';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'lib-button-group-tool',
-  templateUrl: './button-group-tool.component.html',
-  styleUrls: ['./button-group-tool.component.css']
+    selector: 'lib-button-group-tool',
+    templateUrl: './button-group-tool.component.html',
+    styleUrls: ['./button-group-tool.component.css'],
+    standalone: false
 })
 export class ButtonGroupToolComponent implements OnInit {
 

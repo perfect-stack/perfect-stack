@@ -17,9 +17,10 @@ import {MetaAttribute, MetaEntity} from '../../../../../domain/meta.entity';
  * Not editable. Display only.
  */
 @Component({
-  selector: 'lib-link-list-control',
-  templateUrl: './link-list-control.component.html',
-  styleUrls: ['./link-list-control.component.css']
+    selector: 'lib-link-list-control',
+    templateUrl: './link-list-control.component.html',
+    styleUrls: ['./link-list-control.component.css'],
+    standalone: false
 })
 export class LinkListControlComponent implements OnInit {
 

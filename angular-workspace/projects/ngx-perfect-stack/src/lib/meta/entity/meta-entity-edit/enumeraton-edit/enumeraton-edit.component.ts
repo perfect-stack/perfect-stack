@@ -3,9 +3,10 @@ import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/f
 import {MetaAttribute} from '../../../../domain/meta.entity';
 
 @Component({
-  selector: 'lib-enumeraton-edit',
-  templateUrl: './enumeraton-edit.component.html',
-  styleUrls: ['./enumeraton-edit.component.css']
+    selector: 'lib-enumeraton-edit',
+    templateUrl: './enumeraton-edit.component.html',
+    styleUrls: ['./enumeraton-edit.component.css'],
+    standalone: false
 })
 export class EnumeratonEditComponent implements OnInit {
 

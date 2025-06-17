@@ -2,9 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'lib-colour-band-dialog',
-  templateUrl: './colour-band-dialog.component.html',
-  styleUrls: ['./colour-band-dialog.component.css']
+    selector: 'lib-colour-band-dialog',
+    templateUrl: './colour-band-dialog.component.html',
+    styleUrls: ['./colour-band-dialog.component.css'],
+    standalone: false
 })
 export class ColourBandDialogComponent implements OnInit {
 

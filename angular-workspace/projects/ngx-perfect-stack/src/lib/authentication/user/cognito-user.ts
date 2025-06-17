@@ -1,6 +1,6 @@
 import {User} from './user';
 import {NgxPerfectStackConfig} from '../../ngx-perfect-stack-config';
-import jwt_decode from 'jwt-decode';
+import {jwtDecode} from "jwt-decode";
 
 export class CognitoUser  implements User {
 
@@ -20,7 +20,7 @@ export class CognitoUser  implements User {
   set idToken(value: string | null) {
     this._idToken = value;
     if(this._idToken) {
-      const decodedToken: any = jwt_decode(this._idToken);
+      const decodedToken: any = jwtDecode(this._idToken);
       this.groups = [ ...decodedToken['cognito:groups'], ...this.convertToArray(decodedToken['custom:group']) ];
 
       // Add supplementary roles for local dev purposes. Won't do anything on server unless server has "auth disabled"

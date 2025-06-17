@@ -1,4 +1,4 @@
-import {APP_INITIALIZER, inject, INJECTOR, NgModule} from '@angular/core';
+import { inject, INJECTOR, NgModule, provideAppInitializer } from '@angular/core';
 import { NgxPerfectStackComponent } from './ngx-perfect-stack.component';
 import {RouterModule, Routes} from '@angular/router';
 import {MenuBarComponent} from './menu-bar/menu-bar.component';
@@ -117,7 +117,7 @@ import { SelectTestPageComponent } from './select-test-page/select-test-page.com
 import { BadgeListComponent } from './data/controller/layout/controls/badge-list/badge-list.component';
 import { ButtonGroupToolComponent } from './data/controller/layout/tool-view/button-group-tool/button-group-tool.component';
 import { MapTestPageComponent } from './map-test-page/map-test-page.component';
-import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import {LeafletModule} from '@bluehalo/ngx-leaflet';
 import { MapToolComponent } from './data/controller/layout/tool-view/map-tool/map-tool.component';
 import { LinkToolComponent } from './data/controller/layout/tool-view/link-tool/link-tool.component';
 import { RuleEditDialogComponent } from './meta/entity/meta-entity-edit/rule-edit-dialog/rule-edit-dialog.component';
@@ -315,7 +315,11 @@ export const STACK_ROUTES: Routes = [
         SearchControllerService,
         { provide: 'SearchController', useExisting: SearchControllerService },
         { provide: STANDARD_CONTROLLERS, useValue: standardControllers },
-        { provide: APP_INITIALIZER, useFactory: () => inject(INJECTOR).get(MetaMenuService).initMenu(), deps: [HttpClient, MetaMenuService], multi: true },
+        provideAppInitializer(() => {
+        //const initializerFn = (() => inject(INJECTOR).get(MetaMenuService).initMenu())(inject(HttpClient), inject(MetaMenuService));
+        const initializerFn = inject(MetaMenuService).initMenu();
+        return initializerFn();
+      }),
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true },
         { provide: NgbDateAdapter, useClass: CustomDateAdapterService },

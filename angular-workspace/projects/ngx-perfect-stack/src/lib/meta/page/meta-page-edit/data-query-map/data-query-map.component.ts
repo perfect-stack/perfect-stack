@@ -4,9 +4,10 @@ import {MetaEntityService} from '../../../entity/meta-entity-service/meta-entity
 import {Observable, of, switchMap} from 'rxjs';
 
 @Component({
-  selector: 'lib-data-query-map',
-  templateUrl: './data-query-map.component.html',
-  styleUrls: ['./data-query-map.component.css']
+    selector: 'lib-data-query-map',
+    templateUrl: './data-query-map.component.html',
+    styleUrls: ['./data-query-map.component.css'],
+    standalone: false
 })
 export class DataQueryMapComponent implements OnInit {
 

@@ -3,9 +3,10 @@ import {AuthenticationService} from '../authentication.service';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'lib-session-time-out',
-  templateUrl: './session-time-out.component.html',
-  styleUrls: ['./session-time-out.component.css']
+    selector: 'lib-session-time-out',
+    templateUrl: './session-time-out.component.html',
+    styleUrls: ['./session-time-out.component.css'],
+    standalone: false
 })
 export class SessionTimeOutComponent implements OnInit {
 

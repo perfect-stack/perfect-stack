@@ -7,9 +7,10 @@ import {ExpressionService} from '../../../layout/controls/expression-control/exp
 import {EventService} from '../../../../../event/event.service';
 
 @Component({
-  selector: 'lib-button-tool',
-  templateUrl: './button-tool.component.html',
-  styleUrls: ['./button-tool.component.css']
+    selector: 'lib-button-tool',
+    templateUrl: './button-tool.component.html',
+    styleUrls: ['./button-tool.component.css'],
+    standalone: false
 })
 export class ButtonToolComponent implements OnInit {
 

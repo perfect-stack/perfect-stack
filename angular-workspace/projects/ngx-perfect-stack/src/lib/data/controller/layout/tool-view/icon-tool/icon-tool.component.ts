@@ -7,9 +7,10 @@ import {PropertySheetService} from '../../../../../template/property-sheet/prope
 import {ExpressionService} from '../../../layout/controls/expression-control/expression.service';
 
 @Component({
-  selector: 'lib-icon-tool',
-  templateUrl: './icon-tool.component.html',
-  styleUrls: ['./icon-tool.component.css']
+    selector: 'lib-icon-tool',
+    templateUrl: './icon-tool.component.html',
+    styleUrls: ['./icon-tool.component.css'],
+    standalone: false
 })
 export class IconToolComponent implements OnInit {
 

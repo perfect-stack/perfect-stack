@@ -2,7 +2,8 @@ import {Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output} f
 import {DragService} from './drag.service';
 
 @Directive({
-  selector: '[my-dropzone]'
+    selector: '[my-dropzone]',
+    standalone: false
 })
 export class DropzoneDirective implements OnInit, OnDestroy {
 

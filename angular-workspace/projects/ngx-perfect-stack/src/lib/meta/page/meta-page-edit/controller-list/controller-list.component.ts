@@ -5,9 +5,10 @@ import {CONTROLLER_LIST, NgxPerfectControllerList} from '../../../../ngx-perfect
 import {STANDARD_CONTROLLERS, StandardControllers} from '../../../../data/controller/standard-controllers';
 
 @Component({
-  selector: 'lib-controller-list',
-  templateUrl: './controller-list.component.html',
-  styleUrls: ['./controller-list.component.css']
+    selector: 'lib-controller-list',
+    templateUrl: './controller-list.component.html',
+    styleUrls: ['./controller-list.component.css'],
+    standalone: false
 })
 export class ControllerListComponent implements OnInit {
 

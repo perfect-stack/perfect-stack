@@ -24,9 +24,10 @@ import {RuleEditDialogComponent} from './rule-edit-dialog/rule-edit-dialog.compo
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-meta-entity-edit',
-  templateUrl: './meta-entity-edit.component.html',
-  styleUrls: ['./meta-entity-edit.component.css']
+    selector: 'app-meta-entity-edit',
+    templateUrl: './meta-entity-edit.component.html',
+    styleUrls: ['./meta-entity-edit.component.css'],
+    standalone: false
 })
 export class MetaEntityEditComponent implements OnInit {
 

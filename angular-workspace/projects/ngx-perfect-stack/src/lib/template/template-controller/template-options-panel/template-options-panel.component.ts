@@ -8,9 +8,10 @@ import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-e
 import {PropertySheetService} from '../../property-sheet/property-sheet.service';
 
 @Component({
-  selector: 'lib-template-options-panel',
-  templateUrl: './template-options-panel.component.html',
-  styleUrls: ['./template-options-panel.component.css']
+    selector: 'lib-template-options-panel',
+    templateUrl: './template-options-panel.component.html',
+    styleUrls: ['./template-options-panel.component.css'],
+    standalone: false
 })
 export class TemplateOptionsPanelComponent implements OnInit {
 

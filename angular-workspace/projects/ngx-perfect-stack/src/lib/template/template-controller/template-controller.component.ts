@@ -16,9 +16,10 @@ import {OneToManyChoiceDialogComponent} from './one-to-many-choice-dialog/one-to
 
 
 @Component({
-  selector: 'lib-template-controller',
-  templateUrl: './template-controller.component.html',
-  styleUrls: ['./template-controller.component.css']
+    selector: 'lib-template-controller',
+    templateUrl: './template-controller.component.html',
+    styleUrls: ['./template-controller.component.css'],
+    standalone: false
 })
 export class TemplateControllerComponent implements OnInit { //, OnChanges {
 
@@ -36,9 +37,10 @@ export class TemplateControllerComponent implements OnInit { //, OnChanges {
 
 
 @Component({
-  selector: 'lib-template-form-editor',
-  templateUrl: './template-form-editor.component.html',
-  styleUrls: ['./template-form-editor.component.css'],
+    selector: 'lib-template-form-editor',
+    templateUrl: './template-form-editor.component.html',
+    styleUrls: ['./template-form-editor.component.css'],
+    standalone: false
 })
 export class TemplateFormEditor implements OnInit {
 
@@ -169,9 +171,10 @@ export class TemplateFormEditor implements OnInit {
 
 
 @Component({
-  selector: 'lib-cell-view',
-  templateUrl: './cell-view.component.html',
-  styleUrls: ['./cell-view.component.css'],
+    selector: 'lib-cell-view',
+    templateUrl: './cell-view.component.html',
+    styleUrls: ['./cell-view.component.css'],
+    standalone: false
 })
 export class CellViewComponent implements OnInit, OnChanges {
 
@@ -423,9 +426,10 @@ export class CellViewComponent implements OnInit, OnChanges {
 }
 
 @Component({
-  selector: 'lib-template-header-editor',
-  templateUrl: './template-header-editor.component.html',
-  styleUrls: ['./template-header-editor.component.css'],
+    selector: 'lib-template-header-editor',
+    templateUrl: './template-header-editor.component.html',
+    styleUrls: ['./template-header-editor.component.css'],
+    standalone: false
 })
 export class TemplateHeaderEditorComponent implements OnInit{
 

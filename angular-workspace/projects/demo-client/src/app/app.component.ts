@@ -6,9 +6,10 @@ import {EventSearchPageListenerService} from './pages/event-search-page-listener
 import {BirdEditPageListenerService} from './pages/bird-edit-page-listener.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
+    standalone: false
 })
 export class AppComponent {
 

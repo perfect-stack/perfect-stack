@@ -9,9 +9,10 @@ import {MetaEntity} from '../../../domain/meta.entity';
 import {MetaMenuService} from '../../menu/meta-menu-service/meta-menu.service';
 
 @Component({
-  selector: 'lib-meta-role-edit',
-  templateUrl: './meta-role-edit.component.html',
-  styleUrls: ['./meta-role-edit.component.css']
+    selector: 'lib-meta-role-edit',
+    templateUrl: './meta-role-edit.component.html',
+    styleUrls: ['./meta-role-edit.component.css'],
+    standalone: false
 })
 export class MetaRoleEditComponent implements OnInit {
 

@@ -4,7 +4,8 @@ import {Directive, ElementRef, HostListener, Input} from '@angular/core';
  * https://stackoverflow.com/questions/50722368/limit-input-field-to-two-decimal-places-angular-5
  */
 @Directive({
-  selector: '[libDecimalNumber]'
+    selector: '[libDecimalNumber]',
+    standalone: false
 })
 export class DecimalNumberDirective {
 

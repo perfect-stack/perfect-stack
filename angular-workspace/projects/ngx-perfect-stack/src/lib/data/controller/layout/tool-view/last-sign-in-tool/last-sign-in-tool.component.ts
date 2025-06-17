@@ -9,9 +9,10 @@ import {DateTimeFormatter, Instant, LocalTime, ZonedDateTime, ZoneId} from '@js-
 import {AuthenticationClientService} from '../../../../../authentication/authentication-client.service';
 
 @Component({
-  selector: 'lib-last-sign-in-tool',
-  templateUrl: './last-sign-in-tool.component.html',
-  styleUrls: ['./last-sign-in-tool.component.css']
+    selector: 'lib-last-sign-in-tool',
+    templateUrl: './last-sign-in-tool.component.html',
+    styleUrls: ['./last-sign-in-tool.component.css'],
+    standalone: false
 })
 export class LastSignInToolComponent implements OnInit {
 

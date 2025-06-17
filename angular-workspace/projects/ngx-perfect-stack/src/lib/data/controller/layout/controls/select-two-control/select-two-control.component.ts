@@ -6,9 +6,10 @@ import {UntypedFormGroup} from '@angular/forms';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
-  selector: 'lib-select-two-control',
-  templateUrl: './select-two-control.component.html',
-  styleUrls: ['./select-two-control.component.css']
+    selector: 'lib-select-two-control',
+    templateUrl: './select-two-control.component.html',
+    styleUrls: ['./select-two-control.component.css'],
+    standalone: false
 })
 export class SelectTwoControlComponent implements OnInit {
 

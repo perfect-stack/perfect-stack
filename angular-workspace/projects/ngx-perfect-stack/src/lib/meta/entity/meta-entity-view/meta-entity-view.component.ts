@@ -7,9 +7,10 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AttributeDeleteDialogComponent} from '../attribute-delete-dialog/attribute-delete-dialog.component';
 
 @Component({
-  selector: 'app-meta-entity-view',
-  templateUrl: './meta-entity-view.component.html',
-  styleUrls: ['./meta-entity-view.component.css']
+    selector: 'app-meta-entity-view',
+    templateUrl: './meta-entity-view.component.html',
+    styleUrls: ['./meta-entity-view.component.css'],
+    standalone: false
 })
 export class MetaEntityViewComponent implements OnInit {
 

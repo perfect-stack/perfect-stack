@@ -6,9 +6,10 @@ import {UntypedFormBuilder} from '@angular/forms';
 
 
 @Component({
-  selector: 'lib-menu-item-view',
-  templateUrl: './menu-item-view.component.html',
-  styleUrls: ['./menu-item-view.component.css']
+    selector: 'lib-menu-item-view',
+    templateUrl: './menu-item-view.component.html',
+    styleUrls: ['./menu-item-view.component.css'],
+    standalone: false
 })
 export class MenuItemViewComponent implements OnInit {
 

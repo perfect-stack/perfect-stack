@@ -3,9 +3,10 @@ import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {ValidationResult} from '../../../../../domain/meta.rule';
 
 @Component({
-  selector: 'lib-validation-result-label',
-  templateUrl: './validation-result-label.component.html',
-  styleUrls: ['./validation-result-label.component.css']
+    selector: 'lib-validation-result-label',
+    templateUrl: './validation-result-label.component.html',
+    styleUrls: ['./validation-result-label.component.css'],
+    standalone: false
 })
 export class ValidationResultLabelComponent implements OnInit {
 

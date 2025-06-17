@@ -4,9 +4,10 @@ import {MetaEntityService} from '../../meta-entity-service/meta-entity.service';
 import {UntypedFormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'app-relationship-type-edit',
-  templateUrl: './relationship-type-edit.component.html',
-  styleUrls: ['./relationship-type-edit.component.css']
+    selector: 'app-relationship-type-edit',
+    templateUrl: './relationship-type-edit.component.html',
+    styleUrls: ['./relationship-type-edit.component.css'],
+    standalone: false
 })
 export class RelationshipTypeEditComponent implements OnInit {
 

@@ -14,9 +14,10 @@ import {MetaEntityService} from "../../../../../meta/entity/meta-entity-service/
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../../../ngx-perfect-stack-config";
 
 @Component({
-  selector: 'lib-media-control',
-  templateUrl: './media-control.component.html',
-  styleUrls: ['./media-control.component.css']
+    selector: 'lib-media-control',
+    templateUrl: './media-control.component.html',
+    styleUrls: ['./media-control.component.css'],
+    standalone: false
 })
 export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

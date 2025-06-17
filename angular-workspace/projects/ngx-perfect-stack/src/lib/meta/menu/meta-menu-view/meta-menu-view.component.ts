@@ -5,9 +5,10 @@ import {MenuItem, MetaMenu} from '../../../domain/meta.menu';
 import {MetaMenuService} from '../meta-menu-service/meta-menu.service';
 
 @Component({
-  selector: 'lib-meta-menu-view',
-  templateUrl: './meta-menu-view.component.html',
-  styleUrls: ['./meta-menu-view.component.css']
+    selector: 'lib-meta-menu-view',
+    templateUrl: './meta-menu-view.component.html',
+    styleUrls: ['./meta-menu-view.component.css'],
+    standalone: false
 })
 export class MetaMenuViewComponent implements OnInit {
 

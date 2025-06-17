@@ -3,9 +3,10 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {AuthenticationService} from '../authentication.service';
 
 @Component({
-  selector: 'lib-login-callback',
-  templateUrl: './login-callback.component.html',
-  styleUrls: ['./login-callback.component.css']
+    selector: 'lib-login-callback',
+    templateUrl: './login-callback.component.html',
+    styleUrls: ['./login-callback.component.css'],
+    standalone: false
 })
 export class LoginCallbackComponent implements OnInit {
 

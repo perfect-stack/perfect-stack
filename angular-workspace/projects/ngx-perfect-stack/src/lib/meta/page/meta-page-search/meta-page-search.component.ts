@@ -4,9 +4,10 @@ import {MetaPage} from '../../../domain/meta.page';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
 
 @Component({
-  selector: 'app-meta-page-search',
-  templateUrl: './meta-page-search.component.html',
-  styleUrls: ['./meta-page-search.component.css']
+    selector: 'app-meta-page-search',
+    templateUrl: './meta-page-search.component.html',
+    styleUrls: ['./meta-page-search.component.css'],
+    standalone: false
 })
 export class MetaPageSearchComponent implements OnInit {
 

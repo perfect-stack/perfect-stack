@@ -19,9 +19,10 @@ export interface CreateFileResponse {
 }
 
 @Component({
-  selector: 'lib-upload-dialog',
-  templateUrl: './upload-dialog.component.html',
-  styleUrls: ['./upload-dialog.component.css']
+    selector: 'lib-upload-dialog',
+    templateUrl: './upload-dialog.component.html',
+    styleUrls: ['./upload-dialog.component.css'],
+    standalone: false
 })
 export class UploadDialogComponent implements OnDestroy {
 

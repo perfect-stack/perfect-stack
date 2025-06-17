@@ -3,9 +3,10 @@ import {Template, TemplateLocationType, Tool} from '../../../domain/meta.page';
 import {PropertyListMap, PropertySheetService} from '../../property-sheet/property-sheet.service';
 
 @Component({
-  selector: 'lib-tool-drop-zone',
-  templateUrl: './tool-drop-zone.component.html',
-  styleUrls: ['./tool-drop-zone.component.css']
+    selector: 'lib-tool-drop-zone',
+    templateUrl: './tool-drop-zone.component.html',
+    styleUrls: ['./tool-drop-zone.component.css'],
+    standalone: false
 })
 export class ToolDropZoneComponent implements OnInit {
 

@@ -4,9 +4,10 @@ import {Cell, LabelLayoutType} from '../../../../../domain/meta.page';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 
 @Component({
-  selector: 'lib-label',
-  templateUrl: './label.component.html',
-  styleUrls: ['./label.component.css']
+    selector: 'lib-label',
+    templateUrl: './label.component.html',
+    styleUrls: ['./label.component.css'],
+    standalone: false
 })
 export class LabelComponent implements OnInit {
 

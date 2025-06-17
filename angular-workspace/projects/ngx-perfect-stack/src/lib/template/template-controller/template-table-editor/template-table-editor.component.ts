@@ -6,9 +6,10 @@ import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-e
 import {PropertySheetService} from '../../property-sheet/property-sheet.service';
 
 @Component({
-  selector: 'lib-template-table-editor',
-  templateUrl: './template-table-editor.component.html',
-  styleUrls: ['./template-table-editor.component.css']
+    selector: 'lib-template-table-editor',
+    templateUrl: './template-table-editor.component.html',
+    styleUrls: ['./template-table-editor.component.css'],
+    standalone: false
 })
 export class TemplateTableEditorComponent implements OnInit {
 

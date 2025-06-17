@@ -17,9 +17,10 @@ import {
 import {ActionType} from '../../domain/meta.role';
 
 @Component({
-  selector: 'lib-tool-palette',
-  templateUrl: './tool-palette.component.html',
-  styleUrls: ['./tool-palette.component.css']
+    selector: 'lib-tool-palette',
+    templateUrl: './tool-palette.component.html',
+    styleUrls: ['./tool-palette.component.css'],
+    standalone: false
 })
 export class ToolPaletteComponent implements OnInit {
 

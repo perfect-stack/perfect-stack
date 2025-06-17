@@ -6,9 +6,10 @@ import {MetaEntity} from '../../../../domain/meta.entity';
 import {Observable} from 'rxjs';
 
 @Component({
-  selector: 'lib-template-options-modal',
-  templateUrl: './template-options-modal.component.html',
-  styleUrls: ['./template-options-modal.component.css']
+    selector: 'lib-template-options-modal',
+    templateUrl: './template-options-modal.component.html',
+    styleUrls: ['./template-options-modal.component.css'],
+    standalone: false
 })
 export class TemplateOptionsModalComponent implements OnInit {
 

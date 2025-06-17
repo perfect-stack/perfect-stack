@@ -3,9 +3,10 @@ import {FormContext} from '../form-service/form.service';
 import {TemplateType} from '../../../domain/meta.page';
 
 @Component({
-  selector: 'lib-stockholm-layout-style',
-  templateUrl: './stockholm-layout-style.component.html',
-  styleUrls: ['./stockholm-layout-style.component.css']
+    selector: 'lib-stockholm-layout-style',
+    templateUrl: './stockholm-layout-style.component.html',
+    styleUrls: ['./stockholm-layout-style.component.css'],
+    standalone: false
 })
 export class StockholmLayoutStyleComponent implements OnInit {
 

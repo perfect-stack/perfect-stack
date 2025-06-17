@@ -13,9 +13,10 @@ import {FormContext, FormControlWithAttribute} from '../../data/data-edit/form-s
 import {FormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'lib-audit-view',
-  templateUrl: './audit-view.component.html',
-  styleUrls: ['./audit-view.component.css']
+    selector: 'lib-audit-view',
+    templateUrl: './audit-view.component.html',
+    styleUrls: ['./audit-view.component.css'],
+    standalone: false
 })
 export class AuditViewComponent implements OnInit {
 

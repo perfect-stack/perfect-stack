@@ -5,7 +5,7 @@ import {User} from './user/user';
 import {CognitoUser} from './user/cognito-user';
 import {BehaviorSubject} from 'rxjs';
 import {nativeJs, ZonedDateTime, ZoneId} from '@js-joda/core';
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 /**
  * Important: Don't make any HTTP calls from this class or anything else that it invokes, you will probably get an
@@ -47,7 +47,7 @@ export class AuthenticationService {
   createUser(idToken: string | null, accessToken: string | null, sendNotification: boolean) {
     let user = null;
     if(idToken && accessToken) {
-      const decodedToken: any = jwt_decode(idToken);
+      const decodedToken: any = jwtDecode(idToken);
       const expiryTime = ZonedDateTime.from(nativeJs(new Date(decodedToken.exp * 1000)));
       if(expiryTime.isAfter(ZonedDateTime.now(ZoneId.UTC))) {
         user = new CognitoUser(this.stackConfig);

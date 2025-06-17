@@ -4,9 +4,10 @@ import {DataSearchActionEvent} from '../data-search-action-event';
 import {ActionType} from '../../../domain/meta.role';
 
 @Component({
-  selector: '[app-row-view]',  // NOTE: using [] syntax here so cells are nested inside "tr" correctly
-  templateUrl: './row-view.component.html',
-  styleUrls: ['./row-view.component.css']
+    selector: '[app-row-view]', // NOTE: using [] syntax here so cells are nested inside "tr" correctly
+    templateUrl: './row-view.component.html',
+    styleUrls: ['./row-view.component.css'],
+    standalone: false
 })
 export class RowViewComponent implements OnInit {
 

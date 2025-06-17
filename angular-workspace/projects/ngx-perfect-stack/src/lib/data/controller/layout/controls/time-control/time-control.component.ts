@@ -20,9 +20,10 @@ import {TimeService} from '../../../../../utils/time/time.service';
 
 
 @Component({
-  selector: 'lib-time-control',
-  templateUrl: './time-control.component.html',
-  styleUrls: ['./time-control.component.css']
+    selector: 'lib-time-control',
+    templateUrl: './time-control.component.html',
+    styleUrls: ['./time-control.component.css'],
+    standalone: false
 })
 export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

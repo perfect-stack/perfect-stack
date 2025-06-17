@@ -3,9 +3,10 @@ import {FormContext} from '../form-service/form.service';
 import {TemplateLocationType, TemplateType} from '../../../domain/meta.page';
 
 @Component({
-  selector: 'lib-venice-layout-style',
-  templateUrl: './venice-layout-style.component.html',
-  styleUrls: ['./venice-layout-style.component.css']
+    selector: 'lib-venice-layout-style',
+    templateUrl: './venice-layout-style.component.html',
+    styleUrls: ['./venice-layout-style.component.css'],
+    standalone: false
 })
 export class VeniceLayoutStyleComponent implements OnInit {
 

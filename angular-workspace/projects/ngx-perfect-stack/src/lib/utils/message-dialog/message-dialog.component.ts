@@ -8,9 +8,10 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
  * This could evolve into something more than just an "Ok" message/response.
  */
 @Component({
-  selector: 'lib-message-dialog',
-  templateUrl: './message-dialog.component.html',
-  styleUrls: ['./message-dialog.component.css']
+    selector: 'lib-message-dialog',
+    templateUrl: './message-dialog.component.html',
+    styleUrls: ['./message-dialog.component.css'],
+    standalone: false
 })
 export class MessageDialogComponent implements OnInit {
 

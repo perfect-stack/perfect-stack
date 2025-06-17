@@ -3,9 +3,10 @@ import {UntypedFormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 
 @Component({
-  selector: 'lib-boolean-check-box-control',
-  templateUrl: './boolean-check-box-control.component.html',
-  styleUrls: ['./boolean-check-box-control.component.css']
+    selector: 'lib-boolean-check-box-control',
+    templateUrl: './boolean-check-box-control.component.html',
+    styleUrls: ['./boolean-check-box-control.component.css'],
+    standalone: false
 })
 export class BooleanCheckBoxControlComponent implements OnInit {
 
