@@ -6,3 +6,10 @@ jobs:
       - codebuild-hello-github-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - run: echo "Hello World!"
+      - uses: actions/checkout@v2
+    name: Run CDK
+    run: |
+      cd demo/cdk/hello-github &&
+      ls &&
+      cdk deploy --require-approval never HelloGithubStack
+        
