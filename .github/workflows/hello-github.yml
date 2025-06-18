@@ -10,8 +10,9 @@ jobs:
     # then the runner's configuration/image should be updated externally.
     runs-on:
       - codebuild-hello-github-${{ github.run_id }}-${{ github.run_attempt }}
-    # For testing or if you prefer a standard environment, you could use:
-    # runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # Required to fetch the OIDC token
+      contents: read    # Or 'write' if you need to push changes back
 
     steps:
       - run: echo "Hello World!"
