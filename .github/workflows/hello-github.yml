@@ -29,15 +29,16 @@ jobs:
 
       # Configure AWS credentials before running 'cdk deploy'.
       # This step is crucial for CDK to interact with your AWS account.
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v4
-#        with:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
           # OPTION 1: OpenID Connect (OIDC) - Recommended for security
           # Prerequisites:
           # 1. IAM OIDC provider in AWS for GitHub Actions.
           # 2. An IAM role with trust policy for the OIDC provider and necessary permissions for CDK.
-#          role-to-assume: arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/YOUR_GITHUB_ACTIONS_CDK_ROLE # Replace with your Role ARN
-#          aws-region: YOUR_AWS_REGION # e.g., us-east-1. Replace with your deployment region.
+          ##role-to-assume: arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/YOUR_GITHUB_ACTIONS_CDK_ROLE # Replace with your Role ARN
+          role-to-assume: arn:aws:iam::100150877581:role/service-role/codebuild-hello-github-service-role
+          aws-region: ap-southeast-2
 
           # OPTION 2: AWS Access Keys (Less secure - use GitHub secrets)
           # Ensure you have AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY configured as secrets in your GitHub repository.
