@@ -28,7 +28,6 @@ jobs:
         run: npm install -g aws-cdk
 
       # Configure AWS credentials before running 'cdk deploy'.
-      # This step is crucial for CDK to interact with your AWS account.
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
