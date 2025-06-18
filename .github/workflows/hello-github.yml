@@ -7,9 +7,9 @@ jobs:
     steps:
       - run: echo "Hello World!"
       - uses: actions/checkout@v2
-    name: Run CDK
-    run: |
-      cd demo/cdk/hello-github &&
-      ls &&
-      cdk deploy --require-approval never HelloGithubStack
+      - name: Run CDK
+        run: |
+          cd demo/cdk/hello-github &&
+          ls &&
+          cdk deploy --require-approval never HelloGithubStack
         
