@@ -35,7 +35,7 @@ jobs:
           # Prerequisites:
           # 1. IAM OIDC provider in AWS for GitHub Actions.
           # 2. An IAM role with trust policy for the OIDC provider and necessary permissions for CDK.
-          ##role-to-assume: arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/YOUR_GITHUB_ACTIONS_CDK_ROLE # Replace with your Role ARN
+          ###role-to-assume: arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/YOUR_GITHUB_ACTIONS_CDK_ROLE # Replace with your Role ARN
           role-to-assume: arn:aws:iam::100150877581:role/service-role/codebuild-hello-github-service-role
           aws-region: ap-southeast-2
 
