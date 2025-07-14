@@ -35,11 +35,16 @@ export class S3MediaRepository implements MediaRepositoryInterface {
     }
 
     locateFile(filePath: string): Promise<string> {
-        // TODO: should we validate that the file exists using S3 directly first?
-        this.logger.log(`locateFile: ${filePath}`);
-        const resourceKey = filePath;
-        const command = new GetObjectCommand({ Bucket: this.BUCKET_NAME, Key: resourceKey });
-        return getSignedUrl(this.client, command, { expiresIn: 3600 });
+        if(filePath) {
+            // TODO: should we validate that the file exists using S3 directly first?
+            this.logger.log(`locateFile: ${filePath}`);
+            const resourceKey = filePath;
+            const command = new GetObjectCommand({Bucket: this.BUCKET_NAME, Key: resourceKey});
+            return getSignedUrl(this.client, command, {expiresIn: 3600});
+        }
+        else {
+            throw new Error('locateFile: filePath is required');
+        }
     }
 
     downloadFile(filePath: string): Promise<Buffer> {

@@ -47,29 +47,33 @@ export class MediaController {
 
     @ActionPermit(ActionType.Read)
     @SubjectName('Media')
-    @Get('/locate/*')
-    async locateFile(@Param('0') filePath: string) {
+    @Get('/locate/*filePath')
+    async locateFile(@Param('filePath') filePathArray: string[]) {
+        const filePath = filePathArray.join('/');
+        console.log('locateFile: filePath', filePath);
         return this.mediaRepositoryService.locateFile(filePath);
     }
 
     @ActionPermit(ActionType.Read)
     @SubjectName('Media')
-    @Get('*')
-    async downloadFile(@Param('0') filePath: string, @Res() res: Response) {
+    @Get('/download/*filePath')
+    async downloadFile(@Param('filePath') filePathArray: string[], @Res() res: Response) {
+        const filePath = filePathArray.join('/');
         const fileBufferOrUrl  = await this.mediaRepositoryService.downloadFile(filePath);
         res.send(fileBufferOrUrl);
     }
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Media')
-    @Post('/create/*')
-    async createFile(@Param('0') rawFilename: string): Promise<CreateFileResponse> {
+    @Post('/create/:filename')
+    async createFile(@Param('filename') rawFilename: string): Promise<CreateFileResponse> {
+        console.log('createFile: rawFilename', rawFilename);
         return this.mediaRepositoryService.createFile(rawFilename);
     }
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Media')
-    @Put('/upload/*')
+    @Put('/upload')
     @UseInterceptors(FileInterceptor('file', {storage: storageOptions}))
     @ApiConsumes('multipart/form-data') // Document that this endpoint consumes multipart/form-data
     @ApiBody({ // Document the expected body structure
@@ -104,7 +108,6 @@ export class MediaController {
                 path: `${file.filename}`
             };
         }
-
         throw new Error("Unable to upload file")
     }
 
