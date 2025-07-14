@@ -33,20 +33,21 @@ export const loadOrm = async (
 ): Promise<Sequelize> => {
   let databasePassword;
   if (databaseSettings.passwordProperty) {
-    if (
-      databaseSettings.passwordProperty.startsWith('arn:aws:secretsmanager:')
-    ) {
+    if (databaseSettings.passwordProperty.startsWith('RAW:')) {
+      databasePassword = databaseSettings.passwordProperty.substring('RAW:'.length);
+    }
+    else {
       const client = new SecretsManagerClient({});
       const command = new GetSecretValueCommand({
         SecretId: databaseSettings.passwordProperty,
       });
+
       const response = await client.send(command);
       const secret = JSON.parse(response.SecretString);
       databasePassword = secret[databaseSettings.passwordKey];
-    } else {
-      databasePassword = databaseSettings.passwordProperty;
     }
-  } else {
+  }
+  else {
     throw new Error('Database properties have not been initialised');
   }
 
