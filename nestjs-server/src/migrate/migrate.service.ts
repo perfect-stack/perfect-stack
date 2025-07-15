@@ -8,7 +8,7 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import {ConfigService} from "@nestjs/config";
 
-const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-06-12.1';
+const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-07-16';
 const BATCH_SIZE = 200;
 
 const filesToProcess: FileProcessingConfig[] = [
