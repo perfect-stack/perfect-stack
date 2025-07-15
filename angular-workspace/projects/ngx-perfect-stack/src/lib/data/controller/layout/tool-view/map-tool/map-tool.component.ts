@@ -60,23 +60,17 @@ export class MapToolComponent implements OnInit {
       this.eastingControl = locationForm.controls[eastingAttributeName];
       this.northingControl = locationForm.controls[northingAttributeName];
 
-      // May or may not find this...
       this.locationControl = locationForm.controls['location_id'];
+      if(this.locationControl && this.eastingControl && this.northingControl) {
+        this.locationControl.valueChanges.subscribe(() => {
+          this.eastingControl.markAsPristine();
+          this.northingControl.markAsPristine();
+        });
+      }
 
       if(this.eastingControl && this.northingControl) {
         // pump the current location into the map at the start
         this.updateMapLocation();
-
-        // AND, listen for future changes
-        /*this.eastingControl.valueChanges.subscribe(() => {
-          this.clearLocationControl();
-          this.updateMapLocation();
-        });
-
-        this.northingControl.valueChanges.subscribe(() => {
-          this.clearLocationControl();
-          this.updateMapLocation();
-        });*/
 
         // --- Easting Control Listeners ---
 
@@ -217,6 +211,9 @@ export class MapToolComponent implements OnInit {
       if(this.eastingControl && this.northingControl) {
         this.eastingControl.patchValue(nztm.easting);
         this.northingControl.patchValue(nztm.northing);
+
+        this.eastingControl.markAsPristine();
+        this.northingControl.markAsPristine();
       }
 
       this.clearLocationControl();
