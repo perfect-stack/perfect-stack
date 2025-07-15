@@ -5,6 +5,8 @@
   "type": "Database",
   "rootNode": false,
   "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
   "attributes": [
     {
       "name": "id",
@@ -35,7 +37,12 @@
         "given_name",
         "family_name"
       ],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "role",
@@ -51,7 +58,12 @@
       "typeaheadSearch": [
         "name"
       ],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     }
   ]
 }
