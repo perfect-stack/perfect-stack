@@ -233,7 +233,7 @@
     {
       "name": "age_class",
       "label": "Age class",
-      "description": "Adult, Subadult, Chick, Egg",
+      "description": "The various different stages of development",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Enumeration",
@@ -247,6 +247,7 @@
         "Adult",
         "Subadult",
         "Juvenile",
+        "Fledgling",
         "Chick",
         "Egg"
       ]
