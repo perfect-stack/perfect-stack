@@ -272,7 +272,7 @@ export class DataEditComponent implements OnInit {
         this.validateAllFields(key, fg.controls[key]);
       });
     }
-    else if( abstractControl instanceof  UntypedFormArray) {
+    else if(abstractControl instanceof  UntypedFormArray) {
       console.log(`validateAllFields: ${name} - UntypedFormArray`, abstractControl.validator);
       const formArray = abstractControl as UntypedFormArray;
       for(let i = 0; i < formArray.length; i++) {

@@ -5,6 +5,7 @@ import {circleMarker, latLng, LeafletMouseEvent, tileLayer} from 'leaflet';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {MapService} from './map.service';
+import {distinctUntilChanged, map, Subject, takeUntil} from "rxjs";
 
 @Component({
     selector: 'lib-map-tool',
@@ -41,6 +42,8 @@ export class MapToolComponent implements OnInit {
   northingControl: AbstractControl;
   locationControl: AbstractControl;
 
+  private destroy$ = new Subject<void>();
+
   constructor(protected readonly mapService: MapService,
               protected readonly propertySheetService: PropertySheetService) { }
 
@@ -65,7 +68,7 @@ export class MapToolComponent implements OnInit {
         this.updateMapLocation();
 
         // AND, listen for future changes
-        this.eastingControl.valueChanges.subscribe(() => {
+        /*this.eastingControl.valueChanges.subscribe(() => {
           this.clearLocationControl();
           this.updateMapLocation();
         });
@@ -73,7 +76,51 @@ export class MapToolComponent implements OnInit {
         this.northingControl.valueChanges.subscribe(() => {
           this.clearLocationControl();
           this.updateMapLocation();
+        });*/
+
+        // --- Easting Control Listeners ---
+
+        // This stream clears the location ONLY when the control becomes dirty
+        this.eastingControl.statusChanges.pipe(
+          takeUntil(this.destroy$),
+          map(() => this.eastingControl.dirty), // Get the current dirty state
+          distinctUntilChanged()                // IMPORTANT: Only emit when it changes (e.g., false -> true)
+        ).subscribe(isDirty => {
+          if (isDirty) {
+            // This block now only runs ONCE when the user first edits the field.
+            this.clearLocationControl();
+          }
         });
+
+        // This stream updates the map on ANY value change
+        this.eastingControl.valueChanges.pipe(
+          takeUntil(this.destroy$)
+        ).subscribe(() => {
+          this.updateMapLocation();
+        });
+
+
+        // --- Northing Control Listeners ---
+
+        // This stream clears the location ONLY when the control becomes dirty
+        this.northingControl.statusChanges.pipe(
+          takeUntil(this.destroy$),
+          map(() => this.northingControl.dirty),
+          distinctUntilChanged()
+        ).subscribe(isDirty => {
+          if (isDirty) {
+            this.clearLocationControl();
+          }
+        });
+
+        // This stream updates the map on ANY value change
+        this.northingControl.valueChanges.pipe(
+          takeUntil(this.destroy$)
+        ).subscribe(() => {
+          this.updateMapLocation();
+        });
+
+
       }
     }
   }
