@@ -2,6 +2,13 @@ import {Injectable} from "@nestjs/common";
 import * as csv from 'fast-csv';
 import * as fs from "fs";
 import {DataImportModel} from "./data-import.model";
+import {DataImportMapping} from "./data-import.types";
+import {DateConverter} from "./converter/date.converter";
+import {IntegerConverter} from "./converter/integer.converter";
+
+
+
+
 
 @Injectable()
 export class DataImportService {
@@ -37,5 +44,60 @@ export class DataImportService {
         }
 
         return dataImportModel;
+    }
+
+    async processAndValidate(dataImportModel: DataImportModel): Promise<DataImportModel> {
+
+        // for each data row
+        // create entity
+        // validate entity
+        // if !valid then
+        //   - convert errors for return
+
+        return;
+    }
+
+    async processAndSave(dataImportModel: DataImportModel): Promise<DataImportModel> {
+        // for each data row
+        // create entity
+        // "save" entity (will do validation)
+        // if save fails
+        //   - convert error for return
+        return;
+    }
+
+    async createEntity(dataRow: string[]) {
+
+        // find the data mapping for this file (may only be one)
+        // create an entity for this data row
+        // for each data mapping
+        //   - find the externalValue by "columnName"
+        //   - find the converter
+        //   - convert the externalValue (may result in an error)
+        //   - add the attributeValue to the entity
+    }
+
+    async findDataImportMapping(): Promise<DataImportMapping> {
+        return {
+            metaEntityName: 'Event',
+            attributeMappings: [
+                {
+                    attributeName: 'event_type',
+                    defaultValue: `Transmitter`
+                },
+                {
+                    attributeName: 'date_time',
+                    converter: new DateConverter()
+                },
+                {
+                    attributeName: 'easting',
+                    converter: new IntegerConverter()
+                },
+                {
+                    attributeName: 'northing',
+                    converter: new IntegerConverter()
+                }
+            ]
+        }
     }
 }
