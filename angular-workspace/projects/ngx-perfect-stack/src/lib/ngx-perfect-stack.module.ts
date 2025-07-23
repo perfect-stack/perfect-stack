@@ -144,8 +144,10 @@ import { UploadDialogComponent } from './data/controller/layout/controls/media-c
 import {DiscriminatorService} from "./data/data-service/discriminator.service";
 import { ColourBandComponentComponent } from './data/controller/layout/controls/colour-band-component/colour-band-component.component';
 import { ColourBandDialogComponent } from './data/controller/layout/controls/colour-band-component/colour-band-dialog/colour-band-dialog.component';
+import {DataImportComponent} from "./data/data-import/data-import.component";
 
 export const STACK_ROUTES: Routes = [
+  { path: 'data/import', component: DataImportComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/search_edit', component: DataSearchEditComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/:mode/:id', component: DataEditComponent, canActivate: [AuthGuard] },

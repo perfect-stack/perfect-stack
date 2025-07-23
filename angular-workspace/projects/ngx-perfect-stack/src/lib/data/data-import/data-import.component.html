@@ -1,0 +1,42 @@
+<h2>Data Import</h2>
+
+<lib-upload-panel></lib-upload-panel>
+
+<br>
+
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      @if(headerRow) {
+        @for (control of formControls(headerRow); track control) {
+          <th class="px-2">
+            <!--<input type="text" [formControl]="control" class="form-control">-->
+            {{control.value}}
+          </th>
+        }
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (group of formRows; track group) {
+    <tr [formGroup]="group">
+      @for(control of formControls(group); track control) {
+        <td class="px-2">
+          <!--<input type="text" [formControl]="control" class="form-control">-->
+          {{control.value}}
+        </td>
+      }
+    </tr>
+    }
+  </tbody>
+</table>
+
+
+<!--
+
+<br>
+<br>
+<br>
+{{data | json}}
+-->

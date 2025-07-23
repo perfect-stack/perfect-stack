@@ -1,0 +1,42 @@
+<h3>Upload File</h3>
+
+<div class="upload-dropzone border border-dashed border-secondary border-3 rounded"
+     (dragover)="onDragOver($event)"
+     (dragleave)="onDragLeave($event)"
+     (drop)="onDrop($event)"
+     [class.dragover]="isDraggingOver">
+
+  <div class="d-flex flex-column justify-content-center align-items-center p-3">
+
+    <div class="mb-2">
+      <label for="fileUploadInput" class="upload-circle">
+        <span class="material-symbols-outlined">upload</span>
+      </label>
+    </div>
+
+    <div>Drop files here, or click to upload...</div>
+
+    <!-- The actual file input, hidden visually -->
+    <input
+      type="file"
+      id="fileUploadInput"
+      multiple
+      (change)="onFileSelected($event)"
+      style="display: none;"
+    />
+  </div>
+</div>
+
+<div *ngFor="let nextFileItem of fileItems">
+  <div class="row">
+    <div class="col-8">
+      {{nextFileItem.file.name}}
+    </div>
+    <div class="col-4 text-end">
+      <span class="material-symbols-outlined text-secondary" *ngIf="nextFileItem.status === 'loading'">hourglass</span>
+      <span class="material-symbols-outlined text-success" *ngIf="nextFileItem.status === 'success'">check_circle</span>
+      <span class="material-symbols-outlined text-danger" *ngIf="nextFileItem.status === 'error'">error</span>
+    </div>
+  </div>
+  <ngb-progressbar class="" [showValue]="true" type="info" [value]="nextFileItem.uploadProgress" *ngIf="nextFileItem.uploadProgress"></ngb-progressbar>
+</div>
