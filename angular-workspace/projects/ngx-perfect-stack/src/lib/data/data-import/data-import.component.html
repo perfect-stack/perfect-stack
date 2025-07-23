@@ -8,11 +8,10 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      @if(headerRow) {
-        @for (control of formControls(headerRow); track control) {
+      @if(headers) {
+        @for (nextHeader of headers; track nextHeader) {
           <th class="px-2">
-            <!--<input type="text" [formControl]="control" class="form-control">-->
-            {{control.value}}
+            {{nextHeader}}
           </th>
         }
       }

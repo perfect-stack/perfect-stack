@@ -18,6 +18,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import {DataImportService} from "./data-import.service";
+import {DataImportModel} from "./data-import.model";
 
 
 // Define the upload destination as a constant for clarity and reuse.
@@ -76,7 +77,7 @@ export class DataImportController {
                 new MaxFileSizeValidator({maxSize: 10 * 1024 * 1024})
             ], fileIsRequired: true}
         )
-    ) file: Express.Multer.File): Promise<any> {
+    ) file: Express.Multer.File): Promise<DataImportModel> {
 
         // The interceptor takes care of creating the file on the server and then just gives us
         // the "File" handle to that file.
@@ -86,10 +87,7 @@ export class DataImportController {
             console.log('Original filename:', file.originalname);
             console.log('Mimetype:', file.mimetype);
             console.log('Size:', file.size);
-            return {
-                path: `${file.filename}`,
-                data: await this.dataImportService.parseFile(file.path)
-            };
+            return this.dataImportService.parseFile(file.path);
         }
         throw new Error("Unable to upload file")
     }

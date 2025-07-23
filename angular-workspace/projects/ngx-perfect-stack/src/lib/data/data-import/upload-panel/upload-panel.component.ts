@@ -4,6 +4,7 @@ import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../ngx-perfect-stack-config";
 import {HttpClient, HttpEventType, HttpHeaders} from "@angular/common/http";
 import {finalize, Subject, Subscription} from "rxjs";
+import {DataImportModel} from "./data-import.model";
 
 export class FileItem {
   file: File;
@@ -33,7 +34,7 @@ export class UploadPanelComponent {
   fileItems: FileItem[] = [];
   isDraggingOver = false;
 
-  uploadedData = signal<null | any>(null);
+  uploadedData = signal<null | DataImportModel>(null);
 
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
@@ -117,7 +118,7 @@ export class UploadPanelComponent {
     // 3. Make the POST request with the FormData.
     //    DO NOT set the 'Content-Type' header manually. The browser
     //    will handle it correctly for FormData.
-    const upload$ = this.http.post<{ path: string }>(uploadUrl, formData, {
+    const upload$ = this.http.post<DataImportModel>(uploadUrl, formData, {
       reportProgress: true,
       observe: 'events'
     }).pipe(

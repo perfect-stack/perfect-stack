@@ -2,6 +2,7 @@ import {Component, effect, Injector, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
 import {JsonPipe} from "@angular/common";
 import {AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {DataImportModel} from "./upload-panel/data-import.model";
 
 @Component({
   selector: 'lib-data-import',
@@ -17,7 +18,7 @@ export class DataImportComponent {
 
   uploadPanel = viewChild(UploadPanelComponent);
 
-  data: any;
+  data: DataImportModel;
   form: FormArray;
 
 
@@ -27,19 +28,22 @@ export class DataImportComponent {
       if(uploadPanel) {
         const  uploadedData = uploadPanel.uploadedData();
         console.log('Data Import - uploadedData: ', uploadedData);
-        this.data = uploadedData.data;
-        this.createForm(this.data);
+        if(uploadedData) {
+          this.data = uploadedData;
+          this.createForm(this.data);
+        }
       }
     }, {injector: this.injector});
   }
 
-  private createForm(data: string[][]) {
+  private createForm(data: DataImportModel) {
     this.form = new FormArray<FormGroup>([]);
-    for (let rowIdx = 0; rowIdx < data.length; rowIdx++) {
+    const dataRows = data.dataRows;
+    for (let rowIdx = 0; rowIdx < dataRows.length; rowIdx++) {
       const rowGroup = new FormGroup({});
       this.form.push(rowGroup);
 
-      const rowData = data[rowIdx] || [];
+      const rowData = dataRows[rowIdx] || [];
       for(let colIdx = 0; colIdx < rowData.length; colIdx++) {
         const initialValue = rowData[colIdx] || '';
         rowGroup.addControl(`col-${colIdx}`, new FormControl(initialValue));
@@ -47,27 +51,15 @@ export class DataImportComponent {
     }
   }
 
-  /**
-   * Returns the first row of the form, intended for the table header.
-   * @returns The first FormGroup or null if the form is empty.
-   */
-  get headerRow(): FormGroup | null {
-    if (this.form && this.form.length > 0) {
-      return this.form.at(0) as FormGroup;
+  get headers(): string[] | null {
+    if(this.data && this.data.headers) {
+      return this.data.headers;
     }
     return null;
   }
 
-  /**
-   * Returns all data rows of the form (all except the first/header row).
-   * @returns An array of FormGroups for the table body.
-   */
   get formRows(): FormGroup[] {
-    if (this.form && this.form.length > 1) {
-      // .slice(1) creates a new array containing all elements from index 1 onwards.
-      return this.form.controls.slice(1) as FormGroup[];
-    }
-    return []; // Return an empty array if there are no data rows.
+    return this.form && this.form.controls ? this.form.controls as FormGroup[] : [];
   }
 
   formControls(formGroup: FormGroup): FormControl[] {
