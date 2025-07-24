@@ -1,10 +1,11 @@
 import {Injectable} from "@nestjs/common";
 import * as csv from 'fast-csv';
 import * as fs from "fs";
-import {DataImportModel} from "./data-import.model";
-import {DataImportMapping} from "./data-import.types";
+import {DataImportError, DataImportModel} from "./data-import.model";
+import {ConverterResult, CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
 import {DateConverter} from "./converter/date.converter";
 import {IntegerConverter} from "./converter/integer.converter";
+import {Entity} from "../../domain/entity";
 
 
 
@@ -35,26 +36,34 @@ export class DataImportService {
                 });
         });
 
-        // TODO: convert the data into the DataImportModel and validate it for errors
-
         const dataImportModel = new DataImportModel();
         if(data && data.length > 0) {
             dataImportModel.headers = data[0];
             dataImportModel.dataRows = data.slice(1);
         }
 
-        return dataImportModel;
+        // TODO: convert the data into the DataImportModel and validate it for errors
+        const validatedDataImportModel = await this.processAndValidate(dataImportModel);
+
+        return validatedDataImportModel;
     }
 
     async processAndValidate(dataImportModel: DataImportModel): Promise<DataImportModel> {
 
         // for each data row
-        // create entity
-        // validate entity
-        // if !valid then
-        //   - convert errors for return
+        for(let rowIdx = 0; rowIdx < dataImportModel.dataRows.length; rowIdx++) {
+            const nextRow = dataImportModel.dataRows[rowIdx];
 
-        return;
+            // create entity
+            const createEntityResponse = await this.createEntity(dataImportModel.headers, nextRow, rowIdx);
+            dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
+
+            // validate entity
+            // if !valid then
+            //   - convert errors for return
+        }
+
+        return dataImportModel;
     }
 
     async processAndSave(dataImportModel: DataImportModel): Promise<DataImportModel> {
@@ -66,16 +75,75 @@ export class DataImportService {
         return;
     }
 
-    async createEntity(dataRow: string[]) {
+    async createEntity(headers: string[], dataRow: string[], rowIdx: number): Promise<CreateEntityResponse> {
 
         // find the data mapping for this file (may only be one)
+        const dataImportMapping = await this.findDataImportMapping();
+
         // create an entity for this data row
+        const entity: Entity = {
+            id: null
+        };
+
+        const dataImportErrors: DataImportError[] = [];
+
         // for each data mapping
-        //   - find the externalValue by "columnName"
-        //   - find the converter
-        //   - convert the externalValue (may result in an error)
-        //   - add the attributeValue to the entity
+        for(const nextAttributeMapping of dataImportMapping.attributeMappings) {
+            let converterResult: ConverterResult;
+            if(nextAttributeMapping.columnName) {
+                converterResult = this.convertExternalValue(nextAttributeMapping, headers, dataRow);
+            }
+            else if(nextAttributeMapping.defaultValue) {
+                converterResult = this.convertDefaultValue(nextAttributeMapping);
+            }
+            else {
+                throw new Error(`Invalid mapping. No columnName OR default value supplied for ${nextAttributeMapping.attributeName}`);
+            }
+
+            // Add the converted results to the entity
+            for(const nextAttributeValue of converterResult.attributeValues) {
+                entity[nextAttributeValue.name] = nextAttributeValue.value;
+                if(nextAttributeValue.error) {
+                    dataImportErrors.push({
+                        row: rowIdx,
+                        col: converterResult.col,
+                        message: nextAttributeValue.error
+                    });
+                }
+            }
+        }
+
+        return {entity, dataImportErrors};
     }
+
+    convertExternalValue(attributeMapping: DataAttributeMapping, headers: string[], dataRow: string[]) {
+        // find the externalValue by "columnName"
+        const colIdx = headers.indexOf(attributeMapping.columnName);
+        if(colIdx < 0) {
+            throw new Error(`Unable to find column name ${attributeMapping.columnName} in file`);
+        }
+
+        const externalValue = dataRow[colIdx];
+        const converterResult = attributeMapping.converter.toAttributeValue(attributeMapping, externalValue);
+        if(!converterResult) {
+            // This error should never happen but probably will during development if Converter is not implemented
+            throw new Error(`Unable to convert external value ${externalValue} for attribute ${attributeMapping.attributeName}`);
+        }
+        converterResult.col = colIdx;
+        return converterResult;
+    }
+
+
+    convertDefaultValue(attributeMapping: DataAttributeMapping): ConverterResult {
+        return {
+            col: 0,
+            attributeValues: [{
+                name: attributeMapping.attributeName,
+                value: attributeMapping.defaultValue
+            }]
+        }
+    }
+
 
     async findDataImportMapping(): Promise<DataImportMapping> {
         return {
@@ -86,14 +154,17 @@ export class DataImportService {
                     defaultValue: `Transmitter`
                 },
                 {
+                    columnName: 'Event Date',
                     attributeName: 'date_time',
                     converter: new DateConverter()
                 },
                 {
+                    columnName: 'Easting NZTM',
                     attributeName: 'easting',
                     converter: new IntegerConverter()
                 },
                 {
+                    columnName: 'Northing NZTM',
                     attributeName: 'northing',
                     converter: new IntegerConverter()
                 }

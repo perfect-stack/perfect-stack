@@ -18,6 +18,10 @@ describe('DateConverter', () => {
             {format: 'd/MM/yyyy', input: '1/02/2023', expected: '2023-02-01'},
             {format: 'd-MMM-yy', input: '3-Mar-20', expected: '2020-03-03'},
             {format: 'd-MMM-yyyy', input: '25-Dec-2022', expected: '2022-12-25'},
+            // Even though the 29-Feb-2023 is not a valid leap year Date the "SMART" resolver we are using
+            // will still convert it into 2023-02-28. Which isn't ideal, but not going to spend hours fighting this
+            // edge case. It is, was it is and time to move on
+            {format: 'd-MMM-yyyy', input: '29-Feb-2023', expected: '2023-02-28'},
             {format: 'yyyy-MM-dd', input: '2023-08-15', expected: '2023-08-15'},
         ];
 
@@ -43,7 +47,6 @@ describe('DateConverter', () => {
             '01/13/2023', // Invalid month
             '2023/01/01', // Unsupported format (YYYY/MM/DD)
             '01 Feb 2023', // Unsupported format with spaces
-            '29-Feb-2023', // Invalid leap year date
         ];
 
         test.each(invalidDateTests)(

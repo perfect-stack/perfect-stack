@@ -1,4 +1,4 @@
-import {ConverterResult, DataImportConverter} from "../data-import.types";
+import {ConverterResult, DataAttributeMapping, DataImportConverter} from "../data-import.types";
 import {DateTimeFormatter, LocalDate, ResolverStyle} from "@js-joda/core";
 
 import '@js-joda/locale_en';
