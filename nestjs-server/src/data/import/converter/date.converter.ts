@@ -1,8 +1,7 @@
-import {ConverterResult, DataAttributeMapping, DataImportConverter} from "../data-import.types";
 import {DateTimeFormatter, LocalDate, ResolverStyle} from "@js-joda/core";
-
 import '@js-joda/locale_en';
 import {Locale} from "@js-joda/locale_en";
+import {ConverterResult, DataImportConverter} from "./converter.types";
 
 export class DateConverter extends DataImportConverter {
     // Needs to support the following formats;

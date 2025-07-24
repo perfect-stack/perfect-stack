@@ -2,10 +2,11 @@ import {Injectable} from "@nestjs/common";
 import * as csv from 'fast-csv';
 import * as fs from "fs";
 import {DataImportError, DataImportModel} from "./data-import.model";
-import {ConverterResult, CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
+import {CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
 import {DateConverter} from "./converter/date.converter";
 import {IntegerConverter} from "./converter/integer.converter";
 import {Entity} from "../../domain/entity";
+import {ConverterResult} from "./converter/converter.types";
 
 
 
@@ -124,7 +125,7 @@ export class DataImportService {
         }
 
         const externalValue = dataRow[colIdx];
-        const converterResult = attributeMapping.converter.toAttributeValue(attributeMapping, externalValue);
+        const converterResult = attributeMapping.converter.toAttributeValue(attributeMapping.attributeName, externalValue);
         if(!converterResult) {
             // This error should never happen but probably will during development if Converter is not implemented
             throw new Error(`Unable to convert external value ${externalValue} for attribute ${attributeMapping.attributeName}`);

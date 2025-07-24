@@ -1,4 +1,4 @@
-import {ConverterResult, DataAttributeMapping, DataImportConverter} from "../data-import.types";
+import {ConverterResult, DataImportConverter} from "./converter.types";
 
 
 export class IntegerConverter extends DataImportConverter {

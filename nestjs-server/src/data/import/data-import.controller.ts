@@ -1,12 +1,10 @@
 import {ApiBody, ApiConsumes, ApiTags} from "@nestjs/swagger";
 import {
-    Controller, FileTypeValidator,
+    Controller,
     MaxFileSizeValidator,
-    Param,
     ParseFilePipe,
     Post,
-    Put,
-    UploadedFile,
+   UploadedFile,
     UseInterceptors
 } from "@nestjs/common";
 import {ActionPermit} from "../../authentication/action-permit";
