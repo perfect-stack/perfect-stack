@@ -11,7 +11,7 @@ export class ConverterResult {
 
 export class DataImportConverter {
     // string, date, number, codetable, band_number
-    toAttributeValue(attributeName: string, externalValue: string): ConverterResult {
+    async toAttributeValue(attributeName: string, externalValue: string): Promise<ConverterResult> {
         // might need to return more than one value e.g. band_number needs a lookup to get bird_id
         return;
     }

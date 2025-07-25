@@ -21,7 +21,7 @@ export class DateConverter extends DataImportConverter {
     ].map(pattern => DateTimeFormatter
         .ofPattern(pattern).withLocale(Locale.ENGLISH).withResolverStyle(ResolverStyle.SMART));
 
-    toAttributeValue(attributeName: string, externalValue: string): ConverterResult {
+    async toAttributeValue(attributeName: string, externalValue: string): Promise<ConverterResult> {
         if (!externalValue) {
             return {
                 attributeValues: [{

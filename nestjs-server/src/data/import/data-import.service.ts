@@ -7,14 +7,17 @@ import {DateConverter} from "./converter/date.converter";
 import {IntegerConverter} from "./converter/integer.converter";
 import {Entity} from "../../domain/entity";
 import {ConverterResult} from "./converter/converter.types";
-
-
+import {BandNumberLookupConverter} from "./converter/band-number.converter";
+import {QueryService} from "../query.service";
 
 
 
 @Injectable()
 export class DataImportService {
 
+
+    constructor(protected readonly queryService: QueryService) {
+    }
 
     async parseFile(filePath: string): Promise<DataImportModel> {
 
@@ -55,13 +58,17 @@ export class DataImportService {
         for(let rowIdx = 0; rowIdx < dataImportModel.dataRows.length; rowIdx++) {
             const nextRow = dataImportModel.dataRows[rowIdx];
 
-            // create entity
-            const createEntityResponse = await this.createEntity(dataImportModel.headers, nextRow, rowIdx);
-            dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
+            if (!this.isBlankRow(nextRow)) {
+                // create entity
+                const createEntityResponse = await this.createEntity(dataImportModel.headers, nextRow, rowIdx);
+                dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
 
-            // validate entity
-            // if !valid then
-            //   - convert errors for return
+                console.log("Entity: " + JSON.stringify(createEntityResponse.entity));
+
+                // validate entity
+                // if !valid then
+                //   - convert errors for return
+            }
         }
 
         return dataImportModel;
@@ -74,6 +81,11 @@ export class DataImportService {
         // if save fails
         //   - convert error for return
         return;
+    }
+
+    isBlankRow(dataRow: string[]) {
+        // return true if all fields in the dataRow are null, empty, or undefined
+        return dataRow.every(field => field === null || field === '' || typeof field === 'undefined');
     }
 
     async createEntity(headers: string[], dataRow: string[], rowIdx: number): Promise<CreateEntityResponse> {
@@ -92,7 +104,7 @@ export class DataImportService {
         for(const nextAttributeMapping of dataImportMapping.attributeMappings) {
             let converterResult: ConverterResult;
             if(nextAttributeMapping.columnName) {
-                converterResult = this.convertExternalValue(nextAttributeMapping, headers, dataRow);
+                converterResult = await this.convertExternalValue(nextAttributeMapping, headers, dataRow);
             }
             else if(nextAttributeMapping.defaultValue) {
                 converterResult = this.convertDefaultValue(nextAttributeMapping);
@@ -117,7 +129,7 @@ export class DataImportService {
         return {entity, dataImportErrors};
     }
 
-    convertExternalValue(attributeMapping: DataAttributeMapping, headers: string[], dataRow: string[]) {
+    async convertExternalValue(attributeMapping: DataAttributeMapping, headers: string[], dataRow: string[]) {
         // find the externalValue by "columnName"
         const colIdx = headers.indexOf(attributeMapping.columnName);
         if(colIdx < 0) {
@@ -125,7 +137,7 @@ export class DataImportService {
         }
 
         const externalValue = dataRow[colIdx];
-        const converterResult = attributeMapping.converter.toAttributeValue(attributeMapping.attributeName, externalValue);
+        const converterResult = await attributeMapping.converter.toAttributeValue(attributeMapping.attributeName, externalValue);
         if(!converterResult) {
             // This error should never happen but probably will during development if Converter is not implemented
             throw new Error(`Unable to convert external value ${externalValue} for attribute ${attributeMapping.attributeName}`);
@@ -152,7 +164,11 @@ export class DataImportService {
             attributeMappings: [
                 {
                     attributeName: 'event_type',
-                    defaultValue: `Transmitter`
+                    defaultValue: 'Transmitter'
+                },
+                {
+                    attributeName: 'data_source',
+                    defaultValue: 'KIMS'
                 },
                 {
                     columnName: 'Event Date',
@@ -168,7 +184,11 @@ export class DataImportService {
                     columnName: 'Northing NZTM',
                     attributeName: 'northing',
                     converter: new IntegerConverter()
-                }
+                },
+                {
+                    columnName: 'V band',
+                    converter: new BandNumberLookupConverter(this.queryService),
+                },
             ]
         }
     }

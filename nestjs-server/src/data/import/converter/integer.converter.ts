@@ -2,7 +2,7 @@ import {ConverterResult, DataImportConverter} from "./converter.types";
 
 
 export class IntegerConverter extends DataImportConverter {
-    toAttributeValue(attributeName: string, externalValue: string): ConverterResult {
+    async toAttributeValue(attributeName: string, externalValue: string): Promise<ConverterResult> {
         // Check that if not null then externalValue must be a valid number, otherwise return an error
         if (externalValue === null || externalValue === undefined || externalValue === '') {
             return {

@@ -14,7 +14,7 @@ export class DataImportMapping {
 
 export class DataAttributeMapping {
     columnName?: string;
-    attributeName: string;
+    attributeName?: string;
     converter?: DataImportConverter
     defaultValue?: string;
 }
