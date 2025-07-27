@@ -31,7 +31,7 @@ export class IntegerConverter extends DataImportConverter {
             col: 0,
             attributeValues: [{
                 name: attributeName,
-                value: String(parsedValue),
+                value: parsedValue,
             }]
         };
     }

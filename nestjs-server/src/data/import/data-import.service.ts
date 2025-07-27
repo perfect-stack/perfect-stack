@@ -9,6 +9,10 @@ import {Entity} from "../../domain/entity";
 import {ConverterResult} from "./converter/converter.types";
 import {BandNumberLookupConverter} from "./converter/band-number.converter";
 import {QueryService} from "../query.service";
+import {ValidationService} from "../validation.service";
+import {ValidationResultMapController} from "../../domain/meta.rule";
+import {MetaEntity} from "../../domain/meta.entity";
+import {MetaEntityService} from "../../meta/meta-entity/meta-entity.service";
 
 
 
@@ -16,7 +20,9 @@ import {QueryService} from "../query.service";
 export class DataImportService {
 
 
-    constructor(protected readonly queryService: QueryService) {
+    constructor(protected readonly queryService: QueryService,
+                protected readonly metaEntityService: MetaEntityService,
+                protected readonly validationService: ValidationService) {
     }
 
     async parseFile(filePath: string): Promise<DataImportModel> {
@@ -54,18 +60,35 @@ export class DataImportService {
 
     async processAndValidate(dataImportModel: DataImportModel): Promise<DataImportModel> {
 
+        // find the data mapping for this file (may only be one)
+        const dataImportMapping = await this.findDataImportMapping();
+
         // for each data row
         for(let rowIdx = 0; rowIdx < dataImportModel.dataRows.length; rowIdx++) {
             const nextRow = dataImportModel.dataRows[rowIdx];
 
             if (!this.isBlankRow(nextRow)) {
                 // create entity
-                const createEntityResponse = await this.createEntity(dataImportModel.headers, nextRow, rowIdx);
+                const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, rowIdx);
                 dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
 
-                console.log("Entity: " + JSON.stringify(createEntityResponse.entity));
-
                 // validate entity
+                const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
+                if(validationResultMapController.hasErrors()) {
+                    console.log('IMPORT ERRORS: ');
+                    console.log(' Data:   ' + JSON.stringify(nextRow))
+                    console.log(' Entity: ' + JSON.stringify(createEntityResponse.entity));
+                    for(const nextErrorKey of Object.keys(validationResultMapController.validationResultMap)) {
+                        const validationError = validationResultMapController.validationResultMap[nextErrorKey];
+                        console.log(` - Error: ${nextErrorKey}: ${validationError.message}`);
+                    }
+                }
+                else {
+                    console.log('IMPORT GOOD: ');
+                    console.log(' Data:   ' + JSON.stringify(nextRow))
+                    console.log(' Entity: ' + JSON.stringify(createEntityResponse.entity));
+                }
+
                 // if !valid then
                 //   - convert errors for return
             }
@@ -83,15 +106,27 @@ export class DataImportService {
         return;
     }
 
+    async validate(entityName: string, entity: any): Promise<ValidationResultMapController> {
+        const metaEntityList = await this.metaEntityService.findAll();
+        const metaEntityMap = new Map<string, MetaEntity>();
+        for (const nextMetaEntity of metaEntityList) {
+            metaEntityMap.set(nextMetaEntity.name, nextMetaEntity);
+        }
+
+        const metaEntity = metaEntityMap.get(entityName);
+        if (!metaEntity) {
+            throw new Error(`Unable to find MetaEntity ${entityName}`);
+        }
+
+        return await this.validationService.validate(metaEntityMap, metaEntity, entity);
+    }
+
     isBlankRow(dataRow: string[]) {
         // return true if all fields in the dataRow are null, empty, or undefined
         return dataRow.every(field => field === null || field === '' || typeof field === 'undefined');
     }
 
-    async createEntity(headers: string[], dataRow: string[], rowIdx: number): Promise<CreateEntityResponse> {
-
-        // find the data mapping for this file (may only be one)
-        const dataImportMapping = await this.findDataImportMapping();
+    async createEntity(dataImportMapping: DataImportMapping, headers: string[], dataRow: string[], rowIdx: number): Promise<CreateEntityResponse> {
 
         // create an entity for this data row
         const entity: Entity = {
@@ -169,6 +204,18 @@ export class DataImportService {
                 {
                     attributeName: 'data_source',
                     defaultValue: 'KIMS'
+                },
+                {
+                    attributeName: 'activities',
+                    defaultValue: []
+                },
+                {
+                    attributeName: 'observers',
+                    defaultValue: []
+                },
+                {
+                    attributeName: 'instruments',
+                    defaultValue: []
                 },
                 {
                     columnName: 'Event Date',

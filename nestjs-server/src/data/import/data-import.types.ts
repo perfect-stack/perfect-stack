@@ -16,5 +16,5 @@ export class DataAttributeMapping {
     columnName?: string;
     attributeName?: string;
     converter?: DataImportConverter
-    defaultValue?: string;
+    defaultValue?: string | number | [];
 }

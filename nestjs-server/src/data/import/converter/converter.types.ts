@@ -1,6 +1,6 @@
 export class AttributeValue {
     name: string;
-    value: string;
+    value: string | number | [] | null;
     error?: string;
 }
 

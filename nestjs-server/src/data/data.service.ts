@@ -16,12 +16,11 @@ import * as uuid from 'uuid';
 import { UpdateSortIndexRequest } from './update-sort-index.request';
 import { AuditAction } from '../domain/audit';
 import { QueryService } from './query.service';
-import { RuleService } from './rule/rule.service';
-import { ValidationResultMapController } from '../domain/meta.rule';
 import { EventService } from '../event/event.service';
 import { Transaction } from 'sequelize';
 import {MediaRepositoryService} from "../media/media-repository.service";
 import {DiscriminatorService} from "./discriminator.service";
+import {ValidationService} from "./validation.service";
 
 @Injectable()
 export class DataService {
@@ -31,10 +30,10 @@ export class DataService {
     protected readonly metaEntityService: MetaEntityService,
     protected readonly ormService: OrmService,
     protected readonly queryService: QueryService,
-    protected readonly ruleService: RuleService,
     protected readonly eventService: EventService,
     protected readonly discriminatorService: DiscriminatorService,
     protected readonly mediaRepositoryService: MediaRepositoryService,
+    protected readonly validationService: ValidationService
   ) {}
 
   validateUuid(value: string) {
@@ -92,22 +91,7 @@ export class DataService {
       throw new Error(`Unable to find MetaEntity ${entityName}`);
     }
 
-    const eventValidations = await this.eventService.dispatchOnBeforeSave(
-      entity,
-      metaEntity,
-      metaEntityMap,
-    );
-
-    const ruleValidations = await this.ruleService.validate(
-      entity,
-      metaEntity,
-      metaEntityMap,
-    );
-
-    const validationResultMapController = new ValidationResultMapController({
-      ...eventValidations,
-      ...ruleValidations,
-    });
+    const validationResultMapController = await this.validationService.validate(metaEntityMap, metaEntity, entity);
 
     if (!validationResultMapController.hasErrors()) {
       const { action, entityModel } = await this.saveValidatedEntity(

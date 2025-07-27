@@ -37,10 +37,16 @@ export class DateConverter extends DataImportConverter {
                 const parsedDate = LocalDate.parse(externalValue, formatter);
 
                 // Success! Return the standardized ISO format (YYYY-MM-DD)
+
+                // At the moment the imported data does not have a time component, but the application entity validation
+                // expects the date to be a date_time. For now, until there are further requirements we can just assume
+                // it s a "day" value and add the time component.
+                const convertedDateTime = parsedDate.toString() + 'T00:00:00Z';
+
                 return {
                     attributeValues: [{
                         name: attributeName,
-                        value: parsedDate.toString()
+                        value: convertedDateTime
                     }]
                 };
             } catch (e) {

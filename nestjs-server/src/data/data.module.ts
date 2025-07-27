@@ -10,11 +10,12 @@ import { RuleModule } from './rule/rule.module';
 import { EventModule } from '../event/event.module';
 import {MediaRepositoryModule} from "../media/media-repository.module";
 import {DiscriminatorService} from "./discriminator.service";
+import {ValidationService} from "./validation.service";
 
 @Module({
   controllers: [DataController],
   imports: [AuditModule, EventModule, MediaRepositoryModule, MetaEntityModule, OrmModule, RuleModule],
-  providers: [DataService, DiscriminatorService, CustomQueryService, QueryService],
-  exports: [DataService, DiscriminatorService, CustomQueryService, QueryService],
+  providers: [DataService, DiscriminatorService, CustomQueryService, QueryService, ValidationService],
+  exports: [DataService, DiscriminatorService, CustomQueryService, QueryService, ValidationService],
 })
 export class DataModule {}

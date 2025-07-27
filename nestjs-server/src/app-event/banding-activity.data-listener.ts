@@ -154,7 +154,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
       markingAttribute.activity_type,
     );
 
-    if (activityIndex >= 0) {
+    if (entity.activities && activityIndex >= 0) {
       const activity = entity.activities[activityIndex];
       if (activity) {
         const bird_id = entity.bird_id;
