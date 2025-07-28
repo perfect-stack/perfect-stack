@@ -57,10 +57,11 @@
             @for(control of formControls(group); track control; let colIdx = $index) {
               @if(findErrors(rowIdx, colIdx)) {
                 <td class="bg-danger text-white">
-                  <span class="d-block px-2" [ngbTooltip]="findErrorMessagesAsTooltip(rowIdx, colIdx)">
-                  <!--<input type="text" [formControl]="control" class="form-control">-->
+                  <!-- min-height so that tooltip appears for null values, other solutions like moving tooltip to <td> had a layout shift issue-->
+                  <span class="d-block px-2"
+                        style="min-height: 1.2em;"
+                        [ngbTooltip]="findErrorMessagesAsTooltip(rowIdx, colIdx)">
                     {{control.value}}
-                    <span class="material-symbols-outlined">error</span>
                   </span>
                 </td>
               } @else {
