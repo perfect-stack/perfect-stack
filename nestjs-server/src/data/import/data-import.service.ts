@@ -9,6 +9,7 @@ import {Entity} from "../../domain/entity";
 import {ConverterResult} from "./converter/converter.types";
 import {BandNumberLookupConverter} from "./converter/band-number.converter";
 import {QueryService} from "../query.service";
+import {DataService} from "../data.service";
 import {ValidationService} from "../validation.service";
 import {ValidationResult, ValidationResultMapController} from "../../domain/meta.rule";
 import {MetaEntity} from "../../domain/meta.entity";
@@ -21,6 +22,7 @@ export class DataImportService {
 
 
     constructor(protected readonly queryService: QueryService,
+                protected readonly dataService: DataService,
                 protected readonly metaEntityService: MetaEntityService,
                 protected readonly validationService: ValidationService) {
     }
@@ -53,11 +55,11 @@ export class DataImportService {
         }
 
         // TODO: convert the data into the DataImportModel and validate it for errors
-        const validatedDataImportModel = await this.processAndValidate(dataImportModel);
+        const validatedDataImportModel = await this.processAndValidate(dataImportModel, null);
         return validatedDataImportModel;
     }
 
-    async processAndValidate(dataImportModel: DataImportModel): Promise<DataImportModel> {
+    async processAndValidate(dataImportModel: DataImportModel, dataImportResult: DataImportResult): Promise<DataImportModel> {
 
         // find the data mapping for this file (may only be one)
         const dataImportMapping = await this.findDataImportMapping();
@@ -95,10 +97,20 @@ export class DataImportService {
                     console.log('IMPORT GOOD: ');
                     console.log(' Data:   ' + JSON.stringify(nextRow))
                     console.log(' Entity: ' + JSON.stringify(createEntityResponse.entity));
-                }
 
-                // if !valid then
-                //   - convert errors for return
+                    if(dataImportResult) {
+                        const entityResponse = await this.dataService.save(dataImportMapping.metaEntityName, createEntityResponse.entity);
+                        if(entityResponse) {
+                            const entityResultMapController = new ValidationResultMapController(entityResponse.validationResults);
+                            if(entityResultMapController.hasErrors()) {
+                                throw new Error('Attempted save, but it failed');
+                            }
+                            else {
+                                dataImportResult.rowSuccessCount = dataImportResult.rowSuccessCount + 1;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -108,15 +120,9 @@ export class DataImportService {
     async processAndSave(dataImportModel: DataImportModel): Promise<DataImportResult> {
 
         console.log('Ready to processAndSave... ' + dataImportModel.dataRows.length + ' rows');
-
         const dataImportResult = new DataImportResult();
-        dataImportResult.rowSuccessCount = 42;
+        await this.processAndValidate(dataImportModel, dataImportResult);
 
-        // for each data row
-        // create entity
-        // "save" entity (will do validation)
-        // if save fails
-        //   - convert error for return
         return dataImportResult;
     }
 

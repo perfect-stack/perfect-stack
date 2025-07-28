@@ -15,6 +15,6 @@ export class DataImportModel {
 }
 
 export class DataImportResult {
-  rowSuccessCount: number;
+  rowSuccessCount: number = 0;
   errors: DataImportError[] = [];
 }
