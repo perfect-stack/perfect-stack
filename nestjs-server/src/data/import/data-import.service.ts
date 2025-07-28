@@ -1,7 +1,7 @@
 import {Injectable} from "@nestjs/common";
 import * as csv from 'fast-csv';
 import * as fs from "fs";
-import {DataImportError, DataImportModel} from "./data-import.model";
+import {DataImportError, DataImportModel, DataImportResult} from "./data-import.model";
 import {CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
 import {DateConverter} from "./converter/date.converter";
 import {IntegerConverter} from "./converter/integer.converter";
@@ -105,13 +105,19 @@ export class DataImportService {
         return dataImportModel;
     }
 
-    async processAndSave(dataImportModel: DataImportModel): Promise<DataImportModel> {
+    async processAndSave(dataImportModel: DataImportModel): Promise<DataImportResult> {
+
+        console.log('Ready to processAndSave... ' + dataImportModel.dataRows.length + ' rows');
+
+        const dataImportResult = new DataImportResult();
+        dataImportResult.rowSuccessCount = 42;
+
         // for each data row
         // create entity
         // "save" entity (will do validation)
         // if save fails
         //   - convert error for return
-        return;
+        return dataImportResult;
     }
 
     findColName(colName: string, headers: string[]): number | null {

@@ -18,19 +18,20 @@
         } @else {
           <p class="text-success">Import data appears to be good.</p>
           <p>Click import to start adding these rows to the database.</p>
-          <button class="btn btn-primary" [disabled]="importHasErrors()">Import</button>
+          <button class="btn btn-primary" [disabled]="importHasErrors()" (click)="onImportData()">Import</button>
         }
       </div>
     }
 
+    @if (dataImportResult) {
     <div class="col-3">
       <h3>Result</h3>
-      @if (importHasErrors()) {
         <!--<p class="text-danger">Import data has errors. Please correct the errors below and upload again.</p>-->
-      } @else {
-        <p class="text-success">Added [35] events successfully.</p>
-      }
+        <p class="text-success">Added [{{dataImportResult.rowSuccessCount}}] events successfully.</p>
+        <p class="text-success">With [{{dataImportResult.errors.length}}] errors.</p>
     </div>
+    }
+
   </div>
 
   <br>
@@ -76,12 +77,4 @@
   </div>
   }
 
-
-  <!--
-
-  <br>
-  <br>
-  <br>
-  {{data | json}}
-  -->
 </div>

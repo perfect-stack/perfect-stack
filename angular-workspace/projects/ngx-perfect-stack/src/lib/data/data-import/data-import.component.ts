@@ -1,15 +1,14 @@
 import {Component, effect, Injector, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
-import {JsonPipe} from "@angular/common";
-import {AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {DataImportModel} from "./upload-panel/data-import.model";
+import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {DataImportModel, DataImportResult} from "./upload-panel/data-import.model";
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
+import {DataImportService} from "./data-import.service";
 
 @Component({
   selector: 'lib-data-import',
   imports: [
     UploadPanelComponent,
-    JsonPipe,
     ReactiveFormsModule,
     NgbTooltip
   ],
@@ -23,8 +22,11 @@ export class DataImportComponent {
   data: DataImportModel;
   form: FormArray;
 
+  dataImportResult: DataImportResult;
 
-  constructor(private injector: Injector) {
+  constructor(
+    protected readonly dataImportService: DataImportService,
+    private injector: Injector) {
     effect(() => {
       const  uploadPanel = this.uploadPanel();
       if(uploadPanel) {
@@ -98,15 +100,12 @@ export class DataImportComponent {
     return errorMessages && errorMessages.length > 0 ? errorMessages.join(' ') : '';
   }
 
-  getCellStyle(rowIdx: number, colIdx: number) {
-    let cellStyle = 'px-2';
-
-    const errors = this.findErrors(rowIdx, colIdx);
-    if(errors && errors.length > 0) {
-      console.log('ADDED ERROR STYLE');
-      cellStyle += ' bg-danger text-white';
+  onImportData() {
+    if(this.data.errors.length === 0) {
+      this.dataImportService.importData(this.data).subscribe(result => {
+        console.log('Got result:', result);
+        this.dataImportResult = result;
+      });
     }
-
-    return cellStyle;
   }
 }

@@ -13,3 +13,8 @@ export class DataImportModel {
 
   errors: DataImportError[];
 }
+
+export class DataImportResult {
+  rowSuccessCount: number;
+  errors: DataImportError[] = [];
+}

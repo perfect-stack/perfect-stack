@@ -1,10 +1,11 @@
 import {ApiBody, ApiConsumes, ApiTags} from "@nestjs/swagger";
 import {
+    Body,
     Controller,
     MaxFileSizeValidator,
     ParseFilePipe,
     Post,
-   UploadedFile,
+    UploadedFile,
     UseInterceptors
 } from "@nestjs/common";
 import {ActionPermit} from "../../authentication/action-permit";
@@ -16,7 +17,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import {DataImportService} from "./data-import.service";
-import {DataImportModel} from "./data-import.model";
+import {DataImportModel, DataImportResult} from "./data-import.model";
 
 
 // Define the upload destination as a constant for clarity and reuse.
@@ -88,6 +89,15 @@ export class DataImportController {
             return this.dataImportService.parseFile(file.path);
         }
         throw new Error("Unable to upload file")
+    }
+
+    @ActionPermit(ActionType.Edit)
+    @SubjectName('Media')
+    @Post('/data')
+    async importData(@Body() dataImportModel: DataImportModel): Promise<DataImportResult> {
+        if(dataImportModel.errors.length === 0) {
+            return this.dataImportService.processAndSave(dataImportModel);
+        }
     }
 
 }
