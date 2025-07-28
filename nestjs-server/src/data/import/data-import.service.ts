@@ -10,7 +10,7 @@ import {ConverterResult} from "./converter/converter.types";
 import {BandNumberLookupConverter} from "./converter/band-number.converter";
 import {QueryService} from "../query.service";
 import {ValidationService} from "../validation.service";
-import {ValidationResultMapController} from "../../domain/meta.rule";
+import {ValidationResult, ValidationResultMapController} from "../../domain/meta.rule";
 import {MetaEntity} from "../../domain/meta.entity";
 import {MetaEntityService} from "../../meta/meta-entity/meta-entity.service";
 
@@ -75,6 +75,15 @@ export class DataImportService {
                 // validate entity
                 const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
                 if(validationResultMapController.hasErrors()) {
+
+                    // Add the validation errors to the dataImportModel
+                    const validationErrors = validationResultMapController.validationResultMap;
+                    for(const nextErrorKey of Object.keys(validationErrors)) {
+                        const nextError = validationErrors[nextErrorKey];
+                        dataImportModel.errors.push(this.toDataImportError(nextError, rowIdx, dataImportModel.headers, dataImportMapping));
+                    }
+
+
                     console.log('IMPORT ERRORS: ');
                     console.log(' Data:   ' + JSON.stringify(nextRow))
                     console.log(' Entity: ' + JSON.stringify(createEntityResponse.entity));
@@ -104,6 +113,33 @@ export class DataImportService {
         // if save fails
         //   - convert error for return
         return;
+    }
+
+    findColName(colName: string, headers: string[]): number | null {
+        // find the colName (if possible) or return null if not found
+        const colIdx = headers.indexOf(colName);
+        return colIdx >= 0 ? colIdx : null;
+    }
+
+    findColIdxFromValidationResult(validationResult: ValidationResult, dataImportMapping: DataImportMapping, headers: string[]) {
+        const attributeName = validationResult.name;
+        const attributeMapping = dataImportMapping.attributeMappings.find(nextAttributeMapping => nextAttributeMapping.attributeName === attributeName);
+        if(attributeMapping) {
+            return this.findColName(attributeMapping.columnName, headers);
+        }
+    }
+
+    toDataImportError(validationResult: ValidationResult,
+                      rowIdx: number,
+                      headers: string[],
+                      dataImportMapping: DataImportMapping): DataImportError {
+        const colIdx = this.findColIdxFromValidationResult(validationResult, dataImportMapping, headers);
+        const colNum = colIdx ? colIdx : 0;
+        return {
+            row: rowIdx,
+            col: colNum,
+            message: validationResult.message
+        };
     }
 
     async validate(entityName: string, entity: any): Promise<ValidationResultMapController> {

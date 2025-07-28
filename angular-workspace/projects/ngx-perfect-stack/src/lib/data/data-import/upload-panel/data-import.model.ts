@@ -1,7 +1,7 @@
 
 export class DataImportError {
   row: number;
-  column: number;
+  col: number;
   message: string;
 }
 

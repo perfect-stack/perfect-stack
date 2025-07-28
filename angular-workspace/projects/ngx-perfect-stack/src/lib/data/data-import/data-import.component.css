@@ -1,0 +1,14 @@
+
+th {
+  font-size: small;
+}
+
+td {
+  font-size: small;
+  white-space: nowrap;
+}
+
+td .material-symbols-outlined {
+  font-size: small;
+  font-weight: bold;
+}

@@ -1,6 +1,6 @@
 <h3>Upload File</h3>
 
-<div class="upload-dropzone border border-dashed border-secondary border-3 rounded"
+<div class="upload-dropzone border border-dashed border-secondary border-3 rounded mb-2"
      (dragover)="onDragOver($event)"
      (dragleave)="onDragLeave($event)"
      (drop)="onDrop($event)"
@@ -14,7 +14,7 @@
       </label>
     </div>
 
-    <div>Drop files here, or click to upload...</div>
+    <div>Drop <b>ONE</b> file here, or click to upload...</div>
 
     <!-- The actual file input, hidden visually -->
     <input
@@ -27,7 +27,7 @@
   </div>
 </div>
 
-<div *ngFor="let nextFileItem of fileItems">
+<div class="pt-2" *ngFor="let nextFileItem of fileItems">
   <div class="row">
     <div class="col-8">
       {{nextFileItem.file.name}}
