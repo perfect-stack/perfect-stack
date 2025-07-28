@@ -5,21 +5,37 @@
 
   <div class="row">
     <div class="col-3">
+      <h3>File</h3>
       <lib-upload-panel></lib-upload-panel>
     </div>
 
+    @if (data) {
+      <div class="col-3">
+        <h3>Status</h3>
+        @if (importHasErrors()) {
+          <p class="text-danger">Import data has errors.</p>
+          <p class="text-danger">Please correct the errors below and upload again.</p>
+        } @else {
+          <p class="text-success">Import data appears to be good.</p>
+          <p>Click import to start adding these rows to the database.</p>
+          <button class="btn btn-primary" [disabled]="importHasErrors()">Import</button>
+        }
+      </div>
+    }
+
     <div class="col-3">
-      <h3>Status</h3>
-      <button class="btn btn-primary" [disabled]="importHasErrors()">Import</button>
+      <h3>Result</h3>
       @if (importHasErrors()) {
-        <p class="text-danger">Import data has errors. Please correct the errors below and upload again.</p>
+        <!--<p class="text-danger">Import data has errors. Please correct the errors below and upload again.</p>-->
+      } @else {
+        <p class="text-success">Added [35] events successfully.</p>
       }
     </div>
   </div>
 
   <br>
 
-
+  @if (data) {
   <div class="row">
     <h3>Imported Data</h3>
     <table class="table">
@@ -58,6 +74,7 @@
       </tbody>
     </table>
   </div>
+  }
 
 
   <!--

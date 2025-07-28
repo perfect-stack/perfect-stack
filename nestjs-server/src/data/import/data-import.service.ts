@@ -54,7 +54,6 @@ export class DataImportService {
 
         // TODO: convert the data into the DataImportModel and validate it for errors
         const validatedDataImportModel = await this.processAndValidate(dataImportModel);
-
         return validatedDataImportModel;
     }
 

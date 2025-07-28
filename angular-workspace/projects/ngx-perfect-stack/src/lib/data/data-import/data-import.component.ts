@@ -69,8 +69,7 @@ export class DataImportComponent {
   }
 
   importHasErrors() {
-    //return this.data && this.data.errors && this.data.errors.length > 0;
-    return true;
+    return this.data && this.data.errors && this.data.errors.length > 0;
   }
 
   findErrors(rowIdx: number, colIdx: number) {

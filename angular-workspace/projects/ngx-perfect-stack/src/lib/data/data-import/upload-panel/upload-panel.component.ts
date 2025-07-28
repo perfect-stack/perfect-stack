@@ -85,11 +85,14 @@ export class UploadPanelComponent {
   // --- Common File Processing Logic ---
 
   processFiles(files: FileList): void {
-    for (const nextFile of Array.from(files)) {
+    this.fileItems = [];
+
+    const fileArray = Array.from(files);
+    const nextFile = fileArray && fileArray[0];
+    if(nextFile) {
       // Optional: Add checks here to prevent duplicates or filter by type/size
       if (this.fileItems.some(item => item.file.name === nextFile.name && item.file.size === nextFile.size)) {
         console.log(`Skipping duplicate file: ${nextFile.name}`);
-        continue; // Skip if already added
       }
 
       const nextFileItem: FileItem = {
