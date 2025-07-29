@@ -1,6 +1,7 @@
 import {Entity} from "../../domain/entity";
 import {DataImportError} from "./data-import.model";
 import {DataImportConverter} from "./converter/converter.types";
+import {CheckForDuplicates} from "./data-import.service";
 
 export class CreateEntityResponse {
     entity: Entity;
@@ -9,6 +10,7 @@ export class CreateEntityResponse {
 
 export class DataImportMapping {
     metaEntityName: string;
+    duplicateCheck: CheckForDuplicates;
     attributeMappings: DataAttributeMapping[];
 }
 

@@ -26,6 +26,27 @@ export class BandNumberLookupConverter implements DataImportConverter {
         return await this.queryService.findByCriteria(queryRequest);
     }
 
+    private extractAttributeValuesFromBird(birdSearchResult: any): AttributeValue[] {
+
+        // // Needs to find: bird_id, sex, species_id, form, age_class, status
+        // const birdAttributes = ['bird_id', 'sex', 'species_id', 'form', 'age_class', 'status'];
+        //
+        // const attributeValues: AttributeValue[] = [];
+        // for(const nextAttribute of birdAttributes) {
+        //     attributeValues.push({
+        //         name: nextAttribute,
+        //         value: birdSearchResult[nextAttribute]
+        //     })
+        // }
+        //
+        // return attributeValues;
+
+        return [{
+            name: 'bird_id',
+            value: birdSearchResult['id']  // It's called bird_id in the Event and 'id' in the Bird
+        }]
+    }
+
     async toAttributeValue(attributeName: string, externalValue: string): Promise<ConverterResult> {
 
         if(externalValue) {
@@ -68,24 +89,4 @@ export class BandNumberLookupConverter implements DataImportConverter {
         }
     }
 
-    private extractAttributeValuesFromBird(birdSearchResult: any): AttributeValue[] {
-
-        // // Needs to find: bird_id, sex, species_id, form, age_class, status
-        // const birdAttributes = ['bird_id', 'sex', 'species_id', 'form', 'age_class', 'status'];
-        //
-        // const attributeValues: AttributeValue[] = [];
-        // for(const nextAttribute of birdAttributes) {
-        //     attributeValues.push({
-        //         name: nextAttribute,
-        //         value: birdSearchResult[nextAttribute]
-        //     })
-        // }
-        //
-        // return attributeValues;
-
-        return [{
-            name: 'bird_id',
-            value: birdSearchResult['id']  // It's called bird_id in the Event and 'id' in the Bird
-        }]
-    }
 }

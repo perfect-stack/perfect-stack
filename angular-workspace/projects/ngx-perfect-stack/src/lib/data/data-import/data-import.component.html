@@ -18,7 +18,7 @@
         } @else {
           <p class="text-success">Import data appears to be good.</p>
           <p>Click import to start adding these rows to the database.</p>
-          <button class="btn btn-primary" [disabled]="importHasErrors()" (click)="onImportData()">Import</button>
+          <button class="btn btn-primary" [disabled]="importHasErrors() || dataImportResult" (click)="onImportData()">Import</button>
         }
       </div>
     }

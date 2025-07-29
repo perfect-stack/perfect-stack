@@ -14,7 +14,12 @@ import {ValidationService} from "../validation.service";
 import {ValidationResult, ValidationResultMapController} from "../../domain/meta.rule";
 import {MetaEntity} from "../../domain/meta.entity";
 import {MetaEntityService} from "../../meta/meta-entity/meta-entity.service";
+import {DuplicateEventCheck} from "./duplicate-event-check";
 
+
+export interface CheckForDuplicates {
+    checkForDuplicates(entity: Entity): Promise<boolean>;
+}
 
 
 @Injectable()
@@ -23,6 +28,7 @@ export class DataImportService {
 
     constructor(protected readonly queryService: QueryService,
                 protected readonly dataService: DataService,
+                protected readonly duplicateEventCheck: DuplicateEventCheck,
                 protected readonly metaEntityService: MetaEntityService,
                 protected readonly validationService: ValidationService) {
     }
@@ -208,6 +214,17 @@ export class DataImportService {
             }
         }
 
+        // check for duplicates (but only if no errors)
+        if(dataImportErrors.length === 0) {
+            if (await dataImportMapping.duplicateCheck.checkForDuplicates(entity)) {
+                dataImportErrors.push({
+                    row: rowIdx,
+                    col: 0,
+                    message: 'A duplicate entity for this data already exists - unable to import'
+                });
+            }
+        }
+
         return {entity, dataImportErrors};
     }
 
@@ -243,6 +260,7 @@ export class DataImportService {
     async findDataImportMapping(): Promise<DataImportMapping> {
         return {
             metaEntityName: 'Event',
+            duplicateCheck: this.duplicateEventCheck,
             attributeMappings: [
                 {
                     attributeName: 'event_type',

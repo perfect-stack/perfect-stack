@@ -19,10 +19,10 @@ export class DataImportComponent {
 
   uploadPanel = viewChild(UploadPanelComponent);
 
-  data: DataImportModel;
+  data: DataImportModel | null;
   form: FormArray;
 
-  dataImportResult: DataImportResult;
+  dataImportResult: DataImportResult | null;
 
   constructor(
     protected readonly dataImportService: DataImportService,
@@ -30,6 +30,9 @@ export class DataImportComponent {
     effect(() => {
       const  uploadPanel = this.uploadPanel();
       if(uploadPanel) {
+        this.data = null;
+        this.dataImportResult = null;
+
         const  uploadedData = uploadPanel.uploadedData();
         console.log('Data Import - uploadedData: ', uploadedData);
         if(uploadedData) {
@@ -101,7 +104,7 @@ export class DataImportComponent {
   }
 
   onImportData() {
-    if(this.data.errors.length === 0) {
+    if(this.data && this.data.errors.length === 0) {
       this.dataImportService.importData(this.data).subscribe(result => {
         console.log('Got result:', result);
         this.dataImportResult = result;

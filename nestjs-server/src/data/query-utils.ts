@@ -49,13 +49,12 @@ export const convertStringToAttributeType = (
         result = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(result);
         break;
       case AttributeType.DateTime:
-        result = LocalDate.parse(value)
-          .atStartOfDay()
+        result = ZonedDateTime.parse(value).toLocalDateTime()
           .atZone(ZoneId.of('Pacific/Auckland'));
         result = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(result);
         break;
       default:
-        // keep calm and just use value as it is
+        // keep calm and use value as it is
         result = value;
     }
   }
@@ -63,6 +62,10 @@ export const convertStringToAttributeType = (
   return result;
 };
 
+/**
+ * WARNING: this method (intentionally) only does modifications for certain situations. If your query is failing
+ * then it could be you have a new and novel situation not catered for below.
+ */
 export const getCriteriaValue = (criteria: Criteria): any => {
   let value: any = criteria.value;
 
@@ -98,13 +101,15 @@ export const getCriteriaValue = (criteria: Criteria): any => {
     value = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(endOfDay);
   }
 
+  if (criteria.value && criteria.attributeType === AttributeType.DateTime) {
+    const dateTimeValue = ZonedDateTime.parse(criteria.value);
+    value = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(dateTimeValue);
+  }
+
   return value;
 };
 
-export const KnexComparisonOperatorMap = (): Map<
-  ComparisonOperator,
-  string
-> => {
+export const KnexComparisonOperatorMap = (): Map<ComparisonOperator,string> => {
   const map = new Map<ComparisonOperator, string>();
   map.set(ComparisonOperator.Equals, '=');
   map.set(ComparisonOperator.StartsWith, 'like');
