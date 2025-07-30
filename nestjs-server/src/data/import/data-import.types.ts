@@ -17,6 +17,7 @@ export class DataImportMapping {
 export class DataAttributeMapping {
     columnName?: string;
     attributeName?: string;
+    indicatesBlankRow?: boolean;
     converter?: DataImportConverter
     defaultValue?: string | number | [];
 }

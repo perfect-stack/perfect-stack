@@ -9,8 +9,10 @@ export class DataImportError {
 export class DataImportModel {
 
   headers: string[];
+  skipRows: boolean[];
   dataRows: string[][];
 
+  importRowCount: number;
   errors: DataImportError[];
 }
 

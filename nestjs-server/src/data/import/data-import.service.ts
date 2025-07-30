@@ -35,46 +35,67 @@ export class DataImportService {
 
     async parseFile(filePath: string): Promise<DataImportModel> {
 
-        // Use fast-csv and parse the file into a 2d array of raw values
-        // The 'async' keyword means this function will always return a Promise.
-        // We wrap the stream-based parser in a new Promise so we can 'await' its completion.
-        const data: string[][] = await new Promise((resolve, reject) => {
-            const data: string[][] = [];
+        try {
+            // Use fast-csv and parse the file into a 2d array of raw values
+            // The 'async' keyword means this function will always return a Promise.
+            // We wrap the stream-based parser in a new Promise so we can 'await' its completion.
+            const data: string[][] = await new Promise((resolve, reject) => {
+                const data: string[][] = [];
 
-            // read the file from the filePath and create a stream for it
-            const stream = fs.createReadStream(filePath);
+                // read the file from the filePath and create a stream for it
+                const stream = fs.createReadStream(filePath);
 
-            stream
-                .pipe(csv.parse({headers: false})) // 'headers: false' ensures the header row is treated like any other data row.
-                .on('error', (error) => reject(error))
-                .on('data', (row: string[]) => data.push(row))
-                .on('end', (rowCount: number) => {
-                    console.log(`Successfully parsed ${rowCount} rows.`);
-                    resolve(data);
-                });
-        });
+                stream
+                    .pipe(csv.parse({headers: false})) // 'headers: false' ensures the header row is treated like any other data row.
+                    .on('error', (error) => reject(error))
+                    .on('data', (row: string[]) => data.push(row))
+                    .on('end', (rowCount: number) => {
+                        console.log(`Successfully parsed ${rowCount} rows.`);
+                        resolve(data);
+                    });
+            });
 
-        const dataImportModel = new DataImportModel();
-        if(data && data.length > 0) {
-            dataImportModel.headers = data[0];
-            dataImportModel.dataRows = data.slice(1);
+            const dataImportModel = new DataImportModel();
+            if (data && data.length > 0) {
+                dataImportModel.headers = data[0];
+                dataImportModel.dataRows = data.slice(1);
+            }
+
+            return await this.processAndValidate(dataImportModel, null);
         }
-
-        // TODO: convert the data into the DataImportModel and validate it for errors
-        const validatedDataImportModel = await this.processAndValidate(dataImportModel, null);
-        return validatedDataImportModel;
+        catch (error) {
+            return {
+                headers: ["Error parsing file"],
+                skipRows: [],
+                dataRows: [[error.message]],
+                importRowCount: 0,
+                errors: [{
+                    col: 0,
+                    row: 0,
+                    message: error.message
+                }]
+            }
+        }
     }
 
     async processAndValidate(dataImportModel: DataImportModel, dataImportResult: DataImportResult): Promise<DataImportModel> {
 
         // find the data mapping for this file (may only be one)
         const dataImportMapping = await this.findDataImportMapping();
+        dataImportModel.skipRows = [];
 
         // for each data row
+        let importRowCount = 0;
         for(let rowIdx = 0; rowIdx < dataImportModel.dataRows.length; rowIdx++) {
             const nextRow = dataImportModel.dataRows[rowIdx];
 
-            if (!this.isBlankRow(nextRow)) {
+            if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
+                dataImportModel.skipRows.push(true);
+            }
+            else {
+                importRowCount = importRowCount + 1;
+                dataImportModel.skipRows.push(false);
+
                 // create entity
                 const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, rowIdx);
                 dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
@@ -120,6 +141,7 @@ export class DataImportService {
             }
         }
 
+        dataImportModel.importRowCount = importRowCount;
         return dataImportModel;
     }
 
@@ -174,9 +196,23 @@ export class DataImportService {
         return await this.validationService.validate(metaEntityMap, metaEntity, entity);
     }
 
-    isBlankRow(dataRow: string[]) {
-        // return true if all fields in the dataRow are null, empty, or undefined
-        return dataRow.every(field => field === null || field === '' || typeof field === 'undefined');
+    isBlankRow(headers: string[], dataRow: string[], dataImportMapping: DataImportMapping) {
+        // return true if the "Imported" fields in the dataRow are null, empty, or undefined
+        // - we don't care about the fields that we are not importing
+        for(const nextAttributeMapping of dataImportMapping.attributeMappings) {
+            if(nextAttributeMapping.columnName && nextAttributeMapping.indicatesBlankRow) {
+                const colIdx = headers.indexOf(nextAttributeMapping.columnName);
+                if(colIdx >= 0) {
+                    const colValue = dataRow[colIdx];
+                    if(colValue !== null && colValue !== '' && typeof colValue !== 'undefined') {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        //return dataRow.every(field => field === null || field === '' || typeof field === 'undefined');
+        return true;
     }
 
     async createEntity(dataImportMapping: DataImportMapping, headers: string[], dataRow: string[], rowIdx: number): Promise<CreateEntityResponse> {
@@ -283,22 +319,26 @@ export class DataImportService {
                     defaultValue: []
                 },
                 {
-                    columnName: 'Event Date',
+                    columnName: 'Date',
                     attributeName: 'date_time',
+                    indicatesBlankRow: true,
                     converter: new DateConverter()
                 },
                 {
                     columnName: 'Easting NZTM',
                     attributeName: 'easting',
+                    indicatesBlankRow: true,
                     converter: new IntegerConverter()
                 },
                 {
                     columnName: 'Northing NZTM',
                     attributeName: 'northing',
+                    indicatesBlankRow: true,
                     converter: new IntegerConverter()
                 },
                 {
                     columnName: 'V band',
+                    indicatesBlankRow: false,
                     converter: new BandNumberLookupConverter(this.queryService),
                 },
             ]

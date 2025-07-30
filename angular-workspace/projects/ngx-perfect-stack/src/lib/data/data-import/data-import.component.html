@@ -17,6 +17,7 @@
           <p class="text-danger">Please correct the errors below and upload again.</p>
         } @else {
           <p class="text-success">Import data appears to be good.</p>
+          <p class="text-success">{{data.importRowCount}} rows detected for import.</p>
           <p>Click import to start adding these rows to the database.</p>
           <button class="btn btn-primary" [disabled]="importHasErrors() || dataImportResult" (click)="onImportData()">Import</button>
         }
@@ -27,7 +28,7 @@
     <div class="col-3">
       <h3>Result</h3>
         <!--<p class="text-danger">Import data has errors. Please correct the errors below and upload again.</p>-->
-      <p class="text-success">Added <b>{{dataImportResult.rowSuccessCount}}</b> events successfully.</p>
+      <p class="text-success">Added <b>{{dataImportResult.rowSuccessCount}} / {{data?.importRowCount}}</b> events successfully.</p>
       <p class="text-success">With <b>{{dataImportResult.errors.length}}</b> errors.</p>
     </div>
     }
@@ -43,6 +44,9 @@
       <thead>
       <tr>
         @if(headers) {
+          <!-- Row number heading (see below) -->
+          <th>Row</th>
+
           @for (nextHeader of headers; track nextHeader) {
             <th class="px-2">
               {{nextHeader}}
@@ -53,7 +57,11 @@
       </thead>
       <tbody>
         @for (group of formRows; track group; let rowIdx = $index) {
-          <tr [formGroup]="group">
+          <tr [class.skipped-row]="data?.skipRows?.[rowIdx]" [formGroup]="group">
+
+            <!-- Print the row number to make error correction in original spreadsheet easier -->
+            <td>{{rowIdx + 2}}</td> <!-- Excel starts on row 1, and we also removed that because of how we modelled headers, so need to add +2 -->
+
             @for(control of formControls(group); track control; let colIdx = $index) {
               @if(findErrors(rowIdx, colIdx)) {
                 <td class="bg-danger text-white">
