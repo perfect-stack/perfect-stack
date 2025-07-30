@@ -55,7 +55,7 @@ export class DataImportController {
     }
 
     @ActionPermit(ActionType.Edit)
-    @SubjectName('Media')
+    @SubjectName('Import')
     @Post('/upload')
     @UseInterceptors(FileInterceptor('file', {storage: storageOptions}))
     @ApiConsumes('multipart/form-data') // Document that this endpoint consumes multipart/form-data
@@ -92,7 +92,7 @@ export class DataImportController {
     }
 
     @ActionPermit(ActionType.Edit)
-    @SubjectName('Media')
+    @SubjectName('Import')
     @Post('/data')
     async importData(@Body() dataImportModel: DataImportModel): Promise<DataImportResult> {
         if(dataImportModel.errors.length === 0) {

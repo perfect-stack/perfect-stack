@@ -179,4 +179,9 @@ export class AuthorizationService {
   private mergePermissions(existingGroupPermissions: string[], rolePermissions: string[]): string[] {
     return [...new Set([...existingGroupPermissions, ...rolePermissions])];
   }
+
+  userInRole(role: string): boolean {
+    const user = this.authenticationService.user$.getValue();
+    return user && user.getGroups() ? user.getGroups().includes(role) : false;
+  }
 }

@@ -33,6 +33,7 @@ export class MenuBarComponent implements OnInit {
 
 
   menuEnabled: any = {};
+  menuOptionEnabled: any = {};
 
   constructor(@Inject(STACK_CONFIG)
               public readonly stackConfig: NgxPerfectStackConfig,
@@ -55,7 +56,28 @@ export class MenuBarComponent implements OnInit {
     const nextMenuEnabled: any = {};
     for(const nextMenu of this.metaMenuService.menu.menuList) {
       nextMenuEnabled[nextMenu.label] = this.authorizationService.checkPermission(ActionType.Menu, nextMenu.label);
+
+      if(nextMenu.items && nextMenu.items.length > 0) {
+
+        for(const nextMenuItem of nextMenu.items) {
+          if(nextMenuItem.roles && nextMenuItem.roles.length > 0) {
+            let inRole = false;
+            for (const nextRole of nextMenuItem.roles) {
+              inRole = this.authorizationService.userInRole(nextRole);
+              if (inRole) {
+                break;
+              }
+            }
+
+            if(inRole) {
+              this.menuOptionEnabled[nextMenuItem.label] = inRole;
+              break;
+            }
+          }
+        }
+      }
     }
+
     this.menuEnabled = nextMenuEnabled;
   }
 

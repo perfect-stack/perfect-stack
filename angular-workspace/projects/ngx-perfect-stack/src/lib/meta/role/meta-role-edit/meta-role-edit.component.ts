@@ -100,6 +100,10 @@ export class MetaRoleEditComponent implements OnInit {
       {
         type: SubjectType.Special,
         name: "Migrate"
+      },
+      {
+        type: SubjectType.Special,
+        name: "Import"
       }
     ])
   }
