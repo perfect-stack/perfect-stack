@@ -20,11 +20,10 @@ import { EventModule } from './event/event.module';
 import { AppEventModule } from './app-event/app-event.module';
 import { SettingsModule } from './settings/settings.module';
 import { MetaRoleModule } from './meta/meta-role/meta-role.module';
-import { JwtStrategy } from './authentication/jwt.strategy';
-import { JwtModule } from '@nestjs/jwt';
 import { MapModule } from './map/map.module';
 import {MediaRepositoryModule} from "./media/media-repository.module";
 import {MigrateModule} from "./migrate/mirgrate.module";
+import {DataImportModule} from "./data/import/data-import.module";
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -60,6 +59,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     MetaRoleModule,
     MigrateModule,
     DataModule,
+    DataImportModule,
     RuleModule,
     SettingsModule,
   ],

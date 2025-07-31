@@ -24,9 +24,11 @@
             {{nextMenu.label}}
           </a>
           <div class="dropdown-menu" ngbDropdownMenu>
-            <a ngbDropdownItem [routerLink]="menuItem.route" *ngFor="let menuItem of nextMenu.items" id="{{menuItem.label}}MenuItem">
-              {{menuItem.label}}
-            </a>
+            @for(menuItem of nextMenu.items; track menuItem.label) {
+              <a ngbDropdownItem [routerLink]="menuItem.route" id="{{menuItem.label}}MenuItem">
+                {{menuItem.label}}
+              </a>
+            }
           </div>
         </ng-container>
 

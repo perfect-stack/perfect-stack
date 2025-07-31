@@ -19,6 +19,14 @@
     {
       "action": "Edit",
       "subject": "Media"
+    },
+    {
+      "action": "Edit",
+      "subject": "Import"
+    },
+    {
+      "action": "Menu",
+      "subject": "Admin"
     }
   ]
 }

@@ -1,0 +1,20 @@
+
+th {
+  font-size: small;
+}
+
+td {
+  font-size: small;
+  white-space: nowrap;
+}
+
+td .material-symbols-outlined {
+  font-size: small;
+  font-weight: bold;
+}
+
+.skipped-row td {
+  background: #dddddd;
+  color: #444444;
+  font-style: italic;
+}

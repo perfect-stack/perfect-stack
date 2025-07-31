@@ -60,79 +60,85 @@
       "items": [
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Editor", "Administrator"],
+          "label": "Data Import",
+          "route": "/data/import"
+        },
+        {
+          "editable": true,
+          "roles": ["Administrator"],
           "label": "Activity Type",
           "route": "/data/ActivityType/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Capture Method Type",
           "route": "/data/CaptureMethodType/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Count Type",
           "route": "/data/CountType/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Habitat Type",
           "route": "/data/HabitatType/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Instrument",
           "route": "/data/Instrument/search"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Location Type",
           "route": "/data/LocationType/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Nest Status Type",
           "route": "/data/NestStatusType/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Observer Role",
           "route": "/data/ObserverRole/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Organisation",
           "route": "/data/Organisation/search"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Project Status",
           "route": "/data/ProjectStatus/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Project Role",
           "route": "/data/ProjectRole/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Project Team Status",
           "route": "/data/ProjectTeamStatus/search_edit"
         },
         {
           "editable": true,
-          "roles": [],
+          "roles": ["Administrator"],
           "label": "Species",
           "route": "/data/Species/search"
         }

@@ -1,0 +1,96 @@
+<div class="container-fluid container-page">
+  <h2>Data Import</h2>
+
+  <br>
+
+  <div class="row">
+    <div class="col-3">
+      <h3>File</h3>
+      <lib-upload-panel></lib-upload-panel>
+    </div>
+
+    @if (data) {
+      <div class="col-3">
+        <h3>Status</h3>
+        @if (importHasErrors()) {
+          <p class="text-danger">Import data has errors.</p>
+          <p class="text-danger">Please correct the errors below and upload again.</p>
+        } @else {
+          <p class="text-success">Import data appears to be good.</p>
+          <p class="text-success">{{data.importedRowCount}} rows detected for import.</p>
+          <p>Click import to start adding these rows to the database.</p>
+          <button class="btn btn-primary" [disabled]="importHasErrors() || dataImportResult" (click)="onImportData()">Import</button>
+        }
+      </div>
+    }
+
+    @if (dataImportResult) {
+    <div class="col-3">
+      <h3>Result</h3>
+        <!--<p class="text-danger">Import data has errors. Please correct the errors below and upload again.</p>-->
+      <p class="text-success">Added <b>{{dataImportResult.rowSuccessCount}} / {{data?.importedRowCount}}</b> events successfully.</p>
+      <p class="text-success">With <b>{{dataImportResult.errors.length}}</b> errors.</p>
+    </div>
+    }
+
+  </div>
+
+  <br>
+
+  @if (data) {
+  <div class="row">
+    <h3>Imported Data</h3>
+    <table class="table">
+      <thead>
+      <tr>
+        @if(headers) {
+          <!-- Row number heading (see below) -->
+          <th>Row</th>
+
+          @for (nextHeader of headers; track nextHeader) {
+            <th class="px-2">
+              {{nextHeader}}
+            </th>
+          }
+        }
+      </tr>
+      </thead>
+      <tbody>
+        @for (group of formRows; track group; let rowIdx = $index) {
+          <tr [class.skipped-row]="data?.skipRows?.[rowIdx]" [formGroup]="group">
+
+            <!-- Print the row number to make error correction in original spreadsheet easier -->
+            <td>
+              <!-- Excel starts on row 1, and we also removed that because of how we modelled headers, so need to add +2 -->
+              @if (dataImportResult && dataImportResult.importedEntityList[rowIdx]) {
+                <a [routerLink]="['/data/Event/view', dataImportResult.importedEntityList[rowIdx] ]">{{rowIdx + 2}}</a>
+              } @else {
+                {{rowIdx + 2}}
+              }
+            </td>
+
+            @for(control of formControls(group); track control; let colIdx = $index) {
+              @if(findErrors(rowIdx, colIdx)) {
+                <td class="bg-danger text-white">
+                  <!-- min-height so that tooltip appears for null values, other solutions like moving tooltip to <td> had a layout shift issue-->
+                  <span class="d-block px-2"
+                        style="min-height: 1.2em;"
+                        [ngbTooltip]="findErrorMessagesAsTooltip(rowIdx, colIdx)">
+                    {{control.value}}
+                  </span>
+                </td>
+              } @else {
+                <td class="px-2">
+                  <!--<input type="text" [formControl]="control" class="form-control">-->
+                  {{control.value}}
+                </td>
+              }
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+
+</div>
