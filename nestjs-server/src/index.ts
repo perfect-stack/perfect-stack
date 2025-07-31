@@ -5,6 +5,7 @@ import { JwtAuthGuard } from './authentication/jwt-auth.guard';
 import { ClientConfigModule } from './client/config/client-config.module';
 import { ClientConfigService } from './client/config/client-config.service';
 import { DataModule } from './data/data.module';
+import { DataImportModule } from "./data/import/data-import.module";
 import { DataService } from './data/data.service';
 import { DiscriminatorService } from './data/discriminator.service';
 import { FileRepositoryModule } from './file/file-repository.module';
@@ -22,7 +23,7 @@ import { MediaRepositoryService } from './media/media-repository.service';
 
 export { AuthenticationModule, AuthenticationService, PublicApi, JwtAuthGuard };
 export { ClientConfigModule, ClientConfigService };
-export { DataModule, DataService, DiscriminatorService };
+export { DataModule, DataImportModule, DataService, DiscriminatorService };
 export { FileRepositoryModule, FileRepositoryService };
 export { OrmModule, OrmService };
 export { TypeaheadModule, TypeaheadService };
