@@ -17,6 +17,7 @@ import {MetaEntityService} from "../../meta/meta-entity/meta-entity.service";
 import {DuplicateEventCheck} from "./duplicate-event-check";
 import {PostImportEventActions} from "./post-import-event-actions";
 import {TextConverter} from "./converter/text.converter";
+import {TrackingFlightStatusConverter} from "./converter/tracking-flight-status.converter";
 
 
 export interface CheckForDuplicates {
@@ -338,6 +339,13 @@ export class DataImportService {
                     columnName: 'V band',
                     indicatesBlankRow: false,
                     converter: new BandNumberLookupConverter(this.queryService),
+                },
+                {
+                    // Important: this converter must be processed after the BandNumberLookupConverter
+                    columnName: 'Status',
+                    attributeName: 'status',
+                    indicatesBlankRow: true,
+                    converter: new TrackingFlightStatusConverter(),
                 },
                 {
                     columnName: 'Date',
