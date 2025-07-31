@@ -18,18 +18,16 @@ import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import {DataImportService} from "./data-import.service";
 import {DataImportModel, DataImportResult} from "./data-import.model";
+import * as os from "node:os";
 
 
-// Define the upload destination as a constant for clarity and reuse.
-const UPLOAD_DESTINATION = './data-import/upload';
 
-// --- Corrected and Improved Storage Options ---
 const storageOptions = diskStorage({
     // Use a function for destination to ensure the directory exists.
     destination: (req, file, callback) => {
-        // This will create the directory if it doesn't exist.
-        fs.mkdirSync(UPLOAD_DESTINATION, { recursive: true });
-        callback(null, UPLOAD_DESTINATION);
+        const uploadPath = path.join(os.tmpdir(), 'data-import', 'upload');
+        fs.mkdirSync(uploadPath, { recursive: true });
+        callback(null, uploadPath);
     },
 
     filename: (req, file, callback) => {
