@@ -28,7 +28,6 @@ export class IntegerConverter extends DataImportConverter {
         }
 
         return {
-            col: 0,
             attributeValues: [{
                 name: attributeName,
                 value: parsedValue,

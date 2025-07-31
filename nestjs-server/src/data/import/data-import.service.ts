@@ -16,6 +16,7 @@ import {MetaEntity} from "../../domain/meta.entity";
 import {MetaEntityService} from "../../meta/meta-entity/meta-entity.service";
 import {DuplicateEventCheck} from "./duplicate-event-check";
 import {PostImportEventActions} from "./post-import-event-actions";
+import {TextConverter} from "./converter/text.converter";
 
 
 export interface CheckForDuplicates {
@@ -334,6 +335,11 @@ export class DataImportService {
                     defaultValue: []
                 },
                 {
+                    columnName: 'V band',
+                    indicatesBlankRow: false,
+                    converter: new BandNumberLookupConverter(this.queryService),
+                },
+                {
                     columnName: 'Date',
                     attributeName: 'date_time',
                     indicatesBlankRow: true,
@@ -358,9 +364,10 @@ export class DataImportService {
                     converter: new IntegerConverter()
                 },
                 {
-                    columnName: 'V band',
-                    indicatesBlankRow: false,
-                    converter: new BandNumberLookupConverter(this.queryService),
+                    columnName: 'Comments',
+                    attributeName: 'comments',
+                    indicatesBlankRow: true,
+                    converter: new TextConverter()
                 },
             ]
         }
