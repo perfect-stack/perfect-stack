@@ -15,10 +15,15 @@ import {ValidationResult, ValidationResultMapController} from "../../domain/meta
 import {MetaEntity} from "../../domain/meta.entity";
 import {MetaEntityService} from "../../meta/meta-entity/meta-entity.service";
 import {DuplicateEventCheck} from "./duplicate-event-check";
+import {PostImportEventActions} from "./post-import-event-actions";
 
 
 export interface CheckForDuplicates {
     checkForDuplicates(entity: Entity): Promise<boolean>;
+}
+
+export interface PostImportActions {
+    postImport(entity: Entity): Promise<void>;
 }
 
 
@@ -29,6 +34,7 @@ export class DataImportService {
     constructor(protected readonly queryService: QueryService,
                 protected readonly dataService: DataService,
                 protected readonly duplicateEventCheck: DuplicateEventCheck,
+                protected readonly postImportEventActions: PostImportEventActions,
                 protected readonly metaEntityService: MetaEntityService,
                 protected readonly validationService: ValidationService) {
     }
@@ -68,7 +74,7 @@ export class DataImportService {
                 headers: ["Error parsing file"],
                 skipRows: [],
                 dataRows: [[error.message]],
-                importRowCount: 0,
+                importedRowCount: 0,
                 errors: [{
                     col: 0,
                     row: 0,
@@ -83,6 +89,9 @@ export class DataImportService {
         // find the data mapping for this file (may only be one)
         const dataImportMapping = await this.findDataImportMapping();
         dataImportModel.skipRows = [];
+        if(dataImportResult) {
+            dataImportResult.importedEntityList = [];
+        }
 
         // for each data row
         let importRowCount = 0;
@@ -91,6 +100,9 @@ export class DataImportService {
 
             if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
                 dataImportModel.skipRows.push(true);
+                if(dataImportResult) {
+                    dataImportResult.importedEntityList.push(null);
+                }
             }
             else {
                 importRowCount = importRowCount + 1;
@@ -129,11 +141,13 @@ export class DataImportService {
                         const entityResponse = await this.dataService.save(dataImportMapping.metaEntityName, createEntityResponse.entity);
                         if(entityResponse) {
                             const entityResultMapController = new ValidationResultMapController(entityResponse.validationResults);
-                            if(entityResultMapController.hasErrors()) {
-                                throw new Error('Attempted save, but it failed');
+                            if(!entityResultMapController.hasErrors()) {
+                                dataImportResult.importedEntityList.push(entityResponse.entity.id);
+                                dataImportResult.rowSuccessCount = dataImportResult.rowSuccessCount + 1;
+                                await dataImportMapping.postImportActions.postImport(entityResponse.entity);
                             }
                             else {
-                                dataImportResult.rowSuccessCount = dataImportResult.rowSuccessCount + 1;
+                                throw new Error('Attempted save, but it failed');
                             }
                         }
                     }
@@ -141,7 +155,7 @@ export class DataImportService {
             }
         }
 
-        dataImportModel.importRowCount = importRowCount;
+        dataImportModel.importedRowCount = importRowCount;
         return dataImportModel;
     }
 
@@ -297,6 +311,7 @@ export class DataImportService {
         return {
             metaEntityName: 'Event',
             duplicateCheck: this.duplicateEventCheck,
+            postImportActions: this.postImportEventActions,
             attributeMappings: [
                 {
                     attributeName: 'event_type',
@@ -321,6 +336,12 @@ export class DataImportService {
                 {
                     columnName: 'Date',
                     attributeName: 'date_time',
+                    indicatesBlankRow: true,
+                    converter: new DateConverter()
+                },
+                {
+                    columnName: 'Date',
+                    attributeName: 'end_date_time',
                     indicatesBlankRow: true,
                     converter: new DateConverter()
                 },

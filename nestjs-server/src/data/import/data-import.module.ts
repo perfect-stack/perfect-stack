@@ -4,12 +4,13 @@ import {DataImportService} from "./data-import.service";
 import {DataModule} from "../data.module";
 import {MetaEntityModule} from "../../meta/meta-entity/meta-entity.module";
 import {DuplicateEventCheck} from "./duplicate-event-check";
+import {PostImportEventActions} from "./post-import-event-actions";
 
 
 @Module({
     controllers: [DataImportController],
     imports: [DataModule, MetaEntityModule],
-    providers: [DataImportService, DuplicateEventCheck],
+    providers: [DataImportService, DuplicateEventCheck, PostImportEventActions],
     exports: [DataImportService],
 })
 export class DataImportModule {}

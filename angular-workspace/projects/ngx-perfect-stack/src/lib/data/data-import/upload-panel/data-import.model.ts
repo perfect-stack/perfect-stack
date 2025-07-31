@@ -12,11 +12,12 @@ export class DataImportModel {
   skipRows: boolean[];
   dataRows: string[][];
 
-  importRowCount: number;
+  importedRowCount: number;
   errors: DataImportError[];
 }
 
 export class DataImportResult {
   rowSuccessCount: number = 0;
+  importedEntityList: string[];
   errors: DataImportError[] = [];
 }

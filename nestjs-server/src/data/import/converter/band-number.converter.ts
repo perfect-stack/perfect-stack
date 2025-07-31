@@ -28,23 +28,45 @@ export class BandNumberLookupConverter implements DataImportConverter {
 
     private extractAttributeValuesFromBird(birdSearchResult: any): AttributeValue[] {
 
-        // // Needs to find: bird_id, sex, species_id, form, age_class, status
-        // const birdAttributes = ['bird_id', 'sex', 'species_id', 'form', 'age_class', 'status'];
-        //
-        // const attributeValues: AttributeValue[] = [];
-        // for(const nextAttribute of birdAttributes) {
-        //     attributeValues.push({
-        //         name: nextAttribute,
-        //         value: birdSearchResult[nextAttribute]
-        //     })
-        // }
-        //
-        // return attributeValues;
+        // Needs to find: bird_id, sex, species_id, form, age_class, status
+        const bird_id = birdSearchResult['id'];   // It's called bird_id in the Event and 'id' in the Bird
+        const sex = birdSearchResult['sex'];
+        const age_class = birdSearchResult['age_class'];
+        const status = birdSearchResult['status'];
 
-        return [{
-            name: 'bird_id',
-            value: birdSearchResult['id']  // It's called bird_id in the Event and 'id' in the Bird
-        }]
+        // form for an individual Bird comes from the Bird and not the Species
+        const form = birdSearchResult['form'];
+
+        // The findByCriteria query we are using above does not load the associations, so the Bird search result
+        // will only contain the species_id, which is fine for importing an Event
+        const species_id = birdSearchResult['species_id'];
+
+        return [
+            {
+                name: 'bird_id',
+                value: bird_id
+            },
+            {
+                name: 'sex',
+                value: sex
+            },
+            {
+                name: 'age_class',
+                value: age_class
+            },
+            {
+                name: 'status',
+                value: status
+            },
+            {
+                name: 'species_id',
+                value: species_id
+            },
+            {
+                name: 'form',
+                value: form
+            },
+        ];
     }
 
     async toAttributeValue(attributeName: string, externalValue: string): Promise<ConverterResult> {

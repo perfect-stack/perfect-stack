@@ -4,13 +4,15 @@ import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/f
 import {DataImportModel, DataImportResult} from "./upload-panel/data-import.model";
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'lib-data-import',
   imports: [
     UploadPanelComponent,
     ReactiveFormsModule,
-    NgbTooltip
+    NgbTooltip,
+    RouterLink
   ],
   templateUrl: './data-import.component.html',
   styleUrl: './data-import.component.css'
