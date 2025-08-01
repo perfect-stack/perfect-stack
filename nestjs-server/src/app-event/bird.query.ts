@@ -58,12 +58,21 @@ export class BirdQuery implements CustomQuery {
         .leftOuterJoin('Species', 'Species.id', 'Bird.species_id');
 
       for (const criteria of queryRequest.criteria) {
-        let name = criteria.name === 'name' ? 'Bird.name' : criteria.name;
-        name = criteria.name === 'form' ? 'Bird.form' : criteria.name;
+        let sqlName: string;
+        if(criteria.name === 'name') {
+            sqlName = 'Bird.name';
+        }
+        else if(criteria.name === 'form') {
+            sqlName = 'Bird.form';
+        }
+        else {
+            sqlName = criteria.name;
+        }
+
         const operator = comparisonOperatorMap.get(criteria.operator);
         const value: any = getCriteriaValue(criteria);
 
-        select = select.where(name, operator, value);
+        select = select.where(sqlName, operator, value);
       }
 
       return select;
