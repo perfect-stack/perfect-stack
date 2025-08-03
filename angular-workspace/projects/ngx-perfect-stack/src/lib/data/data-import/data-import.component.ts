@@ -36,7 +36,7 @@ export class DataImportComponent {
         this.dataImportResult = null;
 
         const  uploadedData = uploadPanel.uploadedData();
-        console.log('Data Import - uploadedData: ', uploadedData);
+        console.log('Data Import - uploadedData:', uploadedData);
         if(uploadedData) {
           this.data = uploadedData;
           this.createForm(this.data);
