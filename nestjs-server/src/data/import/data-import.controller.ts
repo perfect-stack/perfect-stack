@@ -56,12 +56,12 @@ export class DataImportController {
     @SubjectName('Import')
     @Post('/upload')
     @UseInterceptors(FileInterceptor('file', {storage: storageOptions}))
-    @ApiConsumes('multipart/form-data') // Document that this endpoint consumes multipart/form-data
-    @ApiBody({ // Document the expected body structure
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
         schema: {
             type: 'object',
             properties: {
-                file: { // Matches the field name in FileInterceptor
+                file: {
                     type: 'string',
                     format: 'binary',
                 },
