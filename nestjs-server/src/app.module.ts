@@ -24,6 +24,7 @@ import { MapModule } from './map/map.module';
 import {MediaRepositoryModule} from "./media/media-repository.module";
 import {MigrateModule} from "./migrate/mirgrate.module";
 import {DataImportModule} from "./data/import/data-import.module";
+import {JobModule} from "./job/job.module";
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -43,12 +44,14 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     AppEventModule,
     AuditModule,
     AuthenticationModule,
-    TypeaheadModule,
     AdminModule,
     AuthenticationModule,
     ClientConfigModule,
+    DataModule,
+    DataImportModule,
     CONFIG_MODULE,
     EventModule,
+    JobModule,
     KnexModule,
     OrmModule,
     MapModule,
@@ -58,10 +61,9 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     MetaPageModule,
     MetaRoleModule,
     MigrateModule,
-    DataModule,
-    DataImportModule,
     RuleModule,
     SettingsModule,
+    TypeaheadModule,
   ],
   controllers: [AppController],
   providers: [

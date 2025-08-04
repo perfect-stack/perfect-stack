@@ -73,6 +73,7 @@ export class DataImportService {
         }
         catch (error) {
             return {
+                action: undefined,
                 headers: ["Error parsing file"],
                 skipRows: [],
                 dataRows: [[error.message]],

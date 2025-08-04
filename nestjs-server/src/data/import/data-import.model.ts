@@ -11,6 +11,8 @@ export class DataImportError {
  */
 export class DataImportModel {
 
+  action: "Validate" | "Import";
+
   headers: string[];
   skipRows: boolean[];
   dataRows: string[][];
