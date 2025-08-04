@@ -89,9 +89,10 @@ export class DataImportJobController {
             console.log('Size:', file.size);
 
             const dataImportModel = await this.parseFile(file.path);
-            dataImportModel.action = "Validate";
 
-            return await this.jobService.submitJob(dataImportModel);
+            const job = await this.jobService.submitJob('Data Import - Validate', dataImportModel.dataRows.length, dataImportModel);
+            // TODO: temp while developing this - call inline
+            return await this.jobService.invokeJob(job.id);
         }
         else {
             throw new Error("Unable to upload file")
@@ -131,7 +132,6 @@ export class DataImportJobController {
         }
         catch (error) {
             return {
-                action: undefined,
                 headers: ["Error parsing file"],
                 skipRows: [],
                 dataRows: [[error.message]],
@@ -151,8 +151,7 @@ export class DataImportJobController {
     @Post('/data')
     async importData(@Body() dataImportModel: DataImportModel): Promise<Job> {
         if(dataImportModel.errors.length === 0) {
-            dataImportModel.action = "Import";
-            return await this.jobService.submitJob(dataImportModel);
+            return await this.jobService.submitJob('Data Import - Import', dataImportModel.dataRows.length, dataImportModel);
         }
         else {
             throw new Error('Data Import must not have any errors');

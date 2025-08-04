@@ -148,7 +148,7 @@ export class UploadPanelComponent {
           const apiResponse = event.body;
           console.log('Data Import - upload response: ', apiResponse);
 
-          if(apiResponse && apiResponse.request) {
+          if(apiResponse && apiResponse.data) {
             this.uploadedData.set(apiResponse);
           }
         }

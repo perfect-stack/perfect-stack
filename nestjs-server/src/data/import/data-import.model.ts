@@ -10,9 +10,6 @@ export class DataImportError {
  * about what they have and what they see. The errors will come through from the converted data model.
  */
 export class DataImportModel {
-
-  action: "Validate" | "Import";
-
   headers: string[];
   skipRows: boolean[];
   dataRows: string[][];

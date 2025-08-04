@@ -23,6 +23,34 @@
       "rules": []
     },
     {
+      "name": "name",
+      "label": "Name",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "data",
+      "label": "Data",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Html",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
       "name": "status",
       "label": "Status",
       "description": "",
@@ -42,8 +70,8 @@
       ]
     },
     {
-      "name": "duration",
-      "label": "Duration",
+      "name": "step_index",
+      "label": "Step index",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
@@ -56,12 +84,12 @@
       "rules": []
     },
     {
-      "name": "request",
-      "label": "Request",
+      "name": "step_count",
+      "label": "Step count",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Html",
+      "type": "Integer",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
@@ -70,26 +98,12 @@
       "rules": []
     },
     {
-      "name": "response",
-      "label": "Response",
+      "name": "duration",
+      "label": "Duration",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Html",
-      "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
-      "name": "progress",
-      "label": "Progress",
-      "description": "",
-      "unitOfMeasure": "",
-      "scale": "",
-      "type": "Double",
+      "type": "Integer",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",

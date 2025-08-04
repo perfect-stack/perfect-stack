@@ -44,7 +44,7 @@ export class DataImportComponent {
         if(uploadedData) {
           const job = uploadedData;
           this.jobId = job.id;
-          this.data = JSON.parse(job.request) as DataImportModel;
+          this.data = JSON.parse(job.data) as DataImportModel;
           this.createForm(this.data);
         }
       }
