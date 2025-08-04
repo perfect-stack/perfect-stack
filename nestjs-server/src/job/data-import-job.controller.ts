@@ -7,21 +7,22 @@ import {
     UploadedFile,
     UseInterceptors
 } from "@nestjs/common";
-import {JobController} from "./job.controller";
 import {diskStorage} from "multer";
-import path from "path";
-import os from "node:os";
-import fs from "fs";
-import {v4 as uuidv4} from "uuid";
 import {ActionPermit} from "../authentication/action-permit";
 import {ActionType} from "../domain/meta.role";
 import {SubjectName} from "../authentication/subject";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {ApiBody, ApiConsumes, ApiTags} from "@nestjs/swagger";
 import {DataImportModel, DataImportResult} from "../data/import/data-import.model";
-import * as csv from "fast-csv";
-import {JobModel} from "./job.model";
+import {Job} from "./job.model";
 import {JobService} from "./job.service";
+
+import * as csv from "fast-csv";
+import * as path from 'path';
+import * as fs from 'fs';
+import * as os from "node:os";
+import {v4 as uuidv4} from "uuid";
+
 
 const storageOptions = diskStorage({
     // Use a function for destination to ensure the directory exists.
@@ -76,7 +77,7 @@ export class DataImportJobController {
     async uploadFile(@UploadedFile( new ParseFilePipe({validators: [
             new MaxFileSizeValidator({maxSize: 10 * 1024 * 1024})
         ], fileIsRequired: true
-    })) file: Express.Multer.File): Promise<JobModel> {
+    })) file: Express.Multer.File): Promise<Job> {
 
         // The interceptor takes care of creating the file on the server and then just gives us
         // the "File" handle to that file.
@@ -148,7 +149,7 @@ export class DataImportJobController {
     @ActionPermit(ActionType.Edit)
     @SubjectName('Import')
     @Post('/data')
-    async importData(@Body() dataImportModel: DataImportModel): Promise<JobModel> {
+    async importData(@Body() dataImportModel: DataImportModel): Promise<Job> {
         if(dataImportModel.errors.length === 0) {
             dataImportModel.action = "Import";
             return await this.jobService.submitJob(dataImportModel);

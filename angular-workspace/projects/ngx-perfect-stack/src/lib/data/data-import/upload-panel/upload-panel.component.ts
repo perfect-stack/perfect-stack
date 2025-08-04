@@ -5,6 +5,7 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../ngx-perfect-stack-co
 import {HttpClient, HttpEventType, HttpHeaders} from "@angular/common/http";
 import {finalize, Subject, Subscription} from "rxjs";
 import {DataImportModel} from "./data-import.model";
+import {Job} from "../../../job/job.model";
 
 export class FileItem {
   file: File;
@@ -34,7 +35,7 @@ export class UploadPanelComponent {
   fileItems: FileItem[] = [];
   isDraggingOver = false;
 
-  uploadedData = signal<null | DataImportModel>(null);
+  uploadedData = signal<null | Job>(null);
 
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
@@ -108,7 +109,7 @@ export class UploadPanelComponent {
   }
 
   upload(fileItem: FileItem): void {
-    const uploadUrl = `${this.stackConfig.apiUrl}/data-import/upload`;
+    const uploadUrl = `${this.stackConfig.apiUrl}/job/data-import/upload`;
 
     // 1. Create a FormData object to build the multipart request
     const formData = new FormData();
@@ -121,7 +122,7 @@ export class UploadPanelComponent {
     // 3. Make the POST request with the FormData.
     //    DO NOT set the 'Content-Type' header manually. The browser
     //    will handle it correctly for FormData.
-    const upload$ = this.http.post<DataImportModel>(uploadUrl, formData, {
+    const upload$ = this.http.post<Job>(uploadUrl, formData, {
       reportProgress: true,
       observe: 'events'
     }).pipe(
@@ -137,13 +138,19 @@ export class UploadPanelComponent {
       next: event => {
         if (event.type === HttpEventType.UploadProgress && event.total) {
           fileItem.uploadProgress = Math.round(100 * (event.loaded / event.total));
-        } else if (event.type === HttpEventType.Response) {
-          console.log(`Upload successful for ${fileItem.file.name}`, event.body);
+        }
+        else if (event.type === HttpEventType.Response) {
+          console.log(`Upload successful for ${fileItem.file.name}`);
+
           fileItem.status = 'success';
           fileItem.uploadProgress = 100;
 
-          console.log('Data Import - upload response: ', event.body);
-          this.uploadedData.set(event.body);
+          const apiResponse = event.body;
+          console.log('Data Import - upload response: ', apiResponse);
+
+          if(apiResponse && apiResponse.request) {
+            this.uploadedData.set(apiResponse);
+          }
         }
       },
       error: err => {

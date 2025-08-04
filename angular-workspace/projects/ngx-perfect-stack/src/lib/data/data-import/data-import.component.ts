@@ -5,6 +5,7 @@ import {DataImportModel, DataImportResult} from "./upload-panel/data-import.mode
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
 import {RouterLink} from "@angular/router";
+import {JobProgressMonitorComponent} from "../../job/job-progress-monitor/job-progress-monitor.component";
 
 @Component({
   selector: 'lib-data-import',
@@ -12,7 +13,8 @@ import {RouterLink} from "@angular/router";
     UploadPanelComponent,
     ReactiveFormsModule,
     NgbTooltip,
-    RouterLink
+    RouterLink,
+    JobProgressMonitorComponent
   ],
   templateUrl: './data-import.component.html',
   styleUrl: './data-import.component.css'
@@ -26,6 +28,8 @@ export class DataImportComponent {
 
   dataImportResult: DataImportResult | null;
 
+  jobId: string | null;
+
   constructor(
     protected readonly dataImportService: DataImportService,
     private injector: Injector) {
@@ -38,7 +42,9 @@ export class DataImportComponent {
         const  uploadedData = uploadPanel.uploadedData();
         console.log('Data Import - uploadedData:', uploadedData);
         if(uploadedData) {
-          this.data = uploadedData;
+          const job = uploadedData;
+          this.jobId = job.id;
+          this.data = JSON.parse(job.request) as DataImportModel;
           this.createForm(this.data);
         }
       }
