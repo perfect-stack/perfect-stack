@@ -17,31 +17,31 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import {DataImportService} from "./data-import.service";
-import {DataImportModel, DataImportResult} from "./data-import.model";
+import {DataImportModel} from "./data-import.model";
 import * as os from "node:os";
 
 
-
-const storageOptions = diskStorage({
-    // Use a function for destination to ensure the directory exists.
-    destination: (req, file, callback) => {
-        const uploadPath = path.join(os.tmpdir(), 'data-import', 'upload');
-        fs.mkdirSync(uploadPath, { recursive: true });
-        callback(null, uploadPath);
-    },
-
-    filename: (req, file, callback) => {
-        // Generate a unique filename to prevent overwrites and conflicts.
-        const uniqueSuffix = uuidv4();
-        const extension = path.extname(file.originalname);
-        const baseName = path.basename(file.originalname, extension);
-
-        // Sanitize the base name to remove problematic characters.
-        const safeBaseName = baseName.replace(/[^a-z0-9_.-]/gi, '_').toLowerCase();
-
-        callback(null, `${safeBaseName}-${uniqueSuffix}${extension}`);
-    },
-});
+//
+// const storageOptions = diskStorage({
+//     // Use a function for destination to ensure the directory exists.
+//     destination: (req, file, callback) => {
+//         const uploadPath = path.join(os.tmpdir(), 'data-import', 'upload');
+//         fs.mkdirSync(uploadPath, { recursive: true });
+//         callback(null, uploadPath);
+//     },
+//
+//     filename: (req, file, callback) => {
+//         // Generate a unique filename to prevent overwrites and conflicts.
+//         const uniqueSuffix = uuidv4();
+//         const extension = path.extname(file.originalname);
+//         const baseName = path.basename(file.originalname, extension);
+//
+//         // Sanitize the base name to remove problematic characters.
+//         const safeBaseName = baseName.replace(/[^a-z0-9_.-]/gi, '_').toLowerCase();
+//
+//         callback(null, `${safeBaseName}-${uniqueSuffix}${extension}`);
+//     },
+// });
 
 
 @ApiTags('data-import')
@@ -52,7 +52,7 @@ export class DataImportController {
     constructor(protected readonly dataImportService: DataImportService) {
     }
 
-    @ActionPermit(ActionType.Edit)
+   /* @ActionPermit(ActionType.Edit)
     @SubjectName('Import')
     @Post('/upload')
     @UseInterceptors(FileInterceptor('file', {storage: storageOptions}))
@@ -96,6 +96,6 @@ export class DataImportController {
         if(dataImportModel.errors.length === 0) {
             return this.dataImportService.processAndSave(dataImportModel);
         }
-    }
+    }*/
 
 }

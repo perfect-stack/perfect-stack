@@ -13,7 +13,7 @@ import {ActionType} from "../domain/meta.role";
 import {SubjectName} from "../authentication/subject";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {ApiBody, ApiConsumes, ApiTags} from "@nestjs/swagger";
-import {DataImportModel, DataImportResult} from "../data/import/data-import.model";
+import {DataImportModel} from "../data/import/data-import.model";
 import {Job} from "./job.model";
 import {JobService} from "./job.service";
 
@@ -89,6 +89,7 @@ export class DataImportJobController {
             console.log('Size:', file.size);
 
             const dataImportModel = await this.parseFile(file.path);
+            dataImportModel.status = 'loaded';
 
             const job = await this.jobService.submitJob('Data Import - Validate', dataImportModel.dataRows.length, dataImportModel);
             // TODO: temp while developing this - call inline
@@ -132,10 +133,14 @@ export class DataImportJobController {
         }
         catch (error) {
             return {
+                status: 'error',
                 headers: ["Error parsing file"],
                 skipRows: [],
                 dataRows: [[error.message]],
                 importedRowCount: 0,
+                processedRowCount: 0,
+                rowSuccessCount: 0,
+                importedEntityList: [],
                 errors: [{
                     col: 0,
                     row: 0,
@@ -148,10 +153,13 @@ export class DataImportJobController {
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Import')
-    @Post('/data')
+    @Post('/import')
     async importData(@Body() dataImportModel: DataImportModel): Promise<Job> {
         if(dataImportModel.errors.length === 0) {
-            return await this.jobService.submitJob('Data Import - Import', dataImportModel.dataRows.length, dataImportModel);
+            const job = await this.jobService.submitJob('Data Import - Import', dataImportModel.dataRows.length, dataImportModel);
+
+            // TODO: temp while developing this - call inline
+            return await this.jobService.invokeJob(job.id);
         }
         else {
             throw new Error('Data Import must not have any errors');

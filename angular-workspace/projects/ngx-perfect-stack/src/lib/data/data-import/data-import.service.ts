@@ -1,7 +1,8 @@
 import {Inject, Injectable} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
 import {HttpClient} from "@angular/common/http";
-import {DataImportModel, DataImportResult} from "./upload-panel/data-import.model";
+import {DataImportModel} from "./upload-panel/data-import.model";
+import {Job} from "../../job/job.model";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class DataImportService {
 
 
   importData( dataImportModel: DataImportModel) {
-    return this.http.post<DataImportResult>(`${this.stackConfig.apiUrl}/data-import/data`, dataImportModel);
+    return this.http.post<Job>(`${this.stackConfig.apiUrl}/job/data-import/import`, dataImportModel);
   }
 
 

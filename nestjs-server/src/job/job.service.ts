@@ -54,12 +54,15 @@ export class JobService {
             // Do the work
             switch (jobName) {
                 case 'Data Import - Validate':
-                    const dataImportModel = JSON.parse(job.data)
-                    await this.dataImportService.dataImportValidate(nextStepIdx, dataImportModel);
-                    job.data = JSON.stringify(dataImportModel);
+                    const d1 = JSON.parse(job.data)
+                    await this.dataImportService.dataImportValidate(nextStepIdx, d1);
+                    job.data = JSON.stringify(d1);
                     break;
 
                 case 'Data Import - Import':
+                    const d2 = JSON.parse(job.data)
+                    await this.dataImportService.dataImportImport(nextStepIdx, d2);
+                    job.data = JSON.stringify(d2);
                     break;
 
                 default:
@@ -71,6 +74,25 @@ export class JobService {
             // Every n items update progress
             await this.dataService.save('Job', job);
         }
+
+        switch (jobName) {
+            case 'Data Import - Validate':
+                const d1 = JSON.parse(job.data)
+                d1.status = 'validated';
+                job.data = JSON.stringify(d1);
+                break;
+
+            case 'Data Import - Import':
+                const d2 = JSON.parse(job.data)
+                d2.status = 'imported';
+                job.data = JSON.stringify(d2);
+                break;
+
+            default:
+                throw new Error(`Unknown job of ${jobName}`);
+        }
+
+
 
         // update progress into database
         // update final result into database

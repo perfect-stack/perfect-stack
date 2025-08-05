@@ -1,7 +1,5 @@
 import {Injectable} from "@nestjs/common";
-import * as csv from 'fast-csv';
-import * as fs from "fs";
-import {DataImportError, DataImportModel, DataImportResult} from "./data-import.model";
+import {DataImportError, DataImportModel} from "./data-import.model";
 import {CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
 import {DateConverter} from "./converter/date.converter";
 import {IntegerConverter} from "./converter/integer.converter";
@@ -41,70 +39,24 @@ export class DataImportService {
                 protected readonly validationService: ValidationService) {
     }
 
-    async parseFile(filePath: string): Promise<DataImportModel> {
 
-        try {
-            // Use fast-csv and parse the file into a 2d array of raw values
-            // The 'async' keyword means this function will always return a Promise.
-            // We wrap the stream-based parser in a new Promise so we can 'await' its completion.
-            const data: string[][] = await new Promise((resolve, reject) => {
-                const data: string[][] = [];
-
-                // read the file from the filePath and create a stream for it
-                const stream = fs.createReadStream(filePath);
-
-                stream
-                    .pipe(csv.parse({headers: false})) // 'headers: false' ensures the header row is treated like any other data row.
-                    .on('error', (error) => reject(error))
-                    .on('data', (row: string[]) => data.push(row))
-                    .on('end', (rowCount: number) => {
-                        console.log(`Successfully parsed ${rowCount} rows.`);
-                        resolve(data);
-                    });
-            });
-
-            const dataImportModel = new DataImportModel();
-            if (data && data.length > 0) {
-                dataImportModel.headers = data[0];
-                dataImportModel.dataRows = data.slice(1);
-            }
-
-            return await this.processAndValidate(dataImportModel, null);
-        }
-        catch (error) {
-            return {
-                headers: ["Error parsing file"],
-                skipRows: [],
-                dataRows: [[error.message]],
-                importedRowCount: 0,
-                errors: [{
-                    col: 0,
-                    row: 0,
-                    message: error.message
-                }]
-            }
-        }
-    }
-
-    async dataImportValidate(stepIndex: number, dataImportModel: DataImportModel): Promise<DataImportModel> {
+    async dataImportValidate(stepIndex: number, dataImportModel: DataImportModel) {
 
         if(stepIndex === 0) {
             dataImportModel.skipRows = [];
+            dataImportModel.errors = [];
+            dataImportModel.importedRowCount = 0;
         }
 
         const dataImportMapping = await this.findDataImportMapping();
-
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
             dataImportModel.skipRows.push(true);
-            // if(dataImportResult) {
-            //     dataImportResult.importedEntityList.push(null);
-            // }
         }
         else {
-            // importRowCount = importRowCount + 1;
             dataImportModel.skipRows.push(false);
+            dataImportModel.importedRowCount = dataImportModel.importedRowCount + 1;
 
             // create entity
             const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex);
@@ -112,130 +64,53 @@ export class DataImportService {
 
             // validate entity
             const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
-            if(validationResultMapController.hasErrors()) {
-
-                // Add the validation errors to the dataImportModel
-                const validationErrors = validationResultMapController.validationResultMap;
-                for(const nextErrorKey of Object.keys(validationErrors)) {
-                    const nextError = validationErrors[nextErrorKey];
-                    dataImportModel.errors.push(this.toDataImportError(nextError, stepIndex, dataImportModel.headers, dataImportMapping));
-                }
-
-                console.log('IMPORT ERRORS: ');
-                console.log(' Data:   ' + JSON.stringify(nextRow))
-                console.log(' Entity: ' + JSON.stringify(createEntityResponse.entity));
-                for(const nextErrorKey of Object.keys(validationResultMapController.validationResultMap)) {
-                    const validationError = validationResultMapController.validationResultMap[nextErrorKey];
-                    console.log(` - Error: ${nextErrorKey}: ${validationError.message}`);
-                }
-            }
-            else {
-                console.log('IMPORT GOOD: ');
-                console.log(' Data:   ' + JSON.stringify(nextRow))
-                console.log(' Entity: ' + JSON.stringify(createEntityResponse.entity));
-
-                // if(dataImportResult) {
-                //     const entityResponse = await this.dataService.save(dataImportMapping.metaEntityName, createEntityResponse.entity);
-                //     if(entityResponse) {
-                //         const entityResultMapController = new ValidationResultMapController(entityResponse.validationResults);
-                //         if(!entityResultMapController.hasErrors()) {
-                //             dataImportResult.importedEntityList.push(entityResponse.entity.id);
-                //             dataImportResult.rowSuccessCount = dataImportResult.rowSuccessCount + 1;
-                //             await dataImportMapping.postImportActions.postImport(entityResponse.entity);
-                //         }
-                //         else {
-                //             throw new Error('Attempted save, but it failed');
-                //         }
-                //     }
-                // }
-            }
+            this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
         }
-
-        return dataImportModel;
     }
 
-    async processAndValidate(dataImportModel: DataImportModel, dataImportResult: DataImportResult): Promise<DataImportModel> {
 
-        // find the data mapping for this file (may only be one)
+
+    async dataImportImport(stepIndex: number, dataImportModel: DataImportModel) {
+
+        if(stepIndex === 0) {
+            dataImportModel.importedEntityList = [];
+            dataImportModel.processedRowCount = 0;
+;        }
+
         const dataImportMapping = await this.findDataImportMapping();
-        dataImportModel.skipRows = [];
-        if(dataImportResult) {
-            dataImportResult.importedEntityList = [];
+        const nextRow = dataImportModel.dataRows[stepIndex];
+
+        if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
+            dataImportModel.skipRows.push(true);
+            dataImportModel.importedEntityList.push(null);
         }
+        else {
+            dataImportModel.skipRows.push(false);
+            dataImportModel.processedRowCount = dataImportModel.processedRowCount + 1;
 
-        // for each data row
-        let importRowCount = 0;
-        for(let rowIdx = 0; rowIdx < dataImportModel.dataRows.length; rowIdx++) {
-            const nextRow = dataImportModel.dataRows[rowIdx];
+            // create entity
+            const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex);
+            dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
 
-            if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
-                dataImportModel.skipRows.push(true);
-                if(dataImportResult) {
-                    dataImportResult.importedEntityList.push(null);
-                }
-            }
-            else {
-                importRowCount = importRowCount + 1;
-                dataImportModel.skipRows.push(false);
+            // validate entity
+            const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
+            this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
 
-                // create entity
-                const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, rowIdx);
-                dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
-
-                // validate entity
-                const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
-                if(validationResultMapController.hasErrors()) {
-
-                    // Add the validation errors to the dataImportModel
-                    const validationErrors = validationResultMapController.validationResultMap;
-                    for(const nextErrorKey of Object.keys(validationErrors)) {
-                        const nextError = validationErrors[nextErrorKey];
-                        dataImportModel.errors.push(this.toDataImportError(nextError, rowIdx, dataImportModel.headers, dataImportMapping));
+            if(!validationResultMapController.hasErrors()) {
+                const entityResponse = await this.dataService.save(dataImportMapping.metaEntityName, createEntityResponse.entity);
+                if(entityResponse) {
+                    const entityResultMapController = new ValidationResultMapController(entityResponse.validationResults);
+                    if(!entityResultMapController.hasErrors()) {
+                        dataImportModel.importedEntityList.push(entityResponse.entity.id);
+                        dataImportModel.rowSuccessCount = dataImportModel.rowSuccessCount + 1;
+                        await dataImportMapping.postImportActions.postImport(entityResponse.entity);
                     }
-
-
-                    console.log('IMPORT ERRORS: ');
-                    console.log(' Data:   ' + JSON.stringify(nextRow))
-                    console.log(' Entity: ' + JSON.stringify(createEntityResponse.entity));
-                    for(const nextErrorKey of Object.keys(validationResultMapController.validationResultMap)) {
-                        const validationError = validationResultMapController.validationResultMap[nextErrorKey];
-                        console.log(` - Error: ${nextErrorKey}: ${validationError.message}`);
-                    }
-                }
-                else {
-                    console.log('IMPORT GOOD: ');
-                    console.log(' Data:   ' + JSON.stringify(nextRow))
-                    console.log(' Entity: ' + JSON.stringify(createEntityResponse.entity));
-
-                    if(dataImportResult) {
-                        const entityResponse = await this.dataService.save(dataImportMapping.metaEntityName, createEntityResponse.entity);
-                        if(entityResponse) {
-                            const entityResultMapController = new ValidationResultMapController(entityResponse.validationResults);
-                            if(!entityResultMapController.hasErrors()) {
-                                dataImportResult.importedEntityList.push(entityResponse.entity.id);
-                                dataImportResult.rowSuccessCount = dataImportResult.rowSuccessCount + 1;
-                                await dataImportMapping.postImportActions.postImport(entityResponse.entity);
-                            }
-                            else {
-                                throw new Error('Attempted save, but it failed');
-                            }
-                        }
+                    else {
+                        throw new Error('Attempted save, but it failed');
                     }
                 }
             }
         }
-
-        dataImportModel.importedRowCount = importRowCount;
-        return dataImportModel;
-    }
-
-    async processAndSave(dataImportModel: DataImportModel): Promise<DataImportResult> {
-
-        console.log('Ready to processAndSave... ' + dataImportModel.dataRows.length + ' rows');
-        const dataImportResult = new DataImportResult();
-        await this.processAndValidate(dataImportModel, dataImportResult);
-
-        return dataImportResult;
     }
 
     findColName(colName: string, headers: string[]): number | null {
@@ -249,6 +124,38 @@ export class DataImportService {
         const attributeMapping = dataImportMapping.attributeMappings.find(nextAttributeMapping => nextAttributeMapping.attributeName === attributeName);
         if(attributeMapping) {
             return this.findColName(attributeMapping.columnName, headers);
+        }
+    }
+
+    addErrors(validationResultMapController: ValidationResultMapController,
+              stepIndex: number,
+              dataImportModel: DataImportModel,
+              dataImportMapping: DataImportMapping,
+              dataRow: string[] | null,
+              entity: Entity
+        ) {
+
+        if(validationResultMapController.hasErrors()) {
+
+            // Add the validation errors to the dataImportModel
+            const validationErrors = validationResultMapController.validationResultMap;
+            for(const nextErrorKey of Object.keys(validationErrors)) {
+                const nextError = validationErrors[nextErrorKey];
+                dataImportModel.errors.push(this.toDataImportError(nextError, stepIndex, dataImportModel.headers, dataImportMapping));
+            }
+
+            console.log('IMPORT ERRORS: ');
+            console.log(' Data:   ' + JSON.stringify(dataRow))
+            console.log(' Entity: ' + JSON.stringify(entity));
+            for(const nextErrorKey of Object.keys(validationResultMapController.validationResultMap)) {
+                const validationError = validationResultMapController.validationResultMap[nextErrorKey];
+                console.log(` - Error: ${nextErrorKey}: ${validationError.message}`);
+            }
+        }
+        else {
+            console.log('IMPORT GOOD: ');
+            console.log(' Data:   ' + JSON.stringify(dataRow))
+            console.log(' Entity: ' + JSON.stringify(entity));
         }
     }
 
@@ -295,7 +202,6 @@ export class DataImportService {
             }
         }
 
-        //return dataRow.every(field => field === null || field === '' || typeof field === 'undefined');
         return true;
     }
 

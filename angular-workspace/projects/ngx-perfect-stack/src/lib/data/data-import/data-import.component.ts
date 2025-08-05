@@ -1,7 +1,7 @@
 import {Component, effect, Injector, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {DataImportModel, DataImportResult} from "./upload-panel/data-import.model";
+import {DataImportModel} from "./upload-panel/data-import.model";
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
 import {RouterLink} from "@angular/router";
@@ -26,8 +26,6 @@ export class DataImportComponent {
   data: DataImportModel | null;
   form: FormArray;
 
-  dataImportResult: DataImportResult | null;
-
   jobId: string | null;
 
   constructor(
@@ -37,7 +35,6 @@ export class DataImportComponent {
       const  uploadPanel = this.uploadPanel();
       if(uploadPanel) {
         this.data = null;
-        this.dataImportResult = null;
 
         const  uploadedData = uploadPanel.uploadedData();
         console.log('Data Import - uploadedData:', uploadedData);
@@ -115,7 +112,7 @@ export class DataImportComponent {
     if(this.data && this.data.errors.length === 0) {
       this.dataImportService.importData(this.data).subscribe(result => {
         console.log('Got result:', result);
-        this.dataImportResult = result;
+        this.data = JSON.parse(result.data) as DataImportModel;
       });
     }
   }
