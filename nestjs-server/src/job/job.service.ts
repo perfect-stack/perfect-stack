@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, Logger} from "@nestjs/common";
 import {Job} from "./job.model";
 import {DataService} from "../data/data.service";
 import {QueryService} from "../data/query.service";
@@ -8,6 +8,7 @@ import {Duration, OffsetDateTime} from "@js-joda/core";
 
 @Injectable()
 export class JobService {
+    private readonly logger = new Logger(JobService.name);
 
     constructor(protected readonly dataService: DataService,
                 protected readonly queryService: QueryService,
@@ -30,16 +31,18 @@ export class JobService {
         }
 
         const entityResponse = await this.dataService.save('Job', job)
-
         return entityResponse.entity as Job;
     }
 
     async invokeJob(jobId: string): Promise<Job> {
         // Start the job
+        this.logger.log(`Invoke job: ${jobId}`);
         const startTime = OffsetDateTime.now();
 
         // load the job
         const job = await this.queryService.findOne('Job', jobId) as Job;
+
+        this.logger.log(`Invoke job: loaded Job ${job.name}`);
 
         job.status = "Processing";
         const jobName = job.name;
@@ -75,6 +78,8 @@ export class JobService {
             await this.dataService.save('Job', job);
         }
 
+        this.logger.log(`Invoke job: processed ${stepCount} steps`);
+
         switch (jobName) {
             case 'Data Import - Validate':
                 const d1 = JSON.parse(job.data)
@@ -102,6 +107,8 @@ export class JobService {
         job.duration = Duration.between(startTime, endTime).toMillis();
         job.status = "Completed";
         await this.dataService.save('Job', job);
+
+        this.logger.log(`Invoke job: all finished now`);
 
         return job;
     }

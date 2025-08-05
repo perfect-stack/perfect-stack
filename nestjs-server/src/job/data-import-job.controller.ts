@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller,
+    Controller, Logger,
     MaxFileSizeValidator,
     ParseFilePipe,
     Post,
@@ -17,12 +17,14 @@ import {DataImportModel} from "../data/import/data-import.model";
 import {Job} from "./job.model";
 import {JobService} from "./job.service";
 
-import * as csv from "fast-csv";
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from "node:os";
 import {v4 as uuidv4} from "uuid";
+import {DataImportFileService} from "../data/import/data-import-file.service";
+import {ConfigService} from "@nestjs/config";
 
+import {InvokeCommand, LambdaClient} from "@aws-sdk/client-lambda";
 
 const storageOptions = diskStorage({
     // Use a function for destination to ensure the directory exists.
@@ -54,8 +56,16 @@ const storageOptions = diskStorage({
 @Controller('job/data-import')
 export class DataImportJobController {
 
+    private readonly logger = new Logger(DataImportJobController.name);
 
-    constructor(protected readonly jobService: JobService) {}
+
+    jobProcessingMode: string;
+
+    constructor(protected configService: ConfigService,
+                protected readonly jobService: JobService,
+                protected readonly dataImportFileService: DataImportFileService) {
+        this.jobProcessingMode = configService.get('JOB_PROCESSING_MODE', 'sync');
+    }
 
 
     @ActionPermit(ActionType.Edit)
@@ -88,65 +98,14 @@ export class DataImportJobController {
             console.log('Mimetype:', file.mimetype);
             console.log('Size:', file.size);
 
-            const dataImportModel = await this.parseFile(file.path);
+            const dataImportModel = await this.dataImportFileService.parseFile(file.path);
             dataImportModel.status = 'loaded';
 
             const job = await this.jobService.submitJob('Data Import - Validate', dataImportModel.dataRows.length, dataImportModel);
-            // TODO: temp while developing this - call inline
-            return await this.jobService.invokeJob(job.id);
+            return this.invokeJob(job);
         }
         else {
             throw new Error("Unable to upload file")
-        }
-    }
-
-
-    private async parseFile(filePath: string): Promise<DataImportModel> {
-
-        try {
-            // Use fast-csv and parse the file into a 2d array of raw values
-            // The 'async' keyword means this function will always return a Promise.
-            // We wrap the stream-based parser in a new Promise so we can 'await' its completion.
-            const data: string[][] = await new Promise((resolve, reject) => {
-                const data: string[][] = [];
-
-                // read the file from the filePath and create a stream for it
-                const stream = fs.createReadStream(filePath);
-
-                stream
-                    .pipe(csv.parse({headers: false})) // 'headers: false' ensures the header row is treated like any other data row.
-                    .on('error', (error) => reject(error))
-                    .on('data', (row: string[]) => data.push(row))
-                    .on('end', (rowCount: number) => {
-                        console.log(`Successfully parsed ${rowCount} rows.`);
-                        resolve(data);
-                    });
-            });
-
-            const dataImportModel = new DataImportModel();
-            if (data && data.length > 0) {
-                dataImportModel.headers = data[0];
-                dataImportModel.dataRows = data.slice(1);
-            }
-
-            return dataImportModel;
-        }
-        catch (error) {
-            return {
-                status: 'error',
-                headers: ["Error parsing file"],
-                skipRows: [],
-                dataRows: [[error.message]],
-                importedRowCount: 0,
-                processedRowCount: 0,
-                rowSuccessCount: 0,
-                importedEntityList: [],
-                errors: [{
-                    col: 0,
-                    row: 0,
-                    message: error.message
-                }]
-            }
         }
     }
 
@@ -157,12 +116,52 @@ export class DataImportJobController {
     async importData(@Body() dataImportModel: DataImportModel): Promise<Job> {
         if(dataImportModel.errors.length === 0) {
             const job = await this.jobService.submitJob('Data Import - Import', dataImportModel.dataRows.length, dataImportModel);
-
-            // TODO: temp while developing this - call inline
-            return await this.jobService.invokeJob(job.id);
+            return this.invokeJob(job);
         }
         else {
             throw new Error('Data Import must not have any errors');
         }
+    }
+
+    private async invokeJob(job: Job) {
+        switch (this.jobProcessingMode) {
+            case 'sync':
+                // Wait for the Job result from invoking the Job and return that
+                return await this.jobService.invokeJob(job.id);
+
+            case 'async':
+                // Invoke lambda
+                await this.invokeJobLambda(job);
+
+                // But don't wait for the response and return the Job we created above
+                return job;
+
+            default:
+                throw new Error(`Invalid job processing mode: ${this.jobProcessingMode}`);
+        }
+    }
+
+    private async invokeJobLambda(job: Job) {
+
+        this.logger.log(`Invoking Lambda: for job ID: ${job.id}`);
+
+        const payload = {
+            jobId: job.id
+        };
+
+        const lambdaClient = new LambdaClient();
+
+        const command = new InvokeCommand({
+
+            // TODO: hard coded for now...
+            FunctionName: 'dev-kims-docker-function',
+
+            InvocationType: 'Event', // For asynchronous invocation
+            Payload: JSON.stringify(payload),
+        });
+
+        await lambdaClient.send(command);
+
+        this.logger.log('Invoking Lambda: invocation completed');
     }
 }
