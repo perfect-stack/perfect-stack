@@ -3,7 +3,7 @@
 export interface Job {
     id: string;
     name: string;
-    status: string;
+    status: "Submitted" | "Processing" | "Completed";
     data: string;
     step_index: number;
     step_count: number;

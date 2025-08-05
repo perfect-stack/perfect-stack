@@ -26,7 +26,8 @@ export class DataImportComponent {
   data: DataImportModel | null;
   form: FormArray;
 
-  jobId: string | null;
+  jobIdValidate: string | null;
+  jobIdImport: string | null;
 
   constructor(
     protected readonly dataImportService: DataImportService,
@@ -40,7 +41,7 @@ export class DataImportComponent {
         console.log('Data Import - uploadedData:', uploadedData);
         if(uploadedData) {
           const job = uploadedData;
-          this.jobId = job.id;
+          this.jobIdValidate = job.id;
           this.data = JSON.parse(job.data) as DataImportModel;
           this.createForm(this.data);
         }
@@ -112,6 +113,7 @@ export class DataImportComponent {
     if(this.data && this.data.errors.length === 0) {
       this.dataImportService.importData(this.data).subscribe(result => {
         console.log('Got result:', result);
+        this.jobIdImport = result.id;
         this.data = JSON.parse(result.data) as DataImportModel;
       });
     }

@@ -1,2 +1,9 @@
-<p>job-progress-monitor works!</p>
-job: {{jobId()}}
+
+
+@if (job(); as job) {
+  <ngb-progressbar class="mb-2" [showValue]="true" type="info" [value]="job.step_index + 1" [max]="job.step_count"></ngb-progressbar>
+}
+
+@if(timedOut()) {
+  <div class="text-danger">Job has not completed within the allowable time.</div>
+}
