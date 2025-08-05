@@ -12,24 +12,27 @@
     @if (data) {
       <div class="col-3">
         <h3>Status</h3>
+
+        <lib-job-progress-monitor [jobId]="jobId"></lib-job-progress-monitor>
+
         @if (importHasErrors()) {
-          <p class="text-danger">Import data has errors.</p>
+          <p class="text-danger">Imported data has errors.</p>
           <p class="text-danger">Please correct the errors below and upload again.</p>
         } @else {
-          <p class="text-success">Import data appears to be good.</p>
+          <p class="text-success">Imported data appears to be good.</p>
           <p class="text-success">{{data.importedRowCount}} rows detected for import.</p>
           <p>Click import to start adding these rows to the database.</p>
-          <button class="btn btn-primary" [disabled]="importHasErrors() || dataImportResult" (click)="onImportData()">Import</button>
+          <button class="btn btn-primary" [disabled]="importHasErrors() || data.status === 'imported'" (click)="onImportData()">Import</button>
         }
       </div>
     }
 
-    @if (dataImportResult) {
+    @if (data && data.status === 'imported') {
     <div class="col-3">
       <h3>Result</h3>
         <!--<p class="text-danger">Import data has errors. Please correct the errors below and upload again.</p>-->
-      <p class="text-success">Added <b>{{dataImportResult.rowSuccessCount}} / {{data?.importedRowCount}}</b> events successfully.</p>
-      <p class="text-success">With <b>{{dataImportResult.errors.length}}</b> errors.</p>
+      <p class="text-success">Added <b>{{data.rowSuccessCount}} / {{data?.processedRowCount}}</b> events successfully.</p>
+      <p class="text-success">With <b>{{data.errors.length}}</b> errors.</p>
     </div>
     }
 
@@ -62,8 +65,8 @@
             <!-- Print the row number to make error correction in original spreadsheet easier -->
             <td>
               <!-- Excel starts on row 1, and we also removed that because of how we modelled headers, so need to add +2 -->
-              @if (dataImportResult && dataImportResult.importedEntityList[rowIdx]) {
-                <a [routerLink]="['/data/Event/view', dataImportResult.importedEntityList[rowIdx] ]">{{rowIdx + 2}}</a>
+              @if (data && data.status === 'imported' && data.importedEntityList[rowIdx]) {
+                <a [routerLink]="['/data/Event/view', data.importedEntityList[rowIdx] ]">{{rowIdx + 2}}</a>
               } @else {
                 {{rowIdx + 2}}
               }

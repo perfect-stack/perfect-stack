@@ -1,28 +1,23 @@
 
 export class DataImportError {
-  row: number;
-  col: number;
-  message: string;
+    row: number;
+    col: number;
+    message: string;
 }
 
-/**
- * This is the "raw" data without any modifications needed to import the data so that the user does not get confused
- * about what they have and what they see. The errors will come through from the converted data model.
- */
+
 export class DataImportModel {
+    status: "loaded" | "validated" | "imported" | "error";
+    headers: string[];
+    skipRows: boolean[];
+    dataRows: string[][];
 
-  action: "Validate" | "Import";
+    importedRowCount: number;
+    processedRowCount: number;
 
-  headers: string[];
-  skipRows: boolean[];
-  dataRows: string[][];
+    rowSuccessCount: number = 0;
+    importedEntityList: string[];
 
-  importedRowCount: number;
-  errors: DataImportError[] = [];
+    errors: DataImportError[];
 }
 
-export class DataImportResult {
-  rowSuccessCount: number = 0;
-  importedEntityList: string[];
-  errors: DataImportError[] = [];
-}

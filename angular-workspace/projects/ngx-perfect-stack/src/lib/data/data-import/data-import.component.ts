@@ -1,10 +1,11 @@
 import {Component, effect, Injector, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {DataImportModel, DataImportResult} from "./upload-panel/data-import.model";
+import {DataImportModel} from "./upload-panel/data-import.model";
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
 import {RouterLink} from "@angular/router";
+import {JobProgressMonitorComponent} from "../../job/job-progress-monitor/job-progress-monitor.component";
 
 @Component({
   selector: 'lib-data-import',
@@ -12,7 +13,8 @@ import {RouterLink} from "@angular/router";
     UploadPanelComponent,
     ReactiveFormsModule,
     NgbTooltip,
-    RouterLink
+    RouterLink,
+    JobProgressMonitorComponent
   ],
   templateUrl: './data-import.component.html',
   styleUrl: './data-import.component.css'
@@ -24,7 +26,7 @@ export class DataImportComponent {
   data: DataImportModel | null;
   form: FormArray;
 
-  dataImportResult: DataImportResult | null;
+  jobId: string | null;
 
   constructor(
     protected readonly dataImportService: DataImportService,
@@ -33,12 +35,13 @@ export class DataImportComponent {
       const  uploadPanel = this.uploadPanel();
       if(uploadPanel) {
         this.data = null;
-        this.dataImportResult = null;
 
         const  uploadedData = uploadPanel.uploadedData();
         console.log('Data Import - uploadedData:', uploadedData);
         if(uploadedData) {
-          this.data = uploadedData;
+          const job = uploadedData;
+          this.jobId = job.id;
+          this.data = JSON.parse(job.data) as DataImportModel;
           this.createForm(this.data);
         }
       }
@@ -109,7 +112,7 @@ export class DataImportComponent {
     if(this.data && this.data.errors.length === 0) {
       this.dataImportService.importData(this.data).subscribe(result => {
         console.log('Got result:', result);
-        this.dataImportResult = result;
+        this.data = JSON.parse(result.data) as DataImportModel;
       });
     }
   }

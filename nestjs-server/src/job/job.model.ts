@@ -1,12 +1,13 @@
 
 
-export interface JobModel {
-
+export interface Job {
     id: string;
+    name: string;
     status: string;
-    submitted_time: string;
-    duration_ms: number;
-    progress: number;
-    request: string;
-    response: string;
+    data: string;
+    step_index: number;
+    step_count: number;
+    duration: number;
+    created_at: string;
+    updated_at: string;
 }
