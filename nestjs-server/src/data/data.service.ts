@@ -64,13 +64,13 @@ export class DataService {
     // }
 
     try {
-      this.logger.log(`save.1(${entityName}) ${JSON.stringify(entity)}`);
+      //this.logger.log(`save.1(${entityName}) ${JSON.stringify(entity)}`);
       const result = this.saveInTransaction(entityName, entity, null);
-      this.logger.log(`save.4(${entityName}) ${JSON.stringify(entity)}`);
+      //this.logger.log(`save.4(${entityName}) ${JSON.stringify(entity)}`);
 
       return result;
     } catch (error) {
-      console.error('save.5() failed:', error);
+      //console.error('save.5() failed:', error);
       throw error;
     }
   }

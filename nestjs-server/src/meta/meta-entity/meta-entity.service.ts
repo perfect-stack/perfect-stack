@@ -29,7 +29,7 @@ export class MetaEntityService {
       MetaEntityService.META_ENTITY_DIR,
     );
 
-    this.logger.log(`Found meta-data files: ${fileNames}`);
+    //this.logger.log(`Found meta-data files: ${fileNames}`);
 
     if (fileNames && fileNames.length > 0) {
       for (const nextName of fileNames) {

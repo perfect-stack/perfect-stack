@@ -64,8 +64,8 @@ export const loadOrm = async (
     password: databasePassword,
     database: databaseSettings.databaseName,
     // uncomment one of the following two logging options
-    // logging: false,
-    logging: (msg) => logger.log(msg),
+    logging: false,
+    //logging: (msg) => logger.log(msg),
     logQueryParameters: true,
     ssl: true,
     pool: {

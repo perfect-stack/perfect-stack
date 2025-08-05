@@ -74,8 +74,12 @@ export class JobService {
 
             job.step_index = nextStepIdx;
 
+            this.logger.log(`Invoke job: step number ${nextStepIdx} of ${stepCount}`);
+
             // Every n items update progress
-            await this.dataService.save('Job', job);
+            if(nextStepIdx % 10 === 0) {
+                await this.dataService.save('Job', job);
+            }
         }
 
         this.logger.log(`Invoke job: processed ${stepCount} steps`);

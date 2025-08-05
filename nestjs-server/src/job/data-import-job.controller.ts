@@ -130,7 +130,7 @@ export class DataImportJobController {
                 return await this.jobService.invokeJob(job.id);
 
             case 'async':
-                // Invoke lambda
+                // Invoke the lambda
                 await this.invokeJobLambda(job);
 
                 // But don't wait for the response and return the Job we created above
