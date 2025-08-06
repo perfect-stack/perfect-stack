@@ -1,6 +1,6 @@
 {
   "name": "Operations",
-  "group": "KIMS_Operations,DevKiwiMgmtSystem,KIMS_Editor_DEV_TEST",
+  "group": "KIMS_Operations,KIMS_Editor_DEV_TEST,KIMS_Editor",
   "inherits": "Viewer",
   "description": "<p>Can edit meta but not system, add projects, set project manager role,</p>",
   "permissions": [

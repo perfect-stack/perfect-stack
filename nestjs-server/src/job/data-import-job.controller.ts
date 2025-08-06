@@ -156,17 +156,19 @@ export class DataImportJobController {
             jobId: job.id
         };
 
-        const lambdaClient = new LambdaClient();
+        const envName = this.configService.get('ENV_NAME', null);
+        if(!envName) {
+            throw new Error(`ENV_NAME environment variable is not set. Cannot determine Lambda function name.`);
+        }
 
+        const lambdaFunctionName = `${envName}-kims-docker-function`;
         const command = new InvokeCommand({
-
-            // TODO: hard coded for now...
-            FunctionName: 'dev-kims-docker-function',
-
+            FunctionName: lambdaFunctionName,
             InvocationType: 'Event', // For asynchronous invocation
             Payload: JSON.stringify(payload),
         });
 
+        const lambdaClient = new LambdaClient();
         await lambdaClient.send(command);
 
         this.logger.log('Invoking Lambda: invocation completed');
