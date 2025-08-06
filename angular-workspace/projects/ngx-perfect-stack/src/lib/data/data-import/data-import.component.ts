@@ -6,6 +6,7 @@ import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
 import {RouterLink} from "@angular/router";
 import {JobProgressMonitorComponent} from "../../job/job-progress-monitor/job-progress-monitor.component";
+import {Job} from "../../job/job.model";
 
 @Component({
   selector: 'lib-data-import',
@@ -116,6 +117,13 @@ export class DataImportComponent {
         this.jobIdImport = result.id;
         this.data = JSON.parse(result.data) as DataImportModel;
       });
+    }
+  }
+
+  onJobUpdated(job: Job | null) {
+    if(job?.status === 'Completed') {
+      console.log(`Job Progress Monitor - Job Completed:`, job)
+      this.data = JSON.parse(job.data) as DataImportModel;
     }
   }
 }

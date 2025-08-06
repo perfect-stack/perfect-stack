@@ -13,7 +13,7 @@
       <div class="col-4">
         <h3>Status</h3>
 
-        <lib-job-progress-monitor [jobId]="jobIdValidate"></lib-job-progress-monitor>
+        <lib-job-progress-monitor [jobId]="jobIdValidate" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
 
         @if (importHasErrors()) {
           <p class="text-danger">Imported data has errors.</p>
@@ -32,7 +32,7 @@
       <div class="col-4">
         <h3>Result</h3>
 
-        <lib-job-progress-monitor [jobId]="jobIdImport"></lib-job-progress-monitor>
+        <lib-job-progress-monitor [jobId]="jobIdImport" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
 
         <p class="text-success">Added <b>{{data.rowSuccessCount}} / {{data?.processedRowCount}}</b> events successfully.</p>
         <p class="text-success">With <b>{{data.errors.length}}</b> errors.</p>
