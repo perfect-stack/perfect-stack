@@ -4,15 +4,23 @@ import {DataService} from "../data/data.service";
 import {QueryService} from "../data/query.service";
 import {DataImportService} from "../data/import/data-import.service";
 import {Duration, OffsetDateTime} from "@js-joda/core";
+import {ConfigService} from "@nestjs/config";
 
 
 @Injectable()
 export class JobService {
     private readonly logger = new Logger(JobService.name);
 
-    constructor(protected readonly dataService: DataService,
-                protected readonly queryService: QueryService,
-                protected readonly dataImportService: DataImportService) {}
+    jobProcessingMode: string;
+
+    constructor(
+        protected readonly configService: ConfigService,
+        protected readonly dataService: DataService,
+        protected readonly queryService: QueryService,
+        protected readonly dataImportService: DataImportService) {
+
+        this.jobProcessingMode = configService.get('JOB_PROCESSING_MODE', 'async');
+    }
 
     async submitJob(name: string, stepCount: number, payload: any): Promise<Job> {
         // create the job in the database with a new id
@@ -77,8 +85,15 @@ export class JobService {
             this.logger.log(`Invoke job: step number ${nextStepIdx} of ${stepCount}`);
 
             // Every n items update progress
-            if(nextStepIdx % 10 === 0) {
+            if (nextStepIdx % 10 === 0) {
                 await this.dataService.save('Job', job);
+            }
+
+            if (this.jobProcessingMode === 'local-async') {
+                // Simple delay function - Used for Dev/Test purposes when running locally to simulate async behaviours
+                const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+                await delay(100);
+                this.logger.log(`Delay finished. Invoking jobService for job ID: ${job.id}`);
             }
         }
 

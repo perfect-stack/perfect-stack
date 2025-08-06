@@ -30,6 +30,8 @@ export class DataImportComponent {
   jobIdValidate: string | null;
   jobIdImport: string | null;
 
+  importStarted = false;
+
   constructor(
     protected readonly dataImportService: DataImportService,
     private injector: Injector) {
@@ -37,6 +39,7 @@ export class DataImportComponent {
       const  uploadPanel = this.uploadPanel();
       if(uploadPanel) {
         this.data = null;
+        this.importStarted = false;
 
         const  uploadedData = uploadPanel.uploadedData();
         console.log('Data Import - uploadedData:', uploadedData);
@@ -112,6 +115,7 @@ export class DataImportComponent {
 
   onImportData() {
     if(this.data && this.data.errors.length === 0) {
+      this.importStarted = true;
       this.dataImportService.importData(this.data).subscribe(result => {
         console.log('Got result:', result);
         this.jobIdImport = result.id;

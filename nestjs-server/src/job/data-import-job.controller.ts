@@ -23,6 +23,7 @@ import * as os from "node:os";
 import {v4 as uuidv4} from "uuid";
 import {DataImportFileService} from "../data/import/data-import-file.service";
 import {ConfigService} from "@nestjs/config";
+import {EventEmitter2, OnEvent} from "@nestjs/event-emitter";
 
 import {InvokeCommand, LambdaClient} from "@aws-sdk/client-lambda";
 
@@ -63,7 +64,9 @@ export class DataImportJobController {
 
     constructor(protected configService: ConfigService,
                 protected readonly jobService: JobService,
-                protected readonly dataImportFileService: DataImportFileService) {
+                protected readonly dataImportFileService: DataImportFileService,
+                protected readonly eventEmitter: EventEmitter2
+    ) {
         this.jobProcessingMode = configService.get('JOB_PROCESSING_MODE', 'sync');
     }
 
@@ -129,6 +132,10 @@ export class DataImportJobController {
                 // Wait for the Job result from invoking the Job and return that
                 return await this.jobService.invokeJob(job.id);
 
+            case 'local-async':
+                this.eventEmitter.emit('job.invoke.local-async', job);
+                return job;
+
             case 'async':
                 // Invoke the lambda
                 await this.invokeJobLambda(job);
@@ -163,5 +170,18 @@ export class DataImportJobController {
         await lambdaClient.send(command);
 
         this.logger.log('Invoking Lambda: invocation completed');
+    }
+
+
+    @OnEvent('job.invoke.local-async', { async: true })
+    async handleLocalJobProcessing(job: Job) {
+        this.logger.log(`Simulating local async job for job ID: ${job.id}.`);
+
+        try {
+            await this.jobService.invokeJob(job.id);
+            this.logger.log(`Local async job simulation finished for job ID: ${job.id}`);
+        } catch (error) {
+            this.logger.error(`Error during local async job simulation for job ID: ${job.id}`, error.stack);
+        }
     }
 }

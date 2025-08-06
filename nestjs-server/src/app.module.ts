@@ -25,6 +25,7 @@ import {MediaRepositoryModule} from "./media/media-repository.module";
 import {MigrateModule} from "./migrate/mirgrate.module";
 import {DataImportModule} from "./data/import/data-import.module";
 import {JobModule} from "./job/job.module";
+import {EventEmitterModule} from "@nestjs/event-emitter";
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -51,6 +52,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     DataImportModule,
     CONFIG_MODULE,
     EventModule,
+    EventEmitterModule.forRoot(),
     JobModule,
     KnexModule,
     OrmModule,
