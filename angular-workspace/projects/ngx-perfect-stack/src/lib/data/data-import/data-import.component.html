@@ -16,10 +16,10 @@
         <lib-job-progress-monitor [jobId]="jobIdValidate" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
 
         @if (importHasErrors()) {
-          <p class="text-danger">Imported data has errors.</p>
-          <p class="text-danger">Please correct the errors below and upload again.</p>
+          <p class="text-danger">Imported data has errors. See below and you may need to scroll right.</p>
+          <p class="text-danger">Please correct the errors and upload again.</p>
         }
-        @else {
+        @else if (['validated', 'imported'].includes(data.status)) {
           <p class="text-success">Imported data appears to be good.</p>
           <p class="text-success">{{data.importedRowCount}} rows detected for import.</p>
           <p>Click import to start adding these rows to the database.</p>

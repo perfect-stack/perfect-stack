@@ -87,6 +87,8 @@ export class UploadPanelComponent {
 
   processFiles(files: FileList): void {
     this.fileItems = [];
+    this.uploadedData.set(null);
+
 
     const fileArray = Array.from(files);
     const nextFile = fileArray && fileArray[0];
