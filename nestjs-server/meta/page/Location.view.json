@@ -105,6 +105,23 @@
       "cells": [
         [
           {
+            "width": "12",
+            "height": "2",
+            "attributeName": "media_files",
+            "component": "Media",
+            "hideLabel": true
+          }
+        ]
+      ],
+      "metaEntityName": "Location",
+      "type": "form",
+      "templateHeading": "Media",
+      "binding": "location"
+    },
+    {
+      "cells": [
+        [
+          {
             "width": "3",
             "height": "1",
             "attributeName": "date_time",
