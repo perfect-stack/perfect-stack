@@ -3,3 +3,4 @@
 /angular-workspace/projects/demo-client/src/client-overrides.json
 /aws-login.sh
 /nestjs-server/data-import/
+/nestjs-client/node_modules/

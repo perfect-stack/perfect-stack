@@ -1,0 +1,1349 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Return a Health Check message",
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "AppController_getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Return a Health Check message",
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/coordinates": {
+      "get": {
+        "operationId": "CoordinateConverterController_getSummary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get the count of remaining rows that need WGS84 conversion",
+        "tags": [
+          "coordinates"
+        ]
+      },
+      "post": {
+        "operationId": "CoordinateConverterController_convert",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Batch job to convert records with NZTM values and null WGS84 values",
+        "tags": [
+          "coordinates"
+        ]
+      }
+    },
+    "/data/{entityName}": {
+      "get": {
+        "operationId": "DataController_findAll",
+        "parameters": [
+          {
+            "name": "entityName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Find all data rows for the supplied entity name",
+        "tags": [
+          "data"
+        ]
+      }
+    },
+    "/data/query": {
+      "post": {
+        "operationId": "DataController_findByCriteria",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Find all data rows for the supplied query request containing entity name and other criteria",
+        "tags": [
+          "data"
+        ]
+      }
+    },
+    "/data/{entityName}/{id}": {
+      "get": {
+        "operationId": "DataController_findOne",
+        "parameters": [
+          {
+            "name": "entityName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Find one entity by entity name and id",
+        "tags": [
+          "data"
+        ]
+      },
+      "post": {
+        "operationId": "DataController_save",
+        "parameters": [
+          {
+            "name": "entityName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Save (create/update) the supplied request body as the specified entity with the supplied id",
+        "tags": [
+          "data"
+        ]
+      },
+      "delete": {
+        "operationId": "DataController_destroy",
+        "parameters": [
+          {
+            "name": "entityName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Permanently deletes the supplied entity with the supplied id value",
+        "tags": [
+          "data"
+        ]
+      }
+    },
+    "/data/{entityName}/{id}/sort_index": {
+      "post": {
+        "operationId": "DataController_updateSortIndex",
+        "parameters": [
+          {
+            "name": "entityName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSortIndexRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Update the sort index value for certain reference data types",
+        "tags": [
+          "data"
+        ]
+      }
+    },
+    "/data/check/{entityName}/{id}": {
+      "delete": {
+        "operationId": "DataController_destroyCheck",
+        "parameters": [
+          {
+            "name": "entityName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Check if the entity with the supplied id value can be deleted",
+        "tags": [
+          "data"
+        ]
+      }
+    },
+    "/audit/{id}": {
+      "get": {
+        "operationId": "AuditController_findAll",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Find all audit records for the supplied entity id",
+        "tags": [
+          "audit"
+        ]
+      }
+    },
+    "/media/locate/{filePath}": {
+      "get": {
+        "operationId": "MediaController_locateFile",
+        "parameters": [
+          {
+            "name": "filePath",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/media/download/{filePath}": {
+      "get": {
+        "operationId": "MediaController_downloadFile",
+        "parameters": [
+          {
+            "name": "filePath",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/media/create/{filename}": {
+      "post": {
+        "operationId": "MediaController_createFile",
+        "parameters": [
+          {
+            "name": "filename",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/media/upload": {
+      "put": {
+        "operationId": "MediaController_uploadFile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/media/{filePath}": {
+      "patch": {
+        "operationId": "MediaController_commitFile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      },
+      "delete": {
+        "operationId": "MediaController_deleteFile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/meta/entity": {
+      "get": {
+        "operationId": "MetaEntityController_findAll",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "[PUBLIC] Get all Meta Entity files",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/meta/entity/{metaName}": {
+      "get": {
+        "operationId": "MetaEntityController_findOne",
+        "parameters": [
+          {
+            "name": "metaName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "[PUBLIC] Get one Meta Entity file",
+        "tags": [
+          "meta"
+        ]
+      },
+      "post": {
+        "operationId": "MetaEntityController_create",
+        "parameters": [
+          {
+            "name": "metaName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetaEntity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create a new Meta Entity file",
+        "tags": [
+          "meta"
+        ]
+      },
+      "put": {
+        "operationId": "MetaEntityController_update",
+        "parameters": [
+          {
+            "name": "metaName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetaEntity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update the supplied Meta Entity file",
+        "tags": [
+          "meta"
+        ]
+      },
+      "delete": {
+        "operationId": "MetaEntityController_archive",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Not implemented yet.",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/meta/entity/{metaName}/{attributeName}": {
+      "delete": {
+        "operationId": "MetaEntityController_deleteAttribute",
+        "parameters": [
+          {
+            "name": "metaName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attributeName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deleteAttribute",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "deleteDatabaseCol",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Delete the attribute of the Meta Entity optionally both in the file and in the database (deletes the column)",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/meta/entity/database/sync": {
+      "post": {
+        "operationId": "MetaEntityController_sync",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Synchronize the Meta Entity files with the database. Creates new Tables and new columns in the database if needed.",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/authentication/notification": {
+      "post": {
+        "operationId": "AuthenticationController_notification",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginNotification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Callback from the client to notify the server that a login has been successful. Used for the time of Last Sign In.",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/authentication/last-sign-in/{username}": {
+      "get": {
+        "operationId": "AuthenticationController_findLastSignIn",
+        "parameters": [
+          {
+            "name": "username",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Find the Last Sign In time of the requested username",
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/meta/role": {
+      "get": {
+        "operationId": "MetaRoleController_findAll",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "[PUBLIC] Download all Meta Role files",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/meta/role/{metaRoleName}": {
+      "get": {
+        "operationId": "MetaRoleController_findOne",
+        "parameters": [
+          {
+            "name": "metaRoleName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "[PUBLIC] Get one Meta Role file",
+        "tags": [
+          "meta"
+        ]
+      },
+      "post": {
+        "operationId": "MetaRoleController_create",
+        "parameters": [
+          {
+            "name": "metaRoleName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetaRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create a new Meta Role file",
+        "tags": [
+          "meta"
+        ]
+      },
+      "put": {
+        "operationId": "MetaRoleController_update",
+        "parameters": [
+          {
+            "name": "metaRoleName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetaRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update the supplied Meta Role file",
+        "tags": [
+          "meta"
+        ]
+      },
+      "delete": {
+        "operationId": "MetaRoleController_delete",
+        "parameters": [
+          {
+            "name": "metaRoleName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Permanently deletes the requested Meta Role file",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/client/config": {
+      "get": {
+        "operationId": "ClientConfigController_getConfig",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "[PUBLIC] Download the client config property values",
+        "tags": [
+          "client"
+        ]
+      }
+    },
+    "/job/data-import/upload": {
+      "post": {
+        "operationId": "DataImportJobController_uploadFile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "job/data-import"
+        ]
+      }
+    },
+    "/job/data-import/import": {
+      "post": {
+        "operationId": "DataImportJobController_importData",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataImportModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "job/data-import"
+        ]
+      }
+    },
+    "/job/{jobId}": {
+      "get": {
+        "operationId": "JobController_pollJobStatus",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Poll for the supplied Job current status",
+        "tags": [
+          "job"
+        ]
+      }
+    },
+    "/meta/menu": {
+      "get": {
+        "operationId": "MetaMenuController_findOne",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "[PUBLIC] Find the Meta Menu file (there is only one of them)",
+        "tags": [
+          "meta"
+        ]
+      },
+      "post": {
+        "operationId": "MetaMenuController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetaMenu"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Updates the Meta Menu file supplied",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/meta/menu/version": {
+      "get": {
+        "operationId": "MetaMenuController_getVersion",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "[PUBLIC] Get the server version number of the current release in this environment",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/meta/page": {
+      "get": {
+        "operationId": "MetaPageController_findAll",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "[PUBLIC] Download all Meta Page files",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/meta/page/{metaPageName}": {
+      "get": {
+        "operationId": "MetaPageController_findOne",
+        "parameters": [
+          {
+            "name": "metaPageName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "[PUBLIC] Gets the requested Meta Page",
+        "tags": [
+          "meta"
+        ]
+      },
+      "post": {
+        "operationId": "MetaPageController_create",
+        "parameters": [
+          {
+            "name": "metaPageName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetaPage"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create a new Meta Page file with the supplied data",
+        "tags": [
+          "meta"
+        ]
+      },
+      "put": {
+        "operationId": "MetaPageController_update",
+        "parameters": [
+          {
+            "name": "metaPageName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetaPage"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update the the supplied Meta Page",
+        "tags": [
+          "meta"
+        ]
+      },
+      "delete": {
+        "operationId": "MetaPageController_delete",
+        "parameters": [
+          {
+            "name": "metaPageName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Permanently deletes the requested Meta Page",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/migrate/data": {
+      "post": {
+        "operationId": "MigrateController_migrateData",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "migrate"
+        ]
+      }
+    },
+    "/migrate/images": {
+      "post": {
+        "operationId": "MigrateController_migrateImages",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "migrate"
+        ]
+      }
+    },
+    "/typeahead": {
+      "post": {
+        "operationId": "TypeaheadController_search",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TypeaheadRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Perform a search of the database to find rows matching the supplied search criteria. Used for Typeahead fields within the application",
+        "tags": [
+          "typeahead"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Web API documentation",
+    "description": "The API documentation for the web services interface",
+    "version": "1.x",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "TAG",
+      "description": ""
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "Criteria": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "Equals",
+              "StartsWith",
+              "InsensitiveStartsWith",
+              "InsensitiveLike",
+              "Includes",
+              "GreaterThan",
+              "GreaterThanOrEqualTo",
+              "LessThan",
+              "LessThanOrEqualTo"
+            ]
+          },
+          "attributeType": {
+            "type": "string",
+            "enum": [
+              "Text",
+              "Html",
+              "Boolean",
+              "Double",
+              "Integer",
+              "Identifier",
+              "Date",
+              "DateTime",
+              "Time",
+              "Enumeration",
+              "ManyToOne",
+              "OneToMany",
+              "OneToOne",
+              "OneToPoly",
+              "SelectMultiple"
+            ]
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "operator",
+          "attributeType",
+          "value"
+        ]
+      },
+      "QueryRequest": {
+        "type": "object",
+        "properties": {
+          "metaEntityName": {
+            "type": "string"
+          },
+          "criteria": {
+            "$ref": "#/components/schemas/Criteria"
+          },
+          "customQuery": {
+            "type": "string"
+          },
+          "orderByName": {
+            "type": "string"
+          },
+          "orderByDir": {
+            "type": "string"
+          },
+          "pageNumber": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "metaEntityName",
+          "criteria",
+          "customQuery",
+          "orderByName",
+          "orderByDir",
+          "pageNumber",
+          "pageSize"
+        ]
+      },
+      "UpdateSortIndexRequest": {
+        "type": "object",
+        "properties": {}
+      },
+      "MetaEntity": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "pluralName": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "timestamps": {
+            "type": "boolean"
+          },
+          "cacheExpiryInSecs": {
+            "type": "number"
+          },
+          "permanentDelete": {
+            "type": "boolean"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "pluralName",
+          "type",
+          "icon",
+          "timestamps",
+          "cacheExpiryInSecs",
+          "permanentDelete",
+          "attributes"
+        ]
+      },
+      "LoginNotification": {
+        "type": "object",
+        "properties": {}
+      },
+      "MetaRole": {
+        "type": "object",
+        "properties": {}
+      },
+      "DataImportModel": {
+        "type": "object",
+        "properties": {}
+      },
+      "MetaMenu": {
+        "type": "object",
+        "properties": {}
+      },
+      "MetaPage": {
+        "type": "object",
+        "properties": {}
+      },
+      "TypeaheadRequest": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  }
+}
