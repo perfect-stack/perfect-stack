@@ -22,7 +22,7 @@ async function bootstrap() {
     credentials: true, // Set to true if your client needs to send cookies or Authorization headers
   });
 
-  // OpenAPI documentation
+  // OpenAPI documentation (http://localhost:3080/api-docs)
   const config = new DocumentBuilder()
     .setTitle('Web API documentation')
     .setDescription('The API documentation for the web services interface')
