@@ -22,7 +22,13 @@ async function bootstrap() {
     credentials: true, // Set to true if your client needs to send cookies or Authorization headers
   });
 
-  // OpenAPI documentation (http://localhost:3080/api-docs)
+  // OpenAPI documentation
+  // Localhost:
+  //   - http://localhost:3080/api-docs
+  //   - http://localhost:3080/api-json
+  // Dev
+  //   - https://app.dev.kims.doc.govt.nz/api/api-docs
+  //   - https://app.dev.kims.doc.govt.nz/api/api-json
   const config = new DocumentBuilder()
     .setTitle('Web API documentation')
     .setDescription('The API documentation for the web services interface')

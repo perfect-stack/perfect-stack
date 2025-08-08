@@ -5,12 +5,14 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "generate:client": "openapi --input openapi.json --output ./src/generated --client axios"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.11.16",
+    "openapi-typescript-codegen": "^0.28.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
