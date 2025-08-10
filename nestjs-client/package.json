@@ -14,9 +14,11 @@
     "@types/node": "^20.11.16",
     "openapi-typescript-codegen": "^0.28.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@types/dotenv": "^8.2.0"
   },
   "dependencies": {
-    "axios": "^1.6.7"
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.5"
   }
 }
