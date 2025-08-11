@@ -31,4 +31,11 @@ export class MigrateController {
     async migrateImages() {
         return this.migrateImagesService.migrateImages();
     }
+
+    @ActionPermit(ActionType.Edit)
+    @SubjectName('Migrate')
+    @Post('/images/reset')
+    async migrateImagesReset() {
+        return this.migrateImagesService.migrateImagesReset();
+    }
 }

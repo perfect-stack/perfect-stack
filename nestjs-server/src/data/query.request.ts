@@ -19,7 +19,7 @@ export class QueryRequest {
   @ApiProperty()
   metaEntityName: string;
 
-  @ApiProperty({ type: Criteria })
+  @ApiProperty({ type: [Criteria] })
   criteria: Criteria[] = [];
 
   @ApiProperty()

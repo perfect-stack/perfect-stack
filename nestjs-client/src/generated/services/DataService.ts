@@ -34,6 +34,27 @@ export class DataService {
         });
     }
     /**
+     * Save (create/update) the supplied request body as the specified entity with the supplied id
+     * @param entityName
+     * @param requestBody Entity to save
+     * @returns any
+     * @throws ApiError
+     */
+    public static dataControllerSave(
+        entityName: string,
+        requestBody: Record<string, any>,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/data/{entityName}',
+            path: {
+                'entityName': entityName,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
      * Find all data rows for the supplied query request containing entity name and other criteria
      * @param requestBody
      * @returns any
@@ -66,23 +87,6 @@ export class DataService {
             path: {
                 'entityName': entityName,
                 'id': id,
-            },
-        });
-    }
-    /**
-     * Save (create/update) the supplied request body as the specified entity with the supplied id
-     * @param entityName
-     * @returns any
-     * @throws ApiError
-     */
-    public static dataControllerSave(
-        entityName: string,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/data/{entityName}/{id}',
-            path: {
-                'entityName': entityName,
             },
         });
     }

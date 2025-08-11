@@ -50,9 +50,6 @@ export class MigrateImagesService {
     async migrateImages() {
         console.log('Migrate Images')
 
-        // TODO: make this switchable
-        await this.resetTargetDataStores();
-
         // for each folder from IMAGE_FOLDERS
         for (const dirPath of this.IMAGE_FOLDERS) {
             await this.processDir(dirPath);
@@ -75,7 +72,7 @@ export class MigrateImagesService {
         return;
     }
 
-    private async resetTargetDataStores() {
+    async migrateImagesReset() {
         await this.resetTargetTable();
         await this.resetFileStore();
     }
@@ -278,4 +275,5 @@ export class MigrateImagesService {
             dirPath, fileName, reason
         });
     }
+
 }

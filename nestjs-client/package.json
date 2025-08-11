@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node src/index.ts",
+    "migrate:images": "ts-node src/migrate-images.client.ts",
     "generate:client": "openapi --input openapi.json --output ./src/generated --client axios"
   },
   "author": "",

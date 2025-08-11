@@ -80,4 +80,10 @@ export class VersionComponent implements OnInit {
       this.toastService.showSuccess('Migrate Images complete');
     });
   }
+
+  onMigrateImagesReset() {
+    this.http.post(`${this.stackConfig.apiUrl}/migrate/images/reset`, null).subscribe((a: any) => {
+      this.toastService.showSuccess('Images RESET complete');
+    });
+  }
 }

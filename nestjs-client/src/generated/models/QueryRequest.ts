@@ -5,7 +5,7 @@
 import type { Criteria } from './Criteria';
 export type QueryRequest = {
     metaEntityName: string;
-    criteria: Criteria;
+    criteria: Array<Criteria>;
     customQuery: string;
     orderByName: string;
     orderByDir: string;

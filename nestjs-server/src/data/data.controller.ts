@@ -21,7 +21,7 @@ import { CustomQueryService } from './custom-query.service';
 import { ActionPermit } from '../authentication/action-permit';
 import { ActionType } from '../domain/meta.role';
 import { SubjectKey } from '../authentication/subject';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {ApiBody, ApiOperation, ApiTags} from '@nestjs/swagger';
 
 @ApiTags('data')
 @Controller('data')
@@ -77,7 +77,11 @@ export class DataController {
     summary:
       'Save (create/update) the supplied request body as the specified entity with the supplied id',
   })
-  @Post('/:entityName/:id')
+  @ApiBody({
+      description: 'Entity to save',
+      schema: { type: 'object' }
+  })
+  @Post('/:entityName')
   async save(
     @Req() request: Request,
     @Param('entityName') entityName: string,

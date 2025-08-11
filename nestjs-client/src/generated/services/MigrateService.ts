@@ -26,4 +26,14 @@ export class MigrateService {
             url: '/migrate/images',
         });
     }
+    /**
+     * @returns any
+     * @throws ApiError
+     */
+    public static migrateControllerMigrateImagesReset(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/migrate/images/reset',
+        });
+    }
 }
