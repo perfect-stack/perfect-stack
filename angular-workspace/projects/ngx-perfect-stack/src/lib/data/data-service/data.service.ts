@@ -75,7 +75,7 @@ export class DataService {
   }
 
   save(entityName: string, entity: Entity) {
-    return this.http.post<SaveResponse>(`${this.stackConfig.apiUrl}/data/${entityName}/${entity.id}`, entity);
+    return this.http.post<SaveResponse>(`${this.stackConfig.apiUrl}/data/${entityName}`, entity);
   }
 
   updateSortIndex(updateSortIndexRequest: UpdateSortIndexRequest) {
