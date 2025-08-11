@@ -10,7 +10,8 @@ dotenv.config();
 
 // Configure the base URL of your running NestJS server
 //OpenAPI.BASE = 'http://localhost:3080';
-OpenAPI.BASE = 'https://app.dev.kims.doc.govt.nz/api';
+//OpenAPI.BASE = 'https://app.dev.kims.doc.govt.nz/api';
+OpenAPI.BASE = 'https://app.test.kims.doc.govt.nz/api';
 
 
 
