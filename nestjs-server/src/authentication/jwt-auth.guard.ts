@@ -92,7 +92,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   getUser(context: ExecutionContext): User {
     const request = context.switchToHttp().getRequest();
-    this.logger.debug('GUARD: http headers: ', request.headers);
     return request.user;
   }
 
@@ -179,7 +178,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest(err, user, info, context, status): any {
-    this.logger.debug(`GUARD: handle request`);
+
+    // WARNING: even if this method is "greyed" out don't remove it. It is called by the passport strategy
 
     // if (err || !user) {
     //   throw err || new UnauthorizedException();

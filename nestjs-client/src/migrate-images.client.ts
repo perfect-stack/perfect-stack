@@ -9,7 +9,8 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 // Configure the base URL of your running NestJS server
-OpenAPI.BASE = 'http://localhost:3080';
+//OpenAPI.BASE = 'http://localhost:3080';
+OpenAPI.BASE = 'https://app.dev.kims.doc.govt.nz/api';
 
 
 
@@ -171,8 +172,11 @@ async function uploadFile(dirPath: string, fileName: string, birdEntity: any) {
         comments: null
     });
 
+    console.log('Bird: ', JSON.stringify(birdEntity));
+
     // save the Bird
     const saveResponse = await DataService.dataControllerSave('Bird', birdEntity);
+
 
     goodFiles.add(birdEntity['band_number']);
 }
