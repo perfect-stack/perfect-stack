@@ -6,7 +6,7 @@ export class AttributeValue {
 
 export class ConverterResult {
     col?: number = 0;
-    attributeValues: AttributeValue[];
+    attributeValues: AttributeValue[] = [];
 }
 
 export class DataImportConverter {
