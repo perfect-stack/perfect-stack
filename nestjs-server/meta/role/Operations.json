@@ -21,6 +21,10 @@
       "subject": "Migrate"
     },
     {
+      "action": "Edit",
+      "subject": "Batch"
+    },
+    {
       "action": "Delete",
       "subject": "Meta"
     },

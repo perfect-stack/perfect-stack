@@ -14,15 +14,7 @@ export class CoordinateConverterService {
   ) {}
 
   async getSummary(): Promise<CoordinateSummary> {
-    const databaseSettings = await this.settingsService.getDatabaseSettings();
-
-    const pool = new Pool({
-      user: databaseSettings.databaseUser,
-      host: databaseSettings.databaseHost,
-      database: databaseSettings.databaseName,
-      password: databaseSettings.databasePassword,
-      port: databaseSettings.databasePort,
-    });
+    const pool = await this.settingsService.getDatabasePool();
 
     const selectCountSQL =
       'Select count(*) as total_count from "Event" where (easting is not null and northing is not null) and (lat is null or lng is null)';
@@ -40,15 +32,7 @@ export class CoordinateConverterService {
   }
 
   async convert(): Promise<void> {
-    const databaseSettings = await this.settingsService.getDatabaseSettings();
-
-    const pool = new Pool({
-      user: databaseSettings.databaseUser,
-      host: databaseSettings.databaseHost,
-      database: databaseSettings.databaseName,
-      password: databaseSettings.databasePassword,
-      port: databaseSettings.databasePort,
-    });
+    const pool = await this.settingsService.getDatabasePool();
 
     const selectSql =
       'Select id, easting, northing from "Event" where (easting is not null and northing is not null) and (lat is null or lng is null)';

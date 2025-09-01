@@ -5,6 +5,7 @@ import {
   GetSecretValueCommand,
   SecretsManagerClient,
 } from '@aws-sdk/client-secrets-manager';
+import {Pool} from "pg";
 
 @Injectable()
 export class SettingsService {
@@ -43,5 +44,20 @@ export class SettingsService {
     databaseSettings.databasePassword = databasePassword;
 
     return databaseSettings;
+  }
+
+  async getDatabasePool(): Promise<Pool> {
+
+      const databaseSettings = await this.getDatabaseSettings();
+
+      const pool = new Pool({
+          user: databaseSettings.databaseUser,
+          host: databaseSettings.databaseHost,
+          database: databaseSettings.databaseName,
+          password: databaseSettings.databasePassword,
+          port: databaseSettings.databasePort,
+      });
+
+      return pool;
   }
 }

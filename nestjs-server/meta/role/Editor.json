@@ -25,6 +25,14 @@
       "subject": "Import"
     },
     {
+      "action": "Delete",
+      "subject": "Bird"
+    },
+    {
+      "action": "Delete",
+      "subject": "Event"
+    },
+    {
       "action": "Menu",
       "subject": "Admin"
     }

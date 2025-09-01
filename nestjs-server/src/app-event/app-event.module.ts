@@ -10,6 +10,7 @@ import { CoordinateConverterService } from './coordinate-converter.service';
 import { SettingsModule } from '../settings/settings.module';
 import {DataModule} from "../data/data.module";
 import {BirdQuery} from "./bird.query";
+import {AgeClassBatchJob} from "@app/app-event/age-class.batchjob";
 
 @Module({
   controllers: [CoordinateConverterController],
@@ -22,12 +23,14 @@ import {BirdQuery} from "./bird.query";
     SettingsModule,
   ],
   providers: [
+    AgeClassBatchJob,
     BirdQuery,
     EventSearchCriteriaQuery,
     BandingActivityDataEventListener,
     CoordinateConverterService,
   ],
   exports: [
+    AgeClassBatchJob,
     BirdQuery,
     EventSearchCriteriaQuery,
     BandingActivityDataEventListener,

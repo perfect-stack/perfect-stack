@@ -26,6 +26,7 @@ import {MigrateModule} from "./migrate/mirgrate.module";
 import {DataImportModule} from "./data/import/data-import.module";
 import {JobModule} from "./job/job.module";
 import {EventEmitterModule} from "@nestjs/event-emitter";
+import {BatchModule} from "@app/batch/batch.module";
 
 const envFile =
   process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -47,6 +48,7 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     AuthenticationModule,
     AdminModule,
     AuthenticationModule,
+    BatchModule,
     ClientConfigModule,
     DataModule,
     DataImportModule,

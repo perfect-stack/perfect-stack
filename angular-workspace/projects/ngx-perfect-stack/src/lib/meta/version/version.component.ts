@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import {DebugService} from '../../utils/debug/debug.service';
 import {ToastService} from '../../utils/toasts/toast.service';
 import {CoordinateConverterService} from './coordinate-converter.service';
+import {BatchService} from "./batch.service";
 
 @Component({
     selector: 'lib-version',
@@ -28,6 +29,7 @@ export class VersionComponent implements OnInit {
               protected readonly stackConfig: NgxPerfectStackConfig,
               public readonly debugService: DebugService,
               protected readonly coordinateConverterService: CoordinateConverterService,
+              protected readonly batchService: BatchService,
               protected readonly toastService: ToastService,
               protected readonly http: HttpClient) { }
 
@@ -85,5 +87,11 @@ export class VersionComponent implements OnInit {
     this.http.post(`${this.stackConfig.apiUrl}/migrate/images/reset`, null).subscribe((a: any) => {
       this.toastService.showSuccess('Images RESET complete');
     });
+  }
+
+  onUpdateAgeClass() {
+    this.batchService.ageClassUpdate().subscribe(() => {
+      this.toastService.showSuccess('Batch job complete');
+    })
   }
 }

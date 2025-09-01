@@ -25,6 +25,9 @@ import {BirdDataListener} from "./app-event/bird.data-listener";
 import {MediaRepositoryService} from "./media/media-repository.service";
 import {DiscriminatorService} from "./data/discriminator.service";
 import {BirdQuery} from "./app-event/bird.query";
+import {BatchController} from "@app/batch/batch.controller";
+import {AgeClassBatchJob} from "@app/app-event/age-class.batchjob";
+import {BatchService} from "@app/batch/batch.service";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -36,6 +39,7 @@ export class AppService implements OnApplicationBootstrap {
     protected readonly mapService: MapService,
     protected readonly dataService: DataService,
     protected readonly queryService: QueryService,
+    protected readonly batchService: BatchService,
     protected readonly customQueryService: CustomQueryService,
     protected readonly customRuleService: CustomRuleService,
     protected readonly knexService: KnexService,
@@ -43,6 +47,7 @@ export class AppService implements OnApplicationBootstrap {
     protected readonly mediaRepositoryService: MediaRepositoryService,
     protected readonly eventService: EventService,
     protected readonly settingsService: SettingsService,
+    protected readonly ageClassBatchJob: AgeClassBatchJob,
   ) {}
 
   get(): string {
@@ -66,6 +71,8 @@ export class AppService implements OnApplicationBootstrap {
     this.addEventDataListener();
 
     this.addCustomRules();
+
+    this.addAgeClassBatchJob();
 
     return;
   }
@@ -151,6 +158,10 @@ export class AppService implements OnApplicationBootstrap {
       'EventLocationRule',
       new EventLocationRule(null, null, null),
     );
+  }
+
+  private addAgeClassBatchJob() {
+      this.batchService.addBatchJob('age_class', this.ageClassBatchJob);
   }
 }
 
