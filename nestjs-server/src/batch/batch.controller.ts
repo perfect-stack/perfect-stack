@@ -1,4 +1,4 @@
-import {Controller, Param, Post} from "@nestjs/common";
+import {Controller, Get, Param, Post} from "@nestjs/common";
 import {ApiOperation, ApiTags} from "@nestjs/swagger";
 import {ActionPermit} from "@app/authentication/action-permit";
 import {ActionType} from "@app/domain/meta.role";
@@ -11,6 +11,16 @@ export class BatchController {
 
 
     constructor(protected readonly batchService: BatchService) {}
+
+    @ActionPermit(ActionType.Read)
+    @SubjectName('Batch')
+    @ApiOperation({
+        summary: 'Get summary of batch job',
+    })
+    @Get('/:jobName')
+    async getSummary(@Param('jobName') jobName: string): Promise<any> {
+        return this.batchService.getSummary(jobName);
+    }
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Batch')

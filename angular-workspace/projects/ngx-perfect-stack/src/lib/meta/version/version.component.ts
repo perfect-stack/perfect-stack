@@ -21,6 +21,8 @@ export class VersionComponent implements OnInit {
   style: 'Page' | 'Footer' = 'Page';
 
   conversionRemainingCount = -1;
+  ageClassSummary: any;
+
 
   copyrightFooter: string;
   supportEmail: string;
@@ -40,9 +42,8 @@ export class VersionComponent implements OnInit {
       this.serverVersion = a.serverRelease;
     });
 
-    this.coordinateConverterService.getSummary().subscribe((summary: any) => {
-      this.conversionRemainingCount = summary.remainingCount;
-    });
+    this.getSummaryAgeClass();
+    this.getSummaryCoordinates();
 
     this.copyrightFooter = this.stackConfig.copyrightFooter;
     this.supportEmail = this.stackConfig.supportEmail;
@@ -50,25 +51,6 @@ export class VersionComponent implements OnInit {
 
   onToggleDebug() {
     this.debugService.toggleDebug();
-  }
-
-  onToastSuccess() {
-    this.toastService.showSuccess('This is a success message');
-  }
-
-  onToastWarning() {
-    this.toastService.showWarning('This is a warning message');
-  }
-
-  onToastError() {
-    this.toastService.showError('This is a error message', false);
-  }
-
-  onConvert() {
-    console.log('Convert now');
-    this.coordinateConverterService.convert().subscribe((summary: any) => {
-      this.conversionRemainingCount = summary.remainingCount;
-    });
   }
 
   onMigrateData() {
@@ -89,9 +71,29 @@ export class VersionComponent implements OnInit {
     });
   }
 
+  getSummaryAgeClass() {
+    this.batchService.ageClassSummary().subscribe(summary => {
+      this.ageClassSummary = summary;
+    });
+  }
+
   onUpdateAgeClass() {
     this.batchService.ageClassUpdate().subscribe(() => {
       this.toastService.showSuccess('Batch job complete');
-    })
+      this.getSummaryAgeClass();
+    });
   }
+
+  getSummaryCoordinates() {
+    this.coordinateConverterService.getSummary().subscribe((summary: any) => {
+      this.conversionRemainingCount = summary.remainingCount;
+    });
+  }
+
+  onConvertCoordinates() {
+    this.coordinateConverterService.convert().subscribe((summary: any) => {
+      this.conversionRemainingCount = summary.remainingCount;
+    });
+  }
+
 }
