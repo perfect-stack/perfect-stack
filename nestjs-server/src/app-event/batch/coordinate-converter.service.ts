@@ -1,11 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CoordinateSummary } from './coordinate-converter.controller';
-import { SettingsService } from '../settings/settings.service';
-import { Pool } from 'pg';
-import { MapService } from '../map/map.service';
+import { SettingsService } from '@app/settings/settings.service';
+import { MapService } from '@app/map/map.service';
+import {BatchJob} from "@app/batch/batch-job";
+
+export class CoordinateSummary {
+    remainingCount: number;
+}
 
 @Injectable()
-export class CoordinateConverterService {
+export class CoordinateConverterService implements BatchJob {
   private readonly logger = new Logger(CoordinateConverterService.name);
 
   constructor(
@@ -31,7 +34,7 @@ export class CoordinateConverterService {
     };
   }
 
-  async convert(): Promise<void> {
+  async execute(): Promise<any> {
     const pool = await this.settingsService.getDatabasePool();
 
     const selectSql =

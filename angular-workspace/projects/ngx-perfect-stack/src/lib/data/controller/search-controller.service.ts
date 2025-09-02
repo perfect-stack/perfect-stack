@@ -11,7 +11,7 @@ import {DataQuery} from '../../domain/meta.page';
 import {QueryResponse} from '../data-service/query.response';
 
 
-/**sa
+/**
  * The Search Criteria performs two actions; search and reset. It needs to know the name of the criteria form in the
  * form map and the name of the result table output form also in the form map. With this metadata it can then perform
  * the actions when invoked by the event service.

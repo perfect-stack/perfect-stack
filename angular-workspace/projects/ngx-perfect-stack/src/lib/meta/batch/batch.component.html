@@ -1,0 +1,33 @@
+<div class="container-page">
+
+  <div class="row pt-2">
+    <div class="col-6">
+
+      <h1>Batch Jobs</h1>
+
+      <table class="table mt-4">
+        <thead>
+        <th>Job Name</th>
+        <th>Execute</th>
+        </thead>
+        <tbody>
+        <tr>
+          <td>
+            <span *ngIf="ageClassSummary">Age class summary: {{ageClassSummary.rowCount}} </span>
+          </td>
+          <td>
+            <button class="btn btn-warning ms-2" (click)="onUpdateAgeClass()">Update Age Class</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Events that need WGS84 conversion: {{conversionRemainingCount}}</td>
+          <td><button class="btn btn-warning ms-2" (click)="onConvertCoordinates()">Convert Coordinates</button></td>
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</div>

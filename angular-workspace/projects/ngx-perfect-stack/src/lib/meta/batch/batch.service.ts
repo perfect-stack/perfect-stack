@@ -11,19 +11,11 @@ export class BatchService {
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly http: HttpClient) { }
 
-  coordinateSummary() {
-    return this.http.get(`${this.stackConfig.apiUrl}/coordinates`);
+  getSummary(batchJob: string) {
+    return this.http.get(`${this.stackConfig.apiUrl}/batch/${batchJob}`);
   }
 
-  coordinateConvert() {
-    return this.http.post(`${this.stackConfig.apiUrl}/coordinates`, null);
-  }
-
-  ageClassSummary() {
-    return this.http.get(`${this.stackConfig.apiUrl}/batch/age_class`);
-  }
-
-  ageClassUpdate() {
-    return this.http.post(`${this.stackConfig.apiUrl}/batch/age_class`, null);
+  execute(batchJob: string) {
+    return this.http.post(`${this.stackConfig.apiUrl}/batch/${batchJob}`, null);
   }
 }

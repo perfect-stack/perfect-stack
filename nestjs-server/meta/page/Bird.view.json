@@ -148,7 +148,17 @@
                       "orderByName": "date_time",
                       "orderByDir": "DESC",
                       "noItemsHtml": "<div class=\"text-center\">No events recorded yet</div> <div class=\"text-center text-secondary\">Click \"Add event\" to create a new event for this bird</div>",
-                      "locations": {},
+                      "locations": {
+                        "BottomMiddle": {
+                          "type": "Paginate",
+                          "channel": "eventPanel",
+                          "containerStyles": "",
+                          "styles": "",
+                          "label": "",
+                          "modes": "",
+                          "criteriaForm": "eventPanelCriteria"
+                        }
+                      },
                       "route": "/data/Event/view/${id}?backTo=Bird",
                       "navigation": "Enabled"
                     }

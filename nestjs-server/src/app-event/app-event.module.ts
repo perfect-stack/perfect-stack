@@ -5,15 +5,13 @@ import { KnexModule } from '../knex/knex.module';
 import { EventModule } from '../event/event.module';
 import { MetaEntityModule } from '../meta/meta-entity/meta-entity.module';
 import { MapModule } from '../map/map.module';
-import { CoordinateConverterController } from './coordinate-converter.controller';
-import { CoordinateConverterService } from './coordinate-converter.service';
+import { CoordinateConverterService } from './batch/coordinate-converter.service';
 import { SettingsModule } from '../settings/settings.module';
 import {DataModule} from "../data/data.module";
 import {BirdQuery} from "./bird.query";
-import {AgeClassBatchJob} from "@app/app-event/age-class.batchjob";
+import {AgeClassBatchJob} from "@app/app-event/batch/age-class.batchjob";
 
 @Module({
-  controllers: [CoordinateConverterController],
   imports: [
     KnexModule,
     EventModule,

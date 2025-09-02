@@ -3,8 +3,7 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-confi
 import { HttpClient } from '@angular/common/http';
 import {DebugService} from '../../utils/debug/debug.service';
 import {ToastService} from '../../utils/toasts/toast.service';
-import {CoordinateConverterService} from './coordinate-converter.service';
-import {BatchService} from "./batch.service";
+import {BatchService} from "../batch/batch.service";
 
 @Component({
     selector: 'lib-version',
@@ -20,9 +19,6 @@ export class VersionComponent implements OnInit {
   @Input()
   style: 'Page' | 'Footer' = 'Page';
 
-  conversionRemainingCount = -1;
-  ageClassSummary: any;
-
 
   copyrightFooter: string;
   supportEmail: string;
@@ -30,7 +26,6 @@ export class VersionComponent implements OnInit {
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
               public readonly debugService: DebugService,
-              protected readonly coordinateConverterService: CoordinateConverterService,
               protected readonly batchService: BatchService,
               protected readonly toastService: ToastService,
               protected readonly http: HttpClient) { }
@@ -41,9 +36,6 @@ export class VersionComponent implements OnInit {
     this.http.get(`${this.stackConfig.apiUrl}/meta/menu/version`).subscribe((a: any) => {
       this.serverVersion = a.serverRelease;
     });
-
-    this.getSummaryAgeClass();
-    this.getSummaryCoordinates();
 
     this.copyrightFooter = this.stackConfig.copyrightFooter;
     this.supportEmail = this.stackConfig.supportEmail;
@@ -68,31 +60,6 @@ export class VersionComponent implements OnInit {
   onMigrateImagesReset() {
     this.http.post(`${this.stackConfig.apiUrl}/migrate/images/reset`, null).subscribe((a: any) => {
       this.toastService.showSuccess('Images RESET complete');
-    });
-  }
-
-  getSummaryAgeClass() {
-    this.batchService.ageClassSummary().subscribe(summary => {
-      this.ageClassSummary = summary;
-    });
-  }
-
-  onUpdateAgeClass() {
-    this.batchService.ageClassUpdate().subscribe(() => {
-      this.toastService.showSuccess('Batch job complete');
-      this.getSummaryAgeClass();
-    });
-  }
-
-  getSummaryCoordinates() {
-    this.coordinateConverterService.getSummary().subscribe((summary: any) => {
-      this.conversionRemainingCount = summary.remainingCount;
-    });
-  }
-
-  onConvertCoordinates() {
-    this.coordinateConverterService.convert().subscribe((summary: any) => {
-      this.conversionRemainingCount = summary.remainingCount;
     });
   }
 

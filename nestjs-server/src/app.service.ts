@@ -25,9 +25,9 @@ import {BirdDataListener} from "./app-event/bird.data-listener";
 import {MediaRepositoryService} from "./media/media-repository.service";
 import {DiscriminatorService} from "./data/discriminator.service";
 import {BirdQuery} from "./app-event/bird.query";
-import {BatchController} from "@app/batch/batch.controller";
-import {AgeClassBatchJob} from "@app/app-event/age-class.batchjob";
+import {AgeClassBatchJob} from "@app/app-event/batch/age-class.batchjob";
 import {BatchService} from "@app/batch/batch.service";
+import {CoordinateConverterService} from "@app/app-event/batch/coordinate-converter.service";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -48,6 +48,7 @@ export class AppService implements OnApplicationBootstrap {
     protected readonly eventService: EventService,
     protected readonly settingsService: SettingsService,
     protected readonly ageClassBatchJob: AgeClassBatchJob,
+    protected readonly coordinateConverterService: CoordinateConverterService,
   ) {}
 
   get(): string {
@@ -72,7 +73,7 @@ export class AppService implements OnApplicationBootstrap {
 
     this.addCustomRules();
 
-    this.addAgeClassBatchJob();
+    this.addBatchJobs();
 
     return;
   }
@@ -160,8 +161,9 @@ export class AppService implements OnApplicationBootstrap {
     );
   }
 
-  private addAgeClassBatchJob() {
+  private addBatchJobs() {
       this.batchService.addBatchJob('age_class', this.ageClassBatchJob);
+      this.batchService.addBatchJob("coordinate_converter", this.coordinateConverterService);
   }
 }
 

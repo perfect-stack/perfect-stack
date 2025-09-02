@@ -13,29 +13,6 @@
   <br>
   <br>
 
-  <h3>Batch Jobs</h3>
-  <table class="table">
-    <thead>
-      <th>Job Name</th>
-      <th>Execute</th>
-    </thead>
-    <tbody>
-      <tr>
-        <td>
-          <span *ngIf="ageClassSummary">Age class summary: {{ageClassSummary.rowCount}} </span>
-        </td>
-        <td>
-          <button class="btn btn-warning ms-2" (click)="onUpdateAgeClass()">Update Age Class Job</button>
-        </td>
-      </tr>
-
-      <tr>
-        <td>Events that need WGS84 conversion: {{conversionRemainingCount}}</td>
-        <td><button class="btn btn-warning ms-2" (click)="onConvertCoordinates()">Convert Coordinates</button></td>
-      </tr>
-    </tbody>
-  </table>
-
   <!--<div class="py-3">
     <div><button class="btn btn-warning me-2" (click)="onMigrateData()">Migrate Data</button></div>
     <div><button class="btn btn-warning mt-2 me-2" (click)="onMigrateImages()">Migrate Images</button></div>
