@@ -23,6 +23,6 @@
     }
   },
   "compilerOptions": {
-    "webpack": true
+    "builder": "tsc"
   }
 }
