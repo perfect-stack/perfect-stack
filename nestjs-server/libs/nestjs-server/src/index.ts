@@ -1,5 +1,6 @@
 import { AuthenticationModule } from './authentication/authentication.module';
 import { AuthenticationService } from './authentication/authentication.service';
+import { AuditModule } from "./audit/audit.module";
 import { BatchModule } from './batch/batch.module';
 import { PublicApi } from './authentication/public-api';
 import { JwtAuthGuard } from './authentication/jwt-auth.guard';
@@ -8,11 +9,14 @@ import { ClientConfigService } from './client/config/client-config.service';
 import { DataModule } from './data/data.module';
 import { DataImportModule } from "./data/import/data-import.module";
 import { DataService } from './data/data.service';
+import { EventModule } from "./event/event.module";
 import { DiscriminatorService } from './data/discriminator.service';
 import { FileRepositoryModule } from './file/file-repository.module';
 import { FileRepositoryService } from './file/file-repository.service';
 import { JobModule } from "./job/job.module";
 import { JobService } from "./job/job.service";
+import { KnexModule } from "./knex/knex.module";
+import { MapModule } from "./map/map.module";
 import { OrmModule } from './orm/orm.module';
 import { OrmService } from './orm/orm.service';
 import { TypeaheadService } from './typeahead/typeahead.service';
@@ -20,16 +24,23 @@ import { TypeaheadModule } from './typeahead/typeahead.module';
 import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
 import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 import { MetaPageModule } from './meta/meta-page/meta-page.module';
+import { MetaRoleModule } from "./meta/meta-role/meta-role.module";
 import { MediaRepositoryModule } from './media/media-repository.module';
 import { MediaRepositoryService } from './media/media-repository.service';
+import { MigrateModule } from "./migrate/mirgrate.module";
+import { RuleModule } from "./data/rule/rule.module";
+import { SettingsModule } from "./settings/settings.module";
 
-
-export { AuthenticationModule, AuthenticationService, PublicApi, JwtAuthGuard };
+export { AuthenticationModule, AuthenticationService, AuditModule, PublicApi, JwtAuthGuard };
 export { BatchModule };
 export { ClientConfigModule, ClientConfigService };
 export { DataModule, DataImportModule, DataService, DiscriminatorService };
+export { EventModule };
 export { JobModule, JobService }
 export { FileRepositoryModule, FileRepositoryService };
+export { KnexModule };
+export { MapModule };
+export { MigrateModule };
 export { OrmModule, OrmService };
 export { TypeaheadModule, TypeaheadService };
 
@@ -37,3 +48,6 @@ export { MediaRepositoryModule, MediaRepositoryService };
 export { MetaEntityModule };
 export { MetaMenuModule };
 export { MetaPageModule };
+export { MetaRoleModule };
+export { RuleModule };
+export { SettingsModule };
