@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build kims-server",
+    "build:app": "nest build kims-server",
+    "build:lib": "nest build nestjs-server",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start kims-server",
     "start:dev": "nest start kims-server --watch",
@@ -118,10 +119,9 @@
   "repository": {
     "url": "https://github.com/perfect-stack/perfect-stack.git"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/libs/nestjs-server/index.js",
+  "types": "dist/libs/nestjs-server/index.d.ts",
   "files": [
-    "/dist",
-    "/etc"
+    "dist/libs/nestjs-server"
   ]
 }

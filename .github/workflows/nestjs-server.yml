@@ -26,9 +26,9 @@ jobs:
       - name: npm ci
         working-directory: ./nestjs-server
         run: npm ci
-      - name: npm run build
+      - name: npm run build:lib
         working-directory: ./nestjs-server
-        run: npm run build
+        run: npm run build:lib
       - name: debug
         working-directory: ./nestjs-server
         run: ls -al
