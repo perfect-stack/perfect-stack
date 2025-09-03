@@ -1,4 +1,28 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "monorepo": true,
+  "root": ".",
+  "projects": {
+    "kims-server": {
+      "type": "application",
+      "root": "apps/kims-server",
+      "entryFile": "main",
+      "sourceRoot": "apps/kims-server/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/kims-server/tsconfig.app.json"
+      }
+    },
+    "nestjs-server": {
+      "type": "library",
+      "root": "libs/nestjs-server",
+      "entryFile": "index",
+      "sourceRoot": "libs/nestjs-server/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/nestjs-server/tsconfig.lib.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true
+  }
 }

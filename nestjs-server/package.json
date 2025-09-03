@@ -6,19 +6,19 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "build": "nest build kims-server",
+    "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
+    "start": "nest start kims-server",
+    "start:dev": "nest start kims-server --watch",
+    "start:debug": "nest start kims-server --debug --watch",
+    "start:prod": "node dist/apps/kims-server/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "meta:copy:s3": "aws s3 cp --recursive ./meta/ s3://perfect-stack-demo-meta-s3/meta",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "jest --config ./apps/kims-server/test/jest-e2e.json",
     "publish:github": "npm publish",
     "migrate:images": "ts-node -r tsconfig-paths/register src/bin/migrate-images.ts"
   },
@@ -94,7 +94,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -102,8 +102,15 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/apps/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "^@perfect-stack/nestjs-server(|/.*)$": "<rootDir>/libs/nestjs-server/src/$1"
+    }
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
