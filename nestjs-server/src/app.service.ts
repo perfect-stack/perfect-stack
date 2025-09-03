@@ -28,6 +28,8 @@ import {BirdQuery} from "./app-event/bird.query";
 import {AgeClassBatchJob} from "@app/app-event/batch/age-class.batchjob";
 import {BatchService} from "@app/batch/batch.service";
 import {CoordinateConverterService} from "@app/app-event/batch/coordinate-converter.service";
+import {DeathActivityDataListener} from "@app/app-event/death-activity.data-listener";
+import {ActivityService} from "@app/app-event/activity.service";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -47,6 +49,7 @@ export class AppService implements OnApplicationBootstrap {
     protected readonly mediaRepositoryService: MediaRepositoryService,
     protected readonly eventService: EventService,
     protected readonly settingsService: SettingsService,
+    protected readonly activityService: ActivityService,
     protected readonly ageClassBatchJob: AgeClassBatchJob,
     protected readonly coordinateConverterService: CoordinateConverterService,
   ) {}
@@ -68,6 +71,7 @@ export class AppService implements OnApplicationBootstrap {
     this.addProjectTeamQuery();
 
     this.addBandingActivityListener();
+    this.addDeathActivityListener();
     this.addBirdDataListener()
     this.addEventDataListener();
 
@@ -107,9 +111,16 @@ export class AppService implements OnApplicationBootstrap {
         this.queryService,
         this.knexService,
         this.metaEntityService,
-        this.discriminatorService
+        this.activityService
       ),
     );
+  }
+
+  private addDeathActivityListener() {
+      this.eventService.addDataEventListener(
+          'Event',
+          new DeathActivityDataListener(this.activityService, this.dataService, this.queryService)
+      );
   }
 
   private addBirdDataListener() {

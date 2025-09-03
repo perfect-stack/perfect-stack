@@ -10,6 +10,7 @@ import { SettingsModule } from '../settings/settings.module';
 import {DataModule} from "../data/data.module";
 import {BirdQuery} from "./bird.query";
 import {AgeClassBatchJob} from "@app/app-event/batch/age-class.batchjob";
+import {ActivityService} from "@app/app-event/activity.service";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import {AgeClassBatchJob} from "@app/app-event/batch/age-class.batchjob";
     SettingsModule,
   ],
   providers: [
+    ActivityService,
     AgeClassBatchJob,
     BirdQuery,
     EventSearchCriteriaQuery,
@@ -28,6 +30,7 @@ import {AgeClassBatchJob} from "@app/app-event/batch/age-class.batchjob";
     CoordinateConverterService,
   ],
   exports: [
+    ActivityService,
     AgeClassBatchJob,
     BirdQuery,
     EventSearchCriteriaQuery,
