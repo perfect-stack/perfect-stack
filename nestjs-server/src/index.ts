@@ -1,5 +1,6 @@
 import { AuthenticationModule } from './authentication/authentication.module';
 import { AuthenticationService } from './authentication/authentication.service';
+import { BatchModule } from './batch/batch.module';
 import { PublicApi } from './authentication/public-api';
 import { JwtAuthGuard } from './authentication/jwt-auth.guard';
 import { ClientConfigModule } from './client/config/client-config.module';
@@ -24,6 +25,7 @@ import { MediaRepositoryService } from './media/media-repository.service';
 
 
 export { AuthenticationModule, AuthenticationService, PublicApi, JwtAuthGuard };
+export { BatchModule };
 export { ClientConfigModule, ClientConfigService };
 export { DataModule, DataImportModule, DataService, DiscriminatorService };
 export { JobModule, JobService }
