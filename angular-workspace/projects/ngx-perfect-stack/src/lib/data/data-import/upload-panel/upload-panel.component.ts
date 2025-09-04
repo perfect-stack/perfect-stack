@@ -119,6 +119,7 @@ export class UploadPanelComponent {
     //    the server API expects. You may need to change this if your
     //    backend expects a different name (e.g., 'upload', 'fileData').
     formData.append('file', fileItem.file, fileItem.file.name);
+    formData.append('dataFormat', 'Transmitter');
 
     // 3. Make the POST request with the FormData.
     //    DO NOT set the 'Content-Type' header manually. The browser

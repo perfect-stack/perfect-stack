@@ -3,12 +3,15 @@ import {Injectable} from "@nestjs/common";
 
 import * as fs from 'fs';
 import * as csv from "fast-csv";
+import {DataFormatService} from "@perfect-stack/nestjs-server/data/import/data-format.service";
 
 
 @Injectable()
 export class DataImportFileService {
 
-    async parseFile(filePath: string): Promise<DataImportModel> {
+    constructor(protected readonly dataFormatService: DataFormatService) {}
+
+    async parseFile(dataFormat: string, filePath: string): Promise<DataImportModel> {
 
         try {
             // Use fast-csv and parse the file into a 2d array of raw values
@@ -30,8 +33,13 @@ export class DataImportFileService {
                     });
             });
 
+            if(this.dataFormatService.isValidDataFormat(dataFormat)) {
+                throw new Error(`Unknown data format of: ${dataFormat}`);
+            }
+
             const dataImportModel = new DataImportModel();
             if (data && data.length > 0) {
+                dataImportModel.dataFormat = dataFormat;
                 dataImportModel.headers = data[0];
                 dataImportModel.dataRows = data.slice(1);
             }
@@ -41,6 +49,7 @@ export class DataImportFileService {
         catch (error) {
             return {
                 status: 'error',
+                dataFormat: dataFormat,
                 headers: ["Error parsing file"],
                 skipRows: [],
                 dataRows: [[error.message]],
@@ -56,5 +65,4 @@ export class DataImportFileService {
             }
         }
     }
-
 }

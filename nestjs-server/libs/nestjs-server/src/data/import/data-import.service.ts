@@ -5,17 +5,13 @@ import {DateConverter} from "./converter/date.converter";
 import {IntegerConverter} from "./converter/integer.converter";
 import {Entity} from "../../domain/entity";
 import {ConverterResult} from "./converter/converter.types";
-import {BandNumberLookupConverter} from "./converter/band-number.converter";
 import {QueryService} from "../query.service";
 import {DataService} from "../data.service";
 import {ValidationService} from "../validation.service";
 import {ValidationResult, ValidationResultMapController} from "../../domain/meta.rule";
 import {MetaEntity} from "../../domain/meta.entity";
 import {MetaEntityService} from "../../meta/meta-entity/meta-entity.service";
-import {DuplicateEventCheck} from "./duplicate-event-check";
-import {PostImportEventActions} from "./post-import-event-actions";
-import {TextConverter} from "./converter/text.converter";
-import {TrackingFlightStatusConverter} from "./converter/tracking-flight-status.converter";
+import {DataFormatService} from "@perfect-stack/nestjs-server/data/import/data-format.service";
 
 
 export interface CheckForDuplicates {
@@ -33,8 +29,7 @@ export class DataImportService {
 
     constructor(protected readonly queryService: QueryService,
                 protected readonly dataService: DataService,
-                protected readonly duplicateEventCheck: DuplicateEventCheck,
-                protected readonly postImportEventActions: PostImportEventActions,
+                protected readonly dataFormatService: DataFormatService,
                 protected readonly metaEntityService: MetaEntityService,
                 protected readonly validationService: ValidationService) {
     }
@@ -48,7 +43,7 @@ export class DataImportService {
             dataImportModel.importedRowCount = 0;
         }
 
-        const dataImportMapping = await this.findDataImportMapping();
+        const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
@@ -75,9 +70,9 @@ export class DataImportService {
         if(stepIndex === 0) {
             dataImportModel.importedEntityList = [];
             dataImportModel.processedRowCount = 0;
-;        }
+        }
 
-        const dataImportMapping = await this.findDataImportMapping();
+        const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
@@ -283,75 +278,7 @@ export class DataImportService {
     }
 
 
-    async findDataImportMapping(): Promise<DataImportMapping> {
-        return {
-            metaEntityName: 'Event',
-            duplicateCheck: this.duplicateEventCheck,
-            postImportActions: this.postImportEventActions,
-            attributeMappings: [
-                {
-                    attributeName: 'event_type',
-                    defaultValue: 'Transmitter'
-                },
-                {
-                    attributeName: 'data_source',
-                    defaultValue: 'KIMS'
-                },
-                {
-                    attributeName: 'activities',
-                    defaultValue: []
-                },
-                {
-                    attributeName: 'observers',
-                    defaultValue: []
-                },
-                {
-                    attributeName: 'instruments',
-                    defaultValue: []
-                },
-                {
-                    columnName: 'V band',
-                    indicatesBlankRow: false,
-                    converter: new BandNumberLookupConverter(this.queryService),
-                },
-                {
-                    // Important: this converter must be processed after the BandNumberLookupConverter
-                    columnName: 'Status',
-                    attributeName: 'status',
-                    indicatesBlankRow: true,
-                    converter: new TrackingFlightStatusConverter(),
-                },
-                {
-                    columnName: 'Date',
-                    attributeName: 'date_time',
-                    indicatesBlankRow: true,
-                    converter: new DateConverter()
-                },
-                {
-                    columnName: 'Date',
-                    attributeName: 'end_date_time',
-                    indicatesBlankRow: true,
-                    converter: new DateConverter()
-                },
-                {
-                    columnName: 'Easting NZTM',
-                    attributeName: 'easting',
-                    indicatesBlankRow: true,
-                    converter: new IntegerConverter()
-                },
-                {
-                    columnName: 'Northing NZTM',
-                    attributeName: 'northing',
-                    indicatesBlankRow: true,
-                    converter: new IntegerConverter()
-                },
-                {
-                    columnName: 'Comments',
-                    attributeName: 'comments',
-                    indicatesBlankRow: true,
-                    converter: new TextConverter()
-                },
-            ]
-        }
+    async findDataImportMapping(dataFormat: string): Promise<DataImportMapping> {
+        return this.dataFormatService.getDataFormat(dataFormat);
     }
 }

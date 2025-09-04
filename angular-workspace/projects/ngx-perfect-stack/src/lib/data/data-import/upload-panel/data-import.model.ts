@@ -8,6 +8,7 @@ export class DataImportError {
 
 export class DataImportModel {
   status: "loaded" | "validated" | "imported" | "error";
+  dataFormat: string;
   headers: string[];
   skipRows: boolean[];
   dataRows: string[][];

@@ -80,17 +80,25 @@ export class DataImportJobController {
         schema: {
             type: 'object',
             properties: {
+                dataFormat: {
+                    type: 'string'
+                },
                 file: {
                     type: 'string',
                     format: 'binary',
                 },
             },
+            required: ['dataFormat', 'file']
         },
     })
-    async uploadFile(@UploadedFile( new ParseFilePipe({validators: [
-            new MaxFileSizeValidator({maxSize: 10 * 1024 * 1024})
-        ], fileIsRequired: true
-    })) file: Express.Multer.File): Promise<Job> {
+    async uploadFile(@UploadedFile( new ParseFilePipe({
+            validators: [
+                new MaxFileSizeValidator({maxSize: 10 * 1024 * 1024})
+            ],
+            fileIsRequired: true
+        })) file: Express.Multer.File,
+        @Body('dataFormat') dataFormat: string
+    ): Promise<Job> {
 
         // The interceptor takes care of creating the file on the server and then just gives us
         // the "File" handle to that file.
@@ -101,7 +109,7 @@ export class DataImportJobController {
             console.log('Mimetype:', file.mimetype);
             console.log('Size:', file.size);
 
-            const dataImportModel = await this.dataImportFileService.parseFile(file.path);
+            const dataImportModel = await this.dataImportFileService.parseFile(dataFormat, file.path);
             dataImportModel.status = 'loaded';
 
             const job = await this.jobService.submitJob('Data Import - Validate', dataImportModel.dataRows.length, dataImportModel);
