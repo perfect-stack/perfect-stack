@@ -1,8 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import {DataImportError, DataImportModel} from "./data-import.model";
 import {CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
-import {DateConverter} from "./converter/date.converter";
-import {IntegerConverter} from "./converter/integer.converter";
 import {Entity} from "../../domain/entity";
 import {ConverterResult} from "./converter/converter.types";
 import {QueryService} from "../query.service";

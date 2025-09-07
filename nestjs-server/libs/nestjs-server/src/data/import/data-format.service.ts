@@ -10,6 +10,10 @@ import {TextConverter} from "@perfect-stack/nestjs-server/data/import/converter/
 import {DuplicateEventCheck} from "@perfect-stack/nestjs-server/data/import/duplicate-event-check";
 import {PostImportEventActions} from "@perfect-stack/nestjs-server/data/import/post-import-event-actions";
 import {QueryService} from "../query.service";
+import {MicrochipConverter} from "@perfect-stack/nestjs-server/data/import/converter/microchip.converter";
+import {
+    DualFieldDateTimeConverter
+} from "@perfect-stack/nestjs-server/data/import/converter/dual-field-date-time.converter";
 
 
 @Injectable()
@@ -111,4 +115,67 @@ export class DataFormatService {
         ]
     }
 
+
+    private rfidFormat: DataImportMapping = {
+        metaEntityName: 'Event',
+        duplicateCheck: this.duplicateEventCheck,
+        postImportActions: null,
+        attributeMappings: [
+            {
+                attributeName: 'event_type',
+                defaultValue: 'Transmitter'
+            },
+            {
+                attributeName: 'data_source',
+                defaultValue: 'KIMS'
+            },
+            {
+                attributeName: 'activities',
+                defaultValue: []
+            },
+            {
+                attributeName: 'observers',
+                defaultValue: []
+            },
+            {
+                attributeName: 'instruments',
+                defaultValue: []
+            },
+            {
+                columnName: 'Microchip',
+                indicatesBlankRow: false,
+                converter: new MicrochipConverter(this.queryService),
+            },
+            {
+                columnName: 'Date',
+                attributeName: 'date_time',
+                indicatesBlankRow: true,
+                converter: new DualFieldDateTimeConverter()
+            },
+            {
+                columnName: 'Date',
+                attributeName: 'end_date_time',
+                indicatesBlankRow: true,
+                converter: new DualFieldDateTimeConverter()
+            },
+            {
+                columnName: 'Easting NZTM',
+                attributeName: 'easting',
+                indicatesBlankRow: true,
+                converter: new IntegerConverter()
+            },
+            {
+                columnName: 'Northing NZTM',
+                attributeName: 'northing',
+                indicatesBlankRow: true,
+                converter: new IntegerConverter()
+            },
+            {
+                columnName: 'Comments',
+                attributeName: 'comments',
+                indicatesBlankRow: true,
+                converter: new TextConverter()
+            },
+        ]
+    }
 }

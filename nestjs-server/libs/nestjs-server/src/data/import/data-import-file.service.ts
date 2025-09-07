@@ -33,7 +33,7 @@ export class DataImportFileService {
                     });
             });
 
-            if(this.dataFormatService.isValidDataFormat(dataFormat)) {
+            if(!this.dataFormatService.isValidDataFormat(dataFormat)) {
                 throw new Error(`Unknown data format of: ${dataFormat}`);
             }
 
