@@ -1,6 +1,6 @@
 import {Entity} from "../../domain/entity";
 import {DataImportError} from "./data-import.model";
-import {DataImportConverter} from "./converter/converter.types";
+import {DataImportConverter, DataListImportConverter} from "./converter/converter.types";
 import {CheckForDuplicates, PostImportActions} from "./data-import.service";
 
 export class CreateEntityResponse {
@@ -16,9 +16,21 @@ export class DataImportMapping {
 }
 
 export class DataAttributeMapping {
-    columnName?: string;
+    columnName?: string | string[];
     attributeName?: string;
     indicatesBlankRow?: boolean;
-    converter?: DataImportConverter
+    converter?: DataImportConverter | DataListImportConverter;
     defaultValue?: string | number | [];
+
+    /**
+     * Safely returns the columnName(s) as a string array, regardless of whether the
+     * source is a single string, an array, or undefined.
+     * @returns A string array of column names.
+     */
+    getColumnNamesAsArray(): string[] {
+        if (!this.columnName) {
+            return [];
+        }
+        return Array.isArray(this.columnName) ? this.columnName : [this.columnName];
+    }
 }

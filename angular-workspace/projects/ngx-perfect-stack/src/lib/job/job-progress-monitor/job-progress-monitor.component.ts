@@ -2,7 +2,6 @@ import {Component, effect, inject, input, output, signal} from '@angular/core';
 import {toObservable, toSignal} from "@angular/core/rxjs-interop";
 import {filter, map, merge, switchMap, takeUntil, takeWhile, tap, timer} from "rxjs";
 import {JobService} from "../job.service";
-import {JsonPipe} from "@angular/common";
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 
 
@@ -10,7 +9,6 @@ import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 @Component({
   selector: 'lib-job-progress-monitor',
   imports: [
-    JsonPipe,
     NgbProgressbar
   ],
   templateUrl: './job-progress-monitor.component.html',

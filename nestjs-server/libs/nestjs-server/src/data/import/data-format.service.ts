@@ -1,5 +1,5 @@
 import {Injectable} from "@nestjs/common";
-import {DataImportMapping} from "@perfect-stack/nestjs-server/data/import/data-import.types";
+import {DataAttributeMapping, DataImportMapping} from "@perfect-stack/nestjs-server/data/import/data-import.types";
 import {
     TrackingFlightStatusConverter
 } from "@perfect-stack/nestjs-server/data/import/converter/tracking-flight-status.converter";
@@ -112,7 +112,7 @@ export class DataFormatService {
                 indicatesBlankRow: true,
                 converter: new TextConverter()
             },
-        ]
+        ].map(mapping => Object.assign(new DataAttributeMapping(), mapping))
     }
 
 
@@ -176,6 +176,6 @@ export class DataFormatService {
                 indicatesBlankRow: true,
                 converter: new TextConverter()
             },
-        ]
+        ].map(mapping => Object.assign(new DataAttributeMapping(), mapping))
     }
 }

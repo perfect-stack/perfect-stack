@@ -1,14 +1,17 @@
-import {ConverterResult, DataImportConverter} from "@perfect-stack/nestjs-server/data/import/converter/converter.types";
+import {
+    ConverterResult,
+    DataImportConverter,
+    DataListImportConverter, ExternalValue
+} from "@perfect-stack/nestjs-server/data/import/converter/converter.types";
 
 
 
-export class DualFieldDateTimeConverter implements DataImportConverter {
+export class DualFieldDateTimeConverter implements DataListImportConverter {
 
-    async toAttributeValue(attributeName: string, externalValue: string): Promise<ConverterResult> {
-
+    async toAttributeValueFromExternalValueList(externalValueList: ExternalValue[]): Promise<ConverterResult> {
         return {
             attributeValues: [{
-                name: attributeName,
+                name: null,
                 value: null
             }]
         };

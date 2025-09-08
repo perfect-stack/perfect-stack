@@ -6,7 +6,6 @@ export class IntegerConverter extends DataImportConverter {
         // Check that if not null then externalValue must be a valid number, otherwise return an error
         if (externalValue === null || externalValue === undefined || externalValue === '') {
             return {
-                col: 0,
                 attributeValues: [{
                     name: attributeName,
                     value: null
@@ -18,7 +17,6 @@ export class IntegerConverter extends DataImportConverter {
 
         if (isNaN(parsedValue)) {
             return {
-                col: 0,
                 attributeValues: [{
                     name: attributeName,
                     value: null,

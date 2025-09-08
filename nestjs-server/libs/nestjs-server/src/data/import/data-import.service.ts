@@ -2,7 +2,12 @@ import {Injectable} from "@nestjs/common";
 import {DataImportError, DataImportModel} from "./data-import.model";
 import {CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
 import {Entity} from "../../domain/entity";
-import {ConverterResult} from "./converter/converter.types";
+import {
+    ConverterResult,
+    DataImportConverter,
+    DataListImportConverter,
+    ExternalValue
+} from "./converter/converter.types";
 import {QueryService} from "../query.service";
 import {DataService} from "../data.service";
 import {ValidationService} from "../validation.service";
@@ -106,20 +111,6 @@ export class DataImportService {
         }
     }
 
-    findColName(colName: string, headers: string[]): number | null {
-        // find the colName (if possible) or return null if not found
-        const colIdx = headers.indexOf(colName);
-        return colIdx >= 0 ? colIdx : null;
-    }
-
-    findColIdxFromValidationResult(validationResult: ValidationResult, dataImportMapping: DataImportMapping, headers: string[]) {
-        const attributeName = validationResult.name;
-        const attributeMapping = dataImportMapping.attributeMappings.find(nextAttributeMapping => nextAttributeMapping.attributeName === attributeName);
-        if(attributeMapping) {
-            return this.findColName(attributeMapping.columnName, headers);
-        }
-    }
-
     addErrors(validationResultMapController: ValidationResultMapController,
               stepIndex: number,
               dataImportModel: DataImportModel,
@@ -156,11 +147,18 @@ export class DataImportService {
                       rowIdx: number,
                       headers: string[],
                       dataImportMapping: DataImportMapping): DataImportError {
-        const colIdx = this.findColIdxFromValidationResult(validationResult, dataImportMapping, headers);
-        const colNum = colIdx ? colIdx : 0;
+
+        const attributeMapping = dataImportMapping.attributeMappings.find(mapping => {
+            mapping.getColumnNamesAsArray().includes(validationResult.name)
+        });
+
+        const columnIndices: number[] = attributeMapping ?
+            this.findColumnIndices(attributeMapping.getColumnNamesAsArray(), headers)
+            : [0];
+
         return {
             row: rowIdx,
-            col: colNum,
+            cols: columnIndices,
             message: validationResult.message
         };
     }
@@ -185,11 +183,13 @@ export class DataImportService {
         // - we don't care about the fields that we are not importing
         for(const nextAttributeMapping of dataImportMapping.attributeMappings) {
             if(nextAttributeMapping.columnName && nextAttributeMapping.indicatesBlankRow) {
-                const colIdx = headers.indexOf(nextAttributeMapping.columnName);
-                if(colIdx >= 0) {
-                    const colValue = dataRow[colIdx];
-                    if(colValue !== null && colValue !== '' && typeof colValue !== 'undefined') {
-                        return false;
+                for(const nextColumName of nextAttributeMapping.getColumnNamesAsArray()) {
+                    const colIdx = headers.indexOf(nextColumName);
+                    if (colIdx >= 0) {
+                        const colValue = dataRow[colIdx];
+                        if (colValue !== null && colValue !== '' && typeof colValue !== 'undefined') {
+                            return false;
+                        }
                     }
                 }
             }
@@ -210,7 +210,11 @@ export class DataImportService {
         // for each data mapping
         for(const nextAttributeMapping of dataImportMapping.attributeMappings) {
             let converterResult: ConverterResult;
-            if(nextAttributeMapping.columnName) {
+            //if nextAttributeMapping.columnName is an array of string
+            if(nextAttributeMapping.columnName && Array.isArray(nextAttributeMapping.columnName)) {
+                converterResult = await this.convertDataListExternalValue(nextAttributeMapping, headers, dataRow);
+            }
+            else if(nextAttributeMapping.columnName) {
                 converterResult = await this.convertExternalValue(nextAttributeMapping, headers, dataRow);
             }
             else if(nextAttributeMapping.defaultValue) {
@@ -226,7 +230,7 @@ export class DataImportService {
                 if(nextAttributeValue.error) {
                     dataImportErrors.push({
                         row: rowIdx,
-                        col: converterResult.col,
+                        cols: this.findColumnIndices(nextAttributeMapping.getColumnNamesAsArray(), headers),
                         message: nextAttributeValue.error
                     });
                 }
@@ -238,7 +242,7 @@ export class DataImportService {
             if (await dataImportMapping.duplicateCheck.checkForDuplicates(entity)) {
                 dataImportErrors.push({
                     row: rowIdx,
-                    col: 0,
+                    cols: [0],
                     message: 'A duplicate entity for this data already exists - unable to import'
                 });
             }
@@ -247,32 +251,67 @@ export class DataImportService {
         return {entity, dataImportErrors};
     }
 
+    async convertDataListExternalValue(attributeMapping: DataAttributeMapping, headers: string[], dataRow: string[]) {
+
+        // The DataAttributeMapping can define a list of column names in any order (column B might be listed before column A)
+        // so that when the values are extracted and passed down to the converter, the converter can then rely on ordinal
+        // position of the value when doing the conversion. The mapping lists the order of the columns in the order the
+        // converter needs, but that does not have to be the order in which they occur in the file.
+        const externalValues: ExternalValue[] = this.findExternalValues(attributeMapping.columnName as string[], headers, dataRow);
+        const converter = attributeMapping.converter as DataListImportConverter;
+        const converterResult = await converter.toAttributeValueFromExternalValueList(externalValues);
+
+        return converterResult;
+    }
+
     async convertExternalValue(attributeMapping: DataAttributeMapping, headers: string[], dataRow: string[]) {
-        // find the externalValue by "columnName"
-        const colIdx = headers.indexOf(attributeMapping.columnName);
+        // find the externalValue by single "columnName"
+        const colIdx = headers.indexOf(attributeMapping.columnName as string);
         if(colIdx < 0) {
             throw new Error(`Unable to find column name ${attributeMapping.columnName} in file`);
         }
 
         const externalValue = dataRow[colIdx];
-        const converterResult = await attributeMapping.converter.toAttributeValue(attributeMapping.attributeName, externalValue);
+        const converter = attributeMapping.converter as DataImportConverter;
+        const converterResult = await converter.toAttributeValue(attributeMapping.attributeName, externalValue);
         if(!converterResult) {
             // This error should never happen but probably will during development if Converter is not implemented
             throw new Error(`Unable to convert external value ${externalValue} for attribute ${attributeMapping.attributeName}`);
         }
-        converterResult.col = colIdx;
         return converterResult;
     }
 
 
     convertDefaultValue(attributeMapping: DataAttributeMapping): ConverterResult {
         return {
-            col: 0,
             attributeValues: [{
                 name: attributeMapping.attributeName,
                 value: attributeMapping.defaultValue
             }]
         }
+    }
+
+    findColumnIndices(columnNames: string[], headers: string[]): number[] {
+        const indices: number[] = [];
+        for (const colName of columnNames) {
+            const idx = headers.indexOf(colName);
+            if (idx >= 0) {
+                indices.push(idx);
+            } else {
+                // Handle case where column name is not found, e.g., throw an error or push a -1
+                throw new Error(`Column '${colName}' not found in headers.`);
+            }
+        }
+        return indices;
+    }
+
+    findExternalValues(columnNames: string[], headers: string[], dataRow: string[]): ExternalValue[] {
+        const columnIndices = this.findColumnIndices(columnNames, headers);
+        return columnIndices.map((colIdx, i) => ({
+            name: columnNames[i],
+            value: dataRow[colIdx],
+            col: colIdx
+        }));
     }
 
 

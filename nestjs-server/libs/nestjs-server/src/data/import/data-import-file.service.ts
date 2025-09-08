@@ -58,7 +58,7 @@ export class DataImportFileService {
                 rowSuccessCount: 0,
                 importedEntityList: [],
                 errors: [{
-                    col: 0,
+                    cols: [0],
                     row: 0,
                     message: error.message
                 }]

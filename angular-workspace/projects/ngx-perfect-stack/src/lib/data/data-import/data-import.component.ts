@@ -91,7 +91,7 @@ export class DataImportComponent {
     const errors = [];
     if(this.data && this.data.errors) {
       for(const nextError of this.data.errors) {
-        if(nextError.row === rowIdx && nextError.col === colIdx) {
+        if(nextError.row === rowIdx && nextError.cols.includes(colIdx)) {
           errors.push(nextError);
         }
       }
