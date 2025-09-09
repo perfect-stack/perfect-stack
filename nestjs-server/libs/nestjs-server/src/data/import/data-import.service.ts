@@ -160,7 +160,7 @@ export class DataImportService {
         return {
             row: rowIdx,
             cols: columnIndices,
-            message: validationResult.message
+            message: validationResult.message + ` [${validationResult.name}]`
         };
     }
 

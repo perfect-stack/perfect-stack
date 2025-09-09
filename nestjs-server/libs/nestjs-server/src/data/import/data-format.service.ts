@@ -14,6 +14,7 @@ import {MicrochipConverter} from "@perfect-stack/nestjs-server/data/import/conve
 import {
     DualFieldDateTimeConverter
 } from "@perfect-stack/nestjs-server/data/import/converter/dual-field-date-time.converter";
+import {LocationNameConverter} from "@perfect-stack/nestjs-server/data/import/converter/location-name.converter";
 
 
 @Injectable()
@@ -140,7 +141,12 @@ export class DataFormatService {
             {
                 attributeName: 'instruments',
                 defaultValue: []
-            },//Reader Location name in KIMS
+            },
+            {
+                columnName: 'Reader Location name in KIMS',
+                indicatesBlankRow: false,
+                converter: new LocationNameConverter(this.queryService),
+            },
             {
                 columnName: 'Microchip number',
                 indicatesBlankRow: false,

@@ -4,7 +4,7 @@ import {
 } from "@perfect-stack/nestjs-server/data/import/converter/converter.types";
 import {DateConverter} from "@perfect-stack/nestjs-server/data/import/converter/date.converter";
 import {TimeConverter} from "@perfect-stack/nestjs-server/data/import/converter/time.converter";
-import {LocalTime, ZonedDateTime} from "@js-joda/core";
+import {DateTimeFormatter, LocalTime, OffsetDateTime, ZonedDateTime} from "@js-joda/core";
 
 
 
@@ -12,6 +12,8 @@ export class DualFieldDateTimeConverter implements DataListImportConverter {
 
     private _dateConverter = new DateConverter();
     private _timeConverter = new TimeConverter();
+
+    private _outputFormat = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     async toAttributeValueFromExternalValueList(attributeName: string, externalValueList: ExternalValue[]): Promise<ConverterResult> {
 
@@ -37,7 +39,7 @@ export class DualFieldDateTimeConverter implements DataListImportConverter {
                 const dateStr = dateConverterResult.attributeValues[0].value as string;
                 const timeStr = timeConverterResult.attributeValues[0].value as string;
 
-                const dateValue = ZonedDateTime.parse(dateStr);
+                const dateValue = OffsetDateTime.parse(dateStr);
                 const timeValue = LocalTime.parse(timeStr);
 
                 const dateTimeValue = dateValue.with(timeValue);
@@ -45,7 +47,7 @@ export class DualFieldDateTimeConverter implements DataListImportConverter {
                 return {
                     attributeValues: [{
                         name: attributeName,
-                        value: dateTimeValue.toString()
+                        value: this._outputFormat.format(dateTimeValue)
                     }]
                 }
             }
