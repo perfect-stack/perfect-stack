@@ -2,10 +2,10 @@ import {Component, Inject, signal} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../ngx-perfect-stack-config";
-import {HttpClient, HttpEventType, HttpHeaders} from "@angular/common/http";
-import {finalize, Subject, Subscription} from "rxjs";
-import {DataImportModel} from "./data-import.model";
+import {HttpClient, HttpEventType} from "@angular/common/http";
+import {finalize, Subscription} from "rxjs";
 import {Job} from "../../../job/job.model";
+import {FormsModule} from "@angular/forms";
 
 export class FileItem {
   file: File;
@@ -26,7 +26,8 @@ export interface CreateFileResponse {
   imports: [
     NgForOf,
     NgIf,
-    NgbProgressbar
+    NgbProgressbar,
+    FormsModule
   ],
   templateUrl: './upload-panel.component.html',
   styleUrl: './upload-panel.component.css'
@@ -34,6 +35,8 @@ export interface CreateFileResponse {
 export class UploadPanelComponent {
   fileItems: FileItem[] = [];
   isDraggingOver = false;
+
+  dataFormat = "RFID";
 
   uploadedData = signal<null | Job>(null);
 
@@ -119,7 +122,7 @@ export class UploadPanelComponent {
     //    the server API expects. You may need to change this if your
     //    backend expects a different name (e.g., 'upload', 'fileData').
     formData.append('file', fileItem.file, fileItem.file.name);
-    formData.append('dataFormat', 'Transmitter');
+    formData.append('dataFormat', this.dataFormat);
 
     // 3. Make the POST request with the FormData.
     //    DO NOT set the 'Content-Type' header manually. The browser

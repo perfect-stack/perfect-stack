@@ -40,10 +40,10 @@ export class DataFormatService {
         if(!this._dataFormatMap) {
             this._dataFormatMap = new Map<string, DataImportMapping>();
             this._dataFormatMap.set('Transmitter', this.transmitterFormat);
+            this._dataFormatMap.set('RFID', this.rfidFormat);
         }
         return this._dataFormatMap;
     }
-
 
     private transmitterFormat: DataImportMapping = {
         metaEntityName: 'Event',
@@ -140,42 +140,24 @@ export class DataFormatService {
             {
                 attributeName: 'instruments',
                 defaultValue: []
-            },
+            },//Reader Location name in KIMS
             {
-                columnName: 'Microchip',
+                columnName: 'Microchip number',
                 indicatesBlankRow: false,
                 converter: new MicrochipConverter(this.queryService),
             },
             {
-                columnName: 'Date',
+                columnName: ['Date', 'Time'],
                 attributeName: 'date_time',
                 indicatesBlankRow: true,
                 converter: new DualFieldDateTimeConverter()
             },
             {
-                columnName: 'Date',
+                columnName: ['Date', 'Time'],
                 attributeName: 'end_date_time',
                 indicatesBlankRow: true,
                 converter: new DualFieldDateTimeConverter()
-            },
-            {
-                columnName: 'Easting NZTM',
-                attributeName: 'easting',
-                indicatesBlankRow: true,
-                converter: new IntegerConverter()
-            },
-            {
-                columnName: 'Northing NZTM',
-                attributeName: 'northing',
-                indicatesBlankRow: true,
-                converter: new IntegerConverter()
-            },
-            {
-                columnName: 'Comments',
-                attributeName: 'comments',
-                indicatesBlankRow: true,
-                converter: new TextConverter()
-            },
+            }
         ].map(mapping => Object.assign(new DataAttributeMapping(), mapping))
     }
 }

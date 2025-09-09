@@ -5,13 +5,19 @@ import {QueryService} from "../query.service";
 import {QueryRequest} from "../query.request";
 import {AttributeType, ComparisonOperator} from "../../domain/meta.entity";
 
+export enum DuplicateEventAction {
+    NOT_A_DUPLICATE,
+    DUPLICATE_IGNORE,
+    DUPLICATE_ERROR,
+    UNABLE_TO_DETERMINE
+}
 
 @Injectable()
 export class DuplicateEventCheck implements CheckForDuplicates {
 
     constructor(protected readonly queryService: QueryService) {}
 
-    async checkForDuplicates(entity: Entity): Promise<boolean> {
+    async checkForDuplicates(entity: Entity): Promise<DuplicateEventAction> {
 
         const bird_id = entity['bird_id'];
         const event_type = entity['event_type'];
@@ -19,10 +25,10 @@ export class DuplicateEventCheck implements CheckForDuplicates {
 
         if(bird_id && event_type && date_time) {
             const queryResponse = await this.findByCriteria(bird_id, event_type, date_time);
-            return queryResponse && queryResponse.totalCount > 0;
+            return queryResponse && queryResponse.totalCount > 0 ? DuplicateEventAction.DUPLICATE_ERROR : DuplicateEventAction.NOT_A_DUPLICATE;
         }
         else {
-            throw new Error('Unable to determine if entity had duplicates');
+            return DuplicateEventAction.UNABLE_TO_DETERMINE;
         }
     }
 

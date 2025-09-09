@@ -1,3 +1,11 @@
+
+<div class="pb-3">
+  <select class="form-select" [(ngModel)]="dataFormat">
+    <option>RFID</option>
+    <option>Transmitter</option>
+  </select>
+</div>
+
 <div class="upload-dropzone border border-dashed border-secondary border-3 rounded mb-2"
      (dragover)="onDragOver($event)"
      (dragleave)="onDragLeave($event)"

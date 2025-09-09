@@ -24,7 +24,7 @@ export class DataImportConverter {
 }
 
 export class DataListImportConverter {
-    async toAttributeValueFromExternalValueList(externalValueList: ExternalValue[]): Promise<ConverterResult> {
+    async toAttributeValueFromExternalValueList(attributeName: string, externalValueList: ExternalValue[]): Promise<ConverterResult> {
         return;
     }
 }

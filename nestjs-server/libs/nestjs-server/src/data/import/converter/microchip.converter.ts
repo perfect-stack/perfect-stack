@@ -15,7 +15,7 @@ export class MicrochipConverter extends BirdIdConverter implements DataImportCon
     toCriteria(externalValue: string): Criteria {
         return {
             attributeType: AttributeType.Text,
-            operator: ComparisonOperator.InsensitiveStartsWith,
+            operator: ComparisonOperator.InsensitiveLike,
             name: 'microchip',
             value: externalValue
         };

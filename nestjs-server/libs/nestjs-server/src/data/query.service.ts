@@ -148,6 +148,7 @@ export class QueryService {
     operatorMap.set(ComparisonOperator.LessThanOrEqualTo, Op.lte);
     operatorMap.set(ComparisonOperator.StartsWith, Op.startsWith);
     operatorMap.set(ComparisonOperator.InsensitiveStartsWith, Op.iLike);
+    operatorMap.set(ComparisonOperator.InsensitiveLike, Op.iLike);
 
     for (const nextCriteria of queryRequest.criteria) {
       const value: any = getCriteriaValue(nextCriteria);
