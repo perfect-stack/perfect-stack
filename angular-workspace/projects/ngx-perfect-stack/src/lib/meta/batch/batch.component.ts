@@ -14,8 +14,10 @@ import {ToastService} from "../../utils/toasts/toast.service";
 })
 export class BatchComponent {
 
-  conversionRemainingCount = -1;
   ageClassSummary: any;
+  conversionRemainingCount = -1;
+  dbSnapshotSummary: any;
+
 
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
@@ -40,6 +42,12 @@ export class BatchComponent {
     });
   }
 
+  getSummaryDbSnapshot() {
+    this.batchService.getSummary("db_snapshot").subscribe((summary: any) => {
+      this.dbSnapshotSummary = summary;
+    });
+  }
+
   onUpdateAgeClass() {
     this.batchService.execute('age_class').subscribe(() => {
       this.toastService.showSuccess('Batch job complete');
@@ -52,6 +60,13 @@ export class BatchComponent {
       this.conversionRemainingCount = summary.remainingCount;
       this.toastService.showSuccess('Batch job complete');
       this.getSummaryAgeClass();
+    });
+  }
+
+  onDbSnapshot() {
+    this.batchService.execute('db_snapshot').subscribe(() => {
+      this.toastService.showSuccess('Batch job complete');
+      this.getSummaryDbSnapshot();
     });
   }
 

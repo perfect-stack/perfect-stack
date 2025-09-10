@@ -11,6 +11,8 @@ import {ActivityService} from "./activity.service";
 import {AgeClassBatchJob} from "./batch/age-class.batchjob";
 import {BirdQuery} from "./bird.query";
 import {CoordinateConverterService} from "./batch/coordinate-converter.service";
+import {DbSnapshotBatchjob} from "./batch/db-snapshot.batchjob";
+import {RdsProvider} from "./batch/rds.provider";
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import {CoordinateConverterService} from "./batch/coordinate-converter.service";
     EventSearchCriteriaQuery,
     BandingActivityDataEventListener,
     CoordinateConverterService,
+    DbSnapshotBatchjob,
+    RdsProvider
   ],
   exports: [
     ActivityService,
@@ -36,6 +40,7 @@ import {CoordinateConverterService} from "./batch/coordinate-converter.service";
     EventSearchCriteriaQuery,
     BandingActivityDataEventListener,
     CoordinateConverterService,
+    DbSnapshotBatchjob
   ],
 })
 export class AppEventModule {}

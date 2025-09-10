@@ -24,10 +24,11 @@
     "migrate:images": "ts-node -r tsconfig-paths/register src/bin/migrate-images.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-lambda": "^3.828.0",
-    "@aws-sdk/client-s3": "^3.828.0",
-    "@aws-sdk/client-secrets-manager": "^3.828.0",
-    "@aws-sdk/s3-request-presigner": "^3.828.0",
+    "@aws-sdk/client-lambda": "^3.886.0",
+    "@aws-sdk/client-rds": "^3.886.0",
+    "@aws-sdk/client-s3": "^3.886.0",
+    "@aws-sdk/client-secrets-manager": "^3.886.0",
+    "@aws-sdk/s3-request-presigner": "^3.886.0",
     "@js-joda/core": "^5.6.5",
     "@js-joda/locale_en": "^4.15.1",
     "@js-joda/timezone": "^2.22.0",

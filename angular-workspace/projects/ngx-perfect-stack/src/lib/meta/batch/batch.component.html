@@ -24,6 +24,11 @@
           <td>Events that need WGS84 conversion: {{conversionRemainingCount}}</td>
           <td><button class="btn btn-warning ms-2" (click)="onConvertCoordinates()">Convert Coordinates</button></td>
         </tr>
+
+        <tr>
+          <td>DB Snapshot summary: {{dbSnapshotSummary}}</td>
+          <td><button class="btn btn-warning ms-2" (click)="onDbSnapshot()">DB Snapshot</button></td>
+        </tr>
         </tbody>
       </table>
 

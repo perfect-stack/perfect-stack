@@ -26,6 +26,7 @@ import {BirdDataListener} from "./app-event/bird.data-listener";
 import {EventDataListener} from "./app-event/event.data-listener";
 import {ProjectBirdsQuery} from "./app-event/project-birds.query";
 import {ProjectTeamQuery} from "./app-event/project-team.query";
+import {DbSnapshotBatchjob} from "./app-event/batch/db-snapshot.batchjob";
 
 @Injectable()
 export class KimsServerService implements OnApplicationBootstrap {
@@ -41,6 +42,7 @@ export class KimsServerService implements OnApplicationBootstrap {
         protected readonly batchService: BatchService,
         protected readonly customQueryService: CustomQueryService,
         protected readonly customRuleService: CustomRuleService,
+        protected readonly dbSnapshotBatchjob: DbSnapshotBatchjob,
         protected readonly knexService: KnexService,
         protected readonly discriminatorService: DiscriminatorService,
         protected readonly mediaRepositoryService: MediaRepositoryService,
@@ -173,6 +175,7 @@ export class KimsServerService implements OnApplicationBootstrap {
     private addBatchJobs() {
         this.batchService.addBatchJob('age_class', this.ageClassBatchJob);
         this.batchService.addBatchJob("coordinate_converter", this.coordinateConverterService);
+        this.batchService.addBatchJob("db_snapshot", this.dbSnapshotBatchjob);
     }
 }
 
