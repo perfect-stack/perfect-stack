@@ -1,34 +1,41 @@
-import {CheckForDuplicates} from "./data-import.service";
+import {CheckForDuplicates, DuplicateCheckAction} from "./data-import.service";
 import {Entity} from "../../domain/entity";
 import {Injectable} from "@nestjs/common";
 import {QueryService} from "../query.service";
 import {QueryRequest} from "../query.request";
 import {AttributeType, ComparisonOperator} from "../../domain/meta.entity";
+import {OffsetDateTime} from "@js-joda/core";
 
-export enum DuplicateEventAction {
-    NOT_A_DUPLICATE,
-    DUPLICATE_IGNORE,
-    DUPLICATE_ERROR,
-    UNABLE_TO_DETERMINE
-}
 
 @Injectable()
 export class DuplicateEventCheck implements CheckForDuplicates {
 
     constructor(protected readonly queryService: QueryService) {}
 
-    async checkForDuplicates(entity: Entity): Promise<DuplicateEventAction> {
+    async checkForDuplicates(entity: Entity, duplicateCheckList: string[]): Promise<DuplicateCheckAction> {
 
         const bird_id = entity['bird_id'];
         const event_type = entity['event_type'];
         const date_time = entity['date_time'];
 
         if(bird_id && event_type && date_time) {
+
+            const dateWithoutTime = OffsetDateTime.parse(date_time).toLocalDate().toString();
+            const importSetKey = `${bird_id}|${event_type}|${dateWithoutTime}`;
+
+            if(duplicateCheckList.includes(importSetKey)) {
+                return DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE;
+            }
+
             const queryResponse = await this.findByCriteria(bird_id, event_type, date_time);
-            return queryResponse && queryResponse.totalCount > 0 ? DuplicateEventAction.DUPLICATE_ERROR : DuplicateEventAction.NOT_A_DUPLICATE;
+            const dbDuplicate = queryResponse && queryResponse.totalCount > 0 ? DuplicateCheckAction.DUPLICATE_IN_DB_ERROR : DuplicateCheckAction.NOT_A_DUPLICATE;
+            if(dbDuplicate === DuplicateCheckAction.NOT_A_DUPLICATE) {
+                duplicateCheckList.push(importSetKey);
+            }
+            return dbDuplicate;
         }
         else {
-            return DuplicateEventAction.UNABLE_TO_DETERMINE;
+            return DuplicateCheckAction.UNABLE_TO_DETERMINE;
         }
     }
 

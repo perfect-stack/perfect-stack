@@ -124,7 +124,7 @@ export class DataFormatService {
         attributeMappings: [
             {
                 attributeName: 'event_type',
-                defaultValue: 'Transmitter'
+                defaultValue: 'Electronic'
             },
             {
                 attributeName: 'data_source',

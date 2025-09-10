@@ -42,6 +42,7 @@ export class DataImportFileService {
                 dataImportModel.dataFormat = dataFormat;
                 dataImportModel.headers = data[0];
                 dataImportModel.dataRows = data.slice(1);
+                dataImportModel.duplicateCheckList = [];
             }
 
             return dataImportModel;
@@ -57,6 +58,7 @@ export class DataImportFileService {
                 processedRowCount: 0,
                 rowSuccessCount: 0,
                 importedEntityList: [],
+                duplicateCheckList: [],
                 errors: [{
                     cols: [0],
                     row: 0,

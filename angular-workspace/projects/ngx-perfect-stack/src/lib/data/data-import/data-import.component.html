@@ -62,16 +62,18 @@
       </thead>
       <tbody>
         @for (group of formRows; track group; let rowIdx = $index) {
-          <tr [class.skipped-row]="data?.skipRows?.[rowIdx]" [formGroup]="group">
+          <tr [class.skipped-row]="isRowSkipped(rowIdx)" [formGroup]="group">
 
             <!-- Print the row number to make error correction in original spreadsheet easier -->
             <td>
+              <span class="d-block px-2" [ngbTooltip]="isRowSkippedToolTip(rowIdx)">
               <!-- Excel starts on row 1, and we also removed that because of how we modelled headers, so need to add +2 -->
-              @if (data && data.status === 'imported' && data.importedEntityList[rowIdx]) {
-                <a [routerLink]="['/data/Event/view', data.importedEntityList[rowIdx] ]">{{rowIdx + 2}}</a>
-              } @else {
-                {{rowIdx + 2}}
-              }
+                @if (data && data.status === 'imported' && data.importedEntityList[rowIdx]) {
+                  <a [routerLink]="['/data/Event/view', data.importedEntityList[rowIdx] ]">{{rowIdx + 2}}</a>
+                } @else {
+                  {{rowIdx + 2}}
+                }
+              </span>
             </td>
 
             @for(control of formControls(group); track control; let colIdx = $index) {

@@ -83,6 +83,25 @@ export class DataImportComponent {
     return Object.values(formGroup.controls) as FormControl[];
   }
 
+  isRowSkipped(rowIdx: number) {
+    return this.data && this.data.skipRows && (this.data.skipRows[rowIdx] === 'Blank' || this.data.skipRows[rowIdx] === 'Duplicate');
+  }
+
+  isRowSkippedToolTip(rowIdx: number): string {
+    if(this.isRowSkipped(rowIdx)) {
+      const skipReason = this.data?.skipRows[rowIdx];
+      switch (skipReason) {
+        case 'Blank':
+          return 'Row skipped due to blank fields';
+        case 'Duplicate':
+          return 'Row skipped due to duplicate earlier in file';
+        default:
+          throw new Error(`Unhandled skip reason - ${skipReason}`);
+      }
+    }
+    return '';
+  }
+
   importHasErrors() {
     return this.data && this.data.errors && this.data.errors.length > 0;
   }
@@ -126,8 +145,9 @@ export class DataImportComponent {
 
   onJobUpdated(job: Job | null) {
     if(job?.status === 'Completed') {
-      console.log(`Job Progress Monitor - Job Completed:`, job)
+      console.log(`Job Progress Monitor - Job Completed:`, job);
       this.data = JSON.parse(job.data) as DataImportModel;
+      console.log(`Job Progress Monitor - data:`, this.data);
     }
   }
 }

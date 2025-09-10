@@ -27,7 +27,7 @@ export class LocationNameConverter implements DataImportConverter {
     }
 
     protected extractAttributeValues(locationSearchResult: any): AttributeValue[] {
-
+        // TODO: (MBDP-358) If we add location_description to Event then we will need to update this code below
         return [
             {
                 name: 'northing',
@@ -36,6 +36,10 @@ export class LocationNameConverter implements DataImportConverter {
             {
                 name: 'easting',
                 value: locationSearchResult['easting']
+            },
+            {
+                name: 'location_id',
+                value: locationSearchResult['id']
             }
         ]
     }

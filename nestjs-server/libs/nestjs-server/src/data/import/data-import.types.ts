@@ -1,10 +1,11 @@
 import {Entity} from "../../domain/entity";
 import {DataImportError} from "./data-import.model";
 import {DataImportConverter, DataListImportConverter} from "./converter/converter.types";
-import {CheckForDuplicates, PostImportActions} from "./data-import.service";
+import {CheckForDuplicates, DuplicateCheckAction, PostImportActions} from "./data-import.service";
 
 export class CreateEntityResponse {
     entity: Entity;
+    duplicateCheckAction: DuplicateCheckAction;
     dataImportErrors: DataImportError[];
 }
 

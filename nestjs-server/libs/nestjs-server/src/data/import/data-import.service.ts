@@ -15,11 +15,18 @@ import {ValidationResult, ValidationResultMapController} from "../../domain/meta
 import {MetaEntity} from "../../domain/meta.entity";
 import {MetaEntityService} from "../../meta/meta-entity/meta-entity.service";
 import {DataFormatService} from "@perfect-stack/nestjs-server/data/import/data-format.service";
-import {DuplicateEventAction} from "@perfect-stack/nestjs-server/data/import/duplicate-event-check";
 
+export enum DuplicateCheckAction {
+    NOT_A_DUPLICATE,
+    DUPLICATE_IN_FILE_IGNORE,
+    DUPLICATE_IN_DB_IGNORE,
+    DUPLICATE_IN_FILE_ERROR,
+    DUPLICATE_IN_DB_ERROR,
+    UNABLE_TO_DETERMINE
+}
 
 export interface CheckForDuplicates {
-    checkForDuplicates(entity: Entity): Promise<DuplicateEventAction>;
+    checkForDuplicates(entity: Entity, importSet: string[]): Promise<DuplicateCheckAction>;
 }
 
 export interface PostImportActions {
@@ -51,19 +58,20 @@ export class DataImportService {
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
-            dataImportModel.skipRows.push(true);
+            dataImportModel.skipRows.push("Blank");
         }
         else {
-            dataImportModel.skipRows.push(false);
-            dataImportModel.importedRowCount = dataImportModel.importedRowCount + 1;
-
             // create entity
-            const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex);
+            const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
             dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
 
             // validate entity
             const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
             this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
+
+            const skipReason = createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE ? "Duplicate" : "Processed";
+            dataImportModel.skipRows.push(skipReason);
+            dataImportModel.processedRowCount = dataImportModel.processedRowCount + 1;
         }
     }
 
@@ -80,15 +88,12 @@ export class DataImportService {
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
-            dataImportModel.skipRows.push(true);
+            dataImportModel.skipRows.push("Blank");
             dataImportModel.importedEntityList.push(null);
         }
         else {
-            dataImportModel.skipRows.push(false);
-            dataImportModel.processedRowCount = dataImportModel.processedRowCount + 1;
-
             // create entity
-            const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex);
+            const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
             dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
 
             // validate entity
@@ -102,13 +107,19 @@ export class DataImportService {
                     if(!entityResultMapController.hasErrors()) {
                         dataImportModel.importedEntityList.push(entityResponse.entity.id);
                         dataImportModel.rowSuccessCount = dataImportModel.rowSuccessCount + 1;
-                        await dataImportMapping.postImportActions.postImport(entityResponse.entity);
+                        if(dataImportMapping.postImportActions) {
+                            await dataImportMapping.postImportActions.postImport(entityResponse.entity);
+                        }
                     }
                     else {
                         throw new Error('Attempted save, but it failed');
                     }
                 }
             }
+
+            const skipReason = createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE ? "Duplicate" : "Processed";
+            dataImportModel.skipRows.push(skipReason);
+            dataImportModel.processedRowCount = dataImportModel.processedRowCount + 1;
         }
     }
 
@@ -199,7 +210,7 @@ export class DataImportService {
         return true;
     }
 
-    async createEntity(dataImportMapping: DataImportMapping, headers: string[], dataRow: string[], rowIdx: number): Promise<CreateEntityResponse> {
+    async createEntity(dataImportMapping: DataImportMapping, headers: string[], dataRow: string[], rowIdx: number, duplicateCheckList: string[]): Promise<CreateEntityResponse> {
 
         // create an entity for this data row
         const entity: Entity = {
@@ -238,22 +249,32 @@ export class DataImportService {
             }
         }
 
-        // check for duplicates (but only if no errors)
+        // Check for duplicates (but only if no errors)
+        let duplicateCheckAction = DuplicateCheckAction.UNABLE_TO_DETERMINE;
         if(dataImportErrors.length === 0) {
-            const duplicateAction = await dataImportMapping.duplicateCheck.checkForDuplicates(entity);
+            duplicateCheckAction = await dataImportMapping.duplicateCheck.checkForDuplicates(entity, duplicateCheckList);
 
-            switch (duplicateAction) {
-                case DuplicateEventAction.NOT_A_DUPLICATE:
+            switch (duplicateCheckAction) {
+                case DuplicateCheckAction.NOT_A_DUPLICATE:
+                case DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE:
+                case DuplicateCheckAction.DUPLICATE_IN_DB_IGNORE:
                     // Do nothing
                     break;
-                case DuplicateEventAction.DUPLICATE_ERROR:
+                case DuplicateCheckAction.DUPLICATE_IN_FILE_ERROR:
                     dataImportErrors.push({
                         row: rowIdx,
                         cols: [0],
-                        message: 'A duplicate entity for this data already exists - unable to import'
+                        message: 'A duplicate in this file already exists - unable to import'
                     });
                     break;
-                case DuplicateEventAction.UNABLE_TO_DETERMINE:
+                case DuplicateCheckAction.DUPLICATE_IN_DB_ERROR:
+                    dataImportErrors.push({
+                        row: rowIdx,
+                        cols: [0],
+                        message: 'A duplicate entity for this data already exists in the database - unable to import'
+                    });
+                    break;
+                case DuplicateCheckAction.UNABLE_TO_DETERMINE:
                     dataImportErrors.push({
                         row: rowIdx,
                         cols: [0],
@@ -265,7 +286,7 @@ export class DataImportService {
             }
         }
 
-        return {entity, dataImportErrors};
+        return {entity, duplicateCheckAction, dataImportErrors};
     }
 
     async convertDataListExternalValue(attributeMapping: DataAttributeMapping, headers: string[], dataRow: string[]) {
