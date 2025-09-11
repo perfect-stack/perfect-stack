@@ -1,7 +1,7 @@
 <div class="container-page">
 
   <div class="row pt-2">
-    <div class="col-6">
+    <div class="col-9">
 
       <h1>Batch Jobs</h1>
 
@@ -26,7 +26,28 @@
         </tr>
 
         <tr>
-          <td>DB Snapshot summary: {{dbSnapshotSummary}}</td>
+          <td>
+            <div>DB Snapshot</div>
+            <table class="small">
+              <thead>
+              <tr>
+                <th class="px-0">Snapshot Name</th>
+                <th class="px-3">Creation Time</th>
+                <th class="px-0">Status</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let snapshot of dbSnapshotSummary">
+                <td class="px-0">
+                  <span>{{snapshot.snapshotName ? snapshot.snapshotName : snapshot.arn}}</span>
+                  <span class="material-symbols-outlined align-text-bottom ms-1" style="cursor: pointer; font-size: 1rem;" (click)="onCopyToClipboard(snapshot.arn)">content_copy</span>
+                </td>
+                <td class="px-3">{{snapshot.creationTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td class="px-0">{{snapshot.status}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </td>
           <td><button class="btn btn-warning ms-2" (click)="onDbSnapshot()">DB Snapshot</button></td>
         </tr>
         </tbody>

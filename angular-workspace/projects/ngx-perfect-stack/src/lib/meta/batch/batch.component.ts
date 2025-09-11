@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {NgIf} from "@angular/common";
+import {CommonModule, NgIf} from "@angular/common";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
 import {BatchService} from "./batch.service";
 import {ToastService} from "../../utils/toasts/toast.service";
@@ -7,7 +7,8 @@ import {ToastService} from "../../utils/toasts/toast.service";
 @Component({
   selector: 'lib-batch',
     imports: [
-        NgIf
+        NgIf,
+        CommonModule
     ],
   templateUrl: './batch.component.html',
   styleUrl: './batch.component.css'
@@ -28,6 +29,7 @@ export class BatchComponent {
   ngOnInit(): void {
     this.getSummaryAgeClass();
     this.getSummaryCoordinates();
+    this.getSummaryDbSnapshot();
   }
 
   getSummaryAgeClass() {
@@ -70,4 +72,8 @@ export class BatchComponent {
     });
   }
 
+
+  onCopyToClipboard(textToCopy: string) {
+    navigator.clipboard.writeText(textToCopy).then(() => this.toastService.showSuccess(`Copied: ${textToCopy}`));
+  }
 }

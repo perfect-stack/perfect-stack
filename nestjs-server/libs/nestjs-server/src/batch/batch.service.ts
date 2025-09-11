@@ -1,10 +1,11 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, Logger} from "@nestjs/common";
 import {BatchJob} from "./batch-job";
 
 
 @Injectable()
 export class BatchService {
 
+    private logger = new Logger(BatchService.name);
     private batchJobMap = new Map<string, BatchJob>();
 
     addBatchJob(jobName: string, batchJob: BatchJob) {
@@ -17,7 +18,7 @@ export class BatchService {
     }
 
     async getSummary(jobName: string) {
-        console.log(`Get summary of batch job: ${jobName}`);
+        this.logger.log(`Get summary of batch job: ${jobName}`);
         const batchJob = this.batchJobMap.get(jobName);
         if(batchJob) {
             return batchJob.getSummary();
@@ -29,7 +30,7 @@ export class BatchService {
 
 
     async execute(jobName: string): Promise<any> {
-        console.log(`Execute batch job: ${jobName}`);
+        this.logger.log(`Execute batch job: ${jobName}`);
         const batchJob = this.batchJobMap.get(jobName);
         if(batchJob) {
             return batchJob.execute();
