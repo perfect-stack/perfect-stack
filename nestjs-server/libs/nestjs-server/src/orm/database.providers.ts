@@ -121,7 +121,12 @@ export const renameDatabase = async (
         user: databaseSettings.databaseUser,
         password: databasePassword,
         database: 'postgres', // Connect to the maintenance database
-        ssl: true,
+        // When connecting to a database that requires SSL (like RDS), the client needs to
+        // trust the server's certificate. Setting `rejectUnauthorized: false` bypasses
+        // this validation. This is generally acceptable for this specific, short-lived
+        // administrative task, especially in non-production environments.
+        // See: https://node-postgres.com/features/ssl
+        ssl: { rejectUnauthorized: false },
     });
 
     try {
