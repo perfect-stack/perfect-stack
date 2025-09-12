@@ -60,6 +60,12 @@
       "items": [
         {
           "editable": true,
+          "roles": [],
+          "label": "Data Import",
+          "route": "/data/import"
+        },
+        {
+          "editable": true,
           "roles": [
             "Administrator"
           ],
