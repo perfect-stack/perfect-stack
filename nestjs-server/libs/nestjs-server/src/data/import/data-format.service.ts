@@ -143,27 +143,27 @@ export class DataFormatService {
                 defaultValue: []
             },
             {
-                columnName: 'Reader Location name in KIMS',
+                columnName: 'site_name',
                 indicatesBlankRow: false,
                 converter: new LocationNameConverter(this.queryService),
             },
             {
-                columnName: 'Microchip number',
+                columnName: ['date', 'time'],
+                attributeName: 'date_time',
                 indicatesBlankRow: false,
+                converter: new DualFieldDateTimeConverter()
+            },
+            {
+                columnName: ['date', 'time'],
+                attributeName: 'end_date_time',
+                indicatesBlankRow: false,
+                converter: new DualFieldDateTimeConverter()
+            },
+            {
+                columnName: 'microchip',
+                indicatesBlankRow: true,
                 converter: new MicrochipConverter(this.queryService),
             },
-            {
-                columnName: ['Date', 'Time'],
-                attributeName: 'date_time',
-                indicatesBlankRow: true,
-                converter: new DualFieldDateTimeConverter()
-            },
-            {
-                columnName: ['Date', 'Time'],
-                attributeName: 'end_date_time',
-                indicatesBlankRow: true,
-                converter: new DualFieldDateTimeConverter()
-            }
         ].map(mapping => Object.assign(new DataAttributeMapping(), mapping))
     }
 }
