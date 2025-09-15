@@ -24,6 +24,134 @@ export interface DatabaseSettings {
     databaseName: string;
 }
 
+const getSecret = async (secretName: string) => {
+    const client = new SecretsManagerClient({});
+    const command = new GetSecretValueCommand({
+        SecretId: secretName,
+    });
+
+    const response = await client.send(command);
+    return JSON.parse(response.SecretString);
+}
+
+const getPassword = async (secretName: string, passwordKey: string)=> {
+    return (await getSecret(secretName))[passwordKey];
+}
+
+const findPassword = async (databaseSettings: DatabaseSettings) => {
+    let databasePassword: string;
+    if (databaseSettings.passwordProperty) {
+        if (databaseSettings.passwordProperty.startsWith('RAW:')) {
+            databasePassword = databaseSettings.passwordProperty.substring('RAW:'.length);
+        }
+        else {
+            databasePassword = await getPassword(databaseSettings.passwordProperty, databaseSettings.passwordKey);
+        }
+    } else {
+        throw new Error('Database properties have not been initialised');
+    }
+    return databasePassword;
+}
+
+const updateOneServiceAccountPassword = async (client: Client, username: string, password: string) => {
+    logger.log(`Updating password for service account: ${username}`);
+    await client.query('ALTER USER "' + username + '" WITH PASSWORD \'' + password + '\'');
+    logger.log(`Password updated for service account: ${username}`);
+}
+
+const updateServiceAccountPasswords = async (client: Client)=> {
+    const envName = process.env.ENV_NAME ? process.env.ENV_NAME : 'dev';
+
+    const SERVICE_ACCOUNTS = [
+        `${envName}/kims/database/skyranger-password`,
+        `${envName}/kims/database/fme-password`,
+    ];
+
+    for (const serviceAccount of SERVICE_ACCOUNTS) {
+        const secret = await getSecret(serviceAccount);
+        const username = secret.username;
+        const password = secret.password;
+        await updateOneServiceAccountPassword(client, username, password);
+    }
+}
+
+/**
+ * This method is called when a DB Snapshot has been restored from a different environment and so it will have a
+ * different database name. For example if we restore a prod database into the dev environment it will have the name
+ * of "prod_kims_db". So that all the other connection settings work (FME, Skyranger) we now need to rename the restored
+ * database to have the right name.
+ *
+ * There should be only one database that matches the name "*kims_db" and if there is only one then we can attempt to
+ * rename it.
+ *
+ * @param databasePassword
+ * @param databaseSettings
+ */
+export const renameDatabase = async (
+    databasePassword: string,
+    databaseSettings: DatabaseSettings,
+) => {
+    const expectedDatabaseName = databaseSettings.databaseName;
+    logger.log(`Attempting to find and rename a database to "${expectedDatabaseName}"`);
+
+    // Connect to the 'postgres' database to perform administrative tasks using pg client rather than Sequelize
+    const client = new Client({
+        host: databaseSettings.databaseHost,
+        port: databaseSettings.databasePort,
+        user: databaseSettings.databaseUser,
+        password: databasePassword,
+        database: 'postgres', // Connect to the maintenance database
+        // When connecting to a database that requires SSL (like RDS), the client needs to
+        // trust the server's certificate. Setting `rejectUnauthorized: false` bypasses
+        // this validation. This is generally acceptable for this specific, short-lived
+        // administrative task, especially in non-production environments.
+        // See: https://node-postgres.com/features/ssl
+        ssl: { rejectUnauthorized: false },
+    });
+
+    try {
+        await client.connect();
+        logger.log('Connected to the "postgres" database successfully.');
+
+        // Query for databases that might be the one we want to rename
+        const res = await client.query(
+            "SELECT datname FROM pg_database WHERE datname LIKE '%_kims_db'",
+        );
+
+        if (res.rows.length === 1) {
+            const foundName = res.rows[0].datname;
+            logger.log(`Found one matching database: "${foundName}"`);
+
+            if (foundName === expectedDatabaseName) {
+                // This is an unexpected state. The initial connection to the target DB failed,
+                // but we can see it exists. This might indicate a permissions issue or other problem.
+                throw new Error(`Database "${expectedDatabaseName}" already exists but the initial connection failed. Cannot proceed with rename.`);
+            }
+            else {
+                logger.log(`Renaming database "${foundName}" to "${expectedDatabaseName}"...`);
+                // NOTE: We cannot use parameterised queries for identifiers like database names.
+                // We have validated the names are from a trusted source (pg_database).
+                await client.query(`ALTER DATABASE "${foundName}" RENAME TO "${expectedDatabaseName}"`);
+                logger.log('Database rename successful.');
+
+                // If we rename the database, then we also need to update the service account passwords
+                await updateServiceAccountPasswords(client);
+            }
+        }
+        else if (res.rows.length > 1) {
+            const dbNames = res.rows.map((row) => row.datname).join(', ');
+            throw new Error(`Found multiple databases matching '*_kims_db': ${dbNames}. Unsure how to proceed.`);
+        }
+        else {
+            throw new Error("Did not find any database matching '*_kims_db' to rename.");
+        }
+    }
+    finally {
+        await client.end();
+        logger.log('Disconnected from the "postgres" database.');
+    }
+};
+
 export const newSequelize = async (databasePassword: string, databaseSettings: DatabaseSettings) => {
     const sequelize = new Sequelize({
         dialect: 'postgres',
@@ -74,101 +202,6 @@ export const newSequelize = async (databasePassword: string, databaseSettings: D
     return sequelize;
 }
 
-export const findPassword = async (databaseSettings: DatabaseSettings) => {
-    let databasePassword;
-    if (databaseSettings.passwordProperty) {
-        if (databaseSettings.passwordProperty.startsWith('RAW:')) {
-            databasePassword = databaseSettings.passwordProperty.substring('RAW:'.length);
-        } else {
-            const client = new SecretsManagerClient({});
-            const command = new GetSecretValueCommand({
-                SecretId: databaseSettings.passwordProperty,
-            });
-
-            const response = await client.send(command);
-            const secret = JSON.parse(response.SecretString);
-            databasePassword = secret[databaseSettings.passwordKey];
-        }
-    } else {
-        throw new Error('Database properties have not been initialised');
-    }
-    return databasePassword;
-}
-
-/**
- * This method is called when a DB Snapshot has been restored from a different environment and so it will have a
- * different database name. For example if we restore a prod database into the dev environment it will have the name
- * of "prod_kims_db". So that all the other connection settings work (FME, Skyranger) we now need to rename the restored
- * database to have the right name.
- *
- * There should be only one database that matches the name "*kims_db" and if there is only one then we can attempt to
- * rename it.
- *
- * @param databasePassword
- * @param databaseSettings
- */
-export const renameDatabase = async (
-    databasePassword: string,
-    databaseSettings: DatabaseSettings,
-) => {
-    const expectedDatabaseName = databaseSettings.databaseName;
-    logger.log(`Attempting to find and rename a database to "${expectedDatabaseName}"`);
-
-    // Connect to the 'postgres' database to perform administrative tasks
-    const client = new Client({
-        host: databaseSettings.databaseHost,
-        port: databaseSettings.databasePort,
-        user: databaseSettings.databaseUser,
-        password: databasePassword,
-        database: 'postgres', // Connect to the maintenance database
-        // When connecting to a database that requires SSL (like RDS), the client needs to
-        // trust the server's certificate. Setting `rejectUnauthorized: false` bypasses
-        // this validation. This is generally acceptable for this specific, short-lived
-        // administrative task, especially in non-production environments.
-        // See: https://node-postgres.com/features/ssl
-        ssl: { rejectUnauthorized: false },
-    });
-
-    try {
-        await client.connect();
-        logger.log('Connected to the "postgres" database successfully.');
-
-        // Query for databases that might be the one we want to rename
-        const res = await client.query(
-            "SELECT datname FROM pg_database WHERE datname LIKE '%_kims_db'",
-        );
-
-        if (res.rows.length === 1) {
-            const foundName = res.rows[0].datname;
-            logger.log(`Found one matching database: "${foundName}"`);
-
-            if (foundName === expectedDatabaseName) {
-                // This is an unexpected state. The initial connection to the target DB failed,
-                // but we can see it exists. This might indicate a permissions issue or other problem.
-                throw new Error(`Database "${expectedDatabaseName}" already exists but the initial connection failed. Cannot proceed with rename.`);
-            }
-            else {
-                logger.log(`Renaming database "${foundName}" to "${expectedDatabaseName}"...`);
-                // NOTE: We cannot use parameterised queries for identifiers like database names.
-                // We have validated the names are from a trusted source (pg_database).
-                await client.query(`ALTER DATABASE "${foundName}" RENAME TO "${expectedDatabaseName}"`);
-                logger.log('Database rename successful.');
-            }
-        }
-        else if (res.rows.length > 1) {
-            const dbNames = res.rows.map((row) => row.datname).join(', ');
-            throw new Error(`Found multiple databases matching '*_kims_db': ${dbNames}. Unsure how to proceed.`);
-        }
-        else {
-            throw new Error("Did not find any database matching '*_kims_db' to rename.");
-        }
-    }
-    finally {
-        await client.end();
-        logger.log('Disconnected from the "postgres" database.');
-    }
-};
-
 /**
  * This is the function that loads all the ORM configuration and model definitions. It is called from the provider
  * factory below but also a "reload()" method in the OrmService so that model definitions can be redefined at
@@ -182,7 +215,7 @@ export const loadOrm = async (
 
     logger.log(`Database connection = ${databaseSettings.databaseHost}:${databaseSettings.databasePort}, ${databaseSettings.databaseUser}`);
 
-    let sequelize;
+    let sequelize: Sequelize;
     try {
         sequelize = await newSequelize(databasePassword, databaseSettings);
         return sequelize;
