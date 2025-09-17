@@ -13,6 +13,7 @@ import {BirdQuery} from "./bird.query";
 import {CoordinateConverterService} from "./batch/coordinate-converter.service";
 import {DbSnapshotBatchjob} from "./batch/db-snapshot.batchjob";
 import {RdsProvider} from "./batch/rds.provider";
+import {KimsSchemaListener} from "./kims.schema.listener";
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import {RdsProvider} from "./batch/rds.provider";
     BandingActivityDataEventListener,
     CoordinateConverterService,
     DbSnapshotBatchjob,
+    KimsSchemaListener,
     RdsProvider
   ],
   exports: [
@@ -40,7 +42,8 @@ import {RdsProvider} from "./batch/rds.provider";
     EventSearchCriteriaQuery,
     BandingActivityDataEventListener,
     CoordinateConverterService,
-    DbSnapshotBatchjob
+    DbSnapshotBatchjob,
+    KimsSchemaListener
   ],
 })
 export class AppEventModule {}

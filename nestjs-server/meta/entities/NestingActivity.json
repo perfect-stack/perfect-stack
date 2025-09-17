@@ -124,6 +124,22 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "nest_failure_reason",
+      "label": "Nest failure reason",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "name",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "NestFailureReason",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
     }
   ]
 }

@@ -57,6 +57,10 @@
       "subject": "CaptureMethodType"
     },
     {
+      "action": "Edit",
+      "subject": "NestFailureReason"
+    },
+    {
       "action": "Delete",
       "subject": "LocationType"
     },
@@ -107,6 +111,10 @@
     {
       "action": "Delete",
       "subject": "CaptureMethodType"
+    },
+    {
+      "action": "Delete",
+      "subject": "NestFailureReason"
     },
     {
       "action": "Menu",

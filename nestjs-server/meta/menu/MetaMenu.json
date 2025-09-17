@@ -122,6 +122,12 @@
         },
         {
           "editable": true,
+          "roles": [],
+          "label": "Nest Failure Reason",
+          "route": "/data/NestFailureReason/search_edit"
+        },
+        {
+          "editable": true,
           "roles": [
             "Administrator"
           ],

@@ -12,7 +12,7 @@ import {CustomRuleService} from "@perfect-stack/nestjs-server/data/rule/custom-r
 import {KnexService} from "@perfect-stack/nestjs-server/knex/knex.service";
 import {DiscriminatorService} from "@perfect-stack/nestjs-server/data/discriminator.service";
 import {MediaRepositoryService} from "@perfect-stack/nestjs-server/media/media-repository.service";
-import {EventService} from "@perfect-stack/nestjs-server/event/event.service";
+import {EventService, SchemaListener} from "@perfect-stack/nestjs-server/event/event.service";
 import {SettingsService} from "@perfect-stack/nestjs-server/settings/settings.service";
 import {ActivityService} from "./app-event/activity.service";
 import {AgeClassBatchJob} from "./app-event/batch/age-class.batchjob";
@@ -27,6 +27,8 @@ import {EventDataListener} from "./app-event/event.data-listener";
 import {ProjectBirdsQuery} from "./app-event/project-birds.query";
 import {ProjectTeamQuery} from "./app-event/project-team.query";
 import {DbSnapshotBatchjob} from "./app-event/batch/db-snapshot.batchjob";
+import {KimsSchemaListener} from "./app-event/kims.schema.listener";
+
 
 @Injectable()
 export class KimsServerService implements OnApplicationBootstrap {
@@ -51,6 +53,7 @@ export class KimsServerService implements OnApplicationBootstrap {
         protected readonly activityService: ActivityService,
         protected readonly ageClassBatchJob: AgeClassBatchJob,
         protected readonly coordinateConverterService: CoordinateConverterService,
+        protected readonly kimsSchemaListener: KimsSchemaListener
     ) {}
 
 
@@ -64,6 +67,8 @@ export class KimsServerService implements OnApplicationBootstrap {
     async onApplicationBootstrap(): Promise<any> {
         await this.metaEntityService.syncMetaModelWithDatabase(false);
 
+        this.addOnSchemaUpdate();
+
         this.addBirdQuery();
         this.addEventSearchCriteriaQuery();
         this.addPersonSearchQuery();
@@ -76,10 +81,13 @@ export class KimsServerService implements OnApplicationBootstrap {
         this.addEventDataListener();
 
         this.addCustomRules();
-
         this.addBatchJobs();
 
         return;
+    }
+
+    private addOnSchemaUpdate() {
+        this.eventService.addSchemaListener(this.kimsSchemaListener);
     }
 
     private addBirdQuery() {

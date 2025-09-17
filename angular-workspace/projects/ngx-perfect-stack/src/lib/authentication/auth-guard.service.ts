@@ -98,6 +98,7 @@ export class AuthGuard  {
         'Instrument',
         'LocationType',
         'NestStatusType',
+        'NestFailureReason',
         'ObserverRole',
         'Organisation',
         'ProjectStatus',

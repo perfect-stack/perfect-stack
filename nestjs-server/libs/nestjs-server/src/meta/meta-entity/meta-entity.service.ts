@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger} from '@nestjs/common';
 import { OrmService } from '../../orm/orm.service';
 import {
   AttributeType,
@@ -11,6 +11,7 @@ import { DataTypes } from 'sequelize';
 import { FileRepositoryService } from '../../file/file-repository.service';
 import { ModelCtor } from 'sequelize-typescript';
 import { DeleteAttributeRequest } from './delete-attribute.request';
+import { EventService } from '../../event/event.service';
 
 @Injectable()
 export class MetaEntityService {
@@ -21,6 +22,7 @@ export class MetaEntityService {
   constructor(
     protected readonly ormService: OrmService,
     protected readonly fileRepositoryService: FileRepositoryService,
+    protected readonly eventService: EventService
   ) {}
 
   async findAll(): Promise<MetaEntity[]> {
@@ -309,6 +311,7 @@ export class MetaEntityService {
     // Now that the models are fully defined, ask Sequelize to sync the model schema with the database
     if (alterDatabase) {
       await this.ormService.sequelize.sync({alter: true});
+      await this.eventService.dispatchOnSchemaUpdate();
     }
   }
 

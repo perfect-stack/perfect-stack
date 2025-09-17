@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import {Logger} from '@nestjs/common';
 import {DataEventListener} from "@perfect-stack/nestjs-server/event/event.service";
 import {DataService} from "@perfect-stack/nestjs-server/data/data.service";
 import {QueryService} from "@perfect-stack/nestjs-server/data/query.service";
@@ -10,259 +10,277 @@ import {ResultType, ValidationResultMap} from "@perfect-stack/nestjs-server/doma
 import {Entity} from "@perfect-stack/nestjs-server/domain/entity";
 
 interface Marking {
-  activity_attribute_name: string;
-  bird_attribute_name: string;
-  activity_type: string;
-  unique: boolean;
+    activity_attribute_name: string;
+    bird_attribute_name: string;
+    activity_type: string;
+    banding: boolean;  // Is this type of Marking a "Banding" marking
+    unique: boolean;
 }
 
 export class BandingActivityDataEventListener implements DataEventListener {
-  private readonly logger = new Logger(BandingActivityDataEventListener.name);
+    private readonly logger = new Logger(BandingActivityDataEventListener.name);
 
-  private readonly markings: Marking[] = [
-    {
-      activity_attribute_name: 'band_number',
-      bird_attribute_name: 'band_number',
-      activity_type: 'Banding',
-      unique: true
-    },
-    {
-      activity_attribute_name: 'colour_band',
-      bird_attribute_name: 'colour_band',
-      activity_type: 'Banding',
-      unique: false
-    },
-    {
-      activity_attribute_name: 'microchip',
-      bird_attribute_name: 'microchip',
-      activity_type: 'Microchip',
-      unique: true
-    },
-    {
-      activity_attribute_name: 'wing_tag',
-      bird_attribute_name: 'wing_tag',
-      activity_type: 'Wing tag',
-      unique: true
-    },
-    {
-      activity_attribute_name: 'vhf_tr4_channel',
-      bird_attribute_name: 'transmitter_channel',
-      activity_type: 'Transmitter',
-      unique: false
-    },
-    {
-      activity_attribute_name: 'vhf_frequency_mhz',
-      bird_attribute_name: 'transmitter_frequency',
-      activity_type: 'Transmitter',
-      unique: false
-    },
-    {
-      activity_attribute_name: 'vhf_frequency_ft',
-      bird_attribute_name: 'transmitter_fine_tune',
-      activity_type: 'Transmitter',
-      unique: false
-    },
-  ];
+    private readonly markings: Marking[] = [
+        {
+            activity_attribute_name: 'band_number',
+            bird_attribute_name: 'band_number',
+            activity_type: 'Banding',
+            banding: true,
+            unique: true
+        },
+        {
+            activity_attribute_name: 'colour_band',
+            bird_attribute_name: 'colour_band',
+            activity_type: 'Banding',
+            banding: true,
+            unique: false
+        },
+        {
+            activity_attribute_name: 'microchip',
+            bird_attribute_name: 'microchip',
+            activity_type: 'Microchip',
+            banding: true,
+            unique: true
+        },
+        {
+            activity_attribute_name: 'wing_tag',
+            bird_attribute_name: 'wing_tag',
+            activity_type: 'Wing tag',
+            banding: true,
+            unique: true
+        },
+        {
+            activity_attribute_name: 'vhf_tr4_channel',
+            bird_attribute_name: 'transmitter_channel',
+            activity_type: 'Transmitter',
+            banding: false,
+            unique: false
+        },
+        {
+            activity_attribute_name: 'vhf_frequency_mhz',
+            bird_attribute_name: 'transmitter_frequency',
+            activity_type: 'Transmitter',
+            banding: false,
+            unique: false
+        },
+        {
+            activity_attribute_name: 'vhf_frequency_ft',
+            bird_attribute_name: 'transmitter_fine_tune',
+            activity_type: 'Transmitter',
+            banding: false,
+            unique: false
+        },
+    ];
 
 
-  constructor(
-    protected readonly dataService: DataService,
-    protected readonly queryService: QueryService,
-    protected readonly knexService: KnexService,
-    protected readonly metaEntityService: MetaEntityService,
-    protected readonly activityService: ActivityService
-  ) {}
-
-  async isAttributeValueUniqueForBird(
-    attributeName: string,
-    value: string,
-    id: string,
-  ) {
-    // select count(*) from table where attributeName = :value and id <> :id
-    const knex = await this.knexService.getKnex();
-    const results: any[] = await knex
-      .select()
-      .from('Bird')
-      .where(knex.raw(`LOWER(${attributeName}) = '${value.toLowerCase()}'`))
-      .andWhere('id', '<>', id)
-      .limit(1);
-
-    // valid if count(*) === 0
-    const valid = results.length === 0;
-    return valid;
-  }
-
-  async onBeforeSave(
-    entity: any,
-    metaEntity: MetaEntity,
-    metaEntityMap: Map<string, MetaEntity>,
-  ): Promise<ValidationResultMap> {
-    this.logger.log(`BandingActivityDataEventListener: onBeforeSave()`);
-
-    const validationResultMap = {};
-    await this.validateLocationDescription(entity, validationResultMap);
-
-    for (const nextMarking of this.markings) {
-      if(nextMarking.unique) {
-        await this.validateMarking(
-            entity,
-            nextMarking,
-            validationResultMap,
-        );
-      }
+    constructor(
+        protected readonly dataService: DataService,
+        protected readonly queryService: QueryService,
+        protected readonly knexService: KnexService,
+        protected readonly metaEntityService: MetaEntityService,
+        protected readonly activityService: ActivityService
+    ) {
     }
 
-    return validationResultMap;
-  }
+    async isAttributeValueUniqueForBird(
+        attributeName: string,
+        value: string,
+        id: string,
+    ) {
+        // select count(*) from table where attributeName = :value and id <> :id
+        const knex = await this.knexService.getKnex();
+        const results: any[] = await knex
+            .select()
+            .from('Bird')
+            .where(knex.raw(`LOWER(${attributeName}) = '${value.toLowerCase()}'`))
+            .andWhere('id', '<>', id)
+            .limit(1);
 
-  private async validateLocationDescription(
-      entity: any,
-      validationResultMap: ValidationResultMap,
-  ) {
-      const bandingActivityIndex = await this.activityService.findActivityIndex(
-          entity.activities,
-          'Banding',
-      );
-
-      if(bandingActivityIndex >= 0 && !entity.location_description) {
-          validationResultMap['location_description'] = {
-              name: 'location_description',
-              resultType: ResultType.Error,
-              message: 'If Banding Activity is added then a location description is required',
-          };
-      }
-  }
-
-  private async validateMarking(
-    entity: any,
-    markingAttribute: Marking,
-    validationResultMap: ValidationResultMap,
-  ) {
-    const activityIndex = await this.activityService.findActivityIndex(
-      entity.activities,
-      markingAttribute.activity_type,
-    );
-
-    if (entity.activities && activityIndex >= 0) {
-      const activity = entity.activities[activityIndex];
-      if (activity) {
-        const bird_id = entity.bird_id;
-        if (!bird_id) {
-          validationResultMap[`activities.${activityIndex}.${markingAttribute.activity_attribute_name}`] =
-            {
-              name: markingAttribute.activity_attribute_name,
-              resultType: ResultType.Error,
-              message:
-                'Unable to validate activity, no Bird is attached to the event',
-            };
-        }
-
-        const marking = activity[markingAttribute.activity_attribute_name];
-        if (marking) {
-          const unique = await this.isAttributeValueUniqueForBird(
-            markingAttribute.bird_attribute_name,
-            marking,
-            bird_id,
-          );
-
-          if (!unique) {
-            validationResultMap[
-              `activities.${activityIndex}.${markingAttribute.activity_attribute_name}`
-            ] = {
-              name: markingAttribute.activity_attribute_name,
-              resultType: ResultType.Error,
-              message:
-                'The value supplied already exists on another Bird (case insensitive)',
-            };
-          }
-        } else {
-          validationResultMap[`activities.${activityIndex}.${markingAttribute.activity_attribute_name}`] =
-            {
-              name: markingAttribute.activity_attribute_name,
-              resultType: ResultType.Error,
-              message: 'Value is mandatory if activity has been added',
-            };
-        }
-      }
+        // valid if count(*) === 0
+        const valid = results.length === 0;
+        return valid;
     }
-  }
 
-  async onAfterSave(entity: any, metaEntity: MetaEntity) {
-    this.logger.log(`BandingActivityDataEventListener: onAfterSave()`);
+    async onBeforeSave(
+        entity: any,
+        metaEntity: MetaEntity,
+        metaEntityMap: Map<string, MetaEntity>,
+    ): Promise<ValidationResultMap> {
+        this.logger.log(`BandingActivityDataEventListener: onBeforeSave()`);
 
-    // check if there are any marking activities to worry about
-    if (await this.hasMarkingActivities(entity)) {
-      // if there are load the bird once at the start
-      const bird = await this.loadBird(entity);
+        const validationResultMap = {};
+        await this.validateLocationDescription(entity, validationResultMap);
 
-      // do all the updates (validation has already been checked above)
-      for (const nextMarking of this.markings) {
-        await this.updateMarking(
-          entity,
-          nextMarking,
-          bird,
-        );
-      }
-
-      // do the save of the bird once at the end
-      await this.dataService.save('Bird', bird);
-    }
-  }
-
-  async hasMarkingActivities(entity: any) {
-    const activityList: [] = entity.activities;
-    if (activityList) {
-      for (const nextMarking of this.markings) {
-        if ((await this.activityService.findActivityIndex(activityList, nextMarking.activity_type)) >= 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  async loadBird(entity: any): Promise<Entity> {
-    return await this.queryService.findOne('Bird', entity.bird_id);
-  }
-
-  private async updateMarking(
-    entity: any,
-    markingAttribute: Marking,
-    bird: any,
-  ) {
-    const activityIdx = await this.activityService.findActivityIndex(
-      entity.activities,
-      markingAttribute.activity_type,
-    );
-
-    if (activityIdx >= 0) {
-      const activity = entity.activities[activityIdx];
-      if (activity) {
-        this.logger.log(
-          `Found ${activity.activity_type} activity with ${markingAttribute.activity_attribute_name} = ${activity[markingAttribute.activity_attribute_name]}.`,
-        );
-        const bird_id = entity.bird_id;
-        if (bird_id) {
-          if (bird) {
-            this.logger.log(`Found Bird: ${bird.name}, ${bird.id}`);
-            if (bird[markingAttribute.bird_attribute_name] !== activity[markingAttribute.activity_attribute_name]) {
-              this.logger.log(
-                `Detected different ${markingAttribute.activity_attribute_name}. Update Bird: ${bird.name} ${markingAttribute.bird_attribute_name} from ${bird[markingAttribute.bird_attribute_name]} to ${activity[markingAttribute.activity_attribute_name]}`,
-              );
-              bird[markingAttribute.bird_attribute_name] = activity[markingAttribute.activity_attribute_name];
-            } else {
-              // This can happen if someone updates an event as well as funny situations where they updated the Bird
-              // directly with a new Band and then added the Event. The net effect should be the same, the right band
-              // value should be on the bird.
-              this.logger.log(`Band is the same so no update required.`);
+        for (const nextMarking of this.markings) {
+            if (nextMarking.unique) {
+                await this.validateMarking(
+                    entity,
+                    nextMarking,
+                    validationResultMap,
+                );
             }
-          } else {
-            // No Bird found?
-          }
         }
-      } else {
-        this.logger.log(`No ${activity.activity_type} activity found`);
-      }
+
+        return validationResultMap;
     }
-  }
+
+    private async validateLocationDescription(
+        entity: any,
+        validationResultMap: ValidationResultMap,
+    ) {
+        let locationDescriptionIsMandatory = false;
+        for(const nextMarking of this.markings) {
+            if(nextMarking.banding) {
+                const bandingActivityIndex = await this.activityService.findActivityIndex(
+                    entity.activities,
+                    nextMarking.activity_type,
+                );
+
+                if (bandingActivityIndex >= 0) {
+                    locationDescriptionIsMandatory = true;
+                }
+            }
+        }
+
+        if(locationDescriptionIsMandatory && !entity.location_description) {
+            validationResultMap['location_description'] = {
+                name: 'location_description',
+                resultType: ResultType.Error,
+                message: 'If one of the various banding activities is added then a location description is required',
+            };
+        }
+    }
+
+    private async validateMarking(
+        entity: any,
+        markingAttribute: Marking,
+        validationResultMap: ValidationResultMap,
+    ) {
+        const activityIndex = await this.activityService.findActivityIndex(
+            entity.activities,
+            markingAttribute.activity_type,
+        );
+
+        if (entity.activities && activityIndex >= 0) {
+            const activity = entity.activities[activityIndex];
+            if (activity) {
+                const bird_id = entity.bird_id;
+                if (!bird_id) {
+                    validationResultMap[`activities.${activityIndex}.${markingAttribute.activity_attribute_name}`] =
+                        {
+                            name: markingAttribute.activity_attribute_name,
+                            resultType: ResultType.Error,
+                            message:
+                                'Unable to validate activity, no Bird is attached to the event',
+                        };
+                }
+
+                const marking = activity[markingAttribute.activity_attribute_name];
+                if (marking) {
+                    const unique = await this.isAttributeValueUniqueForBird(
+                        markingAttribute.bird_attribute_name,
+                        marking,
+                        bird_id,
+                    );
+
+                    if (!unique) {
+                        validationResultMap[
+                            `activities.${activityIndex}.${markingAttribute.activity_attribute_name}`
+                            ] = {
+                            name: markingAttribute.activity_attribute_name,
+                            resultType: ResultType.Error,
+                            message:
+                                'The value supplied already exists on another Bird (case insensitive)',
+                        };
+                    }
+                } else {
+                    validationResultMap[`activities.${activityIndex}.${markingAttribute.activity_attribute_name}`] =
+                        {
+                            name: markingAttribute.activity_attribute_name,
+                            resultType: ResultType.Error,
+                            message: 'Value is mandatory if activity has been added',
+                        };
+                }
+            }
+        }
+    }
+
+    async onAfterSave(entity: any, metaEntity: MetaEntity) {
+        this.logger.log(`BandingActivityDataEventListener: onAfterSave()`);
+
+        // check if there are any marking activities to worry about
+        if (await this.hasMarkingActivities(entity)) {
+            // if there are load the bird once at the start
+            const bird = await this.loadBird(entity);
+
+            // do all the updates (validation has already been checked above)
+            for (const nextMarking of this.markings) {
+                await this.updateMarking(
+                    entity,
+                    nextMarking,
+                    bird,
+                );
+            }
+
+            // do the save of the bird once at the end
+            await this.dataService.save('Bird', bird);
+        }
+    }
+
+    async hasMarkingActivities(entity: any) {
+        const activityList: [] = entity.activities;
+        if (activityList) {
+            for (const nextMarking of this.markings) {
+                if ((await this.activityService.findActivityIndex(activityList, nextMarking.activity_type)) >= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    async loadBird(entity: any): Promise<Entity> {
+        return await this.queryService.findOne('Bird', entity.bird_id);
+    }
+
+    private async updateMarking(
+        entity: any,
+        markingAttribute: Marking,
+        bird: any,
+    ) {
+        const activityIdx = await this.activityService.findActivityIndex(
+            entity.activities,
+            markingAttribute.activity_type,
+        );
+
+        if (activityIdx >= 0) {
+            const activity = entity.activities[activityIdx];
+            if (activity) {
+                this.logger.log(
+                    `Found ${activity.activity_type} activity with ${markingAttribute.activity_attribute_name} = ${activity[markingAttribute.activity_attribute_name]}.`,
+                );
+                const bird_id = entity.bird_id;
+                if (bird_id) {
+                    if (bird) {
+                        this.logger.log(`Found Bird: ${bird.name}, ${bird.id}`);
+                        if (bird[markingAttribute.bird_attribute_name] !== activity[markingAttribute.activity_attribute_name]) {
+                            this.logger.log(
+                                `Detected different ${markingAttribute.activity_attribute_name}. Update Bird: ${bird.name} ${markingAttribute.bird_attribute_name} from ${bird[markingAttribute.bird_attribute_name]} to ${activity[markingAttribute.activity_attribute_name]}`,
+                            );
+                            bird[markingAttribute.bird_attribute_name] = activity[markingAttribute.activity_attribute_name];
+                        } else {
+                            // This can happen if someone updates an event as well as funny situations where they updated the Bird
+                            // directly with a new Band and then added the Event. The net effect should be the same, the right band
+                            // value should be on the bird.
+                            this.logger.log(`Band is the same so no update required.`);
+                        }
+                    } else {
+                        // No Bird found?
+                    }
+                }
+            } else {
+                this.logger.log(`No ${activity.activity_type} activity found`);
+            }
+        }
+    }
 }
