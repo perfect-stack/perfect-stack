@@ -125,6 +125,14 @@
                 [
                   {
                     "width": "12",
+                    "height": "2",
+                    "attributeName": "location_description",
+                    "component": "TextArea"
+                  }
+                ],
+                [
+                  {
+                    "width": "12",
                     "height": "1",
                     "attributeName": "location"
                   }

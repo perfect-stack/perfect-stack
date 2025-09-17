@@ -37,6 +37,21 @@
             "height": "1",
             "attributeName": "removed_band"
           }
+        ],
+        [
+          {
+            "width": "9",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "text": "Adding a band means that the location description (above) becomes mandatory."
+            }
+          }
         ]
       ],
       "metaEntityName": "BandingActivity",

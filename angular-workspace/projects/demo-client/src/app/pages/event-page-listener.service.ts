@@ -263,6 +263,7 @@ export class EventPageListenerService implements PageListener {
         formGroup.controls['easting'].setValue(locationEntity.easting);
         formGroup.controls['northing'].setValue(locationEntity.northing);
         formGroup.controls['altitude'].setValue(locationEntity.altitude);
+        formGroup.controls['location_description'].setValue(locationEntity.description);
 
         // This must come second otherwise the easting/northing set value above will clear it
         locationControl.patchValue(locationEntity.id, {emitEvent: false});

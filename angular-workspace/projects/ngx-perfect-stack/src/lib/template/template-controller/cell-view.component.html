@@ -31,7 +31,17 @@
           <ng-container *ngSwitchCase="['Text', 'Html', 'Double', 'Integer'].includes(attribute.type) ? attribute.type : ''">
             <ng-container [ngSwitch]="cell.component">
               <ng-container *ngSwitchCase="'TextArea'">
-                <app-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>
+                <!--<lib-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>-->
+                <editor class="flex-grow-1"
+                        [init]="{
+                         base_url: '/tinymce',
+                         suffix: '.min',
+                         height: getCSSHeight(cell),
+                         menubar: false,
+                         plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
+                         toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+                       }"
+                ></editor>
               </ng-container>
 
               <ng-container *ngSwitchDefault>

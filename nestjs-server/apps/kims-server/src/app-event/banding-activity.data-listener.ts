@@ -100,6 +100,7 @@ export class BandingActivityDataEventListener implements DataEventListener {
     this.logger.log(`BandingActivityDataEventListener: onBeforeSave()`);
 
     const validationResultMap = {};
+    await this.validateLocationDescription(entity, validationResultMap);
 
     for (const nextMarking of this.markings) {
       if(nextMarking.unique) {
@@ -112,6 +113,24 @@ export class BandingActivityDataEventListener implements DataEventListener {
     }
 
     return validationResultMap;
+  }
+
+  private async validateLocationDescription(
+      entity: any,
+      validationResultMap: ValidationResultMap,
+  ) {
+      const bandingActivityIndex = await this.activityService.findActivityIndex(
+          entity.activities,
+          'Banding',
+      );
+
+      if(bandingActivityIndex >= 0 && !entity.location_description) {
+          validationResultMap['location_description'] = {
+              name: 'location_description',
+              resultType: ResultType.Error,
+              message: 'If Banding Activity is added then a location description is required',
+          };
+      }
   }
 
   private async validateMarking(
