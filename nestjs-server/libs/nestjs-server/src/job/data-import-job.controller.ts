@@ -64,8 +64,7 @@ export class DataImportJobController {
 
     constructor(protected configService: ConfigService,
                 protected readonly jobService: JobService,
-                protected readonly dataImportFileService: DataImportFileService,
-                protected readonly eventEmitter: EventEmitter2
+                protected readonly dataImportFileService: DataImportFileService
     ) {
         this.jobProcessingMode = configService.get('JOB_PROCESSING_MODE', 'sync');
     }
@@ -113,7 +112,8 @@ export class DataImportJobController {
             dataImportModel.status = 'loaded';
 
             const job = await this.jobService.submitJob('Data Import - Validate', dataImportModel.dataRows.length, dataImportModel);
-            return this.invokeJob(job);
+            await this.jobService.invokeJob(job.id);
+            return job;
         }
         else {
             throw new Error("Unable to upload file")
@@ -127,71 +127,11 @@ export class DataImportJobController {
     async importData(@Body() dataImportModel: DataImportModel): Promise<Job> {
         if(dataImportModel.errors.length === 0) {
             const job = await this.jobService.submitJob('Data Import - Import', dataImportModel.dataRows.length, dataImportModel);
-            return this.invokeJob(job);
+            await this.jobService.invokeJob(job.id);
+            return job;
         }
         else {
             throw new Error('Data Import must not have any errors');
-        }
-    }
-
-    private async invokeJob(job: Job) {
-        switch (this.jobProcessingMode) {
-            case 'sync':
-                // Wait for the Job result from invoking the Job and return that
-                return await this.jobService.invokeJob(job.id);
-
-            case 'local-async':
-                this.eventEmitter.emit('job.invoke.local-async', job);
-                return job;
-
-            case 'async':
-                // Invoke the lambda
-                await this.invokeJobLambda(job);
-
-                // But don't wait for the response and return the Job we created above
-                return job;
-
-            default:
-                throw new Error(`Invalid job processing mode: ${this.jobProcessingMode}`);
-        }
-    }
-
-    private async invokeJobLambda(job: Job) {
-
-        this.logger.log(`Invoking Lambda: for job ID: ${job.id}`);
-
-        const payload = {
-            jobId: job.id
-        };
-
-        const envName = this.configService.get('ENV_NAME', null);
-        if(!envName) {
-            throw new Error(`ENV_NAME environment variable is not set. Cannot determine Lambda function name.`);
-        }
-
-        const lambdaFunctionName = `${envName}-kims-docker-function`;
-        const command = new InvokeCommand({
-            FunctionName: lambdaFunctionName,
-            InvocationType: 'Event', // For asynchronous invocation
-            Payload: JSON.stringify(payload),
-        });
-
-        const lambdaClient = new LambdaClient();
-        await lambdaClient.send(command);
-
-        this.logger.log('Invoking Lambda: invocation completed');
-    }
-
-
-    @OnEvent('job.invoke.local-async', { async: true })
-    async handleLocalJobProcessing(job: Job) {
-        this.logger.log(`Simulating local async job for job ID: ${job.id}.`);
-
-        try {
-            await this.jobService.invokeJob(job.id);
-            this.logger.log(`Local async job simulation finished for job ID: ${job.id}`);
-        } catch (error) {
-            this.logger.error(`Error during local async job simulation for job ID: ${job.id}`, error.stack);
         }
     }
 }

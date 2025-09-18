@@ -273,16 +273,31 @@ export class MetaEntityService {
         modelAttributeList["updated_at"] = updatedAt;
       }
 
-
-      const entityModel = this.ormService.sequelize.define(
-        nextMetaEntity.name,
-        modelAttributeList,
-        {
-          freezeTableName: true,
-          timestamps: false,  // always false we will manage this ourselves
-          underscored: true,
-        },
-      );
+      let entityModel;
+      if(timestamps) {
+          entityModel = this.ormService.sequelize.define(
+              nextMetaEntity.name,
+              modelAttributeList,
+              {
+                  freezeTableName: true,
+                  timestamps: true,
+                  createdAt: 'created_at',
+                  updatedAt: 'updated_at',
+                  underscored: true,
+              },
+          );
+      }
+      else {
+          entityModel = this.ormService.sequelize.define(
+              nextMetaEntity.name,
+              modelAttributeList,
+              {
+                  freezeTableName: true,
+                  timestamps: false,  // always false we will manage this ourselves
+                  underscored: true,
+              },
+          );
+      }
 
       entityModelMap.set(nextMetaEntity.name, entityModel);
     }
