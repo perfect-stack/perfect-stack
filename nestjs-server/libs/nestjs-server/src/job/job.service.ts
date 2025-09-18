@@ -86,9 +86,15 @@ export class JobService {
         });
 
         const lambdaClient = new LambdaClient();
-        await lambdaClient.send(command);
-
-        this.logger.log('Invoking Lambda: invocation completed');
+        try {
+            const response = await lambdaClient.send(command);
+            // For InvocationType: 'Event', a 202 status code indicates the request was accepted.
+            this.logger.log(`Lambda invocation request sent successfully for job ${jobId}. Status code: ${response.StatusCode}`);
+        }
+        catch (error) {
+            this.logger.error(`Failed to send invocation request for Lambda function ${lambdaFunctionName} for job ${jobId}`, error);
+            throw error;
+        }
     }
 
 

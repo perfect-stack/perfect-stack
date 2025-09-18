@@ -28,8 +28,8 @@ export class JobProgressMonitorComponent {
     switchMap(id => { // When a new valid ID arrives, switch to a new polling stream that has its own completion logic
       this.timedOut.set(false); // Reset the timeout flag for the new job
 
-      // timeout is set to be longer than the Lambda timeout so that the monitor waits until all hope is lost
-      const timeout$ = timer(12 * 60000).pipe(tap(() => this.timedOut.set(true)));
+      // timeout is set to be longer than the Job timeout so that the monitor waits until all hope is lost
+      const timeout$ = timer(65 * 60000).pipe(tap(() => this.timedOut.set(true)));
 
       return timer(0, 3000).pipe(
         // For each tick, get the job
