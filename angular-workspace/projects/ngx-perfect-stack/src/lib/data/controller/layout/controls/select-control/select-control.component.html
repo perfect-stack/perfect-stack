@@ -15,8 +15,10 @@
       <option *ngFor="let o of optionList" [ngValue]="o">{{getDisplayText(o)}}</option>
       <option [ngValue]="null"></option>
     </select>
-
   </div>
+  <ng-container *ngIf="hasErrors() && cell.attribute">
+    <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+  </ng-container>
 </ng-container>
 
 <ng-container *ngIf="mode === 'view'">

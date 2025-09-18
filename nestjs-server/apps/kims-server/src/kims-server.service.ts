@@ -28,6 +28,7 @@ import {ProjectBirdsQuery} from "./app-event/project-birds.query";
 import {ProjectTeamQuery} from "./app-event/project-team.query";
 import {DbSnapshotBatchjob} from "./app-event/batch/db-snapshot.batchjob";
 import {KimsSchemaListener} from "./app-event/kims.schema.listener";
+import {NestingActivityDataListener} from "./app-event/nesting-activity.data-listener";
 
 
 @Injectable()
@@ -75,8 +76,7 @@ export class KimsServerService implements OnApplicationBootstrap {
         this.addProjectBirdsQuery();
         this.addProjectTeamQuery();
 
-        this.addBandingActivityListener();
-        this.addDeathActivityListener();
+        this.addActivityListeners();
         this.addBirdDataListener()
         this.addEventDataListener();
 
@@ -111,7 +111,7 @@ export class KimsServerService implements OnApplicationBootstrap {
         );
     }
 
-    private addBandingActivityListener() {
+    private addActivityListeners() {
         this.eventService.addDataEventListener(
             'Event',
             new BandingActivityDataEventListener(
@@ -122,12 +122,15 @@ export class KimsServerService implements OnApplicationBootstrap {
                 this.activityService
             ),
         );
-    }
 
-    private addDeathActivityListener() {
         this.eventService.addDataEventListener(
             'Event',
             new DeathActivityDataListener(this.activityService, this.dataService, this.queryService)
+        );
+
+        this.eventService.addDataEventListener(
+            'Event',
+            new NestingActivityDataListener(this.activityService, this.dataService, this.queryService)
         );
     }
 

@@ -3,8 +3,8 @@ import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {DataService} from '../../../../data-service/data.service';
 import {Subscription} from 'rxjs';
-import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
-import {ToastService} from '../../../../../utils/toasts/toast.service';
+import {CellAttribute} from "../../../../../meta/page/meta-page-service/meta-page.service";
+import {ValidationResult} from "../../../../../domain/meta.rule";
 
 @Component({
     selector: 'lib-select-control',
@@ -19,6 +19,9 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
 
   @Input()
   mode: string | null;
+
+  @Input()
+  cell: CellAttribute;
 
   @Output()
   selectedEntityEvent = new EventEmitter();
@@ -151,6 +154,15 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   writeValue(obj: any): void {
     this.value = obj;
   }
+
+  hasErrors() {
+    return this.ngControl.errors !== null;
+  }
+
+  get validationResult() {
+    return this.ngControl.errors as ValidationResult;
+  }
+
 }
 
 /**
