@@ -149,7 +149,7 @@ export class JobService {
                 const chunkDurationInSeconds = Duration.between(startTime, OffsetDateTime.now()).seconds();
                 if(chunkDurationInSeconds > JOB_CHUNK_DURATION_IN_SECONDS) {
                     this.logger.log('Chunk complete: invoking job again');
-                    this.invokeJob(jobId)
+                    await this.invokeJob(jobId)
                     return null;
                 }
             }
