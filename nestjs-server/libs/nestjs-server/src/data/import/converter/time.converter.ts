@@ -17,7 +17,7 @@ export class TimeConverter implements DataImportConverter {
         // Needs to support the following formats;
         // HH:mm, HH:mm:ss, HH:mm:ss.SSS
         // Any error should report "Unable to convert Time" in the ConverterResult
-        // Use the Joda date time library for conversion, put all of the formats into an array and loop through them in
+        // Use the Joda date time library for conversion, put all the formats into an array and loop through them in
         // the order until one works.
         const formats = ['HH:mm:ss.SSS', 'HH:mm:ss', 'HH:mm', 'k:mm:ss.SSS', 'k:mm:ss', 'k:mm'];
         for (const format of formats) {

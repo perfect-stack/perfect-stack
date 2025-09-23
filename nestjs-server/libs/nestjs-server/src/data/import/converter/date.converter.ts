@@ -46,7 +46,6 @@ export class DateConverter extends DataImportConverter {
                 // At the moment the imported data does not have a time component, but the application entity validation
                 // expects the date to be a date_time. For now, until there are further requirements we can just assume
                 // it s a "day" value and add the time component.
-
                 try {
                     const zonedDateTime = parsedDate.atTime(LocalTime.of(12, 0, 0)).atZone(ZoneId.of('Pacific/Auckland'));
                     const value = zonedDateTime.toInstant().toString();

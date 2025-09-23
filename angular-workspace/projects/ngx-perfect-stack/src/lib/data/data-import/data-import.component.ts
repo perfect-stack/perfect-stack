@@ -85,9 +85,11 @@ export class DataImportComponent implements OnInit {
           this.jobIdImport = null;
       }
 
-      this.jobService.getJob(jobId).subscribe(job => {
-        this.onJobUpdated(job);
-      });
+      if(jobId) {
+        this.jobService.getJob(jobId).subscribe(job => {
+          this.onJobUpdated(job);
+        });
+      }
     });
   }
 
@@ -186,8 +188,6 @@ export class DataImportComponent implements OnInit {
   onJobUpdated(job: Job | null) {
 
     if(job) {
-      console.log(`Data Import: job status:`, job.status);
-
       if (job.data && !this.data) {
         this.job = job;
         this.data = JSON.parse(job.data) as DataImportModel;
@@ -195,11 +195,13 @@ export class DataImportComponent implements OnInit {
       }
 
       if (job.status === 'Completed') {
-        console.log(`Data Import: Job Completed:`, job);
         this.job = job;
         this.data = JSON.parse(job.data) as DataImportModel;
         this.createForm(this.data);
       }
+
+      console.log(`Data Import: job updated - job:`, this.job);
+      console.log(`Data Import: job updated - data:`, this.data);
     }
   }
 }

@@ -4,7 +4,8 @@ import {
 } from "@perfect-stack/nestjs-server/data/import/converter/converter.types";
 import {DateConverter} from "@perfect-stack/nestjs-server/data/import/converter/date.converter";
 import {TimeConverter} from "@perfect-stack/nestjs-server/data/import/converter/time.converter";
-import {DateTimeFormatter, LocalTime, OffsetDateTime, ZonedDateTime} from "@js-joda/core";
+import {DateTimeFormatter, LocalDate, LocalTime, OffsetDateTime, ZoneId} from "@js-joda/core";
+import '@js-joda/timezone';
 
 
 
@@ -39,10 +40,15 @@ export class DualFieldDateTimeConverter implements DataListImportConverter {
                 const dateStr = dateConverterResult.attributeValues[0].value as string;
                 const timeStr = timeConverterResult.attributeValues[0].value as string;
 
-                const dateValue = OffsetDateTime.parse(dateStr);
-                const timeValue = LocalTime.parse(timeStr);
+                // Convert the UTC dateStr into a New Zealand LocalDate
+                const utcDateTime = OffsetDateTime.parse(dateStr);
+                const nzZoneId = ZoneId.of('Pacific/Auckland');
 
-                const dateTimeValue = dateValue.with(timeValue);
+                const dateValue: LocalDate = utcDateTime.atZoneSameInstant(nzZoneId).toLocalDate();
+
+                const timeValue = LocalTime.parse(timeStr);
+                const nzDateTime = dateValue.atTime(timeValue).atZone(nzZoneId);
+                const dateTimeValue = nzDateTime.withZoneSameInstant(ZoneId.UTC);
 
                 return {
                     attributeValues: [{

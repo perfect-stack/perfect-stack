@@ -80,8 +80,12 @@ export class DataImportService {
     async dataImportImport(stepIndex: number, dataImportModel: DataImportModel) {
 
         if(stepIndex === 0) {
+            dataImportModel.skipRows = [];
+            dataImportModel.errors = [];
+            dataImportModel.importedRowCount = 0;
             dataImportModel.importedEntityList = [];
             dataImportModel.processedRowCount = 0;
+            dataImportModel.duplicateCheckList = [];
         }
 
         const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
@@ -92,34 +96,44 @@ export class DataImportService {
             dataImportModel.importedEntityList.push(null);
         }
         else {
-            // create entity
+            dataImportModel.processedRowCount = dataImportModel.processedRowCount + 1;
+
             const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
             dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
 
-            // validate entity
-            const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
-            this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
+            if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
+                dataImportModel.skipRows.push('Duplicate');
+                dataImportModel.importedEntityList.push(null);
+            }
+            else {
+                const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
+                if (validationResultMapController.hasErrors()) {
+                    this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
+                    dataImportModel.skipRows.push("Processed");
+                    dataImportModel.importedEntityList.push(null);
+                }
+                else {
+                    const entityResponse = await this.dataService.save(dataImportMapping.metaEntityName, createEntityResponse.entity);
+                    if (entityResponse) {
+                        const entityResultMapController = new ValidationResultMapController(entityResponse.validationResults);
+                        if (entityResultMapController.hasErrors()) {
+                            throw new Error('Attempted save, but it failed with new errors');
+                        }
+                        else {
+                            dataImportModel.skipRows.push("Processed");
+                            dataImportModel.importedEntityList.push(entityResponse.entity.id);
+                            dataImportModel.rowSuccessCount = dataImportModel.rowSuccessCount + 1;
 
-            if(!validationResultMapController.hasErrors()) {
-                const entityResponse = await this.dataService.save(dataImportMapping.metaEntityName, createEntityResponse.entity);
-                if(entityResponse) {
-                    const entityResultMapController = new ValidationResultMapController(entityResponse.validationResults);
-                    if(!entityResultMapController.hasErrors()) {
-                        dataImportModel.importedEntityList.push(entityResponse.entity.id);
-                        dataImportModel.rowSuccessCount = dataImportModel.rowSuccessCount + 1;
-                        if(dataImportMapping.postImportActions) {
-                            await dataImportMapping.postImportActions.postImport(entityResponse.entity);
+                            if (dataImportMapping.postImportActions) {
+                                await dataImportMapping.postImportActions.postImport(entityResponse.entity);
+                            }
                         }
                     }
                     else {
-                        throw new Error('Attempted save, but it failed');
+                        throw new Error('Attempted save, but no response returned');
                     }
                 }
             }
-
-            const skipReason = createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE ? "Duplicate" : "Processed";
-            dataImportModel.skipRows.push(skipReason);
-            dataImportModel.processedRowCount = dataImportModel.processedRowCount + 1;
         }
     }
 
