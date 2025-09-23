@@ -7,6 +7,7 @@ import {Duration, OffsetDateTime} from "@js-joda/core";
 import {ConfigService} from "@nestjs/config";
 import {InvokeCommand, LambdaClient} from "@aws-sdk/client-lambda";
 import {EventEmitter2, OnEvent} from "@nestjs/event-emitter";
+import {EventBridgeClient, PutEventsCommand, PutEventsCommandInput} from "@aws-sdk/client-eventbridge";
 
 const JOB_TIMEOUT_IN_SECONDS = 60 * 60;
 const JOB_CHUNK_DURATION_IN_SECONDS= 5 + 60;
@@ -65,7 +66,7 @@ export class JobService {
         }
     }
 
-    private async invokeJobLambda(jobId: string) {
+    private async invokeJobLambda_OLD(jobId: string) {
 
         this.logger.log(`Invoking Lambda: for job ID: ${jobId}`);
 
@@ -93,6 +94,33 @@ export class JobService {
         }
         catch (error) {
             this.logger.error(`Failed to send invocation request for Lambda function ${lambdaFunctionName} for job ${jobId}`, error);
+            throw error;
+        }
+    }
+
+    private async invokeJobLambda(jobId: string) {
+
+        this.logger.log(`Invoking EventBridge: for job ID: ${jobId}`);
+
+        const detail = {
+            jobId
+        };
+
+        const params: PutEventsCommandInput = {
+            Entries: [{
+                Detail: JSON.stringify(detail),
+                DetailType: 'InvokeJobEvent',
+                Source: 'kims.jobs'
+            }],
+        };
+
+        try {
+            const command = new PutEventsCommand(params);
+            const client = new EventBridgeClient();
+            await client.send(command);
+            this.logger.log(`Successfully sent event with jobId: ${detail.jobId}`);
+        } catch (error) {
+            this.logger.error('Failed to send event to EventBridge:', error);
             throw error;
         }
     }
