@@ -1,12 +1,14 @@
-import {Component, effect, Injector, viewChild} from '@angular/core';
+import {Component, effect, Injector, OnInit, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {DataImportModel} from "./upload-panel/data-import.model";
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
-import {RouterLink} from "@angular/router";
+import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {JobProgressMonitorComponent} from "../../job/job-progress-monitor/job-progress-monitor.component";
 import {Job} from "../../job/job.model";
+import {Location} from '@angular/common';
+import {JobService} from "../../job/job.service";
 
 @Component({
   selector: 'lib-data-import',
@@ -20,12 +22,15 @@ import {Job} from "../../job/job.model";
   templateUrl: './data-import.component.html',
   styleUrl: './data-import.component.css'
 })
-export class DataImportComponent {
+export class DataImportComponent implements OnInit {
 
   uploadPanel = viewChild(UploadPanelComponent);
 
+  job: Job | null;
   data: DataImportModel | null;
   form: FormArray;
+
+  phase: null | 'validating' | 'importing' = null;
 
   jobIdValidate: string | null;
   jobIdImport: string | null;
@@ -34,6 +39,9 @@ export class DataImportComponent {
 
   constructor(
     protected readonly dataImportService: DataImportService,
+    protected readonly jobService: JobService,
+    private route: ActivatedRoute,
+    private location: Location,
     private injector: Injector) {
     effect(() => {
       const  uploadPanel = this.uploadPanel();
@@ -42,15 +50,45 @@ export class DataImportComponent {
         this.importStarted = false;
 
         const  uploadedData = uploadPanel.uploadedData();
-        console.log('Data Import - uploadedData:', uploadedData);
+        console.log('Data Import: uploadedData:', uploadedData);
         if(uploadedData) {
-          const job = uploadedData;
-          this.jobIdValidate = job.id;
-          this.data = JSON.parse(job.data) as DataImportModel;
-          this.createForm(this.data);
+          this.job = uploadedData as Job;
+          this.jobIdValidate = this.job.id;
+          this.phase = 'validating';
+
+          console.log('Data Import: user uploaded file for job:', this.job);
+
+          // We want to add the jobId and phase to the URL so that if the user refreshes the page,
+          // the job progress monitor can pick up the job and continue monitoring it.
+          this.location.replaceState(`/data/import?jobId=${this.job.id}&phase=validating`);
         }
       }
     }, {injector: this.injector});
+  }
+
+  ngOnInit(): void {
+    // Initialise the component with the current status of the job taken from the parameters in the URL. This allows
+    // the user to hit refresh on a job after their component has been asleep.
+    this.route.queryParams.subscribe(params => {
+      const jobId = params['jobId'];
+      this.phase = params['phase'];
+
+      switch (this.phase) {
+        case 'validating':
+          this.jobIdValidate = jobId;
+          break;
+        case 'importing':
+          this.jobIdImport = jobId;
+          break;
+        default:
+          this.jobIdValidate = null;
+          this.jobIdImport = null;
+      }
+
+      this.jobService.getJob(jobId).subscribe(job => {
+        this.onJobUpdated(job);
+      });
+    });
   }
 
   private createForm(data: DataImportModel) {
@@ -136,18 +174,32 @@ export class DataImportComponent {
     if(this.data && this.data.errors.length === 0) {
       this.importStarted = true;
       this.dataImportService.importData(this.data).subscribe(result => {
-        console.log('Got result:', result);
+        console.log('Data Import: got result:', result);
         this.jobIdImport = result.id;
+        this.phase = 'importing';
+        this.location.replaceState(`/data/import?jobId=${result.id}&phase=importing`);
         this.data = JSON.parse(result.data) as DataImportModel;
       });
     }
   }
 
   onJobUpdated(job: Job | null) {
-    if(job?.status === 'Completed') {
-      console.log(`Job Progress Monitor - Job Completed:`, job);
-      this.data = JSON.parse(job.data) as DataImportModel;
-      console.log(`Job Progress Monitor - data:`, this.data);
+
+    if(job) {
+      console.log(`Data Import: job status:`, job.status);
+
+      if (job.data && !this.data) {
+        this.job = job;
+        this.data = JSON.parse(job.data) as DataImportModel;
+        this.createForm(this.data);
+      }
+
+      if (job.status === 'Completed') {
+        console.log(`Data Import: Job Completed:`, job);
+        this.job = job;
+        this.data = JSON.parse(job.data) as DataImportModel;
+        this.createForm(this.data);
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AuthenticationService} from './authentication.service';
 import {ActionType} from '../domain/meta.role';
@@ -8,7 +8,7 @@ import {AuthorizationService} from './authorization.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard  {
+export class AuthGuard implements CanActivate {
 
   actionTypeMap = new Map<string, ActionType>();
 
