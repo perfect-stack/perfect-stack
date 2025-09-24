@@ -4,7 +4,7 @@ import {ApiOperation, ApiTags} from "@nestjs/swagger";
 import {JobService} from "./job.service";
 import {ActionPermit} from "../authentication/action-permit";
 import {ActionType} from "../domain/meta.role";
-import {SubjectKey} from "../authentication/subject";
+import {SubjectName} from "../authentication/subject";
 
 
 @ApiTags('job')
@@ -29,7 +29,7 @@ export class JobController {
 
 
     @ActionPermit(ActionType.Read)
-    @SubjectKey('Job')
+    @SubjectName('Job')
     @ApiOperation({ summary: 'Poll for the supplied Job current status' })
     @Get('/:jobId')
     async pollJobStatus(@Param('jobId') jobId: string): Promise<Job> {
