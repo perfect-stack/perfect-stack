@@ -54,9 +54,10 @@ export class DataImportFileService {
                 headers: ["Error parsing file"],
                 skipRows: [],
                 dataRows: [[error.message]],
-                importedRowCount: 0,
-                processedRowCount: 0,
-                rowSuccessCount: 0,
+                skipRowCount: 0,
+                errorRowCount: 0,
+                validRowCount: 0,
+                totalRowCount: 0,
                 importedEntityList: [],
                 duplicateCheckList: [],
                 errors: [{

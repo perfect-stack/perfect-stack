@@ -14,10 +14,11 @@ export class DataImportModel {
     skipRows: SkipReason[];
     dataRows: string[][];
 
-    importedRowCount: number;
-    processedRowCount: number;
+    skipRowCount = 0;
+    errorRowCount = 0;
+    validRowCount = 0;
+    totalRowCount = 0;
 
-    rowSuccessCount: number = 0;
     importedEntityList: string[];
 
     // When checking for duplicates in the File being imported it was important to keep the data structures as

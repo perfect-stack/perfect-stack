@@ -4,7 +4,7 @@ import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/f
 import {DataImportModel} from "./upload-panel/data-import.model";
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
-import {ActivatedRoute, Router, RouterLink} from "@angular/router";
+import {ActivatedRoute, RouterLink} from "@angular/router";
 import {JobProgressMonitorComponent} from "../../job/job-progress-monitor/job-progress-monitor.component";
 import {Job} from "../../job/job.model";
 import {Location} from '@angular/common';
@@ -198,6 +198,17 @@ export class DataImportComponent implements OnInit {
         this.job = job;
         this.data = JSON.parse(job.data) as DataImportModel;
         this.createForm(this.data);
+      }
+
+      // A bit of a hack to update the row counts without updating the form (which would cause a big impact on the UI)
+      if(job.data) {
+        const dataProgress = JSON.parse(job.data) as DataImportModel;
+        if(this.data) {
+          this.data.skipRowCount = dataProgress.skipRowCount;
+          this.data.errorRowCount = dataProgress.errorRowCount;
+          this.data.validRowCount = dataProgress.validRowCount;
+          this.data.totalRowCount = dataProgress.totalRowCount;
+        }
       }
 
       console.log(`Data Import: job updated - job:`, this.job);

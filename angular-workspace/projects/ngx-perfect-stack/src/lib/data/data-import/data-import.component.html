@@ -14,6 +14,9 @@
         <h3>Validating</h3>
 
         <lib-job-progress-monitor [jobId]="jobIdValidate" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
+        @if(data) {
+          <p> Skipped: {{data.skipRowCount}} + Error: {{data.errorRowCount}} + Valid: {{data.validRowCount}} = Total: {{data.totalRowCount}} rows.</p>
+        }
 
         @if(job.status !== 'Completed') {
           <p class="text-success">Job is in progress...</p>
@@ -21,13 +24,13 @@
 
         @if (job.status === 'Completed') {
           @if(data) {
+
             @if (importHasErrors()) {
               <p class="text-danger">Imported data has errors. See below and you may need to scroll right.</p>
               <p class="text-danger">Please correct the errors and upload again.</p>
             }
             @else if (['validated', 'imported'].includes(data.status)) {
               <p class="text-success">Imported data appears to be good.</p>
-              <p class="text-success">{{data.importedRowCount}} rows detected for import.</p>
               <p>Click import to start adding these rows to the database.</p>
               <button class="btn btn-primary" [disabled]="importHasErrors() || data.status === 'imported'" (click)="onImportData()">Import</button>
             }
@@ -37,11 +40,8 @@
 
       @if (data && phase === 'importing') {
         <h3>Importing</h3>
-
         <lib-job-progress-monitor [jobId]="jobIdImport" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
-
-        <p class="text-success">Added <b>{{data.rowSuccessCount}} / {{data?.processedRowCount}}</b> events successfully.</p>
-        <p class="text-success">With <b>{{data.errors.length}}</b> errors.</p>
+        <p> Skipped: {{data.skipRowCount}} + Error: {{data.errorRowCount}} + Valid: {{data.validRowCount}} = Total: {{data.totalRowCount}} rows.</p>
       }
     </div>
   </div>

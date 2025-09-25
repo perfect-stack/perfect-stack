@@ -51,27 +51,48 @@ export class DataImportService {
         if(stepIndex === 0) {
             dataImportModel.skipRows = [];
             dataImportModel.errors = [];
-            dataImportModel.importedRowCount = 0;
+            dataImportModel.importedEntityList = [];
+            dataImportModel.duplicateCheckList = [];
+
+            dataImportModel.skipRowCount = 0;
+            dataImportModel.errorRowCount = 0;
+            dataImportModel.validRowCount = 0;
+            dataImportModel.totalRowCount = dataImportModel.dataRows.length;
         }
 
         const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
+            dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
             dataImportModel.skipRows.push("Blank");
         }
         else {
-            // create entity
             const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
             dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
 
-            // validate entity
-            const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
-            this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
-
-            const skipReason = createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE ? "Duplicate" : "Processed";
-            dataImportModel.skipRows.push(skipReason);
-            dataImportModel.processedRowCount = dataImportModel.processedRowCount + 1;
+            if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
+                dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
+                dataImportModel.skipRows.push('Duplicate');
+            }
+            else {
+                const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
+                if (validationResultMapController.hasErrors()) {
+                    this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
+                    dataImportModel.errorRowCount = dataImportModel.errorRowCount + 1;
+                    dataImportModel.skipRows.push("Processed");
+                }
+                else {
+                    if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_DB_ERROR) {
+                        dataImportModel.errorRowCount = dataImportModel.errorRowCount + 1;
+                        dataImportModel.skipRows.push("Processed");
+                    }
+                    else {
+                        dataImportModel.validRowCount = dataImportModel.validRowCount + 1;
+                        dataImportModel.skipRows.push("Processed");
+                    }
+                }
+            }
         }
     }
 
@@ -82,26 +103,29 @@ export class DataImportService {
         if(stepIndex === 0) {
             dataImportModel.skipRows = [];
             dataImportModel.errors = [];
-            dataImportModel.importedRowCount = 0;
             dataImportModel.importedEntityList = [];
-            dataImportModel.processedRowCount = 0;
             dataImportModel.duplicateCheckList = [];
+
+            dataImportModel.skipRowCount = 0;
+            dataImportModel.errorRowCount = 0;
+            dataImportModel.validRowCount = 0;
+            dataImportModel.totalRowCount = dataImportModel.dataRows.length;
         }
 
         const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
+            dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
             dataImportModel.skipRows.push("Blank");
             dataImportModel.importedEntityList.push(null);
         }
         else {
-            dataImportModel.processedRowCount = dataImportModel.processedRowCount + 1;
-
             const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
             dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
 
             if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
+                dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
                 dataImportModel.skipRows.push('Duplicate');
                 dataImportModel.importedEntityList.push(null);
             }
@@ -109,6 +133,7 @@ export class DataImportService {
                 const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
                 if (validationResultMapController.hasErrors()) {
                     this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
+                    dataImportModel.errorRowCount = dataImportModel.errorRowCount + 1;
                     dataImportModel.skipRows.push("Processed");
                     dataImportModel.importedEntityList.push(null);
                 }
@@ -120,9 +145,9 @@ export class DataImportService {
                             throw new Error('Attempted save, but it failed with new errors');
                         }
                         else {
+                            dataImportModel.validRowCount = dataImportModel.validRowCount + 1;
                             dataImportModel.skipRows.push("Processed");
                             dataImportModel.importedEntityList.push(entityResponse.entity.id);
-                            dataImportModel.rowSuccessCount = dataImportModel.rowSuccessCount + 1;
 
                             if (dataImportMapping.postImportActions) {
                                 await dataImportMapping.postImportActions.postImport(entityResponse.entity);
