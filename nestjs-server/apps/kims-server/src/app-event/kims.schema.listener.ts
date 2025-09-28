@@ -50,8 +50,28 @@ export class KimsSchemaListener implements SchemaListener {
             } catch (error) {
                 this.logger.error('InitNestFailureReasons - FAILED', error.stack);
             }
-        } else {
-            this.logger.log('InitNestFailureReasons - NOT REQUIRED');
+        }
+        else {
+            const resultList: any[] = queryResponse.resultList as any[];
+            const needsUpdate = resultList.filter(reason => reason.sort_index === null || reason.sort_index === undefined).length > 0;
+            if(needsUpdate) {
+                this.logger.log('InitNestFailureReasons - UPDATE REQUIRED');
+                for(const nextReason of resultList) {
+                    if(nextReason.sort_index === null || nextReason.sort_index === undefined) {
+                        // find nextReason.id in NEST_FAILURE_REASONS and use the position index found to update the sort_index
+                        const sortIndex = NEST_FAILURE_REASONS.findIndex(reason => reason.uuid === nextReason.id);
+                        this.logger.log(`InitNestFailureReasons - update required for: ${nextReason.id} - ${nextReason.name} => ${sortIndex}`);
+                        const reasonToUpdate = {
+                            id: nextReason.id,
+                            sort_index: sortIndex,
+                        };
+                        await this.dataService.save('NestFailureReason', reasonToUpdate);
+                    }
+                }
+            }
+            else {
+                this.logger.log('InitNestFailureReasons - NOT REQUIRED');
+            }
         }
     }
 }
