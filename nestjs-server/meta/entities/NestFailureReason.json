@@ -84,7 +84,7 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Identifier",
+      "type": "Integer",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
