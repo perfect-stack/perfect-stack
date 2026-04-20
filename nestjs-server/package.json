@@ -13,6 +13,7 @@
     "start:dev": "nest start kims-server --watch",
     "start:debug": "nest start kims-server --debug --watch",
     "start:prod": "node dist/apps/kims-server/main",
+    "start:capture:dev": "nest start capture-server --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "meta:copy:s3": "aws s3 cp --recursive ./meta/ s3://perfect-stack-demo-meta-s3/meta",
     "test": "jest",

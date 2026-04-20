@@ -3,6 +3,15 @@
   "monorepo": true,
   "root": ".",
   "projects": {
+    "capture-server": {
+      "type": "application",
+      "root": "apps/capture-server",
+      "entryFile": "main",
+      "sourceRoot": "apps/capture-server/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/capture-server/tsconfig.app.json"
+      }
+    },
     "kims-server": {
       "type": "application",
       "root": "apps/kims-server",
