@@ -1,0 +1,19 @@
+<div class="vh-100">
+  <div class="d-flex flex-column h-100">
+    <lib-ngx-perfect-stack
+      applicationTitle="Capture"
+      applicationTitleFont="Rokkitt"
+      applicationLogo="/assets/capture-logo.svg"
+      applicationLogoWidth="100"
+      menuBarBackgroundColor="purple"
+      menuBarDividerColor="#ffffff thin solid"
+    >
+    </lib-ngx-perfect-stack>
+
+    <div class="flex-grow-1">
+      <router-outlet></router-outlet>
+    </div>
+
+    <app-toasts></app-toasts>
+  </div>
+</div>
