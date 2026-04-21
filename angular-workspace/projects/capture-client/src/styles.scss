@@ -1,1 +1,529 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+
+// primary font
+$primary_font: 'Clear Sans';
+
+
+// Theme colors
+$primary:       #056EBA;
+//$secondary:     #FFFFFF;
+$success:       #027A48;
+//$info:          $cyan !default;
+$warning:       #F79009;
+$danger:        #D92D20;
+$light:         #FFFFFF;
+//$dark:          $gray-900 !default;
+
+
+
+/*$theme-colors: (
+  "primary": #056EBA
+);*/
+
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+@import "library-styles.scss";
+
+
+@font-face {
+  font-family: 'Clear Sans';
+  src: url('assets/fonts/clearsans/ClearSans-MediumItalic.woff2') format('woff2'),
+  url('assets/fonts/clearsans/ClearSans-MediumItalic.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clear Sans';
+  src: url('assets/fonts/clearsans/ClearSans-BoldItalic.woff2') format('woff2'),
+  url('assets/fonts/clearsans/ClearSans-BoldItalic.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clear Sans';
+  src: url('assets/fonts/clearsans/ClearSans-Bold.woff2') format('woff2'),
+  url('assets/fonts/clearsans/ClearSans-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clear Sans';
+  src: url('assets/fonts/clearsans/ClearSans.woff2') format('woff2'),
+  url('assets/fonts/clearsans/ClearSans.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clear Sans';
+  src: url('assets/fonts/clearsans/ClearSans-Italic.woff2') format('woff2'),
+  url('assets/fonts/clearsans/ClearSans-Italic.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clear Sans';
+  src: url('assets/fonts/clearsans/ClearSans-Medium.woff2') format('woff2'),
+  url('assets/fonts/clearsans/ClearSans-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clear Sans';
+  src: url('assets/fonts/clearsans/ClearSans-Thin.woff2') format('woff2'),
+  url('assets/fonts/clearsans/ClearSans-Thin.woff') format('woff');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clear Sans';
+  src: url('assets/fonts/clearsans/ClearSans-Light.woff2') format('woff2'),
+  url('assets/fonts/clearsans/ClearSans-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Zilla Slab';
+  src: url('assets/fonts/zillaslab/ZillaSlab-Regular.woff2') format('woff2'),
+  url('assets/fonts/zillaslab/ZillaSlab-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
+// font-weight
+$thin:100;
+$light:300;
+$regular:400;
+$bold:700;
+$black:900;
+
+// Font size
+$font-xs:10px;
+$font-sm: 12px;
+$primary-fs: 14px;
+$font-md: 16px;
+$font-lg: 18px;
+
+body {
+  font-family: $primary_font;
+  font-size: $primary-fs;
+  font-weight: $regular;
+  background: #F2F4F7;
+  color: #101828;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+h4 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+// At the top of a panel, or the side headings (not a h3 and not a h4, it's in-between)
+.panel-heading {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+
+/************************************************
+    Form containers
+*************************************************/
+
+.container-form {
+  color: #475467;
+}
+
+label {
+  //margin-bottom: 6px;
+  color: #475467;
+}
+
+input {
+  height: 48px;
+}
+
+select {
+  height: 48px;
+}
+
+.form-row {
+  padding-bottom: 12px;
+}
+
+.action-buttons-right {
+  padding-bottom: 12px;
+}
+
+// These new few rule change the form-controls so that for "view" mode they look like inline text instead of disabled input fields
+.form-control[readonly] {
+  background: unset;
+  padding: 0;
+  border: 0;
+  font-weight: 400;
+  font-size: 16px;
+  height: unset;
+}
+
+.form-control[disabled] {
+  background: unset;
+  padding: 0;
+  border: 0;
+  font-weight: 400;
+  font-size: 16px;
+  height: unset;
+}
+
+.form-check {
+  margin-bottom: 32px;
+}
+
+// Date Picker Styles
+ngb-datepicker .ngb-dp-header {
+  background: $primary;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.ngb-dp-navigation-select select {
+  margin-right: 4px;
+}
+
+.ngb-dp-header .btn {
+  height: unset;
+}
+
+.ngb-dp-week .ngb-dp-weekday {
+  color: $gray-500;
+  font-style: unset;
+}
+
+.ngb-dp-navigation-chevron {
+  color: white;
+}
+
+.ngb-dp-week.ngb-dp-weekdays {
+  border: 0;
+}
+
+
+// Container/Subject Area specific rules
+
+lib-paris-layout-style:host {
+  margin: 56px;
+}
+
+.bird-view .form-row {
+  padding-top: 12px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+
+/************************************************
+    Table containers
+*************************************************/
+
+.container-table th {
+  text-transform: uppercase;
+  font-size: $font-sm;
+  color: #667085;
+}
+
+.container-table thead {
+  background: #F9FAFB;
+}
+
+.container-table tbody td {
+  height: 52px;
+}
+
+.container-table th:first-child {
+  padding-left: 24px;
+}
+
+.container-table td:first-child {
+  padding-left: 24px;
+}
+
+
+/************************************************
+    Other containers
+*************************************************/
+
+.container-border-radius {
+  background: #ffffff;
+  border: 1px solid #EAECF0;
+  box-sizing: border-box;
+  box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
+  border-radius: 8px;
+}
+
+
+/************************************************
+    Buttons
+*************************************************/
+
+.btn {
+  height: 48px;
+  line-height: 36px;
+}
+
+.btn-link {
+  text-decoration: none;
+}
+
+.btn-outline-primary {
+  background: unset;
+  color: #1E87C9;
+}
+
+.btn-outline-primary:hover {
+  background: #E4E7EF;
+  color: $primary;
+}
+
+.btn-icon {
+  cursor: pointer;
+}
+
+
+// Error states for input controls
+
+input.ng-invalid.ng-touched {
+  border-color: $danger;
+}
+
+editor.ng-invalid.ng-touched {
+  border: $danger solid 1px;
+}
+
+select.ng-invalid.ng-touched {
+  border-color: $danger;
+}
+
+/********  Footer **********************/
+
+$footer-color: #667085;
+
+.text-footer {
+  color: $footer-color;
+}
+
+// This one is actually used by the Audit View because it's only needed to appear at the bottom of that
+.border-footer {
+  border-bottom: solid $footer-color 1px;
+}
+
+/********  Draggable classes ***********/
+
+.drag-border {
+  border: #ff525b dashed 2px !important;
+}
+
+.drag-handle {
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+/* Droppable */
+
+.drag-hint-border {
+  border: #3c763d dashed 2px;
+}
+
+.drag-over-border {
+  border: #fbbc05 dashed 2px;
+}
+
+.drag-transit {
+  border: #3500FF dashed 2px;
+}
+
+
+/*********** Status badge **********/
+
+@mixin badge-mixin {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-grow: 0;
+  align-items: center;
+  height: 24px;
+  border-radius: 16px;
+}
+
+.status-badge-Alive {
+  @include badge-mixin;
+  background: #ECFDF3;
+  color: $success;
+}
+
+.status-badge-Dead {
+  @include badge-mixin;
+  background: #FEF3F2;
+  color: $danger;
+}
+
+.status-badge-Presumed-Dead {
+  @include badge-mixin;
+  background: #FFFAEB;
+  color: $warning;
+}
+
+.status-badge-Unknown {
+  @include badge-mixin;
+  background: #EFF8FF;
+  color: $primary;
+}
+
+/*********** Sex symbol **********/
+
+.sex-symbol-Male {
+  @include badge-mixin;
+  background: #EFF8FF;
+  color: $primary;
+}
+
+.sex-symbol-Female {
+  @include badge-mixin;
+  background: #FEF3F2;
+  color: $danger;
+}
+
+.sex-symbol-Unknown {
+  @include badge-mixin;
+  background: #EAECF0;
+  color: #667085;
+}
+
+// The first group of three above us can be removed once we fully cut over to symbols and stop using badges for sex symbols
+
+.sex-symbol-male {
+  @include badge-mixin;
+  background: #EFF8FF;
+  color: $primary;
+}
+
+.sex-symbol-female {
+  @include badge-mixin;
+  background: #FEF3F2;
+  color: $danger;
+}
+
+.sex-symbol-question_mark {
+  @include badge-mixin;
+  background: #EAECF0;
+  color: #667085;
+}
+
+.sex-symbol-error {
+  @include badge-mixin;
+  background: #EAECF0;
+  color: #667085;
+}
+
+/*********** Last Signed in **********/
+.last-signed-in {
+  @include badge-mixin;
+  background: #bdbdbd;
+  color: #1D2939;
+}
+
+/*********** Spy Control **********/
+
+.spy-bg {
+  background: #F2F4F7 !important;
+}
+
+/*********** Miscellaneous **********/
+.bird-profile-image-width {
+  width: 167px;
+}
+
+.empty-value {
+  color: #98A2B3;
+}
+
+.back-link {
+  font-size: $font-lg;
+}
+
+.icon-filled {
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48;
+}
+
+.row-navigation {
+  cursor: pointer !important;
+}
+
+
+.toast-header {
+  color: #FFF;
+  background-color: unset;
+  border-bottom: unset;
+}
+
+.toast-header .btn-close {
+  display: none;
+}
+
+.toast-header .my-btn-close {
+  cursor: pointer;
+}
+
+.toast-body {
+  padding: 0px 44px 12px 44px;
+}
+
