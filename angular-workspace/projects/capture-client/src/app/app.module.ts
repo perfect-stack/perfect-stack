@@ -4,6 +4,8 @@ import { NgxPerfectStackModule } from 'ngx-perfect-stack';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -11,6 +13,9 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
+    NgbModule,
+    ReactiveFormsModule,
+    NgxPerfectStackModule,
     AppRoutingModule,
     NgxPerfectStackModule,
   ],

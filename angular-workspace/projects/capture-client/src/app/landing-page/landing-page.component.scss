@@ -1,0 +1,34 @@
+
+.landing-page {
+  background: #999999;
+  height: 100%;
+}
+
+.landing-panel {
+  min-width: 1200px;
+  max-width: 1600px;
+  margin: 0 auto;
+  display: block;
+}
+
+.landing-page-title {
+  text-transform: uppercase;
+  padding-top: 56px;
+  font-size: 36pt;
+  color: purple;
+}
+
+.landing-image {
+  /*background-image: url('/assets/Kiwi-landing.jpg');*/
+  background-image: url('/assets/kea-milford-sbernert-1200-4.png');
+  background-position: calc(50% - 225px) 0%;
+  background-repeat: no-repeat;
+}
+
+.landing-login {
+  max-height: 600px;
+}
+
+.landing-page-support {
+  font-size: 12pt;
+}

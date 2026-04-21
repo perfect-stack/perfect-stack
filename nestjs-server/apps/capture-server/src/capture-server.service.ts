@@ -14,6 +14,7 @@ import {DiscriminatorService} from "@perfect-stack/nestjs-server/data/discrimina
 import {MediaRepositoryService} from "@perfect-stack/nestjs-server/media/media-repository.service";
 import {EventService, SchemaListener} from "@perfect-stack/nestjs-server/event/event.service";
 import {SettingsService} from "@perfect-stack/nestjs-server/settings/settings.service";
+import {PersonSearchQuery} from "./app-event/person-search.query";
 // import {ActivityService} from "./app-event/activity.service";
 // import {AgeClassBatchJob} from "./app-event/batch/age-class.batchjob";
 // import {CoordinateConverterService} from "./app-event/batch/coordinate-converter.service";
@@ -72,7 +73,7 @@ export class CaptureServerService implements OnApplicationBootstrap {
 
         // this.addBirdQuery();
         // this.addEventSearchCriteriaQuery();
-        // this.addPersonSearchQuery();
+        this.addPersonSearchQuery();
         // this.addProjectBirdsQuery();
         // this.addProjectTeamQuery();
         //
@@ -102,7 +103,7 @@ export class CaptureServerService implements OnApplicationBootstrap {
             'EventSearchByCriteria',
             new EventSearchCriteriaQuery(this.knexService, this.metaEntityService, this.discriminatorService),
         );
-    }
+    }*/
 
     private addPersonSearchQuery() {
         this.customQueryService.addCustomQuery(
@@ -111,7 +112,7 @@ export class CaptureServerService implements OnApplicationBootstrap {
         );
     }
 
-    private addActivityListeners() {
+    /*private addActivityListeners() {
         this.eventService.addDataEventListener(
             'Event',
             new BandingActivityDataEventListener(
