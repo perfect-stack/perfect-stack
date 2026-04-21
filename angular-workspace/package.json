@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start:demo-client": "ng serve demo-client",
+    "start:capture-client": "ng serve capture-client",
     "build": "ng build ngx-perfect-stack",
     "watch": "ng build --watch",
     "publish:github": "./publish-github.sh",

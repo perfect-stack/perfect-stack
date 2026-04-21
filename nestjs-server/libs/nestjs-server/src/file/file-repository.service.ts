@@ -20,16 +20,22 @@ export class FileRepositoryService {
     protected local: LocalFileRepository,
     protected s3: S3FileRepository,
   ) {
-    const sourceLocation = configService.get('META_SOURCE_LOCATION', 's3');
-    if (sourceLocation === FileLocationType.local) {
+    const sourceLocationStrategy = configService.get('META_SOURCE_LOCATION', 's3');
+    if (sourceLocationStrategy === FileLocationType.local) {
       this.fileRepository = local;
-    } else if (sourceLocation === FileLocationType.s3) {
+    } else if (sourceLocationStrategy === FileLocationType.s3) {
       this.fileRepository = s3;
     } else {
-      throw new Error(`Unknown fileLocationType of ${sourceLocation}`);
+      throw new Error(`Unknown fileLocationType of ${sourceLocationStrategy}`);
     }
 
-    this.logger.log(`sourceLocation = ${sourceLocation}`);
+    this.logger.log(`sourceLocationStrategy = ${sourceLocationStrategy}`);
+
+    const sourceLocationDir = configService.get('META_SOURCE_LOCATION_DIR');
+    if(sourceLocationDir) {
+      this.logger.log(`sourceLocationDir = ${sourceLocationDir}`);
+      this.fileRepository.setBaseDir(sourceLocationDir);
+    }
   }
 
   async listFiles(dir: string): Promise<string[]> {
