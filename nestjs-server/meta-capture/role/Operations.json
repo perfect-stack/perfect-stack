@@ -25,6 +25,10 @@
       "subject": "Batch"
     },
     {
+      "action": "Edit",
+      "subject": "ObservationType"
+    },
+    {
       "action": "Delete",
       "subject": "Meta"
     },

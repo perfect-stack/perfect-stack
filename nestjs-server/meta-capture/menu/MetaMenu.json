@@ -1,6 +1,17 @@
 {
   "menuList": [
     {
+      "label": "Observation",
+      "items": [
+        {
+          "label": "Observation",
+          "route": "/data/Observation/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
       "label": "People",
       "items": [
         {
@@ -29,6 +40,12 @@
           ],
           "label": "Species",
           "route": "/data/Species/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Observation Type",
+          "route": "/data/ObservationType/search_edit"
         }
       ]
     },

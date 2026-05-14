@@ -25,6 +25,10 @@
       "subject": "Import"
     },
     {
+      "action": "Edit",
+      "subject": "Observation"
+    },
+    {
       "action": "Delete",
       "subject": "Bird"
     },
@@ -33,8 +37,16 @@
       "subject": "Event"
     },
     {
+      "action": "Delete",
+      "subject": "Observation"
+    },
+    {
       "action": "Menu",
       "subject": "Admin"
+    },
+    {
+      "action": "Menu",
+      "subject": "Observation"
     }
   ]
 }

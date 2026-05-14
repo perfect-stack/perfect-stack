@@ -6,22 +6,6 @@
   "permissions": [
     {
       "action": "Edit",
-      "subject": "LocationType"
-    },
-    {
-      "action": "Edit",
-      "subject": "ObserverRole"
-    },
-    {
-      "action": "Edit",
-      "subject": "ProjectRole"
-    },
-    {
-      "action": "Edit",
-      "subject": "ProjectStatus"
-    },
-    {
-      "action": "Edit",
       "subject": "Species"
     },
     {
@@ -30,55 +14,7 @@
     },
     {
       "action": "Edit",
-      "subject": "ProjectTeamStatus"
-    },
-    {
-      "action": "Edit",
-      "subject": "CountType"
-    },
-    {
-      "action": "Edit",
-      "subject": "HabitatType"
-    },
-    {
-      "action": "Edit",
-      "subject": "NestingStatus"
-    },
-    {
-      "action": "Edit",
-      "subject": "Instrument"
-    },
-    {
-      "action": "Edit",
-      "subject": "NestStatusType"
-    },
-    {
-      "action": "Edit",
-      "subject": "CaptureMethodType"
-    },
-    {
-      "action": "Edit",
-      "subject": "NestFailureReason"
-    },
-    {
-      "action": "Delete",
-      "subject": "LocationType"
-    },
-    {
-      "action": "Delete",
-      "subject": "ObserverRole"
-    },
-    {
-      "action": "Delete",
-      "subject": "ProjectRole"
-    },
-    {
-      "action": "Delete",
-      "subject": "ProjectStatus"
-    },
-    {
-      "action": "Delete",
-      "subject": "ProjectTeamStatus"
+      "subject": "ObservationType"
     },
     {
       "action": "Delete",
@@ -90,31 +26,7 @@
     },
     {
       "action": "Delete",
-      "subject": "Location"
-    },
-    {
-      "action": "Delete",
-      "subject": "CountType"
-    },
-    {
-      "action": "Delete",
-      "subject": "HabitatType"
-    },
-    {
-      "action": "Delete",
-      "subject": "Instrument"
-    },
-    {
-      "action": "Delete",
-      "subject": "NestStatusType"
-    },
-    {
-      "action": "Delete",
-      "subject": "CaptureMethodType"
-    },
-    {
-      "action": "Delete",
-      "subject": "NestFailureReason"
+      "subject": "ObservationType"
     },
     {
       "action": "Menu",

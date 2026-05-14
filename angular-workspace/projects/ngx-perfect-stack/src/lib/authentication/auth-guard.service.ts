@@ -33,6 +33,10 @@ export class AuthGuard implements CanActivate {
         const menuSubjectPermission = this.authorizationService.checkPermission(ActionType.Menu, menuSubject);
         //console.log(`canActivate.0: action = ${actionSubject.subject}, menu = ${menuSubject}`);
         canActivate = actionSubjectPermission && menuSubjectPermission;
+
+        if(!canActivate) {
+          console.log(`NOT AUTHORISED: ${actionSubject.action}.${actionSubject.subject},  actionSubjectPermission = ${actionSubjectPermission}, menuSubject = ${menuSubject}, menuSubjectPermission = ${menuSubjectPermission}`);
+        }
       }
       else {
         console.log(`findActionAndSubjectFromURL: NO Action or subject found. Keep calm and carry on.`)
@@ -43,6 +47,7 @@ export class AuthGuard implements CanActivate {
         return canActivate;
       }
       else {
+        console.log(`NOT AUTHORISED: redirect to error page`);
         return this.router.navigate(['/authorization-error']);
       }
     }
@@ -100,6 +105,7 @@ export class AuthGuard implements CanActivate {
         'NestStatusType',
         'NestFailureReason',
         'ObserverRole',
+        'ObservationType',
         'Organisation',
         'ProjectStatus',
         'ProjectRole',
