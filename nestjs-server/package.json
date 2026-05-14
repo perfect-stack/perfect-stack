@@ -126,5 +126,15 @@
   "types": "dist/libs/nestjs-server/index.d.ts",
   "files": [
     "dist/libs/nestjs-server"
-  ]
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/libs/nestjs-server/index.d.ts",
+      "default": "./dist/libs/nestjs-server/index.js"
+    },
+    "./*": {
+      "types": "./dist/libs/nestjs-server/*.d.ts",
+      "default": "./dist/libs/nestjs-server/*.js"
+    }
+  }
 }
