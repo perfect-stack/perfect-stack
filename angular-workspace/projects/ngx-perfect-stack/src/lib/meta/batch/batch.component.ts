@@ -1,8 +1,13 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {CommonModule, NgIf} from "@angular/common";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
 import {BatchService} from "./batch.service";
 import {ToastService} from "../../utils/toasts/toast.service";
+
+interface BatchJobSummary {
+  name: string;
+  summary: any;
+}
 
 @Component({
   selector: 'lib-batch',
@@ -13,12 +18,9 @@ import {ToastService} from "../../utils/toasts/toast.service";
   templateUrl: './batch.component.html',
   styleUrl: './batch.component.css'
 })
-export class BatchComponent {
+export class BatchComponent implements OnInit {
 
-  ageClassSummary: any;
-  conversionRemainingCount = -1;
-  dbSnapshotSummary: any;
-
+  batchJobs: BatchJobSummary[] = [];
 
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
@@ -27,51 +29,27 @@ export class BatchComponent {
   ) { }
 
   ngOnInit(): void {
-    this.getSummaryAgeClass();
-    this.getSummaryCoordinates();
-    this.getSummaryDbSnapshot();
-  }
-
-  getSummaryAgeClass() {
-    this.batchService.getSummary("age_class").subscribe(summary => {
-      this.ageClassSummary = summary;
+    this.batchService.getList().subscribe(jobs => {
+      this.batchJobs = jobs.map(name => ({ name, summary: null }));
+      this.batchJobs.forEach(job => this.getSummary(job.name));
     });
   }
 
-  getSummaryCoordinates() {
-    this.batchService.getSummary("coordinate_converter").subscribe((summary: any) => {
-      this.conversionRemainingCount = summary.remainingCount;
+  getSummary(jobName: string) {
+    this.batchService.getSummary(jobName).subscribe(summary => {
+      const job = this.batchJobs.find(j => j.name === jobName);
+      if (job) {
+        job.summary = summary;
+      }
     });
   }
 
-  getSummaryDbSnapshot() {
-    this.batchService.getSummary("db_snapshot").subscribe((summary: any) => {
-      this.dbSnapshotSummary = summary;
+  onExecute(jobName: string) {
+    this.batchService.execute(jobName).subscribe(() => {
+      this.toastService.showSuccess(`Batch job ${jobName} complete`);
+      this.getSummary(jobName);
     });
   }
-
-  onUpdateAgeClass() {
-    this.batchService.execute('age_class').subscribe(() => {
-      this.toastService.showSuccess('Batch job complete');
-      this.getSummaryAgeClass();
-    });
-  }
-
-  onConvertCoordinates() {
-    this.batchService.execute('coordinate_converter').subscribe((summary: any) => {
-      this.conversionRemainingCount = summary.remainingCount;
-      this.toastService.showSuccess('Batch job complete');
-      this.getSummaryAgeClass();
-    });
-  }
-
-  onDbSnapshot() {
-    this.batchService.execute('db_snapshot').subscribe(() => {
-      this.toastService.showSuccess('Batch job complete');
-      this.getSummaryDbSnapshot();
-    });
-  }
-
 
   onCopyToClipboard(textToCopy: string) {
     navigator.clipboard.writeText(textToCopy).then(() => this.toastService.showSuccess(`Copied: ${textToCopy}`));

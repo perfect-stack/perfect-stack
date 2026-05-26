@@ -76,7 +76,13 @@
             "scripts": [
               "node_modules/tinymce/tinymce.min.js"
             ],
-            "browser": "projects/demo-client/src/main.ts"
+            "browser": "projects/demo-client/src/main.ts",
+            "allowedCommonJsDependencies": [
+              "tinymce",
+              "leaflet",
+              "proj4",
+              "ng-drag-drop"
+            ]
           },
           "configurations": {
             "production": {
@@ -190,6 +196,12 @@
             ],
             "scripts": [
               "node_modules/tinymce/tinymce.min.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "tinymce",
+              "leaflet",
+              "proj4",
+              "ng-drag-drop"
             ]
           },
           "configurations": {

@@ -15,6 +15,16 @@ export class BatchController {
     @ActionPermit(ActionType.Read)
     @SubjectName('Batch')
     @ApiOperation({
+        summary: 'Get list of batch jobs',
+    })
+    @Get('/list')
+    async getList(): Promise<any> {
+        return this.batchService.getList();
+    }
+
+    @ActionPermit(ActionType.Read)
+    @SubjectName('Batch')
+    @ApiOperation({
         summary: 'Get summary of batch job',
     })
     @Get('/:jobName')
