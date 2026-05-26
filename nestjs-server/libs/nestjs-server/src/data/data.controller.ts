@@ -21,7 +21,8 @@ import { CustomQueryService } from './custom-query.service';
 import { ActionPermit } from '../authentication/action-permit';
 import { ActionType } from '../domain/meta.role';
 import { SubjectKey } from '../authentication/subject';
-import {ApiBody, ApiOperation, ApiTags} from '@nestjs/swagger';
+import {ApiBody, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {PageQueryResponse} from "../domain/response/page-query.response";
 
 @ApiTags('data')
 @Controller('data')
@@ -36,6 +37,11 @@ export class DataController {
   @ActionPermit(ActionType.Read)
   @SubjectKey('entityName')
   @ApiOperation({ summary: 'Find all data rows for the supplied entity name' })
+  @ApiResponse({
+    status: 200,
+    description: 'The list of entities',
+    type: PageQueryResponse,
+  })
   @Get('/:entityName')
   findAll(
     @Param('entityName') entityName: string,
