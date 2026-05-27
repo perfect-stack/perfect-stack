@@ -162,10 +162,15 @@ export class AuthorizationService {
     permitAction: string,
     permitSubject: string,
   ) {
-    return (
-      action === permitAction &&
-      (subject === permitSubject || permitSubject === 'Any')
-    );
+    const cleanAction = action.trim().toLowerCase();
+    const cleanSubject = subject.trim().toLowerCase();
+    const cleanPermitAction = permitAction.trim().toLowerCase();
+    const cleanPermitSubject = permitSubject.trim().toLowerCase();
+
+    const actionMatch = cleanAction === cleanPermitAction || cleanPermitAction === 'any';
+    const subjectMatch = cleanSubject === cleanPermitSubject || cleanPermitSubject === 'any';
+
+    return actionMatch && subjectMatch;
   }
 
   /**
