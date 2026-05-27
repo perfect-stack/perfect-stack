@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { TypeaheadRequest } from './dto/typeahead.request';
 import { TypeaheadService } from './typeahead.service';
 import { Item } from './dto/typeahead.response';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ActionPermit } from '../authentication/action-permit';
 import { ActionType } from '../domain/meta.role';
 import { SubjectName } from '../authentication/subject';
@@ -17,6 +17,11 @@ export class TypeaheadController {
   @ApiOperation({
     summary:
       'Perform a search of the database to find rows matching the supplied search criteria. Used for Typeahead fields within the application',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Typeahead results',
+    type: [Object],
   })
   @Post()
   search(@Body() request: TypeaheadRequest): Promise<Item[]> {

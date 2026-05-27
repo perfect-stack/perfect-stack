@@ -12,7 +12,7 @@ import {ActionPermit} from "../authentication/action-permit";
 import {ActionType} from "../domain/meta.role";
 import {SubjectName} from "../authentication/subject";
 import {FileInterceptor} from "@nestjs/platform-express";
-import {ApiBody, ApiConsumes, ApiTags} from "@nestjs/swagger";
+import {ApiBody, ApiConsumes, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {DataImportModel} from "../data/import/data-import.model";
 import {Job} from "./job.model";
 import {JobService} from "./job.service";
@@ -90,6 +90,11 @@ export class DataImportJobController {
             required: ['dataFormat', 'file']
         },
     })
+    @ApiResponse({
+        status: 201,
+        description: 'File uploaded and validated',
+        type: Object,
+    })
     async uploadFile(@UploadedFile( new ParseFilePipe({
             validators: [
                 new MaxFileSizeValidator({maxSize: 10 * 1024 * 1024})
@@ -123,6 +128,11 @@ export class DataImportJobController {
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Import')
+    @ApiResponse({
+        status: 201,
+        description: 'Data import submitted',
+        type: Object,
+    })
     @Post('/import')
     async importData(@Body() dataImportModel: DataImportModel): Promise<Job> {
         if(dataImportModel.errors.length === 0) {

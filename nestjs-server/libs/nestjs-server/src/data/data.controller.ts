@@ -23,6 +23,7 @@ import { ActionType } from '../domain/meta.role';
 import { SubjectKey } from '../authentication/subject';
 import {ApiBody, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {PageQueryResponse} from "../domain/response/page-query.response";
+import {QueryResponse} from "./query.response";
 
 @ApiTags('data')
 @Controller('data')
@@ -57,6 +58,11 @@ export class DataController {
     summary:
       'Find all data rows for the supplied query request containing entity name and other criteria',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'The list of entities matching the criteria',
+    type: QueryResponse,
+  })
   @Post('/query')
   findByCriteria(@Body() queryRequest: QueryRequest) {
     if (queryRequest.customQuery) {
@@ -69,6 +75,11 @@ export class DataController {
   @ActionPermit(ActionType.Read)
   @SubjectKey('entityName')
   @ApiOperation({ summary: 'Find one entity by entity name and id' })
+  @ApiResponse({
+    status: 200,
+    description: 'The found entity',
+    type: Object,
+  })
   @Get('/:entityName/:id')
   findOne(
     @Param('entityName') entityName: string,
@@ -86,6 +97,11 @@ export class DataController {
   @ApiBody({
       description: 'Entity to save',
       schema: { type: 'object' }
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'The saved entity response',
+    type: EntityResponse,
   })
   @Post('/:entityName')
   async save(
@@ -114,6 +130,10 @@ export class DataController {
   @SubjectKey('entityName')
   @ApiOperation({
     summary: 'Update the sort index value for certain reference data types',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Sort index successfully updated',
   })
   @Post('/:entityName/:id/sort_index')
   async updateSortIndex(
@@ -151,6 +171,11 @@ export class DataController {
     summary:
       'Permanently deletes the supplied entity with the supplied id value',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Confirmation of deletion',
+    type: Object,
+  })
   @Delete('/:entityName/:id')
   async destroy(
     @Req() request: Request,
@@ -176,6 +201,11 @@ export class DataController {
   @SubjectKey('entityName')
   @ApiOperation({
     summary: 'Check if the entity with the supplied id value can be deleted',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Results indicating if deletion is possible',
+    type: Object,
   })
   @Delete('/check/:entityName/:id')
   async destroyCheck(
