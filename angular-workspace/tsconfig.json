@@ -15,8 +15,7 @@
     "strictPropertyInitialization": false,
     "sourceMap": true,
     "paths": {
-      "ngx-perfect-stack": [
-        "dist/ngx-perfect-stack/ngx-perfect-stack",
+      "@perfect-stack/ngx-perfect-stack": [
         "dist/ngx-perfect-stack"
       ]
     },

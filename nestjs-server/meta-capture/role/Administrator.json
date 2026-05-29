@@ -17,6 +17,14 @@
       "subject": "ObservationType"
     },
     {
+      "action": "Edit",
+      "subject": "SensorType"
+    },
+    {
+      "action": "Edit",
+      "subject": "SensorModel"
+    },
+    {
       "action": "Delete",
       "subject": "Species"
     },
@@ -29,8 +37,24 @@
       "subject": "ObservationType"
     },
     {
+      "action": "Delete",
+      "subject": "SensorModel"
+    },
+    {
+      "action": "Delete",
+      "subject": "SensorType"
+    },
+    {
       "action": "Menu",
       "subject": "Admin"
+    },
+    {
+      "action": "Menu",
+      "subject": "SensorType"
+    },
+    {
+      "action": "Menu",
+      "subject": "SensorModel"
     }
   ]
 }

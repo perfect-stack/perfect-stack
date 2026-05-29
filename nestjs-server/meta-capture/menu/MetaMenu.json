@@ -1,11 +1,33 @@
 {
   "menuList": [
     {
-      "label": "Observation",
+      "label": "Monitoring Station",
       "items": [
         {
-          "label": "Observation",
-          "route": "/data/Observation/search",
+          "label": "Monitoring Station",
+          "route": "/data/MonitoringStation/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
+      "label": "Activities",
+      "items": [
+        {
+          "label": "Station Sensor Activity",
+          "route": "/data/StationSensorActivity/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
+      "label": "Sensor",
+      "items": [
+        {
+          "label": "Sensor",
+          "route": "/data/Sensor/search",
           "editable": true,
           "roles": []
         }
@@ -46,6 +68,18 @@
           "roles": [],
           "label": "Observation Type",
           "route": "/data/ObservationType/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Sensor Type",
+          "route": "/data/SensorType/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Sensor Model",
+          "route": "/data/SensorModel/search"
         }
       ]
     },

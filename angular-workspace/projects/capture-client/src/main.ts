@@ -1,7 +1,7 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
-import { NgxPerfectStackConfig, STACK_CONFIG } from 'ngx-perfect-stack';
+import { NgxPerfectStackConfig, STACK_CONFIG } from '@perfect-stack/ngx-perfect-stack';
 
 async function bootstrap() {
   try {

@@ -29,6 +29,22 @@
       "subject": "Observation"
     },
     {
+      "action": "Edit",
+      "subject": "MonitoringStation"
+    },
+    {
+      "action": "Edit",
+      "subject": "Sensor"
+    },
+    {
+      "action": "Edit",
+      "subject": "StationSensorActivity"
+    },
+    {
+      "action": "Edit",
+      "subject": "StationSensorAction"
+    },
+    {
       "action": "Delete",
       "subject": "Bird"
     },
@@ -47,6 +63,14 @@
     {
       "action": "Menu",
       "subject": "Observation"
+    },
+    {
+      "action": "Menu",
+      "subject": "Sensor"
+    },
+    {
+      "action": "Menu",
+      "subject": "StationSensorActivity"
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgxPerfectStackModule } from 'ngx-perfect-stack';
+import { NgxPerfectStackModule } from '@perfect-stack/ngx-perfect-stack';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,7 +17,6 @@ import {ReactiveFormsModule} from "@angular/forms";
     ReactiveFormsModule,
     NgxPerfectStackModule,
     AppRoutingModule,
-    NgxPerfectStackModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

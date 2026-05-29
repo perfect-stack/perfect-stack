@@ -14,23 +14,19 @@
     },
     {
       "action": "Menu",
-      "subject": "Bird"
-    },
-    {
-      "action": "Menu",
-      "subject": "Event"
-    },
-    {
-      "action": "Menu",
-      "subject": "Location"
-    },
-    {
-      "action": "Menu",
-      "subject": "Project"
-    },
-    {
-      "action": "Menu",
       "subject": "People"
+    },
+    {
+      "action": "Menu",
+      "subject": "Monitoring Station"
+    },
+    {
+      "action": "Menu",
+      "subject": "MonitoringStation"
+    },
+    {
+      "action": "Menu",
+      "subject": "Activities"
     }
   ]
 }

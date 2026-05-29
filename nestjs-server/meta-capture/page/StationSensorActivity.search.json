@@ -1,0 +1,51 @@
+{
+  "name": "StationSensorActivity.search",
+  "title": "$PageTitle",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "station_id"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "activity_type"
+          }
+        ]
+      ],
+      "metaEntityName": "StationSensorActivity",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "station_id"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "activity_type"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "performed_by"
+          }
+        ]
+      ],
+      "metaEntityName": "StationSensorActivity",
+      "type": "table"
+    }
+  ]
+}

@@ -22,8 +22,8 @@ $light:         #FFFFFF;
   "primary": #056EBA
 );*/
 
-@import "../../../node_modules/bootstrap/scss/bootstrap";
-@import "library-styles.scss";
+@use "bootstrap/scss/bootstrap";
+@use "./library-styles.scss";
 
 
 @font-face {
@@ -526,4 +526,3 @@ $footer-color: #667085;
 .toast-body {
   padding: 0px 44px 12px 44px;
 }
-
