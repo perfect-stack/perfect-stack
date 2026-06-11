@@ -55,6 +55,9 @@ async function bootstrap() {
       dataSourceEditable: mergedConfig.DATA_SOURCE_EDITABLE,
       environmentBannerText: mergedConfig.ENVIRONMENT_BANNER_TEXT,
       supplementaryGroupRoles: mergedConfig.SUPPLEMENTARY_GROUP_ROLES,
+      msalClientId: mergedConfig.MSAL_CLIENT_ID,
+      msalAuthority: mergedConfig.MSAL_AUTHORITY,
+      msalRedirectUri: mergedConfig.MSAL_REDIRECT_URI,
       metaRoleList: metaRoleList,
     };
 

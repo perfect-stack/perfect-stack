@@ -1,6 +1,6 @@
 {
   "name": "Viewer",
-  "group": "KIMS_Viewer",
+  "group": "NFC_User",
   "inherits": "",
   "description": "<p>Read-only access, all DOC.</p>\n<p>Edit for \"Authentication\" seems a little odd, but it's there so the system can record the Last Signed In Time, but is ok because recording the Last Signed In time can only update the time of the currently logged in user making the request (they can't impersonate someone else).</p>",
   "permissions": [
@@ -14,11 +14,7 @@
     },
     {
       "action": "Menu",
-      "subject": "People"
-    },
-    {
-      "action": "Menu",
-      "subject": "Monitoring Station"
+      "subject": "Station"
     },
     {
       "action": "Menu",
@@ -26,7 +22,19 @@
     },
     {
       "action": "Menu",
-      "subject": "Activities"
+      "subject": "Activity"
+    },
+    {
+      "action": "Menu",
+      "subject": "StationSensorActivity"
+    },
+    {
+      "action": "Menu",
+      "subject": "Event"
+    },
+    {
+      "action": "Menu",
+      "subject": "Uploads"
     }
   ]
 }

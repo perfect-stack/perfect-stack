@@ -67,6 +67,22 @@
         "name"
       ],
       "rules": []
+    },
+    {
+      "name": "monitoring_station",
+      "label": "Monitoring Station",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "MonitoringStation",
+      "typeaheadSearch": [
+        "station_title"
+      ],
+      "rules": []
     }
   ]
 }

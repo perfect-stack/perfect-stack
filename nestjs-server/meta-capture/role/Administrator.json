@@ -1,7 +1,7 @@
 {
   "name": "Administrator",
-  "group": "KIMS_Business_Admin_DEV_TEST,KIMS_Business_Admin,KIMS_Editor_DEV_TEST",
-  "inherits": "Manager",
+  "group": "NFC_Admin",
+  "inherits": "Editor",
   "description": "<p>Controls admin menu, add projects, set project manager role, Add/Edit people (non-user)</p>",
   "permissions": [
     {
@@ -47,6 +47,18 @@
     {
       "action": "Menu",
       "subject": "Admin"
+    },
+    {
+      "action": "Menu",
+      "subject": "People"
+    },
+    {
+      "action": "Menu",
+      "subject": "Sensor"
+    },
+    {
+      "action": "Menu",
+      "subject": "SensorProtocol"
     },
     {
       "action": "Menu",

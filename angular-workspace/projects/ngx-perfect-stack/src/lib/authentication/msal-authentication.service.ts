@@ -103,8 +103,30 @@ export class MsalAuthenticationService implements AuthenticationServiceProvider,
   }
 
   logout() {
-    console.log('MSAL Logout: started');
-    this.msalService.logoutRedirect({ postLogoutRedirectUri: '/' });
+    console.log('MSAL Logout: local logout only');
+    this.msalService.instance.setActiveAccount(null);
+
+    // Clear MSAL cache from both sessionStorage and localStorage
+    this.clearMsalCache(sessionStorage);
+    this.clearMsalCache(localStorage);
+
+    this.user$.next(null);
+    this.isLoggedIn = false;
+    this.expiryTime = null;
+    this.redirectUrl = null;
+    this.router.navigate(['/']);
+  }
+
+  clearMsalCache(storage: Storage) {
+    const msalKeys = [];
+    for (let i = 0; i < storage.length; i++) {
+      const key = storage.key(i);
+      if (key && (key.startsWith('msal.') || key.includes(this.stackConfig.msalClientId))) {
+        msalKeys.push(key);
+      }
+    }
+
+    msalKeys.forEach(key => storage.removeItem(key));
   }
 
   get redirectUrl(): string | null {

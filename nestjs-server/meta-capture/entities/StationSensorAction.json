@@ -15,7 +15,7 @@
       "unitOfMeasure": "",
       "scale": "",
       "type": "Identifier",
-      "visibility": "Visible",
+      "visibility": "Hidden",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
@@ -136,6 +136,22 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "protocol",
+      "label": "Protocol",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "SensorProtocol",
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": []
     }
   ]

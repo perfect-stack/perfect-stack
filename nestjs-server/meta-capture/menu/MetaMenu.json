@@ -1,10 +1,10 @@
 {
   "menuList": [
     {
-      "label": "Monitoring Station",
+      "label": "Station",
       "items": [
         {
-          "label": "Monitoring Station",
+          "label": "Station",
           "route": "/data/MonitoringStation/search",
           "editable": true,
           "roles": []
@@ -12,10 +12,10 @@
       ]
     },
     {
-      "label": "Activities",
+      "label": "Activity",
       "items": [
         {
-          "label": "Station Sensor Activity",
+          "label": "Activity",
           "route": "/data/StationSensorActivity/search",
           "editable": true,
           "roles": []
@@ -23,24 +23,24 @@
       ]
     },
     {
-      "label": "Sensor",
+      "label": "Event",
       "items": [
         {
-          "label": "Sensor",
-          "route": "/data/Sensor/search",
+          "label": "Event",
+          "route": "/data/Event/search",
           "editable": true,
           "roles": []
         }
       ]
     },
     {
-      "label": "People",
+      "label": "Uploads",
       "items": [
         {
+          "label": "Uploads",
+          "route": "/route/here",
           "editable": true,
-          "roles": [],
-          "label": "People",
-          "route": "/data/Person/search"
+          "roles": []
         }
       ]
     },
@@ -49,11 +49,9 @@
       "items": [
         {
           "editable": true,
-          "roles": [
-            "Administrator"
-          ],
-          "label": "Organisation",
-          "route": "/data/Organisation/search"
+          "roles": [],
+          "label": "People",
+          "route": "/data/Person/search"
         },
         {
           "editable": true,
@@ -68,6 +66,18 @@
           "roles": [],
           "label": "Observation Type",
           "route": "/data/ObservationType/search_edit"
+        },
+        {
+          "label": "Sensor",
+          "route": "/data/Sensor/search",
+          "editable": true,
+          "roles": []
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Sensor Protocol",
+          "route": "/data/SensorProtocol/search_edit"
         },
         {
           "editable": true,

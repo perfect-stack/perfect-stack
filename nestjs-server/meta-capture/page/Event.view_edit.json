@@ -1,0 +1,129 @@
+{
+  "name": "Event.view_edit",
+  "title": "Event details",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "event",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Event",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Event",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "id"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "The Header Heading",
+      "binding": "event"
+    },
+    {
+      "metaEntityName": "Event",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "station"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "start_datetime",
+            "component": "DatePicker"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "end_datetime",
+            "component": "DatePicker"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "device_start_time",
+            "component": "DatePicker"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "device_end_time",
+            "component": "DatePicker"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "storage_id"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "processing_status"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "deploy_by"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "retrieved_by"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "protocol",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "3",
+            "attributeName": "notes",
+            "component": "TextArea"
+          }
+        ]
+      ],
+      "templateHeading": "Event Details",
+      "binding": "event"
+    }
+  ]
+}

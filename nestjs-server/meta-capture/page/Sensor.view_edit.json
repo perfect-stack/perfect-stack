@@ -41,6 +41,13 @@
             "attributeName": "sensor_model",
             "component": "Select"
           }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "monitoring_station"
+          }
         ]
       ],
       "metaEntityName": "Sensor",
