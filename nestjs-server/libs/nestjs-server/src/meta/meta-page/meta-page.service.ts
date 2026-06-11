@@ -5,7 +5,7 @@ import { FileRepositoryService } from '../../file/file-repository.service';
 
 @Injectable()
 export class MetaPageService {
-  static readonly META_PAGE_DIR = 'meta/page';
+  static readonly META_PAGE_DIR = 'page';
 
   constructor(
     protected readonly fileRepositoryService: FileRepositoryService,

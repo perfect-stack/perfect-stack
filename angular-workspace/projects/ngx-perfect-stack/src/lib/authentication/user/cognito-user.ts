@@ -2,7 +2,7 @@ import {User} from './user';
 import {NgxPerfectStackConfig} from '../../ngx-perfect-stack-config';
 import {jwtDecode} from "jwt-decode";
 
-export class CognitoUser  implements User {
+export class CognitoUser implements User {
 
   private _idToken: string | null;
   private _accessToken: string | null;

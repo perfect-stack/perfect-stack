@@ -1,0 +1,132 @@
+{
+  "menuList": [
+    {
+      "label": "Station",
+      "items": [
+        {
+          "label": "Station",
+          "route": "/data/MonitoringStation/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
+      "label": "Activity",
+      "items": [
+        {
+          "label": "Activity",
+          "route": "/data/StationSensorActivity/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
+      "label": "Event",
+      "items": [
+        {
+          "label": "Event",
+          "route": "/data/Event/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
+      "label": "Uploads",
+      "items": [
+        {
+          "label": "Uploads",
+          "route": "/route/here",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
+      "label": "Admin",
+      "items": [
+        {
+          "editable": true,
+          "roles": [],
+          "label": "People",
+          "route": "/data/Person/search"
+        },
+        {
+          "editable": true,
+          "roles": [
+            "Administrator"
+          ],
+          "label": "Species",
+          "route": "/data/Species/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Observation Type",
+          "route": "/data/ObservationType/search_edit"
+        },
+        {
+          "label": "Sensor",
+          "route": "/data/Sensor/search",
+          "editable": true,
+          "roles": []
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Sensor Protocol",
+          "route": "/data/SensorProtocol/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Sensor Type",
+          "route": "/data/SensorType/search_edit"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Sensor Model",
+          "route": "/data/SensorModel/search"
+        }
+      ]
+    },
+    {
+      "label": "Meta",
+      "items": [
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Batch",
+          "route": "/batch/view"
+        },
+        {
+          "label": "Entity",
+          "route": "/meta/entity/search"
+        },
+        {
+          "label": "Menu",
+          "route": "/meta/menu/view"
+        },
+        {
+          "label": "Page",
+          "route": "/meta/page/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Role",
+          "route": "/meta/role/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "Version",
+          "route": "/meta/version"
+        }
+      ]
+    }
+  ]
+}

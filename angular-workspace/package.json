@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start:demo-client": "ng serve demo-client",
+    "start:capture-client": "ng serve capture-client --ssl",
     "build": "ng build ngx-perfect-stack",
     "watch": "ng build --watch",
     "publish:github": "./publish-github.sh",
@@ -20,6 +21,8 @@
     "@angular/platform-browser": "^19.2.14",
     "@angular/platform-browser-dynamic": "^19.2.14",
     "@angular/router": "^19.2.14",
+    "@azure/msal-angular": "^5.2.6",
+    "@azure/msal-browser": "^5.12.0",
     "@bluehalo/ngx-leaflet": "19.0.0",
     "@js-joda/core": "^5.6.5",
     "@js-joda/locale_en": "^4.15.1",

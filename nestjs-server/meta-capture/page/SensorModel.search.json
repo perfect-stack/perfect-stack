@@ -1,0 +1,56 @@
+{
+  "name": "SensorModel.search",
+  "title": "$PageTitle",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "sensor_type",
+            "component": "Select"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "SensorModel",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "sensor_type"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "description"
+          }
+        ]
+      ],
+      "metaEntityName": "SensorModel",
+      "type": "table"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import { LoginNotification } from './login-notification';
 import { ActionPermit } from './action-permit';
 import { ActionType } from '../domain/meta.role';
 import { SubjectName } from './subject';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('authentication')
 @Controller('authentication')
@@ -17,6 +17,10 @@ export class AuthenticationController {
     summary:
       'Callback from the client to notify the server that a login has been successful. Used for the time of Last Sign In.',
   })
+  @ApiResponse({
+    status: 201,
+    description: 'Login notification successful',
+  })
   @Post('/notification')
   notification(@Body() loginNotification: LoginNotification) {
     return this.service.notification(loginNotification);
@@ -26,6 +30,11 @@ export class AuthenticationController {
   @SubjectName('Authentication')
   @ApiOperation({
     summary: 'Find the Last Sign In time of the requested username',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The last sign in time',
+    type: Object,
   })
   @Get('/last-sign-in/:username')
   findLastSignIn(@Param('username') username: string) {

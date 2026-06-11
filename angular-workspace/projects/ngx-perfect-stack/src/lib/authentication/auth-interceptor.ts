@@ -12,6 +12,10 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
 
+    // Capture the stack trace synchronously BEFORE the async HTTP call.
+    // This ensures you see the component/service that actually initiated the request.
+    const callerStack = new Error('HTTP Request Origin').stack;
+
     // WARNING: hack code here for dealing with loading menu when there
     // is no user logged in
     if(req.method === 'GET' && (req.url.includes('menu') || req.url.includes('role'))) {
@@ -36,6 +40,9 @@ export class AuthInterceptor implements HttpInterceptor {
         catchError((error: HttpErrorResponse) => {
 
           console.log('Application Intercepted HTTP error', error.error);
+          console.trace('Trace of interceptor execution at error site:');
+          console.debug('Original request was initiated by:', callerStack);
+
           let toastErrorMessage = '';
           const errorResponse = error.error;
           if(errorResponse) {
@@ -49,7 +56,6 @@ export class AuthInterceptor implements HttpInterceptor {
           }
 
           if(toastErrorMessage) {
-            console.error(toastErrorMessage, error);
             this.toastService.showError(toastErrorMessage, false);
           }
 

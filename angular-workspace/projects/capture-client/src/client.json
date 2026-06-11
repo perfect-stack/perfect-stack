@@ -1,0 +1,18 @@
+{
+  "CLIENT_RELEASE": "1.0.10",
+  "API_URL": "http://localhost:3080",
+  "AUTHENTICATION_PROVIDER": "MSAL",
+  "COGNITO_LOGIN_URL": "https://dev-kims-account-stack.auth.ap-southeast-2.amazoncognito.com/login?client_id=62iubh41fcqtsrs48tok3ec2sb&response_type=token&scope=openid&redirect_uri=http://localhost:4200/login-callback",
+  "DATE_FORMAT": "dd-MMM-yyyy",
+  "DATE_TIME_FORMAT": "dd-MMM-yyyy HH:mm",
+  "TIME_FORMAT": "HH:mm",
+  "DEBUG": false,
+  "COPYRIGHT_FOOTER": "Copyright ©2022 Company",
+  "SUPPORT_EMAIL": "support@company.com",
+  "SHOW_MENU_LOGIN_BTN": false,
+  "DATA_SOURCE_EDITABLE": false,
+  "ENVIRONMENT_BANNER_TEXT": "WARNING - Local Dev Environment",
+  "MSAL_CLIENT_ID": "04ba80f1-f6dd-4efd-97f6-6c0288453973",
+  "MSAL_AUTHORITY": "https://login.microsoftonline.com/f0cbb24f-a2f6-498f-b536-6eb9a13a357c",
+  "MSAL_REDIRECT_URI": "https://localhost:4200/login-callback"
+}

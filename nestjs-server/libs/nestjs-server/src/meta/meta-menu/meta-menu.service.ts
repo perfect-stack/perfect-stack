@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MetaMenuService {
-  static readonly META_MENU_DIR = 'meta/menu';
+  static readonly META_MENU_DIR = 'menu';
 
   constructor(
     protected readonly configService: ConfigService,

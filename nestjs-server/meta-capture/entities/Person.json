@@ -1,0 +1,119 @@
+{
+  "name": "Person",
+  "pluralName": "People",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "timestamps": true,
+  "attributes": [
+    {
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "type": "Text",
+      "visibility": "Required",
+      "name": "given_name",
+      "label": "Given name",
+      "description": "The person's given name",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "type": "Text",
+      "visibility": "Required",
+      "name": "family_name",
+      "label": "Family name",
+      "description": "The person's family name",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "type": "Text",
+      "visibility": "Required",
+      "name": "email_address",
+      "label": "Email address",
+      "description": "Email address",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        },
+        {
+          "type": "UniqueInsensitive",
+          "config": ""
+        },
+        {
+          "type": "Email",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "type": "Date",
+      "visibility": "Visible",
+      "name": "last_login",
+      "label": "Last login",
+      "description": "The last login date of this user",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "name": "organisation",
+      "label": "Organisation",
+      "description": "The organisation that the person belongs to",
+      "unitOfMeasure": "",
+      "scale": "",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Organisation",
+      "typeaheadSearch": [
+        "name"
+      ],
+      "rules": []
+    }
+  ]
+}

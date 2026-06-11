@@ -5,7 +5,7 @@ import { MetaRole } from '../../domain/meta.role';
 
 @Injectable()
 export class MetaRoleService {
-  static readonly META_ROLE_DIR = 'meta/role';
+  static readonly META_ROLE_DIR = 'role';
 
   constructor(
     protected readonly fileRepositoryService: FileRepositoryService,

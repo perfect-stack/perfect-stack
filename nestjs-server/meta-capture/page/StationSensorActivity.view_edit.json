@@ -1,0 +1,202 @@
+{
+  "name": "StationSensorActivity.view_edit",
+  "title": "Station Sensor Activity View/Edit",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [
+    {
+      "dataName": "stationsensoractivity",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "StationSensorActivity",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "monitoring_station"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "performed_by"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "activity_type"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "activity_datetime",
+            "component": "DatePicker"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "status"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "4",
+            "attributeName": "notes",
+            "component": "TextArea"
+          }
+        ]
+      ],
+      "metaEntityName": "StationSensorActivity",
+      "type": "form",
+      "binding": "stationsensoractivity",
+      "templateHeading": "Station Sensor Activity Details"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_id"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "action_datetime"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_type",
+            "component": "Select"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_model",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_northing"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_easting",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_datetime"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "storage_id"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "protocol",
+            "component": "Select"
+          }
+        ]
+      ],
+      "metaEntityName": "StationSensorAction",
+      "type": "form",
+      "binding": "stationsensoractivity.existing_sensor_action",
+      "templateHeading": "Existing Sensor Action"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_id"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "action_datetime"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_type",
+            "component": "Select"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_model",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_northing",
+            "component": "Select"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_easting",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_datetime"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "storage_id"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "protocol",
+            "component": "Select"
+          }
+        ]
+      ],
+      "metaEntityName": "StationSensorAction",
+      "type": "form",
+      "binding": "stationsensoractivity.new_sensor_action",
+      "templateHeading": "New Sensor Action"
+    }
+  ]
+}

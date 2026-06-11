@@ -122,6 +122,8 @@ export class DataService {
     metaEntity: MetaEntity,
     metaEntityMap: Map<string, MetaEntity>,
   ) {
+    await this.saveOneToOneChildren(metaEntity, entity, metaEntityMap);
+
     const model = this.ormService.sequelize.model(metaEntity.name);
 
     // entity may arrive with or without an id, and may exist or not exist in the database
@@ -154,6 +156,38 @@ export class DataService {
     return { action, entityModel };
   }
 
+  private async saveOneToOneChildren(
+    metaEntity: MetaEntity,
+    entity: Entity,
+    metaEntityMap: Map<string, MetaEntity>,
+  ) {
+    // For OneToOne relationships, we assume the FK is on the parent, so we need to save the child first to get its ID.
+    for (const attribute of metaEntity.attributes) {
+      if (attribute.type === AttributeType.OneToOne) {
+        const childEntity = entity[attribute.name] as Entity;
+        if (childEntity) {
+          const childMetaEntity = metaEntityMap.get(attribute.relationshipTarget);
+          if (!childMetaEntity) {
+            throw new Error(`Unable to find MetaEntity ${attribute.relationshipTarget}`);
+          }
+
+          // This is a recursive call to save the child entity.
+          const { entityModel: savedChildEntityModel } = await this.saveValidatedEntity(
+            childEntity,
+            childMetaEntity,
+            metaEntityMap,
+          );
+
+          // Now that the child is saved, we have its ID. Update the parent's FK field.
+          entity[attribute.name + '_id'] = savedChildEntityModel.id;
+        } else if (entity[attribute.name + '_id'] === '') {
+          // If there is no child entity, make sure the foreign key is set to null if it's an empty string.
+          entity[attribute.name + '_id'] = null;
+        }
+      }
+    }
+  }
+
   private async saveTheChildren(
     metaEntityMap: Map<string, MetaEntity>,
     parentMetaEntity: MetaEntity,
@@ -168,14 +202,6 @@ export class DataService {
             parentEntity,
             parentEntityModel,
             parentMetaEntity,
-            attribute,
-          );
-          break;
-        case AttributeType.OneToOne:
-          await this.saveOneToOne(
-            metaEntityMap,
-            parentEntity,
-            parentEntityModel,
             attribute,
           );
           break;
@@ -359,14 +385,6 @@ export class DataService {
     return relationshipName.charAt(0).toUpperCase() + relationshipName.slice(1);
   }
 
-  private setOneToOneAssociation(
-    parentModel: any,
-    childModel: any,
-    attribute: MetaAttribute,
-  ) {
-    parentModel[`set${this.capitalizeFirstLetter(attribute.name)}`](childModel);
-  }
-
   private addOneToManyAssociation(
     parentModel: any,
     childModel: any,
@@ -475,70 +493,6 @@ export class DataService {
         }
       }
     }
-  }
-
-  private async saveOneToOne(
-    metaEntityMap: Map<string, MetaEntity>,
-    parentEntity: Entity,
-    parentEntityModel: any,
-    relationshipAttribute: MetaAttribute,
-  ) {
-    const metaEntity = await metaEntityMap.get(
-      relationshipAttribute.relationshipTarget,
-    );
-    if (!metaEntity) {
-      throw new Error(
-        `Unable to find MetaEntity ${relationshipAttribute.relationshipTarget}`,
-      );
-    }
-
-    const childEntity = parentEntity[relationshipAttribute.name] as Entity;
-    if (!childEntity) {
-      return;
-    }
-
-    let childEntityModel;
-
-    if (childEntity.id) {
-      this.validateUuid(childEntity.id);
-      const childModel = await this.ormService.sequelize.model(
-        relationshipAttribute.relationshipTarget,
-      );
-      childEntityModel = await childModel.findByPk(childEntity.id);
-    } else {
-      childEntity.id = uuid.v4();
-    }
-
-    if (!childEntityModel) {
-      const childModel = await this.ormService.sequelize.model(
-        relationshipAttribute.relationshipTarget,
-      );
-      childEntityModel = await childModel.create(childEntity as any);
-    }
-
-    // recurse down into the children of this child (if needed)
-    await this.saveTheChildren(
-      metaEntityMap,
-      metaEntity,
-      childEntity,
-      childEntityModel,
-    );
-
-    // childEntityModel.set(childEntity);
-    // childEntityModel.save();
-    // parentEntity[relationshipAttribute.name + '_id'] = childEntity.id;
-
-    // const fnName: string = this.addAssociationFunctionName(
-    //   relationshipAttribute.name,
-    // );
-    // console.log(`fnName = ${fnName}`);
-    // parentEntityModel[fnName](childEntityModel);
-
-    this.setOneToOneAssociation(
-      parentEntityModel,
-      childEntityModel,
-      relationshipAttribute,
-    );
   }
 
   private async saveManyToOne(

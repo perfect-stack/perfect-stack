@@ -66,7 +66,11 @@
               "projects/demo-client/src/client-overrides.json",
               "projects/demo-client/src/favicon.ico",
               "projects/demo-client/src/assets",
-              { "glob": "**/*", "input": "node_modules/tinymce", "output": "/tinymce/" }
+              {
+                "glob": "**/*",
+                "input": "node_modules/tinymce",
+                "output": "/tinymce/"
+              }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -76,7 +80,13 @@
             "scripts": [
               "node_modules/tinymce/tinymce.min.js"
             ],
-            "browser": "projects/demo-client/src/main.ts"
+            "browser": "projects/demo-client/src/main.ts",
+            "allowedCommonJsDependencies": [
+              "tinymce",
+              "leaflet",
+              "proj4",
+              "ng-drag-drop"
+            ]
           },
           "configurations": {
             "production": {
@@ -143,6 +153,125 @@
             ],
             "styles": [
               "projects/demo-client/src/styles.scss"
+            ],
+            "scripts": [
+              "node_modules/tinymce/tinymce.min.js"
+            ]
+          }
+        }
+      }
+    },
+    "capture-client": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/capture-client",
+      "sourceRoot": "projects/capture-client/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "preserveSymlinks": true,
+            "outputPath": {
+              "base": "dist/capture-client"
+            },
+            "index": "projects/capture-client/src/index.html",
+            "browser": "projects/capture-client/src/main.ts",
+            "polyfills": [
+              "projects/capture-client/src/polyfills.ts"
+            ],
+            "tsConfig": "projects/capture-client/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/capture-client/src/client.json",
+              "projects/capture-client/src/client-overrides.json",
+              "projects/capture-client/src/favicon.ico",
+              "projects/capture-client/src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/tinymce",
+                "output": "/tinymce/"
+              }
+            ],
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/leaflet/dist/leaflet.css",
+              "projects/capture-client/src/styles.scss"
+            ],
+            "scripts": [
+              "node_modules/tinymce/tinymce.min.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "tinymce",
+              "leaflet",
+              "proj4",
+              "ng-drag-drop"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all",
+              "preserveSymlinks": true
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "preserveSymlinks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "capture-client:build:production"
+            },
+            "development": {
+              "buildTarget": "capture-client:build:development",
+              "port": 4200,
+              "ssl": true
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/capture-client/src/test.ts",
+            "polyfills": [
+              "projects/capture-client/src/polyfills.ts"
+            ],
+            "tsConfig": "projects/capture-client/tsconfig.spec.json",
+            "karmaConfig": "projects/capture-client/karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/capture-client/src/favicon.ico",
+              "projects/capture-client/src/assets"
+            ],
+            "styles": [
+              "projects/capture-client/src/styles.scss"
             ],
             "scripts": [
               "node_modules/tinymce/tinymce.min.js"

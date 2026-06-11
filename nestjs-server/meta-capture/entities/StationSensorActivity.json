@@ -1,0 +1,152 @@
+{
+  "name": "StationSensorActivity",
+  "pluralName": "Station Sensor Activities",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": false,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "monitoring_station",
+      "label": "Monitoring station",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "MonitoringStation",
+      "typeaheadSearch": [
+        "station_title"
+      ],
+      "rules": []
+    },
+    {
+      "name": "performed_by",
+      "label": "Performed by",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "activity_type",
+      "label": "Activity type",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "DEPLOY_SENSOR",
+        "RETRIEVE_SENSOR",
+        "SWAP_DEVICE",
+        "SWAP_CARD"
+      ]
+    },
+    {
+      "name": "existing_sensor_action",
+      "label": "Existing sensor action",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "StationSensorAction",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "new_sensor_action",
+      "label": "New Sensor action",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "StationSensorAction",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "Draft",
+        "Syncing",
+        "Submitted",
+        "Error"
+      ]
+    },
+    {
+      "name": "activity_datetime",
+      "label": "Activity datetime",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "DateTime",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "notes",
+      "label": "Notes",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Html",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}

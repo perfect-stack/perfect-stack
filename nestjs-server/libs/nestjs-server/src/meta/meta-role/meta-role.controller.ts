@@ -13,7 +13,7 @@ import { MetaRoleService } from './meta-role.service';
 import { ActionType, MetaRole } from '../../domain/meta.role';
 import { ActionPermit } from '../../authentication/action-permit';
 import { SubjectName } from '../../authentication/subject';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('meta')
 @Controller('meta/role')
@@ -23,6 +23,11 @@ export class MetaRoleController {
   @PublicApi()
   @ApiOperation({
     summary: '[PUBLIC] Download all Meta Role files',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of Meta Roles',
+    type: [MetaRole],
   })
   @Get('/')
   findAll(
@@ -36,6 +41,11 @@ export class MetaRoleController {
   @ApiOperation({
     summary: '[PUBLIC] Get one Meta Role file',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'The Meta Role',
+    type: MetaRole,
+  })
   @Get('/:metaRoleName')
   findOne(@Param('metaRoleName') metaRoleName: string): Promise<MetaRole> {
     return this.metaRoleService.findOne(metaRoleName);
@@ -45,6 +55,11 @@ export class MetaRoleController {
   @SubjectName('Meta')
   @ApiOperation({
     summary: 'Create a new Meta Role file',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Meta Role created',
+    type: Object,
   })
   @Post('/:metaRoleName')
   create(
@@ -64,6 +79,11 @@ export class MetaRoleController {
   @ApiOperation({
     summary: 'Update the supplied Meta Role file',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Meta Role updated',
+    type: Object,
+  })
   @Put('/:metaRoleName')
   update(
     @Param('metaRoleName') metaRoleName: string,
@@ -81,6 +101,10 @@ export class MetaRoleController {
   @SubjectName('Meta')
   @ApiOperation({
     summary: 'Permanently deletes the requested Meta Role file',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Meta Role deleted',
   })
   @Delete('/:metaRoleName')
   delete(@Param('metaRoleName') metaRoleName: string): Promise<void> {

@@ -8,6 +8,11 @@ export class BatchService {
     private logger = new Logger(BatchService.name);
     private batchJobMap = new Map<string, BatchJob>();
 
+
+    getList(): string[] {
+        return Array.from(this.batchJobMap.keys()).sort();
+    }
+
     addBatchJob(jobName: string, batchJob: BatchJob) {
         if(!this.batchJobMap.has(jobName)) {
             this.batchJobMap.set(jobName, batchJob);

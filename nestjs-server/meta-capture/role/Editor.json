@@ -1,0 +1,60 @@
+{
+  "name": "Editor",
+  "group": "NFC_User",
+  "inherits": "Viewer",
+  "description": "<p>Works on one or more projects, can add/edit Birds, Events and Locations but not People or Projects, or reference data</p>",
+  "permissions": [
+    {
+      "action": "Edit",
+      "subject": "Bird"
+    },
+    {
+      "action": "Edit",
+      "subject": "Event"
+    },
+    {
+      "action": "Edit",
+      "subject": "Location"
+    },
+    {
+      "action": "Edit",
+      "subject": "Media"
+    },
+    {
+      "action": "Edit",
+      "subject": "Import"
+    },
+    {
+      "action": "Edit",
+      "subject": "Observation"
+    },
+    {
+      "action": "Edit",
+      "subject": "MonitoringStation"
+    },
+    {
+      "action": "Edit",
+      "subject": "Sensor"
+    },
+    {
+      "action": "Edit",
+      "subject": "StationSensorActivity"
+    },
+    {
+      "action": "Edit",
+      "subject": "StationSensorAction"
+    },
+    {
+      "action": "Delete",
+      "subject": "Bird"
+    },
+    {
+      "action": "Delete",
+      "subject": "Event"
+    },
+    {
+      "action": "Delete",
+      "subject": "Observation"
+    }
+  ]
+}

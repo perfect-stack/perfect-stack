@@ -1,6 +1,6 @@
 import {Job} from "./job.model";
 import {Controller, Get, Param} from "@nestjs/common";
-import {ApiOperation, ApiTags} from "@nestjs/swagger";
+import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {JobService} from "./job.service";
 import {ActionPermit} from "../authentication/action-permit";
 import {ActionType} from "../domain/meta.role";
@@ -31,6 +31,11 @@ export class JobController {
     @ActionPermit(ActionType.Read)
     @SubjectName('Job')
     @ApiOperation({ summary: 'Poll for the supplied Job current status' })
+    @ApiResponse({
+        status: 200,
+        description: 'The job status',
+        type: Object,
+    })
     @Get('/:jobId')
     async pollJobStatus(@Param('jobId') jobId: string): Promise<Job> {
         // load and return the Job row from the database

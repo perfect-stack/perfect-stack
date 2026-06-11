@@ -1,0 +1,72 @@
+{
+  "name": "Observation.view_edit",
+  "title": "Observation View/Edit",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [
+    {
+      "dataName": "observation",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Observation",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "title"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "observation_datetime"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "status"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "comments"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "observation_type"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "lat"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "lng"
+          }
+        ]
+      ],
+      "metaEntityName": "Observation",
+      "type": "form",
+      "binding": "observation",
+      "templateHeading": "Observation details"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "name": "Event.search",
+  "title": "$PageTitle",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Event",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "station",
+            "component": "Select"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "sensor",
+            "component": "Select"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "processing_status"
+          }
+        ]
+      ]
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "station"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "sensor"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "start_datetime"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "processing_status"
+          }
+        ]
+      ],
+      "metaEntityName": "Event",
+      "type": "table",
+      "orderByName": "start_datetime",
+      "orderByDir": "DESC"
+    }
+  ]
+}

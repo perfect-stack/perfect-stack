@@ -4,12 +4,22 @@ import { AuditAction } from '../domain/audit';
 import { Request } from 'express';
 import * as uuid from 'uuid';
 import { ZonedDateTime, ZoneOffset } from '@js-joda/core';
+import {ConfigService} from "@nestjs/config";
 
 @Injectable()
 export class AuditService {
-  private readonly logger = new Logger(AuditService.name);
 
-  constructor(protected readonly ormService: OrmService) {}
+  private readonly logger = new Logger(AuditService.name);
+  private authDisabled = false;
+
+  constructor(protected readonly ormService: OrmService,
+              protected readonly configService: ConfigService,
+  ) {
+      if (this.configService.get('AUTH_DISABLE_FOR_DEV') === 'true') {
+          this.logger.debug('Audit: Auth Disabled');
+          this.authDisabled = true;
+      }
+  }
 
   async audit(
     request: Request,
@@ -53,10 +63,18 @@ export class AuditService {
         if (!personId) {
           throw new Error(`Unable to find user id in request`);
         }
-      } else {
-        throw new Error(`No user object supplied in the request object`);
       }
-    } else {
+      else {
+        if(this.authDisabled) {
+          personName = 'AUTH_DISABLED';
+          personId = 'AUTH_DISABLED';
+        }
+        else {
+          throw new Error(`No user object supplied in the request object`);
+        }
+      }
+    }
+    else {
       throw new Error(`No request object supplied to audit method`);
     }
 
