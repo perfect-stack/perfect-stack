@@ -1,104 +1,49 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { passportJwtSecret } from 'jwks-rsa';
+import {ExtractJwt, Strategy} from 'passport-jwt';
+import {PassportStrategy} from '@nestjs/passport';
+import {Injectable, Logger, UnauthorizedException} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {passportJwtSecret} from 'jwks-rsa';
+import {JwtPayload} from 'jsonwebtoken';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const axios = require('axios');
-
-/**
- * Had to write all of this as functions, because I didn't know how to inject a function from a service
- * into the Passport strategy without it losing access to "this" - see "secretOrKeyProvider" in the
- * constructor below
- */
-const jwtKeys = {};
-const jwtLogger = new Logger('JWTFunctions');
-
-async function getCognitoKeys(keyMap: any) {
-  const keyList = keyMap['keys'];
-  for (const nextKey of keyList) {
-    jwtKeys[nextKey['kid']] = nextKey;
-  }
-}
-
-async function getJwtKey(
-  keyId: string,
-  configService: ConfigService,
-): Promise<string> {
-  let keyValue = jwtKeys[keyId];
-  if (!keyValue) {
-    const publicKeyUrl = configService.get('AUTHENTICATION_PUBLIC_KEY_URL');
-    const httpResponse = await axios.get(publicKeyUrl);
-    const rawKeys = httpResponse.data;
-
-    jwtLogger.warn(`Got JWT keys from ${publicKeyUrl}`);
-
-    const authenticationProvider = configService.get('AUTHENTICATION_PROVIDER');
-    switch (authenticationProvider) {
-      case 'COGNITO':
-        await getCognitoKeys(rawKeys);
-        break;
-      default:
-        throw new Error(
-          `Unknown authentication provider: ${authenticationProvider}`,
-        );
-    }
-  }
-
-  keyValue = jwtKeys[keyId];
-  if (!keyValue) {
-    jwtLogger.error(
-      `Unable to find JWT public key for; ${keyId} jwtKeys = ${JSON.stringify(
-        jwtKeys,
-      )}`,
-    );
-  }
-
-  return keyValue;
-}
-
-export function getKeyIdFromToken(rawJwtToken: string): string {
-  const tokenElements = rawJwtToken.split('.');
-  const header = JSON.parse(Buffer.from(tokenElements[0], 'base64').toString('utf8'));
-  return header['kid'];
-}
-
-function getCognitoKeyProvider(configService: ConfigService) {
-  const publicKeyUrl = configService.get('AUTHENTICATION_PUBLIC_KEY_URL');
-  if (publicKeyUrl) {
-    return passportJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: publicKeyUrl,
-    });
-  } else {
-    throw new Error(`AUTHENTICATION_PUBLIC_KEY_URL has not been provided`);
-  }
-}
+const jwtLogger = new Logger('JwtStrategy');
 
 function getKeyProvider(configService: ConfigService) {
-  const authenticationProvider = configService.get('AUTHENTICATION_PROVIDER');
-  switch (authenticationProvider) {
-    case 'COGNITO':
-      return getCognitoKeyProvider(configService);
-    default:
-      throw new Error(
-        `Unknown AUTHENTICATION_PROVIDER of ${authenticationProvider}`,
-      );
-  }
+  const cognitoKeyProvider = passportJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: configService.get('COGNITO_AUTHENTICATION_PUBLIC_KEY_URL'),
+  });
+
+  const msalKeyProvider = passportJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: configService.get('MSAL_AUTHENTICATION_PUBLIC_KEY_URL'),
+  });
+
+  return (req, rawJwtToken, done) => {
+    const decodedToken = JSON.parse(Buffer.from(rawJwtToken.split('.')[1], 'base64').toString('utf8'));
+    const issuer = decodedToken.iss;
+    const isMsalIssuer = issuer.startsWith('https://login.microsoftonline.com/') && issuer.endsWith('/v2.0');
+
+    if (issuer === configService.get('COGNITO_AUTHENTICATION_ISSUER')) {
+      cognitoKeyProvider(req, rawJwtToken, done);
+    } else if (isMsalIssuer) {
+      msalKeyProvider(req, rawJwtToken, done);
+    } else {
+      done(new UnauthorizedException('Unknown token issuer'), null);
+    }
+  };
 }
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  readonly expectedIssuer = this.configService.get('AUTHENTICATION_ISSUER');
-
   constructor(protected readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(), // If available as a Bearer token then use that
-        ExtractJwt.fromUrlQueryParameter('jwt'), // Else look for a query parameter called jwt
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        ExtractJwt.fromUrlQueryParameter('jwt'),
       ]),
       ignoreExpiration: false,
       secretOrKeyProvider: getKeyProvider(configService),
@@ -106,15 +51,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   getCognitoGroups(payload: any): string[] {
-    return payload['cognito:groups'];
+    return payload['cognito:groups'] || [];
   }
 
-  /**
-   * The Azure AD groups appear in the token with the following format;
-   *
-   * "custom:group": "[KIMS_Viewer, KIMS_Business_Admin, KIMS_Project_Manager, KIMS_Operations, KIMS_Editor]"
-   * @param payload
-   */
+  getMsalGroups(payload: any): string[] {
+    return payload['groups'] || [];
+  }
+
   getCustomGroups(payload: any): string[] {
     const customGroupsStr = payload['custom:group'];
     if (customGroupsStr) {
@@ -126,14 +69,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
   }
 
-  async validate(payload: any) {
-    // Uncomment the following line for a quick easy way of seeing the JWT payload in clear text (which is safe)
-    // without having to muck about grabbing the Base64 encoded version and decoding that
-    //jwtLogger.log(`PASSPORT: validate token: ${JSON.stringify(payload)}`);
+  async validate(payload: JwtPayload) {
+    jwtLogger.log(`Validating token for issuer: ${payload.iss}`);
 
-    const issuerValid = payload.iss === this.expectedIssuer;
-    if (issuerValid) {
-      const userDataStructure = {
+    let userDataStructure;
+    const isMsalIssuer = payload.iss.startsWith('https://login.microsoftonline.com/') && payload.iss.endsWith('/v2.0');
+
+    if (payload.iss === this.configService.get('COGNITO_AUTHENTICATION_ISSUER')) {
+      userDataStructure = {
         groups: [
           ...this.getCognitoGroups(payload),
           ...this.getCustomGroups(payload),
@@ -143,12 +86,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         family_name: payload['family_name'],
         email: payload['email'],
       };
-      //jwtLogger.log('PASSPORT: userDataStructure: ', userDataStructure);
-      return userDataStructure;
-    }
-    else {
-      jwtLogger.error(`Invalid token, issuerValue = ${issuerValid}, for: ${JSON.stringify(payload)}`);
+    } else if (isMsalIssuer) {
+      userDataStructure = {
+        groups: [
+          ...this.getMsalGroups(payload),
+          ...this.getCustomGroups(payload)
+        ],
+        username: payload['preferred_username'],
+        given_name: payload['name'].split(' ')[0],
+        family_name: payload['name'].split(' ').slice(1).join(' '),
+        email: payload['preferred_username'],
+      };
+    } else {
+      jwtLogger.error(`Invalid token issuer: ${payload.iss}`);
       throw new UnauthorizedException();
     }
+
+    return userDataStructure;
   }
 }

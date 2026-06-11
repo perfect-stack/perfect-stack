@@ -66,7 +66,11 @@
               "projects/demo-client/src/client-overrides.json",
               "projects/demo-client/src/favicon.ico",
               "projects/demo-client/src/assets",
-              { "glob": "**/*", "input": "node_modules/tinymce", "output": "/tinymce/" }
+              {
+                "glob": "**/*",
+                "input": "node_modules/tinymce",
+                "output": "/tinymce/"
+              }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -187,7 +191,11 @@
               "projects/capture-client/src/client-overrides.json",
               "projects/capture-client/src/favicon.ico",
               "projects/capture-client/src/assets",
-              { "glob": "**/*", "input": "node_modules/tinymce", "output": "/tinymce/" }
+              {
+                "glob": "**/*",
+                "input": "node_modules/tinymce",
+                "output": "/tinymce/"
+              }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -238,7 +246,9 @@
               "buildTarget": "capture-client:build:production"
             },
             "development": {
-              "buildTarget": "capture-client:build:development"
+              "buildTarget": "capture-client:build:development",
+              "port": 4200,
+              "ssl": true
             }
           },
           "defaultConfiguration": "development"

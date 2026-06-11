@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { LoginNotification } from './login-notification';
-import { getKeyIdFromToken } from './jwt.strategy';
+import { getKeyIdFromToken } from './jwt.utils';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
 import * as jwksClient from 'jwks-rsa';
@@ -15,7 +15,8 @@ import { UserNameService } from './user-name.service';
 @Injectable()
 export class AuthenticationService {
   private readonly logger = new Logger(AuthenticationService.name);
-  private jwksClient;
+  private cognitoJwksClient;
+  private msalJwksClient;
 
   constructor(
     protected readonly configService: ConfigService,
@@ -23,8 +24,12 @@ export class AuthenticationService {
     protected readonly queryService: QueryService,
     protected readonly userNameService: UserNameService,
   ) {
-    this.jwksClient = jwksClient({
-      jwksUri: configService.get('AUTHENTICATION_PUBLIC_KEY_URL'),
+    this.cognitoJwksClient = jwksClient({
+      jwksUri: configService.get('COGNITO_AUTHENTICATION_PUBLIC_KEY_URL'),
+    });
+
+    this.msalJwksClient = jwksClient({
+      jwksUri: configService.get('MSAL_AUTHENTICATION_PUBLIC_KEY_URL'),
     });
   }
 
@@ -40,8 +45,14 @@ export class AuthenticationService {
       loginNotification.bearerToken,
     );
 
+    const authTimeClaim = bearerToken.auth_time || bearerToken.iat;
+    if (!authTimeClaim) {
+      this.logger.error('Token does not contain auth_time or iat claim', bearerToken);
+      throw new Error('Missing authentication time claim in token');
+    }
+
     const auth_time = ZonedDateTime.from(
-      nativeJs(new Date(bearerToken.auth_time * 1000)),
+      nativeJs(new Date(authTimeClaim * 1000)),
     );
 
     const username = this.userNameService.getUsername(bearerToken);
@@ -66,8 +77,24 @@ export class AuthenticationService {
   }
 
   private async decodeAndVerify(token: string): Promise<any> {
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
+    const issuer = decodedToken.iss;
     const kid = getKeyIdFromToken(token);
-    const key = await this.jwksClient.getSigningKey(kid);
+
+    let jwksClient;
+    const isMsalIssuer = issuer.startsWith('https://login.microsoftonline.com/') && issuer.endsWith('/v2.0');
+    if (issuer === this.configService.get('COGNITO_AUTHENTICATION_ISSUER')) {
+      jwksClient = this.cognitoJwksClient;
+    } else if (isMsalIssuer) {
+      jwksClient = this.msalJwksClient;
+    } else {
+      this.logger.error(`Unknown token issuer: ${issuer}`);
+      this.logger.error(`Expected Cognito: ${this.configService.get('COGNITO_AUTHENTICATION_ISSUER')}`);
+      this.logger.error(`Or for MSAL to have a format like: https://login.microsoftonline.com/{tenantid}/v2.0`);
+      throw new Error('Unknown token issuer');
+    }
+
+    const key = await jwksClient.getSigningKey(kid);
     return jwt.verify(token, key.getPublicKey());
   }
 
