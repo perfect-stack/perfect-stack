@@ -1,6 +1,6 @@
 {
   "name": "@perfect-stack/nestjs-server",
-  "version": "0.0.328",
+  "version": "0.0.335",
   "description": "",
   "author": "Richard Perfect",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "start:dev": "nest start kims-server --watch",
     "start:debug": "nest start kims-server --debug --watch",
     "start:prod": "node dist/apps/kims-server/main",
+    "start:capture:dev": "nest start capture-server --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "meta:copy:s3": "aws s3 cp --recursive ./meta/ s3://perfect-stack-demo-meta-s3/meta",
     "test": "jest",
@@ -43,7 +44,7 @@
     "@nestjs/platform-express": "^11.1.3",
     "@nestjs/swagger": "^11.2.0",
     "@types/pg": "^8.15.4",
-    "aws-lambda": "^1.0.7",
+    "aws-lambda": "^1.0.6",
     "aws-serverless-express": "^3.4.0",
     "cls-hooked": "^4.2.2",
     "fast-csv": "^5.0.2",
@@ -125,5 +126,15 @@
   "types": "dist/libs/nestjs-server/index.d.ts",
   "files": [
     "dist/libs/nestjs-server"
-  ]
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/libs/nestjs-server/index.d.ts",
+      "default": "./dist/libs/nestjs-server/index.js"
+    },
+    "./*": {
+      "types": "./dist/libs/nestjs-server/*.d.ts",
+      "default": "./dist/libs/nestjs-server/*.js"
+    }
+  }
 }

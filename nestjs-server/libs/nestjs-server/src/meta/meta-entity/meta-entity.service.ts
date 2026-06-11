@@ -15,7 +15,7 @@ import { EventService } from '../../event/event.service';
 
 @Injectable()
 export class MetaEntityService {
-  static readonly META_ENTITY_DIR = 'meta/entities';
+  static readonly META_ENTITY_DIR = 'entities';
 
   private readonly logger = new Logger(MetaEntityService.name);
 

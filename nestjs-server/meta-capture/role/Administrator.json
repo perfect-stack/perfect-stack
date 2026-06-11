@@ -1,0 +1,72 @@
+{
+  "name": "Administrator",
+  "group": "NFC_Admin",
+  "inherits": "Editor",
+  "description": "<p>Controls admin menu, add projects, set project manager role, Add/Edit people (non-user)</p>",
+  "permissions": [
+    {
+      "action": "Edit",
+      "subject": "Species"
+    },
+    {
+      "action": "Edit",
+      "subject": "Organisation"
+    },
+    {
+      "action": "Edit",
+      "subject": "ObservationType"
+    },
+    {
+      "action": "Edit",
+      "subject": "SensorType"
+    },
+    {
+      "action": "Edit",
+      "subject": "SensorModel"
+    },
+    {
+      "action": "Delete",
+      "subject": "Species"
+    },
+    {
+      "action": "Delete",
+      "subject": "Organisation"
+    },
+    {
+      "action": "Delete",
+      "subject": "ObservationType"
+    },
+    {
+      "action": "Delete",
+      "subject": "SensorModel"
+    },
+    {
+      "action": "Delete",
+      "subject": "SensorType"
+    },
+    {
+      "action": "Menu",
+      "subject": "Admin"
+    },
+    {
+      "action": "Menu",
+      "subject": "People"
+    },
+    {
+      "action": "Menu",
+      "subject": "Sensor"
+    },
+    {
+      "action": "Menu",
+      "subject": "SensorProtocol"
+    },
+    {
+      "action": "Menu",
+      "subject": "SensorType"
+    },
+    {
+      "action": "Menu",
+      "subject": "SensorModel"
+    }
+  ]
+}

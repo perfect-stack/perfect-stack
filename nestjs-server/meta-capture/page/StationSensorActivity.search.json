@@ -1,0 +1,64 @@
+{
+  "name": "StationSensorActivity.search",
+  "title": "$PageTitle",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "monitoring_station",
+            "component": "TextInput"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "activity_type"
+          }
+        ]
+      ],
+      "metaEntityName": "StationSensorActivity",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "activity_datetime"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "monitoring_station"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "activity_type"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "status"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "performed_by"
+          }
+        ]
+      ],
+      "metaEntityName": "StationSensorActivity",
+      "type": "table",
+      "orderByName": "activity_datetime",
+      "orderByDir": "DESC"
+    }
+  ]
+}

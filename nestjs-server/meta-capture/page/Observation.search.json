@@ -1,0 +1,69 @@
+{
+  "name": "Observation.search",
+  "title": "$PageTitle",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "title"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Observation",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "observation_datetime"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "observation_type"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "title"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "status"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Observation",
+      "type": "table"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "name": "MonitoringStation.view_edit",
+  "title": "$PageTitle",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "monitoring_station",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "MonitoringStation",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "MonitoringStation",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "station_title"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "The Header Heading",
+      "binding": "monitoring_station"
+    },
+    {
+      "metaEntityName": "MonitoringStation",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "station_title"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "status"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "district_name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "district_code"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "easting"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "northing"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "altitude"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "lat"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "lng"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "installed_date"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "decommissioned_date"
+          }
+        ]
+      ],
+      "templateHeading": "Station Details",
+      "binding": "monitoring_station"
+    }
+  ]
+}

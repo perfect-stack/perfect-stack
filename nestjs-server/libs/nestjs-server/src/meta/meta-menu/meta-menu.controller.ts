@@ -5,7 +5,7 @@ import { MetaMenu } from '../../domain/meta.menu';
 import { ActionPermit } from '../../authentication/action-permit';
 import { ActionType } from '../../domain/meta.role';
 import { SubjectName } from '../../authentication/subject';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('meta')
 @Controller('meta/menu')
@@ -15,6 +15,11 @@ export class MetaMenuController {
   @PublicApi()
   @ApiOperation({
     summary: '[PUBLIC] Find the Meta Menu file (there is only one of them)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The Meta Menu',
+    type: MetaMenu,
   })
   @Get()
   findOne() {
@@ -26,6 +31,11 @@ export class MetaMenuController {
   @ApiOperation({
     summary: 'Updates the Meta Menu file supplied',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'The updated Meta Menu',
+    type: MetaMenu,
+  })
   @Post()
   update(@Body() metaMenu: MetaMenu) {
     return this.metaMenuService.update(metaMenu);
@@ -35,6 +45,11 @@ export class MetaMenuController {
   @ApiOperation({
     summary:
       '[PUBLIC] Get the server version number of the current release in this environment',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The server version',
+    type: String,
   })
   @Get('/version')
   getVersion(): string {

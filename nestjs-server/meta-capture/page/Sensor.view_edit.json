@@ -1,0 +1,59 @@
+{
+  "name": "Sensor.view_edit",
+  "title": "Sensor View/Edit",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [
+    {
+      "dataName": "sensor",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Sensor",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_id"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_type",
+            "component": "Select"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_model",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "monitoring_station"
+          }
+        ]
+      ],
+      "metaEntityName": "Sensor",
+      "type": "form",
+      "binding": "sensor",
+      "templateHeading": "Sensor details"
+    }
+  ]
+}

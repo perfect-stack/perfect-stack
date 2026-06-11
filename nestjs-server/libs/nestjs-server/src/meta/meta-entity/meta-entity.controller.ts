@@ -16,7 +16,7 @@ import { MetaEntityService } from './meta-entity.service';
 import { ActionPermit } from '../../authentication/action-permit';
 import { ActionType } from '../../domain/meta.role';
 import { SubjectName } from '../../authentication/subject';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('meta')
 @Controller('meta/entity')
@@ -26,6 +26,11 @@ export class MetaEntityController {
   @PublicApi()
   @ApiOperation({
     summary: '[PUBLIC] Get all Meta Entity files',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of Meta Entities',
+    type: [MetaEntity],
   })
   @Get('/')
   findAll(
@@ -39,6 +44,11 @@ export class MetaEntityController {
   @ApiOperation({
     summary: '[PUBLIC] Get one Meta Entity file',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'The Meta Entity',
+    type: MetaEntity,
+  })
   @Get('/:metaName')
   findOne(@Param('metaName') metaName: string): Promise<MetaEntity> {
     return this.metaEntityService.findOne(metaName);
@@ -47,6 +57,11 @@ export class MetaEntityController {
   @ActionPermit(ActionType.Edit)
   @ApiOperation({
     summary: 'Create a new Meta Entity file',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Entity created',
+    type: EntityResponse,
   })
   @SubjectName('Meta')
   @Post('/:metaName')
@@ -67,6 +82,11 @@ export class MetaEntityController {
   @ApiOperation({
     summary: 'Update the supplied Meta Entity file',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Entity updated',
+    type: EntityResponse,
+  })
   @Put('/:metaName')
   update(
     @Param('metaName') metaName: string,
@@ -84,6 +104,10 @@ export class MetaEntityController {
   @ApiOperation({
     summary:
       'Delete the attribute of the Meta Entity optionally both in the file and in the database (deletes the column)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Attribute deleted',
   })
   @SubjectName('Meta')
   @Delete('/:metaName/:attributeName')
@@ -106,6 +130,10 @@ export class MetaEntityController {
   @ApiOperation({
     summary: 'Not implemented yet.',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Not implemented',
+  })
   @Delete('/:metaName')
   archive(): Promise<void> {
     return;
@@ -115,6 +143,10 @@ export class MetaEntityController {
   @ApiOperation({
     summary:
       'Synchronize the Meta Entity files with the database. Creates new Tables and new columns in the database if needed.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Database synchronized',
   })
   @SubjectName('Meta')
   @Post('/database/sync')

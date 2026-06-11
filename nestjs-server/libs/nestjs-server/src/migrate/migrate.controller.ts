@@ -1,4 +1,4 @@
-import {ApiTags} from "@nestjs/swagger";
+import {ApiResponse, ApiTags} from "@nestjs/swagger";
 import {Controller, Get, Param, Post} from "@nestjs/common";
 import {MigrateService} from "./migrate.service";
 import {ActionPermit} from "../authentication/action-permit";
@@ -20,6 +20,11 @@ export class MigrateController {
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Migrate')
+    @ApiResponse({
+        status: 201,
+        description: 'Data migration started',
+        type: Object,
+    })
     @Post('/data')
     async migrateData() {
         return this.migrateService.migrateData();
@@ -27,6 +32,11 @@ export class MigrateController {
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Migrate')
+    @ApiResponse({
+        status: 201,
+        description: 'Image migration started',
+        type: Object,
+    })
     @Post('/images')
     async migrateImages() {
         return this.migrateImagesService.migrateImages();
@@ -34,6 +44,11 @@ export class MigrateController {
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Migrate')
+    @ApiResponse({
+        status: 201,
+        description: 'Image migration reset',
+        type: Object,
+    })
     @Post('/images/reset')
     async migrateImagesReset() {
         return this.migrateImagesService.migrateImagesReset();

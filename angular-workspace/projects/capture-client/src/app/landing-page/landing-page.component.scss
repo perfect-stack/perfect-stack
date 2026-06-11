@@ -1,0 +1,33 @@
+
+.landing-page {
+  background: #194036;
+  height: 100%;
+}
+
+.landing-panel {
+  min-width: 1200px;
+  max-width: 1600px;
+  margin: 0 auto;
+  display: block;
+}
+
+.landing-page-title {
+  text-transform: uppercase;
+  padding-top: 56px;
+  font-size: 36pt;
+  color: #3c763d;
+}
+
+.landing-image {
+  background-image: url('/assets/Possum BW on tree branch.jpg');
+  background-position: 36.55% 5%;
+  background-repeat: no-repeat;
+}
+
+.landing-login {
+  max-height: 600px;
+}
+
+.landing-page-support {
+  font-size: 12pt;
+}

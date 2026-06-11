@@ -1,4 +1,4 @@
-import { inject, INJECTOR, NgModule, provideAppInitializer } from '@angular/core';
+import { inject, NgModule, provideAppInitializer } from '@angular/core';
 import { NgxPerfectStackComponent } from './ngx-perfect-stack.component';
 import {RouterModule, Routes} from '@angular/router';
 import {MenuBarComponent} from './menu-bar/menu-bar.component';
@@ -10,7 +10,7 @@ import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
 import {NgbDateAdapter, NgbDateParserFormatter, NgbDropdown, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {BrowserModule} from '@angular/platform-browser';
 import {AuthenticationService} from './authentication/authentication.service';
 import {ClientConfigService} from './client/config/client-config.service';
@@ -32,7 +32,6 @@ import {
   RelationshipTypeEditComponent
 } from './meta/entity/meta-entity-edit/relationship-type-edit/relationship-type-edit.component';
 import {AttributeDeleteDialogComponent} from './meta/entity/attribute-delete-dialog/attribute-delete-dialog.component';
-import {ToastService} from './utils/toasts/toast.service';
 import {ValidationMessageComponent} from './utils/validation/validation-message/validation-message.component';
 import {ToastsComponent} from './utils/toasts/toasts.component';
 import {
@@ -146,6 +145,9 @@ import { ColourBandComponentComponent } from './data/controller/layout/controls/
 import { ColourBandDialogComponent } from './data/controller/layout/controls/colour-band-component/colour-band-dialog/colour-band-dialog.component';
 import {DataImportComponent} from "./data/data-import/data-import.component";
 import {BatchComponent} from "./meta/batch/batch.component";
+import { MsalModule, MsalService, MSAL_INSTANCE, MsalBroadcastService } from '@azure/msal-angular';
+import { IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
+import { NgxPerfectStackConfig, STACK_CONFIG } from './ngx-perfect-stack-config';
 
 export const STACK_ROUTES: Routes = [
   { path: 'data/import', component: DataImportComponent, canActivate: [AuthGuard] },
@@ -181,6 +183,16 @@ export const STACK_ROUTES: Routes = [
   { path: 'select-test', component: SelectTestPageComponent},
   { path: 'map-test', component: MapTestPageComponent},
 ];
+
+export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: config.msalClientId,
+      authority: config.msalAuthority,
+      redirectUri: config.msalRedirectUri
+    }
+  });
+}
 
 @NgModule({ declarations: [
         NgxPerfectStackComponent,
@@ -308,7 +320,15 @@ export const STACK_ROUTES: Routes = [
         LeafletModule,
         RouterModule.forChild(STACK_ROUTES),
         LoadingBarHttpClientModule,
-        NgOptimizedImage], providers: [
+        NgOptimizedImage,
+        MsalModule], providers: [
+        {
+          provide: MSAL_INSTANCE,
+          useFactory: MSALInstanceFactory,
+          deps: [STACK_CONFIG]
+        },
+        MsalService,
+        MsalBroadcastService,
         AuthenticationService,
         ClientConfigService,
         DiscriminatorService,

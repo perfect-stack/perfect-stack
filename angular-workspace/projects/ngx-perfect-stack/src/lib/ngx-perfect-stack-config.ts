@@ -19,4 +19,7 @@ export interface NgxPerfectStackConfig {
   dataSourceEditable: boolean;
   environmentBannerText: string;
   supplementaryGroupRoles: string;
+  msalClientId: string;
+  msalAuthority: string;
+  msalRedirectUri: string;
 }

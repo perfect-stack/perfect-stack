@@ -24,26 +24,25 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if(this.authenticationService.isLoggedIn) {
-      let canActivate = true;
       const actionSubject = this.findActionAndSubjectFromURL(state.url);
       if(actionSubject) {
-        //console.log(`findActionAndSubjectFromURL: ${actionSubject.action}.${actionSubject.subject}`);
         const actionSubjectPermission = this.authorizationService.checkPermission(actionSubject.action, actionSubject.subject);
+
         const menuSubject = this.findMenuSubject(actionSubject);
         const menuSubjectPermission = this.authorizationService.checkPermission(ActionType.Menu, menuSubject);
-        //console.log(`canActivate.0: action = ${actionSubject.subject}, menu = ${menuSubject}`);
-        canActivate = actionSubjectPermission && menuSubjectPermission;
+
+        let canActivate = actionSubjectPermission && menuSubjectPermission;
+        if(canActivate) {
+          return canActivate;
+        }
+        else {
+          console.log(`NOT AUTHORISED: ${actionSubject.action}.${actionSubject.subject},  actionSubjectPermission = ${actionSubjectPermission}, menuSubject = ${menuSubject}, menuSubjectPermission = ${menuSubjectPermission}`);
+          return this.router.navigate(['/authorization-error']);
+        }
       }
       else {
         console.log(`findActionAndSubjectFromURL: NO Action or subject found. Keep calm and carry on.`)
-      }
-
-      //console.log(`canActivate.1: ${canActivate} ${state.url}`);
-      if(canActivate) {
-        return canActivate;
-      }
-      else {
-        return this.router.navigate(['/authorization-error']);
+        return true;
       }
     }
     else {
@@ -100,6 +99,7 @@ export class AuthGuard implements CanActivate {
         'NestStatusType',
         'NestFailureReason',
         'ObserverRole',
+        'ObservationType',
         'Organisation',
         'ProjectStatus',
         'ProjectRole',

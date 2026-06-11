@@ -1,0 +1,47 @@
+{
+  "name": "SensorModel.view_edit",
+  "title": "Sensor Model View/Edit",
+  "type": "view_edit",
+  "layoutStyle": "Paris",
+  "dataQueryList": [
+    {
+      "dataName": "sensormodel",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "SensorModel",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "description"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "sensor_type",
+            "component": "Select"
+          }
+        ]
+      ],
+      "metaEntityName": "SensorModel",
+      "type": "form",
+      "binding": "sensormodel",
+      "templateHeading": "Sensor Model details"
+    }
+  ]
+}

@@ -14,7 +14,7 @@ import { MetaPage } from '../../domain/meta.page';
 import { ActionPermit } from '../../authentication/action-permit';
 import { ActionType } from '../../domain/meta.role';
 import { SubjectName } from '../../authentication/subject';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('meta')
 @Controller('meta/page')
@@ -24,6 +24,11 @@ export class MetaPageController {
   @PublicApi()
   @ApiOperation({
     summary: '[PUBLIC] Download all Meta Page files',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of Meta Pages',
+    type: [MetaPage],
   })
   @Get('/')
   findAll(
@@ -37,6 +42,11 @@ export class MetaPageController {
   @ApiOperation({
     summary: '[PUBLIC] Gets the requested Meta Page',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'The Meta Page',
+    type: MetaPage,
+  })
   @Get('/:metaPageName')
   findOne(@Param('metaPageName') metaPageName: string): Promise<MetaPage> {
     return this.metaPageService.findOne(metaPageName);
@@ -46,6 +56,11 @@ export class MetaPageController {
   @SubjectName('Meta')
   @ApiOperation({
     summary: 'Create a new Meta Page file with the supplied data',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Meta Page created',
+    type: Object,
   })
   @Post('/:metaPageName')
   create(
@@ -65,6 +80,11 @@ export class MetaPageController {
   @ApiOperation({
     summary: 'Update the the supplied Meta Page',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Meta Page updated',
+    type: Object,
+  })
   @Put('/:metaPageName')
   update(
     @Param('metaPageName') metaPageName: string,
@@ -82,6 +102,10 @@ export class MetaPageController {
   @SubjectName('Meta')
   @ApiOperation({
     summary: 'Permanently deletes the requested Meta Page',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Meta Page deleted',
   })
   @Delete('/:metaPageName')
   delete(@Param('metaPageName') metaPageName: string): Promise<void> {

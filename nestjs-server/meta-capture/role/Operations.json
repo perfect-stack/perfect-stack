@@ -1,0 +1,44 @@
+{
+  "name": "Operations",
+  "group": "NFC_Admin",
+  "inherits": "Viewer",
+  "description": "<p>Can edit meta but not system, add projects, set project manager role,</p>",
+  "permissions": [
+    {
+      "action": "Edit",
+      "subject": "Meta"
+    },
+    {
+      "action": "Edit",
+      "subject": "Person"
+    },
+    {
+      "action": "Edit",
+      "subject": "Project"
+    },
+    {
+      "action": "Edit",
+      "subject": "Migrate"
+    },
+    {
+      "action": "Edit",
+      "subject": "Batch"
+    },
+    {
+      "action": "Edit",
+      "subject": "ObservationType"
+    },
+    {
+      "action": "Delete",
+      "subject": "Meta"
+    },
+    {
+      "action": "Menu",
+      "subject": "Admin"
+    },
+    {
+      "action": "Menu",
+      "subject": "Meta"
+    }
+  ]
+}

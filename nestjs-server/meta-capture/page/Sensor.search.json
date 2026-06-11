@@ -1,0 +1,58 @@
+{
+  "name": "Sensor.search",
+  "title": "$PageTitle",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sensor_id"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "sensor_type",
+            "component": "Select"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "sensor_model",
+            "component": "Select"
+          }
+        ]
+      ],
+      "metaEntityName": "Sensor",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "sensor_id"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "sensor_type"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "sensor_model"
+          }
+        ]
+      ],
+      "metaEntityName": "Sensor",
+      "type": "table"
+    }
+  ]
+}

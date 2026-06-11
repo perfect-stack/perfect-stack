@@ -12,13 +12,14 @@ import {
 } from "@nestjs/common";
 import {MediaRepositoryService} from "./media-repository.service";
 import {Response} from "express";
-import {ApiBody, ApiConsumes, ApiTags} from "@nestjs/swagger";
+import {ApiBody, ApiConsumes, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {ActionPermit} from "../authentication/action-permit";
 import {ActionType} from "../domain/meta.role";
 import {SubjectName} from "../authentication/subject";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {CreateFileResponse} from "./create-file-response";
+import {UploadFileResponse} from "./upload-file-response";
 
 
 const convertUrl = (req, file, callback) => {
@@ -47,8 +48,13 @@ export class MediaController {
 
     @ActionPermit(ActionType.Read)
     @SubjectName('Media')
+    @ApiResponse({
+        status: 200,
+        description: 'File location URL',
+        type: String,
+    })
     @Get('/locate/*filePath')
-    async locateFile(@Param('filePath') filePathArray: string[]) {
+    async locateFile(@Param('filePath') filePathArray: string[]): Promise<string> {
         const filePath = filePathArray.join('/');
         console.log('locateFile: filePath', filePath);
         return this.mediaRepositoryService.locateFile(filePath);
@@ -56,8 +62,16 @@ export class MediaController {
 
     @ActionPermit(ActionType.Read)
     @SubjectName('Media')
+    @ApiResponse({
+        status: 200,
+        description: 'File downloaded',
+        schema: {
+            type: 'string',
+            format: 'binary'
+        }
+    })
     @Get('/download/*filePath')
-    async downloadFile(@Param('filePath') filePathArray: string[], @Res() res: Response) {
+    async downloadFile(@Param('filePath') filePathArray: string[], @Res() res: Response): Promise<void> {
         const filePath = filePathArray.join('/');
         const fileBufferOrUrl  = await this.mediaRepositoryService.downloadFile(filePath);
         res.send(fileBufferOrUrl);
@@ -65,6 +79,11 @@ export class MediaController {
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Media')
+    @ApiResponse({
+        status: 201,
+        description: 'File created successfully',
+        type: CreateFileResponse,
+    })
     @Post('/create/:filename')
     async createFile(@Param('filename') rawFilename: string): Promise<CreateFileResponse> {
         console.log('createFile: rawFilename', rawFilename);
@@ -73,6 +92,11 @@ export class MediaController {
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Media')
+    @ApiResponse({
+        status: 201,
+        description: 'File uploaded successfully',
+        type: UploadFileResponse,
+    })
     @Put('/upload')
     @UseInterceptors(FileInterceptor('file', {storage: storageOptions}))
     @ApiConsumes('multipart/form-data') // Document that this endpoint consumes multipart/form-data
@@ -94,7 +118,7 @@ export class MediaController {
                 new FileTypeValidator({fileType: '.(png|jpeg|jpg|gif)'})
                 ], fileIsRequired: true}
         )
-    ) file: Express.Multer.File): Promise<any> {
+    ) file: Express.Multer.File): Promise<UploadFileResponse> {
 
         // The interceptor takes care of creating the file on the server and then just gives us
         // the "File" handle to that file.
@@ -113,15 +137,24 @@ export class MediaController {
 
     @ActionPermit(ActionType.Edit)
     @SubjectName('Media')
+    @ApiResponse({
+        status: 200,
+        description: 'File committed',
+        type: String,
+    })
     @Patch(':filePath')
-    async commitFile(filePath: string): Promise<string> {
+    async commitFile(@Param('filePath') filePath: string): Promise<string> {
         return this.mediaRepositoryService.commitFile(filePath);
     }
 
     @ActionPermit(ActionType.Delete)
     @SubjectName('Media')
+    @ApiResponse({
+        status: 200,
+        description: 'File deleted',
+    })
     @Delete(':filePath')
-    async deleteFile(filePath: string): Promise<void> {
+    async deleteFile(@Param('filePath') filePath: string): Promise<void> {
         return this.mediaRepositoryService.deleteFile(filePath);
     }
 
