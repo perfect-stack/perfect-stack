@@ -1,6 +1,6 @@
 {
   "name": "Administrator",
-  "group": "NFC_Admin",
+  "group": "admin",
   "inherits": "Editor",
   "description": "<p>Controls admin menu, add projects, set project manager role, Add/Edit people (non-user)</p>",
   "permissions": [

@@ -85,8 +85,8 @@ export class MsalAuthenticationService implements AuthenticationServiceProvider,
       const expiryTime = ZonedDateTime.from(nativeJs(new Date(idTokenClaims.exp * 1000)));
 
       // Log user roles and groups from the ID Token claims
-      //console.log('MSAL User Roles:', idTokenClaims.roles || 'No roles assigned');
-      //console.log('MSAL User Groups:', idTokenClaims.groups || 'No groups assigned');
+      console.log('MSAL User Roles:', idTokenClaims.roles || 'No roles assigned');
+      console.log('MSAL User Groups:', idTokenClaims.groups || 'No groups assigned');
 
       if (expiryTime.isAfter(ZonedDateTime.now(ZoneId.UTC))) {
         user = new MsalUser(account, this.stackConfig);

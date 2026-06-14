@@ -19,11 +19,9 @@ export class MsalUser implements User {
       // Security groups can be exposed in the 'groups' claim, but requires specific configuration.
       const roles = (account.idTokenClaims['roles'] as string[]) || [];
       const groupsClaim = (account.idTokenClaims['groups'] as string[]) || [];
-      //this.groups = [...roles, ...groupsClaim];
-      //this.groups = [...roles];
-      //this.groups = [...groupsClaim];
-      //this.groups.push("RICHARD");
-      this.groups = ["NFC_Admin"];
+
+      // For MSAL we map across the "roles" as "groups"
+      this.groups = [...roles];
     }
 
     // Add supplementary roles for local dev purposes, similar to CognitoUser.

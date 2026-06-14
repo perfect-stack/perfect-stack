@@ -55,7 +55,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   getMsalGroups(payload: any): string[] {
-    return payload['groups'] || [];
+    // In MSAL we map across the "roles" into "groups" intentionally
+    return payload['roles'] || [];
   }
 
   getCustomGroups(payload: any): string[] {
