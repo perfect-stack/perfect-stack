@@ -41,6 +41,7 @@ export { AuthenticationModule, AuthenticationService, AuditModule, PublicApi, Jw
 export { BatchModule, BatchJob };
 export { ClientConfigModule, ClientConfigService };
 export { DataModule, DataImportModule, DataService, DiscriminatorMapping, DiscriminatorService, QueryService };
+export * from './domain/entity';
 export { EventModule };
 export { JobModule, JobService }
 export { FileRepositoryModule, FileRepositoryService };
