@@ -66,15 +66,15 @@ export class EventService {
   }
 
   dispatchOnAction(pageName: string, channel: string, ctx: FormContext, action: string): void {
-    console.log(`Dispatch onAction(${action}) to page listeners: ${pageName} on channel: ${channel}`);
     const listenerList = this.getListenerList(ListenerType.PageListener, pageName);
+    console.log(`Dispatch onAction(${action}) to PAGE listeners: ${pageName} on channel: ${channel} to listeners:`, listenerList);
     for(const listener of listenerList) {
       const pageListener = listener as PageListener;
       pageListener.onAction(ctx, channel, action);
     }
 
-    console.log(`Dispatch onAction(${action}) to action listeners: ${pageName} on channel: ${channel}`);
     const listenerList2 = this.getListenerList(ListenerType.ActionListener, pageName);
+    console.log(`Dispatch onAction(${action}) to ACTION listeners: ${pageName} on channel: ${channel} to listeners:`, listenerList2);
     for(const listener of listenerList2) {
       const actionListener = listener as ActionListener;
       actionListener.onAction(ctx, channel, action);

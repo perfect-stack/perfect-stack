@@ -197,6 +197,55 @@
       "type": "form",
       "binding": "stationsensoractivity.new_sensor_action",
       "templateHeading": "New Sensor Action"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Person",
+      "type": "form",
+      "locations": {
+        "BottomRight": {
+          "type": "Button",
+          "channel": "SaveChannel",
+          "containerStyles": "",
+          "styles": "btn btn-primary",
+          "label": "Save Button",
+          "modes": "",
+          "action": "SAVE_ACTION",
+          "route": "/route/go/here",
+          "icon": "",
+          "actionPermit": "Read",
+          "subjectPermit": "StationSensorActivity"
+        }
+      }
     }
   ]
 }
