@@ -11,7 +11,8 @@ export class LandingPageComponent {
 
   constructor(protected readonly router: Router) {
   }
+
   onLogin() {
-    this.router.navigate(['/meta/entity/search'])
+    this.router.navigate(['/data/MonitoringStation/search'])
   }
 }

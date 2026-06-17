@@ -38,7 +38,7 @@
       "items": [
         {
           "label": "Uploads",
-          "route": "/route/here",
+          "route": "/uploads",
           "editable": true,
           "roles": []
         }

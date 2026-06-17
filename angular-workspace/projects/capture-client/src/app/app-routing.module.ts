@@ -1,8 +1,10 @@
 import {RouterModule, Routes} from "@angular/router";
 import {NgModule} from "@angular/core";
 import {LandingPageComponent} from "./landing-page/landing-page.component";
+import {UploadsComponent} from "./uploads/uploads.component";
 
 const routes: Routes = [
+  { path: 'uploads', component: UploadsComponent },
   // If no other route found then it must be the Landing page
   { path: '**', component: LandingPageComponent}
 ];

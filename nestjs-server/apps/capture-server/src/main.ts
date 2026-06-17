@@ -1,12 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import {CaptureServerModule} from "./capture-server.module";
+import { LogLevel } from '@nestjs/common';
 
 async function bootstrap() {
+    const logger: LogLevel[] = ['log', 'error', 'warn'];
+    if (process.env.LOG_LEVEL === 'debug') {
+        logger.push('debug');
+    }
+
     const app = await NestFactory.create(CaptureServerModule, {
-        //logger: ['log', 'error', 'warn', 'debug'],
-        logger: [ 'log', 'error', 'warn'],
-        //logger: [ 'error', 'warn'],
+        logger: logger,
     });
 
     app.enableCors({

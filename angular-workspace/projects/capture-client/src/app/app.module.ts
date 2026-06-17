@@ -6,10 +6,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {ReactiveFormsModule} from "@angular/forms";
+import { UploadsComponent } from './uploads/uploads.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    UploadsComponent
   ],
   imports: [
     BrowserModule,
@@ -18,8 +20,7 @@ import {ReactiveFormsModule} from "@angular/forms";
     NgxPerfectStackModule,
     AppRoutingModule
   ],
-  providers: [
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

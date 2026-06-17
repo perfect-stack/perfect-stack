@@ -25,7 +25,7 @@ function getKeyProvider(configService: ConfigService) {
   return (req, rawJwtToken, done) => {
     const decodedToken = JSON.parse(Buffer.from(rawJwtToken.split('.')[1], 'base64').toString('utf8'));
     const issuer = decodedToken.iss;
-    const isMsalIssuer = issuer.startsWith('https://login.microsoftonline.com/') && issuer.endsWith('/v2.0');
+    const isMsalIssuer = issuer.startsWith('https://login.microsoftonline.com/') || issuer.startsWith('https://sts.windows.net/');
 
     if (issuer === configService.get('COGNITO_AUTHENTICATION_ISSUER')) {
       cognitoKeyProvider(req, rawJwtToken, done);
@@ -74,7 +74,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     jwtLogger.log(`Validating token for issuer: ${payload.iss}`);
 
     let userDataStructure;
-    const isMsalIssuer = payload.iss.startsWith('https://login.microsoftonline.com/') && payload.iss.endsWith('/v2.0');
+    const isMsalIssuer = payload.iss.startsWith('https://login.microsoftonline.com/') || payload.iss.startsWith('https://sts.windows.net/');
 
     if (payload.iss === this.configService.get('COGNITO_AUTHENTICATION_ISSUER')) {
       userDataStructure = {
@@ -88,15 +88,30 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         email: payload['email'],
       };
     } else if (isMsalIssuer) {
+      const groups = this.getMsalGroups(payload);
+      const customGroups = this.getCustomGroups(payload);
+
+      let given_name = payload['given_name'];
+      let family_name = payload['family_name'];
+
+      if (!given_name && payload['name']) {
+        const nameParts = payload['name'].split(' ');
+        given_name = nameParts[0];
+        family_name = nameParts.slice(1).join(' ');
+      }
+      
+      const username = payload['preferred_username'] || payload['upn'] || payload['unique_name'];
+      const email = payload['preferred_username'] || payload['email'] || payload['upn'];
+
       userDataStructure = {
         groups: [
-          ...this.getMsalGroups(payload),
-          ...this.getCustomGroups(payload)
+          ...groups,
+          ...customGroups
         ],
-        username: payload['preferred_username'],
-        given_name: payload['name'].split(' ')[0],
-        family_name: payload['name'].split(' ').slice(1).join(' '),
-        email: payload['preferred_username'],
+        username: username,
+        given_name: given_name,
+        family_name: family_name,
+        email: email,
       };
     } else {
       jwtLogger.error(`Invalid token issuer: ${payload.iss}`);
