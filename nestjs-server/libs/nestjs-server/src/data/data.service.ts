@@ -135,15 +135,18 @@ export class DataService {
       entity.id = uuid.v4();
     }
 
+    // Extract plain data in case 'entity' is a Sequelize Model instance
+    const entityData = typeof (entity as any).toJSON === 'function' ? (entity as any).toJSON() : entity;
+
     let action;
     if (!entityModel) {
       // if entityModel was not found, or entity did not arrive with id
       action = AuditAction.Create;
-      entityModel = await model.create(entity as any);
+      entityModel = await model.create(entityData as any);
     } else {
       // else entityModel was found
       action = AuditAction.Update;
-      entityModel.set(entity);
+      entityModel.set(entityData);
       await entityModel.save();
     }
 
@@ -336,8 +339,11 @@ export class DataService {
           childEntity.id = uuid.v4();
         }
 
+        // Extract plain data in case 'childEntity' is a Sequelize Model instance
+        const childEntityData = typeof (childEntity as any).toJSON === 'function' ? (childEntity as any).toJSON() : childEntity;
+
         if (!childEntityModel) {
-          childEntityModel = await childModel.create(childEntity as any);
+          childEntityModel = await childModel.create(childEntityData as any);
         }
 
         const metaEntity = metaEntityMap.get(
@@ -352,8 +358,8 @@ export class DataService {
         // Hmm: this is a tricky bit of code and may not be right yet. There was a bug with Projects where it didn't
         // update the Project Team Member's Role and these next two line fixed that. Watch out for changes here in the
         // future.
-        childEntityModel.set(childEntity);
-        childEntityModel.save();
+        childEntityModel.set(childEntityData);
+        await childEntityModel.save();
 
         await this.saveTheChildren(
           metaEntityMap,
@@ -592,8 +598,8 @@ export class DataService {
       //      await this.save(updateSortIndexRequest.metaName, targetEntity);
 
       // These entities have just been loaded, we can call save() on them directly
-      await sourceEntity.save();
-      await targetEntity.save();
+      sourceEntity.save();
+      targetEntity.save();
     } else {
       // Do nothing but don't fail, sorting may silently bump against the ends of the array
     }
