@@ -592,8 +592,8 @@ export class DataService {
       //      await this.save(updateSortIndexRequest.metaName, targetEntity);
 
       // These entities have just been loaded, we can call save() on them directly
-      sourceEntity.save();
-      targetEntity.save();
+      await sourceEntity.save();
+      await targetEntity.save();
     } else {
       // Do nothing but don't fail, sorting may silently bump against the ends of the array
     }
