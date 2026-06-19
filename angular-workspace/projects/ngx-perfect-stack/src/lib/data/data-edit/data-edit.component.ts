@@ -22,6 +22,7 @@ import {SearchControllerService} from '../controller/search-controller.service';
 import {ActionType} from '../../domain/meta.role';
 import {MessageDialogComponent} from '../../utils/message-dialog/message-dialog.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {makeLabel} from "../../utils/string-utils";
 
 
 @Component({
@@ -318,6 +319,10 @@ export class DataEditComponent implements OnInit {
 
   get DeleteCheckType() {
     return DeleteCheckType;
+  }
+
+  protected makeEditLbl() {
+    return makeLabel(this.metaName ? `Edit ${this.metaName}` : 'Edit');
   }
 }
 

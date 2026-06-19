@@ -14,7 +14,7 @@
           <ng-container TopRightActions>
             <div class="h-100 d-flex align-items-center" *ngIf="mode === 'view'" >
               <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">Edit {{ctx.metaEntity.name.toLowerCase()}}</button>
+                <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">{{makeEditLbl()}}</button>
               </lib-permission-check>
               <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx" [enabledIf]="false">
                 <div class="read-only-badge small text-muted" [ngbTooltip]="'You have insufficient permissions to edit this data, or the data source is read-only.'">
@@ -55,7 +55,7 @@
           <ng-container TopRightActions>
             <div class="h-100 d-flex align-items-center" *ngIf="mode === 'view'" >
               <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">Edit {{ctx.metaEntity.name.toLowerCase()}}</button>
+                <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">{{makeEditLbl()}}</button>
               </lib-permission-check>
             </div>
           </ng-container>

@@ -14,6 +14,7 @@ import {Observable, of, switchMap, withLatestFrom} from 'rxjs';
 import {FormGroupService} from '../data-edit/form-service/form-group.service';
 import {CriteriaService} from './criteria.service';
 import {ActionType} from '../../domain/meta.role';
+import {makeLabel} from "../../utils/string-utils";
 
 @Component({
     selector: 'app-data-search',
@@ -180,7 +181,7 @@ export class DataSearchComponent implements OnInit {
   }
 
   get addButtonLbl() {
-    return this.metaName ? `Add ${this.metaName.toLowerCase()}` : 'Add';
+    return makeLabel(this.metaName ? `Add ${this.metaName}` : 'Add');
   }
 
   onAdd(ctx: FormContext) {
