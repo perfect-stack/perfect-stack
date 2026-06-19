@@ -74,20 +74,7 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "action_datetime"
-          }
-        ],
-        [
-          {
-            "width": "6",
-            "height": "1",
             "attributeName": "sensor_type",
-            "component": "Select"
-          },
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "sensor_model",
             "component": "Select"
           }
         ],
@@ -141,20 +128,7 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "action_datetime"
-          }
-        ],
-        [
-          {
-            "width": "6",
-            "height": "1",
             "attributeName": "sensor_type",
-            "component": "Select"
-          },
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "sensor_model",
             "component": "Select"
           }
         ],
@@ -230,22 +204,7 @@
         ]
       ],
       "metaEntityName": "Person",
-      "type": "form",
-      "locations": {
-        "BottomRight": {
-          "type": "Button",
-          "channel": "SaveChannel",
-          "containerStyles": "",
-          "styles": "btn btn-primary",
-          "label": "Save Button",
-          "modes": "",
-          "action": "SAVE_ACTION",
-          "route": "/route/go/here",
-          "icon": "",
-          "actionPermit": "Read",
-          "subjectPermit": "StationSensorActivity"
-        }
-      }
+      "type": "form"
     }
   ]
 }

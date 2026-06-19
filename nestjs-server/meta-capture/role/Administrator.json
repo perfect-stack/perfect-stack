@@ -45,6 +45,10 @@
       "subject": "SensorType"
     },
     {
+      "action": "Delete",
+      "subject": "MonitoringStation"
+    },
+    {
       "action": "Menu",
       "subject": "Admin"
     },

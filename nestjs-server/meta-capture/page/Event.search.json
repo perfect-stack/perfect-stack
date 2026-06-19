@@ -12,19 +12,24 @@
       "cells": [
         [
           {
-            "width": "4",
+            "width": "3",
             "height": "1",
             "attributeName": "station",
             "component": "Select"
           },
           {
-            "width": "4",
+            "width": "3",
             "height": "1",
             "attributeName": "sensor",
             "component": "Select"
           },
           {
-            "width": "4",
+            "width": "3",
+            "height": "1",
+            "attributeName": "storage_id"
+          },
+          {
+            "width": "3",
             "height": "1",
             "attributeName": "processing_status"
           }
@@ -37,6 +42,11 @@
           {
             "width": "3",
             "height": "1",
+            "attributeName": "start_datetime"
+          },
+          {
+            "width": "3",
+            "height": "1",
             "attributeName": "station"
           },
           {
@@ -45,9 +55,9 @@
             "attributeName": "sensor"
           },
           {
-            "width": "3",
+            "width": "1",
             "height": "1",
-            "attributeName": "start_datetime"
+            "attributeName": "storage_id"
           },
           {
             "width": "3",

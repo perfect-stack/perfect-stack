@@ -1,5 +1,7 @@
-import {Logger, Module} from '@nestjs/common';
+import {Logger, Module, OnApplicationBootstrap} from '@nestjs/common';
 import { CaptureServerController } from './capture-server.controller';
+import { StationSensorActivityController } from './activity/station-sensor-activity.controller';
+import { StationSensorActivityService } from './activity/station-sensor-activity.service';
 import { CaptureServerService } from './capture-server.service';
 import {ConfigModule} from "@nestjs/config";
 import {
@@ -21,6 +23,10 @@ import {MigrateModule} from "@perfect-stack/nestjs-server/migrate/mirgrate.modul
 import {RuleModule} from "@perfect-stack/nestjs-server/data/rule/rule.module";
 import {SettingsModule} from "@perfect-stack/nestjs-server/settings/settings.module";
 import {APP_GUARD} from "@nestjs/core";
+import {MonitoringStationBatchJobService} from "./batch/monitoring-station-batch-job.service";
+import {DocMonResetBatchJobService} from "./batch/docmon-reset-batch-job.service";
+import { CaptureSchemaListener } from './app-event/capture-schema.listener';
+import { StationSensorActivityListener } from './app-event/station-sensor-activity.listener';
 
 const envFile =
     process.env.NESTJS_ENV && process.env.NESTJS_ENV.length > 0
@@ -63,9 +69,17 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
       SettingsModule,
       TypeaheadModule,
   ],
-  controllers: [CaptureServerController],
+  controllers: [
+    CaptureServerController, 
+    StationSensorActivityController
+  ],
   providers: [
       CaptureServerService,
+      CaptureSchemaListener,
+      MonitoringStationBatchJobService,
+      DocMonResetBatchJobService,
+      StationSensorActivityListener,
+      StationSensorActivityService,
       {
           provide: APP_GUARD,
           useClass: JwtAuthGuard,

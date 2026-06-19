@@ -1,20 +1,24 @@
-import {Injectable, Logger, OnApplicationBootstrap} from '@nestjs/common';
-import {MetaMenuService} from "@perfect-stack/nestjs-server/meta/meta-menu/meta-menu.service";
-import {ResultType, RuleValidator, ValidationResult} from "@perfect-stack/nestjs-server/domain/meta.rule";
-import {MetaAttribute} from "@perfect-stack/nestjs-server/domain/meta.entity";
-import {MetaEntityService} from "@perfect-stack/nestjs-server/meta/meta-entity/meta-entity.service";
-import {MapService} from "@perfect-stack/nestjs-server/map/map.service";
-import {DataService} from "@perfect-stack/nestjs-server/data/data.service";
-import {QueryService} from "@perfect-stack/nestjs-server/data/query.service";
-import {BatchService} from "@perfect-stack/nestjs-server/batch/batch.service";
-import {CustomQueryService} from "@perfect-stack/nestjs-server/data/custom-query.service";
-import {CustomRuleService} from "@perfect-stack/nestjs-server/data/rule/custom-rule.service";
-import {KnexService} from "@perfect-stack/nestjs-server/knex/knex.service";
-import {DiscriminatorService} from "@perfect-stack/nestjs-server/data/discriminator.service";
-import {MediaRepositoryService} from "@perfect-stack/nestjs-server/media/media-repository.service";
-import {EventService, SchemaListener} from "@perfect-stack/nestjs-server/event/event.service";
-import {SettingsService} from "@perfect-stack/nestjs-server/settings/settings.service";
-import {PersonSearchQuery} from "./app-event/person-search.query";
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { MetaMenuService } from "@perfect-stack/nestjs-server/meta/meta-menu/meta-menu.service";
+import { ResultType, RuleValidator, ValidationResult } from "@perfect-stack/nestjs-server/domain/meta.rule";
+import { MetaAttribute } from "@perfect-stack/nestjs-server/domain/meta.entity";
+import { MetaEntityService } from "@perfect-stack/nestjs-server/meta/meta-entity/meta-entity.service";
+import { MapService } from "@perfect-stack/nestjs-server/map/map.service";
+import { DataService } from "@perfect-stack/nestjs-server/data/data.service";
+import { QueryService } from "@perfect-stack/nestjs-server/data/query.service";
+import { BatchService } from "@perfect-stack/nestjs-server/batch/batch.service";
+import { CustomQueryService } from "@perfect-stack/nestjs-server/data/custom-query.service";
+import { CustomRuleService } from "@perfect-stack/nestjs-server/data/rule/custom-rule.service";
+import { KnexService } from "@perfect-stack/nestjs-server/knex/knex.service";
+import { DiscriminatorService } from "@perfect-stack/nestjs-server/data/discriminator.service";
+import { MediaRepositoryService } from "@perfect-stack/nestjs-server/media/media-repository.service";
+import { EventService, SchemaListener } from "@perfect-stack/nestjs-server/event/event.service";
+import { SettingsService } from "@perfect-stack/nestjs-server/settings/settings.service";
+import { PersonSearchQuery } from "./app-event/person-search.query";
+import { MonitoringStationBatchJobService } from "./batch/monitoring-station-batch-job.service";
+import { DocMonResetBatchJobService } from "./batch/docmon-reset-batch-job.service";
+import { CaptureSchemaListener } from './app-event/capture-schema.listener';
+import { StationSensorActivityListener } from './app-event/station-sensor-activity.listener';
 // import {ActivityService} from "./app-event/activity.service";
 // import {AgeClassBatchJob} from "./app-event/batch/age-class.batchjob";
 // import {CoordinateConverterService} from "./app-event/batch/coordinate-converter.service";
@@ -46,30 +50,33 @@ export class CaptureServerService implements OnApplicationBootstrap {
         protected readonly batchService: BatchService,
         protected readonly customQueryService: CustomQueryService,
         protected readonly customRuleService: CustomRuleService,
-        //protected readonly dbSnapshotBatchjob: DbSnapshotBatchjob,
         protected readonly knexService: KnexService,
         protected readonly discriminatorService: DiscriminatorService,
         protected readonly mediaRepositoryService: MediaRepositoryService,
         protected readonly eventService: EventService,
         protected readonly settingsService: SettingsService,
+        protected readonly monitoringStationBatchJobService: MonitoringStationBatchJobService,
+        protected readonly docMonResetBatchJobService: DocMonResetBatchJobService,
+        protected readonly captureSchemaListener: CaptureSchemaListener,
+        protected readonly stationSensorActivityListener: StationSensorActivityListener,
         // protected readonly activityService: ActivityService,
         // protected readonly ageClassBatchJob: AgeClassBatchJob,
         // protected readonly coordinateConverterService: CoordinateConverterService,
         //protected readonly captureSchemaListener: CaptureSchemaListener
-    ) {}
+    ) { }
 
 
     getHealth(): string {
         this.logger.log('Health check is ok.');
-        return `Health check ok at: ${new Date().toISOString()}. The version is: ${
-            this.metaMenuService.getVersion().serverRelease
-        }`;
+        return `Health check ok at: ${new Date().toISOString()}. The version is: ${this.metaMenuService.getVersion().serverRelease
+            }`;
     }
 
     async onApplicationBootstrap(): Promise<any> {
         await this.metaEntityService.syncMetaModelWithDatabase(false);
 
-        //this.addOnSchemaUpdate();
+        this.eventService.addSchemaListener(this.captureSchemaListener);
+        this.eventService.addDataEventListener("StationSensorActivity", this.stationSensorActivityListener);
 
         // this.addBirdQuery();
         // this.addEventSearchCriteriaQuery();
@@ -82,7 +89,7 @@ export class CaptureServerService implements OnApplicationBootstrap {
         // this.addEventDataListener();
 
         //this.addCustomRules();
-        //this.addBatchJobs();
+        this.addBatchJobs();
 
         return;
     }
@@ -91,19 +98,19 @@ export class CaptureServerService implements OnApplicationBootstrap {
         this.eventService.addSchemaListener(this.captureSchemaListener);
     }*/
 
-/*    private addBirdQuery() {
-        this.customQueryService.addCustomQuery(
-            "BirdQuery",
-            new BirdQuery(this.knexService, this.metaEntityService)
-        );
-    }
-
-    private addEventSearchCriteriaQuery() {
-        this.customQueryService.addCustomQuery(
-            'EventSearchByCriteria',
-            new EventSearchCriteriaQuery(this.knexService, this.metaEntityService, this.discriminatorService),
-        );
-    }*/
+    /*    private addBirdQuery() {
+            this.customQueryService.addCustomQuery(
+                "BirdQuery",
+                new BirdQuery(this.knexService, this.metaEntityService)
+            );
+        }
+    
+        private addEventSearchCriteriaQuery() {
+            this.customQueryService.addCustomQuery(
+                'EventSearchByCriteria',
+                new EventSearchCriteriaQuery(this.knexService, this.metaEntityService, this.discriminatorService),
+            );
+        }*/
 
     private addPersonSearchQuery() {
         this.customQueryService.addCustomQuery(
@@ -184,11 +191,10 @@ export class CaptureServerService implements OnApplicationBootstrap {
         );
     }*/
 
-    /*private addBatchJobs() {
-        this.batchService.addBatchJob('age_class', this.ageClassBatchJob);
-        this.batchService.addBatchJob("coordinate_converter", this.coordinateConverterService);
-        this.batchService.addBatchJob("db_snapshot", this.dbSnapshotBatchjob);
-    }*/
+    private addBatchJobs() {
+        this.batchService.addBatchJob('Monitoring Station', this.monitoringStationBatchJobService);
+        this.batchService.addBatchJob('DOCMon Reset', this.docMonResetBatchJobService);
+    }
 }
 
 class BirdNameRule extends RuleValidator {

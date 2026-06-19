@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {MetaEntity} from '../domain/meta.entity';
 import {ValidationResultMap} from '../domain/meta.rule';
+import {EntityResponse} from "@perfect-stack/nestjs-server/domain/response/entity.response";
 
 @Injectable()
 export class EventService {
@@ -65,6 +66,40 @@ export class EventService {
         return validationResultMap;
     }
 
+    hasCustomSave(entity: any, metaEntity: MetaEntity): boolean {
+        const listenerList = this.getListenerList(
+            ListenerType.DataEventListener,
+            metaEntity.name,
+        );
+
+        for (const listener of listenerList) {
+            if((listener as DataEventListener).hasCustomSave()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    async dispatchOnCustomSave(
+        entity: any,
+        metaEntity: MetaEntity
+    ): Promise<EntityResponse> {
+        const listenerList = this.getListenerList(
+            ListenerType.DataEventListener,
+            metaEntity.name,
+        );
+
+        let entityResponse: EntityResponse = null;
+        for (const listener of listenerList) {
+            // TODO: Not ideal will only return the "last" saveResult - will do for now only expecting one DataListener
+            // at a time to be doing custom saves.
+            entityResponse = await (listener as DataEventListener).onCustomSave(entity, metaEntity);
+        }
+
+        return entityResponse;
+    }
+
     async dispatchOnAfterSave(entity: any, metaEntity: MetaEntity) {
         const listenerList = this.getListenerList(
             ListenerType.DataEventListener,
@@ -97,6 +132,10 @@ export interface DataEventListener extends EventListener {
         metaEntity: MetaEntity,
         metaEntityMap: Map<string, MetaEntity>,
     ): Promise<ValidationResultMap>;
+
+    hasCustomSave(): boolean;
+
+    onCustomSave(entity: any, metaEntity: MetaEntity): Promise<EntityResponse>;
 
     onAfterSave(entity: any, metaEntity: MetaEntity);
 }

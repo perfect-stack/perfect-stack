@@ -34,7 +34,12 @@
       "comparisonOperator": "InsensitiveLike",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "UniqueInsensitive",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "sensor_type",

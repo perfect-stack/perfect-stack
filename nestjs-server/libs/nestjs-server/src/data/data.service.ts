@@ -94,17 +94,22 @@ export class DataService {
     const validationResultMapController = await this.validationService.validate(metaEntityMap, metaEntity, entity);
 
     if (!validationResultMapController.hasErrors()) {
-      const { action, entityModel } = await this.saveValidatedEntity(
-        entity,
-        metaEntity,
-        metaEntityMap,
-      );
+      // is there a custom save?
+      let entityResponse: any;
+      if (this.eventService.hasCustomSave(entity, metaEntity)) {
+          entityResponse = await this.eventService.dispatchOnCustomSave(entity, metaEntity);
+      }
+      else {
+          entityResponse = await this.saveValidatedEntity(entity, metaEntity, metaEntityMap);
+      }
+
 
       await this.eventService.dispatchOnAfterSave(entity, metaEntity);
 
+      // TODO: this doesn't bubble up validation messages from the custom save
       return {
-        action: action,
-        entity: entityModel,
+        action: entityResponse.action,
+        entity: entityResponse.entityModel,
         validationResults: validationResultMapController.validationResultMap,
       };
     } else {
@@ -117,11 +122,11 @@ export class DataService {
     }
   }
 
-  private async saveValidatedEntity(
+  async saveValidatedEntity(
     entity: Entity,
     metaEntity: MetaEntity,
     metaEntityMap: Map<string, MetaEntity>,
-  ) {
+  ): Promise<EntityResponse> {
     await this.saveOneToOneChildren(metaEntity, entity, metaEntityMap);
 
     const model = this.ormService.sequelize.model(metaEntity.name);
@@ -156,7 +161,11 @@ export class DataService {
     // recursively save all Poly relationships
     await this.saveAllPolys(metaEntityMap, metaEntity, entity);
 
-    return { action, entityModel };
+    return {
+        action: action,
+        entity: entityModel,
+        validationResults: null  // Bit of a hack here
+    };
   }
 
   private async saveOneToOneChildren(
@@ -175,7 +184,7 @@ export class DataService {
           }
 
           // This is a recursive call to save the child entity.
-          const { entityModel: savedChildEntityModel } = await this.saveValidatedEntity(
+          const { entity: savedChildEntityModel } = await this.saveValidatedEntity(
             childEntity,
             childMetaEntity,
             metaEntityMap,
