@@ -135,7 +135,7 @@ export class MetaEntityController {
     description: 'Not implemented',
   })
   @Delete('/:metaName')
-  archive(): Promise<void> {
+  archive(@Param('metaName') metaName: string): Promise<void> {
     return;
   }
 
