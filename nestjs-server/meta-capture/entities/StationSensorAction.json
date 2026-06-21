@@ -53,34 +53,6 @@
       "rules": []
     },
     {
-      "type": "Text",
-      "visibility": "Visible",
-      "name": "sensor_northing",
-      "label": "Sensor northing",
-      "description": "",
-      "unitOfMeasure": "",
-      "scale": "",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
-      "type": "Text",
-      "visibility": "Visible",
-      "name": "sensor_easting",
-      "label": "Sensor easting",
-      "description": "",
-      "unitOfMeasure": "",
-      "scale": "",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
       "type": "DateTime",
       "visibility": "Visible",
       "name": "sensor_datetime",

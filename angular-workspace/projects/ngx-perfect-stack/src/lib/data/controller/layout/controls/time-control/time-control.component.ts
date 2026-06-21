@@ -52,7 +52,7 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
   modifierList: Modifier[] = [
     {label: '+1 hr', duration: 'PT1H'},
     {label: '+2 hrs', duration: 'PT2H'},
-    {label: '+3hrs', duration: 'PT3H'},
+    {label: '+3 hrs', duration: 'PT3H'},
   ];
 
   constructor(@Inject(STACK_CONFIG)

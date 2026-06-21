@@ -36,10 +36,27 @@
             "attributeName": "activity_type"
           },
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "activity_datetime",
             "component": "DatePicker"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "tool": {
+              "type": "Button",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "btn btn-primary mt-4",
+              "label": "Now",
+              "modes": "",
+              "action": "SetTimeNow",
+              "route": "",
+              "icon": "",
+              "actionPermit": "Read",
+              "subjectPermit": "StationSensorActivity"
+            }
           }
         ],
         [
@@ -82,25 +99,12 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "sensor_northing"
+            "attributeName": "storage_id"
           },
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "sensor_easting",
-            "component": "Select"
-          }
-        ],
-        [
           {
             "width": "6",
             "height": "1",
             "attributeName": "sensor_datetime"
-          },
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "storage_id"
           }
         ],
         [
@@ -136,26 +140,12 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "sensor_northing",
-            "component": "Select"
+            "attributeName": "storage_id"
           },
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "sensor_easting",
-            "component": "Select"
-          }
-        ],
-        [
           {
             "width": "6",
             "height": "1",
             "attributeName": "sensor_datetime"
-          },
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "storage_id"
           }
         ],
         [
@@ -171,40 +161,6 @@
       "type": "form",
       "binding": "stationsensoractivity.new_sensor_action",
       "templateHeading": "New Sensor Action"
-    },
-    {
-      "cells": [
-        [
-          {
-            "width": "3",
-            "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1"
-          },
-          {
-            "width": "3",
-            "height": "1"
-          }
-        ],
-        [
-          {
-            "width": "6",
-            "height": "1"
-          },
-          {
-            "width": "6",
-            "height": "1"
-          }
-        ]
-      ],
-      "metaEntityName": "Person",
-      "type": "form"
     }
   ]
 }

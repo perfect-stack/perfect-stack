@@ -153,18 +153,18 @@
       "rules": []
     },
     {
-      "name": "deploy_by",
-      "label": "Deploy by",
+      "name": "deployed_by",
+      "label": "Deployed by",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "ManyToOne",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
-      "relationshipTarget": "StationSensorAction",
+      "relationshipTarget": "StationSensorActivity",
       "typeaheadSearch": [
-        "id"
+        "activity_datetime"
       ],
       "rules": []
     },
@@ -174,13 +174,13 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "ManyToOne",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
-      "relationshipTarget": "StationSensorAction",
+      "relationshipTarget": "StationSensorActivity",
       "typeaheadSearch": [
-        "id"
+        "activity_datetime"
       ],
       "rules": []
     },

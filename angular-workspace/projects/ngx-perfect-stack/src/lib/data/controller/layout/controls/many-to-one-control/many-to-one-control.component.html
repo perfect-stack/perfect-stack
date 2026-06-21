@@ -2,7 +2,7 @@
   <ngb-highlight [result]="r.displayText" [term]="t"></ngb-highlight>
 </ng-template>
 
-<ng-container *ngIf="mode === 'edit'">
+<ng-container *ngIf="mode === 'edit' || mode === 'search'">
   <fieldset class="form-inline">
     <div class="d-flex w-100 wrapper">
       <input #searchInput type="text" class="form-control" placeholder="Search..."
