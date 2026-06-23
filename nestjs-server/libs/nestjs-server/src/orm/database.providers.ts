@@ -178,17 +178,17 @@ export const newSequelize = async (databasePassword: string, databaseSettings: D
              * Ideally you want to choose a `max` number where this holds true:
              * max * EXPECTED_MAX_CONCURRENT_LAMBDA_INVOCATIONS < MAX_ALLOWED_DATABASE_CONNECTIONS * 0.8
              */
-            max: 4,
+            max: 10,
             /*
              * Set this value to 0 so connection pool eviction logic eventually cleans up all connections
              * in the event of a Lambda function timeout.
              */
-            min: 0,
+            min: 1,
             /*
              * Set this value to 0 so connections are eligible for cleanup immediately after they're
              * returned to the pool.
              */
-            idle: 0,
+            idle: 30000,
             // Choose a small enough value that fails fast if a connection takes too long to be established.
             acquire: 3000,
             /*

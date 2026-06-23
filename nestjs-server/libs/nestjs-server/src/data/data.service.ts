@@ -75,6 +75,22 @@ export class DataService {
     }
   }
 
+  async startTxn(): Promise<Transaction> {
+    return this.ormService.sequelize.transaction();
+  }
+
+  async endTxn(txn: Transaction) {
+    if (txn) {
+      await txn.commit();
+    }
+  }
+
+  async rollbackTxn(txn: Transaction) {
+    if (txn) {
+      await txn.rollback();
+    }
+  }
+
   async saveInTransaction(
     entityName: string,
     entity: Entity,
@@ -91,41 +107,51 @@ export class DataService {
       throw new Error(`Unable to find MetaEntity ${entityName}`);
     }
 
-    const validationResultMapController = await this.validationService.validate(metaEntityMap, metaEntity, entity);
+    return await this.saveInTransactionWithMetaEntity(entityName, entity, metaEntityMap, metaEntity, txn);
+  }
 
-    if (!validationResultMapController.hasErrors()) {
-      // is there a custom save?
-      let entityResponse: any;
-      if (this.eventService.hasCustomSave(entity, metaEntity)) {
-          entityResponse = await this.eventService.dispatchOnCustomSave(entity, metaEntity);
+  async saveInTransactionWithMetaEntity(
+      entityName: string,
+      entity: Entity,
+      metaEntityMap = new Map<string, MetaEntity>(),
+      metaEntity: MetaEntity,
+      txn?: Transaction,
+  ) {
+      const validationResultMapController = await this.validationService.validate(metaEntityMap, metaEntity, entity);
+
+      if (!validationResultMapController.hasErrors()) {
+          // is there a custom save?
+          let entityResponse: any;
+          if (this.eventService.hasCustomSave(entity, metaEntity)) {
+              entityResponse = await this.eventService.dispatchOnCustomSave(entity, metaEntity);
+          }
+          else {
+              entityResponse = await this.saveValidatedEntity(entity, metaEntity, metaEntityMap, txn);
+          }
+
+          await this.eventService.dispatchOnAfterSave(entity, metaEntity);
+
+          // TODO: this doesn't bubble up validation messages from the custom save
+          return {
+              action: entityResponse.action,
+              entity: entityResponse.entityModel,
+              validationResults: validationResultMapController.validationResultMap,
+          };
+      } else {
+          // dispatchOnAfterSave() is not fired, because the entity was not saved since it had errors
+          return {
+              action: AuditAction.None,
+              entity: entity,
+              validationResults: validationResultMapController.validationResultMap,
+          };
       }
-      else {
-          entityResponse = await this.saveValidatedEntity(entity, metaEntity, metaEntityMap);
-      }
-
-
-      await this.eventService.dispatchOnAfterSave(entity, metaEntity);
-
-      // TODO: this doesn't bubble up validation messages from the custom save
-      return {
-        action: entityResponse.action,
-        entity: entityResponse.entityModel,
-        validationResults: validationResultMapController.validationResultMap,
-      };
-    } else {
-      // dispatchOnAfterSave() is not fired, because the entity was not saved since it had errors
-      return {
-        action: AuditAction.None,
-        entity: entity,
-        validationResults: validationResultMapController.validationResultMap,
-      };
-    }
   }
 
   async saveValidatedEntity(
     entity: Entity,
     metaEntity: MetaEntity,
     metaEntityMap: Map<string, MetaEntity>,
+    txn?: Transaction,
   ): Promise<EntityResponse> {
     await this.saveOneToOneChildren(metaEntity, entity, metaEntityMap);
 
@@ -135,7 +161,7 @@ export class DataService {
     let entityModel;
     if (entity.id) {
       this.validateUuid(entity.id);
-      entityModel = await model.findByPk(entity.id);
+      entityModel = await model.findByPk(entity.id, {transaction: txn});
     } else {
       entity.id = uuid.v4();
     }
@@ -147,12 +173,12 @@ export class DataService {
     if (!entityModel) {
       // if entityModel was not found, or entity did not arrive with id
       action = AuditAction.Create;
-      entityModel = await model.create(entityData as any);
+      entityModel = await model.create(entityData as any, {transaction: txn});
     } else {
       // else entityModel was found
       action = AuditAction.Update;
       entityModel.set(entityData);
-      await entityModel.save();
+      await entityModel.save({transaction: txn});
     }
 
     // recursively save all the children (excluding the Poly ones)
