@@ -116,12 +116,12 @@ export class DataService {
       metaEntityMap = new Map<string, MetaEntity>(),
       metaEntity: MetaEntity,
       txn?: Transaction,
-  ) {
-      const validationResultMapController = await this.validationService.validate(metaEntityMap, metaEntity, entity);
+  ): Promise<EntityResponse> {
 
+      const validationResultMapController = await this.validationService.validate(metaEntityMap, metaEntity, entity);
       if (!validationResultMapController.hasErrors()) {
           // is there a custom save?
-          let entityResponse: any;
+          let entityResponse: EntityResponse;
           if (this.eventService.hasCustomSave(entity, metaEntity)) {
               entityResponse = await this.eventService.dispatchOnCustomSave(entity, metaEntity);
           }
@@ -134,7 +134,7 @@ export class DataService {
           // TODO: this doesn't bubble up validation messages from the custom save
           return {
               action: entityResponse.action,
-              entity: entityResponse.entityModel,
+              entity: entityResponse.entity,
               validationResults: validationResultMapController.validationResultMap,
           };
       } else {
