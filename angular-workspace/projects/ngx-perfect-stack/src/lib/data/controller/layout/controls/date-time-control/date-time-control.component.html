@@ -10,9 +10,14 @@
 
   <div class="row" *ngIf="mode === 'view'">
     <div class="col-12">
-      <div class="form-control" readonly>
-        {{dateTimeValue}}
-      </div>
+      <ng-container *ngIf="dateTimeValue">
+        <div class="form-control" readonly>
+          {{dateTimeValue}}
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!dateTimeValue">
+        <div class="form-control empty-value" readonly>&mdash;</div>
+      </ng-container>
     </div>
   </div>
 </div>
