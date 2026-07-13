@@ -6,7 +6,7 @@
   "rootNode": true,
   "timestamps": true,
   "cacheExpiryInSecs": "",
-  "permanentDelete": false,
+  "permanentDelete": true,
   "attributes": [
     {
       "name": "id",

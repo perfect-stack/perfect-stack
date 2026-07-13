@@ -703,11 +703,21 @@ export class DataService {
     toTargetEntityName: string,
     id: string,
   ): Promise<boolean> {
+    const relationshipAttribute = fromMetaEntity.attributes.find(
+      (a) => a.relationshipTarget === toTargetEntityName,
+    );
+
+    if (!relationshipAttribute) {
+      throw new Error(
+        `Unable to find relationship attribute on ${fromMetaEntity.name} that points to ${toTargetEntityName}`,
+      );
+    }
+
     const queryRequest = new QueryRequest();
     queryRequest.metaEntityName = fromMetaEntity.name;
     queryRequest.criteria = [
       {
-        name: `${toTargetEntityName.toLowerCase()}_id`,
+        name: `${relationshipAttribute.name}_id`,
         attributeType: AttributeType.ManyToOne,
         operator: ComparisonOperator.Equals,
         value: id,
