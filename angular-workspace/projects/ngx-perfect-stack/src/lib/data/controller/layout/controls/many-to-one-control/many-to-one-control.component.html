@@ -2,7 +2,7 @@
   <ngb-highlight [result]="r.displayText" [term]="t"></ngb-highlight>
 </ng-template>
 
-<ng-container *ngIf="mode === 'edit' || mode === 'search'">
+<ng-container *ngIf="(mode === 'edit' || mode === 'search') && !cell.displayOnly">
   <fieldset class="form-inline">
     <div class="d-flex w-100 wrapper">
       <input #searchInput type="text" class="form-control" placeholder="Search..."
@@ -38,7 +38,7 @@
   </fieldset>
 </ng-container>
 
-<ng-container *ngIf="mode === 'view'">
+<ng-container *ngIf="mode === 'view' || cell.displayOnly">
   <div class="input-group">
     <ng-container *ngIf="selectedModelId && selectedModel">
       <a [routerLink]="['/data', attribute.relationshipTarget, 'view', selectedModelId]" href="#" [id]="attribute.name">{{selectedModel.displayText}}</a>
@@ -48,4 +48,3 @@
     </ng-container>
   </div>
 </ng-container>
-
