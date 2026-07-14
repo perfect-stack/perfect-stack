@@ -1,5 +1,5 @@
 <ng-container *ngIf="options">
-  <ng-container *ngIf="mode !== 'view' || selectedOption">
+  <ng-container *ngIf="mode !== 'view' && !cell.displayOnly">
     <select [ngClass]="{'form-control': isReadOnly(), 'form-select': !isReadOnly(), 'ng-invalid': this.hasErrors(), 'ng-touched': touched}" [id]="ngControl.name" [disabled]="disabled || isReadOnly()"
             [ngModel]="selectedOption" (ngModelChange)="onSelectOption($event)" [ngModelOptions]="{standalone: true}">
       <option *ngFor="let o of options" [ngValue]="o">{{o}}</option>
@@ -11,9 +11,16 @@
     </ng-container>
   </ng-container>
 
-  <ng-container *ngIf="mode === 'view' && !selectedOption">
-    <div class="input-group">
-      <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
-    </div>
+  <ng-container *ngIf="mode === 'view' || cell.displayOnly">
+    <ng-container *ngIf="selectedOption">
+      <div class="input-group">
+        <input class="form-control" readonly [id]="attribute.name" value="{{selectedOption}}">
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!selectedOption">
+      <div class="input-group">
+        <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
+      </div>
+    </ng-container>
   </ng-container>
 </ng-container>

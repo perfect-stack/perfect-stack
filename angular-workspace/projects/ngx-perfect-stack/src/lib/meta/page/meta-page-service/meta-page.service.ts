@@ -20,6 +20,7 @@ export class CellAttribute {
   metaEntity?: MetaEntity;
   attribute?: MetaAttribute;
   template?: Template;
+  displayOnly?: boolean;
 
   componentData?: ComponentData;
   noItemsHtml?: string; // Html displayed when no items

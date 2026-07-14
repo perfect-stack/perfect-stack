@@ -19,19 +19,26 @@
       "cells": [
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "monitoring_station"
           },
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
-            "attributeName": "performed_by"
+            "attributeName": "status",
+            "displayOnly": true
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "status_message",
+            "displayOnly": true
           }
         ],
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "activity_type"
           },
@@ -61,14 +68,14 @@
         ],
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
-            "attributeName": "status"
+            "displayOnly": true,
+            "attributeName": "performed_by"
           },
           {
             "width": "6",
             "height": "1",
-            "attributeName": "status_message",
             "displayOnly": true
           }
         ],
