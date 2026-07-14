@@ -64,8 +64,8 @@
         {
           "editable": true,
           "roles": [],
-          "label": "Observation Type",
-          "route": "/data/ObservationType/search_edit"
+          "label": "Place",
+          "route": "/data/Place/search"
         },
         {
           "label": "Sensor",
@@ -119,6 +119,12 @@
           "roles": [],
           "label": "Role",
           "route": "/meta/role/search"
+        },
+        {
+          "editable": true,
+          "roles": [],
+          "label": "API",
+          "route": "/api/api-docs"
         },
         {
           "editable": true,

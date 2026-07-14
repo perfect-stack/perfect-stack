@@ -26,10 +26,6 @@
     },
     {
       "action": "Menu",
-      "subject": "StationSensorActivity"
-    },
-    {
-      "action": "Menu",
       "subject": "Event"
     },
     {

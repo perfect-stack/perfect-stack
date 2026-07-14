@@ -43,24 +43,24 @@
       "cells": [
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "station_title"
           },
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "status"
           }
         ],
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "district_name"
           },
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "district_code"
           }
@@ -86,24 +86,19 @@
           {
             "width": "4",
             "height": "1",
-            "attributeName": "lat"
-          },
-          {
-            "width": "4",
-            "height": "1",
-            "attributeName": "lng"
-          }
-        ],
-        [
-          {
-            "width": "4",
-            "height": "1",
             "attributeName": "installed_date"
           },
           {
             "width": "4",
             "height": "1",
             "attributeName": "decommissioned_date"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "place"
           }
         ]
       ],

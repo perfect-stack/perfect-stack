@@ -6,7 +6,7 @@
   "rootNode": true,
   "timestamps": true,
   "cacheExpiryInSecs": "",
-  "permanentDelete": true,
+  "permanentDelete": false,
   "attributes": [
     {
       "name": "id",
@@ -51,8 +51,8 @@
       "rules": []
     },
     {
-      "name": "place_id",
-      "label": "Place id",
+      "name": "docmon_place_id",
+      "label": "Docmon place id",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
@@ -79,8 +79,8 @@
       "rules": []
     },
     {
-      "name": "station_id",
-      "label": "Station id",
+      "name": "docmon_station_id",
+      "label": "Docmon station id",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
@@ -109,34 +109,6 @@
     {
       "name": "northing",
       "label": "Northing",
-      "description": "",
-      "unitOfMeasure": "",
-      "scale": "",
-      "type": "Double",
-      "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
-      "name": "lat",
-      "label": "Lat",
-      "description": "",
-      "unitOfMeasure": "",
-      "scale": "",
-      "type": "Double",
-      "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
-      "name": "lng",
-      "label": "Lng",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
@@ -182,13 +154,19 @@
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Text",
+      "type": "Enumeration",
       "visibility": "Visible",
       "comparisonField": "",
-      "comparisonOperator": "",
+      "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
+      "rules": [],
+      "enumeration": [
+        "Draft",
+        "Submitted",
+        "DOCMON",
+        "Error"
+      ]
     },
     {
       "name": "altitude",
@@ -202,6 +180,22 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "place",
+      "label": "Place",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "Place",
+      "typeaheadSearch": [
+        "place_title"
+      ],
       "rules": []
     }
   ]

@@ -36,7 +36,12 @@
       "typeaheadSearch": [
         "station_title"
       ],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "sensor",
@@ -122,21 +127,12 @@
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": []
-    },
-    {
-      "name": "processing_status",
-      "label": "Processing status",
-      "description": "",
-      "unitOfMeasure": "",
-      "scale": "",
-      "type": "Text",
-      "visibility": "Visible",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
     },
     {
       "name": "notes",
@@ -198,6 +194,39 @@
       "typeaheadSearch": [
         "name"
       ],
+      "rules": []
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "Info",
+        "Warning",
+        "Error"
+      ]
+    },
+    {
+      "name": "status_message",
+      "label": "Status message",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
       "rules": []
     }
   ]

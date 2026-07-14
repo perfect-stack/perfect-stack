@@ -61,9 +61,15 @@
         ],
         [
           {
-            "width": "4",
+            "width": "6",
             "height": "1",
             "attributeName": "status"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "status_message",
+            "displayOnly": true
           }
         ],
         [
@@ -91,15 +97,16 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "sensor_type",
-            "component": "Select"
+            "component": "Select",
+            "attributeName": "storage_id"
           }
         ],
         [
           {
             "width": "6",
             "height": "1",
-            "attributeName": "storage_id"
+            "attributeName": "sensor_type",
+            "component": "Select"
           },
           {
             "width": "6",
@@ -132,15 +139,16 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "sensor_type",
-            "component": "Select"
+            "component": "Select",
+            "attributeName": "storage_id"
           }
         ],
         [
           {
             "width": "6",
             "height": "1",
-            "attributeName": "storage_id"
+            "attributeName": "sensor_type",
+            "component": "Select"
           },
           {
             "width": "6",

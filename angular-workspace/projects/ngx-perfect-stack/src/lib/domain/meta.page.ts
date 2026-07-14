@@ -38,6 +38,7 @@ export class Cell {
   footerHtml?: string; // Footer html that appears under the component (only in edit mode)
   tool?: Tool;
   template?: Template;
+  displayOnly?: boolean;
 }
 
 export class ComponentData {}

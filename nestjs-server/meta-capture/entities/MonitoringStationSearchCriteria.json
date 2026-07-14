@@ -1,0 +1,86 @@
+{
+  "name": "MonitoringStationSearchCriteria",
+  "pluralName": "Monitoring Stations",
+  "icon": "",
+  "type": "Criteria",
+  "rootNode": false,
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "station_title",
+      "label": "Station title",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveLike",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "place_site",
+      "label": "Place site",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveLike",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "place_title",
+      "label": "Place title",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveLike",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "place_district",
+      "label": "Place district",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveLike",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "station_status",
+      "label": "Station status",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "Draft",
+        "Submitted",
+        "DOCMON",
+        "Error"
+      ]
+    }
+  ]
+}

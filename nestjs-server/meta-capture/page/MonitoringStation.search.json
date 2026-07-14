@@ -7,46 +7,81 @@
   "controllers": [],
   "templates": [
     {
+      "metaEntityName": "MonitoringStationSearchCriteria",
+      "type": "form",
       "cells": [
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "station_title",
             "component": "Select"
           },
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
-            "attributeName": "district_name"
+            "attributeName": "place_title"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "place_site"
           }
-        ]
-      ],
-      "metaEntityName": "MonitoringStation",
-      "type": "form"
-    },
-    {
-      "cells": [
+        ],
         [
           {
             "width": "4",
             "height": "1",
-            "attributeName": "station_title"
+            "attributeName": "place_district"
           },
           {
             "width": "4",
             "height": "1",
-            "attributeName": "district_name"
+            "attributeName": "station_status",
+            "component": "Select"
           },
           {
             "width": "4",
+            "height": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "metaEntityName": "MonitoringStationSearchResult",
+      "type": "table",
+      "orderByName": "station_title",
+      "orderByDir": "ASC",
+      "customQuery": "MonitoringStationSearch",
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "station_title"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "place_title"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "place_site"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "place_district_name"
+          },
+          {
+            "width": "2",
             "height": "1",
             "attributeName": "status"
           }
         ]
-      ],
-      "metaEntityName": "MonitoringStation",
-      "type": "table"
+      ]
     }
   ]
 }

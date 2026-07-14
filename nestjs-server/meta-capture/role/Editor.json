@@ -6,31 +6,7 @@
   "permissions": [
     {
       "action": "Edit",
-      "subject": "Bird"
-    },
-    {
-      "action": "Edit",
       "subject": "Event"
-    },
-    {
-      "action": "Edit",
-      "subject": "Location"
-    },
-    {
-      "action": "Edit",
-      "subject": "Media"
-    },
-    {
-      "action": "Edit",
-      "subject": "Import"
-    },
-    {
-      "action": "Edit",
-      "subject": "Observation"
-    },
-    {
-      "action": "Edit",
-      "subject": "MonitoringStation"
     },
     {
       "action": "Edit",
@@ -45,16 +21,16 @@
       "subject": "StationSensorAction"
     },
     {
-      "action": "Delete",
-      "subject": "Bird"
+      "action": "Edit",
+      "subject": "Place"
     },
     {
-      "action": "Delete",
-      "subject": "Event"
+      "action": "Edit",
+      "subject": "MonitoringStation"
     },
     {
-      "action": "Delete",
-      "subject": "Observation"
+      "action": "Menu",
+      "subject": "StationSensorActivity"
     }
   ]
 }

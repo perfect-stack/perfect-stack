@@ -1,0 +1,88 @@
+{
+  "name": "Place.view_edit",
+  "title": "$PageTitle",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "place",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Place",
+      "metaEntityName": "Place",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Place",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "place_title"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "$PageTitle",
+      "binding": "place"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "place_title"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "district_name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "district_code"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "set_group"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "set"
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "site"
+          }
+        ]
+      ],
+      "metaEntityName": "Place",
+      "type": "form",
+      "binding": "place",
+      "templateHeading": "Place details"
+    }
+  ]
+}

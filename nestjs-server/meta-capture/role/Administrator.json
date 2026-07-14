@@ -10,19 +10,19 @@
     },
     {
       "action": "Edit",
-      "subject": "Organisation"
-    },
-    {
-      "action": "Edit",
-      "subject": "ObservationType"
-    },
-    {
-      "action": "Edit",
       "subject": "SensorType"
     },
     {
       "action": "Edit",
       "subject": "SensorModel"
+    },
+    {
+      "action": "Edit",
+      "subject": "SensorProtocol"
+    },
+    {
+      "action": "Edit",
+      "subject": "MonitoringStation"
     },
     {
       "action": "Delete",
@@ -30,23 +30,11 @@
     },
     {
       "action": "Delete",
-      "subject": "Organisation"
-    },
-    {
-      "action": "Delete",
-      "subject": "ObservationType"
-    },
-    {
-      "action": "Delete",
       "subject": "SensorModel"
     },
     {
       "action": "Delete",
       "subject": "SensorType"
-    },
-    {
-      "action": "Delete",
-      "subject": "MonitoringStation"
     },
     {
       "action": "Menu",
@@ -55,6 +43,10 @@
     {
       "action": "Menu",
       "subject": "People"
+    },
+    {
+      "action": "Menu",
+      "subject": "Place"
     },
     {
       "action": "Menu",

@@ -52,7 +52,9 @@
         ]
       ],
       "metaEntityName": "Sensor",
-      "type": "table"
+      "type": "table",
+      "orderByName": "sensor_id",
+      "orderByDir": "ASC"
     }
   ]
 }

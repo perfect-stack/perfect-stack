@@ -66,6 +66,25 @@
       ]
     },
     {
+      "name": "activity_datetime",
+      "label": "Activity datetime",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "DateTime",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
       "name": "activity_type",
       "label": "Activity type",
       "description": "",
@@ -139,23 +158,18 @@
       ]
     },
     {
-      "name": "activity_datetime",
-      "label": "Activity datetime",
+      "name": "status_message",
+      "label": "Status message",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "DateTime",
+      "type": "Text",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
       "relationshipTarget": "",
       "typeaheadSearch": [],
-      "rules": [
-        {
-          "type": "Required",
-          "config": ""
-        }
-      ]
+      "rules": []
     },
     {
       "name": "notes",

@@ -31,7 +31,7 @@
           {
             "width": "3",
             "height": "1",
-            "attributeName": "processing_status"
+            "attributeName": "status"
           }
         ]
       ]
@@ -40,29 +40,34 @@
       "cells": [
         [
           {
-            "width": "3",
+            "width": "2",
             "height": "1",
             "attributeName": "start_datetime"
           },
           {
-            "width": "3",
+            "width": "2",
             "height": "1",
             "attributeName": "station"
           },
           {
-            "width": "3",
+            "width": "2",
             "height": "1",
             "attributeName": "sensor"
           },
           {
-            "width": "1",
+            "width": "2",
             "height": "1",
             "attributeName": "storage_id"
           },
           {
-            "width": "3",
+            "width": "2",
             "height": "1",
-            "attributeName": "processing_status"
+            "attributeName": "status"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "status_message"
           }
         ]
       ],
