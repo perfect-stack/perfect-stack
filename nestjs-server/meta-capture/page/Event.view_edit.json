@@ -67,7 +67,8 @@
           {
             "width": "4",
             "height": "1",
-            "attributeName": "protocol"
+            "attributeName": "protocol",
+            "component": "Select"
           },
           {
             "width": "4",
@@ -80,7 +81,8 @@
             "width": "6",
             "height": "1",
             "attributeName": "start_datetime",
-            "component": "DatePicker"
+            "component": "DatePicker",
+            "displayOnly": null
           },
           {
             "width": "6",
@@ -93,26 +95,16 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "device_start_time",
-            "component": "DatePicker"
+            "attributeName": "deployed_by",
+            "displayOnly": true,
+            "component": "ManyToOneLink"
           },
           {
             "width": "6",
             "height": "1",
-            "attributeName": "device_end_time",
-            "component": "DatePicker"
-          }
-        ],
-        [
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "deployed_by"
-          },
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "retrieved_by"
+            "attributeName": "retrieved_by",
+            "displayOnly": true,
+            "component": "Select"
           }
         ],
         [

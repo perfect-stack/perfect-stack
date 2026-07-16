@@ -28,22 +28,24 @@ export class UniqueInsensitiveRuleValidator extends RuleValidator {
       const textValue = String(rawValue).trim().toLowerCase();
       const knex = await this.knexService.getKnex();
 
-      let results: any[];
+      let query;
       if (entity.id) {
         // select count(*) from table where attributeName = :value and id <> :id
-        results = await knex
+        query = knex
           .select()
           .from(this.metaEntity.name)
-          .where(knex.raw(`LOWER(${attribute.name}) = '${textValue}'`)) // This is different to the UniqueRuleValidator
+          .where(knex.raw(`LOWER("${attribute.name}") = ?`, [textValue]))
           .andWhere('id', '<>', entity.id)
           .limit(1);
       } else {
-        results = await knex
+        query = knex
           .select()
           .from(this.metaEntity.name)
-          .where(knex.raw(`LOWER(${attribute.name}) = '${textValue}'`)) // This is different to the UniqueRuleValidator
+          .where(knex.raw(`LOWER("${attribute.name}") = ?`, [textValue]))
           .limit(1);
       }
+
+      const results = await query;
 
       // valid = count(*) === 0
       const valid = results.length === 0;

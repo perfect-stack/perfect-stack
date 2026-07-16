@@ -189,7 +189,7 @@
       "type": "ManyToOne",
       "visibility": "Visible",
       "comparisonField": "",
-      "comparisonOperator": "",
+      "comparisonOperator": "Equals",
       "relationshipTarget": "SensorProtocol",
       "typeaheadSearch": [
         "name"

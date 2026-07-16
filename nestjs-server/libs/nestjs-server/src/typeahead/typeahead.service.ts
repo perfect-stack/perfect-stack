@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TypeaheadRequest } from './dto/typeahead.request';
 import { OrmService } from '../orm/orm.service';
-import { Model, Op } from 'sequelize';
+import {Model, Op, QueryTypes} from 'sequelize';
 import { Item } from './dto/typeahead.response';
 import { MetaAttribute } from '../domain/meta.entity';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
@@ -57,10 +57,17 @@ export class TypeaheadService {
     else if (request.searchText) {
       const searchFieldList = metaAttribute.typeaheadSearch.join(", ' ', ");
       const searchValue = wrapWithWildcards(request.searchText);
+
+      const subQuery = `Select id from "${tableName}" where concat(${searchFieldList}) ilike :searchValue`;
+      this.logger.log(`subQuery = ${subQuery}, searchValue = ${searchValue}`);
+      const subQueryResponse = await this.ormService.sequelize.query(subQuery, {
+        replacements: { searchValue: searchValue },
+        type: QueryTypes.SELECT,
+      });
+
+      const idList = subQueryResponse.map((r: any) => r.id);
       whereClause['id'] = {
-        [Op.in]: this.ormService.sequelize.literal(
-          `(Select id from "${tableName}" where concat(${searchFieldList}) ilike '${searchValue}')`,
-        ),
+        [Op.in]: idList,
       };
     }
     else {

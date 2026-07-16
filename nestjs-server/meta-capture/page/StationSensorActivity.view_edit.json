@@ -114,11 +114,6 @@
             "height": "1",
             "attributeName": "sensor_type",
             "component": "Select"
-          },
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "sensor_datetime"
           }
         ],
         [
@@ -156,11 +151,6 @@
             "height": "1",
             "attributeName": "sensor_type",
             "component": "Select"
-          },
-          {
-            "width": "6",
-            "height": "1",
-            "attributeName": "sensor_datetime"
           }
         ],
         [

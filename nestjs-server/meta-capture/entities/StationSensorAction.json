@@ -53,20 +53,6 @@
       "rules": []
     },
     {
-      "type": "DateTime",
-      "visibility": "Visible",
-      "name": "sensor_datetime",
-      "label": "Sensor datetime",
-      "description": "",
-      "unitOfMeasure": "",
-      "scale": "",
-      "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "",
-      "typeaheadSearch": [],
-      "rules": []
-    },
-    {
       "type": "Text",
       "visibility": "Visible",
       "name": "storage_id",
