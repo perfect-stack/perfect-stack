@@ -262,6 +262,7 @@ export const databaseProviders = [
 
                 const min = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MIN', '2'), 10);
                 const max = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MAX', '10'), 10);
+                logger.log(`Sequelize pool settings; min: ${min}, max: ${max}`);
 
                 globalProviderSequelize = await loadOrm(databaseSettings, min, max);
             }
