@@ -42,24 +42,15 @@
       "cells": [
         [
           {
-            "width": "6",
-            "height": "1",
-            "attributeName": "place_title"
-          }
-        ],
-        [
-          {
             "width": "3",
             "height": "1",
-            "attributeName": "district_name"
+            "attributeName": "place_title"
           },
           {
             "width": "3",
             "height": "1",
-            "attributeName": "district_code"
-          }
-        ],
-        [
+            "attributeName": "site"
+          },
           {
             "width": "3",
             "height": "1",
@@ -74,8 +65,20 @@
         [
           {
             "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
             "height": "1",
-            "attributeName": "site"
+            "attributeName": "district_name"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
           }
         ]
       ],

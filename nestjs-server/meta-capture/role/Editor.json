@@ -10,19 +10,11 @@
     },
     {
       "action": "Edit",
-      "subject": "Sensor"
-    },
-    {
-      "action": "Edit",
       "subject": "StationSensorActivity"
     },
     {
       "action": "Edit",
       "subject": "StationSensorAction"
-    },
-    {
-      "action": "Edit",
-      "subject": "Place"
     },
     {
       "action": "Edit",

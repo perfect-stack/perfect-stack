@@ -6,7 +6,7 @@
   "rootNode": true,
   "timestamps": true,
   "cacheExpiryInSecs": "",
-  "permanentDelete": false,
+  "permanentDelete": true,
   "attributes": [
     {
       "name": "id",
@@ -165,8 +165,25 @@
         "Draft",
         "Submitted",
         "DOCMON",
-        "Error"
+        "Error",
+        "Review Location",
+        "Review Creation",
+        "Review Accepted"
       ]
+    },
+    {
+      "name": "status_message",
+      "label": "Status message",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "altitude",
@@ -196,6 +213,20 @@
       "typeaheadSearch": [
         "place_title"
       ],
+      "rules": []
+    },
+    {
+      "name": "reason",
+      "label": "Reason",
+      "description": "The reason this station needed to be created on the Mobile application. Not populated for planned/pre-existing stations. Not used in DOCMON.",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
       "rules": []
     }
   ]

@@ -2,7 +2,7 @@
   "name": "Event.view_edit",
   "title": "Event details",
   "type": "view_edit",
-  "layoutStyle": "Stockholm",
+  "layoutStyle": "Paris",
   "dataQueryList": [
     {
       "dataName": "event",
@@ -78,14 +78,14 @@
         ],
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "start_datetime",
             "component": "DatePicker",
             "displayOnly": null
           },
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "end_datetime",
             "component": "DatePicker"
@@ -93,18 +93,18 @@
         ],
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "deployed_by",
             "displayOnly": true,
             "component": "ManyToOneLink"
           },
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "retrieved_by",
             "displayOnly": true,
-            "component": "Select"
+            "component": "ManyToOneLink"
           }
         ],
         [

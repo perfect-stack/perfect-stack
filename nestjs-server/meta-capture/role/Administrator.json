@@ -25,6 +25,10 @@
       "subject": "MonitoringStation"
     },
     {
+      "action": "Edit",
+      "subject": "Sensor"
+    },
+    {
       "action": "Delete",
       "subject": "Species"
     },
@@ -39,6 +43,18 @@
     {
       "action": "Delete",
       "subject": "Event"
+    },
+    {
+      "action": "Delete",
+      "subject": "MonitoringStation"
+    },
+    {
+      "action": "Delete",
+      "subject": "StationSensorActivity"
+    },
+    {
+      "action": "Delete",
+      "subject": "StationSensorAction"
     },
     {
       "action": "Menu",

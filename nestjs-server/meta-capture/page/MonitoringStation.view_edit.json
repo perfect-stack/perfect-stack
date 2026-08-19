@@ -2,7 +2,7 @@
   "name": "MonitoringStation.view_edit",
   "title": "$PageTitle",
   "type": "view_edit",
-  "layoutStyle": "Stockholm",
+  "layoutStyle": "Paris",
   "dataQueryList": [
     {
       "dataName": "monitoring_station",
@@ -55,16 +55,29 @@
         ],
         [
           {
+            "width": "8",
+            "height": "1",
+            "attributeName": "reason"
+          }
+        ],
+        [
+          {
             "width": "4",
             "height": "1",
-            "attributeName": "district_name"
+            "attributeName": "installed_date"
           },
           {
             "width": "4",
             "height": "1",
-            "attributeName": "district_code"
+            "attributeName": "decommissioned_date"
           }
-        ],
+        ]
+      ],
+      "templateHeading": "Station Details",
+      "binding": "monitoring_station"
+    },
+    {
+      "cells": [
         [
           {
             "width": "4",
@@ -81,28 +94,33 @@
             "height": "1",
             "attributeName": "altitude"
           }
-        ],
-        [
-          {
-            "width": "4",
-            "height": "1",
-            "attributeName": "installed_date"
-          },
-          {
-            "width": "4",
-            "height": "1",
-            "attributeName": "decommissioned_date"
-          }
-        ],
+        ]
+      ],
+      "metaEntityName": "MonitoringStation",
+      "type": "form",
+      "templateHeading": "Coordinates",
+      "binding": "monitoring_station"
+    },
+    {
+      "cells": [
         [
           {
             "width": "4",
             "height": "1",
             "attributeName": "place"
+          },
+          {
+            "width": "8",
+            "height": "1",
+            "attributeName": "place",
+            "component": "Spy",
+            "spyTemplate": "Place.spy"
           }
         ]
       ],
-      "templateHeading": "Station Details",
+      "metaEntityName": "MonitoringStation",
+      "type": "form",
+      "templateHeading": "Place",
       "binding": "monitoring_station"
     }
   ]
