@@ -6,6 +6,8 @@
     "start:demo-client": "ng serve demo-client",
     "start:capture-client": "ng serve capture-client --ssl",
     "build": "ng build ngx-perfect-stack",
+    "build:lib": "ng build ngx-perfect-stack",
+    "build:lib:yalc": "nodemon --watch projects/ngx-perfect-stack --ext ts,html,scss,css,json --exec \"ng build ngx-perfect-stack && cd dist/ngx-perfect-stack && yalc push\"",
     "watch": "ng build --watch",
     "publish:github": "./publish-github.sh",
     "test": "ng test"
@@ -58,6 +60,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "ng-packagr": "^19.2.2",
+    "nodemon": "^3.1.14",
     "sass": "^1.89.2",
     "typescript": "~5.8.3"
   },

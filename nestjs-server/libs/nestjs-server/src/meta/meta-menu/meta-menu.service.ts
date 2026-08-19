@@ -10,7 +10,7 @@ export class MetaMenuService {
   constructor(
     protected readonly configService: ConfigService,
     protected readonly fileRepositoryService: FileRepositoryService,
-  ) {}
+  ) { }
 
   async findOne() {
     const metaFileName = MetaMenuService.META_MENU_DIR + '/MetaMenu.json';
