@@ -124,17 +124,18 @@ export class DataImportComponent implements OnInit {
   }
 
   isRowSkipped(rowIdx: number) {
-    return this.data && this.data.skipRows && (this.data.skipRows[rowIdx] === 'Blank' || this.data.skipRows[rowIdx] === 'Duplicate');
+    return !!this.data?.importResult?.[rowIdx]?.skipFlag;
   }
 
   isRowSkippedToolTip(rowIdx: number): string {
     if(this.isRowSkipped(rowIdx)) {
-      const skipReason = this.data?.skipRows[rowIdx];
+      const rowResult = this.data?.importResult?.[rowIdx];
+      const skipReason = rowResult?.skipReason;
       switch (skipReason) {
         case 'Blank':
           return 'Row skipped due to blank fields';
         case 'Duplicate':
-          return 'Row skipped due to duplicate earlier in file';
+          return rowResult?.duplicateReason || 'Row skipped due to duplicate earlier in file';
         default:
           throw new Error(`Unhandled skip reason - ${skipReason}`);
       }
@@ -143,14 +144,15 @@ export class DataImportComponent implements OnInit {
   }
 
   importHasErrors() {
-    return this.data && this.data.errors && this.data.errors.length > 0;
+    return (this.data?.errorRowCount ?? 0) > 0 || !!(this.data?.importResult && this.data.importResult.some(r => r.errors && r.errors.length > 0));
   }
 
   findErrors(rowIdx: number, colIdx: number) {
     const errors = [];
-    if(this.data && this.data.errors) {
-      for(const nextError of this.data.errors) {
-        if(nextError.row === rowIdx && nextError.cols.includes(colIdx)) {
+    const rowErrors = this.data?.importResult?.[rowIdx]?.errors;
+    if (rowErrors) {
+      for (const nextError of rowErrors) {
+        if (nextError.cols && nextError.cols.includes(colIdx)) {
           errors.push(nextError);
         }
       }
@@ -173,7 +175,7 @@ export class DataImportComponent implements OnInit {
   }
 
   onImportData() {
-    if(this.data && this.data.errors.length === 0) {
+    if(this.data && !this.importHasErrors()) {
       this.importStarted = true;
       this.dataImportService.importData(this.data).subscribe(result => {
         console.log('Data Import: got result:', result);

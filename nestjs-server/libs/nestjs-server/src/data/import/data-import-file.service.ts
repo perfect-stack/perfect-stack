@@ -43,6 +43,7 @@ export class DataImportFileService {
                 dataImportModel.headers = data[0];
                 dataImportModel.dataRows = data.slice(1);
                 dataImportModel.duplicateCheckList = [];
+                dataImportModel.importResult = [];
             }
 
             return dataImportModel;
@@ -53,18 +54,22 @@ export class DataImportFileService {
                 status: 'error',
                 dataFormat: dataFormat,
                 headers: ["Error parsing file"],
-                skipRows: [],
                 dataRows: [[errorMessage]],
                 skipRowCount: 0,
-                errorRowCount: 0,
+                errorRowCount: 1,
                 validRowCount: 0,
                 totalRowCount: 0,
                 importedEntityList: [],
                 duplicateCheckList: [],
-                errors: [{
-                    cols: [0],
-                    row: 0,
-                    message: errorMessage
+                importResult: [{
+                    skipReason: "Processed",
+                    skipFlag: false,
+                    errors: [{
+                        cols: [0],
+                        row: 0,
+                        message: errorMessage
+                    }],
+                    importedEntity: null
                 }]
             }
         }

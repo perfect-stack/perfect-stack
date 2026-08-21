@@ -1,5 +1,5 @@
 import {Injectable} from "@nestjs/common";
-import {DataImportError, DataImportModel} from "./data-import.model";
+import {DataImportError, DataImportModel, DataImportRowResult} from "./data-import.model";
 import {CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
 import {Entity} from "../../domain/entity";
 import {
@@ -49,15 +49,18 @@ export class DataImportService {
     async dataImportValidate(stepIndex: number, dataImportModel: DataImportModel) {
 
         if(stepIndex === 0) {
-            dataImportModel.skipRows = [];
-            dataImportModel.errors = [];
             dataImportModel.importedEntityList = [];
             dataImportModel.duplicateCheckList = [];
+            dataImportModel.importResult = [];
 
             dataImportModel.skipRowCount = 0;
             dataImportModel.errorRowCount = 0;
             dataImportModel.validRowCount = 0;
             dataImportModel.totalRowCount = dataImportModel.dataRows.length;
+        }
+
+        if(!dataImportModel.importResult) {
+            dataImportModel.importResult = [];
         }
 
         const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
@@ -68,31 +71,59 @@ export class DataImportService {
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
             dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
-            dataImportModel.skipRows.push("Blank");
+            dataImportModel.importResult.push({
+                skipReason: "Blank",
+                skipFlag: true,
+                errors: [],
+                importedEntity: null
+            });
         }
         else {
             const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
-            dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
+            const rowErrors: DataImportError[] = [...createEntityResponse.dataImportErrors];
 
             if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
                 dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
-                dataImportModel.skipRows.push('Duplicate');
+                dataImportModel.importResult.push({
+                    skipReason: "Duplicate",
+                    skipFlag: true,
+                    duplicateReason: "Duplicate in file (ignored)",
+                    errors: rowErrors,
+                    importedEntity: null
+                });
             }
             else {
                 const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
                 if (validationResultMapController.hasErrors()) {
-                    this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
+                    const validationErrors = this.addErrors(validationResultMapController, stepIndex, dataImportModel.headers, dataImportMapping, nextRow, createEntityResponse.entity);
+                    rowErrors.push(...validationErrors);
                     dataImportModel.errorRowCount = dataImportModel.errorRowCount + 1;
-                    dataImportModel.skipRows.push("Processed");
+                    dataImportModel.importResult.push({
+                        skipReason: "Processed",
+                        skipFlag: false,
+                        errors: rowErrors,
+                        importedEntity: null
+                    });
                 }
                 else {
                     if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_DB_ERROR) {
                         dataImportModel.errorRowCount = dataImportModel.errorRowCount + 1;
-                        dataImportModel.skipRows.push("Processed");
+                        dataImportModel.importResult.push({
+                            skipReason: "Processed",
+                            skipFlag: false,
+                            duplicateReason: "Duplicate entity in database",
+                            errors: rowErrors,
+                            importedEntity: null
+                        });
                     }
                     else {
                         dataImportModel.validRowCount = dataImportModel.validRowCount + 1;
-                        dataImportModel.skipRows.push("Processed");
+                        dataImportModel.importResult.push({
+                            skipReason: "Processed",
+                            skipFlag: false,
+                            errors: rowErrors,
+                            importedEntity: null
+                        });
                     }
                 }
             }
@@ -104,15 +135,18 @@ export class DataImportService {
     async dataImportImport(stepIndex: number, dataImportModel: DataImportModel) {
 
         if(stepIndex === 0) {
-            dataImportModel.skipRows = [];
-            dataImportModel.errors = [];
             dataImportModel.importedEntityList = [];
             dataImportModel.duplicateCheckList = [];
+            dataImportModel.importResult = [];
 
             dataImportModel.skipRowCount = 0;
             dataImportModel.errorRowCount = 0;
             dataImportModel.validRowCount = 0;
             dataImportModel.totalRowCount = dataImportModel.dataRows.length;
+        }
+
+        if(!dataImportModel.importResult) {
+            dataImportModel.importResult = [];
         }
 
         const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
@@ -123,25 +157,42 @@ export class DataImportService {
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
             dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
-            dataImportModel.skipRows.push("Blank");
             dataImportModel.importedEntityList.push(null);
+            dataImportModel.importResult.push({
+                skipReason: "Blank",
+                skipFlag: true,
+                errors: [],
+                importedEntity: null
+            });
         }
         else {
             const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
-            dataImportModel.errors.push(...createEntityResponse.dataImportErrors)
+            const rowErrors: DataImportError[] = [...createEntityResponse.dataImportErrors];
 
             if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
                 dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
-                dataImportModel.skipRows.push('Duplicate');
                 dataImportModel.importedEntityList.push(null);
+                dataImportModel.importResult.push({
+                    skipReason: "Duplicate",
+                    skipFlag: true,
+                    duplicateReason: "Duplicate in file (ignored)",
+                    errors: rowErrors,
+                    importedEntity: null
+                });
             }
             else {
                 const validationResultMapController = await this.validate(dataImportMapping.metaEntityName, createEntityResponse.entity);
                 if (validationResultMapController.hasErrors()) {
-                    this.addErrors(validationResultMapController, stepIndex, dataImportModel, dataImportMapping, nextRow, createEntityResponse.entity);
+                    const validationErrors = this.addErrors(validationResultMapController, stepIndex, dataImportModel.headers, dataImportMapping, nextRow, createEntityResponse.entity);
+                    rowErrors.push(...validationErrors);
                     dataImportModel.errorRowCount = dataImportModel.errorRowCount + 1;
-                    dataImportModel.skipRows.push("Processed");
                     dataImportModel.importedEntityList.push(null);
+                    dataImportModel.importResult.push({
+                        skipReason: "Processed",
+                        skipFlag: false,
+                        errors: rowErrors,
+                        importedEntity: null
+                    });
                 }
                 else {
                     const entityResponse = await this.dataService.save(dataImportMapping.metaEntityName, createEntityResponse.entity);
@@ -152,8 +203,13 @@ export class DataImportService {
                         }
                         else {
                             dataImportModel.validRowCount = dataImportModel.validRowCount + 1;
-                            dataImportModel.skipRows.push("Processed");
                             dataImportModel.importedEntityList.push(entityResponse.entity.id);
+                            dataImportModel.importResult.push({
+                                skipReason: "Processed",
+                                skipFlag: false,
+                                errors: rowErrors,
+                                importedEntity: entityResponse.entity.id
+                            });
 
                             if (dataImportMapping.postImportActions) {
                                 await dataImportMapping.postImportActions.postImport(entityResponse.entity);
@@ -170,19 +226,21 @@ export class DataImportService {
 
     addErrors(validationResultMapController: ValidationResultMapController,
               stepIndex: number,
-              dataImportModel: DataImportModel,
+              headers: string[],
               dataImportMapping: DataImportMapping,
               dataRow: string[] | null,
               entity: Entity
-        ) {
+        ): DataImportError[] {
 
+        const rowValidationErrors: DataImportError[] = [];
         if(validationResultMapController.hasErrors()) {
 
-            // Add the validation errors to the dataImportModel
+            // Add the validation errors to the row validation errors list
             const validationErrors = validationResultMapController.validationResultMap;
             for(const nextErrorKey of Object.keys(validationErrors)) {
                 const nextError = validationErrors[nextErrorKey];
-                dataImportModel.errors.push(this.toDataImportError(nextError, stepIndex, dataImportModel.headers, dataImportMapping));
+                const dataImportError = this.toDataImportError(nextError, stepIndex, headers, dataImportMapping);
+                rowValidationErrors.push(dataImportError);
             }
 
             console.log('IMPORT ERRORS: ');
@@ -198,6 +256,8 @@ export class DataImportService {
             console.log(' Data:   ' + JSON.stringify(dataRow))
             console.log(' Entity: ' + JSON.stringify(entity));
         }
+
+        return rowValidationErrors;
     }
 
     toDataImportError(validationResult: ValidationResult,

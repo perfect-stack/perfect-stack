@@ -7,11 +7,18 @@ export class DataImportError {
 
 export type SkipReason = "Processed" | "Blank" | "Duplicate";
 
+export class DataImportRowResult {
+  skipReason!: SkipReason;
+  duplicateReason?: string;
+  skipFlag!: boolean;
+  errors!: DataImportError[];
+  importedEntity!: any;
+}
+
 export class DataImportModel {
   status!: "loaded" | "validated" | "imported" | "error";
   dataFormat!: string;
   headers!: string[];
-  skipRows!: SkipReason[];
   dataRows!: string[][];
 
   skipRowCount = 0;
@@ -25,7 +32,8 @@ export class DataImportModel {
   // close to pure JSON as possible, so this duplicationCheckList could/should be a Set, but was kept as an
   // array of strings.
   duplicateCheckList!: string[];
-  errors!: DataImportError[];
+
+  importResult!: DataImportRowResult[];
 }
 
 

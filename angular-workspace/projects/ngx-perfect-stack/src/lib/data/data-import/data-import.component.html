@@ -58,7 +58,7 @@
           <!-- Row number heading (see below) -->
           <th>Row</th>
 
-          @for (nextHeader of headers; track nextHeader) {
+          @for (nextHeader of headers; track $index) {
             <th class="px-2">
               {{nextHeader}}
             </th>
@@ -67,7 +67,7 @@
       </tr>
       </thead>
       <tbody>
-        @for (group of formRows; track group; let rowIdx = $index) {
+        @for (group of formRows; track $index; let rowIdx = $index) {
           <tr [class.skipped-row]="isRowSkipped(rowIdx)" [formGroup]="group">
 
             <!-- Print the row number to make error correction in original spreadsheet easier -->
@@ -82,7 +82,7 @@
               </span>
             </td>
 
-            @for(control of formControls(group); track control; let colIdx = $index) {
+            @for(control of formControls(group); track $index; let colIdx = $index) {
               @if(findErrors(rowIdx, colIdx)) {
                 <td class="bg-danger text-white">
                   <!-- min-height so that tooltip appears for null values, other solutions like moving tooltip to <td> had a layout shift issue-->
