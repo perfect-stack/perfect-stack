@@ -3,16 +3,16 @@ import {DataImportError} from "./data-import.model";
 import {DataImportConverter, DataListImportConverter} from "./converter/converter.types";
 import {CheckForDuplicates, DuplicateCheckAction, PostImportActions} from "./data-import.service";
 
-export class CreateEntityResponse {
+export type CreateEntityResponse = {
     entity: Entity;
     duplicateCheckAction: DuplicateCheckAction;
     dataImportErrors: DataImportError[];
 }
 
-export class DataImportMapping {
+export type DataImportMapping = {
     metaEntityName: string;
-    duplicateCheck: CheckForDuplicates;
-    postImportActions: PostImportActions;
+    duplicateCheck: CheckForDuplicates | null;
+    postImportActions: PostImportActions | null;
     attributeMappings: DataAttributeMapping[];
 }
 

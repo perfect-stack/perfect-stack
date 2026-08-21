@@ -3,7 +3,7 @@ import {Injectable} from "@nestjs/common";
 
 import * as fs from 'fs';
 import * as csv from "fast-csv";
-import {DataFormatService} from "@perfect-stack/nestjs-server/data/import/data-format.service";
+import {DataFormatService} from "./data-format.service";
 
 
 @Injectable()
@@ -48,12 +48,13 @@ export class DataImportFileService {
             return dataImportModel;
         }
         catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
             return {
                 status: 'error',
                 dataFormat: dataFormat,
                 headers: ["Error parsing file"],
                 skipRows: [],
-                dataRows: [[error.message]],
+                dataRows: [[errorMessage]],
                 skipRowCount: 0,
                 errorRowCount: 0,
                 validRowCount: 0,
@@ -63,7 +64,7 @@ export class DataImportFileService {
                 errors: [{
                     cols: [0],
                     row: 0,
-                    message: error.message
+                    message: errorMessage
                 }]
             }
         }

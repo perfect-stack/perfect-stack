@@ -6,7 +6,7 @@ import {MetaEntityModule} from "../../meta/meta-entity/meta-entity.module";
 import {DuplicateEventCheck} from "./duplicate-event-check";
 import {PostImportEventActions} from "./post-import-event-actions";
 import {DataImportFileService} from "./data-import-file.service";
-import {DataFormatService} from "@perfect-stack/nestjs-server/data/import/data-format.service";
+import {DataFormatService} from "./data-format.service";
 
 
 @Module({

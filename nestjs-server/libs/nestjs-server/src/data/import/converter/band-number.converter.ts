@@ -2,7 +2,7 @@ import {DataImportConverter} from "./converter.types";
 import {QueryService} from "../../query.service";
 import {AttributeType, ComparisonOperator} from "../../../domain/meta.entity";
 import {Criteria} from "../../query.request";
-import {BirdIdConverter} from "@perfect-stack/nestjs-server/data/import/converter/bird-id.converter";
+import {BirdIdConverter} from "./bird-id.converter";
 
 
 export class BandNumberLookupConverter extends BirdIdConverter implements DataImportConverter {

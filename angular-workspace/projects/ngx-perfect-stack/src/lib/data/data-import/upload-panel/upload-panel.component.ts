@@ -36,7 +36,8 @@ export class UploadPanelComponent {
   fileItems: FileItem[] = [];
   isDraggingOver = false;
 
-  dataFormat = "RFID";
+  // Set default value
+  dataFormat = "Monitoring Station";
 
   uploadedData = signal<null | Job>(null);
 

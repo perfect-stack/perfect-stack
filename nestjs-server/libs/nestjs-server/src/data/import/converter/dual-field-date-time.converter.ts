@@ -1,9 +1,9 @@
 import {
     ConverterResult,
     DataListImportConverter, ExternalValue
-} from "@perfect-stack/nestjs-server/data/import/converter/converter.types";
-import {DateConverter} from "@perfect-stack/nestjs-server/data/import/converter/date.converter";
-import {TimeConverter} from "@perfect-stack/nestjs-server/data/import/converter/time.converter";
+} from "./converter.types";
+import {DateConverter} from "./date.converter";
+import {TimeConverter} from "./time.converter";
 import {DateTimeFormatter, LocalDate, LocalTime, OffsetDateTime, ZoneId} from "@js-joda/core";
 import '@js-joda/timezone';
 

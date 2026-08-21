@@ -14,7 +14,7 @@ import {ValidationService} from "../validation.service";
 import {ValidationResult, ValidationResultMapController} from "../../domain/meta.rule";
 import {MetaEntity} from "../../domain/meta.entity";
 import {MetaEntityService} from "../../meta/meta-entity/meta-entity.service";
-import {DataFormatService} from "@perfect-stack/nestjs-server/data/import/data-format.service";
+import {DataFormatService} from "./data-format.service";
 
 export enum DuplicateCheckAction {
     NOT_A_DUPLICATE,
@@ -61,6 +61,9 @@ export class DataImportService {
         }
 
         const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
+        if (!dataImportMapping) {
+            throw new Error(`Data import format '${dataImportModel.dataFormat}' not found`);
+        }
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
@@ -113,6 +116,9 @@ export class DataImportService {
         }
 
         const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
+        if (!dataImportMapping) {
+            throw new Error(`Data import format '${dataImportModel.dataFormat}' not found`);
+        }
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
@@ -252,7 +258,7 @@ export class DataImportService {
     async createEntity(dataImportMapping: DataImportMapping, headers: string[], dataRow: string[], rowIdx: number, duplicateCheckList: string[]): Promise<CreateEntityResponse> {
 
         // create an entity for this data row
-        const entity: Entity = {
+        const entity: any = {
             id: null
         };
 
@@ -291,37 +297,42 @@ export class DataImportService {
         // Check for duplicates (but only if no errors)
         let duplicateCheckAction = DuplicateCheckAction.UNABLE_TO_DETERMINE;
         if(dataImportErrors.length === 0) {
-            duplicateCheckAction = await dataImportMapping.duplicateCheck.checkForDuplicates(entity, duplicateCheckList);
+            if(dataImportMapping.duplicateCheck) {
+                duplicateCheckAction = await dataImportMapping.duplicateCheck.checkForDuplicates(entity, duplicateCheckList);
 
-            switch (duplicateCheckAction) {
-                case DuplicateCheckAction.NOT_A_DUPLICATE:
-                case DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE:
-                case DuplicateCheckAction.DUPLICATE_IN_DB_IGNORE:
-                    // Do nothing
-                    break;
-                case DuplicateCheckAction.DUPLICATE_IN_FILE_ERROR:
-                    dataImportErrors.push({
-                        row: rowIdx,
-                        cols: [0],
-                        message: 'A duplicate in this file already exists - unable to import'
-                    });
-                    break;
-                case DuplicateCheckAction.DUPLICATE_IN_DB_ERROR:
-                    dataImportErrors.push({
-                        row: rowIdx,
-                        cols: [0],
-                        message: 'A duplicate entity for this data already exists in the database - unable to import'
-                    });
-                    break;
-                case DuplicateCheckAction.UNABLE_TO_DETERMINE:
-                    dataImportErrors.push({
-                        row: rowIdx,
-                        cols: [0],
-                        message: 'Unable to perform duplicate check - due to missing or invalid data'
-                    });
-                    break;
-                default:
-                    throw new Error('Unhandled duplicate action - needs work ');
+                switch (duplicateCheckAction) {
+                    case DuplicateCheckAction.NOT_A_DUPLICATE:
+                    case DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE:
+                    case DuplicateCheckAction.DUPLICATE_IN_DB_IGNORE:
+                        // Do nothing
+                        break;
+                    case DuplicateCheckAction.DUPLICATE_IN_FILE_ERROR:
+                        dataImportErrors.push({
+                            row: rowIdx,
+                            cols: [0],
+                            message: 'A duplicate in this file already exists - unable to import'
+                        });
+                        break;
+                    case DuplicateCheckAction.DUPLICATE_IN_DB_ERROR:
+                        dataImportErrors.push({
+                            row: rowIdx,
+                            cols: [0],
+                            message: 'A duplicate entity for this data already exists in the database - unable to import'
+                        });
+                        break;
+                    case DuplicateCheckAction.UNABLE_TO_DETERMINE:
+                        dataImportErrors.push({
+                            row: rowIdx,
+                            cols: [0],
+                            message: 'Unable to perform duplicate check - due to missing or invalid data'
+                        });
+                        break;
+                    default:
+                        throw new Error('Unhandled duplicate action - needs work ');
+                }
+            }
+            else {
+                duplicateCheckAction = DuplicateCheckAction.NOT_A_DUPLICATE;
             }
         }
 
@@ -336,7 +347,7 @@ export class DataImportService {
         // converter needs, but that does not have to be the order in which they occur in the file.
         const externalValues: ExternalValue[] = this.findExternalValues(attributeMapping.columnName as string[], headers, dataRow);
         const converter = attributeMapping.converter as DataListImportConverter;
-        const converterResult = await converter.toAttributeValueFromExternalValueList(attributeMapping.attributeName, externalValues);
+        const converterResult = await converter.toAttributeValueFromExternalValueList(attributeMapping.attributeName as string, externalValues);
 
         return converterResult;
     }
@@ -350,7 +361,7 @@ export class DataImportService {
 
         const externalValue = dataRow[colIdx];
         const converter = attributeMapping.converter as DataImportConverter;
-        const converterResult = await converter.toAttributeValue(attributeMapping.attributeName, externalValue);
+        const converterResult = await converter.toAttributeValue(attributeMapping.attributeName as string, externalValue);
         if(!converterResult) {
             // This error should never happen but probably will during development if Converter is not implemented
             throw new Error(`Unable to convert external value ${externalValue} for attribute ${attributeMapping.attributeName}`);
@@ -362,8 +373,8 @@ export class DataImportService {
     convertDefaultValue(attributeMapping: DataAttributeMapping): ConverterResult {
         return {
             attributeValues: [{
-                name: attributeMapping.attributeName,
-                value: attributeMapping.defaultValue
+                name: attributeMapping.attributeName as string,
+                value: attributeMapping.defaultValue ?? null
             }]
         }
     }
@@ -392,7 +403,7 @@ export class DataImportService {
     }
 
 
-    async findDataImportMapping(dataFormat: string): Promise<DataImportMapping> {
+    async findDataImportMapping(dataFormat: string): Promise<DataImportMapping | undefined> {
         return this.dataFormatService.getDataFormat(dataFormat);
     }
 }

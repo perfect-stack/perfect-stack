@@ -2,9 +2,9 @@ import {
     AttributeValue,
     ConverterResult,
     DataImportConverter
-} from "@perfect-stack/nestjs-server/data/import/converter/converter.types";
-import {QueryService} from "@perfect-stack/nestjs-server";
-import {Criteria, QueryRequest} from "@perfect-stack/nestjs-server/data/query.request";
+} from "./converter.types";
+import {QueryService} from "../../query.service";
+import {Criteria, QueryRequest} from "../../query.request";
 
 
 export abstract class BirdIdConverter implements DataImportConverter {

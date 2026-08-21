@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {MetaEntity} from '../domain/meta.entity';
 import {ValidationResultMap} from '../domain/meta.rule';
-import {EntityResponse} from "@perfect-stack/nestjs-server/domain/response/entity.response";
+import {EntityResponse} from "../domain/response/entity.response";
 
 @Injectable()
 export class EventService {

@@ -1,7 +1,7 @@
-import {AttributeValue, DataImportConverter} from "@perfect-stack/nestjs-server/data/import/converter/converter.types";
-import {QueryService} from "@perfect-stack/nestjs-server";
-import {Criteria, QueryRequest} from "@perfect-stack/nestjs-server/data/query.request";
-import {AttributeType, ComparisonOperator} from "@perfect-stack/nestjs-server/domain/meta.entity";
+import {AttributeValue, DataImportConverter} from "./converter.types";
+import {QueryService} from "../../query.service";
+import {Criteria, QueryRequest} from "../../query.request";
+import {AttributeType, ComparisonOperator} from "../../../domain/meta.entity";
 
 
 export class LocationNameConverter implements DataImportConverter {

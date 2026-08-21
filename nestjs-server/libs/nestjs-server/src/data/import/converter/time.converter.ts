@@ -2,7 +2,7 @@ import {
     ConverterResult,
     DataImportConverter,
     ExternalValue
-} from "@perfect-stack/nestjs-server/data/import/converter/converter.types";
+} from "./converter.types";
 
 // Must be loaded even if it appears nothing is using it
 import '@js-joda/timezone';
