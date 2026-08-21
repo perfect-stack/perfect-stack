@@ -1,5 +1,5 @@
 import {Injectable} from "@nestjs/common";
-import {DataImportError, DataImportModel, DataImportRowResult} from "./data-import.model";
+import {DataImportError, DataImportModel, DataImportRowResult, DataImportSkippedColumn} from "./data-import.model";
 import {CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
 import {Entity} from "../../domain/entity";
 import {
@@ -67,6 +67,7 @@ export class DataImportService {
         if (!dataImportMapping) {
             throw new Error(`Data import format '${dataImportModel.dataFormat}' not found`);
         }
+        const skippedColumns = this.findSkippedColumns(dataImportMapping, dataImportModel.headers);
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
@@ -75,7 +76,8 @@ export class DataImportService {
                 skipReason: "Blank",
                 skipFlag: true,
                 errors: [],
-                importedEntity: null
+                importedEntity: null,
+                skippedColumns: skippedColumns
             });
         }
         else {
@@ -89,7 +91,8 @@ export class DataImportService {
                     skipFlag: true,
                     duplicateReason: "Duplicate in file (ignored)",
                     errors: rowErrors,
-                    importedEntity: null
+                    importedEntity: null,
+                    skippedColumns: skippedColumns
                 });
             }
             else {
@@ -102,7 +105,8 @@ export class DataImportService {
                         skipReason: "Processed",
                         skipFlag: false,
                         errors: rowErrors,
-                        importedEntity: null
+                        importedEntity: null,
+                        skippedColumns: skippedColumns
                     });
                 }
                 else {
@@ -113,7 +117,8 @@ export class DataImportService {
                             skipFlag: false,
                             duplicateReason: "Duplicate entity in database",
                             errors: rowErrors,
-                            importedEntity: null
+                            importedEntity: null,
+                            skippedColumns: skippedColumns
                         });
                     }
                     else {
@@ -122,7 +127,8 @@ export class DataImportService {
                             skipReason: "Processed",
                             skipFlag: false,
                             errors: rowErrors,
-                            importedEntity: null
+                            importedEntity: null,
+                            skippedColumns: skippedColumns
                         });
                     }
                 }
@@ -153,6 +159,7 @@ export class DataImportService {
         if (!dataImportMapping) {
             throw new Error(`Data import format '${dataImportModel.dataFormat}' not found`);
         }
+        const skippedColumns = this.findSkippedColumns(dataImportMapping, dataImportModel.headers);
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
@@ -162,7 +169,8 @@ export class DataImportService {
                 skipReason: "Blank",
                 skipFlag: true,
                 errors: [],
-                importedEntity: null
+                importedEntity: null,
+                skippedColumns: skippedColumns
             });
         }
         else {
@@ -177,7 +185,8 @@ export class DataImportService {
                     skipFlag: true,
                     duplicateReason: "Duplicate in file (ignored)",
                     errors: rowErrors,
-                    importedEntity: null
+                    importedEntity: null,
+                    skippedColumns: skippedColumns
                 });
             }
             else {
@@ -191,7 +200,8 @@ export class DataImportService {
                         skipReason: "Processed",
                         skipFlag: false,
                         errors: rowErrors,
-                        importedEntity: null
+                        importedEntity: null,
+                        skippedColumns: skippedColumns
                     });
                 }
                 else {
@@ -208,7 +218,8 @@ export class DataImportService {
                                 skipReason: "Processed",
                                 skipFlag: false,
                                 errors: rowErrors,
-                                importedEntity: entityResponse.entity.id
+                                importedEntity: entityResponse.entity.id,
+                                skippedColumns: skippedColumns
                             });
 
                             if (dataImportMapping.postImportActions) {
@@ -222,6 +233,29 @@ export class DataImportService {
                 }
             }
         }
+    }
+
+    findSkippedColumns(dataImportMapping: DataImportMapping, headers: string[]): DataImportSkippedColumn[] {
+        const mappedIndices = new Set<number>();
+        for (const attributeMapping of dataImportMapping.attributeMappings) {
+            for (const colName of attributeMapping.getColumnNamesAsArray()) {
+                const idx = headers.indexOf(colName);
+                if (idx >= 0) {
+                    mappedIndices.add(idx);
+                }
+            }
+        }
+
+        const skippedColumns: DataImportSkippedColumn[] = [];
+        for (let colIdx = 0; colIdx < headers.length; colIdx++) {
+            if (!mappedIndices.has(colIdx)) {
+                skippedColumns.push({
+                    col: colIdx,
+                    reason: "Not part of data format"
+                });
+            }
+        }
+        return skippedColumns;
     }
 
     addErrors(validationResultMapController: ValidationResultMapController,

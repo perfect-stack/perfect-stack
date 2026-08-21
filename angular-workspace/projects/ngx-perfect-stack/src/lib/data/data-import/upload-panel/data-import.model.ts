@@ -7,12 +7,18 @@ export class DataImportError {
 
 export type SkipReason = "Processed" | "Blank" | "Duplicate";
 
+export class DataImportSkippedColumn {
+  col!: number;
+  reason!: string;
+}
+
 export class DataImportRowResult {
   skipReason!: SkipReason;
   duplicateReason?: string;
   skipFlag!: boolean;
   errors!: DataImportError[];
   importedEntity!: any;
+  skippedColumns!: DataImportSkippedColumn[];
 }
 
 export class DataImportModel {

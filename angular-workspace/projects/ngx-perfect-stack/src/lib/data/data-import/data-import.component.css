@@ -13,7 +13,7 @@ td .material-symbols-outlined {
   font-weight: bold;
 }
 
-.skipped-row td {
+.skipped-cell {
   background: #dddddd;
   color: #444444;
   font-style: italic;

@@ -1,7 +1,7 @@
 import {Component, effect, Injector, OnInit, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {DataImportModel} from "./upload-panel/data-import.model";
+import {DataImportModel, DataImportSkippedColumn} from "./upload-panel/data-import.model";
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
 import {ActivatedRoute, RouterLink} from "@angular/router";
@@ -139,6 +139,32 @@ export class DataImportComponent implements OnInit {
         default:
           throw new Error(`Unhandled skip reason - ${skipReason}`);
       }
+    }
+    return '';
+  }
+
+  findSkippedColumn(rowIdx: number, colIdx: number): DataImportSkippedColumn | null {
+    const rowResult = this.data?.importResult?.[rowIdx];
+    if (rowResult && rowResult.skippedColumns) {
+      return rowResult.skippedColumns.find(sc => sc.col === colIdx) || null;
+    }
+    return null;
+  }
+
+  isCellSkipped(rowIdx: number, colIdx: number): boolean {
+    if (this.isRowSkipped(rowIdx)) {
+      return true;
+    }
+    return !!this.findSkippedColumn(rowIdx, colIdx);
+  }
+
+  isCellSkippedToolTip(rowIdx: number, colIdx: number): string {
+    if (this.isRowSkipped(rowIdx)) {
+      return this.isRowSkippedToolTip(rowIdx);
+    }
+    const skippedCol = this.findSkippedColumn(rowIdx, colIdx);
+    if (skippedCol) {
+      return skippedCol.reason || 'Column skipped (not part of data format)';
     }
     return '';
   }
