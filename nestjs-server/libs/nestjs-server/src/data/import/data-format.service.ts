@@ -8,6 +8,7 @@ import { DateConverter } from "./converter/date.converter";
 import { IntegerConverter } from "./converter/integer.converter";
 import { TextConverter } from "./converter/text.converter";
 import { DuplicateEventCheck } from "./duplicate-event-check";
+import { DuplicateMonitoringStationCheck } from "./duplicate-monitoring-station-check";
 import { PostImportEventActions } from "./post-import-event-actions";
 import { QueryService } from "../query.service";
 import { MicrochipConverter } from "./converter/microchip.converter";
@@ -26,6 +27,7 @@ export class DataFormatService {
     constructor(
         protected readonly queryService: QueryService,
         protected readonly duplicateEventCheck: DuplicateEventCheck,
+        protected readonly duplicateMonitoringStationCheck: DuplicateMonitoringStationCheck,
         protected readonly postImportEventActions: PostImportEventActions,
     ) { }
 
@@ -50,7 +52,7 @@ export class DataFormatService {
     private getMonitoringStationFormat(): DataImportMapping {
         return {
             metaEntityName: 'MonitoringStation',
-            duplicateCheck: null,
+            duplicateCheck: this.duplicateMonitoringStationCheck,
             postImportActions: null,
             attributeMappings: [
                 {
