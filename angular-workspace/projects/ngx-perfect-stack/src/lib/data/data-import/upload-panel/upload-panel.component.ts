@@ -37,7 +37,7 @@ export class UploadPanelComponent {
   isDraggingOver = false;
 
   // Set default value
-  dataFormat = "Monitoring Station";
+  dataFormat = "Place";
 
   uploadedData = signal<null | Job>(null);
 

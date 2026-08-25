@@ -16,6 +16,8 @@ import {
     DualFieldDateTimeConverter
 } from "./converter/dual-field-date-time.converter";
 import { LocationNameConverter } from "./converter/location-name.converter";
+import { DistrictCodeConverter } from "./converter/district-code.converter";
+
 
 
 @Injectable()
@@ -42,11 +44,52 @@ export class DataFormatService {
     private getDataFormatMap() {
         if (!this._dataFormatMap) {
             this._dataFormatMap = new Map<string, DataImportMapping>();
+            this._dataFormatMap.set('Place', this.getPlaceFormat());
             this._dataFormatMap.set('Monitoring Station', this.getMonitoringStationFormat());
             this._dataFormatMap.set('Transmitter', this.getTransmitterFormat());
             this._dataFormatMap.set('RFID', this.getRfidFormat());
         }
         return this._dataFormatMap;
+    }
+
+    private getPlaceFormat(): DataImportMapping {
+        return {
+            metaEntityName: 'Place',
+            duplicateCheck: null,
+            postImportActions: null,
+            attributeMappings: [
+                {
+                    columnName: 'Line Name',
+                    attributeName: 'place_title',
+                    indicatesBlankRow: true,
+                    converter: new TextConverter(),
+                    defaultValue: []
+                },
+                {
+                    columnName: 'Line',
+                    attributeName: 'district_code',
+                    converter: new DistrictCodeConverter(this.queryService)
+                },
+                {
+                    attributeName: 'tier',
+                    defaultValue: 3
+                },
+                {
+                    columnName: 'Set',
+                    attributeName: 'set',
+                    converter: new TextConverter()
+                },
+                {
+                    attributeName: 'set_group',
+                    defaultValue: 'TODO'
+                },
+                {
+                    columnName: 'Site',
+                    attributeName: 'site',
+                    converter: new TextConverter()
+                },
+            ].map(mapping => Object.assign(new DataAttributeMapping(), mapping))
+        };
     }
 
     private getMonitoringStationFormat(): DataImportMapping {
