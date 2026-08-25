@@ -313,28 +313,16 @@ export class DataImportComponent implements OnInit, OnDestroy {
   }
 
   onJobUpdated(job: Job | null) {
-
     if(job) {
-      if (job.data && !this.data) {
-        this.job = job;
-        this.data = JSON.parse(job.data) as DataImportModel;
-        this.createForm(this.data);
-      }
+      this.job = job;
 
-      if (job.status === 'Completed') {
-        this.job = job;
-        this.data = JSON.parse(job.data) as DataImportModel;
-        this.createForm(this.data);
-      }
-
-      // A bit of a hack to update the row counts without updating the form (which would cause a big impact on the UI)
-      if(job.data) {
+      if (job.data) {
         const dataProgress = JSON.parse(job.data) as DataImportModel;
-        if(this.data) {
-          this.data.skipRowCount = dataProgress.skipRowCount;
-          this.data.errorRowCount = dataProgress.errorRowCount;
-          this.data.validRowCount = dataProgress.validRowCount;
-          this.data.totalRowCount = dataProgress.totalRowCount;
+        if (!this.data || !this.form) {
+          this.data = dataProgress;
+          this.createForm(this.data);
+        } else {
+          this.data = dataProgress;
         }
       }
 
