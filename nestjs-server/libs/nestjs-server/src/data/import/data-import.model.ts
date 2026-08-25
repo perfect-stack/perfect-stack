@@ -19,6 +19,8 @@ export class DataImportRowResult {
     errors!: DataImportError[];
     importedEntity!: any;
     skippedColumns!: DataImportSkippedColumn[];
+    proposedEntity?: any;
+    actualEntity?: any;
 }
 
 export class DataImportModel {

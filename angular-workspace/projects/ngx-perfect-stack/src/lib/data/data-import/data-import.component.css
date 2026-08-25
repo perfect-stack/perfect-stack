@@ -18,3 +18,36 @@ td .material-symbols-outlined {
   color: #444444;
   font-style: italic;
 }
+
+::ng-deep .entity-json-tooltip .tooltip-inner {
+  max-width: 650px;
+  max-height: 80vh;
+  overflow-y: auto;
+  text-align: left;
+  background-color: #1e1e2e;
+  color: #f8f9fa;
+  padding: 10px 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+}
+
+.row-tooltip-content {
+  font-size: 0.8rem;
+}
+
+.json-code-block {
+  background-color: #13131d;
+  color: #e2e8f0;
+  padding: 6px 8px;
+  border-radius: 4px;
+  max-height: 250px;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-break: break-all;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+

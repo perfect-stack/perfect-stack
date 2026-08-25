@@ -77,7 +77,9 @@ export class DataImportService {
                 skipFlag: true,
                 errors: [],
                 importedEntity: null,
-                skippedColumns: skippedColumns
+                skippedColumns: skippedColumns,
+                proposedEntity: null,
+                actualEntity: null
             });
         }
         else {
@@ -92,7 +94,9 @@ export class DataImportService {
                     duplicateReason: "Duplicate in file (ignored)",
                     errors: rowErrors,
                     importedEntity: null,
-                    skippedColumns: skippedColumns
+                    skippedColumns: skippedColumns,
+                    proposedEntity: createEntityResponse.entity,
+                    actualEntity: null
                 });
             }
             else {
@@ -106,7 +110,9 @@ export class DataImportService {
                         skipFlag: false,
                         errors: rowErrors,
                         importedEntity: null,
-                        skippedColumns: skippedColumns
+                        skippedColumns: skippedColumns,
+                        proposedEntity: createEntityResponse.entity,
+                        actualEntity: null
                     });
                 }
                 else {
@@ -118,7 +124,9 @@ export class DataImportService {
                             duplicateReason: "Duplicate entity in database",
                             errors: rowErrors,
                             importedEntity: null,
-                            skippedColumns: skippedColumns
+                            skippedColumns: skippedColumns,
+                            proposedEntity: createEntityResponse.entity,
+                            actualEntity: null
                         });
                     }
                     else {
@@ -128,7 +136,9 @@ export class DataImportService {
                             skipFlag: false,
                             errors: rowErrors,
                             importedEntity: null,
-                            skippedColumns: skippedColumns
+                            skippedColumns: skippedColumns,
+                            proposedEntity: createEntityResponse.entity,
+                            actualEntity: null
                         });
                     }
                 }
@@ -170,7 +180,9 @@ export class DataImportService {
                 skipFlag: true,
                 errors: [],
                 importedEntity: null,
-                skippedColumns: skippedColumns
+                skippedColumns: skippedColumns,
+                proposedEntity: null,
+                actualEntity: null
             });
         }
         else {
@@ -186,7 +198,9 @@ export class DataImportService {
                     duplicateReason: "Duplicate in file (ignored)",
                     errors: rowErrors,
                     importedEntity: null,
-                    skippedColumns: skippedColumns
+                    skippedColumns: skippedColumns,
+                    proposedEntity: createEntityResponse.entity,
+                    actualEntity: null
                 });
             }
             else {
@@ -201,7 +215,9 @@ export class DataImportService {
                         skipFlag: false,
                         errors: rowErrors,
                         importedEntity: null,
-                        skippedColumns: skippedColumns
+                        skippedColumns: skippedColumns,
+                        proposedEntity: createEntityResponse.entity,
+                        actualEntity: null
                     });
                 }
                 else {
@@ -219,7 +235,9 @@ export class DataImportService {
                                 skipFlag: false,
                                 errors: rowErrors,
                                 importedEntity: entityResponse.entity.id,
-                                skippedColumns: skippedColumns
+                                skippedColumns: skippedColumns,
+                                proposedEntity: createEntityResponse.entity,
+                                actualEntity: entityResponse
                             });
 
                             if (dataImportMapping.postImportActions) {

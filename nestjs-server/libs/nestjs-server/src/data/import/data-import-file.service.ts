@@ -70,7 +70,9 @@ export class DataImportFileService {
                         message: errorMessage
                     }],
                     importedEntity: null,
-                    skippedColumns: []
+                    skippedColumns: [],
+                    proposedEntity: null,
+                    actualEntity: null
                 }]
             }
         }

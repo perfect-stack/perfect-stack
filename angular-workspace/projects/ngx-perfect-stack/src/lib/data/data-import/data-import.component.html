@@ -75,7 +75,30 @@
 
           <!-- Print the row number to make error correction in original spreadsheet easier -->
           <td [class.skipped-cell]="isRowSkipped(rowIdx)">
-            <span class="d-block px-2" [ngbTooltip]="isRowSkippedToolTip(rowIdx)">
+            <ng-template #rowTooltip>
+              <div class="row-tooltip-content text-start">
+                @if (isRowSkipped(rowIdx)) {
+                <div class="mb-1 text-warning fw-semibold">{{isRowSkippedToolTip(rowIdx)}}</div>
+                }
+                @if (getRowProposedEntityJson(rowIdx); as proposedJson) {
+                <div class="mt-1">
+                  <div class="fw-bold small text-info">Proposed Entity:</div>
+                  <pre class="json-code-block mb-1"><code>{{proposedJson}}</code></pre>
+                </div>
+                }
+                @if (getRowActualEntityJson(rowIdx); as actualJson) {
+                <div class="mt-2">
+                  <div class="fw-bold small text-success">Actual Entity Response:</div>
+                  <pre class="json-code-block mb-0"><code>{{actualJson}}</code></pre>
+                </div>
+                }
+              </div>
+            </ng-template>
+            <span class="d-block px-2"
+                  [ngbTooltip]="hasRowTooltip(rowIdx) ? rowTooltip : ''"
+                  container="body"
+                  tooltipClass="entity-json-tooltip"
+                  placement="auto">
               <!-- Excel starts on row 1, and we also removed that because of how we modelled headers, so need to add +2 -->
               @if (data && data.status === 'imported' && data.importedEntityList[rowIdx]) {
               <a [routerLink]="['/data/Event/view', data.importedEntityList[rowIdx] ]">{{rowIdx + 2}}</a>

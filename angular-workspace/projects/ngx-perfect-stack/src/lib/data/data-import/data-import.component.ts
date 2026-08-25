@@ -143,6 +143,20 @@ export class DataImportComponent implements OnInit {
     return '';
   }
 
+  getRowProposedEntityJson(rowIdx: number): string | null {
+    const proposed = this.data?.importResult?.[rowIdx]?.proposedEntity;
+    return proposed ? JSON.stringify(proposed, null, 2) : null;
+  }
+
+  getRowActualEntityJson(rowIdx: number): string | null {
+    const actual = this.data?.importResult?.[rowIdx]?.actualEntity;
+    return actual ? JSON.stringify(actual, null, 2) : null;
+  }
+
+  hasRowTooltip(rowIdx: number): boolean {
+    return this.isRowSkipped(rowIdx) || !!this.getRowProposedEntityJson(rowIdx) || !!this.getRowActualEntityJson(rowIdx);
+  }
+
   findSkippedColumn(rowIdx: number, colIdx: number): DataImportSkippedColumn | null {
     const rowResult = this.data?.importResult?.[rowIdx];
     if (rowResult && rowResult.skippedColumns) {
