@@ -1,4 +1,4 @@
-import {Component, effect, Injector, OnInit, viewChild} from '@angular/core';
+import {Component, effect, Injector, OnDestroy, OnInit, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {DataImportModel, DataImportSkippedColumn} from "./upload-panel/data-import.model";
@@ -7,7 +7,7 @@ import {DataImportService} from "./data-import.service";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {JobProgressMonitorComponent} from "../../job/job-progress-monitor/job-progress-monitor.component";
 import {Job} from "../../job/job.model";
-import {Location} from '@angular/common';
+import {Location, NgClass} from '@angular/common';
 import {JobService} from "../../job/job.service";
 
 @Component({
@@ -17,12 +17,13 @@ import {JobService} from "../../job/job.service";
     ReactiveFormsModule,
     NgbTooltip,
     RouterLink,
-    JobProgressMonitorComponent
+    JobProgressMonitorComponent,
+    NgClass
   ],
   templateUrl: './data-import.component.html',
   styleUrl: './data-import.component.css'
 })
-export class DataImportComponent implements OnInit {
+export class DataImportComponent implements OnInit, OnDestroy {
 
   uploadPanel = viewChild(UploadPanelComponent);
 
@@ -36,6 +37,9 @@ export class DataImportComponent implements OnInit {
   jobIdImport: string | null;
 
   importStarted = false;
+
+  private activeTooltip: NgbTooltip | null = null;
+  private tooltipCloseTimeout: any = null;
 
   constructor(
     protected readonly dataImportService: DataImportService,
@@ -91,6 +95,44 @@ export class DataImportComponent implements OnInit {
         });
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.cancelCloseTooltip();
+    if (this.activeTooltip && this.activeTooltip.isOpen()) {
+      this.activeTooltip.close();
+    }
+  }
+
+  openTooltip(tooltip: NgbTooltip) {
+    this.cancelCloseTooltip();
+    if (this.activeTooltip && this.activeTooltip !== tooltip && this.activeTooltip.isOpen()) {
+      this.activeTooltip.close();
+    }
+    this.activeTooltip = tooltip;
+    if (!tooltip.isOpen()) {
+      tooltip.open();
+    }
+  }
+
+  cancelCloseTooltip() {
+    if (this.tooltipCloseTimeout) {
+      clearTimeout(this.tooltipCloseTimeout);
+      this.tooltipCloseTimeout = null;
+    }
+  }
+
+  scheduleCloseTooltip(tooltip: NgbTooltip, delayMs = 300) {
+    this.cancelCloseTooltip();
+    this.tooltipCloseTimeout = setTimeout(() => {
+      if (tooltip.isOpen()) {
+        tooltip.close();
+      }
+      if (this.activeTooltip === tooltip) {
+        this.activeTooltip = null;
+      }
+      this.tooltipCloseTimeout = null;
+    }, delayMs);
   }
 
   private createForm(data: DataImportModel) {
@@ -153,8 +195,51 @@ export class DataImportComponent implements OnInit {
     return actual ? JSON.stringify(actual, null, 2) : null;
   }
 
+  getRowResultSummary(rowIdx: number): 'Imported' | 'Duplicate' | 'Error' | 'Skipped' | 'Valid' | '' {
+    const rowResult = this.data?.importResult?.[rowIdx];
+    if (!rowResult) {
+      return '';
+    }
+
+    if (rowResult.actualEntity) {
+      return 'Imported';
+    }
+
+    if (rowResult.skipReason === 'Duplicate' || rowResult.duplicateReason) {
+      return 'Duplicate';
+    }
+
+    if (rowResult.skipFlag || rowResult.skipReason === 'Blank') {
+      return 'Skipped';
+    }
+
+    if (rowResult.errors && rowResult.errors.length > 0) {
+      return 'Error';
+    }
+
+    return 'Valid';
+  }
+
+  getRowResultBadgeClass(rowIdx: number): string {
+    const summary = this.getRowResultSummary(rowIdx);
+    switch (summary) {
+      case 'Imported':
+        return 'bg-success text-white';
+      case 'Valid':
+        return 'bg-primary text-white';
+      case 'Error':
+        return 'bg-danger text-white';
+      case 'Duplicate':
+        return 'bg-warning text-dark';
+      case 'Skipped':
+        return 'bg-secondary text-white';
+      default:
+        return 'bg-light text-dark';
+    }
+  }
+
   hasRowTooltip(rowIdx: number): boolean {
-    return this.isRowSkipped(rowIdx) || !!this.getRowProposedEntityJson(rowIdx) || !!this.getRowActualEntityJson(rowIdx);
+    return !!this.getRowResultSummary(rowIdx);
   }
 
   findSkippedColumn(rowIdx: number, colIdx: number): DataImportSkippedColumn | null {

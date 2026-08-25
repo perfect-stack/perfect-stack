@@ -19,6 +19,10 @@ td .material-symbols-outlined {
   font-style: italic;
 }
 
+::ng-deep .entity-json-tooltip {
+  pointer-events: auto !important;
+}
+
 ::ng-deep .entity-json-tooltip .tooltip-inner {
   max-width: 650px;
   max-height: 80vh;
@@ -30,10 +34,12 @@ td .material-symbols-outlined {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
+  pointer-events: auto !important;
 }
 
 .row-tooltip-content {
   font-size: 0.8rem;
+  pointer-events: auto;
 }
 
 .json-code-block {
