@@ -15,8 +15,8 @@
 
       <lib-job-progress-monitor [jobId]="jobIdValidate" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
       @if(data) {
-      <p> Skipped: {{data.skipRowCount}} + Error: {{data.errorRowCount}} + Valid: {{data.validRowCount}} = Total:
-        {{data.totalRowCount}} rows.</p>
+      <p> Header: 1 + Skipped: {{skipRowCount}} + Error: {{errorRowCount}} + Valid: {{validRowCount}} + Unprocessed: {{unprocessedRowCount}} = Total:
+        {{totalRowCount + 1}} rows.</p>
       }
 
       @if(job.status !== 'Completed') {
@@ -43,8 +43,8 @@
       @if (data && phase === 'importing') {
       <h3>Importing</h3>
       <lib-job-progress-monitor [jobId]="jobIdImport" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
-      <p> Skipped: {{data.skipRowCount}} + Error: {{data.errorRowCount}} + Valid: {{data.validRowCount}} = Total:
-        {{data.totalRowCount}} rows.</p>
+      <p> Header: 1 + Skipped: {{skipRowCount}} + Error: {{errorRowCount}} + Valid: {{validRowCount}} + Unprocessed: {{unprocessedRowCount}} = Total:
+        {{totalRowCount + 1}} rows.</p>
       }
     </div>
   </div>

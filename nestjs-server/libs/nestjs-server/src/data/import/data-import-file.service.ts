@@ -55,10 +55,6 @@ export class DataImportFileService {
                 dataFormat: dataFormat,
                 headers: ["Error parsing file"],
                 dataRows: [[errorMessage]],
-                skipRowCount: 0,
-                errorRowCount: 1,
-                validRowCount: 0,
-                totalRowCount: 0,
                 importedEntityList: [],
                 duplicateCheckList: [],
                 importResult: [{

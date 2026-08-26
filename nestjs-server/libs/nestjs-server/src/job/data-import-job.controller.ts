@@ -135,7 +135,7 @@ export class DataImportJobController {
     })
     @Post('/import')
     async importData(@Body() dataImportModel: DataImportModel): Promise<Job> {
-        const hasErrors = dataImportModel.errorRowCount > 0 || (dataImportModel.importResult && dataImportModel.importResult.some(r => r.errors && r.errors.length > 0));
+        const hasErrors = !!(dataImportModel.importResult && dataImportModel.importResult.some(r => r.errors && r.errors.length > 0));
         if(!hasErrors) {
             const job = await this.jobService.submitJob('Data Import - Import', dataImportModel.dataRows.length, dataImportModel);
             await this.jobService.invokeJob(job.id);

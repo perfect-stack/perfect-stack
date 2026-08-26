@@ -52,11 +52,6 @@ export class DataImportService {
             dataImportModel.importedEntityList = [];
             dataImportModel.duplicateCheckList = [];
             dataImportModel.importResult = [];
-
-            dataImportModel.skipRowCount = 0;
-            dataImportModel.errorRowCount = 0;
-            dataImportModel.validRowCount = 0;
-            dataImportModel.totalRowCount = dataImportModel.dataRows.length;
         }
 
         if(!dataImportModel.importResult) {
@@ -71,7 +66,6 @@ export class DataImportService {
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
-            dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
             dataImportModel.importResult.push({
                 skipReason: "Blank",
                 skipFlag: true,
@@ -87,7 +81,6 @@ export class DataImportService {
             const rowErrors: DataImportError[] = [...createEntityResponse.dataImportErrors];
 
             if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
-                dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
                 dataImportModel.importResult.push({
                     skipReason: "Duplicate",
                     skipFlag: true,
@@ -104,7 +97,6 @@ export class DataImportService {
                 if (validationResultMapController.hasErrors()) {
                     const validationErrors = this.addErrors(validationResultMapController, stepIndex, dataImportModel.headers, dataImportMapping, nextRow, createEntityResponse.entity);
                     rowErrors.push(...validationErrors);
-                    dataImportModel.errorRowCount = dataImportModel.errorRowCount + 1;
                     dataImportModel.importResult.push({
                         skipReason: "Processed",
                         skipFlag: false,
@@ -117,7 +109,6 @@ export class DataImportService {
                 }
                 else {
                     if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_DB_ERROR) {
-                        dataImportModel.errorRowCount = dataImportModel.errorRowCount + 1;
                         dataImportModel.importResult.push({
                             skipReason: "Processed",
                             skipFlag: false,
@@ -130,7 +121,6 @@ export class DataImportService {
                         });
                     }
                     else {
-                        dataImportModel.validRowCount = dataImportModel.validRowCount + 1;
                         dataImportModel.importResult.push({
                             skipReason: "Processed",
                             skipFlag: false,
@@ -154,11 +144,6 @@ export class DataImportService {
             dataImportModel.importedEntityList = [];
             dataImportModel.duplicateCheckList = [];
             dataImportModel.importResult = [];
-
-            dataImportModel.skipRowCount = 0;
-            dataImportModel.errorRowCount = 0;
-            dataImportModel.validRowCount = 0;
-            dataImportModel.totalRowCount = dataImportModel.dataRows.length;
         }
 
         if(!dataImportModel.importResult) {
@@ -173,7 +158,6 @@ export class DataImportService {
         const nextRow = dataImportModel.dataRows[stepIndex];
 
         if (this.isBlankRow(dataImportModel.headers, nextRow, dataImportMapping)) {
-            dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
             dataImportModel.importedEntityList.push(null);
             dataImportModel.importResult.push({
                 skipReason: "Blank",
@@ -190,7 +174,6 @@ export class DataImportService {
             const rowErrors: DataImportError[] = [...createEntityResponse.dataImportErrors];
 
             if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
-                dataImportModel.skipRowCount = dataImportModel.skipRowCount + 1;
                 dataImportModel.importedEntityList.push(null);
                 dataImportModel.importResult.push({
                     skipReason: "Duplicate",
@@ -208,7 +191,6 @@ export class DataImportService {
                 if (validationResultMapController.hasErrors()) {
                     const validationErrors = this.addErrors(validationResultMapController, stepIndex, dataImportModel.headers, dataImportMapping, nextRow, createEntityResponse.entity);
                     rowErrors.push(...validationErrors);
-                    dataImportModel.errorRowCount = dataImportModel.errorRowCount + 1;
                     dataImportModel.importedEntityList.push(null);
                     dataImportModel.importResult.push({
                         skipReason: "Processed",
@@ -228,7 +210,6 @@ export class DataImportService {
                             throw new Error('Attempted save, but it failed with new errors');
                         }
                         else {
-                            dataImportModel.validRowCount = dataImportModel.validRowCount + 1;
                             dataImportModel.importedEntityList.push(entityResponse.entity.id);
                             dataImportModel.importResult.push({
                                 skipReason: "Processed",

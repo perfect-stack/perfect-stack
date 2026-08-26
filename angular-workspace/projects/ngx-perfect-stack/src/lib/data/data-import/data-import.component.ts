@@ -195,10 +195,44 @@ export class DataImportComponent implements OnInit, OnDestroy {
     return actual ? JSON.stringify(actual, null, 2) : null;
   }
 
-  getRowResultSummary(rowIdx: number): 'Imported' | 'Duplicate' | 'Error' | 'Skipped' | 'Valid' | '' {
+  get totalRowCount(): number {
+    return this.data?.dataRows?.length ?? 0;
+  }
+
+  get skipRowCount(): number {
+    if (!this.data?.importResult) return 0;
+    return this.data.importResult.filter(r => r && (r.skipFlag || r.skipReason === 'Blank' || r.skipReason === 'Duplicate')).length;
+  }
+
+  get errorRowCount(): number {
+    if (!this.data?.importResult) return 0;
+    return this.data.importResult.filter(r => r && !r.skipFlag && r.errors && r.errors.length > 0).length;
+  }
+
+  get validRowCount(): number {
+    if (!this.data?.importResult) return 0;
+    return this.data.importResult.filter(r => r && !r.skipFlag && (!r.errors || r.errors.length === 0)).length;
+  }
+
+  get importedRowCount(): number {
+    if (!this.data?.importResult) return 0;
+    return this.data.importResult.filter(r => r && !!r.actualEntity).length;
+  }
+
+  get unprocessedRowCount(): number {
+    const total = this.totalRowCount;
+    const processed = this.data?.importResult?.length ?? 0;
+    return Math.max(0, total - processed);
+  }
+
+  getRowResultSummary(rowIdx: number): 'Imported' | 'Duplicate' | 'Error' | 'Skipped' | 'Valid' | 'Unprocessed' | '' {
+    if (!this.data) {
+      return '';
+    }
+
     const rowResult = this.data?.importResult?.[rowIdx];
     if (!rowResult) {
-      return '';
+      return 'Unprocessed';
     }
 
     if (rowResult.actualEntity) {
@@ -233,6 +267,8 @@ export class DataImportComponent implements OnInit, OnDestroy {
         return 'bg-warning text-dark';
       case 'Skipped':
         return 'bg-secondary text-white';
+      case 'Unprocessed':
+        return 'bg-light text-muted border';
       default:
         return 'bg-light text-dark';
     }
@@ -268,8 +304,8 @@ export class DataImportComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  importHasErrors() {
-    return (this.data?.errorRowCount ?? 0) > 0 || !!(this.data?.importResult && this.data.importResult.some(r => r.errors && r.errors.length > 0));
+  importHasErrors(): boolean {
+    return this.errorRowCount > 0;
   }
 
   findErrors(rowIdx: number, colIdx: number) {
