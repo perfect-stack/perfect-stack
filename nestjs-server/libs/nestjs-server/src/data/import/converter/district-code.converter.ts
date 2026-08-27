@@ -11,7 +11,7 @@ export class DistrictCodeConverter implements DataImportConverter {
     toCriteria(line: string): Criteria {
         return {
             attributeType: AttributeType.Text,
-            operator: ComparisonOperator.InsensitiveStartsWith,
+            operator: ComparisonOperator.Equals,
             name: 'place_title',
             value: line
         };
