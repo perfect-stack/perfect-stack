@@ -3,6 +3,7 @@ import {MenuItem, MetaMenu} from '../../../domain/meta.menu';
 import { HttpClient } from '@angular/common/http';
 import {tap} from 'rxjs';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
+import {withBypassAuth} from '../../../authentication/auth-interceptor';
 
 @Injectable()
 export class MetaMenuService {
@@ -15,12 +16,11 @@ export class MetaMenuService {
     protected readonly http: HttpClient) { }
 
   initMenu() {
-    // WARNING: there is some hack code in AuthInterceptor to allow it to bypass
-    // authentication logic when the user is not logged in.
-    return () => this.http.get(`${this.stackConfig.apiUrl}/meta/menu`)
-      .pipe( tap((menu) => {
-        this.menu = menu as MetaMenu;
-      }));
+    return () => this.http.get(`${this.stackConfig.apiUrl}/meta/menu`, {
+      context: withBypassAuth()
+    }).pipe( tap((menu) => {
+      this.menu = menu as MetaMenu;
+    }));
   }
 
   getFirstLoginMenuItem(): MenuItem | null {

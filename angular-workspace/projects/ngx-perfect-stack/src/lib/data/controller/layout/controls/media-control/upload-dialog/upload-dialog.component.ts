@@ -3,6 +3,7 @@ import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient, HttpEventType, HttpHeaders } from "@angular/common/http";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../../../../ngx-perfect-stack-config";
 import {finalize, Subscription} from "rxjs";
+import {withDIY} from "../../../../../../authentication/auth-interceptor";
 
 
 export class FileItem {
@@ -112,7 +113,8 @@ export class UploadDialogComponent implements OnDestroy {
     const upload$ = this.http.put<{ path: string }>(uploadUrl, fileItem.file, {
       headers: headers,
       reportProgress: true,
-      observe: 'events'
+      observe: 'events',
+      context: withDIY()
     }).pipe(
       // Finalize runs on completion, error, or unsubscription
       finalize(() => {
