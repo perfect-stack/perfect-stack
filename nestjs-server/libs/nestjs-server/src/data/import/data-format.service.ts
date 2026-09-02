@@ -131,6 +131,10 @@ export class DataFormatService {
                     attributeName: 'status',
                     defaultValue: 'Review Accepted',
                 },
+                {
+                    attributeName: 'station_type',
+                    defaultValue: 'CARMON',
+                },
             ].map(mapping => Object.assign(new DataAttributeMapping(), mapping))
         };
     }
