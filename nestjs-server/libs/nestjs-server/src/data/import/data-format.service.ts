@@ -18,6 +18,7 @@ import {
 } from "./converter/dual-field-date-time.converter";
 import { LocationNameConverter } from "./converter/location-name.converter";
 import { DistrictCodeConverter } from "./converter/district-code.converter";
+import { PlaceLookupConverter } from "./converter/place-lookup.converter";
 
 
 
@@ -90,6 +91,10 @@ export class DataFormatService {
                     attributeName: 'site',
                     converter: new TextConverter()
                 },
+                {
+                    attributeName: 'status',
+                    defaultValue: 'CARMON',
+                },
             ].map(mapping => Object.assign(new DataAttributeMapping(), mapping))
         };
     }
@@ -108,6 +113,11 @@ export class DataFormatService {
                     defaultValue: []
                 },
                 {
+                    columnName: 'Line Name',
+                    attributeName: 'place_id',
+                    converter: new PlaceLookupConverter(this.queryService)
+                },
+                {
                     columnName: 'Easting',
                     attributeName: 'easting',
                     converter: new IntegerConverter()
@@ -116,6 +126,10 @@ export class DataFormatService {
                     columnName: 'Northing',
                     attributeName: 'northing',
                     converter: new IntegerConverter()
+                },
+                {
+                    attributeName: 'status',
+                    defaultValue: 'Review Accepted',
                 },
             ].map(mapping => Object.assign(new DataAttributeMapping(), mapping))
         };
