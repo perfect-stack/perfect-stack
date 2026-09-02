@@ -19,8 +19,15 @@
         {{totalRowCount + 1}} rows.</p>
       }
 
-      @if(job.status !== 'Completed') {
+      @if(job.status === 'Processing' || job.status === 'Submitted') {
       <p class="text-success">Job is in progress...</p>
+      }
+
+      @if(job.status === 'Error') {
+      <div class="alert alert-danger" role="alert">
+        <h5 class="alert-heading">Job Error</h5>
+        <p class="mb-0">{{job.status_message || 'An error occurred while processing the job.'}}</p>
+      </div>
       }
 
       @if (job.status === 'Completed') {
@@ -45,6 +52,17 @@
       <lib-job-progress-monitor [jobId]="jobIdImport" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
       <p> Header: 1 + Skipped: {{skipRowCount}} + Error: {{errorRowCount}} + Valid: {{validRowCount}} + Unprocessed: {{unprocessedRowCount}} = Total:
         {{totalRowCount + 1}} rows.</p>
+
+      @if(job && (job.status === 'Processing' || job.status === 'Submitted')) {
+      <p class="text-success">Job is in progress...</p>
+      }
+
+      @if(job && job.status === 'Error') {
+      <div class="alert alert-danger" role="alert">
+        <h5 class="alert-heading">Job Error</h5>
+        <p class="mb-0">{{job.status_message || 'An error occurred while importing data.'}}</p>
+      </div>
+      }
       }
     </div>
   </div>

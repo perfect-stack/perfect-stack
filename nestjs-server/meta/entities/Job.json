@@ -65,9 +65,24 @@
       "rules": [],
       "enumeration": [
         "Submitted",
-        "InProgress",
-        "Finished"
+        "Processing",
+        "Completed",
+        "Error"
       ]
+    },
+    {
+      "name": "status_message",
+      "label": "Status Message",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     },
     {
       "name": "step_index",

@@ -1,7 +1,10 @@
 
-
 @if (job(); as job) {
-  <ngb-progressbar class="mb-2" [showValue]="true" type="info" [value]="job.step_index + 1" [max]="job.step_count"></ngb-progressbar>
+  @if (job.status === 'Error') {
+    <ngb-progressbar class="mb-2" [showValue]="true" type="danger" [value]="job.step_index + 1" [max]="job.step_count"></ngb-progressbar>
+  } @else {
+    <ngb-progressbar class="mb-2" [showValue]="true" type="info" [value]="job.step_index + 1" [max]="job.step_count"></ngb-progressbar>
+  }
 }
 
 @if(timedOut()) {

@@ -340,6 +340,7 @@ export class DataImportComponent implements OnInit, OnDestroy {
       this.importStarted = true;
       this.dataImportService.importData(this.data).subscribe(result => {
         console.log('Data Import: got result:', result);
+        this.job = result;
         this.jobIdImport = result.id;
         this.phase = 'importing';
         this.location.replaceState(`/data/import?jobId=${result.id}&phase=importing`);

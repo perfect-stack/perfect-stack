@@ -37,6 +37,7 @@ export class JobService {
             id: '',
             name: name,
             status: "Submitted",
+            status_message: null,
             duration: 0,
             data: JSON.stringify(payload),
             step_index: 0,
@@ -150,75 +151,85 @@ export class JobService {
         this.logger.log(`Invoke job: loaded Job ${job.name}`);
 
         job.status = "Processing";
+        job.status_message = null;
         const jobName = job.name;
         const stepIndex = job.step_index === 0 ? 0 : job.step_index + 1;
         const stepCount = job.step_count;
 
-        // start processing it
-        // get the number of work items
-        // for each work item
-        for(let nextStepIdx = stepIndex; nextStepIdx < stepCount; nextStepIdx++) {
+        try {
+            // start processing it
+            // get the number of work items
+            // for each work item
+            for(let nextStepIdx = stepIndex; nextStepIdx < stepCount; nextStepIdx++) {
 
-            job.step_index = nextStepIdx;
-            this.logger.log(`Invoke job: step number ${nextStepIdx} of ${stepCount}`);
-            await this.executeJobStep(job, nextStepIdx);
+                job.step_index = nextStepIdx;
+                this.logger.log(`Invoke job: step number ${nextStepIdx} of ${stepCount}`);
+                await this.executeJobStep(job, nextStepIdx);
 
-            // Every n items update progress
-            if (nextStepIdx % 10 === 0) {
-                await this.dataService.save('Job', job);
+                // Every n items update progress
+                if (nextStepIdx % 10 === 0) {
+                    await this.dataService.save('Job', job);
 
-                const jobStartTime = OffsetDateTime.parse(job.created_at.toISOString());
-                const jobDurationInSeconds = Duration.between(jobStartTime, OffsetDateTime.now()).seconds();
-                if(jobDurationInSeconds > JOB_TIMEOUT_IN_SECONDS) {
-                    this.logger.error('JOB TIMEOUT EXCEEDED');
-                    throw new Error('JOB TIMEOUT EXCEEDED');
+                    const jobStartTime = OffsetDateTime.parse(job.created_at.toISOString());
+                    const jobDurationInSeconds = Duration.between(jobStartTime, OffsetDateTime.now()).seconds();
+                    if(jobDurationInSeconds > JOB_TIMEOUT_IN_SECONDS) {
+                        this.logger.error('JOB TIMEOUT EXCEEDED');
+                        throw new Error('JOB TIMEOUT EXCEEDED');
+                    }
+
+                    const chunkDurationInSeconds = Duration.between(startTime, OffsetDateTime.now()).seconds();
+                    if(chunkDurationInSeconds > JOB_CHUNK_DURATION_IN_SECONDS) {
+                        this.logger.log('Chunk complete: invoking job again');
+                        await this.invokeJob(jobId)
+                        return null;
+                    }
                 }
 
-                const chunkDurationInSeconds = Duration.between(startTime, OffsetDateTime.now()).seconds();
-                if(chunkDurationInSeconds > JOB_CHUNK_DURATION_IN_SECONDS) {
-                    this.logger.log('Chunk complete: invoking job again');
-                    await this.invokeJob(jobId)
-                    return null;
+                if (this.jobProcessingMode === 'local-async') {
+                    // Simple delay function - Used for Dev/Test purposes when running locally to simulate async behaviours
+                    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+                    await delay(100);
+                    this.logger.log(`Delay finished. Invoking jobService for job ID: ${job.id}`);
                 }
             }
 
-            if (this.jobProcessingMode === 'local-async') {
-                // Simple delay function - Used for Dev/Test purposes when running locally to simulate async behaviours
-                const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-                await delay(100);
-                this.logger.log(`Delay finished. Invoking jobService for job ID: ${job.id}`);
+            this.logger.log(`Invoke job: processed ${stepCount} steps`);
+
+            switch (jobName) {
+                case 'Data Import - Validate':
+                    const d1 = JSON.parse(job.data)
+                    d1.status = 'validated';
+                    job.data = JSON.stringify(d1);
+                    break;
+                case 'Data Import - Import':
+                    const d2 = JSON.parse(job.data)
+                    d2.status = 'imported';
+                    job.data = JSON.stringify(d2);
+                    break;
+                default:
+                    throw new Error(`Unknown job of ${jobName}`);
             }
+
+            // update progress into database
+            // update final result into database
+            const endTime = OffsetDateTime.now();
+
+            // duration is in milliseconds...
+            job.duration = Duration.between(startTime, endTime).toMillis();
+            job.status = "Completed";
+            await this.dataService.save('Job', job);
+
+            this.logger.log(`Invoke job: all finished now`);
+
+            return job;
+        } catch (error) {
+            const endTime = OffsetDateTime.now();
+            job.duration = Duration.between(startTime, endTime).toMillis();
+            job.status = "Error";
+            job.status_message = error.message ?? String(error);
+            await this.dataService.save('Job', job);
+            throw error;
         }
-
-        this.logger.log(`Invoke job: processed ${stepCount} steps`);
-
-        switch (jobName) {
-            case 'Data Import - Validate':
-                const d1 = JSON.parse(job.data)
-                d1.status = 'validated';
-                job.data = JSON.stringify(d1);
-                break;
-            case 'Data Import - Import':
-                const d2 = JSON.parse(job.data)
-                d2.status = 'imported';
-                job.data = JSON.stringify(d2);
-                break;
-            default:
-                throw new Error(`Unknown job of ${jobName}`);
-        }
-
-        // update progress into database
-        // update final result into database
-        const endTime = OffsetDateTime.now();
-
-        // duration is in milliseconds...
-        job.duration = Duration.between(startTime, endTime).toMillis();
-        job.status = "Completed";
-        await this.dataService.save('Job', job);
-
-        this.logger.log(`Invoke job: all finished now`);
-
-        return job;
     }
 
     async executeJobStep(job: Job, stepIdx: number) {

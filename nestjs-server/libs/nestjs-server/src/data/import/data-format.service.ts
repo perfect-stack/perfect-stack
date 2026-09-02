@@ -66,7 +66,7 @@ export class DataFormatService {
                     defaultValue: []
                 },
                 {
-                    columnName: 'Line',
+                    columnName: 'Existing Line',
                     attributeName: 'district_code',
                     converter: new DistrictCodeConverter(this.queryService)
                 },
