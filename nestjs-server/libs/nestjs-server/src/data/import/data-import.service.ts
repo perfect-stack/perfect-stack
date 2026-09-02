@@ -25,8 +25,18 @@ export enum DuplicateCheckAction {
     UNABLE_TO_DETERMINE
 }
 
+export class DuplicateCheckResult {
+    action: DuplicateCheckAction;
+    cellNumber: number;
+
+    constructor(action: DuplicateCheckAction = DuplicateCheckAction.NOT_A_DUPLICATE, cellNumber: number = 0) {
+        this.action = action;
+        this.cellNumber = cellNumber;
+    }
+}
+
 export interface CheckForDuplicates {
-    checkForDuplicates(entity: Entity, importSet: string[]): Promise<DuplicateCheckAction>;
+    checkForDuplicates(headers: string[], entity: Entity, duplicateCheckList: string[]): Promise<DuplicateCheckResult>;
 }
 
 export interface PostImportActions {
@@ -80,7 +90,7 @@ export class DataImportService {
             const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
             const rowErrors: DataImportError[] = [...createEntityResponse.dataImportErrors];
 
-            if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
+            if(createEntityResponse.duplicateCheckResult.action === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
                 dataImportModel.importResult.push({
                     skipReason: "Duplicate",
                     skipFlag: true,
@@ -108,7 +118,7 @@ export class DataImportService {
                     });
                 }
                 else {
-                    if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_DB_ERROR) {
+                    if(createEntityResponse.duplicateCheckResult.action === DuplicateCheckAction.DUPLICATE_IN_DB_ERROR) {
                         dataImportModel.importResult.push({
                             skipReason: "Processed",
                             skipFlag: false,
@@ -173,7 +183,7 @@ export class DataImportService {
             const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
             const rowErrors: DataImportError[] = [...createEntityResponse.dataImportErrors];
 
-            if(createEntityResponse.duplicateCheckAction === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
+            if(createEntityResponse.duplicateCheckResult.action === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
                 dataImportModel.importedEntityList.push(null);
                 dataImportModel.importResult.push({
                     skipReason: "Duplicate",
@@ -388,12 +398,13 @@ export class DataImportService {
         }
 
         // Check for duplicates (but only if no errors)
-        let duplicateCheckAction = DuplicateCheckAction.UNABLE_TO_DETERMINE;
+        let duplicateCheckResult = new DuplicateCheckResult(DuplicateCheckAction.NOT_A_DUPLICATE, 0);
         if(dataImportErrors.length === 0) {
             if(dataImportMapping.duplicateCheck) {
-                duplicateCheckAction = await dataImportMapping.duplicateCheck.checkForDuplicates(entity, duplicateCheckList);
+                duplicateCheckResult = await dataImportMapping.duplicateCheck.checkForDuplicates(headers, entity, duplicateCheckList);
+                const col = duplicateCheckResult.cellNumber !== undefined && duplicateCheckResult.cellNumber >= 0 ? duplicateCheckResult.cellNumber : 0;
 
-                switch (duplicateCheckAction) {
+                switch (duplicateCheckResult.action) {
                     case DuplicateCheckAction.NOT_A_DUPLICATE:
                     case DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE:
                     case DuplicateCheckAction.DUPLICATE_IN_DB_IGNORE:
@@ -402,21 +413,21 @@ export class DataImportService {
                     case DuplicateCheckAction.DUPLICATE_IN_FILE_ERROR:
                         dataImportErrors.push({
                             row: rowIdx,
-                            cols: [0],
+                            cols: [col],
                             message: 'A duplicate in this file already exists - unable to import'
                         });
                         break;
                     case DuplicateCheckAction.DUPLICATE_IN_DB_ERROR:
                         dataImportErrors.push({
                             row: rowIdx,
-                            cols: [0],
+                            cols: [col],
                             message: 'A duplicate entity for this data already exists in the database - unable to import'
                         });
                         break;
                     case DuplicateCheckAction.UNABLE_TO_DETERMINE:
                         dataImportErrors.push({
                             row: rowIdx,
-                            cols: [0],
+                            cols: [col],
                             message: 'Unable to perform duplicate check - due to missing or invalid data'
                         });
                         break;
@@ -425,11 +436,16 @@ export class DataImportService {
                 }
             }
             else {
-                duplicateCheckAction = DuplicateCheckAction.NOT_A_DUPLICATE;
+                duplicateCheckResult = new DuplicateCheckResult(DuplicateCheckAction.NOT_A_DUPLICATE, 0);
             }
         }
 
-        return {entity, duplicateCheckAction, dataImportErrors};
+        return {
+            entity,
+            duplicateCheckResult,
+            duplicateCheckAction: duplicateCheckResult.action,
+            dataImportErrors
+        };
     }
 
     async convertDataListExternalValue(attributeMapping: DataAttributeMapping, headers: string[], dataRow: string[]) {

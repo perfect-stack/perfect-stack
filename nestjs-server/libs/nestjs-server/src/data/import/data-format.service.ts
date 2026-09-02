@@ -9,6 +9,7 @@ import { IntegerConverter } from "./converter/integer.converter";
 import { TextConverter } from "./converter/text.converter";
 import { DuplicateEventCheck } from "./duplicate-event-check";
 import { DuplicateMonitoringStationCheck } from "./duplicate-monitoring-station-check";
+import { DuplicatePlaceCheck } from "./duplicate-place-check";
 import { PostImportEventActions } from "./post-import-event-actions";
 import { QueryService } from "../query.service";
 import { MicrochipConverter } from "./converter/microchip.converter";
@@ -30,6 +31,7 @@ export class DataFormatService {
         protected readonly queryService: QueryService,
         protected readonly duplicateEventCheck: DuplicateEventCheck,
         protected readonly duplicateMonitoringStationCheck: DuplicateMonitoringStationCheck,
+        protected readonly duplicatePlaceCheck: DuplicatePlaceCheck,
         protected readonly postImportEventActions: PostImportEventActions,
     ) { }
 
@@ -55,7 +57,7 @@ export class DataFormatService {
     private getPlaceFormat(): DataImportMapping {
         return {
             metaEntityName: 'Place',
-            duplicateCheck: null,
+            duplicateCheck: this.duplicatePlaceCheck,
             postImportActions: null,
             attributeMappings: [
                 {

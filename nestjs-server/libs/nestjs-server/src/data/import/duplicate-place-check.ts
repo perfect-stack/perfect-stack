@@ -4,36 +4,32 @@ import {Injectable} from "@nestjs/common";
 import {QueryService} from "../query.service";
 import {QueryRequest} from "../query.request";
 import {AttributeType, ComparisonOperator} from "../../domain/meta.entity";
-import {OffsetDateTime} from "@js-joda/core";
 
 
 @Injectable()
-export class DuplicateEventCheck implements CheckForDuplicates {
+export class DuplicatePlaceCheck implements CheckForDuplicates {
 
     constructor(protected readonly queryService: QueryService) {}
 
     async checkForDuplicates(headers: string[], entity: Entity, duplicateCheckList: string[]): Promise<DuplicateCheckResult> {
 
-        const bird_id = entity['bird_id'];
-        const event_type = entity['event_type'];
-        const date_time = entity['date_time'];
-
-        const candidateHeaders = ['V band', 'microchip', 'Band Number', 'bird_id', 'Date', 'date'];
-        let cellNumber = candidateHeaders.map(h => headers.indexOf(h)).find(idx => idx >= 0);
-        if (cellNumber === undefined || cellNumber < 0) {
+        const place_name = entity['place_title'];
+        let cellNumber = headers.indexOf('Line Name');
+        if (cellNumber < 0) {
+            cellNumber = headers.indexOf('place_title');
+        }
+        if (cellNumber < 0) {
             cellNumber = 0;
         }
 
-        if(bird_id && event_type && date_time) {
-
-            const dateWithoutTime = OffsetDateTime.parse(date_time).toLocalDate().toString();
-            const importSetKey = `${bird_id}|${event_type}|${dateWithoutTime}`;
+        if(place_name) {
+            const importSetKey = `${place_name}`;
 
             if(duplicateCheckList.includes(importSetKey)) {
                 return new DuplicateCheckResult(DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE, cellNumber);
             }
 
-            const queryResponse = await this.findByCriteria(bird_id, event_type, date_time);
+            const queryResponse = await this.findByCriteria(place_name);
             const dbDuplicate = queryResponse && queryResponse.totalCount > 0 ? DuplicateCheckAction.DUPLICATE_IN_DB_ERROR : DuplicateCheckAction.NOT_A_DUPLICATE;
             if(dbDuplicate === DuplicateCheckAction.NOT_A_DUPLICATE) {
                 duplicateCheckList.push(importSetKey);
@@ -45,30 +41,16 @@ export class DuplicateEventCheck implements CheckForDuplicates {
         }
     }
 
-    private async findByCriteria(bird_id: any, event_type: any, date_time: any) {
+    private async findByCriteria(place_name: any) {
         const queryRequest = new QueryRequest();
-        queryRequest.metaEntityName = 'Event';
+        queryRequest.metaEntityName = 'Place';
         queryRequest.criteria = [];
 
         queryRequest.criteria.push({
-            attributeType: AttributeType.Identifier,
+            attributeType: AttributeType.Text,
             operator: ComparisonOperator.Equals,
-            name: 'bird_id',
-            value: bird_id
-        });
-
-        queryRequest.criteria.push({
-            attributeType: AttributeType.Enumeration,
-            operator: ComparisonOperator.Equals,
-            name: 'event_type',
-            value: event_type
-        });
-
-        queryRequest.criteria.push({
-            attributeType: AttributeType.DateTime,
-            operator: ComparisonOperator.Equals,
-            name: 'date_time',
-            value: date_time
+            name: 'place_title',
+            value: place_name
         });
 
         return this.queryService.findByCriteria(queryRequest);

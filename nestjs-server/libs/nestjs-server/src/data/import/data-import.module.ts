@@ -5,6 +5,7 @@ import {DataModule} from "../data.module";
 import {MetaEntityModule} from "../../meta/meta-entity/meta-entity.module";
 import {DuplicateEventCheck} from "./duplicate-event-check";
 import {DuplicateMonitoringStationCheck} from "./duplicate-monitoring-station-check";
+import {DuplicatePlaceCheck} from "./duplicate-place-check";
 import {PostImportEventActions} from "./post-import-event-actions";
 import {DataImportFileService} from "./data-import-file.service";
 import {DataFormatService} from "./data-format.service";
@@ -18,6 +19,7 @@ import {DataFormatService} from "./data-format.service";
         DataImportFileService,
         DuplicateEventCheck,
         DuplicateMonitoringStationCheck,
+        DuplicatePlaceCheck,
         PostImportEventActions,
         DataFormatService,
     ],
