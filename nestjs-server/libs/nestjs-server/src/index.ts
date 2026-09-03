@@ -1,49 +1,65 @@
 import { AuthenticationModule } from './authentication/authentication.module';
 import { AuthenticationService } from './authentication/authentication.service';
-import { AuditModule } from "./audit/audit.module";
+import { AuditModule } from './audit/audit.module';
 import { BatchModule } from './batch/batch.module';
-import { BatchJob } from "./batch/batch-job";
+import { BatchJob } from './batch/batch-job';
 import { PublicApi } from './authentication/public-api';
 import { JwtAuthGuard } from './authentication/jwt-auth.guard';
 import { ClientConfigModule } from './client/config/client-config.module';
 import { ClientConfigService } from './client/config/client-config.service';
 import { DataModule } from './data/data.module';
-import { DataImportModule } from "./data/import/data-import.module";
+import { DataImportModule } from './data/import/data-import.module';
 import { DataService } from './data/data.service';
-import { EventModule } from "./event/event.module";
-import { DiscriminatorMapping } from "./data/discriminator.service";
+import { EsriModule, ESRIModule } from './esri/esri.module';
+import { ESRIService, EsriService } from './esri/esri.service';
+import { EventModule } from './event/event.module';
+import { DiscriminatorMapping } from './data/discriminator.service';
 import { DiscriminatorService } from './data/discriminator.service';
 import { FileRepositoryModule } from './file/file-repository.module';
 import { FileRepositoryService } from './file/file-repository.service';
-import { JobModule } from "./job/job.module";
-import { JobService } from "./job/job.service";
-import { KnexModule } from "./knex/knex.module";
-import { MapModule } from "./map/map.module";
-import { MapService } from "./map/map.service";
+import { JobModule } from './job/job.module';
+import { JobService } from './job/job.service';
+import { KnexModule } from './knex/knex.module';
+import { MapModule } from './map/map.module';
+import { MapService } from './map/map.service';
 import { OrmModule } from './orm/orm.module';
 import { OrmService } from './orm/orm.service';
-import { QueryService } from "./data/query.service";
+import { QueryService } from './data/query.service';
 import { TypeaheadService } from './typeahead/typeahead.service';
 import { TypeaheadModule } from './typeahead/typeahead.module';
 import { MetaEntityModule } from './meta/meta-entity/meta-entity.module';
 import { MetaEntityService } from './meta/meta-entity/meta-entity.service';
 import { MetaMenuModule } from './meta/meta-menu/meta-menu.module';
 import { MetaPageModule } from './meta/meta-page/meta-page.module';
-import { MetaRoleModule } from "./meta/meta-role/meta-role.module";
+import { MetaRoleModule } from './meta/meta-role/meta-role.module';
 import { MediaRepositoryModule } from './media/media-repository.module';
 import { MediaRepositoryService } from './media/media-repository.service';
-import { MigrateModule } from "./migrate/mirgrate.module";
-import { RuleModule } from "./data/rule/rule.module";
-import { SettingsModule } from "./settings/settings.module";
-import { SettingsService } from "./settings/settings.service";
+import { MigrateModule } from './migrate/mirgrate.module';
+import { RuleModule } from './data/rule/rule.module';
+import { SettingsModule } from './settings/settings.module';
+import { SettingsService } from './settings/settings.service';
 
-export { AuthenticationModule, AuthenticationService, AuditModule, PublicApi, JwtAuthGuard };
+export {
+  AuthenticationModule,
+  AuthenticationService,
+  AuditModule,
+  PublicApi,
+  JwtAuthGuard,
+};
 export { BatchModule, BatchJob };
 export { ClientConfigModule, ClientConfigService };
-export { DataModule, DataImportModule, DataService, DiscriminatorMapping, DiscriminatorService, QueryService };
+export {
+  DataModule,
+  DataImportModule,
+  DataService,
+  DiscriminatorMapping,
+  DiscriminatorService,
+  QueryService,
+};
 export * from './domain/entity';
+export { EsriModule, ESRIModule, ESRIService, EsriService };
 export { EventModule };
-export { JobModule, JobService }
+export { JobModule, JobService };
 export { FileRepositoryModule, FileRepositoryService };
 export { KnexModule };
 export { MapModule, MapService };
