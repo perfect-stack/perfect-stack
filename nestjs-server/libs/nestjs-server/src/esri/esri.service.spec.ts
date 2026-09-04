@@ -105,11 +105,11 @@ describe('ESRIService (Unit)', () => {
   });
 
   describe('Missing API Key Handling', () => {
-    it('should throw an error when ESRI_API_KEY is not configured in ConfigService', async () => {
+    it('should throw an error when ESRI_API_KEY is not configured and ENV_NAME is not set', async () => {
       jest.spyOn(configService, 'get').mockReturnValue(undefined);
 
       await expect(service.getAltitude(1756902, 5434431)).rejects.toThrow(
-        /No ESRI_API_KEY configured in ConfigService/,
+        /No ESRI_API_KEY configured in ConfigService or AWS Secrets Manager/,
       );
     });
   });

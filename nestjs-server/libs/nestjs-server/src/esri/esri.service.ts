@@ -1,6 +1,10 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import {
+  GetSecretValueCommand,
+  SecretsManagerClient,
+} from '@aws-sdk/client-secrets-manager';
 import { firstValueFrom } from 'rxjs';
 import * as proj4 from 'proj4';
 import { Nztm } from '../map/map.service';
@@ -66,6 +70,7 @@ export class ESRIService {
   public static readonly WEB_MERCATOR_WKID = 3857;
 
   private readonly altitudeCache = new Map<string, number>();
+  private cachedApiKey: string | null = null;
 
   constructor(
     private readonly httpService: HttpService,
@@ -142,25 +147,13 @@ export class ESRIService {
   /**
    * PRIMARY ELEVATION QUERY:
    * Queries ESRI WorldElevation Dynamic Terrain ImageServer using WGS84 coordinates and ESRI_API_KEY.
-   * Throws an error if ESRI_API_KEY is not configured in ConfigService.
+   * Throws an error if ESRI_API_KEY is not configured in ConfigService or AWS Secrets Manager.
    */
   public async getAltitudeFromEsriTerrain(
     x: number,
     y: number,
   ): Promise<number | null> {
-    const apiKey =
-      this.configService?.get<string>('ESRI_API_KEY') ||
-      this.configService?.get<string>('ARCGIS_API_KEY') ||
-      this.configService?.get<string>('ARCGIS_TOKEN');
-
-    if (!apiKey) {
-      this.logger.error(
-        `No ESRI_API_KEY configured in ConfigService; cannot perform WorldElevation Terrain lookup.`,
-      );
-      throw new Error(
-        `No ESRI_API_KEY configured in ConfigService; cannot perform WorldElevation Terrain lookup.`,
-      );
-    }
+    const apiKey = await this.getApiKey();
 
     try {
       const prj4 = (proj4 as any).default || proj4;
@@ -312,6 +305,66 @@ export class ESRIService {
       );
       return null;
     }
+  }
+
+  /**
+   * Retrieves the ESRI API Key from ConfigService or AWS Secrets Manager using the service role.
+   * If ESRI_API_KEY is not configured directly, performs a secret lookup using ENV_NAME:
+   *   secretName = `${ENV_NAME}/capture/esri/api-key`
+   * Throws an error if the secret cannot be retrieved or returns null.
+   */
+  public async getApiKey(): Promise<string> {
+    if (this.cachedApiKey) {
+      return this.cachedApiKey;
+    }
+
+    let apiKey = this.configService?.get<string>('ESRI_API_KEY');
+
+    if (!apiKey) {
+      const envName = this.configService?.get<string>('ENV_NAME', null);
+      if (envName) {
+        const secretName = `${envName}/capture/esri/api-key`;
+        try {
+          this.logger.log(
+            `Fetching ESRI API key from AWS Secrets Manager: ${secretName}`,
+          );
+          const client = new SecretsManagerClient({});
+          const command = new GetSecretValueCommand({
+            SecretId: secretName,
+          });
+          const response = await client.send(command);
+          if (response.SecretString) {
+            apiKey = response.SecretString;
+          }
+        } catch (error: any) {
+          this.logger.error(
+            `Failed to retrieve ESRI API key from AWS Secrets Manager (${secretName}): ${error?.message || error}`,
+          );
+          throw new Error(
+            `Failed to retrieve ESRI API key from AWS Secrets Manager (${secretName}): ${error?.message || error}`,
+          );
+        }
+      }
+    }
+
+    if (!apiKey) {
+      this.logger.error(
+        `No ESRI_API_KEY configured in ConfigService or AWS Secrets Manager; cannot perform WorldElevation Terrain lookup.`,
+      );
+      throw new Error(
+        `No ESRI_API_KEY configured in ConfigService or AWS Secrets Manager; cannot perform WorldElevation Terrain lookup.`,
+      );
+    }
+
+    this.cachedApiKey = apiKey;
+    return apiKey;
+  }
+
+  /**
+   * Alias for getApiKey()
+   */
+  public async getAPIKey(): Promise<string> {
+    return this.getApiKey();
   }
 
   /**
