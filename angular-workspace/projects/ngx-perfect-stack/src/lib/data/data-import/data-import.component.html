@@ -11,7 +11,17 @@
 
     <div class="col-4">
       @if (job && phase === 'validating') {
+      @if (job.status === 'Completed') {
+        @if (importHasErrors()) {
+        <h3>Invalid</h3>
+        } @else {
+        <h3>Valid</h3>
+        }
+      } @else if (job.status === 'Error') {
+      <h3>Invalid</h3>
+      } @else {
       <h3>Validating</h3>
+      }
 
       <lib-job-progress-monitor [jobId]="jobIdValidate" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
       @if(data) {
@@ -48,7 +58,11 @@
       }
 
       @if (data && phase === 'importing') {
+      @if (job && (job.status === 'Completed' || job.status === 'Error')) {
+      <h3>Complete</h3>
+      } @else {
       <h3>Importing</h3>
+      }
       <lib-job-progress-monitor [jobId]="jobIdImport" (jobUpdated)="onJobUpdated($event)"></lib-job-progress-monitor>
       <p> Header: 1 + Skipped: {{skipRowCount}} + Error: {{errorRowCount}} + Valid: {{validRowCount}} + Unprocessed: {{unprocessedRowCount}} = Total:
         {{totalRowCount + 1}} rows.</p>
@@ -57,7 +71,12 @@
       <p class="text-success">Job is in progress...</p>
       }
 
+      @if(job && job.status === 'Completed') {
+      <p class="text-success">Import Successful</p>
+      }
+
       @if(job && job.status === 'Error') {
+      <p class="text-danger">Import Failed</p>
       <div class="alert alert-danger" role="alert">
         <h5 class="alert-heading">Job Error</h5>
         <p class="mb-0">{{job.status_message || 'An error occurred while importing data.'}}</p>
