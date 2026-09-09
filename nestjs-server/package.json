@@ -26,12 +26,12 @@
     "migrate:images": "ts-node -r tsconfig-paths/register src/bin/migrate-images.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-eventbridge": "^3.895.0",
-    "@aws-sdk/client-lambda": "^3.886.0",
-    "@aws-sdk/client-rds": "^3.886.0",
-    "@aws-sdk/client-s3": "^3.886.0",
-    "@aws-sdk/client-secrets-manager": "^3.886.0",
-    "@aws-sdk/s3-request-presigner": "^3.886.0",
+    "@aws-sdk/client-eventbridge": "^3.1128.0",
+    "@aws-sdk/client-lambda": "^3.1128.0",
+    "@aws-sdk/client-rds": "^3.1128.0",
+    "@aws-sdk/client-s3": "^3.1128.0",
+    "@aws-sdk/client-secrets-manager": "^3.1128.0",
+    "@aws-sdk/s3-request-presigner": "^3.1128.0",
     "@js-joda/core": "^5.6.5",
     "@js-joda/locale_en": "^4.15.1",
     "@js-joda/timezone": "^2.22.0",
@@ -44,8 +44,7 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.2.3",
     "@nestjs/swagger": "^11.4.7",
-    "@types/pg": "^8.15.4",
-    "aws-lambda": "^1.0.6",
+    "@types/pg": "^8.16.0",
     "aws-serverless-express": "^3.4.0",
     "cls-hooked": "^4.2.2",
     "fast-csv": "^5.0.2",
@@ -62,17 +61,17 @@
     "rxjs": "^7.8.2",
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.24",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.2.3",
-    "@types/express": "^5.0.3",
+    "@types/express": "^5.0.6",
     "@types/jest": "29.5.14",
     "@types/mime-types": "^3.0.1",
     "@types/multer": "^1.4.13",
-    "@types/node": "^24.0.1",
+    "@types/node": "^24.13.3",
     "@types/passport-jwt": "^4.0.1",
     "@types/sequelize": "^4.28.20",
     "@types/supertest": "^6.0.3",
@@ -84,7 +83,7 @@
     "jest": "30.0.0",
     "nodemon": "^3.1.14",
     "prettier": "^3.5.3",
-    "semantic-release": "^24.2.5",
+    "semantic-release": "^25.0.9",
     "semantic-release-monorepo": "^8.0.2",
     "source-map-support": "^0.5.21",
     "supertest": "^7.1.1",
@@ -137,6 +136,12 @@
     "./*": {
       "types": "./dist/libs/nestjs-server/*.d.ts",
       "default": "./dist/libs/nestjs-server/*.js"
+    }
+  },
+  "overrides": {
+    "multer": "^2.3.0",
+    "sequelize": {
+      "uuid": "$uuid"
     }
   }
 }
