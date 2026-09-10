@@ -5,7 +5,6 @@ import {QueryService} from "../data/query.service";
 import {DataImportService} from "../data/import/data-import.service";
 import {Duration, OffsetDateTime} from "@js-joda/core";
 import {ConfigService} from "@nestjs/config";
-import {InvokeCommand, LambdaClient} from "@aws-sdk/client-lambda";
 import {EventEmitter2, OnEvent} from "@nestjs/event-emitter";
 import {EventBridgeClient, PutEventsCommand, PutEventsCommandInput} from "@aws-sdk/client-eventbridge";
 
@@ -64,38 +63,6 @@ export class JobService {
                 break;
             default:
                 throw new Error(`Invalid job processing mode: ${this.jobProcessingMode}`);
-        }
-    }
-
-    private async invokeJobLambda_OLD(jobId: string) {
-
-        this.logger.log(`Invoking Lambda: for job ID: ${jobId}`);
-
-        const payload = {
-            jobId
-        };
-
-        const envName = this.configService.get('ENV_NAME', null);
-        if(!envName) {
-            throw new Error(`ENV_NAME environment variable is not set. Cannot determine Lambda function name.`);
-        }
-
-        const lambdaFunctionName = `${envName}-kims-docker-function`;
-        const command = new InvokeCommand({
-            FunctionName: lambdaFunctionName,
-            InvocationType: 'Event', // For asynchronous invocation
-            Payload: JSON.stringify(payload),
-        });
-
-        const lambdaClient = new LambdaClient();
-        try {
-            const response = await lambdaClient.send(command);
-            // For InvocationType: 'Event', a 202 status code indicates the request was accepted.
-            this.logger.log(`Lambda invocation request sent successfully for job ${jobId}. Status code: ${response.StatusCode}`);
-        }
-        catch (error) {
-            this.logger.error(`Failed to send invocation request for Lambda function ${lambdaFunctionName} for job ${jobId}`, error);
-            throw error;
         }
     }
 

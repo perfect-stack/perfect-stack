@@ -23,9 +23,7 @@ import * as os from "node:os";
 import {v4 as uuidv4} from "uuid";
 import {DataImportFileService} from "../data/import/data-import-file.service";
 import {ConfigService} from "@nestjs/config";
-import {EventEmitter2, OnEvent} from "@nestjs/event-emitter";
 
-import {InvokeCommand, LambdaClient} from "@aws-sdk/client-lambda";
 
 const storageOptions = diskStorage({
     // Use a function for destination to ensure the directory exists.

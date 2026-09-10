@@ -14,19 +14,6 @@ export class JobController {
     constructor(protected readonly jobService: JobService) {
     }
 
-    async submitJob(payload: any): Promise<Job> {
-        // create the job in the database with a new id
-        // return the job id
-        return ;
-    }
-
-    async invokeJob(jobId: string): Promise<void> {
-        // load the job
-        // start processing it
-        // update progress into database
-        // update final result into database
-    }
-
 
     @ActionPermit(ActionType.Read)
     @SubjectName('Job')
