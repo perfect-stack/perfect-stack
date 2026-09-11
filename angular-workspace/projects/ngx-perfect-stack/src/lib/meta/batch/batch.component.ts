@@ -96,7 +96,7 @@ export class BatchComponent implements OnInit {
           (err.error?.message && String(err.error.message).includes('already running'));
 
         if (isConflict) {
-          this.toastService.showWarning(`Job '${jobName}' was already running. Monitoring the Job in progress...`);
+          this.toastService.showWarning(`Job '${jobName}' was already running. Monitoring the Job in progress.`);
           this.jobService.getLatestJob(jobName).subscribe(latestJob => {
             if (jobSummary && latestJob) {
               jobSummary.lastJob = latestJob;
