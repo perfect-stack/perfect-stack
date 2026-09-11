@@ -1,5 +1,7 @@
+import { JobExecutionContext, TaskJobHandler } from '../job/job.model';
 
-export interface BatchJob {
+export interface BatchJob extends TaskJobHandler {
     getSummary(): Promise<any>;
-    execute(): Promise<any>;
+    execute(context?: JobExecutionContext): Promise<any>;
+    showInBatchUI?(): boolean;
 }

@@ -1,47 +1,29 @@
 import {Injectable, Logger} from "@nestjs/common";
 import {BatchJob} from "./batch-job";
-
+import {JobService} from "../job/job.service";
 
 @Injectable()
 export class BatchService {
 
     private logger = new Logger(BatchService.name);
-    private batchJobMap = new Map<string, BatchJob>();
 
+    constructor(protected readonly jobService: JobService) {}
 
     getList(): string[] {
-        return Array.from(this.batchJobMap.keys()).sort();
+        return this.jobService.getJobList();
     }
 
     addBatchJob(jobName: string, batchJob: BatchJob) {
-        if(!this.batchJobMap.has(jobName)) {
-            this.batchJobMap.set(jobName, batchJob);
-        }
-        else {
-            throw new Error(`Batch job with name ${jobName} already exists`);
-        }
+        this.jobService.registerJob(jobName, batchJob);
     }
 
     async getSummary(jobName: string) {
         this.logger.log(`Get summary of batch job: ${jobName}`);
-        const batchJob = this.batchJobMap.get(jobName);
-        if(batchJob) {
-            return batchJob.getSummary();
-        }
-        else {
-            throw new Error(`Unable to find batch job with name ${jobName}`);
-        }
+        return this.jobService.getJobSummary(jobName);
     }
-
 
     async execute(jobName: string): Promise<any> {
         this.logger.log(`Execute batch job: ${jobName}`);
-        const batchJob = this.batchJobMap.get(jobName);
-        if(batchJob) {
-            return batchJob.execute();
-        }
-        else {
-            throw new Error(`Unable to find batch job with name ${jobName}`);
-        }
+        return this.jobService.startJob(jobName);
     }
 }

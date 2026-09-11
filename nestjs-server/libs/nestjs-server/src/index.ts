@@ -3,6 +3,7 @@ import { AuthenticationService } from './authentication/authentication.service';
 import { AuditModule } from './audit/audit.module';
 import { BatchModule } from './batch/batch.module';
 import { BatchJob } from './batch/batch-job';
+import { BatchService } from './batch/batch.service';
 import { PublicApi } from './authentication/public-api';
 import { JwtAuthGuard } from './authentication/jwt-auth.guard';
 import { ClientConfigModule } from './client/config/client-config.module';
@@ -19,6 +20,7 @@ import { FileRepositoryModule } from './file/file-repository.module';
 import { FileRepositoryService } from './file/file-repository.service';
 import { JobModule } from './job/job.module';
 import { JobService } from './job/job.service';
+import { Job, JobExecutionContext, JobHandler, TaskJobHandler, StepJobHandler } from './job/job.model';
 import { KnexModule } from './knex/knex.module';
 import { MapModule } from './map/map.module';
 import { MapService } from './map/map.service';
@@ -46,7 +48,7 @@ export {
   PublicApi,
   JwtAuthGuard,
 };
-export { BatchModule, BatchJob };
+export { BatchModule, BatchJob, BatchService };
 export { ClientConfigModule, ClientConfigService };
 export {
   DataModule,
@@ -59,7 +61,15 @@ export {
 export * from './domain/entity';
 export { EsriModule, ESRIModule, ESRIService, EsriService };
 export { EventModule };
-export { JobModule, JobService };
+export {
+  JobModule,
+  JobService,
+  Job,
+  JobExecutionContext,
+  JobHandler,
+  TaskJobHandler,
+  StepJobHandler,
+};
 export { FileRepositoryModule, FileRepositoryService };
 export { KnexModule };
 export { MapModule, MapService };

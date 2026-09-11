@@ -1,14 +1,15 @@
 <div class="container-page">
 
   <div class="row pt-2">
-    <div class="col-9">
+    <div class="col-10">
 
       <h1>Batch Jobs</h1>
 
       <table class="table mt-4">
         <thead>
-        <th>Job Name</th>
-        <th>Execute</th>
+        <th style="width: 45%;">Job Name</th>
+        <th style="width: 35%;">Progress</th>
+        <th style="width: 20%;">Execute</th>
         </thead>
         <tbody>
         <tr *ngFor="let job of batchJobs">
@@ -36,11 +37,20 @@
               </table>
             </div>
             <div *ngIf="job.name !== 'db_snapshot' && job.summary">
-              {{job.name}} summary: {{job.summary.rowCount}}
+              {{job.name}} summary: {{job.summary?.rowCount !== undefined ? job.summary.rowCount : (job.summary | json)}}
+            </div>
+            <div *ngIf="!job.summary">
+              {{job.name}}
             </div>
           </td>
           <td>
-            <button class="btn btn-warning ms-2" (click)="onExecute(job.name)">Execute {{job.name}}</button>
+            <lib-job-progress-monitor *ngIf="job.currentJobId" [jobId]="job.currentJobId" (jobUpdated)="onJobUpdated(job, $event)"></lib-job-progress-monitor>
+          </td>
+          <td>
+            <button class="btn btn-warning ms-2" [disabled]="job.isRunning" (click)="onExecute(job.name)">
+              <span *ngIf="job.isRunning" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              Execute {{job.name}}
+            </button>
           </td>
         </tr>
         </tbody>

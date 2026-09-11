@@ -1,9 +1,11 @@
-
 @if (job(); as job) {
+  @if (job.status_message) {
+    <div class="small text-muted mb-1">{{ job.status_message }}</div>
+  }
   @if (job.status === 'Error') {
-    <ngb-progressbar class="mb-2" [showValue]="true" type="danger" [value]="job.step_index + 1" [max]="job.step_count"></ngb-progressbar>
+    <ngb-progressbar class="mb-2" [showValue]="job.step_count > 0" type="danger" [value]="job.step_count > 0 ? (job.step_index + 1) : 100" [max]="job.step_count > 0 ? job.step_count : 100"></ngb-progressbar>
   } @else {
-    <ngb-progressbar class="mb-2" [showValue]="true" type="info" [value]="job.step_index + 1" [max]="job.step_count"></ngb-progressbar>
+    <ngb-progressbar class="mb-2" [showValue]="job.step_count > 0" [striped]="job.status === 'Processing'" [animated]="job.status === 'Processing'" type="info" [value]="job.step_count > 0 ? (job.step_index + 1) : 100" [max]="job.step_count > 0 ? job.step_count : 100"></ngb-progressbar>
   }
 }
 

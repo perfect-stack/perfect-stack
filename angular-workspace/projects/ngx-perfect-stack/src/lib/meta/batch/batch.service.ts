@@ -1,26 +1,24 @@
-import {Inject, Injectable} from '@angular/core';
-import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
-import {HttpClient} from "@angular/common/http";
+import {Injectable} from '@angular/core';
+import {JobService} from "../../job/job.service";
 import {Observable} from "rxjs";
+import {Job} from "../../job/job.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class BatchService {
 
-  constructor(@Inject(STACK_CONFIG)
-              protected readonly stackConfig: NgxPerfectStackConfig,
-              protected readonly http: HttpClient) { }
+  constructor(protected readonly jobService: JobService) { }
 
   getList(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.stackConfig.apiUrl}/batch/list`);
+    return this.jobService.getJobList();
   }
 
-  getSummary(batchJob: string) {
-    return this.http.get(`${this.stackConfig.apiUrl}/batch/${batchJob}`);
+  getSummary(batchJob: string): Observable<any> {
+    return this.jobService.getJobSummary(batchJob);
   }
 
-  execute(batchJob: string) {
-    return this.http.post(`${this.stackConfig.apiUrl}/batch/${batchJob}`, null);
+  execute(batchJob: string): Observable<Job> {
+    return this.jobService.startJob(batchJob);
   }
 }
