@@ -31,7 +31,7 @@ export class JobProgressMonitorComponent {
       // timeout is set to be longer than the Job timeout so that the monitor waits until all hope is lost
       const timeout$ = timer(65 * 60000).pipe(tap(() => this.timedOut.set(true)));
 
-      return timer(0, 3000).pipe(
+      return timer(0, 2000).pipe(
         // For each tick, get the job
         switchMap(() => this.jobService.getJob(id)),
         // Stop polling if the job is "Completed" or "Error", but emit the final value.
