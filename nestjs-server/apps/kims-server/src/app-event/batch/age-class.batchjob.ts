@@ -99,7 +99,7 @@ export class AgeClassBatchJob implements BatchJob {
         await pool.end();
         console.log('AgeClassBatchJob.execute() finished.');
         console.log('AgeClassBatchJob - Result: ', result);
-        return;
+        return result;
     }
 
     async selectBirds(pool: Pool): Promise<any[]> {

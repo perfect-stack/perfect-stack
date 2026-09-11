@@ -1,11 +1,16 @@
-import {Injectable, Logger} from "@nestjs/common";
+import {BadRequestException, ConflictException, Injectable, Logger} from "@nestjs/common";
 import {Job, JobExecutionContext, JobHandler, StepJobHandler, TaskJobHandler} from "./job.model";
 import {DataService} from "../data/data.service";
+import {OrmService} from "../orm/orm.service";
 import {QueryService} from "../data/query.service";
+import {QueryRequest} from "../data/query.request";
+import {AttributeType, ComparisonOperator} from "../domain/meta.entity";
 import {Duration, OffsetDateTime} from "@js-joda/core";
 import {ConfigService} from "@nestjs/config";
 import {EventEmitter2, OnEvent} from "@nestjs/event-emitter";
 import {EventBridgeClient, PutEventsCommand, PutEventsCommandInput} from "@aws-sdk/client-eventbridge";
+import {QueryTypes, Transaction} from "sequelize";
+import * as uuid from 'uuid';
 
 const JOB_TIMEOUT_IN_SECONDS = 60 * 60;
 const JOB_CHUNK_DURATION_IN_SECONDS = 5 + 60;
@@ -19,6 +24,7 @@ export class JobService {
 
     constructor(
         protected readonly configService: ConfigService,
+        protected readonly ormService: OrmService,
         protected readonly dataService: DataService,
         protected readonly queryService: QueryService,
         protected readonly eventEmitter: EventEmitter2
@@ -61,10 +67,31 @@ export class JobService {
         return null;
     }
 
+    async getLatestJob(jobName: string): Promise<Job | null> {
+        const queryRequest = new QueryRequest();
+        queryRequest.metaEntityName = 'Job';
+        queryRequest.criteria = [
+            {
+                name: 'name',
+                value: jobName,
+                attributeType: AttributeType.Text,
+                operator: ComparisonOperator.Equals,
+            },
+        ];
+        queryRequest.orderByName = 'created_at';
+        queryRequest.orderByDir = 'DESC';
+        queryRequest.pageSize = 1;
+        const response = await this.queryService.findByCriteria(queryRequest);
+        if (response && response.resultList && response.resultList.length > 0) {
+            return response.resultList[0] as Job;
+        }
+        return null;
+    }
+
     async startJob(name: string, payload: any = null, stepCount: number = 1): Promise<Job> {
         const handler = this.jobHandlers.get(name);
         if (!handler) {
-            throw new Error(`Unable to find job handler for '${name}'`);
+            throw new BadRequestException(`Unable to find job handler for '${name}'`);
         }
         const job = await this.submitJob(name, stepCount, payload);
         await this.invokeJob(job.id);
@@ -72,21 +99,76 @@ export class JobService {
     }
 
     async submitJob(name: string, stepCount: number, payload: any): Promise<Job> {
-        const job: Job = {
-            id: '',
-            name: name,
-            status: "Submitted",
-            status_message: null,
-            duration: 0,
-            data: payload ? (typeof payload === 'string' ? payload : JSON.stringify(payload)) : null,
-            step_index: 0,
-            step_count: stepCount,
-            created_at: null,
-            updated_at: null,
-        };
+        // Use a database transaction and PostgreSQL advisory lock to ensure that across
+        // multiple NestJS server instances, only one instance of a Batch Job can be submitted/running at a given time.
+        return await this.ormService.sequelize.transaction(async (txn: Transaction) => {
+            // Acquire a transaction-level advisory lock specifically for this job name
+            // The lock is automatically released when this transaction commits or rolls back
+            await this.ormService.sequelize.query(
+                `SELECT pg_advisory_xact_lock(hashtext(:lockKey));`,
+                {
+                    replacements: { lockKey: `batch_job_${name}` },
+                    transaction: txn,
+                }
+            );
 
-        const entityResponse = await this.dataService.save('Job', job);
-        return entityResponse.entity as Job;
+            // Check if there is already a running job with this name
+            const activeJobs: Job[] = await this.ormService.sequelize.query(
+                `SELECT id, name, status, status_message, step_index, step_count, duration, data, result_summary, created_at, updated_at
+                 FROM "Job"
+                 WHERE name = :name AND status IN ('Submitted', 'Processing')
+                 ORDER BY created_at DESC
+                 FOR UPDATE;`,
+                {
+                    replacements: { name },
+                    type: QueryTypes.SELECT,
+                    transaction: txn,
+                }
+            );
+
+            if (activeJobs && activeJobs.length > 0) {
+                const activeJob = activeJobs[0];
+
+                // Check if the job has exceeded maximum timeout (e.g. from a crashed previous instance)
+                const startTime = activeJob.created_at ? new Date(activeJob.created_at).getTime() : 0;
+                const elapsedSeconds = startTime ? (Date.now() - startTime) / 1000 : 0;
+
+                if (elapsedSeconds > JOB_TIMEOUT_IN_SECONDS) {
+                    this.logger.warn(`Found stale job ${activeJob.id} for '${name}' running for ${elapsedSeconds}s (exceeded timeout). Marking as Error.`);
+                    await this.ormService.sequelize.query(
+                        `UPDATE "Job"
+                         SET status = 'Error', status_message = 'Job timed out or server process terminated'
+                         WHERE id = :id;`,
+                        {
+                            replacements: { id: activeJob.id },
+                            transaction: txn,
+                        }
+                    );
+                } else {
+                    this.logger.warn(`Attempted to start job '${name}' but job ${activeJob.id} is already in status '${activeJob.status}'.`);
+                    throw new ConflictException(`Job '${name}' is already running (Job ID: ${activeJob.id}, status: ${activeJob.status}). Only one instance can run at a time.`);
+                }
+            }
+
+            // No active job running, proceed to create new job
+            const newJob: Job = {
+                id: uuid.v4(),
+                name: name,
+                status: "Submitted",
+                status_message: null,
+                duration: 0,
+                data: payload ? (typeof payload === 'string' ? payload : JSON.stringify(payload)) : null,
+                step_index: 0,
+                step_count: stepCount,
+                result_summary: null,
+                created_at: new Date(),
+                updated_at: new Date(),
+            };
+
+            const JobModel = this.ormService.sequelize.model('Job');
+            const createdModel = await JobModel.create(newJob as any, { transaction: txn });
+            return (typeof (createdModel as any).toJSON === 'function' ? (createdModel as any).toJSON() : createdModel) as Job;
+        });
     }
 
     async invokeJob(jobId: string) {
@@ -170,6 +252,7 @@ export class JobService {
                 await handler.executeStep(job, nextStepIdx);
 
                 if (nextStepIdx % 10 === 0) {
+                    job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
                     await this.dataService.save('Job', job);
 
                     const jobStartTime = OffsetDateTime.parse(job.created_at.toISOString());
@@ -194,7 +277,10 @@ export class JobService {
             }
 
             if (handler.onComplete) {
-                await handler.onComplete(job);
+                const summary = await handler.onComplete(job);
+                if (summary !== undefined) {
+                    job.result_summary = typeof summary === 'string' ? summary : JSON.stringify(summary);
+                }
             }
 
             const endTime = OffsetDateTime.now();
@@ -230,6 +316,7 @@ export class JobService {
                 if (statusMessage !== undefined) {
                     job.status_message = statusMessage;
                 }
+                job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
                 const now = Date.now();
                 if (now - lastSaveTime > 500 || (job.step_count && stepIndex >= job.step_count)) {
                     await this.dataService.save('Job', job);
@@ -240,6 +327,7 @@ export class JobService {
                 const dataObj = job.data ? JSON.parse(job.data) : {};
                 dataObj.summary = summary;
                 job.data = JSON.stringify(dataObj);
+                job.result_summary = typeof summary === 'string' ? summary : JSON.stringify(summary);
             }
         };
 

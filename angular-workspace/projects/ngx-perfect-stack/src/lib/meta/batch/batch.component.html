@@ -1,21 +1,42 @@
 <div class="container-page">
 
   <div class="row pt-2">
-    <div class="col-10">
+    <div class="col-12">
 
       <h1>Batch Jobs</h1>
 
-      <table class="table mt-4">
+      <table class="table mt-4 align-middle">
         <thead>
-        <th style="width: 45%;">Job Name</th>
-        <th style="width: 35%;">Progress</th>
-        <th style="width: 20%;">Execute</th>
+        <th style="width: 15%;">Job Name</th>
+        <th style="width: 18%;">Last Run</th>
+        <th style="width: 10%;">Duration</th>
+        <th style="width: 25%;">Summary</th>
+        <th style="width: 22%;">Progress</th>
+        <th style="width: 10%;">Execute</th>
         </thead>
         <tbody>
         <tr *ngFor="let job of batchJobs">
+          <td class="fw-semibold">
+            {{job.name}}
+          </td>
+          <td>
+            <div *ngIf="job.lastJob">
+              <div>{{job.lastJob.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</div>
+              <div class="mt-1">
+                <span *ngIf="job.lastJob.status === 'Completed'" class="badge text-bg-success">Completed</span>
+                <span *ngIf="job.lastJob.status === 'Error'" class="badge text-bg-danger" [title]="job.lastJob.status_message || 'Error'">Error</span>
+                <span *ngIf="job.lastJob.status === 'Processing'" class="badge text-bg-info">Processing</span>
+                <span *ngIf="job.lastJob.status === 'Submitted'" class="badge text-bg-secondary">Submitted</span>
+              </div>
+            </div>
+            <span *ngIf="!job.lastJob" class="text-muted small">Never run</span>
+          </td>
+          <td>
+            <span *ngIf="job.lastJob?.duration != null">{{formatDuration(job.lastJob?.duration)}}</span>
+            <span *ngIf="job.lastJob?.duration == null" class="text-muted small">-</span>
+          </td>
           <td>
             <div *ngIf="job.name === 'db_snapshot' && job.summary">
-              <div>DB Snapshot</div>
               <table class="small">
                 <thead>
                 <tr>
@@ -36,20 +57,29 @@
                 </tbody>
               </table>
             </div>
-            <div *ngIf="job.name !== 'db_snapshot' && job.summary">
-              {{job.name}} summary: {{job.summary?.rowCount !== undefined ? job.summary.rowCount : (job.summary | json)}}
-            </div>
-            <div *ngIf="!job.summary">
-              {{job.name}}
+            <div *ngIf="job.name !== 'db_snapshot'">
+              <div *ngIf="job.lastJob?.result_summary">
+                <span class="fw-semibold">Last Result:</span> {{formatResultSummary(job.lastJob?.result_summary)}}
+              </div>
+              <div *ngIf="job.summary?.rowCount !== undefined" class="text-muted small">
+                Pending: {{job.summary.rowCount}}
+              </div>
+              <div *ngIf="job.summary?.remainingCount !== undefined" class="text-muted small">
+                Remaining: {{job.summary.remainingCount}}
+              </div>
+              <div *ngIf="!job.lastJob?.result_summary && !job.summary" class="text-muted small">
+                -
+              </div>
             </div>
           </td>
           <td>
             <lib-job-progress-monitor *ngIf="job.currentJobId" [jobId]="job.currentJobId" (jobUpdated)="onJobUpdated(job, $event)"></lib-job-progress-monitor>
+            <span *ngIf="!job.currentJobId && !job.isRunning" class="text-muted small">Idle</span>
           </td>
           <td>
-            <button class="btn btn-warning ms-2" [disabled]="job.isRunning" (click)="onExecute(job.name)">
-              <span *ngIf="job.isRunning" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-              Execute {{job.name}}
+            <button class="btn btn-warning" [disabled]="job.isRunning || job.lastJob?.status === 'Processing' || job.lastJob?.status === 'Submitted'" (click)="onExecute(job.name)">
+              <span *ngIf="job.isRunning || job.lastJob?.status === 'Processing' || job.lastJob?.status === 'Submitted'" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              Execute
             </button>
           </td>
         </tr>

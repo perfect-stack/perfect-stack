@@ -38,6 +38,19 @@ export class JobController {
         return this.jobService.getJobSummary(jobName);
     }
 
+    @ActionPermit(ActionType.Read)
+    @SubjectName('Job')
+    @ApiOperation({ summary: 'Get latest execution for a registered job' })
+    @ApiResponse({
+        status: 200,
+        description: 'The latest execution of the job',
+        type: Object,
+    })
+    @Get('/latest/:jobName')
+    async getLatestJob(@Param('jobName') jobName: string): Promise<Job | null> {
+        return this.jobService.getLatestJob(jobName);
+    }
+
     @ActionPermit(ActionType.Edit)
     @SubjectName('Job')
     @ApiOperation({ summary: 'Start a registered job' })

@@ -3,12 +3,23 @@
     <div class="small text-muted mb-1">{{ job.status_message }}</div>
   }
   @if (job.status === 'Error') {
-    <ngb-progressbar class="mb-2" [showValue]="job.step_count > 0" type="danger" [value]="job.step_count > 0 ? (job.step_index + 1) : 100" [max]="job.step_count > 0 ? job.step_count : 100"></ngb-progressbar>
+    <ngb-progressbar class="mb-1" [showValue]="job.step_count > 0" type="danger" [value]="job.step_count > 0 ? (job.step_index + 1) : 100" [max]="job.step_count > 0 ? job.step_count : 100"></ngb-progressbar>
   } @else {
-    <ngb-progressbar class="mb-2" [showValue]="job.step_count > 0" [striped]="job.status === 'Processing'" [animated]="job.status === 'Processing'" type="info" [value]="job.step_count > 0 ? (job.step_index + 1) : 100" [max]="job.step_count > 0 ? job.step_count : 100"></ngb-progressbar>
+    <ngb-progressbar class="mb-1" [showValue]="job.step_count > 0" [striped]="job.status === 'Processing'" [animated]="job.status === 'Processing'" type="info" [value]="job.step_count > 0 ? (job.step_index + 1) : 100" [max]="job.step_count > 0 ? job.step_count : 100"></ngb-progressbar>
+  }
+
+  @if (job.status === 'Processing' || job.status === 'Submitted') {
+    <div class="small text-muted d-flex justify-content-between flex-wrap">
+      @if (getElapsedTime(job)) {
+        <span>Elapsed: {{ getElapsedTime(job) }}</span>
+      }
+      @if (getEstimatedCompletion(job)) {
+        <span>ETA: {{ getEstimatedCompletion(job) }}</span>
+      }
+    </div>
   }
 }
 
 @if(timedOut()) {
-  <div class="text-danger">Job has not completed within the allowable time.</div>
+  <div class="text-danger small">Job has not completed within the allowable time.</div>
 }

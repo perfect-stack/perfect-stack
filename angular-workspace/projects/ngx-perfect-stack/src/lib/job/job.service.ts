@@ -3,6 +3,7 @@ import {Job} from "./job.model";
 import {catchError, Observable, of} from "rxjs";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../ngx-perfect-stack-config";
 import {HttpClient} from "@angular/common/http";
+import {withAuthOnly} from "../authentication/auth-interceptor";
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +33,19 @@ export class JobService {
     );
   }
 
+  getLatestJob(jobName: string): Observable<Job | null> {
+    return this.http.get<Job | null>(`${this.stackConfig.apiUrl}/job/latest/${jobName}`).pipe(
+      catchError(err => {
+        console.error(err);
+        return of(null);
+      })
+    );
+  }
+
   startJob(jobName: string, payload: any = null): Observable<Job> {
-    return this.http.post<Job>(`${this.stackConfig.apiUrl}/job/start/${jobName}`, payload);
+    return this.http.post<Job>(`${this.stackConfig.apiUrl}/job/start/${jobName}`, payload, {
+      context: withAuthOnly()
+    });
   }
 
   getJob(jobId: string): Observable<Job | null> {

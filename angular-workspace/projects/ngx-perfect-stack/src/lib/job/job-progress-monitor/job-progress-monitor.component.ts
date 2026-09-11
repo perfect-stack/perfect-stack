@@ -2,9 +2,8 @@ import {Component, effect, inject, input, output, signal} from '@angular/core';
 import {toObservable, toSignal} from "@angular/core/rxjs-interop";
 import {filter, map, merge, switchMap, takeUntil, takeWhile, tap, timer} from "rxjs";
 import {JobService} from "../job.service";
+import {Job} from "../job.model";
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
-
-
 
 @Component({
   selector: 'lib-job-progress-monitor',
@@ -57,5 +56,55 @@ export class JobProgressMonitorComponent {
       // Whenever the job signal changes, emit the new value to the parent component.
       this.jobUpdated.emit(this.job());
     });
+  }
+
+  formatDuration(ms: number): string {
+    if (ms == null || isNaN(ms) || ms < 0) return '';
+    const totalSecs = Math.floor(ms / 1000);
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
+    if (mins > 0) {
+      return `${mins}m ${secs.toString().padStart(2, '0')}s`;
+    }
+    return `${secs}s`;
+  }
+
+  getElapsedTime(job: Job): string | null {
+    if (!job) return null;
+    const startTime = job.created_at ? new Date(job.created_at).getTime() : 0;
+    const elapsedMs = (job.duration && job.duration > 0)
+      ? job.duration
+      : (startTime ? Math.max(0, Date.now() - startTime) : 0);
+    if (elapsedMs <= 0) return null;
+    return this.formatDuration(elapsedMs);
+  }
+
+  getEstimatedCompletion(job: Job): string | null {
+    if (!job || (job.status !== 'Processing' && job.status !== 'Submitted')) {
+      return null;
+    }
+    const startTime = job.created_at ? new Date(job.created_at).getTime() : 0;
+    const elapsedMs = (job.duration && job.duration > 0)
+      ? job.duration
+      : (startTime ? Math.max(0, Date.now() - startTime) : 0);
+
+    if (elapsedMs <= 0) {
+      return null;
+    }
+
+    if (job.step_count > 0) {
+      const stepsCompleted = job.step_index + 1;
+      const progress = stepsCompleted / job.step_count;
+      if (progress > 0 && progress < 1) {
+        const totalEstimatedMs = elapsedMs / progress;
+        const remainingMs = totalEstimatedMs - elapsedMs;
+        const estDate = new Date(Date.now() + remainingMs);
+        const hours = estDate.getHours().toString().padStart(2, '0');
+        const minutes = estDate.getMinutes().toString().padStart(2, '0');
+        const seconds = estDate.getSeconds().toString().padStart(2, '0');
+        return `${hours}:${minutes}:${seconds} (~${this.formatDuration(remainingMs)} remaining)`;
+      }
+    }
+    return null;
   }
 }

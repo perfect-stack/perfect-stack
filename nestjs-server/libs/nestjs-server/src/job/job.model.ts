@@ -7,6 +7,7 @@ export interface Job {
     step_index: number;
     step_count: number;
     duration: number;
+    result_summary?: string;
     created_at: Date;
     updated_at: Date;
 }

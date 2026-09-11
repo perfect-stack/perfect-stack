@@ -42,6 +42,7 @@ export class CoordinateConverterService implements BatchJob {
 
     const selectResponse = await pool.query(selectSql);
     const dataRows = selectResponse.rows;
+    let convertedCount = 0;
     for (const nextRow of dataRows) {
       const id = nextRow.id;
       const easting = nextRow.easting;
@@ -58,9 +59,11 @@ export class CoordinateConverterService implements BatchJob {
 
         const updateSql = 'Update "Event" set lat = $1, lng = $2 where id = $3';
         await pool.query(updateSql, [latLng.lat, latLng.lng, id]);
+        convertedCount++;
       }
     }
 
     await pool.end();
+    return { convertedCount, totalCount: dataRows.length };
   }
 }

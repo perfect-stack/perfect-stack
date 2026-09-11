@@ -1,5 +1,3 @@
-
-
 export interface Job {
   id: string;
   name: string;
@@ -9,6 +7,7 @@ export interface Job {
   step_index: number;
   step_count: number;
   duration: number;
+  result_summary?: string;
   created_at: string;
   updated_at: string;
 }

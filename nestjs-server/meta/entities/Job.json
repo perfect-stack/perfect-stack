@@ -125,6 +125,20 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "result_summary",
+      "label": "Result Summary",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Html",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }
