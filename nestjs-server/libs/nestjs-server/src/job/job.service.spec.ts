@@ -3,6 +3,7 @@ import { JobService } from './job.service';
 import { ConfigService } from '@nestjs/config';
 import { DataService } from '../data/data.service';
 import { QueryService } from '../data/query.service';
+import { OrmService } from '../orm/orm.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Job, JobExecutionContext, StepJobHandler, TaskJobHandler } from './job.model';
 
@@ -12,6 +13,7 @@ describe('JobService', () => {
   let mockQueryService: any;
   let mockConfigService: any;
   let mockEventEmitter: any;
+  let mockOrmService: any;
 
   beforeEach(async () => {
     mockDataService = {
@@ -34,10 +36,21 @@ describe('JobService', () => {
       emit: jest.fn(),
     };
 
+    mockOrmService = {
+      sequelize: {
+        transaction: jest.fn().mockImplementation((cb) => cb({})),
+        query: jest.fn().mockResolvedValue([]),
+        model: jest.fn().mockReturnValue({
+          create: jest.fn().mockImplementation((entity) => Promise.resolve(entity)),
+        }),
+      },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JobService,
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: OrmService, useValue: mockOrmService },
         { provide: DataService, useValue: mockDataService },
         { provide: QueryService, useValue: mockQueryService },
         { provide: EventEmitter2, useValue: mockEventEmitter },
@@ -88,12 +101,12 @@ describe('JobService', () => {
     expect(mockDataService.save).toHaveBeenCalled();
   });
 
-  it('should register and execute a step job', async () => {
-    const executedSteps: number[] = [];
+  it('should register and execute a step job with default chunk size 1', async () => {
+    const executedSteps: { stepIdx: number; chunkSize?: number }[] = [];
     const stepJob: StepJobHandler = {
       type: 'step',
-      executeStep: async (job: Job, stepIdx: number) => {
-        executedSteps.push(stepIdx);
+      executeStep: async (job: Job, stepIdx: number, chunkSize?: number) => {
+        executedSteps.push({ stepIdx, chunkSize });
       },
       onComplete: async (job: Job) => {
         job.data = JSON.stringify({ completed: true });
@@ -118,8 +131,115 @@ describe('JobService', () => {
 
     const executed = await jobService.executeJob('job-456');
     expect(executed.status).toEqual('Completed');
-    expect(executedSteps).toEqual([0, 1, 2]);
+    expect(executedSteps).toEqual([
+      { stepIdx: 0, chunkSize: 1 },
+      { stepIdx: 1, chunkSize: 1 },
+      { stepIdx: 2, chunkSize: 1 },
+    ]);
     expect(JSON.parse(executed.data)).toEqual({ completed: true });
+  });
+
+  it('should execute a step job with custom chunk size', async () => {
+    const executedSteps: { stepIdx: number; chunkSize?: number }[] = [];
+    const chunkStepJob: StepJobHandler = {
+      type: 'step',
+      chunkSize: 50,
+      executeStep: async (job: Job, stepIdx: number, chunkSize?: number) => {
+        executedSteps.push({ stepIdx, chunkSize });
+      },
+    };
+
+    jobService.registerJob('chunk_step_job', chunkStepJob);
+
+    const jobRecord: Job = {
+      id: 'job-789',
+      name: 'chunk_step_job',
+      status: 'Submitted',
+      data: null,
+      step_index: 0,
+      step_count: 150,
+      chunk_size: 50,
+      duration: 0,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    mockQueryService.findOne.mockResolvedValue(jobRecord);
+
+    const executed = await jobService.executeJob('job-789');
+    expect(executed.status).toEqual('Completed');
+    expect(executedSteps).toEqual([
+      { stepIdx: 0, chunkSize: 50 },
+      { stepIdx: 50, chunkSize: 50 },
+      { stepIdx: 100, chunkSize: 50 },
+    ]);
+    // Save should have been called once per chunk (3 chunks) + 1 for completion = 4 times
+    expect(mockDataService.save).toHaveBeenCalledTimes(4);
+  });
+
+  it('should stop job execution when status is changed to Stopped in database', async () => {
+    const executedSteps: number[] = [];
+    let callCount = 0;
+
+    const stoppingStepJob: StepJobHandler = {
+      type: 'step',
+      chunkSize: 10,
+      executeStep: async (job: Job, stepIdx: number) => {
+        executedSteps.push(stepIdx);
+      },
+    };
+
+    jobService.registerJob('stopping_job', stoppingStepJob);
+
+    const jobRecord: Job = {
+      id: 'job-stop-1',
+      name: 'stopping_job',
+      status: 'Submitted',
+      data: null,
+      step_index: 0,
+      step_count: 50,
+      chunk_size: 10,
+      duration: 0,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    // findOne is called before & after each step in executeStepJob.
+    // Simulate another process setting status to 'Stopped' after first chunk runs
+    mockQueryService.findOne.mockImplementation(() => {
+      callCount++;
+      if (callCount > 2) {
+        return Promise.resolve({ ...jobRecord, status: 'Stopped' });
+      }
+      return Promise.resolve(jobRecord);
+    });
+
+    const executed = await jobService.executeJob('job-stop-1');
+    expect(executed.status).toEqual('Stopped');
+    // Only first chunk (step 0) should have executed before halting
+    expect(executedSteps).toEqual([0]);
+  });
+
+  it('should mark job as stopped via stopJob', async () => {
+    const jobRecord: Job = {
+      id: 'job-stop-2',
+      name: 'some_job',
+      status: 'Processing',
+      data: null,
+      step_index: 10,
+      step_count: 50,
+      chunk_size: 10,
+      duration: 100,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    mockQueryService.findOne.mockResolvedValue(jobRecord);
+
+    const stopped = await jobService.stopJob('job-stop-2');
+    expect(stopped.status).toEqual('Stopped');
+    expect(stopped.status_message).toEqual('Job stopped by user');
+    expect(mockDataService.save).toHaveBeenCalled();
   });
 
   it('should filter jobs based on showInBatchUI', () => {

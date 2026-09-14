@@ -88,17 +88,37 @@ export class JobService {
         return null;
     }
 
-    async startJob(name: string, payload: any = null, stepCount: number = 1): Promise<Job> {
+    async startJob(name: string, payload: any = null, stepCount: number = 1, chunkSize: number = 1): Promise<Job> {
         const handler = this.jobHandlers.get(name);
         if (!handler) {
             throw new BadRequestException(`Unable to find job handler for '${name}'`);
         }
-        const job = await this.submitJob(name, stepCount, payload);
+        const effectiveChunkSize = chunkSize > 1 ? chunkSize : ((handler as StepJobHandler)?.chunkSize || chunkSize || 1);
+        const job = await this.submitJob(name, stepCount, payload, effectiveChunkSize);
         await this.invokeJob(job.id);
         return job;
     }
 
-    async submitJob(name: string, stepCount: number, payload: any): Promise<Job> {
+    async stopJob(jobIdOrName: string): Promise<Job> {
+        this.logger.log(`Stopping job: ${jobIdOrName}`);
+        let job = await this.queryService.findOne('Job', jobIdOrName) as Job;
+        if (!job) {
+            job = await this.getLatestJob(jobIdOrName);
+        }
+        if (!job) {
+            throw new BadRequestException(`Job not found: ${jobIdOrName}`);
+        }
+        if (job.status === 'Completed' || job.status === 'Error' || job.status === 'Stopped') {
+            return job;
+        }
+        job.status = 'Stopped';
+        job.status_message = 'Job stopped by user';
+        await this.dataService.save('Job', job);
+        this.logger.log(`Job ${job.id} (${job.name}) marked as Stopped in database.`);
+        return job;
+    }
+
+    async submitJob(name: string, stepCount: number, payload: any, chunkSize: number = 1): Promise<Job> {
         // Use a database transaction and PostgreSQL advisory lock to ensure that across
         // multiple NestJS server instances, only one instance of a Batch Job can be submitted/running at a given time.
         return await this.ormService.sequelize.transaction(async (txn: Transaction) => {
@@ -114,7 +134,7 @@ export class JobService {
 
             // Check if there is already a running job with this name
             const activeJobs: Job[] = await this.ormService.sequelize.query(
-                `SELECT id, name, status, status_message, step_index, step_count, duration, data, result_summary, created_at, updated_at
+                `SELECT id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, created_at, updated_at
                  FROM "Job"
                  WHERE name = :name AND status IN ('Submitted', 'Processing')
                  ORDER BY created_at DESC
@@ -160,6 +180,7 @@ export class JobService {
                 data: payload ? (typeof payload === 'string' ? payload : JSON.stringify(payload)) : null,
                 step_index: 0,
                 step_count: stepCount,
+                chunk_size: chunkSize,
                 result_summary: null,
                 created_at: new Date(),
                 updated_at: new Date(),
@@ -242,37 +263,55 @@ export class JobService {
         const startTime = OffsetDateTime.now();
         job.status = "Processing";
         job.status_message = null;
-        const stepIndex = job.step_index === 0 ? 0 : job.step_index + 1;
+        const chunkSize = job.chunk_size || handler.chunkSize || 1;
+        const stepIndex = job.step_index === 0 ? 0 : job.step_index + chunkSize;
         const stepCount = job.step_count;
 
         try {
-            for (let nextStepIdx = stepIndex; nextStepIdx < stepCount; nextStepIdx++) {
-                job.step_index = nextStepIdx;
-                this.logger.log(`Execute job ${job.id} (${job.name}): step ${nextStepIdx} of ${stepCount}`);
-                await handler.executeStep(job, nextStepIdx);
-
-                if (nextStepIdx % 10 === 0) {
-                    job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
+            for (let nextStepIdx = stepIndex; nextStepIdx < stepCount; nextStepIdx += chunkSize) {
+                // Check if the job was stopped by another thread/request via the database
+                const dbJob = await this.queryService.findOne('Job', job.id) as Job;
+                if (dbJob && dbJob.status === 'Stopped') {
+                    this.logger.log(`Job ${job.id} (${job.name}) was stopped before step ${nextStepIdx}. Halting execution.`);
+                    job.status = 'Stopped';
+                    job.status_message = dbJob.status_message || 'Job stopped by user';
+                    const endTime = OffsetDateTime.now();
+                    job.duration = Duration.between(startTime, endTime).toMillis();
                     await this.dataService.save('Job', job);
-
-                    const jobStartTime = OffsetDateTime.parse(job.created_at.toISOString());
-                    const jobDurationInSeconds = Duration.between(jobStartTime, OffsetDateTime.now()).seconds();
-                    if (jobDurationInSeconds > JOB_TIMEOUT_IN_SECONDS) {
-                        this.logger.error('JOB TIMEOUT EXCEEDED');
-                        throw new Error('JOB TIMEOUT EXCEEDED');
-                    }
-
-                    const chunkDurationInSeconds = Duration.between(startTime, OffsetDateTime.now()).seconds();
-                    if (chunkDurationInSeconds > JOB_CHUNK_DURATION_IN_SECONDS) {
-                        this.logger.log('Chunk complete: invoking job again');
-                        await this.invokeJob(job.id);
-                        return null;
-                    }
+                    return job;
                 }
 
-                if (this.jobProcessingMode === 'local-async') {
-                    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-                    await delay(100);
+                job.step_index = nextStepIdx;
+                this.logger.log(`Execute job ${job.id} (${job.name}): step ${nextStepIdx} of ${stepCount} (chunk size: ${chunkSize})`);
+                await handler.executeStep(job, nextStepIdx, chunkSize);
+
+                job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
+                await this.dataService.save('Job', job);
+
+                // Check if the job was marked as Stopped during chunk execution
+                const postStepDbJob = await this.queryService.findOne('Job', job.id) as Job;
+                if (postStepDbJob && postStepDbJob.status === 'Stopped') {
+                    this.logger.log(`Job ${job.id} (${job.name}) was stopped after step ${nextStepIdx}. Halting execution.`);
+                    job.status = 'Stopped';
+                    job.status_message = postStepDbJob.status_message || 'Job stopped by user';
+                    const endTime = OffsetDateTime.now();
+                    job.duration = Duration.between(startTime, endTime).toMillis();
+                    await this.dataService.save('Job', job);
+                    return job;
+                }
+
+                const jobStartTime = OffsetDateTime.parse(job.created_at.toISOString());
+                const jobDurationInSeconds = Duration.between(jobStartTime, OffsetDateTime.now()).seconds();
+                if (jobDurationInSeconds > JOB_TIMEOUT_IN_SECONDS) {
+                    this.logger.error('JOB TIMEOUT EXCEEDED');
+                    throw new Error('JOB TIMEOUT EXCEEDED');
+                }
+
+                const chunkDurationInSeconds = Duration.between(startTime, OffsetDateTime.now()).seconds();
+                if (chunkDurationInSeconds > JOB_CHUNK_DURATION_IN_SECONDS) {
+                    this.logger.log('Chunk complete: invoking job again');
+                    await this.invokeJob(job.id);
+                    return null;
                 }
             }
 

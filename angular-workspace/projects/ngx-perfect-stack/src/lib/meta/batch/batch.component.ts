@@ -13,6 +13,7 @@ interface BatchJobSummary {
   lastJob?: Job | null;
   currentJobId?: string | null;
   isRunning?: boolean;
+  isStopping?: boolean;
 }
 
 @Component({
@@ -43,7 +44,8 @@ export class BatchComponent implements OnInit {
         summary: null,
         lastJob: null,
         currentJobId: null,
-        isRunning: false
+        isRunning: false,
+        isStopping: false
       }));
       this.batchJobs.forEach(job => {
         this.getSummary(job.name);
@@ -69,13 +71,17 @@ export class BatchComponent implements OnInit {
         if (latestJob && (latestJob.status === 'Processing' || latestJob.status === 'Submitted')) {
           job.currentJobId = latestJob.id;
           job.isRunning = true;
-        } else if (latestJob && (latestJob.status === 'Completed' || latestJob.status === 'Error')) {
+        } else if (latestJob && (latestJob.status === 'Completed' || latestJob.status === 'Error' || latestJob.status === 'Stopped')) {
           if (!job.isRunning) {
             job.currentJobId = null;
           }
         }
       }
     });
+  }
+
+  isJobRunning(job: BatchJobSummary): boolean {
+    return !!(job.isRunning || job.lastJob?.status === 'Processing' || job.lastJob?.status === 'Submitted');
   }
 
   onExecute(jobName: string) {
@@ -116,16 +122,44 @@ export class BatchComponent implements OnInit {
     });
   }
 
+  onStop(jobSummary: BatchJobSummary) {
+    const targetJobId = jobSummary.currentJobId || jobSummary.lastJob?.id || jobSummary.name;
+    jobSummary.isStopping = true;
+    this.jobService.stopJob(targetJobId).subscribe({
+      next: (stoppedJob) => {
+        jobSummary.isStopping = false;
+        jobSummary.isRunning = false;
+        jobSummary.lastJob = stoppedJob;
+        this.toastService.showWarning(`Stop requested for job ${jobSummary.name}`);
+        this.getSummary(jobSummary.name);
+        this.getLatestJob(jobSummary.name);
+      },
+      error: (err) => {
+        jobSummary.isStopping = false;
+        const errorMsg = err.error?.message || err.message || String(err);
+        this.toastService.showError(`Failed to stop job ${jobSummary.name}: ${errorMsg}`, false);
+      }
+    });
+  }
+
   onJobUpdated(jobSummary: BatchJobSummary, job: Job | null) {
     if (!job) return;
     jobSummary.lastJob = job;
     if (job.status === 'Completed') {
       jobSummary.isRunning = false;
+      jobSummary.isStopping = false;
       this.toastService.showSuccess(`Job ${jobSummary.name} complete`);
+      this.getSummary(jobSummary.name);
+      this.getLatestJob(jobSummary.name);
+    } else if (job.status === 'Stopped') {
+      jobSummary.isRunning = false;
+      jobSummary.isStopping = false;
+      this.toastService.showWarning(`Job ${jobSummary.name} stopped`);
       this.getSummary(jobSummary.name);
       this.getLatestJob(jobSummary.name);
     } else if (job.status === 'Error') {
       jobSummary.isRunning = false;
+      jobSummary.isStopping = false;
       this.toastService.showError(`Job ${jobSummary.name} error: ${job.status_message}`, false);
       this.getSummary(jobSummary.name);
       this.getLatestJob(jobSummary.name);

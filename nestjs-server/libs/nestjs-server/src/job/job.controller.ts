@@ -64,6 +64,19 @@ export class JobController {
         return this.jobService.startJob(jobName, payload);
     }
 
+    @ActionPermit(ActionType.Edit)
+    @SubjectName('Job')
+    @ApiOperation({ summary: 'Stop a running job' })
+    @ApiResponse({
+        status: 200,
+        description: 'The stopped job',
+        type: Object,
+    })
+    @Post('/stop/:jobId')
+    async stopJob(@Param('jobId') jobId: string): Promise<Job> {
+        return this.jobService.stopJob(jobId);
+    }
+
     @ActionPermit(ActionType.Read)
     @SubjectName('Job')
     @ApiOperation({ summary: 'Poll for the supplied Job current status' })

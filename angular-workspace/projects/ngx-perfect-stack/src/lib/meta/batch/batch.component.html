@@ -11,8 +11,8 @@
         <th style="width: 18%;">Last Run</th>
         <th style="width: 10%;">Duration</th>
         <th style="width: 25%;">Summary</th>
-        <th style="width: 22%;">Progress</th>
-        <th style="width: 10%;">Execute</th>
+        <th style="width: 20%;">Progress</th>
+        <th style="width: 12%;">Execute</th>
         </thead>
         <tbody>
         <tr *ngFor="let job of batchJobs">
@@ -24,6 +24,7 @@
               <div>{{job.lastJob.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</div>
               <div class="mt-1">
                 <span *ngIf="job.lastJob.status === 'Completed'" class="badge text-bg-success">Completed</span>
+                <span *ngIf="job.lastJob.status === 'Stopped'" class="badge text-bg-warning">Stopped</span>
                 <span *ngIf="job.lastJob.status === 'Error'" class="badge text-bg-danger" [title]="job.lastJob.status_message || 'Error'">Error</span>
                 <span *ngIf="job.lastJob.status === 'Processing'" class="badge text-bg-info">Processing</span>
                 <span *ngIf="job.lastJob.status === 'Submitted'" class="badge text-bg-secondary">Submitted</span>
@@ -74,13 +75,19 @@
           </td>
           <td>
             <lib-job-progress-monitor *ngIf="job.currentJobId" [jobId]="job.currentJobId" (jobUpdated)="onJobUpdated(job, $event)"></lib-job-progress-monitor>
-            <span *ngIf="!job.currentJobId && !job.isRunning" class="text-muted small">Idle</span>
+            <span *ngIf="!job.currentJobId && !isJobRunning(job)" class="text-muted small">Idle</span>
           </td>
           <td>
-            <button class="btn btn-warning" [disabled]="job.isRunning || job.lastJob?.status === 'Processing' || job.lastJob?.status === 'Submitted'" (click)="onExecute(job.name)">
-              <span *ngIf="job.isRunning || job.lastJob?.status === 'Processing' || job.lastJob?.status === 'Submitted'" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-              Execute
-            </button>
+            <div class="d-flex gap-2">
+              <button class="btn btn-warning" [disabled]="isJobRunning(job)" (click)="onExecute(job.name)">
+                <span *ngIf="isJobRunning(job)" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Execute
+              </button>
+              <button *ngIf="isJobRunning(job)" class="btn btn-danger" [disabled]="job.isStopping" (click)="onStop(job)">
+                <span *ngIf="job.isStopping" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Stop
+              </button>
+            </div>
           </td>
         </tr>
         </tbody>

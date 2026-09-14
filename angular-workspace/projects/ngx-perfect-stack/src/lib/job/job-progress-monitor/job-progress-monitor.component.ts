@@ -33,8 +33,8 @@ export class JobProgressMonitorComponent {
       return timer(0, 2000).pipe(
         // For each tick, get the job
         switchMap(() => this.jobService.getJob(id)),
-        // Stop polling if the job is "Completed" or "Error", but emit the final value.
-        takeWhile(job => job?.status !== 'Completed' && job?.status !== 'Error', true),
+        // Stop polling if the job is "Completed" or "Error" or "Stopped", but emit the final value.
+        takeWhile(job => job?.status !== 'Completed' && job?.status !== 'Error' && job?.status !== 'Stopped', true),
         // As a safeguard, stop polling after 60 seconds regardless of status.
         // This will also trigger the timeout$ to set the timedOut flag.
         takeUntil(timeout$)
@@ -93,7 +93,8 @@ export class JobProgressMonitorComponent {
     }
 
     if (job.step_count > 0) {
-      const stepsCompleted = job.step_index + 1;
+      const chunkSize = job.chunk_size || 1;
+      const stepsCompleted = Math.min(job.step_count, job.step_index + chunkSize);
       const progress = stepsCompleted / job.step_count;
       if (progress > 0 && progress < 1) {
         const totalEstimatedMs = elapsedMs / progress;

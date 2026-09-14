@@ -48,6 +48,12 @@ export class JobService {
     });
   }
 
+  stopJob(jobId: string): Observable<Job> {
+    return this.http.post<Job>(`${this.stackConfig.apiUrl}/job/stop/${jobId}`, {}, {
+      context: withAuthOnly()
+    });
+  }
+
   getJob(jobId: string): Observable<Job | null> {
     return this.http.get<Job>(`${this.stackConfig.apiUrl}/job/${jobId}`).pipe(
       catchError(err => {

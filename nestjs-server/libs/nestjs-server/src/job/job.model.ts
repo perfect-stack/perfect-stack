@@ -1,11 +1,12 @@
 export interface Job {
     id: string;
     name: string;
-    status: "Submitted" | "Processing" | "Completed" | "Error";
+    status: "Submitted" | "Processing" | "Completed" | "Stopped" | "Error";
     status_message?: string;
     data: string;
     step_index: number;
     step_count: number;
+    chunk_size?: number;
     duration: number;
     result_summary?: string;
     created_at: Date;
@@ -30,7 +31,8 @@ export interface TaskJobHandler extends BaseJobHandler {
 
 export interface StepJobHandler extends BaseJobHandler {
     readonly type: 'step';
-    executeStep(job: Job, stepIndex: number): Promise<void>;
+    readonly chunkSize?: number;
+    executeStep(job: Job, stepIndex: number, chunkSize?: number): Promise<void>;
     onComplete?(job: Job): Promise<void>;
 }
 

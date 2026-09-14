@@ -66,6 +66,7 @@
       "enumeration": [
         "Submitted",
         "Processing",
+        "Stopped",
         "Completed",
         "Error"
       ]
@@ -101,6 +102,20 @@
     {
       "name": "step_count",
       "label": "Step count",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "chunk_size",
+      "label": "Chunk size",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",
