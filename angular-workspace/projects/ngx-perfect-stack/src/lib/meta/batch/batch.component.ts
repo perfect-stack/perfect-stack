@@ -72,9 +72,7 @@ export class BatchComponent implements OnInit {
           job.currentJobId = latestJob.id;
           job.isRunning = true;
         } else if (latestJob && (latestJob.status === 'Completed' || latestJob.status === 'Error' || latestJob.status === 'Stopped')) {
-          if (!job.isRunning) {
-            job.currentJobId = null;
-          }
+          job.isRunning = false;
         }
       }
     });
@@ -132,7 +130,6 @@ export class BatchComponent implements OnInit {
         jobSummary.lastJob = stoppedJob;
         this.toastService.showWarning(`Stop requested for job ${jobSummary.name}`);
         this.getSummary(jobSummary.name);
-        this.getLatestJob(jobSummary.name);
       },
       error: (err) => {
         jobSummary.isStopping = false;
@@ -150,19 +147,16 @@ export class BatchComponent implements OnInit {
       jobSummary.isStopping = false;
       this.toastService.showSuccess(`Job ${jobSummary.name} complete`);
       this.getSummary(jobSummary.name);
-      this.getLatestJob(jobSummary.name);
     } else if (job.status === 'Stopped') {
       jobSummary.isRunning = false;
       jobSummary.isStopping = false;
       this.toastService.showWarning(`Job ${jobSummary.name} stopped`);
       this.getSummary(jobSummary.name);
-      this.getLatestJob(jobSummary.name);
     } else if (job.status === 'Error') {
       jobSummary.isRunning = false;
       jobSummary.isStopping = false;
       this.toastService.showError(`Job ${jobSummary.name} error: ${job.status_message}`, false);
       this.getSummary(jobSummary.name);
-      this.getLatestJob(jobSummary.name);
     }
   }
 

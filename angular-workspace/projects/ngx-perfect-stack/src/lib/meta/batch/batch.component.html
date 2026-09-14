@@ -74,8 +74,8 @@
             </div>
           </td>
           <td>
-            <lib-job-progress-monitor *ngIf="job.currentJobId" [jobId]="job.currentJobId" (jobUpdated)="onJobUpdated(job, $event)"></lib-job-progress-monitor>
-            <span *ngIf="!job.currentJobId && !isJobRunning(job)" class="text-muted small">Idle</span>
+            <lib-job-progress-monitor *ngIf="job.lastJob?.id" [jobId]="job.lastJob?.id" (jobUpdated)="onJobUpdated(job, $event)"></lib-job-progress-monitor>
+            <span *ngIf="!job.lastJob?.id" class="text-muted small">Never run</span>
           </td>
           <td>
             <div class="d-flex gap-2">

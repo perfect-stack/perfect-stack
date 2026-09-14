@@ -93,8 +93,21 @@ export class JobService {
         if (!handler) {
             throw new BadRequestException(`Unable to find job handler for '${name}'`);
         }
+        let effectiveStepCount = stepCount;
+        if (effectiveStepCount <= 1 && handler.getSummary) {
+            try {
+                const summary = await handler.getSummary();
+                if (summary) {
+                    if (typeof summary.totalCount === 'number') effectiveStepCount = summary.totalCount;
+                    else if (typeof summary.rowCount === 'number') effectiveStepCount = summary.rowCount;
+                    else if (typeof summary.remainingCount === 'number') effectiveStepCount = summary.remainingCount;
+                }
+            } catch (e) {
+                // fallback to stepCount
+            }
+        }
         const effectiveChunkSize = chunkSize > 1 ? chunkSize : ((handler as StepJobHandler)?.chunkSize || chunkSize || 1);
-        const job = await this.submitJob(name, stepCount, payload, effectiveChunkSize);
+        const job = await this.submitJob(name, effectiveStepCount, payload, effectiveChunkSize);
         await this.invokeJob(job.id);
         return job;
     }

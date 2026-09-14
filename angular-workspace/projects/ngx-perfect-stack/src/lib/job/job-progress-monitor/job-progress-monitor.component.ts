@@ -15,7 +15,7 @@ import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 })
 export class JobProgressMonitorComponent {
 
-  jobId = input<string | null>(null);
+  jobId = input<string | null | undefined>(null);
   jobUpdated = output<any | null>();
   jobService = inject(JobService);
   timedOut = signal(false);
@@ -56,6 +56,23 @@ export class JobProgressMonitorComponent {
       // Whenever the job signal changes, emit the new value to the parent component.
       this.jobUpdated.emit(this.job());
     });
+  }
+
+  getProgressValue(job: Job): number {
+    if (!job) return 0;
+    if (job.status === 'Completed') {
+      return job.step_count > 0 ? job.step_count : 100;
+    }
+    if (job.step_count > 0) {
+      const chunkSize = job.chunk_size || 1;
+      return Math.min(job.step_count, job.step_index + chunkSize);
+    }
+    return 100;
+  }
+
+  getProgressMax(job: Job): number {
+    if (!job) return 100;
+    return job.step_count > 0 ? job.step_count : 100;
   }
 
   formatDuration(ms: number): string {
