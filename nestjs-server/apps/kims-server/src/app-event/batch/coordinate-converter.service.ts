@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {BatchJob} from "@perfect-stack/nestjs-server/batch/batch-job";
 import {MapService} from "@perfect-stack/nestjs-server/map/map.service";
 import {SettingsService} from "@perfect-stack/nestjs-server/settings/settings.service";
+import {JobExecutionContext} from "@perfect-stack/nestjs-server/job/job.model";
 
 export class CoordinateSummary {
     remainingCount: number;
@@ -34,7 +35,7 @@ export class CoordinateConverterService implements BatchJob {
     };
   }
 
-  async execute(): Promise<any> {
+  async execute(context?: JobExecutionContext): Promise<any> {
     const pool = await this.settingsService.getDatabasePool();
 
     const selectSql =
@@ -43,7 +44,12 @@ export class CoordinateConverterService implements BatchJob {
     const selectResponse = await pool.query(selectSql);
     const dataRows = selectResponse.rows;
     let convertedCount = 0;
+    let stepIdx = 0;
     for (const nextRow of dataRows) {
+      stepIdx++;
+      if (context) {
+        await context.updateProgress(stepIdx, dataRows.length, `Converting coordinate ${stepIdx} of ${dataRows.length}`);
+      }
       const id = nextRow.id;
       const easting = nextRow.easting;
       const northing = nextRow.northing;

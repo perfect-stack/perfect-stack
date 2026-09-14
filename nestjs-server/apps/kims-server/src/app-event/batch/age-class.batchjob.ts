@@ -4,6 +4,7 @@ import {BatchJob} from "@perfect-stack/nestjs-server/batch/batch-job";
 import {SettingsService} from "@perfect-stack/nestjs-server/settings/settings.service";
 import {DataService} from "@perfect-stack/nestjs-server/data/data.service";
 import {QueryService} from "@perfect-stack/nestjs-server/data/query.service";
+import {JobExecutionContext} from "@perfect-stack/nestjs-server/job/job.model";
 
 
 enum AgingStrategy {
@@ -91,11 +92,11 @@ export class AgeClassBatchJob implements BatchJob {
         }
     }
 
-    async execute(): Promise<any> {
+    async execute(context?: JobExecutionContext): Promise<any> {
         console.log('AgeClassBatchJob.execute()');
         const pool = await this.settingsService.getDatabasePool();
         const rows = await this.selectBirds(pool);
-        const result = await this.processRows(rows, pool);
+        const result = await this.processRows(rows, pool, context);
         await pool.end();
         console.log('AgeClassBatchJob.execute() finished.');
         console.log('AgeClassBatchJob - Result: ', result);
@@ -123,10 +124,15 @@ export class AgeClassBatchJob implements BatchJob {
         return rows;
     }
 
-    async processRows(rows: any[], pool: Pool) {
+    async processRows(rows: any[], pool: Pool, context?: JobExecutionContext) {
         const totalCount = rows.length;
         let updatedCount = 0;
+        let stepIdx = 0;
         for(const row of rows) {
+            stepIdx++;
+            if (context) {
+                await context.updateProgress(stepIdx, totalCount, `Processing bird ${stepIdx} of ${totalCount}`);
+            }
             const birdId = row.id;
             const speciesName = row.species_name;
             const hatchDate = row.hatch_date;
@@ -204,7 +210,7 @@ export class AgeClassBatchJob implements BatchJob {
 
             let isBeforeUpperBoundary = false;
             if (!upperBoundary) {
-                isBeforeUpperBoundary = true; // This is the last age class.
+                isBeforeUpperBoundary = true; // This is the last age class operations.
             } else {
                 const ageAtUpperUnit = ageByUnit[upperBoundary.unit];
                 isBeforeUpperBoundary = ageAtUpperUnit < upperBoundary.value;

@@ -173,8 +173,8 @@ describe('JobService', () => {
       { stepIdx: 50, chunkSize: 50 },
       { stepIdx: 100, chunkSize: 50 },
     ]);
-    // Save should have been called once per chunk (3 chunks) + 1 for completion = 4 times
-    expect(mockDataService.save).toHaveBeenCalledTimes(4);
+    // Save should have been called once on start + once per chunk (3 chunks) + 1 for completion = 5 times
+    expect(mockDataService.save).toHaveBeenCalledTimes(5);
   });
 
   it('should stop job execution when status is changed to Stopped in database', async () => {

@@ -263,6 +263,8 @@ export class JobService {
         const startTime = OffsetDateTime.now();
         job.status = "Processing";
         job.status_message = null;
+        await this.dataService.save('Job', job);
+
         const chunkSize = job.chunk_size || handler.chunkSize || 1;
         const stepIndex = job.step_index === 0 ? 0 : job.step_index + chunkSize;
         const stepCount = job.step_count;
@@ -345,9 +347,21 @@ export class JobService {
         await this.dataService.save('Job', job);
 
         let lastSaveTime = Date.now();
+        let isStopped = false;
         const ctx: JobExecutionContext = {
             job,
             updateProgress: async (stepIndex: number, stepCount?: number, statusMessage?: string) => {
+                const dbJob = await this.queryService.findOne('Job', job.id) as Job;
+                if (dbJob && dbJob.status === 'Stopped') {
+                    isStopped = true;
+                    job.status = 'Stopped';
+                    job.status_message = dbJob.status_message || 'Job stopped by user';
+                    const endTime = OffsetDateTime.now();
+                    job.duration = Duration.between(startTime, endTime).toMillis();
+                    await this.dataService.save('Job', job);
+                    throw new Error('JOB_STOPPED');
+                }
+
                 job.step_index = stepIndex;
                 if (stepCount !== undefined) {
                     job.step_count = stepCount;
@@ -382,6 +396,10 @@ export class JobService {
             this.logger.log(`Execute task job ${job.id} (${job.name}) completed in ${job.duration}ms`);
             return job;
         } catch (error) {
+            if (isStopped || error.message === 'JOB_STOPPED') {
+                this.logger.log(`Execute task job ${job.id} (${job.name}) stopped.`);
+                return job;
+            }
             const endTime = OffsetDateTime.now();
             job.duration = Duration.between(startTime, endTime).toMillis();
             job.status = "Error";
