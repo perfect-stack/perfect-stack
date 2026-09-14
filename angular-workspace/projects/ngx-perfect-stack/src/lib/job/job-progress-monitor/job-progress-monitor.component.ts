@@ -77,8 +77,13 @@ export class JobProgressMonitorComponent {
   formatDuration(ms: number): string {
     if (ms == null || isNaN(ms) || ms < 0) return '';
     const totalSecs = Math.round(ms / 1000);
-    const mins = Math.floor(totalSecs / 60);
+    const hours = Math.floor(totalSecs / 3600);
+    const mins = Math.floor((totalSecs % 3600) / 60);
     const secs = totalSecs % 60;
+
+    if (hours > 0) {
+      return `${hours}h ${mins.toString().padStart(2, '0')}m`;
+    }
     if (mins > 0) {
       return `${mins}m ${secs.toString().padStart(2, '0')}s`;
     }
@@ -115,12 +120,15 @@ export class JobProgressMonitorComponent {
         const totalEstimatedMs = elapsedMs / progress;
         const remainingMs = Math.max(0, totalEstimatedMs - elapsedMs);
         const estDate = new Date(Date.now() + remainingMs);
-        const hours = estDate.getHours().toString().padStart(2, '0');
-        const minutes = estDate.getMinutes().toString().padStart(2, '0');
-        const seconds = estDate.getSeconds().toString().padStart(2, '0');
+
+        const clockTimeStr = estDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+        const nowDate = new Date();
+        const isNextDay = estDate.toDateString() !== nowDate.toDateString();
+        const daySuffix = isNextDay ? ' (tomorrow)' : '';
+
         const remainingStr = this.formatDuration(remainingMs);
         const totalStr = this.formatDuration(totalEstimatedMs);
-        return `${hours}:${minutes}:${seconds} (~${remainingStr} remaining, ~${totalStr} total)`;
+        return `${clockTimeStr}${daySuffix} (~${remainingStr} remaining, ~${totalStr} total)`;
       }
     }
     return null;
