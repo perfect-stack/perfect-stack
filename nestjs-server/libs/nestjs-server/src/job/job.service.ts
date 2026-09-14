@@ -279,7 +279,7 @@ export class JobService {
         await this.dataService.save('Job', job);
 
         const chunkSize = job.chunk_size || handler.chunkSize || 1;
-        const stepIndex = job.step_index === 0 ? 0 : job.step_index + chunkSize;
+        const stepIndex = job.step_index || 0;
         const stepCount = job.step_count;
 
         try {
@@ -296,10 +296,10 @@ export class JobService {
                     return job;
                 }
 
-                job.step_index = nextStepIdx;
                 this.logger.log(`Execute job ${job.id} (${job.name}): step ${nextStepIdx} of ${stepCount} (chunk size: ${chunkSize})`);
                 await handler.executeStep(job, nextStepIdx, chunkSize);
 
+                job.step_index = Math.min(stepCount, nextStepIdx + chunkSize);
                 job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
                 await this.dataService.save('Job', job);
 

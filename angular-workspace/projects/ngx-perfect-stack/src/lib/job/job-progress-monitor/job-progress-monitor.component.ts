@@ -64,10 +64,9 @@ export class JobProgressMonitorComponent {
       return job.step_count > 0 ? job.step_count : 100;
     }
     if (job.step_count > 0) {
-      const chunkSize = job.chunk_size || 1;
-      return Math.min(job.step_count, job.step_index + chunkSize);
+      return Math.min(job.step_count, job.step_index);
     }
-    return 100;
+    return 0;
   }
 
   getProgressMax(job: Job): number {
@@ -77,7 +76,7 @@ export class JobProgressMonitorComponent {
 
   formatDuration(ms: number): string {
     if (ms == null || isNaN(ms) || ms < 0) return '';
-    const totalSecs = Math.floor(ms / 1000);
+    const totalSecs = Math.round(ms / 1000);
     const mins = Math.floor(totalSecs / 60);
     const secs = totalSecs % 60;
     if (mins > 0) {
@@ -89,9 +88,9 @@ export class JobProgressMonitorComponent {
   getElapsedTime(job: Job): string | null {
     if (!job) return null;
     const startTime = job.created_at ? new Date(job.created_at).getTime() : 0;
-    const elapsedMs = (job.duration && job.duration > 0)
-      ? job.duration
-      : (startTime ? Math.max(0, Date.now() - startTime) : 0);
+    const elapsedMs = (job.status === 'Processing' || job.status === 'Submitted') && startTime
+      ? Math.max(0, Date.now() - startTime)
+      : (job.duration && job.duration > 0 ? job.duration : 0);
     if (elapsedMs <= 0) return null;
     return this.formatDuration(elapsedMs);
   }
@@ -109,18 +108,19 @@ export class JobProgressMonitorComponent {
       return null;
     }
 
-    if (job.step_count > 0) {
-      const chunkSize = job.chunk_size || 1;
-      const stepsCompleted = Math.min(job.step_count, job.step_index + chunkSize);
+    if (job.step_count > 0 && job.step_index > 0) {
+      const stepsCompleted = Math.min(job.step_count, job.step_index);
       const progress = stepsCompleted / job.step_count;
       if (progress > 0 && progress < 1) {
         const totalEstimatedMs = elapsedMs / progress;
-        const remainingMs = totalEstimatedMs - elapsedMs;
+        const remainingMs = Math.max(0, totalEstimatedMs - elapsedMs);
         const estDate = new Date(Date.now() + remainingMs);
         const hours = estDate.getHours().toString().padStart(2, '0');
         const minutes = estDate.getMinutes().toString().padStart(2, '0');
         const seconds = estDate.getSeconds().toString().padStart(2, '0');
-        return `${hours}:${minutes}:${seconds} (~${this.formatDuration(remainingMs)} remaining)`;
+        const remainingStr = this.formatDuration(remainingMs);
+        const totalStr = this.formatDuration(totalEstimatedMs);
+        return `${hours}:${minutes}:${seconds} (~${remainingStr} remaining, ~${totalStr} total)`;
       }
     }
     return null;

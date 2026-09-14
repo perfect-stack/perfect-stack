@@ -3,15 +3,15 @@
     <div class="small text-muted mb-1">{{ job.status_message }}</div>
   }
   @if (job.status === 'Error') {
-    <ngb-progressbar class="mb-1" [showValue]="job.step_count > 0" type="danger" [value]="getProgressValue(job)" [max]="getProgressMax(job)"></ngb-progressbar>
+    <ngb-progressbar class="mb-1" [showValue]="job.step_count > 1" type="danger" [value]="getProgressValue(job)" [max]="getProgressMax(job)"></ngb-progressbar>
   } @else if (job.status === 'Stopped') {
-    <ngb-progressbar class="mb-1" [showValue]="job.step_count > 0" type="warning" [value]="getProgressValue(job)" [max]="getProgressMax(job)"></ngb-progressbar>
+    <ngb-progressbar class="mb-1" [showValue]="job.step_count > 1" type="warning" [value]="getProgressValue(job)" [max]="getProgressMax(job)"></ngb-progressbar>
   } @else {
-    <ngb-progressbar class="mb-1" [showValue]="job.step_count > 0" [striped]="job.status === 'Processing'" [animated]="job.status === 'Processing'" type="info" [value]="getProgressValue(job)" [max]="getProgressMax(job)"></ngb-progressbar>
+    <ngb-progressbar class="mb-1" [showValue]="job.step_count > 1" [striped]="job.status === 'Processing'" [animated]="job.status === 'Processing'" type="info" [value]="getProgressValue(job)" [max]="getProgressMax(job)"></ngb-progressbar>
   }
 
   @if (job.status === 'Processing' || job.status === 'Submitted') {
-    <div class="small text-muted d-flex justify-content-between flex-wrap">
+    <div class="small text-muted d-flex justify-content-between flex-wrap gap-2">
       @if (getElapsedTime(job)) {
         <span>Elapsed: {{ getElapsedTime(job) }}</span>
       }
