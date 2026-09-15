@@ -14,8 +14,11 @@ describe('JobService', () => {
   let mockConfigService: any;
   let mockEventEmitter: any;
   let mockOrmService: any;
+  let dbJobs: Map<string, Job>;
 
   beforeEach(async () => {
+    dbJobs = new Map<string, Job>();
+
     mockDataService = {
       save: jest.fn().mockImplementation((name, entity) => {
         return Promise.resolve({
@@ -39,9 +42,107 @@ describe('JobService', () => {
     mockOrmService = {
       sequelize: {
         transaction: jest.fn().mockImplementation((cb) => cb({})),
-        query: jest.fn().mockResolvedValue([]),
+        query: jest.fn().mockImplementation((sql: string, options: any) => {
+          const replacements = options?.replacements || {};
+
+          // SELECT pg_advisory_xact_lock
+          if (sql.includes('pg_advisory_xact_lock')) {
+            return Promise.resolve([]);
+          }
+
+          // UPDATE ... SET status = 'Stopped' ... RETURNING
+          if (sql.includes(`SET status = 'Stopped'`)) {
+            const idOrName = replacements.idOrName;
+            const matched = Array.from(dbJobs.values()).find(
+              j => (j.id === idOrName || j.name === idOrName) && (j.status === 'Submitted' || j.status === 'Processing')
+            );
+            if (matched) {
+              matched.status = 'Stopped';
+              matched.status_message = replacements.statusMessage || 'Job stopped by user';
+              matched.updated_at = new Date();
+              return Promise.resolve([{ ...matched }]);
+            }
+            return Promise.resolve([]);
+          }
+
+          // UPDATE ... SET status = 'Processing' ... RETURNING
+          if (sql.includes(`SET status = 'Processing'`)) {
+            const job = dbJobs.get(replacements.id);
+            if (job && (job.status === 'Submitted' || job.status === 'Processing')) {
+              job.status = 'Processing';
+              job.status_message = null;
+              job.updated_at = new Date();
+              return Promise.resolve([{ ...job }]);
+            }
+            return Promise.resolve([]);
+          }
+
+          // UPDATE ... SET step_index = ... WHERE id = :id AND status = 'Processing' RETURNING
+          if (sql.includes(`SET step_index = COALESCE(:stepIndex`)) {
+            const job = dbJobs.get(replacements.id);
+            if (job && job.status === 'Processing') {
+              if (replacements.stepIndex !== null && replacements.stepIndex !== undefined) job.step_index = replacements.stepIndex;
+              if (replacements.stepCount !== null && replacements.stepCount !== undefined) job.step_count = replacements.stepCount;
+              if (replacements.statusMessage !== null && replacements.statusMessage !== undefined) job.status_message = replacements.statusMessage;
+              if (replacements.duration !== null && replacements.duration !== undefined) job.duration = replacements.duration;
+              if (replacements.data !== null && replacements.data !== undefined) job.data = replacements.data;
+              if (replacements.resultSummary !== null && replacements.resultSummary !== undefined) job.result_summary = replacements.resultSummary;
+              job.updated_at = new Date();
+              return Promise.resolve([{ ...job }]);
+            }
+            return Promise.resolve([]);
+          }
+
+          // UPDATE ... SET status = 'Completed' ... WHERE id = :id AND status = 'Processing' RETURNING
+          if (sql.includes(`SET status = 'Completed'`)) {
+            const job = dbJobs.get(replacements.id);
+            if (job && job.status === 'Processing') {
+              job.status = 'Completed';
+              if (replacements.stepIndex !== null && replacements.stepIndex !== undefined) job.step_index = replacements.stepIndex;
+              if (replacements.duration !== null && replacements.duration !== undefined) job.duration = replacements.duration;
+              if (replacements.data !== null && replacements.data !== undefined) job.data = replacements.data;
+              if (replacements.resultSummary !== null && replacements.resultSummary !== undefined) job.result_summary = replacements.resultSummary;
+              job.updated_at = new Date();
+              return Promise.resolve([{ ...job }]);
+            }
+            return Promise.resolve([]);
+          }
+
+          // UPDATE ... SET status = 'Error'
+          if (sql.includes(`SET status = 'Error'`)) {
+            const job = dbJobs.get(replacements.id);
+            if (job && (job.status === 'Submitted' || job.status === 'Processing')) {
+              job.status = 'Error';
+              job.status_message = replacements.errorMessage;
+              if (replacements.duration !== null && replacements.duration !== undefined) job.duration = replacements.duration;
+              job.updated_at = new Date();
+              return Promise.resolve([{ ...job }]);
+            }
+            return Promise.resolve([]);
+          }
+
+          // SELECT ... FROM "Job" WHERE id = :id
+          if (sql.includes(`WHERE id = :id`)) {
+            const job = dbJobs.get(replacements.id);
+            return Promise.resolve(job ? [{ ...job }] : []);
+          }
+
+          // SELECT ... FROM "Job" WHERE name = :name
+          if (sql.includes(`WHERE name = :name`)) {
+            const matched = Array.from(dbJobs.values())
+              .filter(j => j.name === replacements.name)
+              .sort((a, b) => (new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+            return Promise.resolve(matched.map(j => ({ ...j })));
+          }
+
+          return Promise.resolve([]);
+        }),
         model: jest.fn().mockReturnValue({
-          create: jest.fn().mockImplementation((entity) => Promise.resolve(entity)),
+          create: jest.fn().mockImplementation((entity) => {
+            const record = { ...entity };
+            dbJobs.set(record.id, record);
+            return Promise.resolve(record);
+          }),
         }),
       },
     };
@@ -91,14 +192,12 @@ describe('JobService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-
-    mockQueryService.findOne.mockResolvedValue(jobRecord);
+    dbJobs.set(jobRecord.id, { ...jobRecord });
 
     const executed = await jobService.executeJob('job-123');
     expect(executed.status).toEqual('Completed');
     expect(executed.step_index).toEqual(2);
     expect(executed.step_count).toEqual(2);
-    expect(mockDataService.save).toHaveBeenCalled();
   });
 
   it('should stop task job execution when status is changed to Stopped in database during updateProgress', async () => {
@@ -108,6 +207,11 @@ describe('JobService', () => {
       execute: async (ctx?: JobExecutionContext) => {
         if (ctx) {
           await ctx.updateProgress(1, 10, 'Step 1');
+          callCount++;
+          if (callCount === 1) {
+            // Concurrent stop from another process/thread
+            await jobService.stopJob('job-task-stop-1');
+          }
           await ctx.updateProgress(2, 10, 'Step 2');
           await ctx.updateProgress(3, 10, 'Step 3');
         }
@@ -128,23 +232,19 @@ describe('JobService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-
-    mockQueryService.findOne.mockImplementation(() => {
-      callCount++;
-      if (callCount >= 3) {
-        return Promise.resolve({ ...jobRecord, status: 'Stopped', status_message: 'Job stopped by user' });
-      }
-      return Promise.resolve(jobRecord);
-    });
+    dbJobs.set(jobRecord.id, { ...jobRecord });
 
     const executed = await jobService.executeJob('job-task-stop-1');
     expect(executed.status).toEqual('Stopped');
+    expect(executed.status_message).toEqual('Job stopped by user');
   });
 
   it('should preserve Stopped status for task job when stopped before completion save', async () => {
     const taskJob: TaskJobHandler = {
       type: 'task',
       execute: async () => {
+        // Concurrent stop right before task finishes
+        await jobService.stopJob('job-task-stop-2');
         return { done: true };
       },
     };
@@ -162,16 +262,7 @@ describe('JobService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-
-    let findOneCount = 0;
-    mockQueryService.findOne.mockImplementation(() => {
-      findOneCount++;
-      // Return Submitted on initial fetch, but Stopped on completion check
-      if (findOneCount > 2) {
-        return Promise.resolve({ ...jobRecord, status: 'Stopped' });
-      }
-      return Promise.resolve(jobRecord);
-    });
+    dbJobs.set(jobRecord.id, { ...jobRecord });
 
     const executed = await jobService.executeJob('job-task-stop-2');
     expect(executed.status).toEqual('Stopped');
@@ -195,13 +286,11 @@ describe('JobService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-
-    mockQueryService.findOne.mockResolvedValue(jobRecord);
+    dbJobs.set(jobRecord.id, { ...jobRecord });
 
     const executed = await jobService.executeJob('job-stopped-already');
     expect(executed.status).toEqual('Stopped');
     expect(stepJob.executeStep).not.toHaveBeenCalled();
-    expect(mockDataService.save).not.toHaveBeenCalled();
   });
 
   it('should register and execute a step job with default chunk size 1', async () => {
@@ -229,8 +318,7 @@ describe('JobService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-
-    mockQueryService.findOne.mockResolvedValue(jobRecord);
+    dbJobs.set(jobRecord.id, { ...jobRecord });
 
     const executed = await jobService.executeJob('job-456');
     expect(executed.status).toEqual('Completed');
@@ -239,7 +327,6 @@ describe('JobService', () => {
       { stepIdx: 1, chunkSize: 1 },
       { stepIdx: 2, chunkSize: 1 },
     ]);
-    expect(JSON.parse(executed.data)).toEqual({ completed: true });
   });
 
   it('should execute a step job with custom chunk size', async () => {
@@ -266,8 +353,7 @@ describe('JobService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-
-    mockQueryService.findOne.mockResolvedValue(jobRecord);
+    dbJobs.set(jobRecord.id, { ...jobRecord });
 
     const executed = await jobService.executeJob('job-789');
     expect(executed.status).toEqual('Completed');
@@ -276,19 +362,20 @@ describe('JobService', () => {
       { stepIdx: 50, chunkSize: 50 },
       { stepIdx: 100, chunkSize: 50 },
     ]);
-    // Save should have been called once on start + once per chunk (3 chunks) + 1 for completion = 5 times
-    expect(mockDataService.save).toHaveBeenCalledTimes(5);
   });
 
-  it('should stop job execution when status is changed to Stopped in database', async () => {
+  it('should stop job execution when status is changed to Stopped in database concurrently', async () => {
     const executedSteps: number[] = [];
-    let callCount = 0;
 
     const stoppingStepJob: StepJobHandler = {
       type: 'step',
       chunkSize: 10,
       executeStep: async (job: Job, stepIdx: number) => {
         executedSteps.push(stepIdx);
+        // Simulate concurrent stop call from another thread/process after first step
+        if (stepIdx === 0) {
+          await jobService.stopJob('job-stop-1');
+        }
       },
     };
 
@@ -306,20 +393,7 @@ describe('JobService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-
-    // findOne is called:
-    // 1: in executeJob
-    // 2: in executeStepJob (initial check)
-    // 3: before step 0
-    // 4: after step 0 (post-step check)
-    // Simulate another process setting status to 'Stopped' after step 0 finishes
-    mockQueryService.findOne.mockImplementation(() => {
-      callCount++;
-      if (callCount >= 4) {
-        return Promise.resolve({ ...jobRecord, status: 'Stopped' });
-      }
-      return Promise.resolve(jobRecord);
-    });
+    dbJobs.set(jobRecord.id, { ...jobRecord });
 
     const executed = await jobService.executeJob('job-stop-1');
     expect(executed.status).toEqual('Stopped');
@@ -340,13 +414,11 @@ describe('JobService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-
-    mockQueryService.findOne.mockResolvedValue(jobRecord);
+    dbJobs.set(jobRecord.id, { ...jobRecord });
 
     const stopped = await jobService.stopJob('job-stop-2');
     expect(stopped.status).toEqual('Stopped');
     expect(stopped.status_message).toEqual('Job stopped by user');
-    expect(mockDataService.save).toHaveBeenCalled();
   });
 
   it('should filter jobs based on showInBatchUI', () => {

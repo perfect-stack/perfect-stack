@@ -3,8 +3,6 @@ import {Job, JobExecutionContext, JobHandler, StepJobHandler, TaskJobHandler} fr
 import {DataService} from "../data/data.service";
 import {OrmService} from "../orm/orm.service";
 import {QueryService} from "../data/query.service";
-import {QueryRequest} from "../data/query.request";
-import {AttributeType, ComparisonOperator} from "../domain/meta.entity";
 import {Duration, OffsetDateTime} from "@js-joda/core";
 import {ConfigService} from "@nestjs/config";
 import {EventEmitter2, OnEvent} from "@nestjs/event-emitter";
@@ -67,25 +65,32 @@ export class JobService {
         return null;
     }
 
-    async getLatestJob(jobName: string): Promise<Job | null> {
-        const queryRequest = new QueryRequest();
-        queryRequest.metaEntityName = 'Job';
-        queryRequest.criteria = [
+    async getJobById(jobId: string): Promise<Job | null> {
+        const rows: Job[] = await this.ormService.sequelize.query(
+            `SELECT id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at
+             FROM "Job"
+             WHERE id = :id;`,
             {
-                name: 'name',
-                value: jobName,
-                attributeType: AttributeType.Text,
-                operator: ComparisonOperator.Equals,
-            },
-        ];
-        queryRequest.orderByName = 'created_at';
-        queryRequest.orderByDir = 'DESC';
-        queryRequest.pageSize = 1;
-        const response = await this.queryService.findByCriteria(queryRequest);
-        if (response && response.resultList && response.resultList.length > 0) {
-            return response.resultList[0] as Job;
-        }
-        return null;
+                replacements: { id: jobId },
+                type: QueryTypes.SELECT,
+            }
+        );
+        return rows && rows.length > 0 ? rows[0] : null;
+    }
+
+    async getLatestJob(jobName: string): Promise<Job | null> {
+        const rows: Job[] = await this.ormService.sequelize.query(
+            `SELECT id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at
+             FROM "Job"
+             WHERE name = :name
+             ORDER BY created_at DESC
+             LIMIT 1;`,
+            {
+                replacements: { name: jobName },
+                type: QueryTypes.SELECT,
+            }
+        );
+        return rows && rows.length > 0 ? rows[0] : null;
     }
 
     async startJob(name: string, payload: any = null, stepCount: number = 1, chunkSize: number = 1): Promise<Job> {
@@ -114,21 +119,36 @@ export class JobService {
 
     async stopJob(jobIdOrName: string): Promise<Job> {
         this.logger.log(`Stopping job: ${jobIdOrName}`);
-        let job = await this.queryService.findOne('Job', jobIdOrName) as Job;
-        if (!job) {
-            job = await this.getLatestJob(jobIdOrName);
+
+        // Atomic DB transition: transitions any active matching job (by ID or by name) to Stopped
+        const stoppedRows: Job[] = await this.ormService.sequelize.query(
+            `UPDATE "Job"
+             SET status = 'Stopped',
+                 status_message = 'Job stopped by user',
+                 updated_at = NOW()
+             WHERE (id = :idOrName OR (name = :idOrName AND status IN ('Submitted', 'Processing')))
+               AND status IN ('Submitted', 'Processing')
+             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+            {
+                replacements: { idOrName: jobIdOrName },
+                type: QueryTypes.SELECT,
+            }
+        );
+
+        if (stoppedRows && stoppedRows.length > 0) {
+            const stoppedJob = stoppedRows[0];
+            this.logger.log(`Job ${stoppedJob.id} (${stoppedJob.name}) atomically transitioned to Stopped in database.`);
+            return stoppedJob;
         }
-        if (!job) {
+
+        // If no active job was stopped, check if the job exists (could already be Stopped, Completed, or Error)
+        const existingJob = await this.getJobById(jobIdOrName) || await this.getLatestJob(jobIdOrName);
+        if (!existingJob) {
             throw new BadRequestException(`Job not found: ${jobIdOrName}`);
         }
-        if (job.status === 'Completed' || job.status === 'Error' || job.status === 'Stopped') {
-            return job;
-        }
-        job.status = 'Stopped';
-        job.status_message = 'Job stopped by user';
-        await this.dataService.save('Job', job);
-        this.logger.log(`Job ${job.id} (${job.name}) marked as Stopped in database.`);
-        return job;
+
+        this.logger.log(`Job ${existingJob.id} (${existingJob.name}) is already in status '${existingJob.status}'.`);
+        return existingJob;
     }
 
     async submitJob(name: string, stepCount: number, payload: any, chunkSize: number = 1): Promise<Job> {
@@ -253,9 +273,111 @@ export class JobService {
         }
     }
 
+    private async markJobProcessingAtomic(jobId: string): Promise<Job | null> {
+        const rows: Job[] = await this.ormService.sequelize.query(
+            `UPDATE "Job"
+             SET status = 'Processing',
+                 status_message = NULL,
+                 updated_at = NOW()
+             WHERE id = :id AND status IN ('Submitted', 'Processing')
+             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+            {
+                replacements: { id: jobId },
+                type: QueryTypes.SELECT,
+            }
+        );
+        return rows && rows.length > 0 ? rows[0] : null;
+    }
+
+    private async updateJobProgressAtomic(jobId: string, updates: {
+        stepIndex?: number;
+        stepCount?: number;
+        statusMessage?: string | null;
+        duration?: number;
+        data?: string | null;
+        resultSummary?: string | null;
+    }): Promise<Job | null> {
+        const rows: Job[] = await this.ormService.sequelize.query(
+            `UPDATE "Job"
+             SET step_index = COALESCE(:stepIndex, step_index),
+                 step_count = COALESCE(:stepCount, step_count),
+                 status_message = COALESCE(:statusMessage, status_message),
+                 duration = COALESCE(:duration, duration),
+                 data = COALESCE(:data, data),
+                 result_summary = COALESCE(:resultSummary, result_summary),
+                 updated_at = NOW()
+             WHERE id = :id AND status = 'Processing'
+             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+            {
+                replacements: {
+                    id: jobId,
+                    stepIndex: updates.stepIndex !== undefined ? updates.stepIndex : null,
+                    stepCount: updates.stepCount !== undefined ? updates.stepCount : null,
+                    statusMessage: updates.statusMessage !== undefined ? updates.statusMessage : null,
+                    duration: updates.duration !== undefined ? updates.duration : null,
+                    data: updates.data !== undefined ? updates.data : null,
+                    resultSummary: updates.resultSummary !== undefined ? updates.resultSummary : null,
+                },
+                type: QueryTypes.SELECT,
+            }
+        );
+        return rows && rows.length > 0 ? rows[0] : null;
+    }
+
+    private async markJobCompletedAtomic(jobId: string, updates: {
+        duration?: number;
+        resultSummary?: string | null;
+        data?: string | null;
+        stepIndex?: number;
+    }): Promise<Job | null> {
+        const rows: Job[] = await this.ormService.sequelize.query(
+            `UPDATE "Job"
+             SET status = 'Completed',
+                 step_index = COALESCE(:stepIndex, step_count, step_index),
+                 duration = COALESCE(:duration, duration),
+                 data = COALESCE(:data, data),
+                 result_summary = COALESCE(:resultSummary, result_summary),
+                 updated_at = NOW()
+             WHERE id = :id AND status = 'Processing'
+             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+            {
+                replacements: {
+                    id: jobId,
+                    stepIndex: updates.stepIndex !== undefined ? updates.stepIndex : null,
+                    duration: updates.duration !== undefined ? updates.duration : null,
+                    data: updates.data !== undefined ? updates.data : null,
+                    resultSummary: updates.resultSummary !== undefined ? updates.resultSummary : null,
+                },
+                type: QueryTypes.SELECT,
+            }
+        );
+        return rows && rows.length > 0 ? rows[0] : null;
+    }
+
+    private async markJobErrorAtomic(jobId: string, errorMessage: string, duration?: number): Promise<Job | null> {
+        const rows: Job[] = await this.ormService.sequelize.query(
+            `UPDATE "Job"
+             SET status = 'Error',
+                 status_message = :errorMessage,
+                 duration = COALESCE(:duration, duration),
+                 updated_at = NOW()
+             WHERE id = :id AND status IN ('Submitted', 'Processing')
+             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+            {
+                replacements: {
+                    id: jobId,
+                    errorMessage,
+                    duration: duration !== undefined ? duration : null,
+                },
+                type: QueryTypes.SELECT,
+            }
+        );
+        return rows && rows.length > 0 ? rows[0] : null;
+    }
+
     async executeJob(jobId: string): Promise<Job> {
         this.logger.log(`Execute job: ${jobId}`);
-        const job = await this.queryService.findOne('Job', jobId) as Job;
+        const job = await this.getJobById(jobId);
         if (!job) {
             throw new Error(`Job not found: ${jobId}`);
         }
@@ -282,59 +404,53 @@ export class JobService {
         }
     }
 
-    private async executeStepJob(job: Job, handler: StepJobHandler): Promise<Job> {
+    private async executeStepJob(initialJob: Job, handler: StepJobHandler): Promise<Job> {
         const startTime = OffsetDateTime.now();
+        const jobId = initialJob.id;
 
-        // Check if stopped before marking as Processing
-        const initialDbJob = await this.queryService.findOne('Job', job.id) as Job;
-        if (initialDbJob && initialDbJob.status === 'Stopped') {
-            this.logger.log(`Job ${job.id} (${job.name}) was stopped before execution started. Halting.`);
-            return initialDbJob;
+        // Atomically transition from Submitted to Processing
+        const processingJob = await this.markJobProcessingAtomic(jobId);
+        if (!processingJob) {
+            const currentJob = await this.getJobById(jobId);
+            this.logger.log(`Job ${jobId} (${initialJob.name}) cannot transition to Processing (status: ${currentJob?.status}). Halting.`);
+            return currentJob || initialJob;
         }
 
-        job.status = "Processing";
-        job.status_message = null;
-        await this.dataService.save('Job', job);
-
+        let job = processingJob;
         const chunkSize = job.chunk_size || handler.chunkSize || 1;
         const stepIndex = job.step_index || 0;
         const stepCount = job.step_count;
 
         try {
             for (let nextStepIdx = stepIndex; nextStepIdx < stepCount; nextStepIdx += chunkSize) {
-                // Check if the job was stopped by another request via the database
-                const dbJob = await this.queryService.findOne('Job', job.id) as Job;
-                if (dbJob && dbJob.status === 'Stopped') {
-                    this.logger.log(`Job ${job.id} (${job.name}) was stopped before step ${nextStepIdx}. Halting execution.`);
-                    job.status = 'Stopped';
-                    job.status_message = dbJob.status_message || 'Job stopped by user';
-                    const endTime = OffsetDateTime.now();
-                    job.duration = Duration.between(startTime, endTime).toMillis();
-                    await this.dataService.save('Job', job);
-                    return job;
+                // Pre-step atomic DB status check
+                const preStepJob = await this.getJobById(jobId);
+                if (preStepJob && preStepJob.status === 'Stopped') {
+                    this.logger.log(`Job ${jobId} (${job.name}) was stopped before step ${nextStepIdx}. Halting execution.`);
+                    return preStepJob;
                 }
 
-                this.logger.log(`Execute job ${job.id} (${job.name}): step ${nextStepIdx} of ${stepCount} (chunk size: ${chunkSize})`);
+                this.logger.log(`Execute job ${jobId} (${job.name}): step ${nextStepIdx} of ${stepCount} (chunk size: ${chunkSize})`);
                 await handler.executeStep(job, nextStepIdx, chunkSize);
 
-                // Check if the job was marked as Stopped during chunk execution BEFORE saving progress
-                const postStepDbJob = await this.queryService.findOne('Job', job.id) as Job;
-                if (postStepDbJob && postStepDbJob.status === 'Stopped') {
-                    this.logger.log(`Job ${job.id} (${job.name}) was stopped during step ${nextStepIdx}. Halting execution.`);
-                    job.status = 'Stopped';
-                    job.status_message = postStepDbJob.status_message || 'Job stopped by user';
-                    job.step_index = Math.min(stepCount, nextStepIdx + chunkSize);
-                    const endTime = OffsetDateTime.now();
-                    job.duration = Duration.between(startTime, endTime).toMillis();
-                    await this.dataService.save('Job', job);
-                    return job;
+                const calculatedDuration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
+                const nextStepIndex = Math.min(stepCount, nextStepIdx + chunkSize);
+
+                // Atomic DB progress update: only updates if status is still 'Processing'
+                const updatedJob = await this.updateJobProgressAtomic(jobId, {
+                    stepIndex: nextStepIndex,
+                    duration: calculatedDuration,
+                });
+
+                if (!updatedJob) {
+                    const stoppedDbJob = await this.getJobById(jobId);
+                    this.logger.log(`Job ${jobId} (${job.name}) progress update aborted because status is '${stoppedDbJob?.status}'. Halting.`);
+                    return stoppedDbJob || job;
                 }
 
-                job.step_index = Math.min(stepCount, nextStepIdx + chunkSize);
-                job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
-                await this.dataService.save('Job', job);
+                job = updatedJob;
 
-                const jobStartTime = OffsetDateTime.parse(job.created_at.toISOString());
+                const jobStartTime = OffsetDateTime.parse(job.created_at ? new Date(job.created_at).toISOString() : new Date().toISOString());
                 const jobDurationInSeconds = Duration.between(jobStartTime, OffsetDateTime.now()).seconds();
                 if (jobDurationInSeconds > JOB_TIMEOUT_IN_SECONDS) {
                     this.logger.error('JOB TIMEOUT EXCEEDED');
@@ -342,10 +458,10 @@ export class JobService {
                 }
 
                 const chunkDurationInSeconds = Duration.between(startTime, OffsetDateTime.now()).seconds();
-                if (chunkDurationInSeconds > JOB_CHUNK_DURATION_IN_SECONDS) {
-                    const chunkCheckDbJob = await this.queryService.findOne('Job', job.id) as Job;
-                    if (chunkCheckDbJob && chunkCheckDbJob.status === 'Stopped') {
-                        this.logger.log(`Job ${job.id} (${job.name}) was stopped. Skipping subsequent chunk invocation.`);
+                if (chunkDurationInSeconds > JOB_CHUNK_DURATION_IN_SECONDS && nextStepIndex < stepCount) {
+                    const chunkCheckDbJob = await this.getJobById(jobId);
+                    if (chunkCheckDbJob && chunkCheckDbJob.status !== 'Processing') {
+                        this.logger.log(`Job ${jobId} (${job.name}) is '${chunkCheckDbJob.status}'. Skipping subsequent chunk invocation.`);
                         return chunkCheckDbJob;
                     }
                     this.logger.log('Chunk complete: invoking job again');
@@ -354,105 +470,99 @@ export class JobService {
                 }
             }
 
-            // Check if the job was stopped before marking as Completed
-            const completionCheckDbJob = await this.queryService.findOne('Job', job.id) as Job;
-            if (completionCheckDbJob && completionCheckDbJob.status === 'Stopped') {
-                this.logger.log(`Job ${job.id} (${job.name}) was stopped before completion. Halting execution.`);
-                job.status = 'Stopped';
-                job.status_message = completionCheckDbJob.status_message || 'Job stopped by user';
-                const endTime = OffsetDateTime.now();
-                job.duration = Duration.between(startTime, endTime).toMillis();
-                await this.dataService.save('Job', job);
-                return job;
-            }
-
+            let summaryStr: string | null = null;
             if (handler.onComplete) {
                 const summary = await handler.onComplete(job);
                 if (summary !== undefined) {
-                    job.result_summary = typeof summary === 'string' ? summary : JSON.stringify(summary);
+                    summaryStr = typeof summary === 'string' ? summary : JSON.stringify(summary);
                 }
             }
 
             const endTime = OffsetDateTime.now();
-            job.duration = Duration.between(startTime, endTime).toMillis();
-            job.status = "Completed";
-            await this.dataService.save('Job', job);
-            this.logger.log(`Execute job ${job.id} (${job.name}) completed in ${job.duration}ms`);
-            return job;
+            const finalDuration = Duration.between(startTime, endTime).toMillis();
+
+            // Atomic DB completion: only transitions to 'Completed' if status is still 'Processing'
+            const completedJob = await this.markJobCompletedAtomic(jobId, {
+                duration: finalDuration,
+                resultSummary: summaryStr || job.result_summary,
+                stepIndex: stepCount,
+            });
+
+            if (!completedJob) {
+                const finalDbJob = await this.getJobById(jobId);
+                this.logger.log(`Job ${jobId} (${job.name}) completion skipped because status is '${finalDbJob?.status}'.`);
+                return finalDbJob || job;
+            }
+
+            this.logger.log(`Execute job ${jobId} (${job.name}) completed in ${completedJob.duration}ms`);
+            return completedJob;
         } catch (error) {
-            const errorCheckDbJob = await this.queryService.findOne('Job', job.id) as Job;
-            if (errorCheckDbJob && errorCheckDbJob.status === 'Stopped') {
-                this.logger.log(`Job ${job.id} (${job.name}) was stopped during step execution. Preserving Stopped status.`);
-                job.status = 'Stopped';
-                job.status_message = errorCheckDbJob.status_message || 'Job stopped by user';
-                const endTime = OffsetDateTime.now();
-                job.duration = Duration.between(startTime, endTime).toMillis();
-                await this.dataService.save('Job', job);
-                return job;
+            const errorDbJob = await this.getJobById(jobId);
+            if (errorDbJob && errorDbJob.status === 'Stopped') {
+                this.logger.log(`Job ${jobId} (${job.name}) was stopped during step execution. Preserving Stopped status.`);
+                return errorDbJob;
             }
 
             const endTime = OffsetDateTime.now();
-            job.duration = Duration.between(startTime, endTime).toMillis();
-            job.status = "Error";
-            job.status_message = error.message ?? String(error);
-            await this.dataService.save('Job', job);
+            const finalDuration = Duration.between(startTime, endTime).toMillis();
+            await this.markJobErrorAtomic(jobId, error.message ?? String(error), finalDuration);
             throw error;
         }
     }
 
-    private async executeTaskJob(job: Job, handler: TaskJobHandler): Promise<Job> {
+    private async executeTaskJob(initialJob: Job, handler: TaskJobHandler): Promise<Job> {
         const startTime = OffsetDateTime.now();
+        const jobId = initialJob.id;
 
-        // Check if stopped before marking as Processing
-        const initialDbJob = await this.queryService.findOne('Job', job.id) as Job;
-        if (initialDbJob && initialDbJob.status === 'Stopped') {
-            this.logger.log(`Task Job ${job.id} (${job.name}) was stopped before execution started. Halting.`);
-            return initialDbJob;
+        // Atomically transition from Submitted to Processing
+        const processingJob = await this.markJobProcessingAtomic(jobId);
+        if (!processingJob) {
+            const currentJob = await this.getJobById(jobId);
+            this.logger.log(`Task Job ${jobId} (${initialJob.name}) cannot transition to Processing (status: ${currentJob?.status}). Halting.`);
+            return currentJob || initialJob;
         }
 
-        job.status = "Processing";
-        job.status_message = null;
-        await this.dataService.save('Job', job);
-
+        let job = processingJob;
         let lastSaveTime = Date.now();
         let isStopped = false;
-        const ctx: JobExecutionContext = {
-            job,
-            updateProgress: async (stepIndex: number, stepCount?: number, statusMessage?: string) => {
-                const dbJob = await this.queryService.findOne('Job', job.id) as Job;
-                if (dbJob && dbJob.status === 'Stopped') {
-                    isStopped = true;
-                    job.status = 'Stopped';
-                    job.status_message = dbJob.status_message || 'Job stopped by user';
-                    const endTime = OffsetDateTime.now();
-                    job.duration = Duration.between(startTime, endTime).toMillis();
-                    await this.dataService.save('Job', job);
-                    throw new Error('JOB_STOPPED');
-                }
 
-                job.step_index = stepIndex;
-                if (stepCount !== undefined) {
-                    job.step_count = stepCount;
-                }
-                if (statusMessage !== undefined) {
-                    job.status_message = statusMessage;
-                }
-                job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
+        const ctx: JobExecutionContext = {
+            get job() {
+                return job;
+            },
+            updateProgress: async (stepIndex: number, stepCount?: number, statusMessage?: string) => {
+                const calculatedDuration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
                 const now = Date.now();
-                if (now - lastSaveTime > 500 || (job.step_count && stepIndex >= job.step_count)) {
-                    // Check DB status once more before saving progress to prevent overwriting a concurrent Stop
-                    const checkDbJob = await this.queryService.findOne('Job', job.id) as Job;
-                    if (checkDbJob && checkDbJob.status === 'Stopped') {
+                const isLastStep = (stepCount !== undefined && stepIndex >= stepCount) ||
+                                   (job.step_count && stepIndex >= job.step_count);
+
+                if (now - lastSaveTime > 500 || isLastStep) {
+                    // Atomic update: only updates DB if status is still 'Processing'
+                    const updated = await this.updateJobProgressAtomic(jobId, {
+                        stepIndex,
+                        stepCount,
+                        statusMessage,
+                        duration: calculatedDuration,
+                        data: job.data,
+                        resultSummary: job.result_summary,
+                    });
+
+                    if (!updated) {
                         isStopped = true;
-                        job.status = 'Stopped';
-                        job.status_message = checkDbJob.status_message || 'Job stopped by user';
-                        const endTime = OffsetDateTime.now();
-                        job.duration = Duration.between(startTime, endTime).toMillis();
-                        await this.dataService.save('Job', job);
+                        const stoppedDbJob = await this.getJobById(jobId);
+                        if (stoppedDbJob) {
+                            job = stoppedDbJob;
+                        }
                         throw new Error('JOB_STOPPED');
                     }
-                    await this.dataService.save('Job', job);
+                    job = updated;
                     lastSaveTime = now;
+                } else {
+                    // In-memory update between saves
+                    job.step_index = stepIndex;
+                    if (stepCount !== undefined) job.step_count = stepCount;
+                    if (statusMessage !== undefined) job.status_message = statusMessage;
+                    job.duration = calculatedDuration;
                 }
             },
             setSummary: (summary: any) => {
@@ -469,51 +579,50 @@ export class JobService {
                 ctx.setSummary(summary);
             }
 
-            // Check if the job was stopped during execution before marking as Completed
-            const completionDbJob = await this.queryService.findOne('Job', job.id) as Job;
-            if (completionDbJob && completionDbJob.status === 'Stopped') {
-                this.logger.log(`Execute task job ${job.id} (${job.name}) was stopped. Halting completion.`);
-                job.status = 'Stopped';
-                job.status_message = completionDbJob.status_message || 'Job stopped by user';
-                const endTime = OffsetDateTime.now();
-                job.duration = Duration.between(startTime, endTime).toMillis();
-                await this.dataService.save('Job', job);
-                return job;
+            const endTime = OffsetDateTime.now();
+            const finalDuration = Duration.between(startTime, endTime).toMillis();
+
+            // Atomic DB completion: only transitions if status is still 'Processing'
+            const completedJob = await this.markJobCompletedAtomic(jobId, {
+                duration: finalDuration,
+                data: job.data,
+                resultSummary: job.result_summary,
+                stepIndex: job.step_count,
+            });
+
+            if (!completedJob) {
+                const finalDbJob = await this.getJobById(jobId);
+                this.logger.log(`Task Job ${jobId} (${job.name}) was not in Processing status (${finalDbJob?.status}). Preserving status.`);
+                return finalDbJob || job;
             }
 
-            const endTime = OffsetDateTime.now();
-            job.duration = Duration.between(startTime, endTime).toMillis();
-            job.status = "Completed";
-            await this.dataService.save('Job', job);
-            this.logger.log(`Execute task job ${job.id} (${job.name}) completed in ${job.duration}ms`);
-            return job;
+            this.logger.log(`Execute task job ${jobId} (${job.name}) completed in ${completedJob.duration}ms`);
+            return completedJob;
         } catch (error) {
             if (isStopped || error.message === 'JOB_STOPPED') {
-                this.logger.log(`Execute task job ${job.id} (${job.name}) stopped.`);
-                return job;
+                const stoppedDbJob = await this.getJobById(jobId);
+                this.logger.log(`Execute task job ${jobId} (${job.name}) stopped.`);
+                return stoppedDbJob || job;
             }
 
-            const errorDbJob = await this.queryService.findOne('Job', job.id) as Job;
+            const errorDbJob = await this.getJobById(jobId);
             if (errorDbJob && errorDbJob.status === 'Stopped') {
-                this.logger.log(`Execute task job ${job.id} (${job.name}) was stopped on error. Preserving Stopped status.`);
-                job.status = 'Stopped';
-                job.status_message = errorDbJob.status_message || 'Job stopped by user';
-                const endTime = OffsetDateTime.now();
-                job.duration = Duration.between(startTime, endTime).toMillis();
-                await this.dataService.save('Job', job);
-                return job;
+                this.logger.log(`Execute task job ${jobId} (${job.name}) was stopped on error. Preserving Stopped status.`);
+                return errorDbJob;
             }
 
             const endTime = OffsetDateTime.now();
-            job.duration = Duration.between(startTime, endTime).toMillis();
-            job.status = "Error";
-            job.status_message = error.message ?? String(error);
-            await this.dataService.save('Job', job);
+            const finalDuration = Duration.between(startTime, endTime).toMillis();
+            await this.markJobErrorAtomic(jobId, error.message ?? String(error), finalDuration);
             throw error;
         }
     }
 
     async pollJobStatus(jobId: string): Promise<Job> {
-        return await this.queryService.findOne('Job', jobId) as Job;
+        const job = await this.getJobById(jobId);
+        if (!job) {
+            throw new BadRequestException(`Job not found: ${jobId}`);
+        }
+        return job;
     }
 }
