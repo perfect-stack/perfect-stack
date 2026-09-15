@@ -115,6 +115,7 @@ describe('JobService', () => {
               job.status = 'Error';
               job.status_message = replacements.errorMessage;
               if (replacements.duration !== null && replacements.duration !== undefined) job.duration = replacements.duration;
+              if (replacements.data !== null && replacements.data !== undefined) job.data = replacements.data;
               job.updated_at = new Date();
               return Promise.resolve([{ ...job }]);
             }
@@ -293,15 +294,21 @@ describe('JobService', () => {
     expect(stepJob.executeStep).not.toHaveBeenCalled();
   });
 
-  it('should register and execute a step job with default chunk size 1', async () => {
+  it('should register and execute a step job with default chunk size 1 and persist data updates', async () => {
     const executedSteps: { stepIdx: number; chunkSize?: number }[] = [];
     const stepJob: StepJobHandler = {
       type: 'step',
       executeStep: async (job: Job, stepIdx: number, chunkSize?: number) => {
         executedSteps.push({ stepIdx, chunkSize });
+        const data = JSON.parse(job.data || '{}');
+        data.items = data.items || [];
+        data.items.push(stepIdx);
+        job.data = JSON.stringify(data);
       },
       onComplete: async (job: Job) => {
-        job.data = JSON.stringify({ completed: true });
+        const data = JSON.parse(job.data || '{}');
+        data.completed = true;
+        job.data = JSON.stringify(data);
       },
     };
 
@@ -327,6 +334,11 @@ describe('JobService', () => {
       { stepIdx: 1, chunkSize: 1 },
       { stepIdx: 2, chunkSize: 1 },
     ]);
+    expect(JSON.parse(executed.data)).toEqual({ items: [0, 1, 2], completed: true });
+
+    // Verify database record has updated data
+    const dbJob = dbJobs.get('job-456');
+    expect(JSON.parse(dbJob.data)).toEqual({ items: [0, 1, 2], completed: true });
   });
 
   it('should execute a step job with custom chunk size', async () => {

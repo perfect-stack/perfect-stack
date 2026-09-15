@@ -356,12 +356,13 @@ export class JobService {
         return rows && rows.length > 0 ? rows[0] : null;
     }
 
-    private async markJobErrorAtomic(jobId: string, errorMessage: string, duration?: number): Promise<Job | null> {
+    private async markJobErrorAtomic(jobId: string, errorMessage: string, duration?: number, data?: string | null): Promise<Job | null> {
         const rows: Job[] = await this.ormService.sequelize.query(
             `UPDATE "Job"
              SET status = 'Error',
                  status_message = :errorMessage,
                  duration = COALESCE(:duration, duration),
+                 data = COALESCE(:data, data),
                  updated_at = NOW()
              WHERE id = :id AND status IN ('Submitted', 'Processing')
              RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
@@ -370,6 +371,7 @@ export class JobService {
                     id: jobId,
                     errorMessage,
                     duration: duration !== undefined ? duration : null,
+                    data: data !== undefined ? data : null,
                 },
                 type: QueryTypes.SELECT,
             }
@@ -442,6 +444,7 @@ export class JobService {
                 const updatedJob = await this.updateJobProgressAtomic(jobId, {
                     stepIndex: nextStepIndex,
                     duration: calculatedDuration,
+                    data: job.data,
                 });
 
                 if (!updatedJob) {
@@ -486,6 +489,7 @@ export class JobService {
             // Atomic DB completion: only transitions to 'Completed' if status is still 'Processing'
             const completedJob = await this.markJobCompletedAtomic(jobId, {
                 duration: finalDuration,
+                data: job.data,
                 resultSummary: summaryStr || job.result_summary,
                 stepIndex: stepCount,
             });
@@ -507,7 +511,7 @@ export class JobService {
 
             const endTime = OffsetDateTime.now();
             const finalDuration = Duration.between(startTime, endTime).toMillis();
-            await this.markJobErrorAtomic(jobId, error.message ?? String(error), finalDuration);
+            await this.markJobErrorAtomic(jobId, error.message ?? String(error), finalDuration, job.data);
             throw error;
         }
     }
@@ -615,7 +619,7 @@ export class JobService {
 
             const endTime = OffsetDateTime.now();
             const finalDuration = Duration.between(startTime, endTime).toMillis();
-            await this.markJobErrorAtomic(jobId, error.message ?? String(error), finalDuration);
+            await this.markJobErrorAtomic(jobId, error.message ?? String(error), finalDuration, job.data);
             throw error;
         }
     }
