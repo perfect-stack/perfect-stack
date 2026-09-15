@@ -230,7 +230,9 @@ export class JobService {
             case 'sync':
                 return await this.executeJob(jobId);
             case 'local-async':
-                this.eventEmitter.emit('job.invoke.local-async', jobId);
+                setImmediate(() => {
+                    this.eventEmitter.emit('job.invoke.local-async', jobId);
+                });
                 break;
             case 'async':
                 await this.invokeJobLambda(jobId);
