@@ -19,57 +19,60 @@ export class CoordinateConverterService implements BatchJob {
 
   async getSummary(): Promise<CoordinateSummary> {
     const pool = await this.settingsService.getDatabasePool();
+    try {
+      const selectCountSQL =
+        'Select count(*) as total_count from "Event" where (easting is not null and northing is not null) and (lat is null or lng is null)';
 
-    const selectCountSQL =
-      'Select count(*) as total_count from "Event" where (easting is not null and northing is not null) and (lat is null or lng is null)';
+      const selectCountResponse = await pool.query(selectCountSQL);
+      const totalCount = Number(selectCountResponse.rows[0].total_count);
 
-    const selectCountResponse = await pool.query(selectCountSQL);
-    const totalCount = Number(selectCountResponse.rows[0].total_count);
+      this.logger.log(`WGS84 conversion needed for ${totalCount} rows.`);
 
-    this.logger.log(`WGS84 conversion needed for ${totalCount} rows.`);
-
-    await pool.end();
-
-    return {
-      remainingCount: totalCount,
-    };
+      return {
+        remainingCount: totalCount,
+      };
+    } finally {
+      await pool.end();
+    }
   }
 
   async execute(context?: JobExecutionContext): Promise<any> {
     const pool = await this.settingsService.getDatabasePool();
+    try {
+      const selectSql =
+        'Select id, easting, northing from "Event" where (easting is not null and northing is not null) and (lat is null or lng is null)';
 
-    const selectSql =
-      'Select id, easting, northing from "Event" where (easting is not null and northing is not null) and (lat is null or lng is null)';
+      const selectResponse = await pool.query(selectSql);
+      const dataRows = selectResponse.rows;
+      let convertedCount = 0;
+      let stepIdx = 0;
+      for (const nextRow of dataRows) {
+        stepIdx++;
+        if (context) {
+          await context.updateProgress(stepIdx, dataRows.length, `Converting coordinate ${stepIdx} of ${dataRows.length}`);
+        }
+        const id = nextRow.id;
+        const easting = nextRow.easting;
+        const northing = nextRow.northing;
+        this.logger.log(`Convert Row: ${id}: ${easting}, ${northing}`);
 
-    const selectResponse = await pool.query(selectSql);
-    const dataRows = selectResponse.rows;
-    let convertedCount = 0;
-    let stepIdx = 0;
-    for (const nextRow of dataRows) {
-      stepIdx++;
-      if (context) {
-        await context.updateProgress(stepIdx, dataRows.length, `Converting coordinate ${stepIdx} of ${dataRows.length}`);
+        if (northing && easting) {
+          const latLng = this.mapService.toLatLng({
+            northing,
+            easting,
+          });
+
+          this.logger.log(`      => ${latLng.lat}, ${latLng.lng}`);
+
+          const updateSql = 'Update "Event" set lat = $1, lng = $2 where id = $3';
+          await pool.query(updateSql, [latLng.lat, latLng.lng, id]);
+          convertedCount++;
+        }
       }
-      const id = nextRow.id;
-      const easting = nextRow.easting;
-      const northing = nextRow.northing;
-      this.logger.log(`Convert Row: ${id}: ${easting}, ${northing}`);
 
-      if (northing && easting) {
-        const latLng = this.mapService.toLatLng({
-          northing,
-          easting,
-        });
-
-        this.logger.log(`      => ${latLng.lat}, ${latLng.lng}`);
-
-        const updateSql = 'Update "Event" set lat = $1, lng = $2 where id = $3';
-        await pool.query(updateSql, [latLng.lat, latLng.lng, id]);
-        convertedCount++;
-      }
+      return { convertedCount, totalCount: dataRows.length };
+    } finally {
+      await pool.end();
     }
-
-    await pool.end();
-    return { convertedCount, totalCount: dataRows.length };
   }
 }

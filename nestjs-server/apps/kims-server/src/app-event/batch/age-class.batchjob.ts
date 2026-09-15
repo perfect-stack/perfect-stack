@@ -6,7 +6,6 @@ import {DataService} from "@perfect-stack/nestjs-server/data/data.service";
 import {QueryService} from "@perfect-stack/nestjs-server/data/query.service";
 import {JobExecutionContext} from "@perfect-stack/nestjs-server/job/job.model";
 
-
 enum AgingStrategy {
     CONTINUOUS, // Age is calculated continuously from hatch date
     ANNIVERSARY, // Age increments on a specific date each year
@@ -85,22 +84,29 @@ export class AgeClassBatchJob implements BatchJob {
     async getSummary(): Promise<any> {
         console.log('AgeClassBatchJob.getSummary()');
         const pool = await this.settingsService.getDatabasePool();
-        const rows = await this.selectBirds(pool);
-        console.log('AgeClassBatchJob.getSummary()');
-        return {
-            rowCount: rows.length
+        try {
+            const rows = await this.selectBirds(pool);
+            console.log('AgeClassBatchJob.getSummary()');
+            return {
+                rowCount: rows.length
+            };
+        } finally {
+            await pool.end();
         }
     }
 
     async execute(context?: JobExecutionContext): Promise<any> {
         console.log('AgeClassBatchJob.execute()');
         const pool = await this.settingsService.getDatabasePool();
-        const rows = await this.selectBirds(pool);
-        const result = await this.processRows(rows, pool, context);
-        await pool.end();
-        console.log('AgeClassBatchJob.execute() finished.');
-        console.log('AgeClassBatchJob - Result: ', result);
-        return result;
+        try {
+            const rows = await this.selectBirds(pool);
+            const result = await this.processRows(rows, pool, context);
+            console.log('AgeClassBatchJob.execute() finished.');
+            console.log('AgeClassBatchJob - Result: ', result);
+            return result;
+        } finally {
+            await pool.end();
+        }
     }
 
     async selectBirds(pool: Pool): Promise<any[]> {
@@ -128,7 +134,7 @@ export class AgeClassBatchJob implements BatchJob {
         const totalCount = rows.length;
         let updatedCount = 0;
         let stepIdx = 0;
-        for(const row of rows) {
+        for (const row of rows) {
             stepIdx++;
             if (context) {
                 await context.updateProgress(stepIdx, totalCount, `Processing bird ${stepIdx} of ${totalCount}`);
@@ -148,7 +154,7 @@ export class AgeClassBatchJob implements BatchJob {
             }
         }
 
-        return { updatedCount, totalCount }
+        return { updatedCount, totalCount };
     }
 
     /**
@@ -256,7 +262,7 @@ export class AgeClassBatchJob implements BatchJob {
     }
 
     async updateAgeClass(birdId: string, newAgeClass: string, pool: Pool): Promise<any> {
-        const updateSql = "Update \"Bird\" set age_class = $1 where id = $2"
+        const updateSql = 'Update "Bird" set age_class = $1 where id = $2';
         await pool.query(updateSql, [newAgeClass, birdId]);
     }
 }

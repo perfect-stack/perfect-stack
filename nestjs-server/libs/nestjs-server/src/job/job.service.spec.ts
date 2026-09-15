@@ -101,6 +101,109 @@ describe('JobService', () => {
     expect(mockDataService.save).toHaveBeenCalled();
   });
 
+  it('should stop task job execution when status is changed to Stopped in database during updateProgress', async () => {
+    let callCount = 0;
+    const taskJob: TaskJobHandler = {
+      type: 'task',
+      execute: async (ctx?: JobExecutionContext) => {
+        if (ctx) {
+          await ctx.updateProgress(1, 10, 'Step 1');
+          await ctx.updateProgress(2, 10, 'Step 2');
+          await ctx.updateProgress(3, 10, 'Step 3');
+        }
+        return { finished: true };
+      },
+    };
+
+    jobService.registerJob('stopping_task', taskJob);
+
+    const jobRecord: Job = {
+      id: 'job-task-stop-1',
+      name: 'stopping_task',
+      status: 'Submitted',
+      data: null,
+      step_index: 0,
+      step_count: 10,
+      duration: 0,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    mockQueryService.findOne.mockImplementation(() => {
+      callCount++;
+      if (callCount >= 3) {
+        return Promise.resolve({ ...jobRecord, status: 'Stopped', status_message: 'Job stopped by user' });
+      }
+      return Promise.resolve(jobRecord);
+    });
+
+    const executed = await jobService.executeJob('job-task-stop-1');
+    expect(executed.status).toEqual('Stopped');
+  });
+
+  it('should preserve Stopped status for task job when stopped before completion save', async () => {
+    const taskJob: TaskJobHandler = {
+      type: 'task',
+      execute: async () => {
+        return { done: true };
+      },
+    };
+
+    jobService.registerJob('task_stop_before_completion', taskJob);
+
+    const jobRecord: Job = {
+      id: 'job-task-stop-2',
+      name: 'task_stop_before_completion',
+      status: 'Submitted',
+      data: null,
+      step_index: 0,
+      step_count: 1,
+      duration: 0,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    let findOneCount = 0;
+    mockQueryService.findOne.mockImplementation(() => {
+      findOneCount++;
+      // Return Submitted on initial fetch, but Stopped on completion check
+      if (findOneCount > 2) {
+        return Promise.resolve({ ...jobRecord, status: 'Stopped' });
+      }
+      return Promise.resolve(jobRecord);
+    });
+
+    const executed = await jobService.executeJob('job-task-stop-2');
+    expect(executed.status).toEqual('Stopped');
+  });
+
+  it('should not execute a job that is already in Stopped status', async () => {
+    const stepJob: StepJobHandler = {
+      type: 'step',
+      executeStep: jest.fn(),
+    };
+    jobService.registerJob('already_stopped_job', stepJob);
+
+    const jobRecord: Job = {
+      id: 'job-stopped-already',
+      name: 'already_stopped_job',
+      status: 'Stopped',
+      data: null,
+      step_index: 5,
+      step_count: 10,
+      duration: 50,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    mockQueryService.findOne.mockResolvedValue(jobRecord);
+
+    const executed = await jobService.executeJob('job-stopped-already');
+    expect(executed.status).toEqual('Stopped');
+    expect(stepJob.executeStep).not.toHaveBeenCalled();
+    expect(mockDataService.save).not.toHaveBeenCalled();
+  });
+
   it('should register and execute a step job with default chunk size 1', async () => {
     const executedSteps: { stepIdx: number; chunkSize?: number }[] = [];
     const stepJob: StepJobHandler = {
@@ -204,11 +307,15 @@ describe('JobService', () => {
       updated_at: new Date(),
     };
 
-    // findOne is called before & after each step in executeStepJob.
-    // Simulate another process setting status to 'Stopped' after first chunk runs
+    // findOne is called:
+    // 1: in executeJob
+    // 2: in executeStepJob (initial check)
+    // 3: before step 0
+    // 4: after step 0 (post-step check)
+    // Simulate another process setting status to 'Stopped' after step 0 finishes
     mockQueryService.findOne.mockImplementation(() => {
       callCount++;
-      if (callCount > 2) {
+      if (callCount >= 4) {
         return Promise.resolve({ ...jobRecord, status: 'Stopped' });
       }
       return Promise.resolve(jobRecord);

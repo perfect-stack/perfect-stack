@@ -141,22 +141,31 @@ export class BatchComponent implements OnInit {
 
   onJobUpdated(jobSummary: BatchJobSummary, job: Job | null) {
     if (!job) return;
+    const wasRunning = jobSummary.isRunning || jobSummary.isStopping;
     jobSummary.lastJob = job;
     if (job.status === 'Completed') {
       jobSummary.isRunning = false;
       jobSummary.isStopping = false;
-      this.toastService.showSuccess(`Job ${jobSummary.name} complete`);
-      this.getSummary(jobSummary.name);
+      if (wasRunning) {
+        this.toastService.showSuccess(`Job ${jobSummary.name} complete`);
+        this.getSummary(jobSummary.name);
+      }
     } else if (job.status === 'Stopped') {
       jobSummary.isRunning = false;
       jobSummary.isStopping = false;
-      this.toastService.showWarning(`Job ${jobSummary.name} stopped`);
-      this.getSummary(jobSummary.name);
+      if (wasRunning) {
+        this.toastService.showWarning(`Job ${jobSummary.name} stopped`);
+        this.getSummary(jobSummary.name);
+      }
     } else if (job.status === 'Error') {
       jobSummary.isRunning = false;
       jobSummary.isStopping = false;
-      this.toastService.showError(`Job ${jobSummary.name} error: ${job.status_message}`, false);
-      this.getSummary(jobSummary.name);
+      if (wasRunning) {
+        this.toastService.showError(`Job ${jobSummary.name} error: ${job.status_message}`, false);
+        this.getSummary(jobSummary.name);
+      }
+    } else if (job.status === 'Processing' || job.status === 'Submitted') {
+      jobSummary.isRunning = true;
     }
   }
 

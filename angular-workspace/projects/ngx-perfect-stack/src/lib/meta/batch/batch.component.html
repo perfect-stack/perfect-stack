@@ -7,12 +7,12 @@
 
       <table class="table mt-4 align-middle">
         <thead>
-        <th style="width: 15%;">Job Name</th>
-        <th style="width: 18%;">Last Run</th>
-        <th style="width: 10%;">Duration</th>
-        <th style="width: 25%;">Summary</th>
-        <th style="width: 20%;">Progress</th>
-        <th style="width: 12%;">Execute</th>
+        <th style="width: 14%;">Job Name</th>
+        <th style="width: 12%;">Last Run</th>
+        <th style="width: 8%;">Duration</th>
+        <th style="width: 24%;">Summary</th>
+        <th style="width: 22%;">Progress</th>
+        <th style="width: 20%;">Execute</th>
         </thead>
         <tbody>
         <tr *ngFor="let job of batchJobs">
@@ -77,13 +77,13 @@
             <lib-job-progress-monitor *ngIf="job.lastJob?.id" [jobId]="job.lastJob?.id" (jobUpdated)="onJobUpdated(job, $event)"></lib-job-progress-monitor>
             <span *ngIf="!job.lastJob?.id" class="text-muted small">Never run</span>
           </td>
-          <td>
-            <div class="d-flex gap-2">
-              <button class="btn btn-warning" [disabled]="isJobRunning(job)" (click)="onExecute(job.name)">
+          <td class="text-nowrap">
+            <div class="d-flex gap-2 align-items-center flex-nowrap">
+              <button class="btn btn-warning text-nowrap" [disabled]="isJobRunning(job)" (click)="onExecute(job.name)">
                 <span *ngIf="isJobRunning(job)" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                 Execute
               </button>
-              <button *ngIf="isJobRunning(job)" class="btn btn-danger" [disabled]="job.isStopping" (click)="onStop(job)">
+              <button *ngIf="isJobRunning(job)" class="btn btn-danger text-nowrap" [disabled]="job.isStopping" (click)="onStop(job)">
                 <span *ngIf="job.isStopping" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                 Stop
               </button>

@@ -260,6 +260,16 @@ export class JobService {
             throw new Error(`Job not found: ${jobId}`);
         }
 
+        // If the job was already stopped, completed, or failed, do not resume or overwrite state
+        if (job.status === 'Stopped') {
+            this.logger.log(`Job ${jobId} (${job.name}) is already Stopped. Skipping execution.`);
+            return job;
+        }
+        if (job.status === 'Completed' || job.status === 'Error') {
+            this.logger.log(`Job ${jobId} (${job.name}) is already ${job.status}. Skipping execution.`);
+            return job;
+        }
+
         const handler = this.jobHandlers.get(job.name);
         if (!handler) {
             throw new Error(`No handler registered for job: ${job.name}`);
@@ -274,6 +284,14 @@ export class JobService {
 
     private async executeStepJob(job: Job, handler: StepJobHandler): Promise<Job> {
         const startTime = OffsetDateTime.now();
+
+        // Check if stopped before marking as Processing
+        const initialDbJob = await this.queryService.findOne('Job', job.id) as Job;
+        if (initialDbJob && initialDbJob.status === 'Stopped') {
+            this.logger.log(`Job ${job.id} (${job.name}) was stopped before execution started. Halting.`);
+            return initialDbJob;
+        }
+
         job.status = "Processing";
         job.status_message = null;
         await this.dataService.save('Job', job);
@@ -284,7 +302,7 @@ export class JobService {
 
         try {
             for (let nextStepIdx = stepIndex; nextStepIdx < stepCount; nextStepIdx += chunkSize) {
-                // Check if the job was stopped by another thread/request via the database
+                // Check if the job was stopped by another request via the database
                 const dbJob = await this.queryService.findOne('Job', job.id) as Job;
                 if (dbJob && dbJob.status === 'Stopped') {
                     this.logger.log(`Job ${job.id} (${job.name}) was stopped before step ${nextStepIdx}. Halting execution.`);
@@ -299,21 +317,22 @@ export class JobService {
                 this.logger.log(`Execute job ${job.id} (${job.name}): step ${nextStepIdx} of ${stepCount} (chunk size: ${chunkSize})`);
                 await handler.executeStep(job, nextStepIdx, chunkSize);
 
-                job.step_index = Math.min(stepCount, nextStepIdx + chunkSize);
-                job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
-                await this.dataService.save('Job', job);
-
-                // Check if the job was marked as Stopped during chunk execution
+                // Check if the job was marked as Stopped during chunk execution BEFORE saving progress
                 const postStepDbJob = await this.queryService.findOne('Job', job.id) as Job;
                 if (postStepDbJob && postStepDbJob.status === 'Stopped') {
-                    this.logger.log(`Job ${job.id} (${job.name}) was stopped after step ${nextStepIdx}. Halting execution.`);
+                    this.logger.log(`Job ${job.id} (${job.name}) was stopped during step ${nextStepIdx}. Halting execution.`);
                     job.status = 'Stopped';
                     job.status_message = postStepDbJob.status_message || 'Job stopped by user';
+                    job.step_index = Math.min(stepCount, nextStepIdx + chunkSize);
                     const endTime = OffsetDateTime.now();
                     job.duration = Duration.between(startTime, endTime).toMillis();
                     await this.dataService.save('Job', job);
                     return job;
                 }
+
+                job.step_index = Math.min(stepCount, nextStepIdx + chunkSize);
+                job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
+                await this.dataService.save('Job', job);
 
                 const jobStartTime = OffsetDateTime.parse(job.created_at.toISOString());
                 const jobDurationInSeconds = Duration.between(jobStartTime, OffsetDateTime.now()).seconds();
@@ -324,10 +343,27 @@ export class JobService {
 
                 const chunkDurationInSeconds = Duration.between(startTime, OffsetDateTime.now()).seconds();
                 if (chunkDurationInSeconds > JOB_CHUNK_DURATION_IN_SECONDS) {
+                    const chunkCheckDbJob = await this.queryService.findOne('Job', job.id) as Job;
+                    if (chunkCheckDbJob && chunkCheckDbJob.status === 'Stopped') {
+                        this.logger.log(`Job ${job.id} (${job.name}) was stopped. Skipping subsequent chunk invocation.`);
+                        return chunkCheckDbJob;
+                    }
                     this.logger.log('Chunk complete: invoking job again');
                     await this.invokeJob(job.id);
                     return null;
                 }
+            }
+
+            // Check if the job was stopped before marking as Completed
+            const completionCheckDbJob = await this.queryService.findOne('Job', job.id) as Job;
+            if (completionCheckDbJob && completionCheckDbJob.status === 'Stopped') {
+                this.logger.log(`Job ${job.id} (${job.name}) was stopped before completion. Halting execution.`);
+                job.status = 'Stopped';
+                job.status_message = completionCheckDbJob.status_message || 'Job stopped by user';
+                const endTime = OffsetDateTime.now();
+                job.duration = Duration.between(startTime, endTime).toMillis();
+                await this.dataService.save('Job', job);
+                return job;
             }
 
             if (handler.onComplete) {
@@ -344,6 +380,17 @@ export class JobService {
             this.logger.log(`Execute job ${job.id} (${job.name}) completed in ${job.duration}ms`);
             return job;
         } catch (error) {
+            const errorCheckDbJob = await this.queryService.findOne('Job', job.id) as Job;
+            if (errorCheckDbJob && errorCheckDbJob.status === 'Stopped') {
+                this.logger.log(`Job ${job.id} (${job.name}) was stopped during step execution. Preserving Stopped status.`);
+                job.status = 'Stopped';
+                job.status_message = errorCheckDbJob.status_message || 'Job stopped by user';
+                const endTime = OffsetDateTime.now();
+                job.duration = Duration.between(startTime, endTime).toMillis();
+                await this.dataService.save('Job', job);
+                return job;
+            }
+
             const endTime = OffsetDateTime.now();
             job.duration = Duration.between(startTime, endTime).toMillis();
             job.status = "Error";
@@ -355,6 +402,14 @@ export class JobService {
 
     private async executeTaskJob(job: Job, handler: TaskJobHandler): Promise<Job> {
         const startTime = OffsetDateTime.now();
+
+        // Check if stopped before marking as Processing
+        const initialDbJob = await this.queryService.findOne('Job', job.id) as Job;
+        if (initialDbJob && initialDbJob.status === 'Stopped') {
+            this.logger.log(`Task Job ${job.id} (${job.name}) was stopped before execution started. Halting.`);
+            return initialDbJob;
+        }
+
         job.status = "Processing";
         job.status_message = null;
         await this.dataService.save('Job', job);
@@ -385,6 +440,17 @@ export class JobService {
                 job.duration = Duration.between(startTime, OffsetDateTime.now()).toMillis();
                 const now = Date.now();
                 if (now - lastSaveTime > 500 || (job.step_count && stepIndex >= job.step_count)) {
+                    // Check DB status once more before saving progress to prevent overwriting a concurrent Stop
+                    const checkDbJob = await this.queryService.findOne('Job', job.id) as Job;
+                    if (checkDbJob && checkDbJob.status === 'Stopped') {
+                        isStopped = true;
+                        job.status = 'Stopped';
+                        job.status_message = checkDbJob.status_message || 'Job stopped by user';
+                        const endTime = OffsetDateTime.now();
+                        job.duration = Duration.between(startTime, endTime).toMillis();
+                        await this.dataService.save('Job', job);
+                        throw new Error('JOB_STOPPED');
+                    }
                     await this.dataService.save('Job', job);
                     lastSaveTime = now;
                 }
@@ -402,6 +468,19 @@ export class JobService {
             if (summary !== undefined) {
                 ctx.setSummary(summary);
             }
+
+            // Check if the job was stopped during execution before marking as Completed
+            const completionDbJob = await this.queryService.findOne('Job', job.id) as Job;
+            if (completionDbJob && completionDbJob.status === 'Stopped') {
+                this.logger.log(`Execute task job ${job.id} (${job.name}) was stopped. Halting completion.`);
+                job.status = 'Stopped';
+                job.status_message = completionDbJob.status_message || 'Job stopped by user';
+                const endTime = OffsetDateTime.now();
+                job.duration = Duration.between(startTime, endTime).toMillis();
+                await this.dataService.save('Job', job);
+                return job;
+            }
+
             const endTime = OffsetDateTime.now();
             job.duration = Duration.between(startTime, endTime).toMillis();
             job.status = "Completed";
@@ -413,6 +492,18 @@ export class JobService {
                 this.logger.log(`Execute task job ${job.id} (${job.name}) stopped.`);
                 return job;
             }
+
+            const errorDbJob = await this.queryService.findOne('Job', job.id) as Job;
+            if (errorDbJob && errorDbJob.status === 'Stopped') {
+                this.logger.log(`Execute task job ${job.id} (${job.name}) was stopped on error. Preserving Stopped status.`);
+                job.status = 'Stopped';
+                job.status_message = errorDbJob.status_message || 'Job stopped by user';
+                const endTime = OffsetDateTime.now();
+                job.duration = Duration.between(startTime, endTime).toMillis();
+                await this.dataService.save('Job', job);
+                return job;
+            }
+
             const endTime = OffsetDateTime.now();
             job.duration = Duration.between(startTime, endTime).toMillis();
             job.status = "Error";
