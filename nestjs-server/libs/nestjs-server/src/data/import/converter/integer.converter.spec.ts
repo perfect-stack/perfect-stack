@@ -36,6 +36,28 @@ describe('IntegerConverter', () => {
             expect(result.attributeValues[0].value).toBe(99);
             expect(result.attributeValues[0].error).toBeUndefined();
         });
+
+        it('should correctly convert comma-separated integers', async () => {
+            const result1 = await converter.toAttributeValue(attributeName, '1,542,483');
+            expect(result1.attributeValues[0].value).toBe(1542483);
+            expect(result1.attributeValues[0].error).toBeUndefined();
+
+            const result2 = await converter.toAttributeValue(attributeName, '5,427,097');
+            expect(result2.attributeValues[0].value).toBe(5427097);
+            expect(result2.attributeValues[0].error).toBeUndefined();
+
+            const result3 = await converter.toAttributeValue(attributeName, '1,000');
+            expect(result3.attributeValues[0].value).toBe(1000);
+            expect(result3.attributeValues[0].error).toBeUndefined();
+
+            const result4 = await converter.toAttributeValue(attributeName, '-1,542,483');
+            expect(result4.attributeValues[0].value).toBe(-1542483);
+            expect(result4.attributeValues[0].error).toBeUndefined();
+
+            const result5 = await converter.toAttributeValue(attributeName, '  5,427,097  ');
+            expect(result5.attributeValues[0].value).toBe(5427097);
+            expect(result5.attributeValues[0].error).toBeUndefined();
+        });
     });
 
     describe('Empty and Nullish Inputs', () => {
@@ -77,18 +99,41 @@ describe('IntegerConverter', () => {
             expect(attributeValue.error).toBe(`Value '${externalValue}' is not a valid integer.`);
         });
 
-        it('should truncate floating point numbers and not report an error', async () => {
-            // Note: parseInt() truncates floats. This test verifies the current behavior.
-            const result = await converter.toAttributeValue(attributeName, '123.45');
-            expect(result.attributeValues[0].value).toBe(123);
-            expect(result.attributeValues[0].error).toBeUndefined();
+        it('should reject floating point numbers and report an error', async () => {
+            const externalValue = '123.45';
+            const result = await converter.toAttributeValue(attributeName, externalValue);
+            const attributeValue = result.attributeValues[0];
+
+            expect(attributeValue.value).toBeNull();
+            expect(attributeValue.error).toBe(`Value '${externalValue}' is not a valid integer.`);
         });
 
-        it('should parse leading numbers from a mixed alphanumeric string', async () => {
-            // Note: parseInt() stops at the first non-digit. This test verifies the current behavior.
-            const result = await converter.toAttributeValue(attributeName, '50cent');
-            expect(result.attributeValues[0].value).toBe(50);
-            expect(result.attributeValues[0].error).toBeUndefined();
+        it('should reject floating point numbers with comma formatting', async () => {
+            const externalValue = '1,234.56';
+            const result = await converter.toAttributeValue(attributeName, externalValue);
+            const attributeValue = result.attributeValues[0];
+
+            expect(attributeValue.value).toBeNull();
+            expect(attributeValue.error).toBe(`Value '${externalValue}' is not a valid integer.`);
+        });
+
+        it('should reject mixed alphanumeric string', async () => {
+            const externalValue = '50cent';
+            const result = await converter.toAttributeValue(attributeName, externalValue);
+            const attributeValue = result.attributeValues[0];
+
+            expect(attributeValue.value).toBeNull();
+            expect(attributeValue.error).toBe(`Value '${externalValue}' is not a valid integer.`);
+        });
+
+        it('should reject invalid comma formatting', async () => {
+            const invalidValues = ['1,23', '1,2345', ',123', '123,', '1,,234'];
+            for (const val of invalidValues) {
+                const result = await converter.toAttributeValue(attributeName, val);
+                const attributeValue = result.attributeValues[0];
+                expect(attributeValue.value).toBeNull();
+                expect(attributeValue.error).toBe(`Value '${val}' is not a valid integer.`);
+            }
         });
     });
 });

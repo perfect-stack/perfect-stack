@@ -4,6 +4,7 @@ import { TrackingFlightStatusConverter } from './converter/tracking-flight-statu
 import { BandNumberLookupConverter } from './converter/band-number.converter';
 import { DateConverter } from './converter/date.converter';
 import { IntegerConverter } from './converter/integer.converter';
+import { NZTMCoordinateConverter } from './converter/nztm-coordinate.converter';
 import { TextConverter } from './converter/text.converter';
 import { DuplicateEventCheck } from './duplicate-event-check';
 import { DuplicateMonitoringStationCheck } from './duplicate-monitoring-station-check';
@@ -118,12 +119,12 @@ export class DataFormatService {
         {
           columnName: 'Easting',
           attributeName: 'easting',
-          converter: new IntegerConverter(),
+          converter: new NZTMCoordinateConverter(),
         },
         {
           columnName: 'Northing',
           attributeName: 'northing',
-          converter: new IntegerConverter(),
+          converter: new NZTMCoordinateConverter(),
         },
         {
           columnName: ['Easting', 'Northing'],
