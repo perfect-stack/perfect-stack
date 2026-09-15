@@ -538,7 +538,7 @@ export class JobService {
                 const isLastStep = (stepCount !== undefined && stepIndex >= stepCount) ||
                                    (job.step_count && stepIndex >= job.step_count);
 
-                if (now - lastSaveTime > 500 || isLastStep) {
+                if (now - lastSaveTime > 1000 || isLastStep) {
                     // Atomic update: only updates DB if status is still 'Processing'
                     const updated = await this.updateJobProgressAtomic(jobId, {
                         stepIndex,

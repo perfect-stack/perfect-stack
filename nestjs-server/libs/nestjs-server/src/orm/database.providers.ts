@@ -167,35 +167,17 @@ export const newSequelize = async (
         //logging: (msg) => logger.log(msg),
         logQueryParameters: true,
         ssl: true,
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false,
+            },
+        },
         pool: {
-            /*
-             * Lambda functions process one request at a time but your code may issue multiple queries
-             * concurrently. Be wary that `sequelize` has methods that issue 2 queries concurrently
-             * (e.g. `Model.findAndCountAll()`). Using a value higher than 1 allows concurrent queries to
-             * be executed in parallel rather than serialized. Careful with executing too many queries in
-             * parallel per Lambda function execution since that can bring down your database with an
-             * excessive number of connections.
-             *
-             * Ideally you want to choose a `max` number where this holds true:
-             * max * EXPECTED_MAX_CONCURRENT_LAMBDA_INVOCATIONS < MAX_ALLOWED_DATABASE_CONNECTIONS * 0.8
-             */
             max: max,
-            /*
-             * Set this value to 0 so connection pool eviction logic eventually cleans up all connections
-             * in the event of a Lambda function timeout.
-             */
             min: min,
-            /*
-             * Set this value to 0 so connections are eligible for cleanup immediately after they're
-             * returned to the pool.
-             */
             idle: 30000,
-            // Maximum time (in ms) that pool will try to get connection before throwing error
             acquire: acquire,
-            /*
-             * Ensures the connection pool attempts to be cleaned up automatically on the next Lambda
-             * function invocation, if the previous invocation timed out.
-             */
             evict: 30000,
         },
     });

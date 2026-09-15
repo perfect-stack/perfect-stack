@@ -45,32 +45,10 @@ export class DataService {
   }
 
   async save(entityName: string, entity: Entity): Promise<EntityResponse> {
-    // try {
-    //   this.logger.log(`save.1(${entityName}) ${JSON.stringify(entity)}`);
-    //   const result = await this.ormService.sequelize.transaction(
-    //     async (txn: Transaction) => {
-    //       this.logger.log(`save.2(${entityName}) ${JSON.stringify(entity)}`);
-    //       const txnResult = this.saveInTransaction(entityName, entity, txn);
-    //       this.logger.log(`save.3(${entityName}) ${JSON.stringify(entity)}`);
-    //       return txnResult;
-    //     },
-    //   );
-    //   this.logger.log(`save.4(${entityName}) ${JSON.stringify(entity)}`);
-    //
-    //   return result;
-    // } catch (error) {
-    //   console.error('save.5() failed:', error);
-    //   throw error;
-    // }
-
     try {
-      //this.logger.log(`save.1(${entityName}) ${JSON.stringify(entity)}`);
       const result = this.saveInTransaction(entityName, entity, null);
-      //this.logger.log(`save.4(${entityName}) ${JSON.stringify(entity)}`);
-
       return result;
     } catch (error) {
-      //console.error('save.5() failed:', error);
       throw error;
     }
   }
@@ -320,7 +298,7 @@ export class DataService {
           throw new Error(
             `Unable to find entity mapping for discriminator value ${discriminatorValue} in entity mapping of ${JSON.stringify(
               discriminator.entityMappingList,
-            )}`,
+            )}`
           );
         }
       } else {
@@ -369,7 +347,6 @@ export class DataService {
         if (childEntity.id) {
           this.validateUuid(childEntity.id);
           childEntityModel = await childModel.findByPk(childEntity.id);
-          //childEntityModel = existingChildren.get(childEntity.id);
         } else {
           childEntity.id = uuid.v4();
         }
@@ -403,17 +380,7 @@ export class DataService {
           childEntityModel,
         );
 
-        // childEntityModel.set(childEntity);
-        // childEntityModel[parentMetaEntity.name + 'Id'] = parentEntity.id;
-        // childEntityModel.save();
-
-        // const fnName: string = this.addAssociationFunctionName(
-        //   relationshipAttribute.name,
-        // );
-        // console.log(`fnName = ${fnName}`);
-        // parentEntityModel[fnName](childEntityModel);
-
-        this.addOneToManyAssociation(
+        await this.addOneToManyAssociation(
           parentEntityModel,
           childEntityModel,
           relationshipAttribute,
@@ -426,12 +393,15 @@ export class DataService {
     return relationshipName.charAt(0).toUpperCase() + relationshipName.slice(1);
   }
 
-  private addOneToManyAssociation(
+  private async addOneToManyAssociation(
     parentModel: any,
     childModel: any,
     attribute: MetaAttribute,
   ) {
-    parentModel[`add${this.capitalizeFirstLetter(attribute.name)}`](childModel);
+    const fnName = `add${this.capitalizeFirstLetter(attribute.name)}`;
+    if (parentModel && typeof parentModel[fnName] === 'function') {
+      await parentModel[fnName](childModel);
+    }
   }
 
   private async findExistingChildren(
@@ -479,7 +449,7 @@ export class DataService {
       if (!incomingChild) {
         const existingChild = existingChildren.get(childKey);
         existingChildren.delete(childKey);
-        existingChild.destroy();
+        await existingChild.destroy();
 
         if(isChildMediaFile) {
           this.logger.warn(`Delete media file: ${existingChild['path']}`);
@@ -541,12 +511,6 @@ export class DataService {
     parentEntity: Entity,
     relationshipAttribute: MetaAttribute,
   ) {
-    // const childEntity = parentEntity[relationshipAttribute.name] as Entity;
-    // if (!childEntity) {
-    //   return;
-    // }
-    //
-    // parentEntity[relationshipAttribute.name + '_id'] = childEntity.id;
     if (parentEntity[relationshipAttribute.name + '_id'] === '') {
       parentEntity[relationshipAttribute.name + '_id'] = null;
     }
@@ -629,12 +593,10 @@ export class DataService {
       this.logger.log(
         `Updating sourceEntity ${sourceEntity.name} to ${sourceEntity.sort_index} and targetEntity ${targetEntity.name} to ${targetEntity.sort_index}`,
       );
-      //      await this.save(updateSortIndexRequest.metaName, sourceEntity);
-      //      await this.save(updateSortIndexRequest.metaName, targetEntity);
 
       // These entities have just been loaded, we can call save() on them directly
-      sourceEntity.save();
-      targetEntity.save();
+      await sourceEntity.save();
+      await targetEntity.save();
     } else {
       // Do nothing but don't fail, sorting may silently bump against the ends of the array
     }
