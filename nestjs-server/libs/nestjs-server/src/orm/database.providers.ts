@@ -152,7 +152,13 @@ export const renameDatabase = async (
     }
 };
 
-export const newSequelize = async (databasePassword: string, databaseSettings: DatabaseSettings, min: number, max: number) => {
+export const newSequelize = async (
+    databasePassword: string,
+    databaseSettings: DatabaseSettings,
+    min: number,
+    max: number,
+    acquire: number = 60000,
+) => {
     const sequelize = new Sequelize({
         dialect: 'postgres',
         dialectModule: require('pg'),
@@ -189,13 +195,13 @@ export const newSequelize = async (databasePassword: string, databaseSettings: D
              * returned to the pool.
              */
             idle: 30000,
-            // Choose a small enough value that fails fast if a connection takes too long to be established.
-            acquire: 3000,
+            // Maximum time (in ms) that pool will try to get connection before throwing error
+            acquire: acquire,
             /*
              * Ensures the connection pool attempts to be cleaned up automatically on the next Lambda
              * function invocation, if the previous invocation timed out.
              */
-            evict: 30000, //CURRENT_LAMBDA_FUNCTION_TIMEOUT,
+            evict: 30000,
         },
     });
     await sequelize.authenticate();
@@ -211,6 +217,7 @@ export const loadOrm = async (
     databaseSettings: DatabaseSettings,
     min: number,
     max: number,
+    acquire: number = 60000,
 ): Promise<Sequelize> => {
 
     const databasePassword = await findPassword(databaseSettings);
@@ -219,14 +226,14 @@ export const loadOrm = async (
 
     let sequelize: Sequelize;
     try {
-        sequelize = await newSequelize(databasePassword, databaseSettings, min, max);
+        sequelize = await newSequelize(databasePassword, databaseSettings, min, max, acquire);
         return sequelize;
     }
     catch (e) {
         logger.error(`Error connecting to database: ${e.message}`)
         if (e.message.includes('kims_db') && e.message.includes('does not exist')) {
             await renameDatabase(databasePassword, databaseSettings);
-            sequelize = await newSequelize(databasePassword, databaseSettings, min, max);
+            sequelize = await newSequelize(databasePassword, databaseSettings, min, max, acquire);
             return sequelize;
         }
         else {
@@ -262,9 +269,10 @@ export const databaseProviders = [
 
                 const min = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MIN', '2'), 10);
                 const max = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MAX', '10'), 10);
-                logger.log(`Sequelize pool settings; min: ${min}, max: ${max}`);
+                const acquire = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_ACQUIRE', '60000'), 10);
+                logger.log(`Sequelize pool settings; min: ${min}, max: ${max}, acquire: ${acquire}`);
 
-                globalProviderSequelize = await loadOrm(databaseSettings, min, max);
+                globalProviderSequelize = await loadOrm(databaseSettings, min, max, acquire);
             }
 
             return globalProviderSequelize;
