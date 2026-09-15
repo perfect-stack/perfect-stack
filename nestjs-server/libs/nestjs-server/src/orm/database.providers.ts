@@ -19,6 +19,17 @@ export interface DatabaseSettings {
     databaseName: string;
 }
 
+const isLocalHost = (host: string): boolean => {
+    return !host || host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
+};
+
+const shouldUseSsl = (host: string): boolean => {
+    if (process.env.DATABASE_SSL !== undefined) {
+        return process.env.DATABASE_SSL === 'true';
+    }
+    return !isLocalHost(host);
+};
+
 const getSecret = async (secretName: string) => {
     const client = new SecretsManagerClient({});
     const command = new GetSecretValueCommand({
@@ -89,6 +100,8 @@ export const renameDatabase = async (
     const expectedDatabaseName = databaseSettings.databaseName;
     logger.log(`Attempting to find and rename a database to "${expectedDatabaseName}"`);
 
+    const useSsl = shouldUseSsl(databaseSettings.databaseHost);
+
     // Connect to the 'postgres' database to perform administrative tasks using pg client rather than Sequelize
     const client = new Client({
         host: databaseSettings.databaseHost,
@@ -101,7 +114,7 @@ export const renameDatabase = async (
         // this validation. This is generally acceptable for this specific, short-lived
         // administrative task, especially in non-production environments.
         // See: https://node-postgres.com/features/ssl
-        ssl: { rejectUnauthorized: false },
+        ...(useSsl ? { ssl: { rejectUnauthorized: false } } : {}),
     });
 
     try {
@@ -154,6 +167,8 @@ export const newSequelize = async (
     max: number,
     acquire: number = 60000,
 ) => {
+    const useSsl = shouldUseSsl(databaseSettings.databaseHost);
+
     const sequelize = new Sequelize({
         dialect: 'postgres',
         dialectModule: require('pg'),
@@ -166,13 +181,17 @@ export const newSequelize = async (
         logging: false,
         //logging: (msg) => logger.log(msg),
         logQueryParameters: true,
-        ssl: true,
-        dialectOptions: {
-            ssl: {
-                require: true,
-                rejectUnauthorized: false,
-            },
-        },
+        ssl: useSsl,
+        ...(useSsl
+            ? {
+                  dialectOptions: {
+                      ssl: {
+                          require: true,
+                          rejectUnauthorized: false,
+                      },
+                  },
+              }
+            : {}),
         pool: {
             max: max,
             min: min,
