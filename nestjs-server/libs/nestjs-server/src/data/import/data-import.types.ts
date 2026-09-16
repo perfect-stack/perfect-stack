@@ -10,7 +10,13 @@ export type CreateEntityResponse = {
     dataImportErrors: DataImportError[];
 }
 
+export type DataImportClientMapping = {
+    title: string;
+    metaEntityName: string;
+}
+
 export type DataImportMapping = {
+    title: string;
     metaEntityName: string;
     duplicateCheck: CheckForDuplicates | null;
     postImportActions: PostImportActions | null;

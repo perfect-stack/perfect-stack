@@ -42,20 +42,22 @@ export class DataFormatService {
 
   private getDataFormatMap() {
     if (!this._dataFormatMap) {
-      this._dataFormatMap = new Map<string, DataImportMapping>();
-      this._dataFormatMap.set('Place', this.getPlaceFormat());
-      this._dataFormatMap.set(
-        'Monitoring Station',
+      const formats: DataImportMapping[] = [
+        this.getPlaceFormat(),
         this.getMonitoringStationFormat(),
+        this.getTransmitterFormat(),
+        this.getRfidFormat(),
+      ];
+      this._dataFormatMap = new Map<string, DataImportMapping>(
+        formats.map((format) => [format.title, format]),
       );
-      this._dataFormatMap.set('Transmitter', this.getTransmitterFormat());
-      this._dataFormatMap.set('RFID', this.getRfidFormat());
     }
     return this._dataFormatMap;
   }
 
   private getPlaceFormat(): DataImportMapping {
     return {
+      title: 'Place',
       metaEntityName: 'Place',
       duplicateCheck: this.duplicatePlaceCheck,
       postImportActions: null,
@@ -100,6 +102,7 @@ export class DataFormatService {
 
   private getMonitoringStationFormat(): DataImportMapping {
     return {
+      title: 'Monitoring Station',
       metaEntityName: 'MonitoringStation',
       duplicateCheck: this.duplicateMonitoringStationCheck,
       postImportActions: null,
@@ -145,6 +148,7 @@ export class DataFormatService {
 
   private getTransmitterFormat(): DataImportMapping {
     return {
+      title: 'Transmitter',
       metaEntityName: 'Event',
       duplicateCheck: this.duplicateEventCheck,
       postImportActions: this.postImportEventActions,
@@ -217,6 +221,7 @@ export class DataFormatService {
 
   private getRfidFormat(): DataImportMapping {
     return {
+      title: 'RFID',
       metaEntityName: 'Event',
       duplicateCheck: this.duplicateEventCheck,
       postImportActions: null,
