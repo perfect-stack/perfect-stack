@@ -3,10 +3,10 @@ import {IntegerConverter} from "./integer.converter";
 
 
 export class NZTMCoordinateConverter extends IntegerConverter {
-    public static readonly MIN_EASTING = 800000;
-    public static readonly MAX_EASTING = 2300000;
-    public static readonly MIN_NORTHING = 4400000;
-    public static readonly MAX_NORTHING = 6500000;
+    public static readonly MIN_EASTING = 1084000;
+    public static readonly MAX_EASTING = 2092000;
+    public static readonly MIN_NORTHING = 4722000;
+    public static readonly MAX_NORTHING = 6234000;
 
     async toAttributeValue(attributeName: string, externalValue: string): Promise<ConverterResult> {
         if (attributeName !== 'easting' && attributeName !== 'northing') {
