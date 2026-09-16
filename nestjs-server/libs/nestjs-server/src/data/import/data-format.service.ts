@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataAttributeMapping, DataImportMapping } from './data-import.types';
+import { DataAttributeMapping, DataImportClientMapping, DataImportMapping } from './data-import.types';
 import { TrackingFlightStatusConverter } from './converter/tracking-flight-status.converter';
 import { BandNumberLookupConverter } from './converter/band-number.converter';
 import { DateConverter } from './converter/date.converter';
@@ -38,6 +38,15 @@ export class DataFormatService {
 
   getDataFormat(dataFormat: string) {
     return this.getDataFormatMap().get(dataFormat);
+  }
+
+  getDataImportClientMapping(): DataImportClientMapping[] {
+    return Array.from(this.getDataFormatMap().values())
+      .map((format) => ({
+        title: format.title,
+        metaEntityName: format.metaEntityName,
+      }))
+      .sort((a, b) => a.title.localeCompare(b.title));
   }
 
   private getDataFormatMap() {

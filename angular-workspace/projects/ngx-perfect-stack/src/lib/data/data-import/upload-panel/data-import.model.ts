@@ -1,4 +1,3 @@
-
 export class DataImportError {
   row!: number;
   cols!: number[];
@@ -39,4 +38,7 @@ export class DataImportModel {
   importResult!: DataImportRowResult[];
 }
 
-
+export type DataImportClientMapping = {
+  title: string;
+  metaEntityName: string;
+};

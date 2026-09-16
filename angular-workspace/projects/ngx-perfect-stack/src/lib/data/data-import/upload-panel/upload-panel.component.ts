@@ -1,4 +1,4 @@
-import {Component, Inject, signal} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, signal} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../ngx-perfect-stack-config";
@@ -6,6 +6,8 @@ import {HttpClient, HttpEventType} from "@angular/common/http";
 import {finalize, Subscription} from "rxjs";
 import {Job} from "../../../job/job.model";
 import {FormsModule} from "@angular/forms";
+import {DataImportService} from "../data-import.service";
+import {DataImportClientMapping} from "./data-import.model";
 
 export class FileItem {
   file: File;
@@ -32,9 +34,11 @@ export interface CreateFileResponse {
   templateUrl: './upload-panel.component.html',
   styleUrl: './upload-panel.component.css'
 })
-export class UploadPanelComponent {
+export class UploadPanelComponent implements OnInit, OnDestroy {
   fileItems: FileItem[] = [];
   isDraggingOver = false;
+
+  clientMappings: DataImportClientMapping[] = [];
 
   // Set default value
   dataFormat = "Place";
@@ -43,7 +47,17 @@ export class UploadPanelComponent {
 
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
+              protected readonly dataImportService: DataImportService,
               private http: HttpClient) {
+  }
+
+  ngOnInit(): void {
+    this.dataImportService.getDataImportClientMapping().subscribe(mappings => {
+      this.clientMappings = mappings;
+      if (this.clientMappings.length > 0 && !this.clientMappings.some(m => m.title === this.dataFormat)) {
+        this.dataFormat = this.clientMappings[0].title;
+      }
+    });
   }
 
   ngOnDestroy(): void {

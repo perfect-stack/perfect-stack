@@ -1,101 +1,28 @@
-import {ApiBody, ApiConsumes, ApiTags} from "@nestjs/swagger";
-import {
-    Body,
-    Controller,
-    MaxFileSizeValidator,
-    ParseFilePipe,
-    Post,
-    UploadedFile,
-    UseInterceptors
-} from "@nestjs/common";
-import {ActionPermit} from "../../authentication/action-permit";
-import {ActionType} from "../../domain/meta.role";
-import {SubjectName} from "../../authentication/subject";
-import {FileInterceptor} from "@nestjs/platform-express";
-import {diskStorage} from "multer";
-import * as path from 'path';
-import * as fs from 'fs';
-import { v4 as uuidv4 } from 'uuid';
-import {DataImportService} from "./data-import.service";
-import {DataImportModel} from "./data-import.model";
-import * as os from "node:os";
-
-
-//
-// const storageOptions = diskStorage({
-//     // Use a function for destination to ensure the directory exists.
-//     destination: (req, file, callback) => {
-//         const uploadPath = path.join(os.tmpdir(), 'data-import', 'upload');
-//         fs.mkdirSync(uploadPath, { recursive: true });
-//         callback(null, uploadPath);
-//     },
-//
-//     filename: (req, file, callback) => {
-//         // Generate a unique filename to prevent overwrites and conflicts.
-//         const uniqueSuffix = uuidv4();
-//         const extension = path.extname(file.originalname);
-//         const baseName = path.basename(file.originalname, extension);
-//
-//         // Sanitize the base name to remove problematic characters.
-//         const safeBaseName = baseName.replace(/[^a-z0-9_.-]/gi, '_').toLowerCase();
-//
-//         callback(null, `${safeBaseName}-${uniqueSuffix}${extension}`);
-//     },
-// });
-
+import { Controller, Get } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ActionPermit } from '../../authentication/action-permit';
+import { ActionType } from '../../domain/meta.role';
+import { SubjectName } from '../../authentication/subject';
+import { DataImportService } from './data-import.service';
+import { DataImportClientMapping } from './data-import.types';
 
 @ApiTags('data-import')
 @Controller('data-import')
 export class DataImportController {
+  constructor(protected readonly dataImportService: DataImportService) {}
 
-
-    constructor(protected readonly dataImportService: DataImportService) {
-    }
-
-   /* @ActionPermit(ActionType.Edit)
-    @SubjectName('Import')
-    @Post('/upload')
-    @UseInterceptors(FileInterceptor('file', {storage: storageOptions}))
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                file: {
-                    type: 'string',
-                    format: 'binary',
-                },
-            },
-        },
-    })
-    async uploadFile(@UploadedFile(
-        new ParseFilePipe(
-            {validators: [
-                new MaxFileSizeValidator({maxSize: 10 * 1024 * 1024})
-            ], fileIsRequired: true}
-        )
-    ) file: Express.Multer.File): Promise<DataImportModel> {
-
-        // The interceptor takes care of creating the file on the server and then just gives us
-        // the "File" handle to that file.
-        if(file) {
-            console.log('File uploaded successfully:', file);
-            console.log('Saved to path:', file.path); // Path where multer saved the file
-            console.log('Original filename:', file.originalname);
-            console.log('Mimetype:', file.mimetype);
-            console.log('Size:', file.size);
-            return this.dataImportService.parseFile(file.path);
-        }
-        throw new Error("Unable to upload file")
-    }
-
-    @ActionPermit(ActionType.Edit)
-    @SubjectName('Import')
-    @Post('/data')
-    async importData(@Body() dataImportModel: DataImportModel): Promise<DataImportResult> {
-        if(dataImportModel.errors.length === 0) {
-            return this.dataImportService.processAndSave(dataImportModel);
-        }
-    }*/
-
+  @ActionPermit(ActionType.Read)
+  @SubjectName('Import')
+  @ApiOperation({
+    summary: 'Get all data formats in DataImportClientMapping format sorted by title ascending',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of DataImportClientMapping objects',
+    type: Object,
+  })
+  @Get()
+  getDataImportClientMapping(): DataImportClientMapping[] {
+    return this.dataImportService.getDataImportClientMapping();
+  }
 }

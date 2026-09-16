@@ -1,7 +1,7 @@
 import {Component, effect, Injector, OnDestroy, OnInit, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {DataImportModel, DataImportSkippedColumn} from "./upload-panel/data-import.model";
+import {DataImportClientMapping, DataImportModel, DataImportSkippedColumn} from "./upload-panel/data-import.model";
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
 import {ActivatedRoute, RouterLink} from "@angular/router";
@@ -27,6 +27,7 @@ export class DataImportComponent implements OnInit, OnDestroy {
 
   uploadPanel = viewChild(UploadPanelComponent);
 
+  clientMappings: DataImportClientMapping[] = [];
   job: Job | null;
   data: DataImportModel | null;
   form: FormArray;
@@ -71,6 +72,10 @@ export class DataImportComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.dataImportService.getDataImportClientMapping().subscribe(mappings => {
+      this.clientMappings = mappings;
+    });
+
     // Initialise the component with the current status of the job taken from the parameters in the URL. This allows
     // the user to hit refresh on a job after their component has been asleep.
     this.route.queryParams.subscribe(params => {
@@ -148,6 +153,14 @@ export class DataImportComponent implements OnInit, OnDestroy {
         rowGroup.addControl(`col-${colIdx}`, new FormControl(initialValue));
       }
     }
+  }
+
+  get metaEntityName(): string | null {
+    if (this.data?.dataFormat && this.clientMappings) {
+      const mapping = this.clientMappings.find(m => m.title === this.data?.dataFormat);
+      return mapping?.metaEntityName ?? null;
+    }
+    return null;
   }
 
   get headers(): string[] | null {

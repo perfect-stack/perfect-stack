@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import {DataImportError, DataImportModel, DataImportRowResult, DataImportSkippedColumn} from "./data-import.model";
-import {CreateEntityResponse, DataAttributeMapping, DataImportMapping} from "./data-import.types";
+import {CreateEntityResponse, DataAttributeMapping, DataImportClientMapping, DataImportMapping} from "./data-import.types";
 import {Entity} from "../../domain/entity";
 import {
     ConverterResult,
@@ -55,6 +55,9 @@ export class DataImportService {
                 protected readonly validationService: ValidationService) {
     }
 
+    getDataImportClientMapping(): DataImportClientMapping[] {
+        return this.dataFormatService.getDataImportClientMapping();
+    }
 
     async dataImportValidate(stepIndex: number, dataImportModel: DataImportModel) {
 
