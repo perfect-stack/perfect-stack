@@ -9,16 +9,18 @@ on:
       - 'nestjs-server/**'
       - 'testing/**'
   workflow_dispatch:
+
 jobs:
-  publish-github:
+  build-and-test:
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '24.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@perfect-stack'
       - name: git pull
@@ -33,12 +35,33 @@ jobs:
       - name: npm ci (testing)
         working-directory: ./testing
         run: npm ci
-      - name: run tests
+      - name: run cucumber tests
         working-directory: ./testing
         run: npm test
-      - name: debug
+
+  publish-release:
+    name: Version & Publish
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@perfect-stack'
+      - name: git pull
         working-directory: ./nestjs-server
-        run: ls -al
+        run: git pull
+      - name: npm ci (nestjs-server)
+        working-directory: ./nestjs-server
+        run: npm ci
+      - name: npm run build:lib
+        working-directory: ./nestjs-server
+        run: npm run build:lib
       - name: bump version
         working-directory: ./nestjs-server
         run: npm version patch
