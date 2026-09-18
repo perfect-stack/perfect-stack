@@ -7,6 +7,7 @@ on:
       - 'main'
     paths:
       - 'nestjs-server/**'
+      - 'testing/**'
   workflow_dispatch:
 jobs:
   publish-github:
@@ -17,18 +18,24 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: '20.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@perfect-stack'
       - name: git pull
         working-directory: ./nestjs-server
         run: git pull
-      - name: npm ci
+      - name: npm ci (nestjs-server)
         working-directory: ./nestjs-server
         run: npm ci
       - name: npm run build:lib
         working-directory: ./nestjs-server
         run: npm run build:lib
+      - name: npm ci (testing)
+        working-directory: ./testing
+        run: npm ci
+      - name: run tests
+        working-directory: ./testing
+        run: npm test
       - name: debug
         working-directory: ./nestjs-server
         run: ls -al

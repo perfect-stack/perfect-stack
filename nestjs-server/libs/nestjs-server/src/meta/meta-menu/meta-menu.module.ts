@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { MetaMenuController } from './meta-menu.controller';
 import { MetaMenuService } from './meta-menu.service';
 import { FileRepositoryModule } from '../../file/file-repository.module';
@@ -6,7 +7,7 @@ import { FileRepositoryModule } from '../../file/file-repository.module';
 @Module({
   controllers: [MetaMenuController],
   providers: [MetaMenuService],
-  imports: [FileRepositoryModule],
+  imports: [ConfigModule, FileRepositoryModule],
   exports: [MetaMenuService],
 })
 export class MetaMenuModule {}

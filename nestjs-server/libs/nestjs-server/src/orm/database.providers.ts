@@ -38,34 +38,33 @@ const getSecret = async (secretName: string) => {
 
     const response = await client.send(command);
     return JSON.parse(response.SecretString);
-}
+};
 
-const getPassword = async (secretName: string, passwordKey: string)=> {
+const getPassword = async (secretName: string, passwordKey: string) => {
     return (await getSecret(secretName))[passwordKey];
-}
+};
 
 const findPassword = async (databaseSettings: DatabaseSettings) => {
     let databasePassword: string;
     if (databaseSettings.passwordProperty) {
         if (databaseSettings.passwordProperty.startsWith('RAW:')) {
             databasePassword = databaseSettings.passwordProperty.substring('RAW:'.length);
-        }
-        else {
+        } else {
             databasePassword = await getPassword(databaseSettings.passwordProperty, databaseSettings.passwordKey);
         }
     } else {
         throw new Error('Database properties have not been initialised');
     }
     return databasePassword;
-}
+};
 
 const updateOneServiceAccountPassword = async (client: Client, username: string, password: string) => {
     logger.log(`Updating password for service account: ${username}`);
     await client.query('ALTER USER "' + username + '" WITH PASSWORD \'' + password + '\'');
     logger.log(`Password updated for service account: ${username}`);
-}
+};
 
-const updateServiceAccountPasswords = async (client: Client)=> {
+const updateServiceAccountPasswords = async (client: Client) => {
     const envName = process.env.ENV_NAME ? process.env.ENV_NAME : 'dev';
 
     const SERVICE_ACCOUNTS = [
@@ -79,7 +78,7 @@ const updateServiceAccountPasswords = async (client: Client)=> {
         const password = secret.password;
         await updateOneServiceAccountPassword(client, username, password);
     }
-}
+};
 
 /**
  * This method is called when a DB Snapshot has been restored from a different environment and so it will have a
@@ -134,8 +133,7 @@ export const renameDatabase = async (
                 // This is an unexpected state. The initial connection to the target DB failed,
                 // but we can see it exists. This might indicate a permissions issue or other problem.
                 throw new Error(`Database "${expectedDatabaseName}" already exists but the initial connection failed. Cannot proceed with rename.`);
-            }
-            else {
+            } else {
                 logger.log(`Renaming database "${foundName}" to "${expectedDatabaseName}"...`);
                 // NOTE: We cannot use parameterised queries for identifiers like database names.
                 // We have validated the names are from a trusted source (pg_database).
@@ -145,16 +143,13 @@ export const renameDatabase = async (
                 // If we rename the database, then we also need to update the service account passwords
                 await updateServiceAccountPasswords(client);
             }
-        }
-        else if (res.rows.length > 1) {
+        } else if (res.rows.length > 1) {
             const dbNames = res.rows.map((row) => row.datname).join(', ');
             throw new Error(`Found multiple databases matching '*_kims_db': ${dbNames}. Unsure how to proceed.`);
-        }
-        else {
+        } else {
             throw new Error("Did not find any database matching '*_kims_db' to rename.");
         }
-    }
-    finally {
+    } finally {
         await client.end();
         logger.log('Disconnected from the "postgres" database.');
     }
@@ -202,12 +197,12 @@ export const newSequelize = async (
     });
     await sequelize.authenticate();
     return sequelize;
-}
+};
 
 /**
- * This is the function that loads all the ORM configuration and model definitions. It is called from the provider
- * factory below but also a "reload()" method in the OrmService so that model definitions can be redefined at
- * runtime.
+ * This is the function that loads all the ORM configuration and model definitions for Postgres.
+ * It is called from the provider factory below but also a "reload()" method in the OrmService so
+ * that model definitions can be redefined at runtime.
  */
 export const loadOrm = async (
     databaseSettings: DatabaseSettings,
@@ -215,7 +210,6 @@ export const loadOrm = async (
     max: number,
     acquire: number = 60000,
 ): Promise<Sequelize> => {
-
     const databasePassword = await findPassword(databaseSettings);
 
     logger.log(`Database connection = ${databaseSettings.databaseHost}:${databaseSettings.databasePort}, ${databaseSettings.databaseUser}`);
@@ -224,18 +218,51 @@ export const loadOrm = async (
     try {
         sequelize = await newSequelize(databasePassword, databaseSettings, min, max, acquire);
         return sequelize;
-    }
-    catch (e) {
-        logger.error(`Error connecting to database: ${e.message}`)
+    } catch (e) {
+        logger.error(`Error connecting to database: ${e.message}`);
         if (e.message.includes('kims_db') && e.message.includes('does not exist')) {
             await renameDatabase(databasePassword, databaseSettings);
             sequelize = await newSequelize(databasePassword, databaseSettings, min, max, acquire);
             return sequelize;
-        }
-        else {
+        } else {
             throw e;
         }
     }
+};
+
+const createPostgresSequelize = async (configService: ConfigService): Promise<Sequelize> => {
+    logger.log('SEQUELIZE factory: Postgres dialect configured');
+
+    const databaseSettings: DatabaseSettings = {
+        databaseHost: configService.get<string>('DATABASE_HOST'),
+        databasePort: configService.get<number>('DATABASE_PORT'),
+        databaseUser: configService.get<string>('DATABASE_USER'),
+        databasePassword: '',
+        passwordProperty: configService.get<string>('DATABASE_PASSWORD'),
+        passwordKey: configService.get<string>('DATABASE_PASSWORD_KEY'),
+        databaseName: configService.get<string>('DATABASE_NAME'),
+    };
+
+    const min = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MIN', '2'), 10);
+    const max = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MAX', '10'), 10);
+    const acquire = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_ACQUIRE', '60000'), 10);
+    logger.log(`Sequelize pool settings; min: ${min}, max: ${max}, acquire: ${acquire}`);
+
+    return await loadOrm(databaseSettings, min, max, acquire);
+};
+
+const createSqliteSequelize = async (configService: ConfigService): Promise<Sequelize> => {
+    const storage = configService.get<string>('DATABASE_STORAGE', ':memory:');
+    const logging = configService.get<string>('DATABASE_LOGGING', 'false') === 'true';
+    logger.log(`SEQUELIZE factory: SQLite dialect configured (storage: ${storage})`);
+
+    const sequelize = new Sequelize({
+        dialect: 'sqlite',
+        storage: storage,
+        logging: logging ? (msg) => logger.log(msg) : false,
+    });
+    await sequelize.authenticate();
+    return sequelize;
 };
 
 // Global variable: to make lambdas faster..
@@ -250,25 +277,19 @@ export const databaseProviders = [
             if (globalProviderSequelize) {
                 logger.log('SEQUELIZE factory: detected globalProviderSequelize, using that');
                 return globalProviderSequelize;
-            } else {
-                logger.log('SEQUELIZE factory: no globalProviderSequelize, will loadOrm()');
+            }
 
-                const databaseSettings: DatabaseSettings = {
-                    databaseHost: configService.get<string>('DATABASE_HOST'),
-                    databasePort: configService.get<number>('DATABASE_PORT'),
-                    databaseUser: configService.get<string>('DATABASE_USER'),
-                    databasePassword: '',
-                    passwordProperty: configService.get<string>('DATABASE_PASSWORD'),
-                    passwordKey: configService.get<string>('DATABASE_PASSWORD_KEY'),
-                    databaseName: configService.get<string>('DATABASE_NAME'),
-                };
+            const dialect = (configService.get<string>('DATABASE_DIALECT', 'postgres') || 'postgres').toLowerCase();
 
-                const min = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MIN', '2'), 10);
-                const max = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MAX', '10'), 10);
-                const acquire = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_ACQUIRE', '60000'), 10);
-                logger.log(`Sequelize pool settings; min: ${min}, max: ${max}, acquire: ${acquire}`);
-
-                globalProviderSequelize = await loadOrm(databaseSettings, min, max, acquire);
+            switch (dialect) {
+                case 'sqlite':
+                    globalProviderSequelize = await createSqliteSequelize(configService);
+                    break;
+                case 'postgres':
+                    globalProviderSequelize = await createPostgresSequelize(configService);
+                    break;
+                default:
+                    throw new Error(`Unsupported DATABASE_DIALECT: "${dialect}". Supported dialects are: 'postgres', 'sqlite'`);
             }
 
             return globalProviderSequelize;

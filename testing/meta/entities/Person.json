@@ -1,0 +1,135 @@
+{
+  "name": "Person",
+  "pluralName": "People",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "given_name",
+      "label": "Given name",
+      "description": "The person's given name",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "family_name",
+      "label": "Family name",
+      "description": "The person's family name",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "email_address",
+      "label": "Email address",
+      "description": "Email address",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        },
+        {
+          "type": "UniqueInsensitive",
+          "config": ""
+        },
+        {
+          "type": "Email",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "birthday",
+      "label": "Birthday",
+      "description": "The person's date of birth",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "description": "Gender enumeration",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Male",
+        "Female"
+      ],
+      "rules": []
+    },
+    {
+      "name": "address",
+      "label": "Address",
+      "description": "Person addresses",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Address",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "name": "Address",
+  "pluralName": "Addresses",
+  "icon": "",
+  "type": "Database",
+  "rootNode": false,
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "street_address",
+      "label": "Street Address",
+      "description": "Street address line",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "city",
+      "label": "City",
+      "description": "City",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "country",
+      "label": "Country",
+      "description": "Country",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}
