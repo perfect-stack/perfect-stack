@@ -24,6 +24,7 @@ Before(async function (this: CustomWorld) {
   this.currentEntity = null;
   this.savedEntity = null;
   this.retrievedEntity = null;
+  this.queryResponse = null;
   this.lastResponse = null;
   this.lastError = null;
   this.contextData = {};

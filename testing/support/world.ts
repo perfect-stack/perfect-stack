@@ -18,6 +18,7 @@ export class CustomWorld extends World {
   currentEntity: any;
   savedEntity: any;
   retrievedEntity: any;
+  queryResponse: any;
   lastResponse: any;
   lastError: any;
   contextData: Record<string, any> = {};

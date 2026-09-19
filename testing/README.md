@@ -21,29 +21,42 @@ The primary goal of this testing suite is to provide a robust, fast, and human-r
 - **Server Services Integration**: Validates NestJS modules (`OrmModule`, `MetaEntityModule`, `DataModule`, `KnexModule`, `QueryService`) working together with dynamic model schemas, validation rules, and persistence operations.
 - **UI & Browser Automation**: Supports Playwright for browser testing against UI components and full client workflows under the same BDD framework.
 
+### 4. Data-Driven Test Isolation Principle
+- **No Reliance on Global DB Reset**: Rather than dropping or truncating tables between every scenario (which degrades execution speed), tests maintain isolation through **intentional, distinct test datasets**.
+- **Unique Identifying Values**: Use distinctive identifiers, names, or email domain prefixes for scenario-specific data (e.g. `query.search.alice@example.com`, `SearchDept-100`).
+- **Targeted Filter Queries**: Queries should assert on expected slices of data using explicit search criteria rather than assuming an empty table.
+
 ---
 
 ## 🏗️ Directory Structure
 
 ```text
 testing/
-├── features/                  # Gherkin .feature specifications
-│   ├── server/                # Backend / service integration scenarios (e.g. data-crud.feature)
-│   └── ui/                    # Playwright browser / frontend scenarios
-├── meta/                      # Dedicated metadata schemas for test scenarios
-│   └── entities/              # Test entity definitions (Person.json, Address.json)
-├── step-definitions/          # Step definition implementations
-│   ├── server/                # Server-side step definitions
-│   ├── ui/                    # UI / Playwright step definitions
-│   └── common/                # Shared step definitions
-├── support/                   # Test harnesses, lifecycle hooks, and world context
-│   ├── hooks.ts               # Cucumber Before / After hooks
-│   ├── world.ts               # Custom Cucumber World context
+├── features/                      # Gherkin .feature specifications
+│   ├── server/                    # Backend / service integration scenarios
+│   │   ├── data/                  # Data layer feature tests
+│   │   │   ├── data/              # DataService features (CRUD, lifecycle, sort index)
+│   │   │   └── query/             # QueryService features (criteria, pagination, sorting)
+│   └── ui/                        # Playwright browser / frontend scenarios
+├── meta/                          # Dedicated metadata schemas for test scenarios
+│   └── entities/                  # Test entity definitions (Person.json, Address.json, etc.)
+├── reports/                       # Generated test execution reports (HTML, JSON)
+├── scripts/                       # Test summary and reporting utilities
+├── step-definitions/              # Step definition implementations
+│   ├── server/                    # Server-side step definitions
+│   │   ├── data/
+│   │   │   ├── data/              # DataService step definitions
+│   │   │   └── query/             # QueryService step definitions
+│   ├── ui/                        # UI / Playwright step definitions
+│   └── common/                    # Shared step definitions
+├── support/                       # Test harnesses, lifecycle hooks, and world context
+│   ├── hooks.ts                   # Cucumber Before / After hooks
+│   ├── world.ts                   # Custom Cucumber World context
 │   └── server/
-│       └── server-harness.ts  # NestJS Test module & SQLite environment initializer
-├── cucumber.js                # Cucumber configuration and profile definitions
-├── package.json               # Dependencies and test execution scripts
-└── tsconfig.json              # TypeScript configuration with path aliases
+│       └── server-harness.ts      # NestJS Test module & SQLite environment initializer
+├── cucumber.js                    # Cucumber configuration and profile definitions
+├── package.json                   # Dependencies and test execution scripts
+└── tsconfig.json                  # TypeScript configuration with path aliases
 ```
 
 ---
@@ -79,14 +92,15 @@ Located at [`support/server/server-harness.ts`](./support/server/server-harness.
 ### Custom World Context
 Located at [`support/world.ts`](./support/world.ts):
 - Provides scenario-scoped state management (e.g., current entity under test, query responses, authentication context).
-- Resets state between scenarios to guarantee test isolation.
+- Resets state variables before each scenario to guarantee clean step context.
 
 ---
 
 ## ✍️ Adding New Tests
 
-1. **Define the Feature**: Create a `.feature` file in [`features/server/`](./features/server/) or [`features/ui/`](./features/ui/).
+1. **Define the Feature**: Create a `.feature` file organized by service under [`features/server/<domain>/<service>/`](./features/server/).
 2. **Configure Test Meta (if needed)**: Add or adjust schema definitions under [`meta/entities/`](./meta/entities/).
 3. **Implement Step Definitions**: Implement matching steps in [`step-definitions/`](./step-definitions/) using the `CustomWorld` context.
 4. **Keep Steps Atomic & Reusable**: Prefer general-purpose steps where appropriate to reuse existing assertions across features.
 5. **Ensure Dialect Independence**: When writing server queries and test validations, rely on ORM abstractions or ANSI-compliant SQL supported by both Postgres and SQLite.
+6. **Follow Data-Driven Isolation**: Use scenario-unique field values to avoid test interference across scenarios.

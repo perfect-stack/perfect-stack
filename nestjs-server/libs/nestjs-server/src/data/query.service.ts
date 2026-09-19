@@ -140,6 +140,9 @@ export class QueryService {
     const whereClause = { [Op.and]: [] };
     const criteriaList = whereClause[Op.and];
 
+    const isSqlite = this.ormService.sequelize.getDialect() === 'sqlite';
+    const iLikeOp = isSqlite ? Op.like : Op.iLike;
+
     const operatorMap = new Map<string, symbol>();
     operatorMap.set(ComparisonOperator.Equals, Op.eq);
     operatorMap.set(ComparisonOperator.GreaterThan, Op.gt);
@@ -147,8 +150,8 @@ export class QueryService {
     operatorMap.set(ComparisonOperator.LessThan, Op.lt);
     operatorMap.set(ComparisonOperator.LessThanOrEqualTo, Op.lte);
     operatorMap.set(ComparisonOperator.StartsWith, Op.startsWith);
-    operatorMap.set(ComparisonOperator.InsensitiveStartsWith, Op.iLike);
-    operatorMap.set(ComparisonOperator.InsensitiveLike, Op.iLike);
+    operatorMap.set(ComparisonOperator.InsensitiveStartsWith, iLikeOp);
+    operatorMap.set(ComparisonOperator.InsensitiveLike, iLikeOp);
 
     for (const nextCriteria of queryRequest.criteria) {
       const value: any = getCriteriaValue(nextCriteria);
@@ -164,9 +167,7 @@ export class QueryService {
             });
           } else {
             this.logger.warn(
-              `No SQL operator defined for application level comparison operator of ${JSON.stringify(
-                nextCriteria.operator,
-              )}`,
+              `No SQL operator defined for application level comparison operator of ${JSON.stringify(nextCriteria.operator)}`,
             );
           }
         } else {

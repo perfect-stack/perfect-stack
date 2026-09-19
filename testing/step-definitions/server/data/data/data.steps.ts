@@ -1,6 +1,6 @@
 import { Given, When, Then, DataTable } from '@cucumber/cucumber';
 import { expect } from 'chai';
-import { CustomWorld } from '../../support/world';
+import { CustomWorld } from '../../../../support/world';
 import { Entity, UpdateSortIndexRequest } from '@perfect-stack/nestjs-server';
 
 Given(
