@@ -43,7 +43,8 @@
     "tinymce": "^7.8.0",
     "tslib": "^2.8.1",
     "uuid": "^11.1.0",
-    "zone.js": "~0.15.1"
+    "zone.js": "~0.15.1",
+    "@ngx-loading-bar/core": "^7.0.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.2.15",
