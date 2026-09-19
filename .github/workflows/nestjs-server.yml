@@ -70,9 +70,14 @@ jobs:
       - name: npm ci (nestjs-server)
         working-directory: ./nestjs-server
         run: npm ci
-      - name: npm run version:patch
+      - name: bump version
         working-directory: ./nestjs-server
-        run: npm run version:patch
+        run: npm version patch
+      - name: get version
+        working-directory: ./nestjs-server
+        run: |
+          export NPM_PKG_VERSION=$(npm pkg get version | sed 's/"//g')
+          echo "TAG_NAME=nestjs-server-$NPM_PKG_VERSION" >> $GITHUB_ENV
       - name: npm run build:lib
         working-directory: ./nestjs-server
         run: npm run build:lib
@@ -80,12 +85,13 @@ jobs:
         working-directory: ./nestjs-server
         run: npm publish --tag latest
         env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
           NODE_AUTH_TOKEN: ${{ secrets.PAT_GITHUB }}
-      - name: commit new version
+      - name: commit push
         uses: EndBug/add-and-commit@v9
         with:
-          author_name: GitHub Actions
-          author_email: 41898282+github-actions[bot]@users.noreply.github.com
+          default_author: github_actions
+          tag: ${{ env.TAG_NAME }}
           message: 'Update version number for nestjs-server package'
           add: 'package.json package-lock.json'
           cwd: ./nestjs-server
