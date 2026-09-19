@@ -1,0 +1,87 @@
+{
+  "name": "Pet.view_edit",
+  "title": "Pet Details",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "pet",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Pet",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Pet",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "name"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Pet Header",
+      "binding": "pet"
+    },
+    {
+      "metaEntityName": "Pet",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "species",
+            "component": "Select"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "breed"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "birth_date"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "microchip_number"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "owner",
+            "component": "Select"
+          }
+        ]
+      ],
+      "templateHeading": "Pet Information",
+      "binding": "pet"
+    }
+  ]
+}

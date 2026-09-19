@@ -1,0 +1,44 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "strictPropertyInitialization": false,
+    "sourceMap": true,
+    "paths": {
+      "@perfect-stack/ngx-perfect-stack": [
+        "../../../angular-workspace/dist/ngx-perfect-stack",
+        "../../../angular-workspace/projects/ngx-perfect-stack/src/public-api.ts"
+      ],
+      "@perfect-stack/ngx-perfect-stack/*": [
+        "../../../angular-workspace/dist/ngx-perfect-stack/*",
+        "../../../angular-workspace/projects/ngx-perfect-stack/src/*"
+      ]
+    },
+    "declaration": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "es2020",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "useDefineForClassFields": false
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": false
+  }
+}

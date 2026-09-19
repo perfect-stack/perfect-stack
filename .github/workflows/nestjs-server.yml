@@ -7,7 +7,7 @@ on:
       - 'main'
     paths:
       - 'nestjs-server/**'
-      - 'testing/**'
+      - 'testing/test-server/**'
   workflow_dispatch:
 
 jobs:
@@ -32,22 +32,22 @@ jobs:
       - name: npm run build:lib
         working-directory: ./nestjs-server
         run: npm run build:lib
-      - name: npm ci (testing)
-        working-directory: ./testing
+      - name: npm ci (test-server)
+        working-directory: ./testing/test-server
         run: npm ci
       - name: run cucumber tests
-        working-directory: ./testing
+        working-directory: ./testing/test-server
         run: npm test
       - name: generate test summary
         if: always()
-        working-directory: ./testing
+        working-directory: ./testing/test-server
         run: npx ts-node scripts/generate-summary.ts
       - name: upload cucumber html report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cucumber-test-report
-          path: ./testing/reports/cucumber-report.html
+          path: ./testing/test-server/reports/cucumber-report.html
           retention-days: 14
 
   publish-release:

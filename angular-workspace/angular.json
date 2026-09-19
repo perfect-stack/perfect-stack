@@ -279,6 +279,95 @@
           }
         }
       }
+    },
+    "test-ui-client": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        },
+        "@schematics/angular:application": {
+          "strict": false
+        }
+      },
+      "root": "projects/test-ui-client",
+      "sourceRoot": "projects/test-ui-client/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "preserveSymlinks": true,
+            "outputPath": {
+              "base": "dist/test-ui-client"
+            },
+            "index": "projects/test-ui-client/src/index.html",
+            "polyfills": [
+              "projects/test-ui-client/src/polyfills.ts"
+            ],
+            "tsConfig": "projects/test-ui-client/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/test-ui-client/src/client.json",
+              "projects/test-ui-client/src/client-overrides.json",
+              "projects/test-ui-client/src/favicon.ico",
+              "projects/test-ui-client/src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/tinymce",
+                "output": "/tinymce/"
+              }
+            ],
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/leaflet/dist/leaflet.css",
+              "projects/test-ui-client/src/styles.scss"
+            ],
+            "scripts": [
+              "node_modules/tinymce/tinymce.min.js"
+            ],
+            "browser": "projects/test-ui-client/src/main.ts",
+            "allowedCommonJsDependencies": [
+              "tinymce",
+              "leaflet",
+              "proj4",
+              "ng-drag-drop"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/test-ui-client/src/environments/environment.ts",
+                  "with": "projects/test-ui-client/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all",
+              "preserveSymlinks": true
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "preserveSymlinks": true
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "test-ui-client:build:production"
+            },
+            "development": {
+              "buildTarget": "test-ui-client:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
     }
   }
 }

@@ -1,0 +1,25 @@
+{
+  "name": "@perfect-stack/test-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "End-to-end BDD UI testing suite for Perfect Stack with Playwright",
+  "scripts": {
+    "test": "cucumber-js --config cucumber.js",
+    "start:server": "cd server && npm run start",
+    "start:client": "cd ../../angular-workspace && npm run start:test-ui-client"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^10.9.0",
+    "@cucumber/pretty-formatter": "^1.0.1",
+    "@playwright/test": "^1.49.0",
+    "chai": "^4.4.1",
+    "playwright": "^1.49.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.16",
+    "@types/node": "^24.13.3"
+  }
+}

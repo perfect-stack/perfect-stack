@@ -1,0 +1,73 @@
+{
+  "name": "Owner.search",
+  "title": "Owner Search",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "first_name"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "last_name"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "email_address"
+          }
+        ]
+      ],
+      "metaEntityName": "Owner",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "first_name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "last_name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "phone_number"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "email_address"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Owner",
+      "type": "table",
+      "orderByName": "last_name",
+      "orderByDir": "ASC"
+    }
+  ]
+}

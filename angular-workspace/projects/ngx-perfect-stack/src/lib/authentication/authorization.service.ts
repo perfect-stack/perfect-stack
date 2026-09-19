@@ -21,25 +21,11 @@ export class AuthorizationService {
     this.permissionMap$.next(nextPermissionMap);
   }
 
-  /*loadPermissions(): Observable<Map<string, string[]>> {
-    return this.metaRoleService.findAll().pipe(switchMap((metaRoleList) => {
-      const permissionMap = new Map<string, string[]>();
-      for (const nextMetaRole of metaRoleList) {
-        const groupNames = nextMetaRole.group.split(',');
-        for (const nextGroupName of groupNames) {
-          permissionMap.set(
-            nextGroupName,
-            this.loadPermissionsForRole(nextMetaRole, metaRoleList),
-          );
-        }
-      }
-
-      return of(permissionMap);
-    }));
-  }*/
-
   loadPermissionsFromMetaRoleList(metaRoleList: MetaRole[]) {
     const permissionMap = new Map<string, string[]>();
+    if (!metaRoleList) {
+      return permissionMap;
+    }
     for (const nextMetaRole of metaRoleList) {
       // calculate the permissions of the current Role document (we can use this more than once below)
       const rolePermissions = this.loadPermissionsForRole(nextMetaRole, metaRoleList);
@@ -59,6 +45,16 @@ export class AuthorizationService {
     return permissionMap;
   }
 
+  private mergePermissions(existingGroupPermissions: string[], rolePermissions: string[]) {
+    const mergedList = Object.assign([], existingGroupPermissions);
+    for (const nextPermission of rolePermissions) {
+      if(!this.alreadyExists(nextPermission, mergedList)) {
+        mergedList.push(nextPermission);
+      }
+    }
+    return mergedList;
+  }
+
   private loadPermissionsForRole(
     metaRole: MetaRole,
     metaRoleList: MetaRole[],
@@ -75,10 +71,12 @@ export class AuthorizationService {
       }
     }
 
-    for (const nextPermission of metaRole.permissions) {
-      const permit = `${nextPermission.action}.${nextPermission.subject}`;
-      if (!this.alreadyExists(permit, permissions)) {
-        permissions.push(permit);
+    if (metaRole.permissions) {
+      for (const nextPermission of metaRole.permissions) {
+        const permit = `${nextPermission.action}.${nextPermission.subject}`;
+        if (!this.alreadyExists(permit, permissions)) {
+          permissions.push(permit);
+        }
       }
     }
 
@@ -89,11 +87,26 @@ export class AuthorizationService {
     return permissions.findIndex((s) => s === permission) >= 0;
   }
 
+  userInRole(roleName: string): boolean {
+    if (this.stackConfig.authenticationProvider === 'None' || this.stackConfig.authenticationProvider === 'NONE') {
+      return true;
+    }
+    const user = this.authenticationService.user$.getValue();
+    if (user) {
+      const userGroups = user.getGroups();
+      return userGroups ? userGroups.includes(roleName) : false;
+    }
+    return false;
+  }
+
   checkPermission(
     action: string,
     subject: string | null,
     dataSource = ''
   ): boolean {
+    if (this.stackConfig.authenticationProvider === 'None' || this.stackConfig.authenticationProvider === 'NONE') {
+      return true;
+    }
 
     const dataSourcePermission = dataSource ? ['KIMS', 'KEA'].includes(dataSource) : true;
 
@@ -138,55 +151,14 @@ export class AuthorizationService {
           const permits = groupPermissions[j].split('.');
           const permitAction = permits[0];
           const permitSubject = permits[1];
-          permitted = this.isPermittedMatch(
-            action,
-            subject,
-            permitAction,
-            permitSubject,
-          );
+
+          if(permitAction === action && permitSubject === subject) {
+            permitted = true;
+          }
         }
       }
     }
 
-    console.log(`CheckPermission: ${action}.${subject} for ${userGroups} = ${permitted}`);
-    if(!permitted) {
-      console.log(' - userGroups:', userGroups);
-      console.log(' - permissionMap:', permissionMap);
-    }
     return permitted;
-  }
-
-  private isPermittedMatch(
-    action: string,
-    subject: string,
-    permitAction: string,
-    permitSubject: string,
-  ) {
-    const cleanAction = action.trim().toLowerCase();
-    const cleanSubject = subject.trim().toLowerCase();
-    const cleanPermitAction = permitAction.trim().toLowerCase();
-    const cleanPermitSubject = permitSubject.trim().toLowerCase();
-
-    const actionMatch = cleanAction === cleanPermitAction || cleanPermitAction === 'any';
-    const subjectMatch = cleanSubject === cleanPermitSubject || cleanPermitSubject === 'any';
-
-    return actionMatch && subjectMatch;
-  }
-
-  /**
-   * Add the two arrays of permissions together and do not include duplicates.
-   *
-   * https://codeburst.io/how-to-merge-arrays-without-duplicates-in-javascript-91c66e7b74cf
-   * @param existingGroupPermissions
-   * @param rolePermissions
-   * @private
-   */
-  private mergePermissions(existingGroupPermissions: string[], rolePermissions: string[]): string[] {
-    return [...new Set([...existingGroupPermissions, ...rolePermissions])];
-  }
-
-  userInRole(role: string): boolean {
-    const user = this.authenticationService.user$.getValue();
-    return user && user.getGroups() ? user.getGroups().includes(role) : false;
   }
 }

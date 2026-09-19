@@ -1,0 +1,57 @@
+{
+  "name": "Species.search",
+  "title": "Species Search",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Species",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sort_index"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Species",
+      "type": "table",
+      "orderByName": "sort_index",
+      "orderByDir": "ASC"
+    }
+  ]
+}

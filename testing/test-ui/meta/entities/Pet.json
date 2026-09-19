@@ -1,0 +1,118 @@
+{
+  "name": "Pet",
+  "pluralName": "Pets",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "name",
+      "label": "Pet Name",
+      "description": "Name of the pet",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": ["name"],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "species",
+      "label": "Species",
+      "description": "The species of the pet",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "Species",
+      "typeaheadSearch": ["name"],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "breed",
+      "label": "Breed",
+      "description": "Specific breed or variety",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "birth_date",
+      "label": "Date of Birth",
+      "description": "Pet date of birth",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "microchip_number",
+      "label": "Microchip Number",
+      "description": "Unique electronic identification number",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": ["microchip_number"],
+      "rules": []
+    },
+    {
+      "name": "owner",
+      "label": "Owner",
+      "description": "The registered owner of the pet",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "Owner",
+      "typeaheadSearch": ["first_name", "last_name"],
+      "rules": []
+    }
+  ]
+}

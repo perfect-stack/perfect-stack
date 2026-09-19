@@ -10,7 +10,8 @@
     "build:lib:yalc": "nodemon --watch projects/ngx-perfect-stack --ext ts,html,scss,css,json --exec \"ng build ngx-perfect-stack && cd dist/ngx-perfect-stack && yalc push\"",
     "watch": "ng build --watch",
     "publish:github": "./publish-github.sh",
-    "test": "ng test"
+    "test": "ng test",
+    "start:test-ui-client": "ng serve test-ui-client"
   },
   "private": true,
   "dependencies": {

@@ -5,3 +5,4 @@
 /nestjs-server/data-import/
 /nestjs-client/node_modules/
 /nestjs-client/.env
+/testing/test-ui/client/.angular/

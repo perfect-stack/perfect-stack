@@ -1,0 +1,47 @@
+{
+  "name": "Administrator",
+  "group": "Administrator",
+  "description": "<p>Full access to Vet Clinic administration, Pet, Owner, and Species records</p>",
+  "permissions": [
+    {
+      "action": "Menu",
+      "subject": "Vet Clinic"
+    },
+    {
+      "action": "Menu",
+      "subject": "Pets"
+    },
+    {
+      "action": "Menu",
+      "subject": "Owners"
+    },
+    {
+      "action": "Menu",
+      "subject": "Species"
+    },
+    {
+      "action": "Edit",
+      "subject": "Pet"
+    },
+    {
+      "action": "Read",
+      "subject": "Pet"
+    },
+    {
+      "action": "Edit",
+      "subject": "Owner"
+    },
+    {
+      "action": "Read",
+      "subject": "Owner"
+    },
+    {
+      "action": "Edit",
+      "subject": "Species"
+    },
+    {
+      "action": "Read",
+      "subject": "Species"
+    }
+  ]
+}

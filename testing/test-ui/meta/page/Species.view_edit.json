@@ -1,0 +1,61 @@
+{
+  "name": "Species.view_edit",
+  "title": "Species Details",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "species",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Species",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Species",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "name"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Species Header",
+      "binding": "species"
+    },
+    {
+      "metaEntityName": "Species",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "sort_index"
+          }
+        ]
+      ],
+      "templateHeading": "Species Details",
+      "binding": "species"
+    }
+  ]
+}

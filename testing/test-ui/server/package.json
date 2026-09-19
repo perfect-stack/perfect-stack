@@ -1,0 +1,27 @@
+{
+  "name": "@perfect-stack/test-ui-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone Vet Clinic NestJS test server for UI testing",
+  "scripts": {
+    "start": "ts-node -r tsconfig-paths/register src/main.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.2.3",
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/core": "^11.2.3",
+    "@nestjs/event-emitter": "^3.1.0",
+    "@nestjs/platform-express": "^11.2.5",
+    "@nestjs/swagger": "^11.0.6",
+    "pg": "^8.16.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "sequelize": "^6.37.7",
+    "sequelize-typescript": "^2.1.6",
+    "sqlite3": "^5.1.7",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3",
+    "uuid": "^11.1.1"
+  }
+}

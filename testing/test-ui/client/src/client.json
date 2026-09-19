@@ -1,0 +1,15 @@
+{
+  "CLIENT_RELEASE": "1.0.0",
+  "API_URL": "http://localhost:3080",
+  "AUTHENTICATION_PROVIDER": "None",
+  "COGNITO_LOGIN_URL": "",
+  "DATE_FORMAT": "dd-MMM-yyyy",
+  "DATE_TIME_FORMAT": "dd-MMM-yyyy HH:mm",
+  "TIME_FORMAT": "HH:mm",
+  "DEBUG": false,
+  "COPYRIGHT_FOOTER": "Copyright ©2026 Vet Clinic",
+  "SUPPORT_EMAIL": "support@vetclinic.test",
+  "SHOW_MENU_LOGIN_BTN": false,
+  "DATA_SOURCE_EDITABLE": false,
+  "ENVIRONMENT_BANNER_TEXT": "TEST ENVIRONMENT - Vet Clinic"
+}

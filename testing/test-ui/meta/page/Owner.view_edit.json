@@ -1,0 +1,73 @@
+{
+  "name": "Owner.view_edit",
+  "title": "Owner Details",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "owner",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Owner",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Owner",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "first_name,last_name"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Owner Header",
+      "binding": "owner"
+    },
+    {
+      "metaEntityName": "Owner",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "first_name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "last_name"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "phone_number"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "email_address"
+          }
+        ]
+      ],
+      "templateHeading": "Personal Details",
+      "binding": "owner"
+    }
+  ]
+}

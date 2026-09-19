@@ -1,0 +1,27 @@
+{
+  "menuList": [
+    {
+      "label": "Vet Clinic",
+      "items": [
+        {
+          "label": "Pets",
+          "route": "/data/Pet/search",
+          "editable": true,
+          "roles": []
+        },
+        {
+          "label": "Owners",
+          "route": "/data/Owner/search",
+          "editable": true,
+          "roles": []
+        },
+        {
+          "label": "Species",
+          "route": "/data/Species/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    }
+  ]
+}

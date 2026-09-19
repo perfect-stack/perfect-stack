@@ -12,17 +12,10 @@
     "baseUrl": "./",
     "skipLibCheck": true,
     "strictNullChecks": false,
-    "noImplicitAny": false,
-    "paths": {
-      "@perfect-stack/nestjs-server": [
-        "../nestjs-server/libs/nestjs-server/src"
-      ],
-      "@perfect-stack/nestjs-server/*": [
-        "../nestjs-server/libs/nestjs-server/src/*"
-      ]
-    }
+    "noImplicitAny": false
   },
   "include": [
-    "**/*.ts"
+    "step-definitions/**/*.ts",
+    "support/**/*.ts"
   ]
 }

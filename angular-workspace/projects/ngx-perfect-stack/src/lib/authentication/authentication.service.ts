@@ -4,6 +4,7 @@ import {User} from './user/user';
 import {BehaviorSubject} from 'rxjs';
 import {MsalAuthenticationService} from "./msal-authentication.service";
 import {CognitoAuthenticationService} from "./cognito-authentication.service";
+import {NoAuthAuthenticationService} from "./no-auth-authentication.service";
 import {AuthenticationServiceProvider} from "./authentication-service-provider";
 import {ZonedDateTime} from "@js-joda/core";
 
@@ -17,11 +18,15 @@ export class AuthenticationService {
   constructor(
     private cognitoAuthService: CognitoAuthenticationService,
     private msalAuthService: MsalAuthenticationService,
+    private noAuthService: NoAuthAuthenticationService,
     @Inject(STACK_CONFIG) private readonly stackConfig: NgxPerfectStackConfig
   ) {
     if (this.stackConfig.authenticationProvider === 'MSAL') {
       this.provider = this.msalAuthService;
       console.log('AuthenticationService initialized with MSAL provider');
+    } else if (this.stackConfig.authenticationProvider === 'None' || this.stackConfig.authenticationProvider === 'NONE') {
+      this.provider = this.noAuthService;
+      console.log('AuthenticationService initialized with NoAuth provider');
     } else {
       this.provider = this.cognitoAuthService;
       console.log('AuthenticationService initialized with Cognito provider');
@@ -64,15 +69,15 @@ export class AuthenticationService {
     this.provider.sessionTimeout();
   }
 
-  createUser(idToken: string | null, accessToken: string | null, sendNotification: boolean): void {
-    this.provider.createUser(idToken, accessToken, sendNotification);
-  }
-
-  createUserFromLocalStorage(): void {
+  createUserFromLocalStorage() {
     this.provider.createUserFromLocalStorage();
   }
 
-  navigateToFirstPage(): void {
+  createUser(idToken: string | null, accessToken: string | null, sendNotification: boolean) {
+    this.provider.createUser(idToken, accessToken, sendNotification);
+  }
+
+  navigateToFirstPage() {
     this.provider.navigateToFirstPage();
   }
 }

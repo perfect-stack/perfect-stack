@@ -4,103 +4,78 @@ Integration and Behavior-Driven Development (BDD) testing suite for the Perfect 
 
 ---
 
-## 🎯 Goals & Testing Strategy
+## 🎯 Goals & Architecture
 
-The primary goal of this testing suite is to provide a robust, fast, and human-readable verification framework across both backend services and frontend applications in the Perfect Stack repository.
+The testing suite is decoupled into two independent sub-projects to keep backend service integration and frontend browser automation cleanly separated with domain-specific focus:
 
-### 1. Behavior-Driven Development (BDD) as Living Documentation
-- **Gherkin Feature Specifications**: Scenarios are written in plain language (`Given / When / Then`) under [`features/`](./features) to act as living documentation for business requirements and technical capabilities.
-- **Unified Domain Language**: Keeps developers, stakeholders, and automated test runners aligned on expected system behavior.
-
-### 2. Fast, Dependency-Free Local Testing (SQLite)
-- **Zero External Infrastructure**: Integration tests run out-of-the-box locally and in CI without requiring live PostgreSQL instances, AWS Secrets Manager, or RDS connectivity.
-- **Isolated SQLite Storage**: Leverages SQLite file/in-memory mode for fast database spins, rapid migrations, and zero teardown friction.
-- **Production Postgres Parity**: Core libraries (`@perfect-stack/nestjs-server`) maintain dialect-aware factories (`postgres` vs `sqlite`), ensuring local SQLite test speed without altering or risking production Postgres behavior.
-
-### 3. Comprehensive End-to-End & Integration Coverage
-- **Server Services Integration**: Validates NestJS modules (`OrmModule`, `MetaEntityModule`, `DataModule`, `KnexModule`, `QueryService`) working together with dynamic model schemas, validation rules, and persistence operations.
-- **UI & Browser Automation**: Supports Playwright for browser testing against UI components and full client workflows under the same BDD framework.
-
-### 4. Data-Driven Test Isolation Principle
-- **No Reliance on Global DB Reset**: Rather than dropping or truncating tables between every scenario (which degrades execution speed), tests maintain isolation through **intentional, distinct test datasets**.
-- **Unique Identifying Values**: Use distinctive identifiers, names, or email domain prefixes for scenario-specific data (e.g. `query.search.alice@example.com`, `SearchDept-100`).
-- **Targeted Filter Queries**: Queries should assert on expected slices of data using explicit search criteria rather than assuming an empty table.
+1. **[`testing/test-server`](./test-server)**: Fast, service-level integration testing for `@perfect-stack/nestjs-server` modules (`DataService`, `QueryService`, `OrmService`, `RuleService`, `KnexModule`).
+2. **[`testing/test-ui`](./test-ui)**: End-to-end browser testing using Playwright and Cucumber against a dedicated **Vet Clinic** application (`Pet`, `Species`, `Owner`), running with its own standalone NestJS server and Angular client.
 
 ---
 
-## 🏗️ Directory Structure
+## 🏗️ Directory Overview
 
 ```text
 testing/
-├── features/                      # Gherkin .feature specifications
-│   ├── server/                    # Backend / service integration scenarios
-│   │   ├── data/                  # Data layer feature tests
-│   │   │   ├── data/              # DataService features (CRUD, lifecycle, sort index)
-│   │   │   └── query/             # QueryService features (criteria, pagination, sorting)
-│   └── ui/                        # Playwright browser / frontend scenarios
-├── meta/                          # Dedicated metadata schemas for test scenarios
-│   └── entities/                  # Test entity definitions (Person.json, Address.json, etc.)
-├── reports/                       # Generated test execution reports (HTML, JSON)
-├── scripts/                       # Test summary and reporting utilities
-├── step-definitions/              # Step definition implementations
-│   ├── server/                    # Server-side step definitions
-│   │   ├── data/
-│   │   │   ├── data/              # DataService step definitions
-│   │   │   └── query/             # QueryService step definitions
-│   ├── ui/                        # UI / Playwright step definitions
-│   └── common/                    # Shared step definitions
-├── support/                       # Test harnesses, lifecycle hooks, and world context
-│   ├── hooks.ts                   # Cucumber Before / After hooks
-│   ├── world.ts                   # Custom Cucumber World context
-│   └── server/
-│       └── server-harness.ts      # NestJS Test module & SQLite environment initializer
-├── cucumber.js                    # Cucumber configuration and profile definitions
-├── package.json                   # Dependencies and test execution scripts
-└── tsconfig.json                  # TypeScript configuration with path aliases
+├── test-server/                   # Server Services Integration Suite
+│   ├── features/                  # Gherkin .feature specifications
+│   │   └── server/data/
+│   │       ├── data/              # DataService features (CRUD, lifecycle, sort index)
+│   │       └── query/             # QueryService features (criteria, pagination, sorting, eager-loading)
+│   ├── meta/                      # Metadata schemas for server integration (Person, Department, etc.)
+│   ├── step-definitions/          # Step definition implementations
+│   ├── support/                   # ServerHarness & World context
+│   ├── test-database.sqlite       # Local SQLite test database
+│   ├── cucumber.js
+│   └── package.json
+│
+└── test-ui/                       # Frontend & E2E Browser Testing Suite (Vet Clinic)
+    ├── client/                    # Angular client importing @perfect-stack/ngx-perfect-stack
+    ├── server/                    # Standalone NestJS server running Vet Clinic backend
+    ├── meta/                      # Vet Clinic domain metadata (Species.json, Pet.json, Owner.json)
+    ├── features/                  # Gherkin UI specifications
+    ├── step-definitions/          # Playwright browser step definitions
+    ├── support/                   # Playwright UIWorld and browser lifecycle hooks
+    ├── cucumber.js
+    └── package.json
 ```
 
 ---
 
 ## 🚀 Running Tests
 
-### Run All Tests
+### 1. Server Integration Tests (`test-server`)
+
+Runs the full suite of backend integration tests (DataService & QueryService):
+
 ```bash
+cd testing/test-server
 npm test
 ```
 
-### Run Server Integration Profile Only
+### 2. UI & Playwright Tests (`test-ui`)
+
+Runs browser automation scenarios with Playwright and Cucumber:
+
 ```bash
-npm run test:server
+cd testing/test-ui
+npm test
 ```
 
-### Run UI / Playwright Profile Only
+### 3. Running the Vet Clinic App Standalone
+
+You can start the Vet Clinic backend server independently outside of automated tests:
+
 ```bash
-npm run test:ui
+cd testing/test-ui/server
+npm run start
+# Server listens on http://localhost:3080 with SQLite persistence
 ```
 
 ---
 
-## ⚙️ Architecture & Test Harness
+## 📋 Data-Driven Test Isolation Principle
 
-### `ServerHarness`
-Located at [`support/server/server-harness.ts`](./support/server/server-harness.ts):
-- Initializes a standalone NestJS `TestingModule` using local configuration.
-- Automatically sets `DATABASE_DIALECT=sqlite` and points storage to an isolated test database (`test-database.sqlite`).
-- Loads dedicated test metadata definitions from [`meta/`](./meta).
-- Performs schema synchronization via Sequelize and initializes meta-entity models before executing feature steps.
-
-### Custom World Context
-Located at [`support/world.ts`](./support/world.ts):
-- Provides scenario-scoped state management (e.g., current entity under test, query responses, authentication context).
-- Resets state variables before each scenario to guarantee clean step context.
-
----
-
-## ✍️ Adding New Tests
-
-1. **Define the Feature**: Create a `.feature` file organized by service under [`features/server/<domain>/<service>/`](./features/server/).
-2. **Configure Test Meta (if needed)**: Add or adjust schema definitions under [`meta/entities/`](./meta/entities/).
-3. **Implement Step Definitions**: Implement matching steps in [`step-definitions/`](./step-definitions/) using the `CustomWorld` context.
-4. **Keep Steps Atomic & Reusable**: Prefer general-purpose steps where appropriate to reuse existing assertions across features.
-5. **Ensure Dialect Independence**: When writing server queries and test validations, rely on ORM abstractions or ANSI-compliant SQL supported by both Postgres and SQLite.
-6. **Follow Data-Driven Isolation**: Use scenario-unique field values to avoid test interference across scenarios.
+- **No Reliance on Global DB Reset**: Rather than dropping or truncating tables between every scenario, tests maintain isolation through **intentional, distinct test datasets**.
+- **Unique Identifying Values**: Use distinctive identifiers, names, or prefixes for scenario-specific data (e.g. `qmc.alice.baker@corp.com`, `QEL-Oliver`).
+- **Targeted Filter Queries**: Queries assert on expected slices of data using explicit search criteria rather than assuming an empty table.
