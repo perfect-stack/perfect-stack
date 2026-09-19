@@ -38,6 +38,64 @@ When(
   },
 );
 
+When(
+  'I query {string} ordered by {string} {string} by criteria:',
+  async function (
+    this: CustomWorld,
+    entityName: string,
+    orderByName: string,
+    orderByDir: string,
+    dataTable: DataTable,
+  ) {
+    const rows = dataTable.hashes();
+    const queryRequest = new QueryRequest();
+    queryRequest.metaEntityName = entityName;
+    queryRequest.orderByName = orderByName;
+    queryRequest.orderByDir = orderByDir;
+    queryRequest.criteria = rows.map((row) => {
+      const criteria = new Criteria();
+      criteria.name = row.name;
+      criteria.operator = row.operator as ComparisonOperator;
+      criteria.attributeType = row.attributeType as AttributeType;
+      criteria.value = row.value;
+      return criteria;
+    });
+
+    this.queryResponse = await this.queryService.findByCriteria(queryRequest);
+  },
+);
+
+When(
+  'I query {string} page {int} of size {int} ordered by {string} {string} by criteria:',
+  async function (
+    this: CustomWorld,
+    entityName: string,
+    pageNumber: number,
+    pageSize: number,
+    orderByName: string,
+    orderByDir: string,
+    dataTable: DataTable,
+  ) {
+    const rows = dataTable.hashes();
+    const queryRequest = new QueryRequest();
+    queryRequest.metaEntityName = entityName;
+    queryRequest.pageNumber = pageNumber;
+    queryRequest.pageSize = pageSize;
+    queryRequest.orderByName = orderByName;
+    queryRequest.orderByDir = orderByDir;
+    queryRequest.criteria = rows.map((row) => {
+      const criteria = new Criteria();
+      criteria.name = row.name;
+      criteria.operator = row.operator as ComparisonOperator;
+      criteria.attributeType = row.attributeType as AttributeType;
+      criteria.value = row.value;
+      return criteria;
+    });
+
+    this.queryResponse = await this.queryService.findByCriteria(queryRequest);
+  },
+);
+
 Then(
   'the query response should contain {int} records',
   function (this: CustomWorld, expectedCount: number) {
@@ -47,6 +105,17 @@ Then(
       this.queryResponse.resultList.length,
       `Expected ${expectedCount} records in resultList`,
     ).to.equal(expectedCount);
+  },
+);
+
+Then(
+  'the query response total count should be {int}',
+  function (this: CustomWorld, expectedTotal: number) {
+    expect(this.queryResponse, 'Query response should exist').to.be.ok;
+    expect(
+      this.queryResponse.totalCount,
+      `Expected totalCount to be ${expectedTotal} but got ${this.queryResponse.totalCount}`,
+    ).to.equal(expectedTotal);
   },
 );
 
