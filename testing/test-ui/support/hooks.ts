@@ -16,7 +16,7 @@ setWorldConstructor(UIWorld);
 
 let globalBrowser: Browser;
 
-BeforeAll(async function () {
+BeforeAll({ timeout: 120 * 1000 }, async function () {
   await ensureBackendRunning();
   await ensureFrontendRunning();
 
@@ -52,7 +52,7 @@ After(async function (this: UIWorld, scenario) {
   }
 });
 
-AfterAll(async function () {
+AfterAll({ timeout: 60 * 1000 }, async function () {
   if (globalBrowser) {
     await globalBrowser.close();
   }

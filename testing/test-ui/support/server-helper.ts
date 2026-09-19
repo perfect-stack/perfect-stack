@@ -7,7 +7,7 @@ let frontendProcess: ChildProcess | null = null;
 
 async function isPortOpen(port: number, pathName = '/'): Promise<boolean> {
   return new Promise((resolve) => {
-    const req = http.get({ hostname: '127.0.0.1', port, path: pathName, timeout: 1500 }, (res) => {
+    const req = http.get({ hostname: '127.0.0.1', port, path: pathName, timeout: 2000 }, (res) => {
       resolve(res.statusCode !== undefined && res.statusCode < 500);
     });
     req.on('error', () => resolve(false));
@@ -18,13 +18,13 @@ async function isPortOpen(port: number, pathName = '/'): Promise<boolean> {
   });
 }
 
-async function waitForServer(port: number, pathName = '/', maxWaitMs = 35000): Promise<boolean> {
+async function waitForServer(port: number, pathName = '/', maxWaitMs = 60000): Promise<boolean> {
   const start = Date.now();
   while (Date.now() - start < maxWaitMs) {
     if (await isPortOpen(port, pathName)) {
       return true;
     }
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 1000));
   }
   return false;
 }
@@ -44,10 +44,22 @@ export async function ensureBackendRunning(): Promise<void> {
     env: { ...process.env, PORT: '3080' },
   });
 
-  backendProcess.stdout?.on('data', () => {});
-  backendProcess.stderr?.on('data', () => {});
+  backendProcess.stdout?.on('data', (d) => {
+    const text = d.toString();
+    if (process.env.DEBUG || process.env.CI) {
+      console.log(`[Backend stdout]: ${text.trim()}`);
+    }
+  });
+  backendProcess.stderr?.on('data', (d) => {
+    console.error(`[Backend stderr]: ${d.toString().trim()}`);
+  });
+  backendProcess.on('exit', (code, signal) => {
+    if (code !== null && code !== 0) {
+      console.error(`[Backend process exited with code ${code}, signal: ${signal}]`);
+    }
+  });
 
-  const ready = await waitForServer(3080, '/meta/entity', 30000);
+  const ready = await waitForServer(3080, '/meta/entity', 45000);
   if (!ready) {
     throw new Error('Timed out waiting for Vet Clinic Backend server to start on port 3080');
   }
@@ -69,10 +81,22 @@ export async function ensureFrontendRunning(): Promise<void> {
     env: { ...process.env },
   });
 
-  frontendProcess.stdout?.on('data', () => {});
-  frontendProcess.stderr?.on('data', () => {});
+  frontendProcess.stdout?.on('data', (d) => {
+    const text = d.toString();
+    if (process.env.DEBUG || process.env.CI) {
+      console.log(`[Frontend stdout]: ${text.trim()}`);
+    }
+  });
+  frontendProcess.stderr?.on('data', (d) => {
+    console.error(`[Frontend stderr]: ${d.toString().trim()}`);
+  });
+  frontendProcess.on('exit', (code, signal) => {
+    if (code !== null && code !== 0) {
+      console.error(`[Frontend process exited with code ${code}, signal: ${signal}]`);
+    }
+  });
 
-  const ready = await waitForServer(4200, '/', 40000);
+  const ready = await waitForServer(4200, '/', 60000);
   if (!ready) {
     throw new Error('Timed out waiting for Vet Clinic Frontend to start on port 4200');
   }

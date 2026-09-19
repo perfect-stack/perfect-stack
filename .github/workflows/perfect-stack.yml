@@ -111,6 +111,12 @@ jobs:
       - name: npm run build:lib
         working-directory: ./angular-workspace
         run: npm run build:lib
+      - name: npm ci (test-ui server)
+        working-directory: ./testing/test-ui/server
+        run: npm ci
+      - name: npm ci (test-ui client)
+        working-directory: ./testing/test-ui/client
+        run: npm ci --legacy-peer-deps
       - name: npm ci (test-ui)
         working-directory: ./testing/test-ui
         run: npm ci
