@@ -28,11 +28,19 @@
       "subject": "Pet"
     },
     {
+      "action": "Delete",
+      "subject": "Pet"
+    },
+    {
       "action": "Edit",
       "subject": "Owner"
     },
     {
       "action": "Read",
+      "subject": "Owner"
+    },
+    {
+      "action": "Delete",
       "subject": "Owner"
     },
     {
@@ -41,6 +49,10 @@
     },
     {
       "action": "Read",
+      "subject": "Species"
+    },
+    {
+      "action": "Delete",
       "subject": "Species"
     }
   ]

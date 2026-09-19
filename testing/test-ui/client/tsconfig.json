@@ -15,12 +15,10 @@
     "sourceMap": true,
     "paths": {
       "@perfect-stack/ngx-perfect-stack": [
-        "../../../angular-workspace/dist/ngx-perfect-stack",
-        "../../../angular-workspace/projects/ngx-perfect-stack/src/public-api.ts"
+        "node_modules/@perfect-stack/ngx-perfect-stack"
       ],
       "@perfect-stack/ngx-perfect-stack/*": [
-        "../../../angular-workspace/dist/ngx-perfect-stack/*",
-        "../../../angular-workspace/projects/ngx-perfect-stack/src/*"
+        "node_modules/@perfect-stack/ngx-perfect-stack/*"
       ]
     },
     "declaration": false,
@@ -39,6 +37,6 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": false
+    "strictTemplates": true
   }
 }

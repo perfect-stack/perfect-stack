@@ -20,8 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "preserveSymlinks": true,
-            "outputPath": {
+                        "outputPath": {
               "base": "dist/test-ui-client"
             },
             "index": "src/index.html",
@@ -78,15 +77,13 @@
                 }
               ],
               "outputHashing": "all",
-              "preserveSymlinks": true
-            },
+                          },
             "development": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true,
-              "preserveSymlinks": true
-            }
+                          }
           },
           "defaultConfiguration": "development"
         },

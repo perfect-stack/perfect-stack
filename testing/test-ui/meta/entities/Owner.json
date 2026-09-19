@@ -31,7 +31,9 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": ["first_name"],
+      "typeaheadSearch": [
+        "first_name"
+      ],
       "rules": [
         {
           "type": "Required",
@@ -50,7 +52,9 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": ["last_name"],
+      "typeaheadSearch": [
+        "last_name"
+      ],
       "rules": [
         {
           "type": "Required",
@@ -83,8 +87,11 @@
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
-      "typeaheadSearch": ["email_address"],
+      "typeaheadSearch": [
+        "email_address"
+      ],
       "rules": []
     }
-  ]
+  ],
+  "permanentDelete": true
 }

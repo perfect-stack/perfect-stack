@@ -31,7 +31,9 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": ["name"],
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": [
         {
           "type": "Required",
@@ -57,5 +59,6 @@
       "typeaheadSearch": [],
       "rules": []
     }
-  ]
+  ],
+  "permanentDelete": true
 }

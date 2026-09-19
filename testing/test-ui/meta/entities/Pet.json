@@ -31,7 +31,9 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": ["name"],
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": [
         {
           "type": "Required",
@@ -50,7 +52,9 @@
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "Species",
-      "typeaheadSearch": ["name"],
+      "typeaheadSearch": [
+        "name"
+      ],
       "rules": [
         {
           "type": "Required",
@@ -97,7 +101,9 @@
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
-      "typeaheadSearch": ["microchip_number"],
+      "typeaheadSearch": [
+        "microchip_number"
+      ],
       "rules": []
     },
     {
@@ -111,8 +117,12 @@
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "Owner",
-      "typeaheadSearch": ["first_name", "last_name"],
+      "typeaheadSearch": [
+        "first_name",
+        "last_name"
+      ],
       "rules": []
     }
-  ]
+  ],
+  "permanentDelete": true
 }
