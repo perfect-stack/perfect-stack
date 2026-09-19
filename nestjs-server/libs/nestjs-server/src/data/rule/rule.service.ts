@@ -106,30 +106,51 @@ export class RuleService implements MetaEntityRuleValidator {
       // This is an array type, so get the attribute value and iterate through the items in the array (if any)
       const attributeValue = entity[attribute.name] as [];
 
-      for (let i = 0; i < attributeValue.length; i++) {
-        const nextPath = this.appendPath(path, `${attribute.name}.${i}`);
-        const nextEntity = attributeValue[i];
+      if (attributeValue && Array.isArray(attributeValue)) {
+        for (let i = 0; i < attributeValue.length; i++) {
+          const nextPath = this.appendPath(path, `${attribute.name}.${i}`);
+          const nextEntity = attributeValue[i];
 
-        let nextMetaEntity = null;
-        if (attribute.type === AttributeType.OneToMany) {
-          nextMetaEntity = metaEntityMap.get(attribute.relationshipTarget);
-          if (!nextMetaEntity) {
-            throw new Error(
-              `Unable to find MetaEntity for attribute ${attribute.name} with relationshipTarget of ${attribute.relationshipTarget}`,
+          let nextMetaEntity = null;
+          if (attribute.type === AttributeType.OneToMany) {
+            nextMetaEntity = metaEntityMap.get(attribute.relationshipTarget);
+            if (!nextMetaEntity) {
+              throw new Error(
+                `Unable to find MetaEntity for attribute ${attribute.name} with relationshipTarget of ${attribute.relationshipTarget}`,
+              );
+            }
+          }
+          else if (attribute.type === AttributeType.OneToPoly) {
+            nextMetaEntity = await this.getMetaEntityFromAttributeValue(
+              attribute,
+              nextEntity,
+              metaEntityMap,
             );
           }
-        }
-        else if (attribute.type === AttributeType.OneToPoly) {
-          nextMetaEntity = await this.getMetaEntityFromAttributeValue(
-            attribute,
+          else {
+            throw new Error('Unexpected situation');
+          }
+
+          await this.validateOneObject(
+            nextPath,
             nextEntity,
+            nextMetaEntity,
             metaEntityMap,
+            validationResultMap,
           );
         }
-        else {
-          throw new Error('Unexpected situation');
+      }
+    } else if (attribute.type === AttributeType.OneToOne) {
+      // This is a child object, so get the attribute value and recursively validate it
+      const nextPath = this.appendPath(path, attribute.name);
+      const nextEntity = entity[attribute.name];
+      if (nextEntity) {
+        const nextMetaEntity = metaEntityMap.get(attribute.relationshipTarget);
+        if (!nextMetaEntity) {
+          throw new Error(
+            `Unable to find MetaEntity for attribute ${attribute.name} with relationshipTarget of ${attribute.relationshipTarget}`,
+          );
         }
-
         await this.validateOneObject(
           nextPath,
           nextEntity,
@@ -138,23 +159,6 @@ export class RuleService implements MetaEntityRuleValidator {
           validationResultMap,
         );
       }
-    } else if (attribute.type === AttributeType.OneToOne) {
-      // This is a child object, so get the attribute value and recursively validate it
-      const nextPath = this.appendPath(path, attribute.name);
-      const nextEntity = entity[attribute.name];
-      const nextMetaEntity = metaEntityMap.get(attribute.relationshipTarget);
-      if (!nextMetaEntity) {
-        throw new Error(
-          `Unable to find MetaEntity for attribute ${attribute.name} with relationshipTarget of ${attribute.relationshipTarget}`,
-        );
-      }
-      await this.validateOneObject(
-        nextPath,
-        nextEntity,
-        nextMetaEntity,
-        metaEntityMap,
-        validationResultMap,
-      );
     }
     // Else the attribute is a simple type or a ManyToOne. For the simple types we already did the rule validation at
     // the top of the method. For the ManyToOne objects we don't validate them now since the relationship we have here/now
@@ -228,12 +232,15 @@ export class RuleService implements MetaEntityRuleValidator {
     const discriminatorValue = childItem[discriminator.discriminatorName + "_id"];
 
     const discriminatorMapping = discriminatorMap.get(discriminatorValue);
-    const metaEntity = metaEntityMap.get(discriminatorMapping.metaEntityName);
-    if(metaEntity) {
-      return metaEntity;
+    if (!discriminatorMapping) {
+      throw new Error(`Unable to find discriminator mapping for discriminator value of ${discriminatorValue}`);
     }
-    else {
-      throw new Error(`Unable to find MetaEntity for discriminator value ${discriminatorValue}`);
+
+    const nextMetaEntity = metaEntityMap.get(discriminatorMapping.metaEntityName);
+    if (!nextMetaEntity) {
+      throw new Error(`Unable to find MetaEntity for discriminator mapping of ${discriminatorMapping.metaEntityName}`);
     }
+
+    return nextMetaEntity;
   }
 }

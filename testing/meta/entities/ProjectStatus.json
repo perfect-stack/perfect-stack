@@ -1,0 +1,57 @@
+{
+  "name": "ProjectStatus",
+  "pluralName": "ProjectStatuses",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "name",
+      "label": "Status Name",
+      "description": "The name of the status",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "sort_index",
+      "label": "Sort Index",
+      "description": "Position in display list",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}

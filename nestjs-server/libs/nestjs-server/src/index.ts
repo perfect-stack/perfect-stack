@@ -11,6 +11,7 @@ import { ClientConfigService } from './client/config/client-config.service';
 import { DataModule } from './data/data.module';
 import { DataImportModule } from './data/import/data-import.module';
 import { DataService } from './data/data.service';
+import { UpdateSortIndexRequest } from './data/update-sort-index.request';
 import { EsriModule, ESRIModule } from './esri/esri.module';
 import { ESRIService, EsriService } from './esri/esri.service';
 import { EventModule } from './event/event.module';
@@ -54,6 +55,7 @@ export {
   DataModule,
   DataImportModule,
   DataService,
+  UpdateSortIndexRequest,
   DiscriminatorMapping,
   DiscriminatorService,
   QueryService,

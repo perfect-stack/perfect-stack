@@ -1,0 +1,57 @@
+{
+  "name": "Passport",
+  "pluralName": "Passports",
+  "icon": "",
+  "type": "Database",
+  "rootNode": false,
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "passport_number",
+      "label": "Passport Number",
+      "description": "Passport number",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "issuing_country",
+      "label": "Issuing Country",
+      "description": "Country that issued passport",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}

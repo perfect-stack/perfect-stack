@@ -130,6 +130,34 @@
       "relationshipTarget": "Address",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "department",
+      "label": "Department",
+      "description": "Person department",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Department",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "passport",
+      "label": "Passport",
+      "description": "Person passport",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Passport",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

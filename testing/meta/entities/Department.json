@@ -1,0 +1,57 @@
+{
+  "name": "Department",
+  "pluralName": "Departments",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "timestamps": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "name",
+      "label": "Department Name",
+      "description": "The name of the department",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "code",
+      "label": "Department Code",
+      "description": "Unique department code",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}
