@@ -13,6 +13,14 @@ When('I navigate to {string}', async function (this: UIWorld, urlPath: string) {
   await this.page.goto(targetUrl);
 });
 
+When('I pause the test', async function (this: UIWorld) {
+  if (!this.page) {
+    throw new Error('Playwright page is not initialized');
+  }
+  console.log('⏸️  Test execution paused by test step. Use the Playwright Inspector or DevTools to resume.');
+  await this.page.pause();
+});
+
 Then('the page title should not be empty', async function (this: UIWorld) {
   if (!this.page) {
     throw new Error('Playwright page is not initialized');

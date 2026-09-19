@@ -11,7 +11,13 @@ import { chromium, Browser } from 'playwright';
 import { UIWorld } from './world';
 import { ensureBackendRunning, ensureFrontendRunning, stopServers } from './server-helper';
 
-setDefaultTimeout(30 * 1000);
+// When running in debug mode (PWDEBUG=1), disable step timeouts so you can step through without timing out
+if (process.env.PWDEBUG === '1' || process.env.PAUSE === 'true') {
+  setDefaultTimeout(-1);
+} else {
+  setDefaultTimeout(30 * 1000);
+}
+
 setWorldConstructor(UIWorld);
 
 let globalBrowser: Browser;
@@ -20,8 +26,14 @@ BeforeAll({ timeout: 120 * 1000 }, async function () {
   await ensureBackendRunning();
   await ensureFrontendRunning();
 
+  const isHeaded = process.env.HEADED === 'true' || process.env.PWDEBUG === '1';
+  const slowMo = process.env.SLOW_MO
+    ? parseInt(process.env.SLOW_MO, 10)
+    : (process.env.HEADED === 'true' ? 500 : 0);
+
   globalBrowser = await chromium.launch({
-    headless: process.env.HEADED !== 'true',
+    headless: !isHeaded,
+    slowMo,
   });
 });
 
