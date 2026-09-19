@@ -1,0 +1,213 @@
+name: Perfect Stack CI/CD
+concurrency: single_main_branch_build
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'nestjs-server/**'
+      - 'angular-workspace/**'
+      - 'testing/**'
+  workflow_dispatch:
+
+jobs:
+  build-nestjs-server:
+    name: Build nestjs-server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@perfect-stack'
+      - name: npm ci (nestjs-server)
+        working-directory: ./nestjs-server
+        run: npm ci
+      - name: npm run build:lib
+        working-directory: ./nestjs-server
+        run: npm run build:lib
+
+  build-ngx-perfect-stack:
+    name: Build ngx-perfect-stack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@perfect-stack'
+      - name: npm ci (angular-workspace)
+        working-directory: ./angular-workspace
+        run: npm ci --legacy-peer-deps
+      - name: npm run build:lib
+        working-directory: ./angular-workspace
+        run: npm run build:lib
+
+  test-server:
+    name: Test Server (test-server)
+    needs: [build-nestjs-server]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@perfect-stack'
+      - name: npm ci (nestjs-server)
+        working-directory: ./nestjs-server
+        run: npm ci
+      - name: npm run build:lib
+        working-directory: ./nestjs-server
+        run: npm run build:lib
+      - name: npm ci (test-server)
+        working-directory: ./testing/test-server
+        run: npm ci
+      - name: run cucumber tests
+        working-directory: ./testing/test-server
+        run: npm test
+      - name: generate test summary
+        if: always()
+        working-directory: ./testing/test-server
+        run: npx ts-node scripts/generate-summary.ts
+      - name: upload cucumber html report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-cucumber-report
+          path: ./testing/test-server/reports/cucumber-report.html
+          retention-days: 14
+
+  test-ui:
+    name: Test UI (test-ui)
+    needs: [test-server, build-ngx-perfect-stack]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@perfect-stack'
+      - name: npm ci (nestjs-server)
+        working-directory: ./nestjs-server
+        run: npm ci
+      - name: npm run build:lib
+        working-directory: ./nestjs-server
+        run: npm run build:lib
+      - name: npm ci (angular-workspace)
+        working-directory: ./angular-workspace
+        run: npm ci --legacy-peer-deps
+      - name: npm run build:lib
+        working-directory: ./angular-workspace
+        run: npm run build:lib
+      - name: npm ci (test-ui)
+        working-directory: ./testing/test-ui
+        run: npm ci
+      - name: install playwright browsers
+        working-directory: ./testing/test-ui
+        run: npx playwright install --with-deps chromium
+      - name: run playwright ui tests
+        working-directory: ./testing/test-ui
+        run: npm test
+      - name: generate test summary
+        if: always()
+        working-directory: ./testing/test-ui
+        run: npx ts-node scripts/generate-summary.ts
+      - name: upload playwright ui cucumber report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-cucumber-report
+          path: ./testing/test-ui/reports/cucumber-report.html
+          retention-days: 14
+
+  publish-release:
+    name: Version & Publish Packages
+    needs: [test-ui]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@perfect-stack'
+      - name: git pull
+        run: git pull
+
+      # --- 1. Version & Publish nestjs-server ---
+      - name: npm ci (nestjs-server)
+        working-directory: ./nestjs-server
+        run: npm ci
+      - name: bump version (nestjs-server)
+        working-directory: ./nestjs-server
+        run: npm version patch
+      - name: record nestjs-server version
+        working-directory: ./nestjs-server
+        run: |
+          VERSION=$(npm pkg get version | sed 's/\"//g')
+          echo "NESTJS_SERVER_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "NESTJS_SERVER_TAG=nestjs-server-$VERSION" >> $GITHUB_ENV
+      - name: build nestjs-server
+        working-directory: ./nestjs-server
+        run: npm run build:lib
+      - name: publish nestjs-server
+        working-directory: ./nestjs-server
+        run: npm publish --tag latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- 2. Version & Publish ngx-perfect-stack ---
+      - name: npm ci (angular-workspace)
+        working-directory: ./angular-workspace
+        run: npm ci --legacy-peer-deps
+      - name: bump version (ngx-perfect-stack)
+        working-directory: ./angular-workspace/projects/ngx-perfect-stack
+        run: npm version patch
+      - name: record ngx-perfect-stack version
+        working-directory: ./angular-workspace/projects/ngx-perfect-stack
+        run: |
+          VERSION=$(npm pkg get version | sed 's/\"//g')
+          echo "NGX_STACK_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "NGX_STACK_TAG=ngx-perfect-stack-$VERSION" >> $GITHUB_ENV
+      - name: build ngx-perfect-stack
+        working-directory: ./angular-workspace
+        run: npm run build:lib
+      - name: publish ngx-perfect-stack
+        working-directory: ./angular-workspace/dist/ngx-perfect-stack
+        run: npm publish --tag latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- 3. Commit version files and push tags ---
+      - name: commit version bumps
+        uses: EndBug/add-and-commit@v9
+        with:
+          default_author: github_actions
+          message: 'chore: release nestjs-server v${{ env.NESTJS_SERVER_VERSION }} and ngx-perfect-stack v${{ env.NGX_STACK_VERSION }} [skip ci]'
+          add: 'nestjs-server/package.json nestjs-server/package-lock.json angular-workspace/projects/ngx-perfect-stack/package.json'
+      - name: push release git tags
+        run: |
+          git tag ${{ env.NESTJS_SERVER_TAG }}
+          git tag ${{ env.NGX_STACK_TAG }}
+          git push origin ${{ env.NESTJS_SERVER_TAG }}
+          git push origin ${{ env.NGX_STACK_TAG }}
