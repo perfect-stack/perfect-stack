@@ -55,6 +55,9 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      packages: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -85,8 +88,8 @@ jobs:
         working-directory: ./nestjs-server
         run: npm publish --tag latest
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
-          NODE_AUTH_TOKEN: ${{ secrets.PAT_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: commit push
         uses: EndBug/add-and-commit@v9
         with:
