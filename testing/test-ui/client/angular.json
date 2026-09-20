@@ -20,6 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "preserveSymlinks": true,
             "outputPath": {
               "base": "dist/test-ui-client"
             },
@@ -54,8 +55,7 @@
               "leaflet",
               "proj4",
               "ng-drag-drop"
-            ],
-            "preserveSymlinks": true
+            ]
           },
           "configurations": {
             "production": {
@@ -77,15 +77,13 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all",
-              "preserveSymlinks": true
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "preserveSymlinks": true
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "development"

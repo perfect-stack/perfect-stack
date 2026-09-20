@@ -10,7 +10,7 @@ When('I navigate to {string}', async function (this: UIWorld, urlPath: string) {
     urlPath.startsWith('http') || urlPath.startsWith('data:')
       ? urlPath
       : `${this.baseUrl}${urlPath}`;
-  await this.page.goto(targetUrl);
+  await this.page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 });
 
 When('I pause the test', async function (this: UIWorld) {

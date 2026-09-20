@@ -25,11 +25,14 @@
     ],
     "useDefineForClassFields": false,
     "paths": {
+      "@angular/*": [
+        "./node_modules/@angular/*"
+      ],
       "@perfect-stack/ngx-perfect-stack": [
-        "../../../angular-workspace/dist/ngx-perfect-stack"
+        "./node_modules/@perfect-stack/ngx-perfect-stack"
       ],
       "@perfect-stack/ngx-perfect-stack/*": [
-        "../../../angular-workspace/dist/ngx-perfect-stack/*"
+        "./node_modules/@perfect-stack/ngx-perfect-stack/*"
       ]
     }
   },

@@ -1,9 +1,11 @@
-import { spawn, ChildProcess } from 'child_process';
+import { spawn, execSync, ChildProcess } from 'child_process';
 import * as http from 'http';
 import * as path from 'path';
+import * as fs from 'fs';
+import { SpaStaticServer } from './static-server';
 
 let backendProcess: ChildProcess | null = null;
-let frontendProcess: ChildProcess | null = null;
+let spaServer: SpaStaticServer | null = null;
 
 async function isPortOpen(port: number, pathName = '/'): Promise<boolean> {
   return new Promise((resolve) => {
@@ -32,7 +34,7 @@ async function waitForServer(port: number, pathName = '/', maxWaitMs = 60000): P
 export async function ensureBackendRunning(): Promise<void> {
   const isRunning = await isPortOpen(3080, '/meta/entity');
   if (isRunning) {
-    console.log('Backend already running on http://localhost:3080');
+    console.log('Backend already running on http://127.0.0.1:3080');
     return;
   }
 
@@ -63,72 +65,54 @@ export async function ensureBackendRunning(): Promise<void> {
   if (!ready) {
     throw new Error('Timed out waiting for Vet Clinic Backend server to start on port 3080');
   }
-  console.log('Backend server is ready on http://localhost:3080');
+  console.log('Backend server is ready on http://127.0.0.1:3080');
 }
 
 export async function ensureFrontendRunning(): Promise<void> {
   const isRunning = await isPortOpen(4200, '/');
   if (isRunning) {
-    console.log('Frontend already running on http://localhost:4200');
+    console.log('Frontend already running on http://127.0.0.1:4200');
     return;
   }
 
-  console.log('Starting Vet Clinic Frontend on http://localhost:4200 (ng serve)...');
   const clientDir = path.resolve(__dirname, '../client');
-  frontendProcess = spawn('npx', ['ng', 'serve', '--port', '4200', '--host', '0.0.0.0'], {
-    cwd: clientDir,
-    stdio: 'pipe',
-    env: { ...process.env },
-  });
+  let distDir = path.resolve(clientDir, 'dist/test-ui-client/browser');
 
-  let isCompiled = false;
-
-  frontendProcess.stdout?.on('data', (d) => {
-    const text = d.toString();
-    if (process.env.DEBUG || process.env.CI) {
-      console.log(`[Frontend stdout]: ${text.trim()}`);
-    }
-    if (
-      text.includes('Application bundle generation complete') ||
-      text.includes('Compiled successfully') ||
-      text.includes('Watch mode enabled') ||
-      text.includes('Angular Live Development Server is listening')
-    ) {
-      isCompiled = true;
-    }
-  });
-  frontendProcess.stderr?.on('data', (d) => {
-    console.error(`[Frontend stderr]: ${d.toString().trim()}`);
-  });
-  frontendProcess.on('exit', (code, signal) => {
-    if (code !== null && code !== 0) {
-      console.error(`[Frontend process exited with code ${code}, signal: ${signal}]`);
-    }
-  });
-
-  const start = Date.now();
-  const maxWaitMs = 90000;
-  while (Date.now() - start < maxWaitMs) {
-    if (isCompiled && (await isPortOpen(4200, '/'))) {
-      console.log('Frontend server is compiled and ready on http://localhost:4200');
-      return;
-    }
-    await new Promise((r) => setTimeout(r, 1000));
+  // If application builder output without /browser subfolder:
+  if (!fs.existsSync(distDir) && fs.existsSync(path.resolve(clientDir, 'dist/test-ui-client/index.html'))) {
+    distDir = path.resolve(clientDir, 'dist/test-ui-client');
   }
 
-  // Fallback check if port is open after timeout
-  if (await isPortOpen(4200, '/')) {
-    console.log('Frontend port is open on http://localhost:4200 (compilation wait finished)');
-    return;
+  const indexPath = path.resolve(distDir, 'index.html');
+  if (!fs.existsSync(indexPath)) {
+    console.log('Static distribution not found. Building Vet Clinic Frontend (npm run build)...');
+    execSync('npm run build', { cwd: clientDir, stdio: 'inherit' });
+    if (!fs.existsSync(indexPath)) {
+      if (fs.existsSync(path.resolve(clientDir, 'dist/test-ui-client/browser/index.html'))) {
+        distDir = path.resolve(clientDir, 'dist/test-ui-client/browser');
+      } else if (fs.existsSync(path.resolve(clientDir, 'dist/test-ui-client/index.html'))) {
+        distDir = path.resolve(clientDir, 'dist/test-ui-client');
+      } else {
+        throw new Error(`Build completed but index.html not found in ${distDir}`);
+      }
+    }
   }
 
-  throw new Error('Timed out waiting for Vet Clinic Frontend to start and compile on port 4200');
+  console.log(`Starting CloudFront-like SPA Static Server from ${distDir} on port 4200...`);
+  spaServer = new SpaStaticServer(distDir, 4200);
+  await spaServer.start();
+
+  const ready = await waitForServer(4200, '/', 15000);
+  if (!ready) {
+    throw new Error('Timed out waiting for Frontend SPA static server to start on port 4200');
+  }
+  console.log('Frontend SPA server is ready on http://127.0.0.1:4200');
 }
 
 export async function stopServers(): Promise<void> {
-  if (frontendProcess) {
-    frontendProcess.kill('SIGTERM');
-    frontendProcess = null;
+  if (spaServer) {
+    await spaServer.stop();
+    spaServer = null;
   }
   if (backendProcess) {
     backendProcess.kill('SIGTERM');

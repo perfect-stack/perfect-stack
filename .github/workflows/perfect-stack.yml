@@ -117,6 +117,9 @@ jobs:
       - name: npm ci (test-ui client)
         working-directory: ./testing/test-ui/client
         run: npm ci --legacy-peer-deps
+      - name: npm run build (test-ui client)
+        working-directory: ./testing/test-ui/client
+        run: npm run build
       - name: npm ci (test-ui)
         working-directory: ./testing/test-ui
         run: npm ci
@@ -135,7 +138,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ui-cucumber-report
-          path: ./testing/test-ui/reports/cucumber-report.html
+          path: ./testing/test-ui/reports/
           retention-days: 14
 
   publish-release:
