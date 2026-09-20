@@ -24,7 +24,7 @@ fetch("/client.json")
       })
       .finally(() => {
         const stackConfig: NgxPerfectStackConfig = {
-          apiUrl: mergedConfig.API_URL || "http://localhost:3080",
+          apiUrl: mergedConfig.API_URL || "http://127.0.0.1:3080",
           authenticationProvider: mergedConfig.AUTHENTICATION_PROVIDER || "None",
           cognitoLoginUrl: mergedConfig.COGNITO_LOGIN_URL,
           clientRelease: mergedConfig.CLIENT_RELEASE || "1.0.0",

@@ -28,8 +28,8 @@ async function bootstrap() {
   logger.log("Database schema synchronized and dynamic models initialized");
 
   const port = process.env.PORT || 3080;
-  await app.listen(port);
-  logger.log(`Vet Clinic Server is running on http://localhost:${port}`);
+  await app.listen(port, "0.0.0.0");
+  logger.log(`Vet Clinic Server is running on http://127.0.0.1:${port}`);
 }
 
 bootstrap();
