@@ -1,8 +1,8 @@
 <div class="btn-group" role="group">
-  <ng-container *ngFor="let buttonName of buttonNames; let i = index;">
+  @for (buttonName of buttonNames; track buttonName; let i = $index) {
     <input type="radio" class="btn-check" name="btnradio" id="btn{{i}}" autocomplete="off" [checked]="buttonName === checkedName">
     <label class="btn btn-outline-secondary" for="btn{{i}}" (click)="onClick(buttonName)">{{buttonName}}</label>
-  </ng-container>
+  }
 </div>
 
 <!--<hr>
@@ -10,6 +10,6 @@ TooL: {{buttonGroupTool|json}}<br>
 Checked: {{checkedName}}-->
 
 <!--<ng-container *ngIf="ctx && ctx.metaPage">
-  <hr>
+<hr>
   {{ctx.metaPage.name}}
 </ng-container>-->

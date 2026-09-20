@@ -1,8 +1,8 @@
 
-<ng-container *ngIf="isDefaultImageUrl()">
+@if (isDefaultImageUrl()) {
   <span class="material-symbols-outlined align-middle" (click)="onClick()">image</span>
-</ng-container>
+}
 
-<ng-container *ngIf="!isDefaultImageUrl()">
+@if (!isDefaultImageUrl()) {
   <img [src]="imageTool.imageUrl" [ngClass]="imageTool.styles" (click)="onClick()">
-</ng-container>
+}

@@ -1,20 +1,20 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      <ng-container *ngIf="authenticationService.isLoggedIn">
-        <ng-container *ngIf="loginExpiryTime$ | async as loginExpiryTime">
+      @if (authenticationService.isLoggedIn) {
+        @if (loginExpiryTime$ | async; as loginExpiryTime) {
           <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogout()" id="logoutBtn">
             Logout
-            <ng-container *ngIf="showTimeLeft">
+            @if (showTimeLeft) {
               <span>in {{loginExpiryTime}}</span>
-            </ng-container>
+            }
           </button>
-        </ng-container>
-      </ng-container>
+        }
+      }
 
-      <ng-container *ngIf="!authenticationService.isLoggedIn">
+      @if (!authenticationService.isLoggedIn) {
         <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogin()" id="loginBtn">Login</button>
-      </ng-container>
+      }
     </div>
   </div>
 </div>

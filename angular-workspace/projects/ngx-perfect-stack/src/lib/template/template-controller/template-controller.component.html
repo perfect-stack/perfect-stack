@@ -2,32 +2,29 @@
   <lib-template-options-panel [template]="template"></lib-template-options-panel>
 
   <!--<div class="d-flex justify-content-between">
-    <div></div>
-    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
-  </div>-->
+  <div></div>
+  <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
+</div>-->
 
-  <ng-container [ngSwitch]="template.type">
-    <ng-container *ngSwitchCase="'header'">
-      <lib-template-header-editor [template]="template"></lib-template-header-editor>
-    </ng-container>
+@switch (template.type) {
+  @case ('header') {
+    <lib-template-header-editor [template]="template"></lib-template-header-editor>
+  }
+  @case ('form') {
+    <lib-template-form-editor [template]="template"></lib-template-form-editor>
+  }
+  @case ('table') {
+    <lib-template-table-editor [template]="template"></lib-template-table-editor>
+  }
+  @default {
+    <div>UNKNOWN template type of {{template.type}}</div>
+  }
+}
 
-    <ng-container *ngSwitchCase="'form'">
-      <lib-template-form-editor [template]="template"></lib-template-form-editor>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="'table'">
-      <lib-template-table-editor [template]="template"></lib-template-table-editor>
-    </ng-container>
-
-    <ng-container *ngSwitchDefault>
-      <div>UNKNOWN template type of {{template.type}}</div>
-    </ng-container>
-  </ng-container>
-
-  <div class="d-flex justify-content-between">
-    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomLeft" [editorMode]="true"></lib-tool-drop-zone>
-    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomMiddle" [editorMode]="true"></lib-tool-drop-zone>
-    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomRight" [editorMode]="true"></lib-tool-drop-zone>
-  </div>
+<div class="d-flex justify-content-between">
+  <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomLeft" [editorMode]="true"></lib-tool-drop-zone>
+  <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomMiddle" [editorMode]="true"></lib-tool-drop-zone>
+  <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomRight" [editorMode]="true"></lib-tool-drop-zone>
+</div>
 </div>
 

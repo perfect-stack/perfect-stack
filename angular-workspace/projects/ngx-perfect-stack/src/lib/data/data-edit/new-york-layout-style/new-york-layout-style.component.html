@@ -1,24 +1,22 @@
 <div class="d-flex flex-column h-100">
-  <div class="container-fluid new-york-layout-style" *ngIf="ctx">
-    <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
-      <h2 class="mb-3" id="sectionHdg">{{ctx.metaPage.title}}</h2>
-
-      <ng-container *ngFor="let template of ctx.metaPage.templates; index as i">
-        <lib-controller [ctx]="ctx" [template]="template"></lib-controller>
-      </ng-container>
-
-
-      <div class="d-flex justify-content-between px-2 pb-2">
-        <div>
-          <!-- Bottom left actions would go here -->
-        </div>
-        <div>
-          <ng-content select="[BottomRightActions]"></ng-content>
+  @if (ctx) {
+    <div class="container-fluid new-york-layout-style">
+      <div class="container-fluid mt-3 bg-light py-3 shadow-sm border">
+        <h2 class="mb-3" id="sectionHdg">{{ctx.metaPage.title}}</h2>
+        @for (template of ctx.metaPage.templates; track template; let i = $index) {
+          <lib-controller [ctx]="ctx" [template]="template"></lib-controller>
+        }
+        <div class="d-flex justify-content-between px-2 pb-2">
+          <div>
+            <!-- Bottom left actions would go here -->
+          </div>
+          <div>
+            <ng-content select="[BottomRightActions]"></ng-content>
+          </div>
         </div>
       </div>
     </div>
-
-  </div>
+  }
 
   <div class="container-fluid flex-grow-1">
     <lib-audit-view [ctx]="ctx"></lib-audit-view>

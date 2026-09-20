@@ -1,41 +1,37 @@
-<ng-container *ngIf="metaEntityMap$ | async as metaEntityMap">
-  <ng-container *ngIf="metaPageMap$ | async as metaPageMap">
-    <ng-container *ngIf="discriminatorMap$ | async as discriminatorMap">
-
-      <ng-container *ngIf="attributes.length > 0 || mode === 'edit'">
-        <div class="mt-2" *ngFor="let nextItem of attributes.controls; let i=index">
-
-          <div class="d-flex justify-content-between">
-            <h5 id="cards[{{i}}].cardHdg">{{getHeadingForRow(i, metaPageMap, discriminatorMap)}}</h5>
-            <a class="text-primary" role="button" (click)="onDeleteItem(i)" *ngIf="mode === 'edit'" id="cards[{{i}}].deleteBtn">Remove</a>
-          </div>
-
-          <ng-container *ngIf="getTemplateForRow(i, metaPageMap, discriminatorMap) as template">
-            <lib-form-layout
-              [mode]="mode"
-              [ctx]="ctx"
-              [template]="template"
-              [formGroup]="getFormGroupForRow(i)">
-            </lib-form-layout>
-          </ng-container>
-
-          <br>
-        </div>
-
-        <ng-container *ngIf="mode === 'edit'">
-          <button class="btn btn-outline-success mt-2" (click)="onAddItem(metaPageMap, metaEntityMap, discriminatorMap)" id="cardAddItemBtn">Add Item</button>
-        </ng-container>
-      </ng-container>
-
-      <ng-container *ngIf="attributes.length === 0 && mode !== 'edit'">
-        <div [innerHtml]="getNoItemsHtml()"></div>
-      </ng-container>
-
-      <!--<br>
-      <p>formGroup: {{formGroup.value | json}}</p>
-      <p>metaAttribute: {{ attributes.attribute | json}}</p>-->
-      <!--<p>Got metaEntityList: {{metaEntityList.length}}</p>-->
-
-    </ng-container>
-  </ng-container>
-</ng-container>
+@if (metaEntityMap$ | async; as metaEntityMap) {
+  @if (metaPageMap$ | async; as metaPageMap) {
+    @if (discriminatorMap$ | async; as discriminatorMap) {
+      @if (attributes.length > 0 || mode === 'edit') {
+        @for (nextItem of attributes.controls; track nextItem; let i = $index) {
+          <div class="mt-2">
+            <div class="d-flex justify-content-between">
+              <h5 id="cards[{{i}}].cardHdg">{{getHeadingForRow(i, metaPageMap, discriminatorMap)}}</h5>
+              @if (mode === 'edit') {
+                <a class="text-primary" role="button" (click)="onDeleteItem(i)" id="cards[{{i}}].deleteBtn">Remove</a>
+              }
+            </div>
+            @if (getTemplateForRow(i, metaPageMap, discriminatorMap); as template) {
+              <lib-form-layout
+                [mode]="mode"
+                [ctx]="ctx"
+                [template]="template"
+                [formGroup]="getFormGroupForRow(i)">
+              </lib-form-layout>
+            }
+            <br>
+            </div>
+          }
+          @if (mode === 'edit') {
+            <button class="btn btn-outline-success mt-2" (click)="onAddItem(metaPageMap, metaEntityMap, discriminatorMap)" id="cardAddItemBtn">Add Item</button>
+          }
+        }
+        @if (attributes.length === 0 && mode !== 'edit') {
+          <div [innerHtml]="getNoItemsHtml()"></div>
+        }
+        <!--<br>
+        <p>formGroup: {{formGroup.value | json}}</p>
+        <p>metaAttribute: {{ attributes.attribute | json}}</p>-->
+        <!--<p>Got metaEntityList: {{metaEntityList.length}}</p>-->
+      }
+    }
+  }

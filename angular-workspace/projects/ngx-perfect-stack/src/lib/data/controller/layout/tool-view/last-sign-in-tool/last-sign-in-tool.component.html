@@ -1,1 +1,3 @@
-<div class="last-signed-in px-3 mx-3" (click)="onClick($event)" *ngIf="lastSignInTime">Last signed in {{lastSignInTime}}</div>
+@if (lastSignInTime) {
+  <div class="last-signed-in px-3 mx-3" (click)="onClick($event)">Last signed in {{lastSignInTime}}</div>
+}

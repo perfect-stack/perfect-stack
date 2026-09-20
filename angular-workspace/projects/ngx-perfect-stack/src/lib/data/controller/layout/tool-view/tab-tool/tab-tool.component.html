@@ -1,35 +1,40 @@
-<ng-container *ngIf="tabContext$ | async as tabContext">
-  <ng-container *ngIf="editorMode">
+@if (tabContext$ | async; as tabContext) {
+  @if (editorMode) {
     <div class="material-symbols-outlined" (click)="doEditorAction()">settings</div>
-  </ng-container>
-
-  <div *ngIf="tabContext.tabList.length > 0">
-    <div class="d-flex border-bottom">
-      <div class="tab-heading"
+  }
+  @if (tabContext.tabList.length > 0) {
+    <div>
+      <div class="d-flex border-bottom">
+        @for (metaPage of tabContext.tabList; track metaPage; let i = $index) {
+          <div class="tab-heading"
            [ngClass]="{
            'border-bottom': metaPage.name === selectedMetaPage.name,
            'border-primary': metaPage.name === selectedMetaPage.name,
            'border-4': metaPage.name === selectedMetaPage.name
            }"
-           *ngFor="let metaPage of tabContext.tabList; index as i">
-        <div (click)="onTabMetaPageSelected(metaPage, i)">
-          {{metaPage.title}}
-        </div>
+            >
+            <div (click)="onTabMetaPageSelected(metaPage, i)">
+              {{metaPage.title}}
+            </div>
+          </div>
+        }
       </div>
     </div>
-  </div>
-
-  <div class="row" *ngIf="tabContext.tabList.length">
-    <ng-container *ngFor="let metaPage of tabContext.tabList; index as i">
-      <ng-container *ngIf="selectedTabIdx === i">
-        <div class="col-12">
-          <lib-layout [ctx]="ctx" [template]="tabContext.tabList[i].templates[0]"></lib-layout>
-        </div>
-      </ng-container>
-    </ng-container>
-  </div>
-
-  <div *ngIf="tabContext.tabList.length === 0">
-    No Tabs defined yet
-  </div>
-</ng-container>
+  }
+  @if (tabContext.tabList.length) {
+    <div class="row">
+      @for (metaPage of tabContext.tabList; track metaPage; let i = $index) {
+        @if (selectedTabIdx === i) {
+          <div class="col-12">
+            <lib-layout [ctx]="ctx" [template]="tabContext.tabList[i].templates[0]"></lib-layout>
+          </div>
+        }
+      }
+    </div>
+  }
+  @if (tabContext.tabList.length === 0) {
+    <div>
+      No Tabs defined yet
+    </div>
+  }
+}

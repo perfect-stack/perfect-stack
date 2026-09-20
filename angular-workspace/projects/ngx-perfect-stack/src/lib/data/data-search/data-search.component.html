@@ -1,67 +1,67 @@
-<div class="container-fluid container-page" *ngIf="ctx$ | async as ctx">
-
-  <ng-container *ngIf="searchCriteriaTemplate">
-    <div class="d-flex justify-content-between">
-      <div>
-        <lib-page-title-tool [ctx]="ctx"></lib-page-title-tool>
-      </div>
-      <div>
-        <!-- There is a tool view here and so at some point that may have something in it that isn't an Add button, that
-        needs better permission management but we will cross that bridge when we get there -->
-        <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
-          <ng-container *ngIf="!(searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight'])">
-            <button type="button" class="btn btn-success" (click)="onAdd(ctx)" id="addBtn">{{addButtonLbl}}</button>
-          </ng-container>
-          <ng-container *ngIf="searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight']">
-            <lib-tool-view [ctx]="ctx" [tool]="searchCriteriaTemplate.locations['TopRight']"></lib-tool-view>
-          </ng-container>
-        </lib-permission-check>
-      </div>
-    </div>
-
-    <!-- The *ngIf here is important because it triggers the redisplay of the criteria when the route changes. There's
-    an indirect dependency here between the route changing, the search criteria form changing and a new search being done -->
-    <form class="container-fluid container-form" *ngIf="searchResultsFormGroup">
-      <div class="d-flex">
-        <div class="flex-grow-1">
-          <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate"></lib-controller>
+@if (ctx$ | async; as ctx) {
+  <div class="container-fluid container-page">
+    @if (searchCriteriaTemplate) {
+      <div class="d-flex justify-content-between">
+        <div>
+          <lib-page-title-tool [ctx]="ctx"></lib-page-title-tool>
         </div>
-        <div class="action-buttons-right align-self-end">
-          <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)" id="searchBtn">Search</button>
-          <button type="button" class="btn btn-outline-primary" (click)="onReset(ctx)" id="resetBtn">Reset</button>
+        <div>
+          <!-- There is a tool view here and so at some point that may have something in it that isn't an Add button, that
+          needs better permission management but we will cross that bridge when we get there -->
+          <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
+            @if (!(searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight'])) {
+              <button type="button" class="btn btn-success" (click)="onAdd(ctx)" id="addBtn">{{addButtonLbl}}</button>
+            }
+            @if (searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight']) {
+              <lib-tool-view [ctx]="ctx" [tool]="searchCriteriaTemplate.locations['TopRight']"></lib-tool-view>
+            }
+          </lib-permission-check>
         </div>
       </div>
-    </form>
-  </ng-container>
-
-  <div class="container-table" *ngIf="searchResultsFormGroup">
-
-    <div class="collection-size-found" *ngIf="resultsMessage">
-      <!--Showing {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found-->
-      {{resultsMessage}}
-    </div>
-
-    <ng-container *ngIf="searchResultsFormGroup">
-      <lib-table-layout
-        [ctx]="ctx"
-        [template]="resultTableTemplate"
-        [mode]="'view'"
-        [relationshipProperty]="'results'">
-      </lib-table-layout>
-    </ng-container>
-
-
-    <ng-container *ngIf="showPagination">
-      <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx, false)">
-        <ng-template ngbPaginationFirst>First</ng-template>
-        <ng-template ngbPaginationLast>Last</ng-template>
-        <ng-template ngbPaginationPrevious>Previous</ng-template>
-        <ng-template ngbPaginationNext>Next</ng-template>
-        <ng-template ngbPaginationEllipsis>...</ng-template>
-        <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
-      </ngb-pagination>
-    </ng-container>
+      <!-- The *ngIf here is important because it triggers the redisplay of the criteria when the route changes. There's
+      an indirect dependency here between the route changing, the search criteria form changing and a new search being done -->
+      @if (searchResultsFormGroup) {
+        <form class="container-fluid container-form">
+          <div class="d-flex">
+            <div class="flex-grow-1">
+              <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate"></lib-controller>
+            </div>
+            <div class="action-buttons-right align-self-end">
+              <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)" id="searchBtn">Search</button>
+              <button type="button" class="btn btn-outline-primary" (click)="onReset(ctx)" id="resetBtn">Reset</button>
+            </div>
+          </div>
+        </form>
+      }
+    }
+    @if (searchResultsFormGroup) {
+      <div class="container-table">
+        @if (resultsMessage) {
+          <div class="collection-size-found">
+            <!--Showing {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found-->
+            {{resultsMessage}}
+          </div>
+        }
+        @if (searchResultsFormGroup) {
+          <lib-table-layout
+            [ctx]="ctx"
+            [template]="resultTableTemplate"
+            [mode]="'view'"
+            [relationshipProperty]="'results'">
+          </lib-table-layout>
+        }
+        @if (showPagination) {
+          <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx, false)">
+            <ng-template ngbPaginationFirst>First</ng-template>
+            <ng-template ngbPaginationLast>Last</ng-template>
+            <ng-template ngbPaginationPrevious>Previous</ng-template>
+            <ng-template ngbPaginationNext>Next</ng-template>
+            <ng-template ngbPaginationEllipsis>...</ng-template>
+            <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+          </ngb-pagination>
+        }
+      </div>
+    }
+    <lib-version [style]="'Footer'"></lib-version>
   </div>
-
-  <lib-version [style]="'Footer'"></lib-version>
-</div>
+}

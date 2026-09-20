@@ -6,11 +6,12 @@
   <p>{{text}}</p>
 </div>
 <div class="modal-footer">
-  <button
-    *ngFor="let action of actions"
-    type="button"
-    [ngClass]="action.style"
-    (click)="activeModal.close(action.name)">
-    {{action.name}}
-  </button>
+  @for (action of actions; track action) {
+    <button
+      type="button"
+      [ngClass]="action.style"
+      (click)="activeModal.close(action.name)">
+      {{action.name}}
+    </button>
+  }
 </div>

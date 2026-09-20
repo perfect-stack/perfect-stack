@@ -1,30 +1,33 @@
-<ng-container *ngIf="template">
-  <ng-container *ngIf="metaEntityMap$ | async as metaEntityMap">
-    <div class="row g-1" *ngFor="let nextRow of template.cells">
-      <div [class]="getCSS(nextCell)" *ngFor="let nextCell of nextRow">
-        <!--{{nextCell.attributeName}}: {{getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName) | json}}-->
-        <!--{{getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName) | json}}-->
-        <lib-cell-view
-          [metaEntity]="getMetaEntity(metaEntityMap, template.metaEntityName)"
-          [cell]="nextCell"
-          [attribute]="getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName)"
-          (changeWidth)="onChangeWidth($event, nextRow, nextCell)"
-          (changeHeight)="onChangeHeight($event, nextRow, nextCell)"
-          (deleteCell)="onDeleteCell($event, nextRow)">
-        </lib-cell-view>
+@if (template) {
+  @if (metaEntityMap$ | async; as metaEntityMap) {
+    @for (nextRow of template.cells; track nextRow) {
+      <div class="row g-1">
+        @for (nextCell of nextRow; track nextCell) {
+          <div [class]="getCSS(nextCell)">
+            <!--{{nextCell.attributeName}}: {{getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName) | json}}-->
+            <!--{{getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName) | json}}-->
+            <lib-cell-view
+              [metaEntity]="getMetaEntity(metaEntityMap, template.metaEntityName)"
+              [cell]="nextCell"
+              [attribute]="getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName)"
+              (changeWidth)="onChangeWidth($event, nextRow, nextCell)"
+              (changeHeight)="onChangeHeight($event, nextRow, nextCell)"
+              (deleteCell)="onDeleteCell($event, nextRow)">
+            </lib-cell-view>
+          </div>
+        }
+        @if (getTotalWidth(nextRow) < 12) {
+          <div class="add-cell cell-highlight hover-highlight rounded-2 d-flex align-items-center justify-content-center" (click)="onAddCell(nextRow)">
+            <div class="material-symbols-outlined no_selection">add_circle_outline</div>
+          </div>
+        }
       </div>
-      <ng-container *ngIf="getTotalWidth(nextRow) < 12">
-        <div class="add-cell cell-highlight hover-highlight rounded-2 d-flex align-items-center justify-content-center" (click)="onAddCell(nextRow)">
-          <div class="material-symbols-outlined no_selection">add_circle_outline</div>
-        </div>
-      </ng-container>
-    </div>
-
+    }
     <div class="d-flex my-2">
       <button class="btn btn-outline-success me-2" (click)="onAddRow(1)">Add Row</button>
       <button class="btn btn-outline-success me-2" (click)="onAddRow(5)">x5</button>
       <button class="btn btn-outline-success" (click)="onAddRow(10)">x10</button>
       <div class="flex-grow-1"></div>
     </div>
-  </ng-container>
-</ng-container>
+  }
+}

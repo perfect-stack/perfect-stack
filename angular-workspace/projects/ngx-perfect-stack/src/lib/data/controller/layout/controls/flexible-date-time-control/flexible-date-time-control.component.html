@@ -1,99 +1,105 @@
-<ng-container *ngIf="mode === 'edit'">
+@if (mode === 'edit') {
   <div class="row" [formGroup]="formGroup">
     <!--Cell: {{cell|json}}-->
     <div class="col-6">
       <div class="row">
-        <div class="col-6 flexible-time-input-field" *ngIf="cell && cell.attribute">
-          <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
-            <span placement="right" [ngbTooltip]="cell.attribute.description">Date</span>
-            <ng-container *ngIf="mode == 'edit'">
-              <span class="text-danger ps-1" *ngIf="cell.attribute.visibility == 'Required'">*</span>
-            </ng-container>
-          </label>
-
-          <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [parentDisplaysError]="true" [includesTimeValue]="true"></app-date-picker-control>
-
-          <ng-container *ngIf="hasDateErrors() && cell.attribute">
-            <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
-          </ng-container>
-        </div>
-
-        <div class="col-6 flexible-time-input-field" *ngIf="cell && cell.attribute && cell.attribute.name">
-          <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
-            <span placement="right" [ngbTooltip]="cell.attribute.description">Time</span>
-            <ng-container *ngIf="mode == 'edit'">
-              <span class="text-danger ps-1" *ngIf="cell.attribute.visibility == 'Required'">*</span>
-            </ng-container>
-          </label>
-
-          <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [parentDisplaysError]="true" [disabled]="timeInputDisabled" [includesDate]="true"></lib-time-control>
-
-          <ng-container *ngIf="hasTimeErrors() && cell.attribute">
-            <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
-          </ng-container>
-        </div>
-
-        <ng-container *ngIf="hasDateTimeErrors() && cell.attribute">
+        @if (cell && cell.attribute) {
+          <div class="col-6 flexible-time-input-field">
+            <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
+              <span placement="right" [ngbTooltip]="cell.attribute.description">Date</span>
+              @if (mode == 'edit') {
+                @if (cell.attribute.visibility == 'Required') {
+                  <span class="text-danger ps-1">*</span>
+                }
+              }
+            </label>
+            <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [parentDisplaysError]="true" [includesTimeValue]="true"></app-date-picker-control>
+            @if (hasDateErrors() && cell.attribute) {
+              <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+            }
+          </div>
+        }
+        @if (cell && cell.attribute && cell.attribute.name) {
+          <div class="col-6 flexible-time-input-field">
+            <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
+              <span placement="right" [ngbTooltip]="cell.attribute.description">Time</span>
+              @if (mode == 'edit') {
+                @if (cell.attribute.visibility == 'Required') {
+                  <span class="text-danger ps-1">*</span>
+                }
+              }
+            </label>
+            <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [parentDisplaysError]="true" [disabled]="timeInputDisabled" [includesDate]="true"></lib-time-control>
+            @if (hasTimeErrors() && cell.attribute) {
+              <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+            }
+          </div>
+        }
+        @if (hasDateTimeErrors() && cell.attribute) {
           <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
-        </ng-container>
+        }
       </div>
     </div>
-
-
     <div class="col-1">
       <label class="label-hidden">Hidden</label>
       -&nbsp;or&nbsp;-
     </div>
-
     <div class="col-5">
       <label>Unsure of the time?</label>
       <div class="btn-group d-block w-100" role="group">
-        <ng-container *ngFor="let option of timeOptions; let i = index;">
+        @for (option of timeOptions; track option; let i = $index) {
           <input type="radio" class="btn-check" [id]="'btn_' + option.name" autocomplete="off" [checked]="option.name === timeOptionSelected">
           <label class="btn btn-outline-secondary" [for]="'btn_' + option.name" (click)="onClick(option)">{{option.name}}</label>
-        </ng-container>
+        }
       </div>
     </div>
   </div>
-
   <div class="row flexible-time-text mt-3">
-    <div class="col-12 d-flex" *ngIf="timeOptionSelected === 'Day'">
-      <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-sun pt-1 pe-2">light_mode</div>
-      <div class="flex-grow-0">
-        <div class="flexible-time-hdg">Day time</div>
-        <div>This is an approximate time for this event and would be any time between 12am-11:59am</div>
-        <a class="text-primary" role="button" (click)="resetTime()">Enter an exact time</a>
+    @if (timeOptionSelected === 'Day') {
+      <div class="col-12 d-flex">
+        <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-sun pt-1 pe-2">light_mode</div>
+        <div class="flex-grow-0">
+          <div class="flexible-time-hdg">Day time</div>
+          <div>This is an approximate time for this event and would be any time between 12am-11:59am</div>
+          <a class="text-primary" role="button" (click)="resetTime()">Enter an exact time</a>
+        </div>
       </div>
-    </div>
-    <div class="col-12 d-flex" *ngIf="timeOptionSelected === 'Night'">
-      <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-moon pt-1 pe-2">nightlight</div>
-      <div class="flex-grow-0">
-        <div class="flexible-time-hdg">Night time</div>
-        <div>This is an approximate time for this event and would be any time between 12pm-11:59pm</div>
-        <a class="text-primary" role="button" (click)="resetTime()">Enter an exact time</a>
+    }
+    @if (timeOptionSelected === 'Night') {
+      <div class="col-12 d-flex">
+        <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-moon pt-1 pe-2">nightlight</div>
+        <div class="flex-grow-0">
+          <div class="flexible-time-hdg">Night time</div>
+          <div>This is an approximate time for this event and would be any time between 12pm-11:59pm</div>
+          <a class="text-primary" role="button" (click)="resetTime()">Enter an exact time</a>
+        </div>
       </div>
-    </div>
-    <div class="col-12 d-flex" *ngIf="timeOptionSelected === 'Unknown'">
-      <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-unknown pt-1 pe-2">help</div>
-      <div class="flex-grow-0">
-        <div class="flexible-time-hdg">Unknown</div>
-        <div>If you think day or night is more accurate, select one of those.</div>
-        <a class="text-primary" role="button" (click)="resetTime()">Enter an exact time</a>
+    }
+    @if (timeOptionSelected === 'Unknown') {
+      <div class="col-12 d-flex">
+        <div class="btn-icon material-symbols-outlined icon-filled flexible-time-icon flexible-time-unknown pt-1 pe-2">help</div>
+        <div class="flex-grow-0">
+          <div class="flexible-time-hdg">Unknown</div>
+          <div>If you think day or night is more accurate, select one of those.</div>
+          <a class="text-primary" role="button" (click)="resetTime()">Enter an exact time</a>
+        </div>
       </div>
-    </div>
+    }
   </div>
-</ng-container>
+}
 
-<div class="row" *ngIf="mode !== 'edit'">
-  <div class="col-12">
-    <div class="form-control" readonly>
-      {{dateTimeValue}}
-      <ng-container *ngIf="timePrecisionControl && timePrecisionControl.value">
-        - <span class="badge small bg-secondary">{{timePrecisionControl.value}}</span>
-      </ng-container>
+@if (mode !== 'edit') {
+  <div class="row">
+    <div class="col-12">
+      <div class="form-control" readonly>
+        {{dateTimeValue}}
+        @if (timePrecisionControl && timePrecisionControl.value) {
+          - <span class="badge small bg-secondary">{{timePrecisionControl.value}}</span>
+        }
+      </div>
     </div>
   </div>
-</div>
+}
 
 <!--<hr>-->
 <!--{{formGroup.controls[name].value}}-->

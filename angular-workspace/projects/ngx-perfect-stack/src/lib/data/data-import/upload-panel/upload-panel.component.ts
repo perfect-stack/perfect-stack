@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit, signal} from '@angular/core';
-import {NgForOf, NgIf} from "@angular/common";
+
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../ngx-perfect-stack-config";
 import {HttpClient, HttpEventType} from "@angular/common/http";
@@ -26,11 +26,9 @@ export interface CreateFileResponse {
 @Component({
   selector: 'lib-upload-panel',
   imports: [
-    NgForOf,
-    NgIf,
     NgbProgressbar,
     FormsModule
-  ],
+],
   templateUrl: './upload-panel.component.html',
   styleUrl: './upload-panel.component.css'
 })

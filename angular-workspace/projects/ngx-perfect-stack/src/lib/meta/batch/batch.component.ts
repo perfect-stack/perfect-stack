@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {CommonModule, NgIf} from "@angular/common";
+import { CommonModule } from "@angular/common";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
 import {BatchService} from "./batch.service";
 import {ToastService} from "../../utils/toasts/toast.service";
@@ -19,10 +19,9 @@ interface BatchJobSummary {
 @Component({
   selector: 'lib-batch',
   imports: [
-    NgIf,
     CommonModule,
     JobProgressMonitorComponent
-  ],
+],
   templateUrl: './batch.component.html',
   styleUrl: './batch.component.css'
 })

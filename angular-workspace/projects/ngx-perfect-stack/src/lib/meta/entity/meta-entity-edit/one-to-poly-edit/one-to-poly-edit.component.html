@@ -6,7 +6,9 @@
       <div class="col-6">
         <label class="form-label">Discriminator type</label>
         <select class="form-select" formControlName="discriminatorType" (ngModelChange)="onDiscriminatorTypeChange($event)">
-          <option *ngFor="let o of metaEntityOptions" [ngValue]="o.name">{{o.name}}</option>
+          @for (o of metaEntityOptions; track o) {
+            <option [ngValue]="o.name">{{o.name}}</option>
+          }
         </select>
       </div>
 
@@ -16,36 +18,41 @@
       </div>
     </div>
 
-    <ng-container *ngIf="discriminatorValueOptions$ | async as discriminatorValueOptions">
+    @if (discriminatorValueOptions$ | async; as discriminatorValueOptions) {
       <table class="table table-striped mt-3">
         <thead>
-        <th>Discriminator Value</th>
-        <th>Meta Entity</th>
-        <th></th>
+          <th>Discriminator Value</th>
+          <th>Meta Entity</th>
+          <th></th>
         </thead>
         <tbody>
-        <ng-container formArrayName="entityMappingList" *ngFor="let formGroup of mappings.controls; let i=index">
-          <tr [formGroupName]="i">
-            <td>
-              <select class="form-select" formControlName="discriminatorValue">
-                <option *ngFor="let o of discriminatorValueOptions.resultList" [ngValue]="o.name">{{o.name}}</option>
-              </select>
-            </td>
-            <td>
-              <select class="form-select" formControlName="metaEntityName">
-                <option *ngFor="let o of metaEntityOptions" [ngValue]="o.name">{{o.name}}</option>
-              </select>
-            </td>
-            <td>
-              <span class="btn-icon text-danger material-symbols-outlined" (click)="onDeleteEntityMapping(i)">remove_circle</span>
-            </td>
-          </tr>
-        </ng-container>
+          @for (formGroup of mappings.controls; track formGroup; let i = $index) {
+            <ng-container formArrayName="entityMappingList">
+              <tr [formGroupName]="i">
+                <td>
+                  <select class="form-select" formControlName="discriminatorValue">
+                    @for (o of discriminatorValueOptions.resultList; track o) {
+                      <option [ngValue]="o.name">{{o.name}}</option>
+                    }
+                  </select>
+                </td>
+                <td>
+                  <select class="form-select" formControlName="metaEntityName">
+                    @for (o of metaEntityOptions; track o) {
+                      <option [ngValue]="o.name">{{o.name}}</option>
+                    }
+                  </select>
+                </td>
+                <td>
+                  <span class="btn-icon text-danger material-symbols-outlined" (click)="onDeleteEntityMapping(i)">remove_circle</span>
+                </td>
+              </tr>
+            </ng-container>
+          }
         </tbody>
       </table>
-
       <button class="btn btn-outline-success" (click)="onAddEntityMapping()">Add</button>
-    </ng-container>
+    }
   </div>
 
 

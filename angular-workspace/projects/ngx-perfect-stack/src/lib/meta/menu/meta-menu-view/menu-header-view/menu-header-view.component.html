@@ -1,16 +1,19 @@
-<div class="wrapper" *ngIf="menu">
-  <div>
-    {{menu.label}}
+@if (menu) {
+  <div class="wrapper">
+    <div>
+      {{menu.label}}
+    </div>
+    @if (mouseActive) {
+      <div class="overlay">
+        <span class="material-symbols-outlined" (click)="onMove(-1)">keyboard_arrow_left</span>
+        <span class="material-symbols-outlined" (click)="onMove(+1)">keyboard_arrow_right</span>
+        <span class="material-symbols-outlined" (click)="onAdd()">add</span>
+        <span class="material-symbols-outlined" (click)="onDelete()">delete</span>
+        <span class="material-symbols-outlined" (click)="onEditMenu(content)">edit</span>
+      </div>
+    }
   </div>
-
-  <div class="overlay" *ngIf="mouseActive">
-    <span class="material-symbols-outlined" (click)="onMove(-1)">keyboard_arrow_left</span>
-    <span class="material-symbols-outlined" (click)="onMove(+1)">keyboard_arrow_right</span>
-    <span class="material-symbols-outlined" (click)="onAdd()">add</span>
-    <span class="material-symbols-outlined" (click)="onDelete()">delete</span>
-    <span class="material-symbols-outlined" (click)="onEditMenu(content)">edit</span>
-  </div>
-</div>
+}
 
 <ng-template #content let-modal>
   <div class="modal-header">

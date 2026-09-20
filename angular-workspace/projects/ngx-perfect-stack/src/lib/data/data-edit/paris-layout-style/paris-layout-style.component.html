@@ -1,60 +1,56 @@
-<div class="container-fluid paris-layout-style" *ngIf="ctx">
-
-  <lib-back-link [ctx]="ctx"></lib-back-link>
-
-  <div class="d-flex justify-content-between my-3">
-    <div>
-      <ng-container *ngIf="!hasHeaderTemplates()">
-        <div class="my-3">
-          <lib-page-title-tool [ctx]="ctx"></lib-page-title-tool>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="hasHeaderTemplates()">
-        <ng-container *ngFor="let template of headerTemplates; index as i">
-          <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
-        </ng-container>
-      </ng-container>
-    </div>
-    <div>
-      <ng-content select="[TopRightActions]"></ng-content>
-    </div>
-  </div>
-
-  <div class="container-fluid container-border-radius">
-    <div class="row" *ngFor="let template of contentTemplates; index as i">
-
-      <ng-container *ngIf="template.templateHeading && template.visible !== false">
-        <div class="row template">
-          <div class="col-3">
-            <div class="panel-heading" id="template[{{i}}].sectionHdg">{{template.templateHeading}}</div>
-          </div>
-          <div class="col-9">
-            <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
-          </div>
-        </div>
-      </ng-container>
-
-      <ng-container *ngIf="!template.templateHeading">
-        <div class="col-12 p-0">
-          <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
-        </div>
-      </ng-container>
-    </div>
-
+@if (ctx) {
+  <div class="container-fluid paris-layout-style">
+    <lib-back-link [ctx]="ctx"></lib-back-link>
     <div class="d-flex justify-content-between my-3">
       <div>
-        <ng-content select="[BottomLeftActions]"></ng-content>
+        @if (!hasHeaderTemplates()) {
+          <div class="my-3">
+            <lib-page-title-tool [ctx]="ctx"></lib-page-title-tool>
+          </div>
+        }
+        @if (hasHeaderTemplates()) {
+          @for (template of headerTemplates; track template; let i = $index) {
+            <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
+          }
+        }
       </div>
       <div>
-        <ng-content select="[BottomRightActions]"></ng-content>
+        <ng-content select="[TopRightActions]"></ng-content>
       </div>
     </div>
+    <div class="container-fluid container-border-radius">
+      @for (template of contentTemplates; track template; let i = $index) {
+        <div class="row">
+          @if (template.templateHeading && template.visible !== false) {
+            <div class="row template">
+              <div class="col-3">
+                <div class="panel-heading" id="template[{{i}}].sectionHdg">{{template.templateHeading}}</div>
+              </div>
+              <div class="col-9">
+                <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
+              </div>
+            </div>
+          }
+          @if (!template.templateHeading) {
+            <div class="col-12 p-0">
+              <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
+            </div>
+          }
+        </div>
+      }
+      <div class="d-flex justify-content-between my-3">
+        <div>
+          <ng-content select="[BottomLeftActions]"></ng-content>
+        </div>
+        <div>
+          <ng-content select="[BottomRightActions]"></ng-content>
+        </div>
+      </div>
+    </div>
+    <div class="flex-grow-1">
+      <lib-audit-view [ctx]="ctx"></lib-audit-view>
+    </div>
+    <lib-version [style]="'Footer'"></lib-version>
   </div>
-
-  <div class="flex-grow-1">
-    <lib-audit-view [ctx]="ctx"></lib-audit-view>
-  </div>
-
-  <lib-version [style]="'Footer'"></lib-version>
-</div>
+}
 

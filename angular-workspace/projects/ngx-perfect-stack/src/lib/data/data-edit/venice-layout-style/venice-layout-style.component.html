@@ -1,9 +1,7 @@
-<ng-container *ngIf="ctx">
-
+@if (ctx) {
   <div class="container-fluid venice-layout-style p-5">
     <lib-back-link [ctx]="ctx"></lib-back-link>
-
-    <ng-container *ngFor="let template of headerTemplates; index as i">
+    @for (template of headerTemplates; track template; let i = $index) {
       <div class="d-flex justify-content-between my-3">
         <div>
           <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
@@ -12,24 +10,18 @@
           <lib-tool-view [tool]="template.locations[TemplateLocationType.TopRight]" [ctx]="ctx"></lib-tool-view>
         </div>
       </div>
-    </ng-container>
-
+    }
     <div class="d-flex justify-content-between my-2">
       <!-- Remember: there are different titles at different levels, so this may or may not appear depending on page meta data -->
       <!--<h2 id="sectionHdg" *ngIf="ctx.metaPage.title">{{ctx.metaPage.title}}</h2>-->
-
       <!--<ng-container *ngIf="outerTopRightTool">
-        <lib-tool-view [ctx]="ctx" [tool]="outerTopRightTool"></lib-tool-view>
-      </ng-container>-->
-    </div>
-
-    <ng-container *ngFor="let template of contentTemplates; index as i">
-      <lib-controller [ctx]="ctx" [template]="template"></lib-controller>
-    </ng-container>
-
-    <lib-audit-view [ctx]="ctx"></lib-audit-view>
-
-    <lib-version [style]="'Footer'"></lib-version>
+      <lib-tool-view [ctx]="ctx" [tool]="outerTopRightTool"></lib-tool-view>
+    </ng-container>-->
   </div>
-
-</ng-container>
+  @for (template of contentTemplates; track template; let i = $index) {
+    <lib-controller [ctx]="ctx" [template]="template"></lib-controller>
+  }
+  <lib-audit-view [ctx]="ctx"></lib-audit-view>
+  <lib-version [style]="'Footer'"></lib-version>
+</div>
+}

@@ -1,122 +1,114 @@
-<ng-container *ngIf="cell && cell.tool">
+@if (cell && cell.tool) {
   <lib-tool-view [tool]="cell.tool" [ctx]="ctx" [formGroup]="formGroup"></lib-tool-view>
-</ng-container>
+}
 
-<ng-container *ngIf="formGroup && mode && cell && cell.attribute && !cell.tool">
-  <ng-container [ngSwitch]="cell.attribute.type">
-    <ng-container [formGroup]="formGroup" *ngSwitchCase="'Date'">
-      <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></app-date-picker-control>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="'DateTime'">
-      <ng-container [ngSwitch]="cell.component">
-        <ng-container *ngSwitchCase="'FlexibleDateTime'">
-          <lib-flexible-date-time-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-flexible-date-time-control>
-        </ng-container>
-
-        <ng-container *ngSwitchDefault>
-          <lib-date-time-control [mode]="mode" [formGroup]="formGroup" [cell]="cell" [name]="cell.attribute.name"></lib-date-time-control>
-        </ng-container>
+@if (formGroup && mode && cell && cell.attribute && !cell.tool) {
+  @switch (cell.attribute.type) {
+    @case ('Date') {
+      <ng-container [formGroup]="formGroup">
+        <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></app-date-picker-control>
       </ng-container>
-    </ng-container>
-
-    <ng-container [formGroup]="formGroup" *ngSwitchCase="'Time'">
-      <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="false"></lib-time-control>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="['Text', 'Html', 'Double', 'Integer'].includes(cell.attribute.type) ? cell.attribute.type : ''">
-      <ng-container [ngSwitch]="cell.component">
-        <ng-container *ngSwitchCase="'TextArea'">
+    }
+    @case ('DateTime') {
+      @switch (cell.component) {
+        @case ('FlexibleDateTime') {
+          <lib-flexible-date-time-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-flexible-date-time-control>
+        }
+        @default {
+          <lib-date-time-control [mode]="mode" [formGroup]="formGroup" [cell]="cell" [name]="cell.attribute.name"></lib-date-time-control>
+        }
+      }
+    }
+    @case ('Time') {
+      <ng-container [formGroup]="formGroup">
+        <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="false"></lib-time-control>
+      </ng-container>
+    }
+    @case (['Text', 'Html', 'Double', 'Integer'].includes(cell.attribute.type) ? cell.attribute.type : '') {
+      @switch (cell.component) {
+        @case ('TextArea') {
           <ng-container [formGroup]="formGroup">
             <lib-text-area-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [formControlName]="cell.attribute.name"></lib-text-area-control>
           </ng-container>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'BadgeList'">
+        }
+        @case ('BadgeList') {
           <lib-badge-list  [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-badge-list>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'ColourBand'">
+        }
+        @case ('ColourBand') {
           <ng-container [formGroup]="formGroup">
             <lib-colour-band-component [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-colour-band-component>
           </ng-container>
-        </ng-container>
-
+        }
         <!-- There are two usage of this. Enumeration can be a text attribute or a relationship -->
-        <ng-container [formGroup]="formGroup" *ngSwitchCase="'Enumeration'">
-          <lib-enumeration-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
-        </ng-container>
-
-        <ng-container *ngSwitchDefault>
+        @case ('Enumeration') {
+          <ng-container [formGroup]="formGroup">
+            <lib-enumeration-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
+          </ng-container>
+        }
+        @default {
           <ng-container [formGroup]="formGroup">
             <lib-text-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-text-field-control>
           </ng-container>
-        </ng-container>
-      </ng-container>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="'Boolean'">
+        }
+      }
+    }
+    @case ('Boolean') {
       <lib-boolean-check-box-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-boolean-check-box-control>
-    </ng-container>
-
-    <ng-container [formGroup]="formGroup" *ngSwitchCase="'Enumeration'">
-      <lib-enumeration-control [mode]="mode" [cell]="cell" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="'OneToMany'">
-      <ng-container [ngSwitch]="cell.component">
-        <ng-container *ngSwitchCase="'LinkList'">
+    }
+    @case ('Enumeration') {
+      <ng-container [formGroup]="formGroup">
+        <lib-enumeration-control [mode]="mode" [cell]="cell" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
+      </ng-container>
+    }
+    @case ('OneToMany') {
+      @switch (cell.component) {
+        @case ('LinkList') {
           <lib-link-list-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-link-list-control>
-        </ng-container>
-        <ng-container *ngSwitchCase="'Media'">
+        }
+        @case ('Media') {
           <lib-media-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-media-control>
-        </ng-container>
-        <ng-container *ngSwitchDefault>
+        }
+        @default {
           <lib-one-to-many-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
-        </ng-container>
-      </ng-container>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="'OneToOne'">
+        }
+      }
+    }
+    @case ('OneToOne') {
       <lib-one-to-one-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-one-control>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="'ManyToOne'">
-      <ng-container [formGroup]="formGroup" [ngSwitch]="cell.component">
-        <ng-container *ngSwitchCase="'Select'">
-          <lib-select-control [mode]="mode"  [cell]="cell" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'SelectTwo'">
-          <lib-select-two-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-select-two-control>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Spy'">
-          <lib-spy-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [formGroup]="formGroup" [cell]="cell" [attribute]="cell.attribute"></lib-spy-control>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'ManyToOnePlain'">
-          <lib-select-control [mode]="mode"  [cell]="cell" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
-        </ng-container>
-
-        <ng-container *ngSwitchDefault>
-          <ng-container *ngIf="cell.metaEntity">
-            <lib-many-to-one-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [ctx]="ctx" [formGroup]="formGroup" [metaEntity]="cell.metaEntity" [cell]="cell" [attribute]="cell.attribute"></lib-many-to-one-control>
-          </ng-container>
-        </ng-container>
+    }
+    @case ('ManyToOne') {
+      <ng-container [formGroup]="formGroup">
+        @switch (cell.component) {
+          @case ('Select') {
+            <lib-select-control [mode]="mode"  [cell]="cell" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
+          }
+          @case ('SelectTwo') {
+            <lib-select-two-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-select-two-control>
+          }
+          @case ('Spy') {
+            <lib-spy-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [formGroup]="formGroup" [cell]="cell" [attribute]="cell.attribute"></lib-spy-control>
+          }
+          @case ('ManyToOnePlain') {
+            <lib-select-control [mode]="mode"  [cell]="cell" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
+          }
+          @default {
+            @if (cell.metaEntity) {
+              <lib-many-to-one-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [ctx]="ctx" [formGroup]="formGroup" [metaEntity]="cell.metaEntity" [cell]="cell" [attribute]="cell.attribute"></lib-many-to-one-control>
+            }
+          }
+        }
       </ng-container>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="'OneToPoly'">
+    }
+    @case ('OneToPoly') {
       <lib-one-to-poly-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-poly-control>
-    </ng-container>
-
-    <ng-container [formGroup]="formGroup" *ngSwitchCase="'SelectMultiple'">
-      <lib-select-multiple-control [mode]="mode" [formControlName]="cell.attribute.name" [cell]="cell" ></lib-select-multiple-control>
-    </ng-container>
-
-    <ng-container *ngSwitchDefault>
+    }
+    @case ('SelectMultiple') {
+      <ng-container [formGroup]="formGroup">
+        <lib-select-multiple-control [mode]="mode" [formControlName]="cell.attribute.name" [cell]="cell" ></lib-select-multiple-control>
+      </ng-container>
+    }
+    @default {
       ERROR: Missing or unknown attribute type of: "{{cell.attribute.type}}"
-    </ng-container>
-  </ng-container>
-</ng-container>
+    }
+  }
+}

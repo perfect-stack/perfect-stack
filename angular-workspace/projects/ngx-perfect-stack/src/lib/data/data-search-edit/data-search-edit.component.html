@@ -1,41 +1,38 @@
-<div class="container-fluid mt-3" *ngIf="metaEntity$ | async as metaEntity">
-
-  <h2 class="mb-3">Search/Edit of {{metaEntity.pluralName}}</h2>
-
-  <ng-container *ngIf="rowData$ | async as rowData">
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Start date</th>
-        <th>End date</th>
+@if (metaEntity$ | async; as metaEntity) {
+  <div class="container-fluid mt-3">
+    <h2 class="mb-3">Search/Edit of {{metaEntity.pluralName}}</h2>
+    @if (rowData$ | async; as rowData) {
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <lib-permission-check [action]="ActionType.Edit" [subject]="metaEntity.name">
+              <th>Actions</th>
+            </lib-permission-check>
+          </tr>
+        </thead>
+        <tbody>
+          @for (nextEntity of rowData.resultList; track nextEntity) {
+            @if (!editSet.has(nextEntity.id)) {
+              <tr app-row-view [entity]="nextEntity" [metaEntity]="metaEntity" (actionEvent)="onActionEvent($event)"></tr>
+            }
+            @if (editSet.has(nextEntity.id)) {
+              <tr app-row-edit [entity]="nextEntity" [metaEntity]="metaEntity" (actionEvent)="onActionEvent($event)"></tr>
+            }
+          }
+        </tbody>
+      </table>
+      <div class="d-flex">
+        <div class="flex-grow-1"></div>
         <lib-permission-check [action]="ActionType.Edit" [subject]="metaEntity.name">
-          <th>Actions</th>
+          <button class="btn btn-outline-success" (click)="onNew(rowData)" id="newBtn">New...</button>
         </lib-permission-check>
-      </tr>
-      </thead>
-      <tbody>
-      <ng-container *ngFor="let nextEntity of rowData.resultList">
-        <ng-container *ngIf="!editSet.has(nextEntity.id)">
-          <tr app-row-view [entity]="nextEntity" [metaEntity]="metaEntity" (actionEvent)="onActionEvent($event)"></tr>
-        </ng-container>
-
-        <ng-container *ngIf="editSet.has(nextEntity.id)">
-          <tr app-row-edit [entity]="nextEntity" [metaEntity]="metaEntity" (actionEvent)="onActionEvent($event)"></tr>
-        </ng-container>
-      </ng-container>
-      </tbody>
-    </table>
-
-    <div class="d-flex">
-      <div class="flex-grow-1"></div>
-      <lib-permission-check [action]="ActionType.Edit" [subject]="metaEntity.name">
-        <button class="btn btn-outline-success" (click)="onNew(rowData)" id="newBtn">New...</button>
-      </lib-permission-check>
-    </div>
-  </ng-container>
-
-  <!-- whitespace padding at bottom of page -->
-  <div class="my-5 py-5"></div>
-</div>
+      </div>
+    }
+    <!-- whitespace padding at bottom of page -->
+    <div class="my-5 py-5"></div>
+  </div>
+}

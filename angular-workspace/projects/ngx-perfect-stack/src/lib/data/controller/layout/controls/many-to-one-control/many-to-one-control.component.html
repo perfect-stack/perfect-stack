@@ -2,7 +2,7 @@
   <ngb-highlight [result]="r.displayText" [term]="t"></ngb-highlight>
 </ng-template>
 
-<ng-container *ngIf="(mode === 'edit' || mode === 'search') && !cell.displayOnly">
+@if ((mode === 'edit' || mode === 'search') && !cell.displayOnly) {
   <fieldset class="form-inline">
     <div class="d-flex w-100 wrapper">
       <input #searchInput type="text" class="form-control" placeholder="Search..."
@@ -10,41 +10,45 @@
                'ng-invalid': ngControl.invalid,
                'ng-touched': ngControl.touched
              }"
-             [class.is-invalid]="searchFailed"
-             [ngbTypeahead]="search"
-             [editable]="false"
-             [focusFirst]="false"
-             [inputFormatter]="formatter"
-             [resultTemplate]="resultTemplate"
-             [ngModelOptions]="{standalone: true}"
-             [(ngModel)]="selectedModel"
-             (selectItem)="onSelectItem($event)"
-             (focusout)="onFocusOut($event)"
-             [id]="attribute.name"
-      />
-      <small *ngIf="searching" class="form-text text-muted">searching...</small>
-      <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
-      <ng-container *ngIf="showClear">
+        [class.is-invalid]="searchFailed"
+        [ngbTypeahead]="search"
+        [editable]="false"
+        [focusFirst]="false"
+        [inputFormatter]="formatter"
+        [resultTemplate]="resultTemplate"
+        [ngModelOptions]="{standalone: true}"
+        [(ngModel)]="selectedModel"
+        (selectItem)="onSelectItem($event)"
+        (focusout)="onFocusOut($event)"
+        [id]="attribute.name"
+        />
+      @if (searching) {
+        <small class="form-text text-muted">searching...</small>
+      }
+      @if (searchFailed) {
+        <div class="invalid-feedback">Sorry, suggestions could not be loaded.</div>
+      }
+      @if (showClear) {
         <div class="ps-1 link-primary overlay-top-right" (click)="onClear($event)">Clear</div>
-      </ng-container>
+      }
     </div>
-    <ng-container *ngIf="hasErrors() && attribute">
+    @if (hasErrors() && attribute) {
       <lib-validation-result-label [attribute]="attribute" [validationResult]="validationResult"></lib-validation-result-label>
-    </ng-container>
+    }
     <!--ManyToOneControl
     valid: {{ngControl.valid}}
     value: {{ngControl.value}}
     errors: {{validationResult | json}}-->
   </fieldset>
-</ng-container>
+}
 
-<ng-container *ngIf="mode === 'view' || cell.displayOnly">
+@if (mode === 'view' || cell.displayOnly) {
   <div class="input-group">
-    <ng-container *ngIf="selectedModelId && selectedModel">
+    @if (selectedModelId && selectedModel) {
       <a [routerLink]="['/data', attribute.relationshipTarget, 'view', selectedModelId]" href="#" [id]="attribute.name">{{selectedModel.displayText}}</a>
-    </ng-container>
-    <ng-container *ngIf="!selectedModelId || !selectedModel">
+    }
+    @if (!selectedModelId || !selectedModel) {
       <input class="form-control" disabled [id]="attribute.name" value="&mdash;">
-    </ng-container>
+    }
   </div>
-</ng-container>
+}

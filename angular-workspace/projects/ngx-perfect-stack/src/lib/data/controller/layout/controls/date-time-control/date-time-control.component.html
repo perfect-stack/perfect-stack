@@ -1,23 +1,31 @@
 <div [formGroup]="formGroup">
-  <div class="row" *ngIf="mode !== 'view'">
-    <div class="col-6" *ngIf="cell && cell.attribute && cell.attribute.name">
-      <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="true"></app-date-picker-control>
-    </div>
-    <div class="col-6" *ngIf="cell && cell.attribute && cell.attribute.name">
-      <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="true"></lib-time-control>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="mode === 'view'">
-    <div class="col-12">
-      <ng-container *ngIf="dateTimeValue">
-        <div class="form-control" readonly>
-          {{dateTimeValue}}
+  @if (mode !== 'view') {
+    <div class="row">
+      @if (cell && cell.attribute && cell.attribute.name) {
+        <div class="col-6">
+          <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="true"></app-date-picker-control>
         </div>
-      </ng-container>
-      <ng-container *ngIf="!dateTimeValue">
-        <div class="form-control empty-value" readonly>&mdash;</div>
-      </ng-container>
+      }
+      @if (cell && cell.attribute && cell.attribute.name) {
+        <div class="col-6">
+          <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="true"></lib-time-control>
+        </div>
+      }
     </div>
-  </div>
+  }
+
+  @if (mode === 'view') {
+    <div class="row">
+      <div class="col-12">
+        @if (dateTimeValue) {
+          <div class="form-control" readonly>
+            {{dateTimeValue}}
+          </div>
+        }
+        @if (!dateTimeValue) {
+          <div class="form-control empty-value" readonly>&mdash;</div>
+        }
+      </div>
+    </div>
+  }
 </div>

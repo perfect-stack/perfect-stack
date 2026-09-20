@@ -1,4 +1,4 @@
-<ng-container *ngIf="metaEntityMap$ | async as metaEntityMap">
+@if (metaEntityMap$ | async; as metaEntityMap) {
   <div class="alert alert-info" [ngClass]="{'glowing-border': selected}" (click)="onClick(metaEntityMap, $event)">
     <div class="d-flex justify-content-between">
       <div class="d-flex">
@@ -6,10 +6,10 @@
         <!--<div class="h4">{{template.type}} - </div>-->
         <input class="form-control me-2" type="text" [(ngModel)]="template.templateHeading">
         <!--<div>
-          {{template.binding}}:{{template.metaEntityName}}&nbsp;-&nbsp;{{template.type}}<ng-container *ngIf="template.type === 'table'">, order by: {{template.orderByName}}, {{template.orderByDir}}</ng-container>
-        </div>-->
-      </div>
-      <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
+        {{template.binding}}:{{template.metaEntityName}}&nbsp;-&nbsp;{{template.type}}<ng-container *ngIf="template.type === 'table'">, order by: {{template.orderByName}}, {{template.orderByDir}}</ng-container>
+      </div>-->
     </div>
+    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
   </div>
-</ng-container>
+</div>
+}

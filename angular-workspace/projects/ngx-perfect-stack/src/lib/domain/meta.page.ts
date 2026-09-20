@@ -67,6 +67,7 @@ export enum ToolType {
   Button = 'Button',
   ButtonGroup = 'ButtonGroup',
   ButtonTabs = 'ButtonTabs',
+  Duration = 'Duration',
   Icon = 'Icon',
   Image = 'Image',
   LastSignIn = 'LastSignIn',
@@ -227,7 +228,7 @@ export enum PageType {
 }
 
 export enum LayoutStyle {
-  NewYork = 'New York',
+  NewYork = 'NewYork',
   Paris = 'Paris',
   Stockholm = 'Stockholm',
   Venice = 'Venice',

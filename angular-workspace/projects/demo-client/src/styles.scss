@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 
-@use "bootstrap/scss/bootstrap";
+@use "bootstrap/scss/bootstrap" as *;
 @use "library-styles";
 
 @font-face {
@@ -205,9 +205,7 @@ h4 {
   border-bottom: solid $secondary 2px;
 }
 
-/********  Draggable classes ***********/
-
-.drag-border {
+/********  Draggable classes ***********/\n\n.drag-border {
   border: #ff525b dashed 2px !important;
 }
 
@@ -385,4 +383,3 @@ h4 {
 .toast-body {
   padding: 0px 44px 12px 44px;
 }
-

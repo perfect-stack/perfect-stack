@@ -1,5 +1,5 @@
-<ng-container *ngIf="cell && cell.attribute">
-  <ng-container *ngIf="cell && cell.attribute && cell.attribute.name">
+@if (cell && cell.attribute) {
+  @if (cell && cell.attribute && cell.attribute.name) {
     <lib-card-layout
       [mode]="mode"
       [ctx]="ctx"
@@ -7,5 +7,5 @@
       [formGroup]="formGroup"
       [relationshipProperty]="cell.attribute.name">
     </lib-card-layout>
-  </ng-container>
-</ng-container>
+  }
+}
