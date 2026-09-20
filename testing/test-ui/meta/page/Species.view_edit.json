@@ -69,6 +69,49 @@
       ],
       "templateHeading": "Species Details",
       "binding": "species"
+    },
+    {
+      "metaEntityName": "Species",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "template": {
+              "binding": "children",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "Species",
+              "cells": [
+                [
+                  {
+                    "width": "4",
+                    "height": "1",
+                    "attributeName": "scientific_name"
+                  },
+                  {
+                    "width": "4",
+                    "height": "1",
+                    "attributeName": "common_name"
+                  },
+                  {
+                    "width": "4",
+                    "height": "1",
+                    "attributeName": "rank"
+                  }
+                ]
+              ],
+              "orderByName": "scientific_name",
+              "orderByDir": "ASC",
+              "navigation": "Enabled",
+              "route": "/data/Species/view/${id}"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Children",
+      "binding": "species"
     }
   ]
 }
