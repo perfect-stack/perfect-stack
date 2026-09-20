@@ -1,25 +1,33 @@
-import {Injectable} from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
+
+export interface ToastData {
+  header: string;
+  message: string;
+  classname: string;
+  delay?: number;
+  autohide?: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToastService {
-  toasts: any[] = [];
+  toasts = signal<ToastData[]>([]);
 
   constructor(protected readonly router: Router) {
     this.router.events.subscribe((event: any) => {
       if(event instanceof NavigationStart) {
-        if(this.toasts.length > 0) {
-          console.log('Cleared toast messages because route is changing');
-          this.toasts.length = 0;
+        if(this.toasts().length > 0) {
+          console.log('[ToastService] Cleared toast messages because route is changing to', event.url);
+          this.toasts.set([]);
         }
       }
     });
   }
 
   showSuccess(message: string) {
-    this.show( {
+    this.show({
       header: 'Success',
       message: message,
       classname: 'bg-success text-light',
@@ -29,7 +37,7 @@ export class ToastService {
   }
 
   showWarning(message: string) {
-    this.show( {
+    this.show({
       header: 'Warning',
       message: message,
       classname: 'bg-warning',
@@ -39,7 +47,7 @@ export class ToastService {
   }
 
   showError(message: string, autohide: boolean) {
-    this.show( {
+    this.show({
       header: 'Error',
       message: message,
       classname: 'bg-danger text-light',
@@ -49,10 +57,10 @@ export class ToastService {
   }
 
   show(toastData: any = {}) {
-    this.toasts.push(toastData);
+    this.toasts.update(toasts => [...toasts, toastData]);
   }
 
   remove(toast: any) {
-    this.toasts = this.toasts.filter(t => t !== toast);
+    this.toasts.update(toasts => toasts.filter(t => t !== toast));
   }
 }
