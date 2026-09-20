@@ -8,7 +8,7 @@
         <div>
           <!-- There is a tool view here and so at some point that may have something in it that isn't an Add button, that
           needs better permission management but we will cross that bridge when we get there -->
-          <lib-permission-check [action]="ActionType.Edit" [subject]="metaName">
+          <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
             @if (!(searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight'])) {
               <button type="button" class="btn btn-success" (click)="onAdd(ctx)" id="addBtn">{{addButtonLbl}}</button>
             }

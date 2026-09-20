@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-config';
 import { HttpClient } from '@angular/common/http';
 import {DebugService} from '../../utils/debug/debug.service';
@@ -28,13 +28,15 @@ export class VersionComponent implements OnInit {
               public readonly debugService: DebugService,
               protected readonly batchService: BatchService,
               protected readonly toastService: ToastService,
-              protected readonly http: HttpClient) { }
+              protected readonly http: HttpClient,
+              protected readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.clientVersion = this.stackConfig.clientRelease;
 
     this.http.get(`${this.stackConfig.apiUrl}/meta/menu/version`).subscribe((a: any) => {
       this.serverVersion = a.serverRelease;
+      this.cdr.markForCheck();
     });
 
     this.copyrightFooter = this.stackConfig.copyrightFooter;
