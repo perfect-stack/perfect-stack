@@ -75,23 +75,22 @@ export async function ensureFrontendRunning(): Promise<void> {
     return;
   }
 
-  const clientDir = path.resolve(__dirname, '../client');
-  let distDir = path.resolve(clientDir, 'dist/test-ui-client/browser');
+  const workspaceDir = path.resolve(__dirname, '../../../angular-workspace');
+  let distDir = path.resolve(workspaceDir, 'dist/test-ui-client/browser');
 
-  // If application builder output without /browser subfolder:
-  if (!fs.existsSync(distDir) && fs.existsSync(path.resolve(clientDir, 'dist/test-ui-client/index.html'))) {
-    distDir = path.resolve(clientDir, 'dist/test-ui-client');
+  if (!fs.existsSync(distDir) && fs.existsSync(path.resolve(workspaceDir, 'dist/test-ui-client/index.html'))) {
+    distDir = path.resolve(workspaceDir, 'dist/test-ui-client');
   }
 
   const indexPath = path.resolve(distDir, 'index.html');
   if (!fs.existsSync(indexPath)) {
-    console.log('Static distribution not found. Building Vet Clinic Frontend (npm run build)...');
-    execSync('npm run build', { cwd: clientDir, stdio: 'inherit' });
+    console.log('Static distribution not found. Building Vet Clinic Frontend in angular-workspace (npx ng build test-ui-client)...');
+    execSync('npm run build:lib && npx ng build test-ui-client', { cwd: workspaceDir, stdio: 'inherit' });
     if (!fs.existsSync(indexPath)) {
-      if (fs.existsSync(path.resolve(clientDir, 'dist/test-ui-client/browser/index.html'))) {
-        distDir = path.resolve(clientDir, 'dist/test-ui-client/browser');
-      } else if (fs.existsSync(path.resolve(clientDir, 'dist/test-ui-client/index.html'))) {
-        distDir = path.resolve(clientDir, 'dist/test-ui-client');
+      if (fs.existsSync(path.resolve(workspaceDir, 'dist/test-ui-client/browser/index.html'))) {
+        distDir = path.resolve(workspaceDir, 'dist/test-ui-client/browser');
+      } else if (fs.existsSync(path.resolve(workspaceDir, 'dist/test-ui-client/index.html'))) {
+        distDir = path.resolve(workspaceDir, 'dist/test-ui-client');
       } else {
         throw new Error(`Build completed but index.html not found in ${distDir}`);
       }

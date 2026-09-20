@@ -126,6 +126,20 @@ When('I enter {string} into the {string} field', async function (this: UIWorld, 
 When('I select {string} from the {string} dropdown', async function (this: UIWorld, optionLabel: string, fieldName: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
 
+  const typeahead = this.page.getByTestId(`typeahead-${fieldName}`)
+    .or(this.page.locator(`input#${fieldName}`));
+
+  if (await typeahead.count() > 0 && await typeahead.first().isVisible()) {
+    const target = typeahead.first();
+    await target.fill(optionLabel.substring(0, 4));
+    const dropdownItem = this.page.locator('ngb-typeahead-window button.dropdown-item, .dropdown-menu button.dropdown-item')
+      .filter({ hasText: optionLabel })
+      .first();
+    await dropdownItem.waitFor({ state: 'visible', timeout: 10000 });
+    await dropdownItem.click();
+    return;
+  }
+
   const select = this.page.getByTestId(`select-${fieldName}`)
     .or(this.page.getByTestId(`select-${fieldName}_id`))
     .or(this.page.locator(`select#${fieldName}, select#${fieldName}_id, select[name="${fieldName}"], select[name="${fieldName}_id"]`));

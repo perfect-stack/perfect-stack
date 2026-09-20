@@ -46,18 +46,26 @@ Before(async function (this: UIWorld, scenario) {
     viewport: { width: 1280, height: 720 },
   });
 
+  this.consoleErrors = [];
+  this.pageErrors = [];
+
   // Enable Playwright tracing for full diagnostic playback on failure
   await this.context.tracing.start({ screenshots: true, snapshots: true, sources: true });
 
   this.page = await this.context.newPage();
 
-  // 1. Log browser console output
+  // 1. Log browser console output and capture errors
   this.page.on('console', (msg) => {
-    console.log(`[Browser Console ${msg.type()}]: ${msg.text()}`);
+    const text = msg.text();
+    if (msg.type() === 'error') {
+      this.consoleErrors.push(text);
+    }
+    console.log(`[Browser Console ${msg.type()}]: ${text}`);
   });
 
   // 2. Log unhandled JavaScript page errors
   this.page.on('pageerror', (err) => {
+    this.pageErrors.push(err.message);
     console.error(`[Browser PageError]: ${err.message}`);
   });
 
@@ -84,6 +92,22 @@ After(async function (this: UIWorld, scenario) {
     console.error(`Scenario: "${scenario.pickle.name}"`);
     console.error(`Current URL: ${currentUrl}`);
     console.error(`Page Title:  ${pageTitle}`);
+
+    if (this.pageErrors.length > 0) {
+      console.error(`Uncaught Page Errors (${this.pageErrors.length}):`);
+      for (const err of this.pageErrors) {
+        console.error(`  - ${err}`);
+      }
+      this.attach(`Page Errors:\n${this.pageErrors.join('\n')}`, 'text/plain');
+    }
+
+    if (this.consoleErrors.length > 0) {
+      console.error(`Browser Console Errors (${this.consoleErrors.length}):`);
+      for (const err of this.consoleErrors) {
+        console.error(`  - ${err}`);
+      }
+      this.attach(`Console Errors:\n${this.consoleErrors.join('\n')}`, 'text/plain');
+    }
 
     try {
       const buttons = await this.page.locator('button, a.btn, input[type="button"], input[type="submit"]').allInnerTexts();

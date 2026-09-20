@@ -1,5 +1,5 @@
 import {Component, Injector, OnInit} from '@angular/core';
-import {Observable, tap, withLatestFrom} from 'rxjs';
+import {combineLatest, Observable, tap, switchMap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {FormContext, FormService} from './form-service/form.service';
@@ -24,6 +24,11 @@ import {MessageDialogComponent} from '../../utils/message-dialog/message-dialog.
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {makeLabel} from "../../utils/string-utils";
 
+enum DeleteCheckType {
+  Unknown = 'Unknown',
+  Yes = 'Yes',
+  No = 'No'
+}
 
 @Component({
     selector: 'app-data-edit',
@@ -53,51 +58,42 @@ export class DataEditComponent implements OnInit {
               protected readonly injector: Injector) {}
 
   ngOnInit(): void {
-    this.route.url.pipe(
-      withLatestFrom(this.route.paramMap, this.route.queryParamMap)
-    ).subscribe(([url, paramMap,  queryParamMap]) => {
+    this.ctx$ = combineLatest([this.route.paramMap, this.route.queryParamMap]).pipe(
+      switchMap(([paramMap, queryParamMap]) => {
+        this.metaName = paramMap.get('metaName');
+        this.mode = paramMap.get('mode');
+        this.entityId = this.toUuid(paramMap.get('id'));
 
-      this.metaName = paramMap.get('metaName');
-      this.mode = paramMap.get('mode');
-      this.entityId = this.toUuid(paramMap.get('id'));
+        console.log('queryParamMap', queryParamMap.keys);
 
-      console.log('queryParamMap', queryParamMap.keys);
+        if (this.metaName && this.mode) {
+          return this.formService.loadFormContext(this.metaName, this.mode, this.entityId, paramMap, queryParamMap).pipe(
+            tap((ctx) => {
+              this.deleteAvailable = ctx.metaEntity.permanentDelete;
+              if (this.deleteAvailable && this.mode !== 'view' && this.metaName && this.entityId) {
+                this.dataService.destroyCheck(this.metaName, this.entityId).subscribe((destroyEnabled) => {
+                  console.log('destroyCheck got response', destroyEnabled);
+                  this.deleteCheck = destroyEnabled ? DeleteCheckType.Yes : DeleteCheckType.No;
+                });
+              }
 
-      if(this.metaName && this.mode) {
-        this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, this.entityId, paramMap, queryParamMap).pipe(tap((ctx) => {
-
-          this.deleteAvailable = ctx.metaEntity.permanentDelete;
-          if(this.deleteAvailable && this.mode !== 'view' && this.metaName && this.entityId) {
-            this.dataService.destroyCheck(this.metaName, this.entityId).subscribe((destroyEnabled) => {
-              console.log('destroyCheck got response', destroyEnabled);
-              this.deleteCheck = destroyEnabled ? DeleteCheckType.Yes : DeleteCheckType.No;
-            });
-          }
-
-          this.attachControllers(ctx);
-          this.eventService.dispatchOnAction(ctx.metaPage.name, '*', ctx, 'init');
-          this.eventService.dispatchOnPageLoad(ctx.metaPage.name, ctx, paramMap, queryParamMap);
-        }));
-      }
-      else {
-        throw new Error('Invalid input parameters; ');
-      }
-    });
+              this.attachControllers(ctx);
+              this.eventService.dispatchOnAction(ctx.metaPage.name, '*', ctx, 'init');
+              this.eventService.dispatchOnPageLoad(ctx.metaPage.name, ctx, paramMap, queryParamMap);
+            })
+          );
+        } else {
+          throw new Error('Invalid input parameters; ');
+        }
+      })
+    );
   }
 
-  /**
-   * Convert the controller metadata into a proper service/class and add the controllers to the EventService so that
-   * they receive events from the page components.
-   */
   attachControllers(ctx: FormContext) {
     if(ctx.metaPage.controllers) {
       for(const controller of ctx.metaPage.controllers) {
-
-        // TODO: was looking for a DI friendly way of doing this but Angular services are typically only created once. Needs more thought.
-        //const controllerService = this.injector.get(controller.class) as any;
         const controllerService: any = new SearchControllerService(this.dataService, this.formService);
 
-        // copy the properties of the metadata into the service
         for(const nextProperty of controllerService.propertyList) {
           controllerService[nextProperty.name] = (controller as any)[nextProperty.name];
         }
@@ -108,9 +104,6 @@ export class DataEditComponent implements OnInit {
     }
   }
 
-  /**
-   * When the page is destroyed remove the controllers from the EventService.
-   */
   detachControllers() {
 
   }
@@ -120,7 +113,6 @@ export class DataEditComponent implements OnInit {
       return null;
     }
     else {
-      // will throw error if invalid, caller should bail out of use case
       uuid.parse(value);
       return value;
     }
@@ -135,7 +127,6 @@ export class DataEditComponent implements OnInit {
   }
 
   onCancel(ctx: FormContext, saveResponse: SaveResponse | null): Promise<boolean> {
-
     let completionResult = this.eventService.dispatchOnCompletion(ctx.metaPage.name, ctx, saveResponse);
     if(completionResult === CompletionResult.Stop) {
       return new Promise(() => false);
@@ -151,24 +142,12 @@ export class DataEditComponent implements OnInit {
   }
 
   getDataForm(ctx: FormContext) {
-    // TODO: so that entityForm could be removed from FOrmContext we are going to use a rule that says an edit page
-    // only has one form and so we can get the one and only form out of the formMap. Once this changes to some sort
-    // of template approach then the template binding will be needed here to find the form to get the entityData
     return ctx.formMap.values().next().value;
-
-    // WARNING: Same logic in AuditViewComponent
   }
-
 
   onSave(ctx: FormContext) {
     console.log('onSave() - STARTED');
 
-    // TODO: this is wrong since it now depends on entityForm
-    //const entityData = ctx.entityForm.value;
-
-    // TODO: so that entityForm could be removed from FormContext we are going to use a rule that says an edit page
-    // only has one form and so we can get the one and only form out of the formMap. Once this changes to some sort
-    // of template approach then the template binding will be needed here to find the form to get the entityData
     const form = this.getDataForm(ctx);
     console.log('onSave() - GOT FORM');
 
@@ -186,7 +165,6 @@ export class DataEditComponent implements OnInit {
       treeWalker.byType(AttributeType.Double, new DoubleVisitor());
       treeWalker.byType(AttributeType.Integer, new IntegerVisitor());
       treeWalker.byType(AttributeType.Identifier, new IdentifierVisitor());
-      //treeWalker.byType(AttributeType.ManyToOne, new ManyToOneVisitor());
       treeWalker.walk(entityData, ctx.metaEntity);
       console.log(`DataEdit: save value:`, entityData);
 
@@ -224,7 +202,6 @@ export class DataEditComponent implements OnInit {
         console.log('set error', response.validationResults[k]);
         console.log('set error control', control);
         control.setErrors(response.validationResults[k]);
-        //control.markAsTouched();
       }
       else {
         console.log(`Did not find control; ${k} looking for control with _id suffix`);
@@ -234,7 +211,7 @@ export class DataEditComponent implements OnInit {
         if(control_id) {
           console.log('set error', response.validationResults[control_id_key]);
           console.log('set error control', control);
-          control_id.setErrors(response.validationResults[k]); // this is without the _id so that location => location_id
+          control_id.setErrors(response.validationResults[k]);
         }
         else {
           console.warn(`Unable to find control; "${k}". Validation error will not be displayed.`);
@@ -249,11 +226,6 @@ export class DataEditComponent implements OnInit {
     });
   }
 
-  /**
-   * The form can be invalid, but the save button is not disabled until the user has had a chance to make changes of
-   * some kind and the form become "touched". The onSave() action above will do validation checks and not save the
-   * form if it is not valid.
-   */
   isSaveDisabled(ctx: FormContext) {
     const dataForm = this.getDataForm(ctx);
     return dataForm && dataForm.touched && !dataForm.valid;
@@ -292,7 +264,7 @@ export class DataEditComponent implements OnInit {
 
   onDeletePrompt(ctx: FormContext) {
     console.log('On Delete Prompt');
-    const modalRef = this.modalService.open(MessageDialogComponent)
+    const modalRef = this.modalService.open(MessageDialogComponent);
     const modalComponent: MessageDialogComponent = modalRef.componentInstance;
     modalComponent.title = `Delete ${this.metaName} Confirmation`;
     modalComponent.text = `This action will delete this ${this.metaName}. It cannot be undone.`;
@@ -311,7 +283,6 @@ export class DataEditComponent implements OnInit {
             this.toastService.showSuccess(`${this.metaName} deleted successfully`);
             this.onBack();
           }
-          // else some other error should pop up (?)
         });
       }
     });
@@ -324,11 +295,4 @@ export class DataEditComponent implements OnInit {
   protected makeEditLbl() {
     return makeLabel(this.metaName ? `Edit ${this.metaName}` : 'Edit');
   }
-}
-
-
-enum DeleteCheckType {
-  Unknown = 'Unknown',
-  Yes = 'Yes',
-  No = 'No'
 }

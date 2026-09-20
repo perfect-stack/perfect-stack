@@ -9,6 +9,8 @@ export class UIWorld extends World {
   contextData: Record<string, any> = {};
   retrievedEntity?: any;
   lastError?: any;
+  consoleErrors: string[] = [];
+  pageErrors: string[] = [];
 
   constructor(options: IWorldOptions) {
     super(options);

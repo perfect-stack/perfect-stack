@@ -20,10 +20,10 @@
   </div>
 
   <div class="d-flex justify-content-between w-50">
-    @for (nextMenu of metaMenuService.menu.menuList; track nextMenu) {
+    @for (nextMenu of (metaMenuService.menu ? metaMenuService.menu.menuList : []); track nextMenu.label) {
       <div class="" ngbDropdown>
         @if (menuEnabled[nextMenu.label]) {
-          @if (nextMenu.items.length > 1) {
+          @if (nextMenu.items && nextMenu.items.length > 1) {
             <a class="menu-title" tabindex="0" ngbDropdownToggle id="{{nextMenu.label}}Menu" [attr.data-testid]="'menu-' + nextMenu.label" role="button">
               {{nextMenu.label}}
             </a>
@@ -35,7 +35,7 @@
               }
             </div>
           }
-          @if (nextMenu.items.length === 1) {
+          @if (nextMenu.items && nextMenu.items.length === 1) {
             <a class="menu-title"
               routerLinkActive="active-link"
               id="{{nextMenu.label}}Menu"

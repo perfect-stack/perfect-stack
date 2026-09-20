@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "esModuleInterop": true,
@@ -25,14 +26,11 @@
     ],
     "useDefineForClassFields": false,
     "paths": {
-      "@angular/*": [
-        "./node_modules/@angular/*"
-      ],
       "@perfect-stack/ngx-perfect-stack": [
-        "./node_modules/@perfect-stack/ngx-perfect-stack"
+        "../../angular-workspace/dist/ngx-perfect-stack"
       ],
       "@perfect-stack/ngx-perfect-stack/*": [
-        "./node_modules/@perfect-stack/ngx-perfect-stack/*"
+        "../../angular-workspace/dist/ngx-perfect-stack/*"
       ]
     }
   },

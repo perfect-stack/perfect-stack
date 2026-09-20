@@ -1,10 +1,20 @@
-import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {DataService} from '../../../../data-service/data.service';
 import {Subscription} from 'rxjs';
-import {CellAttribute} from "../../../../../meta/page/meta-page-service/meta-page.service";
-import {ValidationResult} from "../../../../../domain/meta.rule";
+import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {ValidationResult} from '../../../../../domain/meta.rule';
 
 @Component({
     selector: 'lib-select-control',
@@ -12,7 +22,7 @@ import {ValidationResult} from "../../../../../domain/meta.rule";
     styleUrls: ['./select-control.component.css'],
     standalone: false
 })
-export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class SelectControlComponent implements OnInit, OnChanges, OnDestroy, ControlValueAccessor {
 
   @Input()
   attribute: MetaAttribute;
@@ -26,10 +36,11 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   @Output()
   selectedEntityEvent = new EventEmitter();
 
-  selectedEntityId: string;
-  selectedEntity: any;
+  selectedEntityId: string | null = null;
+  selectedEntity: any = null;
 
-  optionList: any[];
+  optionList: any[] = [];
+  isLoading = false;
   optionListSubscription: Subscription;
 
   disabled = false;
@@ -38,38 +49,60 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   byEntityOrId = byEntityOrId;
 
   constructor(protected readonly dataService: DataService,
-              public ngControl: NgControl) {
+              public ngControl: NgControl,
+              private readonly cdr: ChangeDetectorRef) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
-    if(this.mode !== 'view') {
-      this.optionListSubscription = this.dataService.findAll(this.attribute.relationshipTarget, '', 1, 999).subscribe((response) => {
-        this.optionList = response.resultList;
-        if(this.optionList && this.optionList.length > 0) {
-          const firstElement = this.optionList[0];
-          if(firstElement) {
-            if(firstElement.sort_index) {
-              this.optionList.sort((a, b) => a.sort_index - b.sort_index);
-            }
-            else {
-              this.optionList.sort((a,b) => {
-                const displayA =this.getDisplayText(a).toUpperCase();
-                const displayB = this.getDisplayText(b).toUpperCase();
-                if(displayA < displayB ) {
-                  return -1;
-                }
-                else if(displayA > displayB) {
-                  return 1;
-                }
-                else {
-                  return 0;
-                }
-              });
+    console.log(`[SelectControlComponent] ngOnInit for attribute:`, this.attribute?.name, `mode:`, this.mode, `relationshipTarget:`, this.attribute?.relationshipTarget);
+    this.loadOptions();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ((changes['attribute'] && !changes['attribute'].isFirstChange()) ||
+        (changes['mode'] && !changes['mode'].isFirstChange())) {
+      this.loadOptions();
+    }
+  }
+
+  loadOptions(): void {
+    const target = this.attribute?.relationshipTarget;
+    if (this.mode !== 'view' && target) {
+      if (this.optionListSubscription) {
+        this.optionListSubscription.unsubscribe();
+      }
+      this.isLoading = true;
+      this.cdr.markForCheck();
+      console.log(`[SelectControlComponent] fetching findAll for target: ${target}`);
+      this.optionListSubscription = this.dataService.findAll(target, '', 1, 999).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          console.log(`[SelectControlComponent] received response for ${target}:`, response);
+          this.optionList = response?.resultList || [];
+          if (this.optionList && this.optionList.length > 0) {
+            const firstElement = this.optionList[0];
+            if (firstElement) {
+              if (firstElement.sort_index !== undefined && firstElement.sort_index !== null) {
+                this.optionList.sort((a, b) => a.sort_index - b.sort_index);
+              } else {
+                this.optionList.sort((a, b) => {
+                  const displayA = this.getDisplayText(a).toUpperCase();
+                  const displayB = this.getDisplayText(b).toUpperCase();
+                  return displayA.localeCompare(displayB);
+                });
+              }
             }
           }
+          this.updateSelectedEntity();
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error(`[SelectControlComponent] error fetching ${target}:`, err);
+          this.optionList = [];
+          this.cdr.markForCheck();
         }
-        this.updateSelectedEntity();
       });
     }
   }
@@ -83,22 +116,27 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
   }
 
   getDisplayText(option: any) {
+    if (!option) return '';
     let displayValue = '';
-    for(const displayAttributeName of this.attribute.typeaheadSearch) {
-      displayValue += option[displayAttributeName];
-      displayValue += ' ';
+    if (this.attribute && this.attribute.typeaheadSearch && this.attribute.typeaheadSearch.length > 0) {
+      for (const displayAttributeName of this.attribute.typeaheadSearch) {
+        if (option[displayAttributeName] !== undefined && option[displayAttributeName] !== null) {
+          displayValue += option[displayAttributeName] + ' ';
+        }
+      }
     }
-    return displayValue;
+    const trimmed = displayValue.trim();
+    return trimmed || option.name || option.scientific_name || option.title || option.id || '';
   }
 
   onModelChange(selectedEntity: any) {
-    console.log(`onModelChange() ${this.attribute.name}`, selectedEntity);
-    //this.value = selectedEntity ? selectedEntity.id : null;
-    this.value = selectedEntity ? selectedEntity.id : '';
+    console.log(`[SelectControlComponent] onModelChange() ${this.attribute?.name}`, selectedEntity);
+    const id = selectedEntity ? selectedEntity.id : null;
+    this.value = id;
   }
 
   ngOnDestroy(): void {
-    if(this.optionListSubscription) {
+    if (this.optionListSubscription) {
       this.optionListSubscription.unsubscribe();
     }
   }
@@ -108,39 +146,41 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
    * is set. So we need call this method whenever either changes but only do the actual selection if both are set.
    */
   updateSelectedEntity() {
-    if(this.optionList) {
-      if(this.selectedEntityId) {
-        this.selectedEntity = this.optionList.find(x => x.id === this.selectedEntityId);
-      }
-      else {
+    if (this.optionList && this.optionList.length > 0) {
+      if (this.selectedEntityId) {
+        this.selectedEntity = this.optionList.find(x => x.id === this.selectedEntityId) || null;
+      } else {
         this.selectedEntity = null;
       }
       this.selectedEntityEvent.next(this.selectedEntity);
-    }
-    else {
-      // we may not ever get an optionList (e.g. view mode) but if we have the id then just do a look of the entity that way
-      if(this.selectedEntityId) {
+    } else {
+      if (this.selectedEntityId && this.attribute?.relationshipTarget) {
         this.dataService.findByIdUsingCache(this.attribute.relationshipTarget, this.selectedEntityId).subscribe((response) => {
           this.selectedEntity = response;
+          this.selectedEntityEvent.next(this.selectedEntity);
+          this.cdr.markForCheck();
         });
+      } else {
+        this.selectedEntity = null;
       }
     }
+    this.cdr.markForCheck();
   }
 
-  set value(val: string){
-    this.selectedEntityId = val
+  set value(val: any) {
+    const idVal = val && typeof val === 'object' ? val.id : (val || null);
+    this.selectedEntityId = idVal;
     this.updateSelectedEntity();
 
-    console.log(`onChange() ${val}`);
-    this.onChange(val)
-    //this.onTouch(val)
+    console.log(`[SelectControlComponent] onChange() ${idVal}`);
+    this.onChange(idVal);
   }
 
   onChange: any = () => {}
   onTouch: any = () => {}
 
   registerOnChange(fn: any): void {
-    this.onChange = fn
+    this.onChange = fn;
   }
 
   registerOnTouched(fn: any): void {
@@ -149,10 +189,14 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   writeValue(obj: any): void {
-    this.value = obj;
+    const idVal = obj && typeof obj === 'object' ? obj.id : (obj || null);
+    this.selectedEntityId = idVal;
+    this.updateSelectedEntity();
+    this.cdr.markForCheck();
   }
 
   hasErrors() {
@@ -174,15 +218,13 @@ export class SelectControlComponent implements OnInit, OnDestroy, ControlValueAc
 export const byEntityOrId = (entity1: any, entity2: any): boolean => {
   const findId = (entity: any) => {
     return entity && entity.id ? entity.id : entity;
-  }
+  };
 
   const id_1 = findId(entity1);
   const id_2 = findId(entity2);
-  if(id_1 && id_2) {
+  if (id_1 && id_2) {
     return id_1 === id_2;
+  } else {
+    return !id_1 && !id_2;
   }
-  else {
-    return id_1 === null && id_2 === null;
-  }
-}
-
+};

@@ -18,21 +18,17 @@
           </lib-permission-check>
         </div>
       </div>
-      <!-- The *ngIf here is important because it triggers the redisplay of the criteria when the route changes. There's
-      an indirect dependency here between the route changing, the search criteria form changing and a new search being done -->
-      @if (searchResultsFormGroup) {
-        <form class="container-fluid container-form">
-          <div class="d-flex">
-            <div class="flex-grow-1">
-              <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate"></lib-controller>
-            </div>
-            <div class="action-buttons-right align-self-end">
-              <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)" id="searchBtn" [attr.data-testid]="'btn-search'">Search</button>
-              <button type="button" class="btn btn-outline-primary" (click)="onReset(ctx)" id="resetBtn" [attr.data-testid]="'btn-reset'">Reset</button>
-            </div>
+      <form class="container-fluid container-form">
+        <div class="d-flex">
+          <div class="flex-grow-1">
+            <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate"></lib-controller>
           </div>
-        </form>
-      }
+          <div class="action-buttons-right align-self-end">
+            <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)" id="searchBtn" [attr.data-testid]="'btn-search'">Search</button>
+            <button type="button" class="btn btn-outline-primary" (click)="onReset(ctx)" id="resetBtn" [attr.data-testid]="'btn-reset'">Reset</button>
+          </div>
+        </div>
+      </form>
     }
     @if (searchResultsFormGroup) {
       <div class="container-table">
@@ -42,14 +38,12 @@
             {{resultsMessage}}
           </div>
         }
-        @if (searchResultsFormGroup) {
-          <lib-table-layout
-            [ctx]="ctx"
-            [template]="resultTableTemplate"
-            [mode]="'view'"
-            [relationshipProperty]="'results'">
-          </lib-table-layout>
-        }
+        <lib-table-layout
+          [ctx]="ctx"
+          [template]="resultTableTemplate"
+          [mode]="'view'"
+          [relationshipProperty]="'results'">
+        </lib-table-layout>
         @if (showPagination) {
           <ngb-pagination class="d-flex justify-content-center" [collectionSize]="collectionSize" [maxSize]="5" [(page)]="pageNumber" [pageSize]="pageSize" (pageChange)="onSearch(ctx, false)">
             <ng-template ngbPaginationFirst>First</ng-template>

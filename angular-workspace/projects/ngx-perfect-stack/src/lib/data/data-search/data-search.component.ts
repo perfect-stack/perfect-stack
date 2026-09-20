@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {AttributeType, MetaEntity} from '../../domain/meta.entity';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
@@ -10,7 +10,7 @@ import {
   CustomDateParserFormatter
 } from '../controller/layout/controls/date-picker-control/custom-date-parser-formatter';
 import {AbstractControl, UntypedFormGroup} from '@angular/forms';
-import {Observable, of, switchMap, withLatestFrom} from 'rxjs';
+import {combineLatest, Observable, of, switchMap} from 'rxjs';
 import {FormGroupService} from '../data-edit/form-service/form-group.service';
 import {CriteriaService} from './criteria.service';
 import {ActionType} from '../../domain/meta.role';
@@ -49,59 +49,61 @@ export class DataSearchComponent implements OnInit {
               protected readonly formGroupService: FormGroupService,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly criteriaService: CriteriaService,
-              protected readonly dataService: DataService) { }
+              protected readonly dataService: DataService,
+              protected readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.route.url.pipe(
-      withLatestFrom(this.route.paramMap, this.route.queryParamMap)
-    ).subscribe(([url, paramMap,  queryParamMap]) => {
+    this.ctx$ = combineLatest([this.route.paramMap, this.route.queryParamMap]).pipe(
+      switchMap(([paramMap, queryParamMap]) => {
+        this.metaName = paramMap.get('metaName');
+        if (this.metaName) {
+          return this.formService.loadFormContext(this.metaName, this.mode, null, paramMap, queryParamMap).pipe(
+            switchMap((ctx) => {
+              this.searchCriteriaTemplate = ctx.metaPage.templates[0];
+              this.searchCriteriaTemplate.binding = 'criteria';
+              console.log('Criteria template:', this.searchCriteriaTemplate);
+              if (!ctx.formMap) {
+                ctx.formMap = new Map<string, AbstractControl>();
+              }
+              const criteriaForm = this.formGroupService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null);
+              ctx.formMap.set('criteria', criteriaForm);
+              console.log('Criteria form:', criteriaForm);
 
-      this.metaName = paramMap.get('metaName');
-      if (this.metaName) {
+              // grab the latest criteria object from our in-memory store
+              const searchState = this.criteriaService.getSearchState(this.searchCriteriaTemplate.metaEntityName);
+              criteriaForm.patchValue(searchState.criteria);
+              this.pageNumber = searchState.pageNumber;
 
-        this.ctx$ = this.formService.loadFormContext(this.metaName, this.mode, null, paramMap, queryParamMap).pipe(switchMap((ctx) => {
-          this.searchCriteriaTemplate = ctx.metaPage.templates[0];
-          this.searchCriteriaTemplate.binding = 'criteria';
-          console.log('Criteria template:', this.searchCriteriaTemplate);
-          if (!ctx.formMap) {
-            ctx.formMap = new Map<string, AbstractControl>();
-          }
-          const criteriaForm = this.formGroupService.createFormGroup(ctx.mode, this.searchCriteriaTemplate.metaEntityName, ctx.metaPageMap, ctx.metaEntityMap, null)
-          ctx.formMap.set('criteria', criteriaForm);
-          console.log('Criteria form:', criteriaForm);
+              // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
+              this.resultTableTemplate = ctx.metaPage.templates[1];
+              if (!this.resultTableTemplate.binding) {
+                this.resultTableTemplate.binding = 'results';
+                this.resultTableTemplate.navigation = TemplateNavigationType.Enabled;
+                this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}'; // the ${id} parameter is being passed in as an expression to be resolved later
+              }
 
-          // grab the latest criteria object from our in-memory store
-          const searchState = this.criteriaService.getSearchState(this.searchCriteriaTemplate.metaEntityName);
-          criteriaForm.patchValue(searchState.criteria);
-          this.pageNumber = searchState.pageNumber;
-
-          // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
-          this.resultTableTemplate = ctx.metaPage.templates[1];
-          if (!this.resultTableTemplate.binding) {
-            this.resultTableTemplate.binding = 'results';
-            this.resultTableTemplate.navigation = TemplateNavigationType.Enabled;
-            this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}';  // the ${id} parameter is being passed in as an expression to be resolved later
-          }
-
-          const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName;
-          const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
-          if (rtme) {
-            this.resultTableMetaEntity = rtme;
-            this.onSearch(ctx);
-            return of(ctx);
-          } else {
-            throw new Error(`Unable to find metaEntity of; ${resultTableMetaEntityName}`);
-          }
-        }));
-      } else {
-        throw new Error('Invalid input parameters; ');
-      }
-    });
+              const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName;
+              const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
+              if (rtme) {
+                this.resultTableMetaEntity = rtme;
+                this.onSearch(ctx);
+                return of(ctx);
+              } else {
+                throw new Error(`Unable to find metaEntity of; ${resultTableMetaEntityName}`);
+              }
+            })
+          );
+        } else {
+          throw new Error('Invalid input parameters; ');
+        }
+      })
+    );
   }
 
   onSearch(ctx: FormContext, resetToFirstPage = true) {
     if(this.metaName) {
       this.searchResultsFormGroup = null;
+      this.cdr.markForCheck();
 
       if(resetToFirstPage) {
         this.pageNumber = 1;
@@ -129,21 +131,36 @@ export class DataSearchComponent implements OnInit {
       const criteria = criteriaForm.getRawValue();
       this.criteriaService.updateSearchState(this.searchCriteriaTemplate.metaEntityName, criteria, this.pageNumber);
 
-      this.dataService.findByCriteria(queryRequest).subscribe((response) => {
-        this.collectionSize = response.totalCount;
-        this.searchResultsFormGroup = this.formService.createFormGroupForDataMapItem(ctx, this.resultTableTemplate.metaEntityName, ResultCardinalityType.QueryMany, this.resultTableTemplate, response.resultList);
-        if(!ctx.formMap) {
-          ctx.formMap = new Map<string, AbstractControl>()
+      this.dataService.findByCriteria(queryRequest).subscribe({
+        next: (response) => {
+          this.collectionSize = response.totalCount;
+          this.searchResultsFormGroup = this.formService.createFormGroupForDataMapItem(ctx, this.resultTableTemplate.metaEntityName, ResultCardinalityType.QueryMany, this.resultTableTemplate, response.resultList);
+          if(!ctx.formMap) {
+            ctx.formMap = new Map<string, AbstractControl>();
+          }
+          ctx.formMap.set('results', this.searchResultsFormGroup);
+
+          const startRow = Math.min(((queryRequest.pageNumber - 1) * queryRequest.pageSize) + 1, response.totalCount);
+          const endRow = Math.min(startRow + queryRequest.pageSize - 1, response.totalCount);
+          const totalRows = response.totalCount;
+          const pluralName = this.resultTableMetaEntity.pluralName ? this.resultTableMetaEntity.pluralName.toLowerCase() : '';
+          this.resultsMessage = `Showing ${startRow}-${endRow} of ${totalRows} ${pluralName}`;
+
+          this.showPagination = totalRows > this.pageSize;
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error('DataSearchComponent findByCriteria error:', err);
+          this.collectionSize = 0;
+          this.searchResultsFormGroup = this.formService.createFormGroupForDataMapItem(ctx, this.resultTableTemplate.metaEntityName, ResultCardinalityType.QueryMany, this.resultTableTemplate, []);
+          if(!ctx.formMap) {
+            ctx.formMap = new Map<string, AbstractControl>();
+          }
+          ctx.formMap.set('results', this.searchResultsFormGroup);
+          this.resultsMessage = '';
+          this.showPagination = false;
+          this.cdr.markForCheck();
         }
-        ctx.formMap.set('results', this.searchResultsFormGroup);
-
-        const startRow = Math.min(((queryRequest.pageNumber - 1) * queryRequest.pageSize) + 1, response.totalCount);
-        const endRow = Math.min(startRow + queryRequest.pageSize - 1, response.totalCount);
-        const totalRows = response.totalCount;
-        const pluralName = this.resultTableMetaEntity.pluralName ? this.resultTableMetaEntity.pluralName.toLowerCase() : '';
-        this.resultsMessage = `Showing ${startRow}-${endRow} of ${totalRows} ${pluralName}`;
-
-        this.showPagination = totalRows > this.pageSize;
       });
     }
   }
