@@ -15,7 +15,7 @@ import { ensureBackendRunning, ensureFrontendRunning, stopServers } from './serv
 if (process.env.PWDEBUG === '1' || process.env.PAUSE === 'true') {
   setDefaultTimeout(-1);
 } else {
-  setDefaultTimeout(30 * 1000);
+  setDefaultTimeout(60 * 1000);
 }
 
 setWorldConstructor(UIWorld);

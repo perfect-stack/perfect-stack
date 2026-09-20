@@ -81,10 +81,20 @@ export async function ensureFrontendRunning(): Promise<void> {
     env: { ...process.env },
   });
 
+  let isCompiled = false;
+
   frontendProcess.stdout?.on('data', (d) => {
     const text = d.toString();
     if (process.env.DEBUG || process.env.CI) {
       console.log(`[Frontend stdout]: ${text.trim()}`);
+    }
+    if (
+      text.includes('Application bundle generation complete') ||
+      text.includes('Compiled successfully') ||
+      text.includes('Watch mode enabled') ||
+      text.includes('Angular Live Development Server is listening')
+    ) {
+      isCompiled = true;
     }
   });
   frontendProcess.stderr?.on('data', (d) => {
@@ -96,11 +106,23 @@ export async function ensureFrontendRunning(): Promise<void> {
     }
   });
 
-  const ready = await waitForServer(4200, '/', 60000);
-  if (!ready) {
-    throw new Error('Timed out waiting for Vet Clinic Frontend to start on port 4200');
+  const start = Date.now();
+  const maxWaitMs = 90000;
+  while (Date.now() - start < maxWaitMs) {
+    if (isCompiled && (await isPortOpen(4200, '/'))) {
+      console.log('Frontend server is compiled and ready on http://localhost:4200');
+      return;
+    }
+    await new Promise((r) => setTimeout(r, 1000));
   }
-  console.log('Frontend server is ready on http://localhost:4200');
+
+  // Fallback check if port is open after timeout
+  if (await isPortOpen(4200, '/')) {
+    console.log('Frontend port is open on http://localhost:4200 (compilation wait finished)');
+    return;
+  }
+
+  throw new Error('Timed out waiting for Vet Clinic Frontend to start and compile on port 4200');
 }
 
 export async function stopServers(): Promise<void> {

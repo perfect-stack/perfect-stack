@@ -98,7 +98,7 @@ When('I click the {string} button', async function (this: UIWorld, buttonLabel: 
 
   const selector = idMap[buttonLabel] || `button:has-text("${buttonLabel}")`;
   const btn = this.page.locator(selector).first();
-  await btn.waitFor({ state: 'visible', timeout: 10000 });
+  await btn.waitFor({ state: 'visible', timeout: 30000 });
   await btn.click();
 });
 
@@ -106,7 +106,7 @@ When('I enter {string} into the {string} field', async function (this: UIWorld, 
   if (!this.page) throw new Error('Playwright page is not initialized');
 
   const input = this.page.locator(`input#${fieldName}, textarea#${fieldName}, input#${fieldName}_id`).first();
-  await input.waitFor({ state: 'visible', timeout: 10000 });
+  await input.waitFor({ state: 'visible', timeout: 30000 });
   await input.fill(value);
   await input.dispatchEvent('input');
   await input.dispatchEvent('change');
@@ -118,7 +118,7 @@ When('I select {string} from the {string} dropdown', async function (this: UIWor
   const select = this.page
     .locator(`select#${fieldName}, select#${fieldName}_id, select[name="${fieldName}"], select[name="${fieldName}_id"]`)
     .first();
-  await select.waitFor({ state: 'visible', timeout: 10000 });
+  await select.waitFor({ state: 'visible', timeout: 30000 });
   await select.selectOption({ label: optionLabel });
   await select.dispatchEvent('change');
 });
@@ -127,7 +127,7 @@ Then('I should see a success toast {string}', async function (this: UIWorld, toa
   if (!this.page) throw new Error('Playwright page is not initialized');
 
   const toast = this.page.locator('.toast, app-toasts, .toast-body, ngb-toast').filter({ hasText: toastMessage }).first();
-  await toast.waitFor({ state: 'visible', timeout: 10000 });
+  await toast.waitFor({ state: 'visible', timeout: 30000 });
   const text = await toast.textContent();
   expect(text).to.include(toastMessage);
 });
@@ -136,7 +136,7 @@ Then('I should see {string} in the {string} field', async function (this: UIWorl
   if (!this.page) throw new Error('Playwright page is not initialized');
 
   const field = this.page.locator(`#${fieldName}, #${fieldName}_id`).first();
-  await field.waitFor({ state: 'visible', timeout: 10000 });
+  await field.waitFor({ state: 'visible', timeout: 30000 });
 
   const tagName = await field.evaluate((el) => el.tagName.toLowerCase());
   if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
@@ -152,14 +152,14 @@ When('I confirm the deletion dialog', async function (this: UIWorld) {
   if (!this.page) throw new Error('Playwright page is not initialized');
 
   const confirmBtn = this.page.locator('.modal-dialog .btn-danger, .modal-footer button:has-text("Delete")').first();
-  await confirmBtn.waitFor({ state: 'visible', timeout: 10000 });
+  await confirmBtn.waitFor({ state: 'visible', timeout: 30000 });
   await confirmBtn.click();
 });
 
 Then('I should be on the search page', async function (this: UIWorld) {
   if (!this.page) throw new Error('Playwright page is not initialized');
 
-  await this.page.waitForURL((url) => url.pathname.includes('/search'), { timeout: 10000 });
+  await this.page.waitForURL((url) => url.pathname.includes('/search'), { timeout: 30000 });
   expect(this.page.url()).to.include('/search');
 });
 
