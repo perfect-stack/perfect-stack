@@ -114,9 +114,6 @@ jobs:
       - name: npm ci (test-ui server)
         working-directory: ./testing/test-ui/server
         run: npm ci
-      - name: npm ci (test-ui client)
-        working-directory: ./testing/test-ui/client
-        run: npm ci --legacy-peer-deps
       - name: npm run build (test-ui client)
         working-directory: ./testing/test-ui/client
         run: npm run build
