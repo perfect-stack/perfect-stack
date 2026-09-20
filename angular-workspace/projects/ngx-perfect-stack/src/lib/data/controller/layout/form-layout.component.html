@@ -2,9 +2,8 @@
   [FORM_LAYOUT {{template.templateHeading}} - {{template.binding}}]
 }
 @if (cells$ | async; as cells) {
-  <!--Cells: {{cells|json}}-->
-  <!-- If template has a binding to the form -->
-  @if ((template && template.binding) || (template && formGroup)) {
+  <!-- If template has a formGroup -->
+  @if (formGroup) {
     <div [formGroup]="formGroup">
       @for (row of cells; track row) {
         <div class="row" [ngClass]="{'form-row': isFormRow(row)}">
@@ -52,46 +51,48 @@
         </div>
       }
     </div>
-  }
-  <!-- If this template doesn't have a binding (normally this means it's a root level template with nested child templates, so no binding means no form group) -->
-  <!--<ng-container *ngIf="template && !template.binding">
-  <div [formGroup]="formGroup">
-    <div [ngClass]="template.styles">  &lt;!&ndash; NO Binding means NO formGroup &ndash;&gt;
-      <div class="row" [ngClass]="{'form-row': isFormRow(row)}" *ngFor="let row of cells">
-        <div [class]="getCSS(cell)" *ngFor="let cell of row">
-          <ng-container *ngIf="cell.template">
-            <div class="container-border-radius" *ngIf="cell.template">
-              <lib-layout [ctx]="ctx" [template]="cell.template"></lib-layout>
-            </div>
-          </ng-container>
-          <ng-container *ngIf="cell.attribute && isShowLabel(cell)">
-            <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
-          </ng-container>
-          <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
-          <div *ngIf="mode !== 'view' && cell.footerHtml" [innerHtml]="cell.footerHtml"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-container>-->
-}
-
-<!-- If this template doesn't have a binding (normally this means it's a root level template with nested child templates, so no binding means no form group) -->
-@if (template && !template.binding) {
-  <!-- NO Binding means NO formGroup -->
-  @for (row of template.cells; track row) {
-    <div class="row">
-      @for (cell of row; track cell) {
-        <div [class]="getCSS(cell)">
-          @if (cell.template) {
-            @if (cell.template) {
-              <div>
+  } @else {
+    <div>
+      @for (row of cells; track row) {
+        <div class="row" [ngClass]="{'form-row': isFormRow(row)}">
+          @for (cell of row; track cell) {
+            <div [class]="getCSS(cell)">
+              @if (cell && isShowLabel(cell)) {
+                @if (isShowLabelTop(cell)) {
+                  @if (cell.attribute) {
+                    <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                  }
+                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell"></lib-cell>
+                }
+                @if (isShowLabelLeft(cell)) {
+                  <div class="row">
+                    <div class="col-4">
+                      @if (cell.attribute) {
+                        <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                      }
+                    </div>
+                    <div class="col-8">
+                      <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell"></lib-cell>
+                    </div>
+                  </div>
+                }
+                @if (!isShowLabelLeft(cell) && !isShowLabelTop(cell)) {
+                  Unknown Label Layout
+                }
+              }
+              @if (cell && !isShowLabel(cell)) {
+                <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell"></lib-cell>
+              }
+              @if (mode !== 'view' && cell.footerHtml) {
+                <div [innerHtml]="cell.footerHtml">WOOF</div>
+              }
+              @if (cell.template) {
                 @if (debugService.ON) {
                   [OTHER-FORM]
                 }
                 <lib-layout [ctx]="ctx" [template]="cell.template"></lib-layout>
-              </div>
-            }
+              }
+            </div>
           }
         </div>
       }

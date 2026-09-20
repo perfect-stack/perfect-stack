@@ -30,6 +30,12 @@
           "route": "/data/Species/search",
           "editable": true,
           "roles": []
+        },
+        {
+          "label": "Species Tree",
+          "route": "/data/Species/tree",
+          "editable": true,
+          "roles": []
         }
       ]
     }

@@ -74,6 +74,24 @@ export class DataService {
     }
   }
 
+  findRootTree(entityName: string, depth?: number): Observable<Entity> {
+    const query = depth !== undefined && depth !== null ? `?depth=${depth}` : '';
+    return this.http.get<Entity>(`${this.stackConfig.apiUrl}/data/${entityName}/tree${query}`);
+  }
+
+  findSubTree(entityName: string, id: string, depth?: number): Observable<Entity> {
+    const query = depth !== undefined && depth !== null ? `?depth=${depth}` : '';
+    return this.http.get<Entity>(`${this.stackConfig.apiUrl}/data/${entityName}/${id}/tree${query}`);
+  }
+
+  findChildren(entityName: string, parentId: string, pageNumber = 1, pageSize = 50): Observable<PageQueryResponse<Entity>> {
+    return this.http.get<PageQueryResponse<Entity>>(`${this.stackConfig.apiUrl}/data/${entityName}/${parentId}/children?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  }
+
+  findAncestors(entityName: string, nodeId: string): Observable<Entity[]> {
+    return this.http.get<Entity[]>(`${this.stackConfig.apiUrl}/data/${entityName}/${nodeId}/ancestors`);
+  }
+
   save(entityName: string, entity: Entity) {
     return this.http.post<SaveResponse>(`${this.stackConfig.apiUrl}/data/${entityName}`, entity);
   }

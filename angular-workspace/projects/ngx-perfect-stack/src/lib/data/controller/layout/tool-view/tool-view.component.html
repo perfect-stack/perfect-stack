@@ -40,6 +40,9 @@
       @case ('Icon') {
         <lib-icon-tool [iconTool]="asIconTool()" [editorMode]="editorMode" [ctx]="ctx" [formGroup]="formGroup"></lib-icon-tool>
       }
+      @case ('Tree') {
+        <lib-tree-tool [treeTool]="asTreeTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-tree-tool>
+      }
       @default {
         <div>UNKNOWN tool type of {{tool.type}}</div>
       }

@@ -106,6 +106,8 @@ import { PropertySheetComponent } from './template/property-sheet/property-sheet
 import { VeniceLayoutStyleComponent } from './data/data-edit/venice-layout-style/venice-layout-style.component';
 import { TextToolComponent } from './data/controller/layout/tool-view/text-tool/text-tool.component';
 import { IconToolComponent } from './data/controller/layout/tool-view/icon-tool/icon-tool.component';
+import { TreeToolComponent } from './data/controller/layout/tool-view/tree-tool/tree-tool.component';
+import { Tree, TreeItem, TreeItemGroup } from '@angular/aria/tree';
 import { DateTimeControlComponent } from './data/controller/layout/controls/date-time-control/date-time-control.component';
 import { TimeControlComponent } from './data/controller/layout/controls/time-control/time-control.component';
 import { TileButtonPanelComponent } from './utils/tile-button-panel/tile-button-panel.component';
@@ -153,6 +155,7 @@ export const STACK_ROUTES: Routes = [
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/search_edit', component: DataSearchEditComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/:mode/:id', component: DataEditComponent, canActivate: [AuthGuard] },
+  { path: 'data/:metaName/:mode', component: DataEditComponent, canActivate: [AuthGuard] },
 
   { path: 'batch/view', component: BatchComponent, canActivate: [AuthGuard] },
 
@@ -263,6 +266,7 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
     ButtonToolComponent,
     ImageToolComponent,
     ToolViewComponent,
+    TreeToolComponent,
     PropertySheetComponent,
     VeniceLayoutStyleComponent,
     TextToolComponent,
@@ -310,6 +314,7 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
     ToastsComponent,
     TileButtonPanelComponent,
     LayoutComponent,
+    TreeToolComponent,
   ],
   imports: [
     CommonModule,
@@ -318,6 +323,9 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
     NgbModule,
     EditorModule,
     LeafletModule,
+    Tree,
+    TreeItem,
+    TreeItemGroup,
     RouterModule.forChild(STACK_ROUTES),
     LoadingBarHttpClientModule,
     NgOptimizedImage,

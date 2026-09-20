@@ -3,7 +3,7 @@ import {
   ButtonGroupTool,
   ButtonTabsTool, ButtonTool,
   Cell, DurationTool, IconTool, ImageTool, LabelLayoutType, LastSignInTool, LinkTool, MapTool,
-  MetaPage, PageTitleTool, PaginateTool, TabTool,
+  MetaPage, PageTitleTool, PaginateTool, TabTool, TreeTool,
   Template,
   TemplateLocationType,
   TemplateType, TextTool, Tool,
@@ -1086,6 +1086,10 @@ export class ToolViewComponent implements OnInit {
 
   asIconTool() {
     return this.tool as IconTool;
+  }
+
+  asTreeTool() {
+    return this.tool as TreeTool;
   }
 
   isToolVisible() {

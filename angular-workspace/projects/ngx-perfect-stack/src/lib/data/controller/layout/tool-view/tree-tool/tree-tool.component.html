@@ -1,0 +1,110 @@
+@if (editorMode) {
+  <div class="ps-tree-editor-placeholder p-3 border border-secondary border-dashed rounded text-center text-muted" (click)="onEditorModeClick()">
+    <span class="material-symbols-outlined align-middle me-1">account_tree</span>
+    <span>Tree View ({{ treeTool?.metaEntityName || 'Tree' }})</span>
+  </div>
+} @else {
+  <div class="ps-tree-container">
+    @if (loading) {
+      <div class="d-flex align-items-center p-3 text-muted">
+        <div class="spinner-border spinner-border-sm me-2" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <span>Loading tree structure...</span>
+      </div>
+    }
+
+    @if (error) {
+      <div class="alert alert-warning my-2" role="alert">
+        <span class="material-symbols-outlined align-middle me-1">warning</span>
+        {{ error }}
+      </div>
+    }
+
+    @if (!loading && !error && rootNode) {
+      <div class="ps-tree-toolbar mb-3 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" (click)="expandAll()">
+          <span class="material-symbols-outlined fs-6 me-1">unfold_more</span>
+          Expand All
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" (click)="collapseAll()">
+          <span class="material-symbols-outlined fs-6 me-1">unfold_less</span>
+          Collapse All
+        </button>
+      </div>
+
+      <div class="ps-tree-card card p-3 shadow-sm">
+        <ul ngTree #tree="ngTree" class="ps-tree-root list-unstyled mb-0">
+          <ng-template
+            [ngTemplateOutlet]="treeNodes"
+            [ngTemplateOutletContext]="{nodes: [rootNode], parent: tree}"
+          />
+        </ul>
+      </div>
+
+      <ng-template #treeNodes let-nodes="nodes" let-parent="parent">
+        @for (node of nodes; track node.id) {
+          <li ngTreeItem
+              #treeItem="ngTreeItem"
+              [parent]="parent"
+              [value]="node.id"
+              [label]="getNodeLabel(node)"
+              [expanded]="isExpanded(node)"
+              (expandedChange)="onExpandedChange(node, $event)"
+              class="ps-tree-item"
+              [class.is-expanded]="isExpanded(node)">
+            <div class="ps-tree-node-row d-flex align-items-center py-1 px-2 rounded">
+              @if (hasChildren(node)) {
+                <button type="button" class="btn btn-sm btn-link ps-tree-toggle-btn p-0 text-secondary me-1"
+                        (click)="toggleNode(node, $event)"
+                        [attr.aria-label]="isExpanded(node) ? 'Collapse node' : 'Expand node'">
+                  @if (isLoading(node)) {
+                    <span class="spinner-border spinner-border-sm text-secondary" style="width: 14px; height: 14px;"></span>
+                  } @else {
+                    <span class="material-symbols-outlined ps-tree-chevron">{{ isExpanded(node) ? 'expand_more' : 'chevron_right' }}</span>
+                  }
+                </button>
+              } @else {
+                <span class="ps-tree-toggle-spacer me-1"></span>
+              }
+
+              <span class="material-symbols-outlined ps-tree-node-icon me-2 text-muted fs-5">
+                {{ hasChildren(node) ? (isExpanded(node) ? 'folder_open' : 'folder') : 'subdirectory_arrow_right' }}
+              </span>
+
+              <a [routerLink]="getNodeRoute(node)" class="ps-tree-node-link text-decoration-none fw-medium text-primary">
+                {{ getNodeLabel(node) }}
+              </a>
+
+              @if (getSecondaryLabel(node); as sec) {
+                <span class="ps-tree-node-secondary ms-2 text-muted fs-7 fst-italic">({{ sec }})</span>
+              }
+
+              @if (getBadgeValue(node); as badge) {
+                <span class="badge bg-secondary ms-2 ps-tree-badge">{{ badge }}</span>
+              }
+            </div>
+
+            @if (hasChildren(node)) {
+              <ul role="group" class="ps-tree-group list-unstyled ms-4 ps-2 border-start" [hidden]="!isExpanded(node)">
+                <ng-template ngTreeItemGroup [ownedBy]="treeItem" #group="ngTreeItemGroup">
+                  <ng-template
+                    [ngTemplateOutlet]="treeNodes"
+                    [ngTemplateOutletContext]="{nodes: node.children || [], parent: group}"
+                  />
+                </ng-template>
+              </ul>
+            }
+          </li>
+        }
+      </ng-template>
+    }
+
+    @if (!loading && !error && !rootNode) {
+      <div class="p-4 text-center text-muted">
+        <span class="material-symbols-outlined fs-2 d-block mb-2">account_tree</span>
+        <span>No tree data available.</span>
+      </div>
+    }
+  </div>
+}

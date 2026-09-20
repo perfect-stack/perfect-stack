@@ -78,6 +78,7 @@ export enum ToolType {
   Select = 'Select',
   TabTool = 'TabTool',
   TextTool = 'TextTool',
+  Tree = 'Tree',
 }
 
 export class Tool {
@@ -166,6 +167,15 @@ export class TextTool extends Tool {
 
 export class IconTool extends Tool {
   iconName: string;
+}
+
+export class TreeTool extends Tool {
+  metaEntityName: string;
+  displayAttribute?: string;
+  secondaryAttribute?: string;
+  badgeAttribute?: string;
+  initialDepth?: number;
+  route?: string;
 }
 
 export class TemplateLocationMap {

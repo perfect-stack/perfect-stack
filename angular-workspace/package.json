@@ -16,6 +16,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^22.1.7",
+    "@angular/aria": "^22.1.7",
     "@angular/common": "^22.1.7",
     "@angular/compiler": "^22.1.7",
     "@angular/core": "^22.1.7",
@@ -31,6 +32,7 @@
     "@js-joda/locale_en": "^4.15.1",
     "@js-joda/timezone": "^2.22.0",
     "@ng-bootstrap/ng-bootstrap": "^21.0.0",
+    "@ngx-loading-bar/core": "^7.0.1",
     "@ngx-loading-bar/http-client": "^7.0.1",
     "@popperjs/core": "^2.11.8",
     "@tinymce/tinymce-angular": "^9.0.0",
@@ -43,8 +45,7 @@
     "tinymce": "^7.8.0",
     "tslib": "^2.8.1",
     "uuid": "^11.1.0",
-    "zone.js": "~0.16.0",
-    "@ngx-loading-bar/core": "^7.0.1"
+    "zone.js": "~0.16.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^22.1.8",
