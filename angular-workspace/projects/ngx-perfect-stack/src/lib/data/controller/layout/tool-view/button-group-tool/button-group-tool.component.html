@@ -1,7 +1,7 @@
 <div class="btn-group" role="group">
   @for (buttonName of buttonNames; track buttonName; let i = $index) {
-    <input type="radio" class="btn-check" name="btnradio" id="btn{{i}}" autocomplete="off" [checked]="buttonName === checkedName">
-    <label class="btn btn-outline-secondary" for="btn{{i}}" (click)="onClick(buttonName)">{{buttonName}}</label>
+    <input type="radio" class="btn-check" name="btnradio" id="btn{{i}}" autocomplete="off" [checked]="buttonName === checkedName" [attr.data-testid]="'btn-group-input-' + buttonName">
+    <label class="btn btn-outline-secondary" for="btn{{i}}" (click)="onClick(buttonName)" [attr.data-testid]="'btn-group-' + buttonName">{{buttonName}}</label>
   }
 </div>
 

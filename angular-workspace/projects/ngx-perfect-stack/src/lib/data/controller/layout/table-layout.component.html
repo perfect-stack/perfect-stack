@@ -5,11 +5,11 @@
 @if (cells$ | async; as cells) {
   @if (cells && attributes && (attributes.length > 0 || mode === 'edit')) {
     @if (hasResultsSummary()) {
-      <div class="results-summary">
+      <div class="results-summary" [attr.data-testid]="'results-summary'">
         {{formGroup.controls['resultsSummary'].value}}
       </div>
     }
-    <table class="table" [ngClass]="getStyleClasses()">
+    <table class="table" [ngClass]="getStyleClasses()" [attr.data-testid]="'table-' + (template?.binding || 'data')">
       <thead>
         @if (cells) {
           <tr>
@@ -36,7 +36,7 @@
       </thead>
       <tbody>
         @for (group of attributes.controls; track group; let i = $index) {
-          <tr class="align-middle" (click)="onRowClicked(i)">
+          <tr class="align-middle" (click)="onRowClicked(i)" [attr.data-testid]="'table-row-' + i">
             @for (nextCell of cells[0]; track nextCell) {
               <td [ngStyle]="{'width': getCellWidth(nextCell) }">
                 @if (nextCell.attribute || nextCell.tool) {
@@ -46,7 +46,7 @@
             }
             @if (mode === 'edit') {
               <td>
-                <span class="btn-icon text-primary material-symbols-outlined" (click)="onDeleteRow(i)">delete</span>
+                <span class="btn-icon text-primary material-symbols-outlined" (click)="onDeleteRow(i)" [attr.data-testid]="'btn-delete-row-' + i">delete</span>
               </td>
             }
           </tr>
@@ -55,7 +55,7 @@
     </table>
   }
   @if (mode !== 'edit' && cells && attributes && attributes.length == 0) {
-    <div class="no-items-container">
+    <div class="no-items-container" [attr.data-testid]="'no-items-container'">
       <div class="d-flex justify-content-center no-items-icon">
         <span class="material-symbols-outlined no-items-icon">manage_search</span>
       </div>
@@ -66,12 +66,10 @@
   }
   @if (mode === 'edit' && attributes) {
     <div class="d-flex">
-      <a class="text-primary" (click)="onAddRow()" id="addRowBtn" role="button">
+      <a class="text-primary" (click)="onAddRow()" id="addRowBtn" [attr.data-testid]="'btn-add-row'" role="button">
         <span class="material-symbols-outlined icon-filled align-middle">add_circle</span>
         Add another
       </a>
     </div>
   }
 }
-
-

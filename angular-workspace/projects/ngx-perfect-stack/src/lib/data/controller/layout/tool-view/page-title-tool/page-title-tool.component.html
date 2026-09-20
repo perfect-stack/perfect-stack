@@ -1,29 +1,29 @@
 <div class="pt-2">
   @if (editorMode) {
-    <h1 (click)="onEditorModeClick()">Page title here</h1>
+    <h1 (click)="onEditorModeClick()" [attr.data-testid]="'page-title'">Page title here</h1>
   } @else {
     @if (isStaticTitle()) {
-      <h1>{{this.ctx.metaPage.title}}</h1>
+      <h1 [attr.data-testid]="'page-title'">{{this.ctx.metaPage.title}}</h1>
     } @else {
       @switch (pageMode) {
         @case ('search') {
-          <h1>Search {{entityNamePlural}}</h1>
+          <h1 [attr.data-testid]="'page-title'">Search {{entityNamePlural}}</h1>
         }
         @case ('add') {
-          <h1>Add {{entityNameSingular}}</h1>
+          <h1 [attr.data-testid]="'page-title'">Add {{entityNameSingular}}</h1>
         }
         @case ('view') {
           @if (usingNames()) {
-            <h1>{{fullName}}</h1>
+            <h1 [attr.data-testid]="'page-title'">{{fullName}}</h1>
           } @else {
-            <h1>{{entityNameSingular}}</h1>
+            <h1 [attr.data-testid]="'page-title'">{{entityNameSingular}}</h1>
           }
         }
         @case ('update') {
           @if (usingNames()) {
-            <h1>Update {{firstName}}&apos;s details</h1>
+            <h1 [attr.data-testid]="'page-title'">Update {{firstName}}&apos;s details</h1>
           } @else {
-            <h1>Update {{entityNameSingular}}</h1>
+            <h1 [attr.data-testid]="'page-title'">Update {{entityNameSingular}}</h1>
           }
         }
       }

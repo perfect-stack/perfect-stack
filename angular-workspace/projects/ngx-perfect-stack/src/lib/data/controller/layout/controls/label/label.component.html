@@ -1,7 +1,7 @@
 @if (!labelHidden && cell.component !== 'FlexibleDateTime') {
   <div class="row">
     @if (isShowLabelTop(cell)) {
-      <label class="col" [for]="attribute.name" id="{{attribute.name}}Lbl">
+      <label class="col" [for]="attribute.name" id="{{attribute.name}}Lbl" [attr.data-testid]="'label-' + attribute.name">
         <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
         @if (mode == 'edit') {
           @if (attribute.visibility == 'Required') {
@@ -10,7 +10,7 @@
         }
       </label>
       @if (secondaryAttribute) {
-        <label class="col" id="{{attribute.name}}Lbl">
+        <label class="col" [for]="secondaryAttribute.name" id="{{secondaryAttribute.name}}Lbl" [attr.data-testid]="'label-' + secondaryAttribute.name">
           <span placement="right" [ngbTooltip]="secondaryAttribute.description">{{secondaryAttribute.label}}</span>
           @if (mode == 'edit') {
             @if (secondaryAttribute.visibility == 'Required') {
@@ -22,7 +22,7 @@
     }
     @if (isShowLabelLeft(cell)) {
       <!-- if LabelLayoutType === Left then just show the label -->
-      <label class="col" [for]="attribute.name" id="{{attribute.name}}Lbl">
+      <label class="col" [for]="attribute.name" id="{{attribute.name}}Lbl" [attr.data-testid]="'label-' + attribute.name">
         <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
         @if (mode == 'edit') {
           @if (attribute.visibility == 'Required') {
@@ -38,7 +38,7 @@
 @if (!labelHidden && cell.component === 'FlexibleDateTime') {
   <div class="row">
     @if (mode === 'view') {
-      <label class="col" [for]="attribute.name" id="{{attribute.name}}Lbl">
+      <label class="col" [for]="attribute.name" id="{{attribute.name}}Lbl" [attr.data-testid]="'label-' + attribute.name">
         <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
       </label>
     }

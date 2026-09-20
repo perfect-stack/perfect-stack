@@ -5,13 +5,14 @@
 <lib-environment-banner></lib-environment-banner>
 
 <!-- This is the main menu bar the application -->
-<div class="menu-bar d-flex justify-content-between" [ngStyle]="{'background-color': menuBarBackgroundColor}" id="ngxMenuBar">
+<div class="menu-bar d-flex justify-content-between" [ngStyle]="{'background-color': menuBarBackgroundColor}" id="ngxMenuBar" [attr.data-testid]="'menu-bar'">
   <div class="menu-heading">
     @if (applicationLogo) {
-      <img class="menu-heading-logo" [src]="applicationLogo" [width]="applicationLogoWidth" id="logoImage">
+      <img class="menu-heading-logo" [src]="applicationLogo" [width]="applicationLogoWidth" id="logoImage" [attr.data-testid]="'app-logo'">
     }
     <span class="menu-heading-title"
       id="applicationTitle"
+      [attr.data-testid]="'app-title'"
        [ngStyle]="{
           'font-family': applicationTitleFont,
           'border-left': menuBarDividerColor
@@ -23,12 +24,12 @@
       <div class="" ngbDropdown>
         @if (menuEnabled[nextMenu.label]) {
           @if (nextMenu.items.length > 1) {
-            <a class="menu-title" tabindex="0" ngbDropdownToggle id="{{nextMenu.label}}Menu" role="button">
+            <a class="menu-title" tabindex="0" ngbDropdownToggle id="{{nextMenu.label}}Menu" [attr.data-testid]="'menu-' + nextMenu.label" role="button">
               {{nextMenu.label}}
             </a>
             <div class="dropdown-menu" ngbDropdownMenu>
               @for(menuItem of nextMenu.items; track menuItem.label) {
-                <a ngbDropdownItem [routerLink]="menuItem.route" id="{{menuItem.label}}MenuItem">
+                <a ngbDropdownItem [routerLink]="menuItem.route" id="{{menuItem.label}}MenuItem" [attr.data-testid]="'menu-item-' + menuItem.label">
                   {{menuItem.label}}
                 </a>
               }
@@ -38,6 +39,7 @@
             <a class="menu-title"
               routerLinkActive="active-link"
               id="{{nextMenu.label}}Menu"
+              [attr.data-testid]="'menu-' + nextMenu.label"
               [routerLink]="nextMenu.items[0].route">
               {{nextMenu.items[0].label}}
             </a>

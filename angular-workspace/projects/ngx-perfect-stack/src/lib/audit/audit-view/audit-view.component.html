@@ -1,15 +1,15 @@
-<div class="d-flex flex-column pt-3 h-100">
+<div class="d-flex flex-column pt-3 h-100" [attr.data-testid]="'audit-view'">
   <div class="flex-grow-1 border-footer pb-4">
 
     @if (!showRecords) {
-      <div class="d-flex align-items-center link-primary" (click)="toggleShowRecords()" id="showAuditRecords">
+      <div class="d-flex align-items-center link-primary" (click)="toggleShowRecords()" id="showAuditRecords" [attr.data-testid]="'btn-show-audit'">
         <span class="p-0 material-symbols-outlined">chevron_right</span>
         Show audit records
       </div>
     }
 
     @if (showRecords) {
-      <div class="d-flex align-items-center link-primary" (click)="toggleShowRecords()" id="hideAuditRecords">
+      <div class="d-flex align-items-center link-primary" (click)="toggleShowRecords()" id="hideAuditRecords" [attr.data-testid]="'btn-hide-audit'">
         <span class="material-symbols-outlined">expand_more</span>
         Hide audit records
       </div>
@@ -20,7 +20,7 @@
       </div>
     </div>-->
     @if (auditRecords$ | async; as auditRecords) {
-      <table class="table table-sm mt-3" style="width: 24em;">
+      <table class="table table-sm mt-3" style="width: 24em;" [attr.data-testid]="'table-audit-records'">
         <thead>
           <th>Datetime</th>
           <th>Action</th>
@@ -28,8 +28,8 @@
         </thead>
         @if (auditRecords && auditRecords.length > 0) {
           <tbody>
-            @for (record of auditRecords; track record) {
-              <tr>
+            @for (record of auditRecords; track record; let i = $index) {
+              <tr [attr.data-testid]="'audit-record-' + i">
                 <td>{{toDisplayTime(record.date_time)}}</td>
                 <td>{{record.action}}</td>
                 <td>{{record.person_name}}</td>

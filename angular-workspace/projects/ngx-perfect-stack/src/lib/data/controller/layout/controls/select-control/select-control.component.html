@@ -1,10 +1,12 @@
 @if (mode !== 'view' && !cell.displayOnly) {
   @if (optionList) {
-    <div class="input-group">
+    <div class="input-group" [attr.data-testid]="'field-' + (attribute?.name || ngControl.name)">
       <!-- ng-invalid and ng-touched is here because  this select isn't bound to a form control name and so we need to
       be responsible for setting the valid status/flags. Don't really like this way of doing it, but wasn't able to
       figure out a better way at the time. Should probably be upgraded to a ControlValueAccessor approach at some point -->
-      <select [id]="ngControl.name" [disabled]="isReadOnly() || disabled"
+      <select [id]="ngControl.name" [attr.name]="attribute?.name || ngControl.name"
+        [attr.data-testid]="'select-' + (attribute?.name || ngControl.name)"
+        [disabled]="isReadOnly() || disabled"
         [ngModel]="selectedEntity" (ngModelChange)="onModelChange($event)" [compareWith]="byEntityOrId"
         [ngModelOptions]="{standalone: true}"
             [ngClass]="{
@@ -27,13 +29,13 @@
 
 @if (mode === 'view' || cell.displayOnly) {
   @if (selectedEntityId && selectedEntity) {
-    <div class="input-group">
-      <input class="form-control" readonly [id]="attribute.name" value="{{getDisplayText(selectedEntity)}}">
+    <div class="input-group" [attr.data-testid]="'field-' + attribute.name">
+      <input class="form-control" readonly [id]="attribute.name" [attr.data-testid]="'view-' + attribute.name" value="{{getDisplayText(selectedEntity)}}">
     </div>
   }
   @if (!selectedEntityId) {
-    <div class="input-group">
-      <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
+    <div class="input-group" [attr.data-testid]="'field-' + attribute.name">
+      <input class="form-control empty-value" readonly [id]="attribute.name" [attr.data-testid]="'view-' + attribute.name" value="&mdash;">
     </div>
   }
 }

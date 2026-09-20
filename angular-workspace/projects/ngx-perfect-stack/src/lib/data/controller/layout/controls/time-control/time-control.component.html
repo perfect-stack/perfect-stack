@@ -1,5 +1,7 @@
-
 <input class="form-control"
+  [id]="cell?.attribute?.name"
+  [attr.name]="cell?.attribute?.name"
+  [attr.data-testid]="'time-' + cell?.attribute?.name"
   [readonly]="disabled"
   (change)="onTimeChanged($event)"
   [ngModel]="timeModel"

@@ -13,7 +13,7 @@
               @if (mode === 'view') {
                 <div class="h-100 d-flex align-items-center" >
                   <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                    <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">{{makeEditLbl()}}</button>
+                    <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn" [attr.data-testid]="'btn-edit'">{{makeEditLbl()}}</button>
                   </lib-permission-check>
                   <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx" [enabledIf]="false">
                     <div class="read-only-badge small text-muted" [ngbTooltip]="'You have insufficient permissions to edit this data, or the data source is read-only.'">
@@ -30,11 +30,11 @@
                   <lib-permission-check [action]="ActionType.Delete" [subject]="metaName" [ctx]="ctx">
                     @if (deleteCheck === DeleteCheckType.No) {
                       <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
-                        <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn">Delete</button>
+                        <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn" [attr.data-testid]="'btn-delete'">Delete</button>
                       </span>
                     }
                     @if (deleteCheck === DeleteCheckType.Yes) {
-                      <button type="button" class="btn btn-outline-danger me-2" (click)="onDeletePrompt(ctx)" id="deleteBtn" placement="top" ngbTooltip="This entity can be deleted safely">Delete</button>
+                      <button type="button" class="btn btn-outline-danger me-2" (click)="onDeletePrompt(ctx)" id="deleteBtn" [attr.data-testid]="'btn-delete'" placement="top" ngbTooltip="This entity can be deleted safely">Delete</button>
                     }
                   </lib-permission-check>
                 </div>
@@ -44,8 +44,8 @@
               @if (mode === 'edit') {
                 <div class="mt-2">
                   <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                    <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn">Cancel</button>
-                    <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save details</button>
+                    <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn" [attr.data-testid]="'btn-cancel'">Cancel</button>
+                    <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn" [attr.data-testid]="'btn-save'">Save details</button>
                   </lib-permission-check>
                 </div>
               }
@@ -59,7 +59,7 @@
               @if (mode === 'view') {
                 <div class="h-100 d-flex align-items-center" >
                   <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                    <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">{{makeEditLbl()}}</button>
+                    <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn" [attr.data-testid]="'btn-edit'">{{makeEditLbl()}}</button>
                   </lib-permission-check>
                 </div>
               }
@@ -70,11 +70,11 @@
                   <lib-permission-check [action]="ActionType.Delete" [subject]="metaName" [ctx]="ctx">
                     @if (deleteCheck === DeleteCheckType.No) {
                       <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
-                        <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn">Delete</button>
+                        <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn" [attr.data-testid]="'btn-delete'">Delete</button>
                       </span>
                     }
                     @if (deleteCheck === DeleteCheckType.Yes) {
-                      <button type="button" class="btn btn-outline-danger me-2" (click)="onDeletePrompt(ctx)" id="deleteBtn" placement="top" ngbTooltip="This entity can be deleted safely">Delete</button>
+                      <button type="button" class="btn btn-outline-danger me-2" (click)="onDeletePrompt(ctx)" id="deleteBtn" [attr.data-testid]="'btn-delete'" placement="top" ngbTooltip="This entity can be deleted safely">Delete</button>
                     }
                   </lib-permission-check>
                 </div>
@@ -84,8 +84,8 @@
               @if (mode === 'edit') {
                 <div class="mt-2">
                   <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                    <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn">Cancel</button>
-                    <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save details</button>
+                    <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn" [attr.data-testid]="'btn-cancel'">Cancel</button>
+                    <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn" [attr.data-testid]="'btn-save'">Save details</button>
                   </lib-permission-check>
                 </div>
               }
@@ -103,17 +103,17 @@
               @switch (mode) {
                 @case ('view') {
                   <div class="mt-2">
-                    <button type="button" class="btn btn-outline-primary me-2" (click)="onBack()" id="backBtn">Back</button>
+                    <button type="button" class="btn btn-outline-primary me-2" (click)="onBack()" id="backBtn" [attr.data-testid]="'btn-back'">Back</button>
                     <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                      <button type="submit" class="btn btn-primary me-2" (click)="onEdit()" id="editBtn">Edit</button>
+                      <button type="submit" class="btn btn-primary me-2" (click)="onEdit()" id="editBtn" [attr.data-testid]="'btn-edit'">Edit</button>
                     </lib-permission-check>
                   </div>
                 }
                 @case ('edit') {
                   <div class="mt-2">
                     <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                      <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn">Cancel</button>
-                      <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save</button>
+                      <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn" [attr.data-testid]="'btn-cancel'">Cancel</button>
+                      <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn" [attr.data-testid]="'btn-save'">Save</button>
                     </lib-permission-check>
                   </div>
                 }

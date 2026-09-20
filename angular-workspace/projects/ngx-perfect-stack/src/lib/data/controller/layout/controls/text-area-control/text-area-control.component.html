@@ -1,20 +1,21 @@
 @if (formGroup && cell.attribute) {
-  <div class="input-group" [formGroup]="formGroup">
+  <div class="input-group" [formGroup]="formGroup" [attr.data-testid]="'field-' + cell.attribute.name">
     @if (isReadOnly()) {
       @if (formGroup.controls[cell.attribute.name].value) {
-        <div class="overflow-auto form-control" readonly [id]="cell.attribute.name">
+        <div class="overflow-auto form-control" readonly [id]="cell.attribute.name" [attr.data-testid]="'view-' + cell.attribute.name">
           <div [innerHtml]="formGroup.controls[cell.attribute.name].value"></div>
         </div>
       }
       @if (!formGroup.controls[cell.attribute.name].value) {
-        <div class="overflow-auto form-control" readonly [id]="cell.attribute.name">
+        <div class="overflow-auto form-control" readonly [id]="cell.attribute.name" [attr.data-testid]="'view-' + cell.attribute.name">
           <div>&mdash;</div>
         </div>
       }
     }
     @if (!isReadOnly()) {
       <editor class="flex-grow-1"
-        [id]=componentId
+        [id]="componentId"
+        [attr.data-testid]="'editor-' + cell.attribute.name"
         [formControlName]="cell.attribute.name"
               [init]="{
                  base_url: '/tinymce',

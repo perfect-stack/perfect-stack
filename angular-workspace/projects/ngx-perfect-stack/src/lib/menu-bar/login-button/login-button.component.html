@@ -3,7 +3,7 @@
     <div class="col">
       @if (authenticationService.isLoggedIn) {
         @if (loginExpiryTime$ | async; as loginExpiryTime) {
-          <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogout()" id="logoutBtn">
+          <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogout()" id="logoutBtn" [attr.data-testid]="'btn-logout'">
             Logout
             @if (showTimeLeft) {
               <span>in {{loginExpiryTime}}</span>
@@ -13,7 +13,7 @@
       }
 
       @if (!authenticationService.isLoggedIn) {
-        <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogin()" id="loginBtn">Login</button>
+        <button class="child btn btn-outline-light ml-2 my-2 my-sm-0" (click)="onLogin()" id="loginBtn" [attr.data-testid]="'btn-login'">Login</button>
       }
     </div>
   </div>

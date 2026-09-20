@@ -2,6 +2,8 @@
   type="text"
   [placeholder]="placeholder"
   [id]="attribute.name"
+  [attr.name]="attribute?.name"
+  [attr.data-testid]="(isReadOnly ? 'view-' : 'input-') + attribute?.name"
   [readonly]="isReadOnly"
   [autoClose]="true"
   (dateSelect)="onDateSelect($event)"

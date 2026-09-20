@@ -1,8 +1,8 @@
 @if (mode !== 'view') {
   @if (attribute) {
-    <div class="form-check" [formGroup]="formGroup">
-      <input class="form-check-input" type="checkbox" [id]="attribute.name" [formControlName]="attribute.name">
-      <label class="form-check-label" [for]="attribute.name">
+    <div class="form-check" [formGroup]="formGroup" [attr.data-testid]="'field-' + attribute.name">
+      <input class="form-check-input" type="checkbox" [id]="attribute.name" [formControlName]="attribute.name" [attr.name]="attribute.name" [attr.data-testid]="'checkbox-' + attribute.name">
+      <label class="form-check-label" [for]="attribute.name" [attr.data-testid]="'label-' + attribute.name">
         {{attribute.label}}
       </label>
     </div>
@@ -10,6 +10,8 @@
 }
 
 @if (mode === 'view') {
-  <label [for]="attribute.name">{{attribute.label}}</label>
-  <div [id]="attribute.name">{{getDisplayValue()}}</div>
+  <div [attr.data-testid]="'field-' + attribute.name">
+    <label [for]="attribute.name" [attr.data-testid]="'label-' + attribute.name">{{attribute.label}}</label>
+    <div [id]="attribute.name" [attr.data-testid]="'view-' + attribute.name">{{getDisplayValue()}}</div>
+  </div>
 }

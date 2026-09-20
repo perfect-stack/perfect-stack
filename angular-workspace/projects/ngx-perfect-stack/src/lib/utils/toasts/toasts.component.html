@@ -2,6 +2,7 @@
   <ngb-toast
     #myToast
     [class]="toast.classname"
+    [attr.data-testid]="'toast-' + toast.header.toLowerCase()"
     [autohide]="toast.autohide"
     [delay]="toast.delay || 7000"
     (hidden)="toastService.remove(toast)"
@@ -16,10 +17,10 @@
       @if (toast.header === 'Error') {
         <span class="material-symbols-outlined">error_circle_rounded</span>
       }
-      <strong class="ms-2">{{toast.header}}</strong>
+      <strong class="ms-2" [attr.data-testid]="'toast-header'">{{toast.header}}</strong>
       <span class="me-auto"></span>
-      <span class="material-symbols-outlined my-btn-close" (click)="onClose(myToast)">close</span>
+      <span class="material-symbols-outlined my-btn-close" [attr.data-testid]="'toast-close'" (click)="onClose(myToast)">close</span>
     </ng-template>
-    {{toast.message}}
+    <span [attr.data-testid]="'toast-message'">{{toast.message}}</span>
   </ngb-toast>
 }

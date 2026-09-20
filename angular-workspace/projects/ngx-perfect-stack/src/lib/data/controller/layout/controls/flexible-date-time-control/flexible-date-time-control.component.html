@@ -1,11 +1,11 @@
 @if (mode === 'edit') {
-  <div class="row" [formGroup]="formGroup">
+  <div class="row" [formGroup]="formGroup" [attr.data-testid]="'field-' + (cell?.attribute?.name || name)">
     <!--Cell: {{cell|json}}-->
     <div class="col-6">
       <div class="row">
         @if (cell && cell.attribute) {
           <div class="col-6 flexible-time-input-field">
-            <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
+            <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl" [attr.data-testid]="'label-date-' + cell.attribute.name">
               <span placement="right" [ngbTooltip]="cell.attribute.description">Date</span>
               @if (mode == 'edit') {
                 @if (cell.attribute.visibility == 'Required') {
@@ -21,7 +21,7 @@
         }
         @if (cell && cell.attribute && cell.attribute.name) {
           <div class="col-6 flexible-time-input-field">
-            <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl">
+            <label [for]="cell.attribute.name" id="{{cell.attribute.name}}Lbl" [attr.data-testid]="'label-time-' + cell.attribute.name">
               <span placement="right" [ngbTooltip]="cell.attribute.description">Time</span>
               @if (mode == 'edit') {
                 @if (cell.attribute.visibility == 'Required') {
@@ -48,7 +48,7 @@
       <label>Unsure of the time?</label>
       <div class="btn-group d-block w-100" role="group">
         @for (option of timeOptions; track option; let i = $index) {
-          <input type="radio" class="btn-check" [id]="'btn_' + option.name" autocomplete="off" [checked]="option.name === timeOptionSelected">
+          <input type="radio" class="btn-check" [id]="'btn_' + option.name" autocomplete="off" [checked]="option.name === timeOptionSelected" [attr.data-testid]="'btn-time-' + option.name.toLowerCase()">
           <label class="btn btn-outline-secondary" [for]="'btn_' + option.name" (click)="onClick(option)">{{option.name}}</label>
         }
       </div>
@@ -89,9 +89,9 @@
 }
 
 @if (mode !== 'edit') {
-  <div class="row">
+  <div class="row" [attr.data-testid]="'field-' + (cell?.attribute?.name || name)">
     <div class="col-12">
-      <div class="form-control" readonly>
+      <div class="form-control" readonly [id]="cell?.attribute?.name || name" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">
         {{dateTimeValue}}
         @if (timePrecisionControl && timePrecisionControl.value) {
           - <span class="badge small bg-secondary">{{timePrecisionControl.value}}</span>

@@ -1,5 +1,4 @@
-
-<div class="row p-2">
+<div class="row p-2" [attr.data-testid]="'field-media'">
   <div class="col-6">
     <div class="row">
       <div class="col-12">
@@ -19,8 +18,8 @@
           <div class="col-4">
             @if (imageCount > 1) {
               <div class="btn-group" role="group">
-                <button class="btn btn-outline-secondary" (click)="decrementIndex()">&lt;</button>
-                <button class="btn btn-outline-secondary" (click)="incrementIndex()">&gt;</button>
+                <button class="btn btn-outline-secondary" (click)="decrementIndex()" [attr.data-testid]="'btn-media-prev'">&lt;</button>
+                <button class="btn btn-outline-secondary" (click)="incrementIndex()" [attr.data-testid]="'btn-media-next'">&gt;</button>
               </div>
             }
           </div>
@@ -30,9 +29,9 @@
           <div class="col-4 text-end">
             @if (mode === 'edit') {
               @if (imageSrc) {
-                <button class="btn btn-danger me-2" (click)="onDelete()">Delete</button>
+                <button class="btn btn-danger me-2" (click)="onDelete()" [attr.data-testid]="'btn-media-delete'">Delete</button>
               }
-              <button class="btn btn-outline-primary" (click)="onUpload()">Upload...</button>
+              <button class="btn btn-outline-primary" (click)="onUpload()" [attr.data-testid]="'btn-media-upload'">Upload...</button>
             }
           </div>
         </div>

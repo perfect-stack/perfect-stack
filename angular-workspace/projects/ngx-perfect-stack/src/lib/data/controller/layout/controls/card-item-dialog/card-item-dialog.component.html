@@ -1,13 +1,13 @@
-<div class="modal-header">
-  <h4 class="modal-title">Add {{metaAttribute.name.toLowerCase()}}</h4>
+<div class="modal-header" [attr.data-testid]="'modal-card-item-header'">
+  <h4 class="modal-title" [attr.data-testid]="'modal-title'">Add {{metaAttribute.name.toLowerCase()}}</h4>
 </div>
 
-<div class="modal-body">
+<div class="modal-body" [attr.data-testid]="'modal-body'">
   <p>Select one or more {{metaAttribute.name.toLowerCase()}} to add</p>
   <lib-tile-button-panel [buttonList]="buttonList" [width]="3" [selectionMode]="'multiple'" (buttonClicked)="onButtonClicked($event)"></lib-tile-button-panel>
 </div>
 
 <div class="modal-footer d-flex justify-content-between">
-  <button type="button" class="btn btn-outline-primary" (click)="onCancel()" id="cancelBtn">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="onAdd()" [disabled]="!isAddEnabled()" id="addBtn">Add</button>
+  <button type="button" class="btn btn-outline-primary" (click)="onCancel()" id="cancelBtn" [attr.data-testid]="'btn-modal-cancel'">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onAdd()" [disabled]="!isAddEnabled()" id="addBtn" [attr.data-testid]="'btn-modal-add'">Add</button>
 </div>

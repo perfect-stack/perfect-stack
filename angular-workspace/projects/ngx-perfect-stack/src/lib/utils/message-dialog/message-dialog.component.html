@@ -1,15 +1,16 @@
-<div class="modal-header">
-  <h4 class="modal-title">{{title}}</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Close')"></button>
+<div class="modal-header" [attr.data-testid]="'modal-header'">
+  <h4 class="modal-title" [attr.data-testid]="'modal-title'">{{title}}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Close')" [attr.data-testid]="'btn-modal-close'"></button>
 </div>
-<div class="modal-body">
+<div class="modal-body" [attr.data-testid]="'modal-body'">
   <p>{{text}}</p>
 </div>
-<div class="modal-footer">
+<div class="modal-footer" [attr.data-testid]="'modal-footer'">
   @for (action of actions; track action) {
     <button
       type="button"
       [ngClass]="action.style"
+      [attr.data-testid]="'btn-dialog-' + action.name.toLowerCase()"
       (click)="activeModal.close(action.name)">
       {{action.name}}
     </button>

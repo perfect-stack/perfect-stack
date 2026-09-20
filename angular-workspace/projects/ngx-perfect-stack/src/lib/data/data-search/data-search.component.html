@@ -10,7 +10,7 @@
           needs better permission management but we will cross that bridge when we get there -->
           <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
             @if (!(searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight'])) {
-              <button type="button" class="btn btn-success" (click)="onAdd(ctx)" id="addBtn">{{addButtonLbl}}</button>
+              <button type="button" class="btn btn-success" (click)="onAdd(ctx)" id="addBtn" [attr.data-testid]="'btn-add'">{{addButtonLbl}}</button>
             }
             @if (searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight']) {
               <lib-tool-view [ctx]="ctx" [tool]="searchCriteriaTemplate.locations['TopRight']"></lib-tool-view>
@@ -27,8 +27,8 @@
               <lib-controller [ctx]="ctx" [template]="searchCriteriaTemplate"></lib-controller>
             </div>
             <div class="action-buttons-right align-self-end">
-              <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)" id="searchBtn">Search</button>
-              <button type="button" class="btn btn-outline-primary" (click)="onReset(ctx)" id="resetBtn">Reset</button>
+              <button type="submit" class="btn btn-primary me-2" (click)="onSearch(ctx)" id="searchBtn" [attr.data-testid]="'btn-search'">Search</button>
+              <button type="button" class="btn btn-outline-primary" (click)="onReset(ctx)" id="resetBtn" [attr.data-testid]="'btn-reset'">Reset</button>
             </div>
           </div>
         </form>
@@ -37,7 +37,7 @@
     @if (searchResultsFormGroup) {
       <div class="container-table">
         @if (resultsMessage) {
-          <div class="collection-size-found">
+          <div class="collection-size-found" [attr.data-testid]="'results-message'">
             <!--Showing {{collectionSize}} {{this.resultTableMetaEntity.pluralName}} found-->
             {{resultsMessage}}
           </div>

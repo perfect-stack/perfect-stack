@@ -1,4 +1,4 @@
-<div [formGroup]="formGroup">
+<div [formGroup]="formGroup" [attr.data-testid]="'field-' + (cell?.attribute?.name || name)">
   @if (mode !== 'view') {
     <div class="row">
       @if (cell && cell.attribute && cell.attribute.name) {
@@ -18,12 +18,12 @@
     <div class="row">
       <div class="col-12">
         @if (dateTimeValue) {
-          <div class="form-control" readonly>
+          <div class="form-control" readonly [id]="cell?.attribute?.name || name" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">
             {{dateTimeValue}}
           </div>
         }
         @if (!dateTimeValue) {
-          <div class="form-control empty-value" readonly>&mdash;</div>
+          <div class="form-control empty-value" readonly [id]="cell?.attribute?.name || name" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">&mdash;</div>
         }
       </div>
     </div>

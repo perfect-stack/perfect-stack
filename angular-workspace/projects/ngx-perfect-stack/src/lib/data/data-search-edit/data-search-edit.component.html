@@ -1,8 +1,8 @@
 @if (metaEntity$ | async; as metaEntity) {
-  <div class="container-fluid mt-3">
+  <div class="container-fluid mt-3" [attr.data-testid]="'search-edit-page'">
     <h2 class="mb-3">Search/Edit of {{metaEntity.pluralName}}</h2>
     @if (rowData$ | async; as rowData) {
-      <table class="table table-striped">
+      <table class="table table-striped" [attr.data-testid]="'search-edit-table'">
         <thead>
           <tr>
             <th>Name</th>
@@ -15,12 +15,12 @@
           </tr>
         </thead>
         <tbody>
-          @for (nextEntity of rowData.resultList; track nextEntity) {
+          @for (nextEntity of rowData.resultList; track nextEntity; let i = $index) {
             @if (!editSet.has(nextEntity.id)) {
-              <tr app-row-view [entity]="nextEntity" [metaEntity]="metaEntity" (actionEvent)="onActionEvent($event)"></tr>
+              <tr app-row-view [entity]="nextEntity" [metaEntity]="metaEntity" [attr.data-testid]="'search-edit-row-' + i" (actionEvent)="onActionEvent($event)"></tr>
             }
             @if (editSet.has(nextEntity.id)) {
-              <tr app-row-edit [entity]="nextEntity" [metaEntity]="metaEntity" (actionEvent)="onActionEvent($event)"></tr>
+              <tr app-row-edit [entity]="nextEntity" [metaEntity]="metaEntity" [attr.data-testid]="'search-edit-row-' + i" (actionEvent)="onActionEvent($event)"></tr>
             }
           }
         </tbody>
@@ -28,7 +28,7 @@
       <div class="d-flex">
         <div class="flex-grow-1"></div>
         <lib-permission-check [action]="ActionType.Edit" [subject]="metaEntity.name">
-          <button class="btn btn-outline-success" (click)="onNew(rowData)" id="newBtn">New...</button>
+          <button class="btn btn-outline-success" (click)="onNew(rowData)" id="newBtn" [attr.data-testid]="'btn-new'">New...</button>
         </lib-permission-check>
       </div>
     }

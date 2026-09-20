@@ -1,10 +1,12 @@
 @if (mode !== 'view' && !cell.displayOnly) {
-  <div class="input-group flex-nowrap">
+  <div class="input-group flex-nowrap" [attr.data-testid]="'field-' + name">
     <input class="form-control" [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}" [readonly]="isReadOnly()" [id]="name"
+      [attr.name]="name"
+      [attr.data-testid]="'input-' + name"
       [ngModel]="internalValue" (ngModelChange)="onModelChange($event)" [ngModelOptions]="{standalone: true}"
       libDecimalNumber [scale]="cell.attribute?.scale">
     @if (cell && cell.attribute && cell.attribute.unitOfMeasure) {
-      <span class="input-group-text" [id]="name + '_uom'">
+      <span class="input-group-text" [id]="name + '_uom'" [attr.data-testid]="'uom-' + name">
         {{cell.attribute.unitOfMeasure}}
       </span>
     }
@@ -16,10 +18,10 @@
 
 @if (mode === 'view' || cell.displayOnly) {
   @if (internalValue) {
-    <div class="input-group">
-      <span class="form-control" readonly="true"  [id]="name">
+    <div class="input-group" [attr.data-testid]="'field-' + name">
+      <span class="form-control" readonly="true" [id]="name" [attr.data-testid]="'view-' + name">
         {{internalValue}} @if (cell.attribute?.unitOfMeasure) {
-        <span [id]="name + '_uom'">{{cell.attribute?.unitOfMeasure}}</span>
+        <span [id]="name + '_uom'" [attr.data-testid]="'uom-' + name">{{cell.attribute?.unitOfMeasure}}</span>
       }
     </span>
     <!--<input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name"
@@ -27,8 +29,8 @@
   </div>
 }
 @if (!internalValue) {
-  <div class="input-group">
-    <span class="form-control empty-value" readonly [id]="name">&mdash;</span>
+  <div class="input-group" [attr.data-testid]="'field-' + name">
+    <span class="form-control empty-value" readonly [id]="name" [attr.data-testid]="'view-' + name">&mdash;</span>
   </div>
 }
 }
