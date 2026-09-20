@@ -297,7 +297,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "preserveSymlinks": true,
             "outputPath": {
               "base": "dist/test-ui-client"
             },
@@ -332,7 +331,8 @@
               "leaflet",
               "proj4",
               "ng-drag-drop"
-            ]
+            ],
+            "preserveSymlinks": true
           },
           "configurations": {
             "production": {

@@ -28,30 +28,32 @@ export class MsalAuthenticationService implements AuthenticationServiceProvider,
               private msalBroadcastService: MsalBroadcastService,
               @Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) {
 
-    this._redirectUrl = localStorage.getItem('redirectUrl');
+    if (this.stackConfig && this.stackConfig.authenticationProvider === "MSAL") {
+      this._redirectUrl = localStorage.getItem("redirectUrl");
 
-    // This is essential for MSAL to process the redirect and finish initialization.
-    this.msalService.handleRedirectObservable().subscribe();
+      // This is essential for MSAL to process the redirect and finish initialization.
+      this.msalService.handleRedirectObservable().subscribe();
 
-    this.msalBroadcastService.inProgress$
-      .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None),
-        takeUntil(this._destroying$)
-      )
-      .subscribe(() => {
-        this.checkAndSetActiveAccount();
-      });
+      this.msalBroadcastService.inProgress$
+        .pipe(
+          filter((status: InteractionStatus) => status === InteractionStatus.None),
+          takeUntil(this._destroying$)
+        )
+        .subscribe(() => {
+          this.checkAndSetActiveAccount();
+        });
 
-    this.msalBroadcastService.msalSubject$
-      .pipe(
-        filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS),
-        takeUntil(this._destroying$)
-      )
-      .subscribe((result: EventMessage) => {
-        const payload = result.payload as any;
-        this.msalService.instance.setActiveAccount(payload.account);
-        this.checkAndSetActiveAccount();
-      });
+      this.msalBroadcastService.msalSubject$
+        .pipe(
+          filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS),
+          takeUntil(this._destroying$)
+        )
+        .subscribe((result: EventMessage) => {
+          const payload = result.payload as any;
+          this.msalService.instance.setActiveAccount(payload.account);
+          this.checkAndSetActiveAccount();
+        });
+    }
   }
 
   ngOnDestroy(): void {

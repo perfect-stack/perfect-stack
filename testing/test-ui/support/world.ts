@@ -6,6 +6,9 @@ export class UIWorld extends World {
   context?: BrowserContext;
   page?: Page;
   baseUrl: string;
+  contextData: Record<string, any> = {};
+  retrievedEntity?: any;
+  lastError?: any;
 
   constructor(options: IWorldOptions) {
     super(options);

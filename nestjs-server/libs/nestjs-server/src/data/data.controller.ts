@@ -74,6 +74,73 @@ export class DataController {
 
   @ActionPermit(ActionType.Read)
   @SubjectKey('entityName')
+  @ApiOperation({ summary: 'Find tree rooted at the singular root entity' })
+  @ApiResponse({
+    status: 200,
+    description: 'The root entity with nested children',
+    type: Object,
+  })
+  @Get('/:entityName/tree')
+  findRootTree(
+    @Param('entityName') entityName: string,
+    @Query('depth') depth?: number,
+  ): Promise<Entity> {
+    return this.queryService.findTree(entityName, undefined, depth);
+  }
+
+  @ActionPermit(ActionType.Read)
+  @SubjectKey('entityName')
+  @ApiOperation({ summary: 'Find tree or subtree rooted at the supplied id' })
+  @ApiResponse({
+    status: 200,
+    description: 'The node entity with nested children',
+    type: Object,
+  })
+  @Get('/:entityName/:id/tree')
+  findSubTree(
+    @Param('entityName') entityName: string,
+    @Param('id') id: string,
+    @Query('depth') depth?: number,
+  ): Promise<Entity> {
+    return this.queryService.findTree(entityName, id, depth);
+  }
+
+  @ActionPermit(ActionType.Read)
+  @SubjectKey('entityName')
+  @ApiOperation({ summary: 'Find ancestors from the root down to the supplied id' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of ancestor entities from root to node',
+    type: Object,
+  })
+  @Get('/:entityName/:id/ancestors')
+  findAncestors(
+    @Param('entityName') entityName: string,
+    @Param('id') id: string,
+  ): Promise<Entity[]> {
+    return this.queryService.findAncestors(entityName, id);
+  }
+
+  @ActionPermit(ActionType.Read)
+  @SubjectKey('entityName')
+  @ApiOperation({ summary: 'Find direct children of the supplied parent id with pagination' })
+  @ApiResponse({
+    status: 200,
+    description: 'Page of child entities',
+    type: PageQueryResponse,
+  })
+  @Get('/:entityName/:id/children')
+  findChildren(
+    @Param('entityName') entityName: string,
+    @Param('id') id: string,
+    @Query('pageNumber') pageNumber?: number,
+    @Query('pageSize') pageSize?: number,
+  ): Promise<PageQueryResponse<Entity>> {
+    return this.queryService.findChildren(entityName, id, pageNumber, pageSize);
+  }
+
+  @ActionPermit(ActionType.Read)
+  @SubjectKey('entityName')
   @ApiOperation({ summary: 'Find one entity by entity name and id' })
   @ApiResponse({
     status: 200,

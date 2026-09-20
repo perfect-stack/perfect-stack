@@ -1,6 +1,6 @@
 {
-  "name": "Species",
-  "pluralName": "Species",
+  "name": "OrganisationUnit",
+  "pluralName": "OrganisationUnits",
   "icon": "",
   "type": "Database",
   "rootNode": true,
@@ -23,9 +23,9 @@
       "rules": []
     },
     {
-      "name": "scientific_name",
-      "label": "Scientific Name",
-      "description": "The scientific / taxonomic name",
+      "name": "name",
+      "label": "Unit Name",
+      "description": "The name of the organisation unit",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -33,7 +33,10 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": [],
+      "typeaheadSearch": [
+        "name",
+        "code"
+      ],
       "rules": [
         {
           "type": "Required",
@@ -42,23 +45,23 @@
       ]
     },
     {
-      "name": "common_name",
-      "label": "Common Name",
-      "description": "The common or vernacular name if any",
+      "name": "code",
+      "label": "Unit Code",
+      "description": "Unique unit code identifier",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
       "visibility": "Visible",
       "comparisonField": "",
-      "comparisonOperator": "InsensitiveStartsWith",
+      "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
     },
     {
-      "name": "rank",
-      "label": "Rank",
-      "description": "Taxonomic rank",
+      "name": "unit_type",
+      "label": "Unit Type",
+      "description": "Hierarchy level or unit classification",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Enumeration",
@@ -68,13 +71,10 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "enumeration": [
-        "Kingdom",
-        "Phylum",
-        "Class",
-        "Order",
-        "Family",
-        "Genus",
-        "Species"
+        "Headquarters",
+        "Division",
+        "Department",
+        "Team"
       ],
       "rules": [
         {
@@ -85,29 +85,32 @@
     },
     {
       "name": "parent",
-      "label": "Parent",
-      "description": "Parent taxonomic entity",
+      "label": "Parent Unit",
+      "description": "Parent organisation unit in hierarchy",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "Equals",
-      "relationshipTarget": "Species",
-      "typeaheadSearch": ["scientific_name", "common_name"],
+      "relationshipTarget": "OrganisationUnit",
+      "typeaheadSearch": [
+        "name",
+        "code"
+      ],
       "rules": []
     },
     {
       "name": "children",
-      "label": "Children",
-      "description": "Child taxonomic entities",
+      "label": "Sub-Units",
+      "description": "Child organisation units",
       "unitOfMeasure": "",
       "scale": "",
       "type": "OneToMany",
       "visibility": "Visible",
       "comparisonField": "",
-      "comparisonOperator": "",
-      "relationshipTarget": "Species",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "OrganisationUnit",
       "typeaheadSearch": [],
       "rules": []
     }

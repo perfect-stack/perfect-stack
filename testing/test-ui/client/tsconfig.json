@@ -13,24 +13,6 @@
     "noFallthroughCasesInSwitch": true,
     "strictPropertyInitialization": false,
     "sourceMap": true,
-    "preserveSymlinks": true,
-    "paths": {
-      "@angular/*": [
-        "node_modules/@angular/*"
-      ],
-      "rxjs": [
-        "node_modules/rxjs"
-      ],
-      "rxjs/*": [
-        "node_modules/rxjs/*"
-      ],
-      "@perfect-stack/ngx-perfect-stack": [
-        "node_modules/@perfect-stack/ngx-perfect-stack"
-      ],
-      "@perfect-stack/ngx-perfect-stack/*": [
-        "node_modules/@perfect-stack/ngx-perfect-stack/*"
-      ]
-    },
     "declaration": false,
     "experimentalDecorators": true,
     "moduleResolution": "node",
@@ -41,7 +23,15 @@
       "es2020",
       "dom"
     ],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths": {
+      "@perfect-stack/ngx-perfect-stack": [
+        "../../../angular-workspace/dist/ngx-perfect-stack"
+      ],
+      "@perfect-stack/ngx-perfect-stack/*": [
+        "../../../angular-workspace/dist/ngx-perfect-stack/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

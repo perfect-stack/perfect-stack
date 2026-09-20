@@ -4,6 +4,7 @@
   "icon": "",
   "type": "Database",
   "rootNode": true,
+  "permanentDelete": true,
   "timestamps": true,
   "attributes": [
     {
@@ -53,7 +54,7 @@
       "comparisonOperator": "Equals",
       "relationshipTarget": "Species",
       "typeaheadSearch": [
-        "name"
+        "scientific_name"
       ],
       "rules": [
         {
@@ -101,15 +102,13 @@
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
-      "typeaheadSearch": [
-        "microchip_number"
-      ],
+      "typeaheadSearch": [],
       "rules": []
     },
     {
       "name": "owner",
       "label": "Owner",
-      "description": "The registered owner of the pet",
+      "description": "Pet owner",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
@@ -123,6 +122,5 @@
       ],
       "rules": []
     }
-  ],
-  "permanentDelete": true
+  ]
 }

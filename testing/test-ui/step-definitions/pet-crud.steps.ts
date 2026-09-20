@@ -51,11 +51,31 @@ Given('a species {string} exists in the registry', async function (this: UIWorld
 
   const existing = await makeApiRequest('GET', `/data/Species`);
   const list = existing?.resultList || existing || [];
-  const found = Array.isArray(list) && list.some((s: any) => s.name === speciesName);
+  const found = Array.isArray(list) && list.some((s: any) => s.scientific_name === speciesName || s.common_name === speciesName);
   if (!found) {
+    let rootId: string | null = null;
+    try {
+      const rootResp = await makeApiRequest('GET', `/data/Species/tree`);
+      if (rootResp && rootResp.id) {
+        rootId = rootResp.id;
+      }
+    } catch {}
+
+    if (!rootId) {
+      const rootSave = await makeApiRequest('POST', `/data/Species`, {
+        scientific_name: 'Animalia',
+        common_name: 'Animals',
+        rank: 'Kingdom',
+        parent_id: null,
+      });
+      rootId = rootSave?.entity?.id;
+    }
+
     await makeApiRequest('POST', `/data/Species`, {
-      name: speciesName,
-      sort_index: 1,
+      scientific_name: speciesName,
+      common_name: speciesName,
+      rank: 'Species',
+      parent_id: rootId,
     });
   }
 });
@@ -139,24 +159,14 @@ When('I confirm the deletion dialog', async function (this: UIWorld) {
 Then('I should be on the search page', async function (this: UIWorld) {
   if (!this.page) throw new Error('Playwright page is not initialized');
 
-  await this.page.waitForURL(/.*\/search/, { timeout: 10000 });
-  const url = this.page.url();
-  expect(url).to.include('/search');
-});
-
-Then('I should see {string} in the search results table', async function (this: UIWorld, expectedText: string) {
-  if (!this.page) throw new Error('Playwright page is not initialized');
-
-  const cell = this.page.locator('table tbody tr').filter({ hasText: expectedText }).first();
-  await cell.waitFor({ state: 'visible', timeout: 10000 });
-  expect(await cell.isVisible()).to.be.true;
+  await this.page.waitForURL((url) => url.pathname.includes('/search'), { timeout: 10000 });
+  expect(this.page.url()).to.include('/search');
 });
 
 Then('I should not see {string} in the search results table', async function (this: UIWorld, unexpectedText: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
 
-  await this.page.waitForTimeout(500);
-  const matchingRows = this.page.locator('table tbody tr').filter({ hasText: unexpectedText });
-  const count = await matchingRows.count();
-  expect(count).to.equal(0);
+  await this.page.waitForTimeout(1000);
+  const bodyContent = await this.page.textContent('body');
+  expect(bodyContent || '').to.not.include(unexpectedText);
 });

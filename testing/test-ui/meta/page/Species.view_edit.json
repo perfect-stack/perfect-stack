@@ -29,7 +29,7 @@
               "styles": "",
               "label": "",
               "modes": "",
-              "nameAttributes": "name"
+              "nameAttributes": "scientific_name"
             }
           }
         ]
@@ -45,12 +45,26 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "name"
+            "attributeName": "scientific_name"
           },
           {
             "width": "6",
             "height": "1",
-            "attributeName": "sort_index"
+            "attributeName": "common_name"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "rank",
+            "component": "Select"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "parent",
+            "component": "Select"
           }
         ]
       ],

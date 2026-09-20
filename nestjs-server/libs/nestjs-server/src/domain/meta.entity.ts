@@ -127,6 +127,12 @@ export class MetaEntity {
   icon: string; // icon name for this MetaEntity
 
   @ApiProperty()
+  rootNode: boolean;
+
+  @ApiProperty()
+  treeNode: boolean;
+
+  @ApiProperty()
   timestamps: boolean; // Controls if Sequelize will add createdAt and updatedAt timestamps to each record (if undefined defaults to true)
 
   // How long to cache instances of this entity on the client in seconds (no value means don't cache)

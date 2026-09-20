@@ -5,17 +5,17 @@ Feature: Pet Management CRUD Lifecycle
 
   @crud
   Scenario: Create, read, update, and delete a Pet record
-    Given a species "Canine" exists in the registry
+    Given a species "Canis familiaris" exists in the registry
     When I navigate to "/data/Pet/search"
     And I click the "Add Pet" button
     And I enter "Barnaby" into the "name" field
-    And I select "Canine" from the "species" dropdown
+    And I select "Canis familiaris" from the "species" dropdown
     And I enter "Golden Retriever" into the "breed" field
     And I enter "CHIP-98765" into the "microchip_number" field
     And I click the "Save details" button
     Then I should see a success toast "Save is successful"
     And I should see "Barnaby" in the "name" field
-    And I should see "Canine" in the "species" field
+    And I should see "Canis familiaris" in the "species" field
     And I should see "Golden Retriever" in the "breed" field
 
     When I click the "Edit Pet" button

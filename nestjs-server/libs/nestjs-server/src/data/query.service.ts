@@ -10,7 +10,7 @@ import { QueryRequest } from './query.request';
 import { OrmService } from '../orm/orm.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import { QueryResponse } from './query.response';
 import { getCriteriaValue } from './query-utils';
 import { DataNotFound } from './data.exception';
@@ -120,6 +120,156 @@ export class QueryService {
     }
   }
 
+  async findTree(
+    entityName: string,
+    rootId?: string,
+    depth?: number,
+  ): Promise<Entity> {
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    const parentAttr = metaEntity.attributes.find(
+      (a) =>
+        a.type === AttributeType.ManyToOne &&
+        a.relationshipTarget === metaEntity.name,
+    );
+    const parentFkName = parentAttr ? parentAttr.name + '_id' : 'parent_id';
+    const childrenAttr = metaEntity.attributes.find(
+      (a) =>
+        a.type === AttributeType.OneToMany &&
+        a.relationshipTarget === metaEntity.name,
+    );
+    const childrenAttrName = childrenAttr ? childrenAttr.name : 'children';
+
+    if (!rootId) {
+      const model = this.ormService.sequelize.model(entityName);
+      const rootRecord: any = await model.findOne({
+        where: { [parentFkName]: null },
+      });
+      if (!rootRecord) {
+        throw new DataNotFound();
+      }
+      rootId = rootRecord.id;
+    }
+
+    const depthClause =
+      depth != null && !isNaN(Number(depth))
+        ? `WHERE p.depth < ${Number(depth)}`
+        : '';
+
+    const sql = `
+      WITH RECURSIVE tree_cte AS (
+        SELECT *, 0 AS depth
+        FROM "${entityName}"
+        WHERE "id" = :rootId
+        UNION ALL
+        SELECT c.*, p.depth + 1
+        FROM "${entityName}" c
+        JOIN tree_cte p ON c."${parentFkName}" = p."id"
+        ${depthClause}
+      )
+      SELECT * FROM tree_cte ORDER BY depth ASC, "id" ASC;
+    `;
+
+    const rows = (await this.ormService.sequelize.query(sql, {
+      replacements: { rootId },
+      type: QueryTypes.SELECT,
+    })) as any[];
+
+    if (!rows || rows.length === 0) {
+      throw new DataNotFound();
+    }
+
+    const nodeMap = new Map<string, any>();
+    for (const row of rows) {
+      nodeMap.set(row.id, {
+        ...row,
+        [childrenAttrName]: [],
+      });
+    }
+
+    let rootResult: any = null;
+    for (const row of rows) {
+      const node = nodeMap.get(row.id);
+      if (row.id === rootId) {
+        rootResult = node;
+      } else {
+        const parentNode = nodeMap.get(row[parentFkName]);
+        if (parentNode) {
+          parentNode[childrenAttrName].push(node);
+        }
+      }
+    }
+
+    return rootResult;
+  }
+
+  async findAncestors(entityName: string, nodeId: string): Promise<Entity[]> {
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    const parentAttr = metaEntity.attributes.find(
+      (a) =>
+        a.type === AttributeType.ManyToOne &&
+        a.relationshipTarget === metaEntity.name,
+    );
+    const parentFkName = parentAttr ? parentAttr.name + '_id' : 'parent_id';
+
+    const sql = `
+      WITH RECURSIVE ancestors_cte AS (
+        SELECT *, 0 AS level
+        FROM "${entityName}"
+        WHERE "id" = :nodeId
+        UNION ALL
+        SELECT p.*, a.level + 1
+        FROM "${entityName}" p
+        JOIN ancestors_cte a ON a."${parentFkName}" = p."id"
+      )
+      SELECT * FROM ancestors_cte ORDER BY level DESC;
+    `;
+
+    const rows = (await this.ormService.sequelize.query(sql, {
+      replacements: { nodeId },
+      type: QueryTypes.SELECT,
+    })) as Entity[];
+
+    if (!rows || rows.length === 0) {
+      throw new DataNotFound();
+    }
+
+    return rows;
+  }
+
+  async findChildren(
+    entityName: string,
+    parentId: string,
+    pageNumber?: number,
+    pageSize?: number,
+  ): Promise<PageQueryResponse<Entity>> {
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    const parentAttr = metaEntity.attributes.find(
+      (a) =>
+        a.type === AttributeType.ManyToOne &&
+        a.relationshipTarget === metaEntity.name,
+    );
+    const parentFkName = parentAttr ? parentAttr.name + '_id' : 'parent_id';
+
+    const queryRequest = new QueryRequest();
+    queryRequest.metaEntityName = entityName;
+    queryRequest.pageNumber = pageNumber;
+    queryRequest.pageSize = pageSize;
+    queryRequest.criteria = [
+      {
+        name: parentFkName,
+        value: parentId,
+        attributeType: AttributeType.Identifier,
+        operator: ComparisonOperator.Equals,
+      },
+    ];
+
+    const response = await this.findByCriteria(queryRequest);
+    return {
+      resultList: response.resultList,
+      totalCount: response.totalCount,
+    };
+  }
+
   async findByCriteria(
     queryRequest: QueryRequest,
   ): Promise<QueryResponse<any>> {
@@ -189,11 +339,6 @@ export class QueryService {
       order: orderBy,
       offset: offset,
       limit: pageSize,
-      // Here be dragons: There was probably a time where the search results tables were showing attributes from
-      // child objects but as the code evolved those more complex situations have become custom queries. Reactivating
-      // this "include" feature here will probably reintroduce a bug to the Project search results since then that
-      // will have a count that includes all team members
-      //include: { all: true, nested: true }, // TODO this should only return row data needed not nested entities
     });
 
     const response = new QueryResponse<Entity>();

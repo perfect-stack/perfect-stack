@@ -1,19 +1,22 @@
-import 'reflect-metadata';
-import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
-import { VetClinicServerModule } from './vet-clinic-server.module';
-import { MetaEntityService, OrmService } from '@perfect-stack/nestjs-server';
+import "reflect-metadata";
+import { NestFactory } from "@nestjs/core";
+import { Logger } from "@nestjs/common";
+import { VetClinicServerModule } from "./vet-clinic-server.module";
+import { MetaEntityService, OrmService } from "@perfect-stack/nestjs-server";
+import { AllExceptionsFilter } from "./all-exceptions.filter";
 
 async function bootstrap() {
-  const logger = new Logger('VetClinicBootstrap');
+  const logger = new Logger("VetClinicBootstrap");
   const app = await NestFactory.create(VetClinicServerModule, {
-    logger: ['log', 'error', 'warn'],
+    logger: ["log", "error", "warn"],
   });
+
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   app.enableCors({
     origin: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: '*',
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: "*",
     credentials: true,
   });
 
@@ -22,7 +25,7 @@ async function bootstrap() {
   const ormService = app.get(OrmService);
   await metaEntityService.syncMetaModelWithDatabase(false);
   await ormService.sequelize.sync();
-  logger.log('Database schema synchronized and dynamic models initialized');
+  logger.log("Database schema synchronized and dynamic models initialized");
 
   const port = process.env.PORT || 3080;
   await app.listen(port);

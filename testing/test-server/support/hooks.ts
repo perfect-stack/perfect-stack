@@ -28,6 +28,21 @@ Before(async function (this: CustomWorld) {
   this.lastResponse = null;
   this.lastError = null;
   this.contextData = {};
+
+  // Clean SQLite database tables between scenarios
+  const sequelize = ctx.ormService.sequelize;
+  if (sequelize) {
+    const isSqlite = sequelize.getDialect() === 'sqlite';
+    if (isSqlite) {
+      await sequelize.query('PRAGMA foreign_keys = OFF;');
+    }
+    for (const modelName of Object.keys(sequelize.models)) {
+      await sequelize.models[modelName].destroy({ where: {}, truncate: true, force: true });
+    }
+    if (isSqlite) {
+      await sequelize.query('PRAGMA foreign_keys = ON;');
+    }
+  }
 });
 
 AfterAll(async function () {
