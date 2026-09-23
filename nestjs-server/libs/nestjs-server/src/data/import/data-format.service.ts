@@ -4,6 +4,7 @@ import { TrackingFlightStatusConverter } from './converter/tracking-flight-statu
 import { BandNumberLookupConverter } from './converter/band-number.converter';
 import { DateConverter } from './converter/date.converter';
 import { IntegerConverter } from './converter/integer.converter';
+import { DoubleConverter } from './converter/double.converter';
 import { NZTMCoordinateConverter } from './converter/nztm-coordinate.converter';
 import { TextConverter } from './converter/text.converter';
 import { DuplicateEventCheck } from './duplicate-event-check';
@@ -54,14 +55,134 @@ export class DataFormatService {
       const formats: DataImportMapping[] = [
         this.getPlaceFormat(),
         this.getMonitoringStationFormat(),
-        this.getTransmitterFormat(),
         this.getRfidFormat(),
+        this.getTransmitterFormat(),
+        this.getDocmonSpeciesFormat(),
+        this.getAlitaPredictionFormat(),
       ];
       this._dataFormatMap = new Map<string, DataImportMapping>(
         formats.map((format) => [format.title, format]),
       );
     }
     return this._dataFormatMap;
+  }
+
+  private getAlitaPredictionFormat(): DataImportMapping {
+    return {
+      title: 'Alita Prediction',
+      metaEntityName: 'Prediction',
+      duplicateCheck: null,
+      postImportActions: null,
+      attributeMappings: [
+        {
+          columnName: 'File_Path',
+          attributeName: 'file_path',
+          indicatesBlankRow: true,
+          converter: new TextConverter(),
+        },
+        {
+          columnName: 'Date_Time',
+          attributeName: 'date_time',
+          indicatesBlankRow: true,
+          converter: new TextConverter(),
+        },
+        {
+          columnName: 'Crop',
+          attributeName: 'crop',
+          indicatesBlankRow: true,
+          converter: new TextConverter(),
+        },
+        {
+          columnName: 'x_min',
+          attributeName: 'x_min',
+          indicatesBlankRow: true,
+          converter: new DoubleConverter(),
+        },
+        {
+          columnName: 'y_min',
+          attributeName: 'y_min',
+          indicatesBlankRow: true,
+          converter: new DoubleConverter(),
+        },
+        {
+          columnName: 'Width',
+          attributeName: 'width',
+          indicatesBlankRow: true,
+          converter: new DoubleConverter(),
+        },
+        {
+          columnName: 'Height',
+          attributeName: 'height',
+          indicatesBlankRow: true,
+          converter: new DoubleConverter(),
+        },
+        {
+          columnName: 'Confidence',
+          attributeName: 'confidence',
+          indicatesBlankRow: true,
+          converter: new DoubleConverter(),
+        },
+        {
+          columnName: 'Row_Predicted_Class',
+          attributeName: 'row_predicted_class',
+          indicatesBlankRow: true,
+          converter: new TextConverter(),
+        },
+        {
+          columnName: 'Row_Predicted_Probability',
+          attributeName: 'row_predicted_probability',
+          indicatesBlankRow: true,
+          converter: new DoubleConverter(),
+        },
+      ].map((mapping) => Object.assign(new DataAttributeMapping(), mapping)),
+    };
+  }
+
+  private getDocmonSpeciesFormat(): DataImportMapping {
+    return {
+      title: 'Docmon Species',
+      metaEntityName: 'DocmonSpecies',
+      duplicateCheck: null,
+      postImportActions: null,
+      attributeMappings: [
+        {
+          columnName: 'NPCP database names',
+          attributeName: 'npcp_species_name',
+          indicatesBlankRow: true,
+          converter: new TextConverter(),
+        },
+        {
+          columnName: 'AlitaCommonNameOutput',
+          attributeName: 'common_name',
+          indicatesBlankRow: true,
+          converter: new TextConverter(),
+        },
+        {
+          columnName: 'SpeciesID (docmon)',
+          attributeName: 'species_id',
+          indicatesBlankRow: true,
+          converter: new IntegerConverter(),
+        },
+        {
+          columnName: 'SpeciesName (docmon)',
+          attributeName: 'docmon_species_name',
+          indicatesBlankRow: true,
+          converter: new TextConverter(),
+        },
+        {
+          columnName: 'ScientificName (docmon)',
+          attributeName: 'scientific_name',
+          indicatesBlankRow: true,
+          converter: new TextConverter(),
+        },
+        {
+          columnName: 'Notes (LS 22/6 following advice from GE)',
+          attributeName: 'notes',
+          indicatesBlankRow: false,
+          converter: new TextConverter(),
+        },
+      ].map((mapping) => Object.assign(new DataAttributeMapping(), mapping)),
+    };
   }
 
   private getPlaceFormat(): DataImportMapping {
