@@ -1,20 +1,32 @@
-<div class="row g-3 pb-3" *ngFor="let rowItem of [].constructor(rowCount); let rowIdx = index">
-  <div class="col" *ngFor="let colItem of [].constructor(width)l let colIdx = index">
-    <div *ngIf="doesButtonExist(colIdx, rowIdx)">
-      <button class="btn btn-outline-secondary tile-btn w-100"
+@for (rowItem of [].constructor(rowCount); track rowItem; let rowIdx = $index) {
+  <div class="row g-3 pb-3">
+    @for (colItem of [].constructor(width); track colItem; let colIdx = $index) {
+      <div class="col">
+        @if (doesButtonExist(colIdx, rowIdx)) {
+          <div>
+            <button class="btn btn-outline-secondary tile-btn w-100"
               [ngClass]="{'tile-btn-selected': isSelected(colIdx, rowIdx)}"
               [disabled]="!isEnabled(colIdx, rowIdx)"
               (click)="onButtonClicked(colIdx, rowIdx)">
-        <div class="btn-icon material-symbols-outlined" [ngClass]="{'btn-icon-disabled': !isEnabled(colIdx, rowIdx)}">{{getButton(colIdx, rowIdx).icon}}</div>
-        <div>{{getButton(colIdx, rowIdx).name}}</div>
-        <ng-container *ngIf="selectionMode === 'single'">
-          <span class="btn-icon btn-radio material-symbols-outlined btn-radio-selected" *ngIf="isSelected(colIdx, rowIdx)">radio_button_checked</span>
-          <span class="btn-icon btn-radio material-symbols-outlined" *ngIf="!isSelected(colIdx, rowIdx)">radio_button_unchecked</span>
-        </ng-container>
-        <ng-container *ngIf="selectionMode === 'multiple'">
-          <span class="btn-icon material-symbols-outlined icon-filled btn-check-selected" *ngIf="isSelected(colIdx, rowIdx)">check_box</span>
-        </ng-container>
-      </button>
-    </div>
+              <div class="btn-icon material-symbols-outlined" [ngClass]="{'btn-icon-disabled': !isEnabled(colIdx, rowIdx)}">{{getButton(colIdx, rowIdx).icon}}</div>
+              <div>{{getButton(colIdx, rowIdx).name}}</div>
+              @if (selectionMode === 'single') {
+                @if (isSelected(colIdx, rowIdx)) {
+                  <span class="btn-icon btn-radio material-symbols-outlined btn-radio-selected">radio_button_checked</span>
+                }
+                @if (!isSelected(colIdx, rowIdx)) {
+                  <span class="btn-icon btn-radio material-symbols-outlined">radio_button_unchecked</span>
+                }
+              }
+              @if (selectionMode === 'multiple') {
+                @if (isSelected(colIdx, rowIdx)) {
+                  <span class="btn-icon material-symbols-outlined icon-filled btn-check-selected">check_box</span>
+                }
+              }
+            </button>
+          </div>
+        }
+      </div>
+    }
   </div>
-</div>
+}

@@ -1,3 +1,5 @@
-<div class="badge bg-secondary me-2" *ngFor="let badgeValue of getBadgeValues()">
-  {{badgeValue}}
-</div>
+@for (badgeValue of getBadgeValues(); track badgeValue) {
+  <div class="badge bg-secondary me-2" [attr.data-testid]="'badge-' + (attribute?.name || '')">
+    {{badgeValue}}
+  </div>
+}

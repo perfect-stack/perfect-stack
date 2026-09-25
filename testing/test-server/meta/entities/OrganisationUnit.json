@@ -1,0 +1,118 @@
+{
+  "name": "OrganisationUnit",
+  "pluralName": "OrganisationUnits",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "treeNode": true,
+  "timestamps": true,
+  "permanentDelete": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "name",
+      "label": "Unit Name",
+      "description": "The name of the organisation unit",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [
+        "name",
+        "code"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "code",
+      "label": "Unit Code",
+      "description": "Unique unit code identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "unit_type",
+      "label": "Unit Type",
+      "description": "Hierarchy level or unit classification",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "enumeration": [
+        "Headquarters",
+        "Division",
+        "Department",
+        "Team"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "parent",
+      "label": "Parent Unit",
+      "description": "Parent organisation unit in hierarchy",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "OrganisationUnit",
+      "typeaheadSearch": [
+        "name",
+        "code"
+      ],
+      "rules": []
+    },
+    {
+      "name": "children",
+      "label": "Sub-Units",
+      "description": "Child organisation units",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "OrganisationUnit",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}

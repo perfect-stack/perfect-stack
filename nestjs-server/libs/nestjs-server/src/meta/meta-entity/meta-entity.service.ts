@@ -341,14 +341,29 @@ export class MetaEntityService {
       metaAttribute.relationshipTarget,
     ) as ModelCtor;
 
+    const isSelfReferencing = metaEntity.name === metaAttribute.relationshipTarget;
+
     switch (metaAttribute.type) {
       case AttributeType.OneToMany:
-        sourceModel.hasMany(targetModel, {
-          as: metaAttribute.name,
-          onDelete: 'CASCADE',
-          onUpdate: 'CASCADE',
-        });
-        targetModel.belongsTo(sourceModel);
+        if (isSelfReferencing) {
+          const parentAttr = metaEntity.attributes.find(
+            (a) => a.type === AttributeType.ManyToOne && a.relationshipTarget === metaEntity.name,
+          );
+          const foreignKeyName = parentAttr ? parentAttr.name + '_id' : 'parent_id';
+          sourceModel.hasMany(targetModel, {
+            as: metaAttribute.name,
+            foreignKey: foreignKeyName,
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE',
+          });
+        } else {
+          sourceModel.hasMany(targetModel, {
+            as: metaAttribute.name,
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
+          });
+          targetModel.belongsTo(sourceModel);
+        }
         break;
       case AttributeType.OneToOne:
         sourceModel.belongsTo(targetModel, {

@@ -1,8 +1,8 @@
 
-<ng-container *ngIf="isDefaultIconName()">
+@if (isDefaultIconName()) {
   <span class="material-symbols-outlined align-middle" (click)="onClick()">interests</span>
-</ng-container>
+}
 
-<ng-container *ngIf="!isDefaultIconName()">
+@if (!isDefaultIconName()) {
   <span class="material-symbols-outlined align-middle" [ngClass]="stylesValue" (click)="onClick()">{{iconValue}}</span>
-</ng-container>
+}

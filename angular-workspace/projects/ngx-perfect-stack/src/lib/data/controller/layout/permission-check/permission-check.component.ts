@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ActionType} from '../../../../domain/meta.role';
 import {AuthorizationService} from '../../../../authentication/authorization.service';
 import {FormContext} from '../../../data-edit/form-service/form.service';
-import {AbstractControl, FormGroup} from "@angular/forms";
+import {FormGroup} from "@angular/forms";
 
 /**
  * This PermissionCheckComponent makes it easy to control the display of a component based on the current User's
@@ -14,7 +14,7 @@ import {AbstractControl, FormGroup} from "@angular/forms";
     styleUrls: ['./permission-check.component.css'],
     standalone: false
 })
-export class PermissionCheckComponent implements OnInit {
+export class PermissionCheckComponent implements OnInit, OnChanges {
 
   @Input()
   action: ActionType;
@@ -25,8 +25,8 @@ export class PermissionCheckComponent implements OnInit {
   @Input()
   enabledIf = true;
 
-
-  private _subject: string | null;
+  @Input()
+  subject: string | null;
 
   displayEnabled = false;
   dataSource = '';
@@ -34,34 +34,33 @@ export class PermissionCheckComponent implements OnInit {
   constructor(protected readonly authorizationService: AuthorizationService) { }
 
   ngOnInit(): void {
-    if(this.ctx) {
+    this.updateDataSource();
+    this.checkPermission();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateDataSource();
+    this.checkPermission();
+  }
+
+  private updateDataSource(): void {
+    if(this.ctx && this.ctx.formMap) {
       // WARNING: Same logic in DateEditComponent
       const abstractControl = this.ctx.formMap.values().next().value;
       if(abstractControl instanceof FormGroup) {
         const formGroup = abstractControl as FormGroup;
         const dataSourceControl = formGroup.controls['data_source'] as any;
-        this.dataSource = dataSourceControl?.value;
-        this.checkPermission();
+        this.dataSource = dataSourceControl?.value ?? '';
       }
     }
   }
 
-  get subject(): string | null {
-    return this._subject;
-  }
-
-  @Input()
-  set subject(value: string | null) {
-    this._subject = value;
-    this.checkPermission();
-  }
-
   checkPermission() {
     if(this.enabledIf) {
-      this.displayEnabled = this.authorizationService.checkPermission(this.action, this._subject, this.dataSource);
+      this.displayEnabled = this.authorizationService.checkPermission(this.action, this.subject, this.dataSource);
     }
     else {
-      this.displayEnabled = !this.authorizationService.checkPermission(this.action, this._subject, this.dataSource);
+      this.displayEnabled = !this.authorizationService.checkPermission(this.action, this.subject, this.dataSource);
     }
   }
 }

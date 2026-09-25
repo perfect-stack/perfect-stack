@@ -1,31 +1,40 @@
+@if (mode === 'view') {
+  <div ngbDropdown [attr.data-testid]="'field-' + (cell?.attribute?.name || name)">
+    @if (selectedOptions.length > 0) {
+      @for (option of selectedOptions; track option) {
+        <span class="badge bg-primary me-1" [attr.data-testid]="'view-badge-' + (cell?.attribute?.name || name)">
+          <span class="option-label align-top">{{getDisplayLabel(option)}}</span>
+        </span>
+      }
+    }
+    @if (selectedOptions.length === 0) {
+      <div class="input-group">
+        <span class="form-control empty-value" readonly [id]="name" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">&mdash;</span>
+      </div>
+    }
+  </div>
+}
 
-<div ngbDropdown *ngIf="mode === 'view'">
-  <ng-container *ngIf="selectedOptions.length > 0">
-    <span class="badge bg-primary me-1" *ngFor="let option of selectedOptions">
-      <span class="option-label align-top">{{getDisplayLabel(option)}}</span>
-    </span>
-  </ng-container>
-  <ng-container *ngIf="selectedOptions.length === 0">
-    <div class="input-group">
-      <span class="form-control empty-value" readonly [id]="name">&mdash;</span>
+@if (mode !== 'view') {
+  <div ngbDropdown [attr.data-testid]="'field-' + (cell?.attribute?.name || name)">
+    <div class="form-select w-100" style="white-space: normal;" [id]="name || 'dropdownBasic1'" [attr.data-testid]="'select-multiple-' + (cell?.attribute?.name || name)" ngbDropdownToggle>
+      @if (selectedOptions.length === 0) {
+        <span>&nbsp;</span>
+      }
+      @for (option of selectedOptions; track option) {
+        <span class="badge bg-primary me-1" (click)="onItemDeleted(option, $event)">
+          <span class="option-label align-top">{{getDisplayLabel(option)}}</span>
+          <span class="option-delete material-symbols-outlined ms-1">close</span>
+        </span>
+      }
     </div>
-  </ng-container>
-</div>
-
-
-<div ngbDropdown *ngIf="mode !== 'view'">
-  <div class="form-select w-100" style="white-space: normal;" id="dropdownBasic1" ngbDropdownToggle>
-    <span *ngIf="selectedOptions.length === 0">&nbsp;</span>
-    <span class="badge bg-primary me-1" *ngFor="let option of selectedOptions" (click)="onItemDeleted(option, $event)">
-      <span class="option-label align-top">{{getDisplayLabel(option)}}</span>
-      <span class="option-delete material-symbols-outlined ms-1">close</span>
-    </span>
+    <div ngbDropdownMenu [attr.aria-labelledby]="name || 'dropdownBasic1'">
+      @for (option of optionList; track option) {
+        <button ngbDropdownItem [attr.data-testid]="'option-' + (cell?.attribute?.name || name) + '-' + getDisplayLabel(option)" (click)="onItemSelected(option)">{{getDisplayLabel(option)}}</button>
+      }
+    </div>
+    @if (hasErrors() && cell.attribute) {
+      <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+    }
   </div>
-  <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-    <button ngbDropdownItem *ngFor="let option of optionList" (click)="onItemSelected(option)">{{getDisplayLabel(option)}}</button>
-  </div>
-
-  <ng-container *ngIf="hasErrors() && cell.attribute">
-    <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
-  </ng-container>
-</div>
+}

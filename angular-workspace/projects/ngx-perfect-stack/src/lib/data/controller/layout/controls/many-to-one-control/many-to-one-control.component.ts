@@ -1,4 +1,14 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import {ControlValueAccessor, UntypedFormGroup, NgControl} from '@angular/forms';
 import {MetaAttribute, MetaEntity} from '../../../../../domain/meta.entity';
 import {
@@ -7,9 +17,10 @@ import {
   distinctUntilChanged,
   Observable,
   of,
-  OperatorFunction, Subscription,
+  OperatorFunction,
+  Subscription,
   switchMap,
-  tap
+  tap,
 } from 'rxjs';
 import {TypeaheadService} from './typeahead.service';
 import {Item} from './typeahead.response';
@@ -21,12 +32,12 @@ import {ValidationResult} from '../../../../../domain/meta.rule';
 import {Cell} from '../../../../../domain/meta.page';
 
 @Component({
-    selector: 'lib-many-to-one-control',
-    templateUrl: './many-to-one-control.component.html',
-    styleUrls: ['./many-to-one-control.component.css'],
-    standalone: false
+  selector: 'lib-many-to-one-control',
+  templateUrl: './many-to-one-control.component.html',
+  styleUrls: ['./many-to-one-control.component.css'],
+  standalone: false,
 })
-export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class ManyToOneControlComponent implements OnInit, OnChanges, OnDestroy, ControlValueAccessor {
 
   @Input()
   mode: string | null;
@@ -49,23 +60,32 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   @ViewChild('searchInput')
   searchInput: ElementRef;
 
-  selectedModelId: string | null;
-  selectedModel: any | null;
+  selectedModelId: string | null = null;
+  selectedModel: any | null = null;
 
   searching = false;
   searchFailed = false;
-  typeaheadSubscription: Subscription;
+  typeaheadSubscription?: Subscription;
 
   disabled = false;
 
-  constructor(protected readonly dataService: DataService,
-              protected readonly eventService: EventService,
-              protected readonly typeaheadService: TypeaheadService,
-              public ngControl: NgControl) {
+  constructor(
+    protected readonly dataService: DataService,
+    protected readonly eventService: EventService,
+    protected readonly typeaheadService: TypeaheadService,
+    protected readonly cdr: ChangeDetectorRef,
+    public ngControl: NgControl,
+  ) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ((changes['metaEntity'] || changes['attribute']) && this.selectedModelId && (!this.selectedModel || this.selectedModel.id !== this.selectedModelId)) {
+      this.loadModelById(this.selectedModelId);
+    }
   }
 
   search: OperatorFunction<string, readonly Item[]> = (text$: Observable<string>) =>
@@ -80,12 +100,16 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
             catchError(() => {
               this.searchFailed = true;
               return of([]);
-            }))
+            }),
+          );
         } else {
           return of([]);
         }
       }),
-      tap(() => this.searching = false)
+      tap(() => {
+        this.searching = false;
+        this.cdr.markForCheck();
+      }),
     );
 
   formatter = (x: {displayText: string}) => x.displayText;
@@ -99,6 +123,7 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
     if(item && item.id) {
       console.log('onSelectItem', event.item);
       this.setValueByItem(item);
+      this.onChange(this.selectedModelId);
 
       // Dispatch event for the item selected
       if(this.ctx) {
@@ -113,44 +138,61 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   onClear($event: MouseEvent) {
     // don't let the Clear link grab focus otherwise it upsets the onfocusOut() behaviour below
     $event.preventDefault();
-    this.setValueById(null);
+    this.setValueByItem(null);
+    this.onChange(null);
   }
 
   setValueByItem(item: Item | null) {
     if(item) {
       this.selectedModelId = item.id;
       this.selectedModel = item;
-      this.onChange(this.selectedModelId)
     }
     else {
       this.selectedModelId = null;
       this.selectedModel = null;
-      this.onChange(null);
     }
+    this.cdr.markForCheck();
   }
 
   setValueById(id: string | null) {
+    this.loadModelById(id);
+  }
+
+  loadModelById(id: string | null) {
     if(this.typeaheadSubscription) {
       this.typeaheadSubscription.unsubscribe();
+      this.typeaheadSubscription = undefined;
     }
 
-    if(id) {
-      this.typeaheadSubscription = this.typeaheadService.searchById(id, this.metaEntity, this.attribute).subscribe((items) => {
-        if(items && items.length === 1) {
-          this.setValueByItem(items[0]);
-        }
+    this.selectedModelId = id;
+
+    if(id && this.metaEntity && this.attribute) {
+      this.typeaheadSubscription = this.typeaheadService.searchById(id, this.metaEntity, this.attribute).subscribe({
+        next: (items) => {
+          if(items && items.length === 1) {
+            this.setValueByItem(items[0]);
+          } else {
+            this.setValueByItem(null);
+          }
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error('ManyToOneControlComponent searchById error:', err);
+          this.setValueByItem(null);
+          this.cdr.markForCheck();
+        },
       });
     }
-    else {
-      this.setValueByItem(null)
+    else if (!id) {
+      this.setValueByItem(null);
     }
   }
 
-  onChange: any = () => {}
-  onTouch: any = () => {}
+  onChange: any = () => {};
+  onTouch: any = () => {};
 
   registerOnChange(fn: any): void {
-    this.onChange = fn
+    this.onChange = fn;
   }
 
   registerOnTouched(fn: any): void {
@@ -159,6 +201,7 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   writeValue(obj: any): void {
@@ -166,6 +209,9 @@ export class ManyToOneControlComponent implements OnInit, OnDestroy, ControlValu
   }
 
   ngOnDestroy(): void {
+    if(this.typeaheadSubscription) {
+      this.typeaheadSubscription.unsubscribe();
+    }
   }
 
   onFocusOut($event: FocusEvent) {

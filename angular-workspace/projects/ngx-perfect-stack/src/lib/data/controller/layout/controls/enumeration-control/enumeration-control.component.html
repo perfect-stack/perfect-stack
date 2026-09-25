@@ -1,26 +1,32 @@
-<ng-container *ngIf="options">
-  <ng-container *ngIf="mode !== 'view' && !cell.displayOnly">
-    <select [ngClass]="{'form-control': isReadOnly(), 'form-select': !isReadOnly(), 'ng-invalid': this.hasErrors(), 'ng-touched': touched}" [id]="ngControl.name" [disabled]="disabled || isReadOnly()"
-            [ngModel]="selectedOption" (ngModelChange)="onSelectOption($event)" [ngModelOptions]="{standalone: true}">
-      <option *ngFor="let o of options" [ngValue]="o">{{o}}</option>
-      <option [ngValue]="null"></option>
-    </select>
-
-    <ng-container *ngIf="hasErrors() && attribute">
-      <lib-validation-result-label [attribute]="attribute" [validationResult]="validationResult"></lib-validation-result-label>
-    </ng-container>
-  </ng-container>
-
-  <ng-container *ngIf="mode === 'view' || cell.displayOnly">
-    <ng-container *ngIf="selectedOption">
-      <div class="input-group">
-        <input class="form-control" readonly [id]="attribute.name" value="{{selectedOption}}">
+@if (options) {
+  @if (mode !== 'view' && !cell.displayOnly) {
+    <div class="input-group" [attr.data-testid]="'field-' + (attribute?.name || ngControl.name)">
+      <select [ngClass]="{'form-control': isReadOnly(), 'form-select': !isReadOnly(), 'ng-invalid': this.hasErrors(), 'ng-touched': touched}"
+        [id]="ngControl.name"
+        [attr.name]="ngControl.name"
+        [attr.data-testid]="'select-' + (attribute?.name || ngControl.name)"
+        [disabled]="disabled || isReadOnly()"
+        [ngModel]="selectedOption" (ngModelChange)="onSelectOption($event)" [ngModelOptions]="{standalone: true}">
+        @for (o of options; track o) {
+          <option [ngValue]="o">{{o}}</option>
+        }
+        <option [ngValue]="null"></option>
+      </select>
+      @if (hasErrors() && attribute) {
+        <lib-validation-result-label [attribute]="attribute" [validationResult]="validationResult"></lib-validation-result-label>
+      }
+    </div>
+  }
+  @if (mode === 'view' || cell.displayOnly) {
+    @if (selectedOption) {
+      <div class="input-group" [attr.data-testid]="'field-' + attribute.name">
+        <input class="form-control" readonly [id]="attribute.name" [attr.data-testid]="'view-' + attribute.name" value="{{selectedOption}}">
       </div>
-    </ng-container>
-    <ng-container *ngIf="!selectedOption">
-      <div class="input-group">
-        <input class="form-control empty-value" readonly [id]="attribute.name" value="&mdash;">
+    }
+    @if (!selectedOption) {
+      <div class="input-group" [attr.data-testid]="'field-' + attribute.name">
+        <input class="form-control empty-value" readonly [id]="attribute.name" [attr.data-testid]="'view-' + attribute.name" value="&mdash;">
       </div>
-    </ng-container>
-  </ng-container>
-</ng-container>
+    }
+  }
+}

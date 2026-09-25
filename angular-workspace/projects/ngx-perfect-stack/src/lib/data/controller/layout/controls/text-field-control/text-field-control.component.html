@@ -1,30 +1,36 @@
-<ng-container *ngIf="mode !== 'view' && !cell.displayOnly">
-  <div class="input-group flex-nowrap">
+@if (mode !== 'view' && !cell.displayOnly) {
+  <div class="input-group flex-nowrap" [attr.data-testid]="'field-' + name">
     <input class="form-control" [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}" [readonly]="isReadOnly()" [id]="name"
-           [ngModel]="internalValue" (ngModelChange)="onModelChange($event)" [ngModelOptions]="{standalone: true}"
-           libDecimalNumber [scale]="cell.attribute?.scale">
-    <span class="input-group-text" [id]="name + '_uom'" *ngIf="cell && cell.attribute && cell.attribute.unitOfMeasure">
-      {{cell.attribute.unitOfMeasure}}
-    </span>
-  </div>
-  <ng-container *ngIf="hasErrors() && cell.attribute">
-    <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
-  </ng-container>
-</ng-container>
-
-<ng-container *ngIf="mode === 'view' || cell.displayOnly">
-  <ng-container *ngIf="internalValue">
-    <div class="input-group">
-      <span class="form-control" readonly="true"  [id]="name">
-        {{internalValue}} <span [id]="name + '_uom'" *ngIf="cell.attribute?.unitOfMeasure">{{cell.attribute?.unitOfMeasure}}</span>
+      [attr.name]="name"
+      [attr.data-testid]="'input-' + name"
+      [ngModel]="internalValue" (ngModelChange)="onModelChange($event)" [ngModelOptions]="{standalone: true}"
+      libDecimalNumber [scale]="cell.attribute?.scale">
+    @if (cell && cell.attribute && cell.attribute.unitOfMeasure) {
+      <span class="input-group-text" [id]="name + '_uom'" [attr.data-testid]="'uom-' + name">
+        {{cell.attribute.unitOfMeasure}}
       </span>
-      <!--<input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name"
-             [(ngModel)]="internalValue" [ngModelOptions]="{standalone: true}">-->
-    </div>
-  </ng-container>
-  <ng-container *ngIf="!internalValue">
-    <div class="input-group">
-      <span class="form-control empty-value" readonly [id]="name">&mdash;</span>
-    </div>
-  </ng-container>
-</ng-container>
+    }
+  </div>
+  @if (hasErrors() && cell.attribute) {
+    <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+  }
+}
+
+@if (mode === 'view' || cell.displayOnly) {
+  @if (internalValue) {
+    <div class="input-group" [attr.data-testid]="'field-' + name">
+      <span class="form-control" readonly="true" [id]="name" [attr.data-testid]="'view-' + name">
+        {{internalValue}} @if (cell.attribute?.unitOfMeasure) {
+        <span [id]="name + '_uom'" [attr.data-testid]="'uom-' + name">{{cell.attribute?.unitOfMeasure}}</span>
+      }
+    </span>
+    <!--<input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name"
+    [(ngModel)]="internalValue" [ngModelOptions]="{standalone: true}">-->
+  </div>
+}
+@if (!internalValue) {
+  <div class="input-group" [attr.data-testid]="'field-' + name">
+    <span class="form-control empty-value" readonly [id]="name" [attr.data-testid]="'view-' + name">&mdash;</span>
+  </div>
+}
+}

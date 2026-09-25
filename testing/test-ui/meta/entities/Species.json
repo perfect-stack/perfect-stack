@@ -4,7 +4,9 @@
   "icon": "",
   "type": "Database",
   "rootNode": true,
+  "treeNode": true,
   "timestamps": true,
+  "permanentDelete": true,
   "attributes": [
     {
       "name": "id",
@@ -21,9 +23,9 @@
       "rules": []
     },
     {
-      "name": "name",
-      "label": "Species Name",
-      "description": "The name of the species (e.g. Dog, Cat, Bird)",
+      "name": "scientific_name",
+      "label": "Scientific Name",
+      "description": "The scientific / taxonomic name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -31,34 +33,83 @@
       "comparisonField": "",
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
-      "typeaheadSearch": [
-        "name"
-      ],
+      "typeaheadSearch": [],
       "rules": [
         {
           "type": "Required",
-          "config": ""
-        },
-        {
-          "type": "UniqueInsensitive",
           "config": ""
         }
       ]
     },
     {
-      "name": "sort_index",
-      "label": "Sort Index",
-      "description": "Display order index",
+      "name": "common_name",
+      "label": "Common Name",
+      "description": "The common or vernacular name if any",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "Integer",
+      "type": "Text",
       "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "rank",
+      "label": "Rank",
+      "description": "Taxonomic rank",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Required",
       "comparisonField": "",
       "comparisonOperator": "Equals",
       "relationshipTarget": "",
       "typeaheadSearch": [],
+      "enumeration": [
+        "Kingdom",
+        "Phylum",
+        "Class",
+        "Order",
+        "Family",
+        "Genus",
+        "Species"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "parent",
+      "label": "Parent",
+      "description": "Parent taxonomic entity",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "Species",
+      "typeaheadSearch": ["scientific_name", "common_name"],
+      "rules": []
+    },
+    {
+      "name": "children",
+      "label": "Children",
+      "description": "Child taxonomic entities",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Species",
+      "typeaheadSearch": [],
       "rules": []
     }
-  ],
-  "permanentDelete": true
+  ]
 }

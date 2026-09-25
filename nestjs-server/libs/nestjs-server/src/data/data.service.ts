@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Entity } from '../domain/entity';
 import { EntityResponse } from '../domain/response/entity.response';
 import { OrmService } from '../orm/orm.service';
@@ -17,7 +17,7 @@ import { UpdateSortIndexRequest } from './update-sort-index.request';
 import { AuditAction } from '../domain/audit';
 import { QueryService } from './query.service';
 import { EventService } from '../event/event.service';
-import { Transaction } from 'sequelize';
+import { QueryTypes, Transaction } from 'sequelize';
 import {MediaRepositoryService} from "../media/media-repository.service";
 import {DiscriminatorService} from "./discriminator.service";
 import {ValidationService} from "./validation.service";
@@ -125,12 +125,115 @@ export class DataService {
       }
   }
 
+  getTreeParentAttribute(metaEntity: MetaEntity): MetaAttribute | undefined {
+    return metaEntity?.attributes?.find(
+      (a) =>
+        a.type === AttributeType.ManyToOne &&
+        a.relationshipTarget === metaEntity.name,
+    );
+  }
+
+  getTreeChildrenAttribute(metaEntity: MetaEntity): MetaAttribute | undefined {
+    return metaEntity?.attributes?.find(
+      (a) =>
+        a.type === AttributeType.OneToMany &&
+        a.relationshipTarget === metaEntity.name,
+    );
+  }
+
+  async validateTreeInvariants(
+    entity: Entity,
+    metaEntity: MetaEntity,
+    txn?: Transaction,
+  ): Promise<void> {
+    const parentAttr = this.getTreeParentAttribute(metaEntity);
+    if (!parentAttr) {
+      return;
+    }
+
+    const parentFkName = parentAttr.name + "_id";
+    let parentId = entity[parentFkName];
+    if (
+      !parentId &&
+      entity[parentAttr.name] &&
+      typeof entity[parentAttr.name] === "object"
+    ) {
+      parentId = entity[parentAttr.name].id;
+    }
+    if (parentId === "") {
+      parentId = null;
+    }
+    entity[parentFkName] = parentId;
+
+    const model = this.ormService.sequelize.model(metaEntity.name);
+
+    if (!parentId) {
+      // Attempting to save a root node (parent_id is null)
+      const existingRoots: any[] = await model.findAll({
+        where: {
+          [parentFkName]: null,
+        },
+        transaction: txn,
+      });
+
+      const otherRoot = existingRoots.find((r) => r.id !== entity.id);
+      if (otherRoot) {
+        throw new BadRequestException(
+          `A root entity already exists for ${metaEntity.name} (id: ${otherRoot.id}). Non-root entities must specify a parent.`,
+        );
+      }
+    } else {
+      // Non-root node must specify an existing parent
+      if (entity.id && entity.id === parentId) {
+        throw new BadRequestException(`An entity cannot be its own parent.`);
+      }
+
+      const parentRecord = await model.findByPk(parentId, { transaction: txn });
+      if (!parentRecord) {
+        throw new BadRequestException(
+          `Specified parent ${metaEntity.name} with id ${parentId} does not exist.`,
+        );
+      }
+
+      // Cycle prevention if entity is an existing node being reparented
+      if (entity.id) {
+        const sql = `
+          WITH RECURSIVE descendants_cte AS (
+            SELECT "id"
+            FROM "${metaEntity.name}"
+            WHERE "${parentFkName}" = :entityId
+            UNION ALL
+            SELECT c."id"
+            FROM "${metaEntity.name}" c
+            JOIN descendants_cte d ON c."${parentFkName}" = d."id"
+          )
+          SELECT "id" FROM descendants_cte WHERE "id" = :parentId;
+        `;
+        const descendantRows: any[] = (await this.ormService.sequelize.query(
+          sql,
+          {
+            replacements: { entityId: entity.id, parentId },
+            type: QueryTypes.SELECT,
+            transaction: txn,
+          },
+        )) as any[];
+
+        if (descendantRows && descendantRows.length > 0) {
+          throw new BadRequestException(
+            `Cannot set parent to ${parentId}: cycle detected (target parent is a descendant of this node).`,
+          );
+        }
+      }
+    }
+  }
+
   async saveValidatedEntity(
     entity: Entity,
     metaEntity: MetaEntity,
     metaEntityMap: Map<string, MetaEntity>,
     txn?: Transaction,
   ): Promise<EntityResponse> {
+    await this.validateTreeInvariants(entity, metaEntity, txn);
     await this.saveOneToOneChildren(metaEntity, entity, metaEntityMap);
 
     const model = this.ormService.sequelize.model(metaEntity.name);
@@ -213,6 +316,9 @@ export class DataService {
     for (const attribute of parentMetaEntity.attributes) {
       switch (attribute.type) {
         case AttributeType.OneToMany:
+          if (attribute.relationshipTarget === parentMetaEntity.name) {
+            continue;
+          }
           await this.saveListOfChildren(
             metaEntityMap,
             parentEntity,
@@ -612,14 +718,33 @@ export class DataService {
         },
       });
     } else {
-      throw new Error(
-        `Unable to destroy ${entityName} (${id}) since there are related entities`,
+      throw new BadRequestException(
+        `Unable to destroy ${entityName} (${id}) since there are related entities or child nodes`,
       );
     }
   }
 
   async destroyCheck(entityName: string, id: string) {
     this.logger.log(`Destroy check for ${entityName}: ${id}`);
+
+    // Check if this entity is a tree entity and has child nodes (leaf-only deletion rule)
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    const parentAttr = this.getTreeParentAttribute(metaEntity);
+    if (parentAttr) {
+      const parentFkName = parentAttr.name + "_id";
+      const model = this.ormService.sequelize.model(entityName);
+      const childCount = await model.count({
+        where: {
+          [parentFkName]: id,
+        },
+      });
+      if (childCount > 0) {
+        this.logger.log(
+          `Destroy check failed for tree node ${entityName} (${id}): node has ${childCount} child nodes`,
+        );
+        return false;
+      }
+    }
 
     // find all entities that have a relationship to this entity
     const relatedEntities = await this.findRelatedEntities(entityName);

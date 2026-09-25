@@ -1,40 +1,37 @@
-<ng-container *ngIf="metaPage$ | async as metaPage">
+@if (metaPage$ | async; as metaPage) {
   <div class="container-border-radius m-3 p-3">
     <h2>Page Edit</h2>
-
     <form class="form mb-2" #form="ngForm" [formGroup]="metaPageForm">
       <div class="row">
         <div class="col-2">
           <label class="form-label" for="name">Name</label>
           <input class="form-control" type="text" id="name" formControlName="name">
         </div>
-
         <div class="col-2">
           <label class="form-label" for="title">Title</label>
           <input class="form-control" type="text" id="title" formControlName="title">
         </div>
-
         <div class="col-2">
           <label class="form-label" for="type">Type</label>
           <select class="form-select" id="type" formControlName="type">
-            <option *ngFor="let o of getPageTypeOptions()" [ngValue]="o">{{o}}</option>
+            @for (o of getPageTypeOptions(); track o) {
+              <option [ngValue]="o">{{o}}</option>
+            }
           </select>
         </div>
-
         <div class="col-2">
           <label class="form-label" for="layoutStyle">Layout style</label>
           <select class="form-select" id="layoutStyle" formControlName="layoutStyle">
-            <option *ngFor="let o of getLayoutStyleOptions()" [ngValue]="o">{{o}}</option>
+            @for (o of getLayoutStyleOptions(); track o) {
+              <option [ngValue]="o">{{o}}</option>
+            }
           </select>
         </div>
       </div>
     </form>
-
     <lib-data-query-map [dataQueryList]="dataQueryList"></lib-data-query-map>
-
     <lib-controller-list [controllers]="controllers"></lib-controller-list>
   </div>
-
   <div class="container-border-radius m-3 p-3">
     <div class="row">
       <div class="col-10">
@@ -42,20 +39,19 @@
         <div class="pb-2">
           <lib-tool-palette></lib-tool-palette>
         </div>
-
         <h4>Templates</h4>
-        <div class="mb-4" *ngFor="let nextTemplate of templates">
-          <lib-template-controller [template]="nextTemplate"></lib-template-controller>
-        </div>
+        @for (nextTemplate of templates; track nextTemplate) {
+          <div class="mb-4">
+            <lib-template-controller [template]="nextTemplate"></lib-template-controller>
+          </div>
+        }
       </div>
-
       <div class="col-2">
         <lib-property-sheet></lib-property-sheet>
         <lib-attribute-palette></lib-attribute-palette>
       </div>
     </div>
   </div>
-
   <div class="d-flex my-5 px-3">
     <button class="btn btn-danger" (click)="onDelete(metaPage)">Delete</button>
     <div class="flex-grow-1"></div>
@@ -63,7 +59,6 @@
     <button class="btn btn-outline-primary me-2" (click)="onCancel()">Cancel</button>
     <button class="btn btn-primary" (click)="onSave()">Save</button>
   </div>
-
   <!--<hr>
   <div class="drag-border">drag-border</div>
   <div class="drag-handle">drag-handle</div>
@@ -71,5 +66,4 @@
   <div class="drag-hint-border">drag-hint-border</div>
   <div class="drag-over-border">drag-over-border</div>
   <div class="drag-transit">drag-transit</div>-->
-
-</ng-container>
+}

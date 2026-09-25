@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "esModuleInterop": true,
@@ -13,35 +14,25 @@
     "noFallthroughCasesInSwitch": true,
     "strictPropertyInitialization": false,
     "sourceMap": true,
-    "preserveSymlinks": true,
-    "paths": {
-      "@angular/*": [
-        "node_modules/@angular/*"
-      ],
-      "rxjs": [
-        "node_modules/rxjs"
-      ],
-      "rxjs/*": [
-        "node_modules/rxjs/*"
-      ],
-      "@perfect-stack/ngx-perfect-stack": [
-        "node_modules/@perfect-stack/ngx-perfect-stack"
-      ],
-      "@perfect-stack/ngx-perfect-stack/*": [
-        "node_modules/@perfect-stack/ngx-perfect-stack/*"
-      ]
-    },
     "declaration": false,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
     "module": "es2020",
     "lib": [
-      "es2020",
+      "es2022",
       "dom"
     ],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths": {
+      "@perfect-stack/ngx-perfect-stack": [
+        "../../angular-workspace/dist/ngx-perfect-stack"
+      ],
+      "@perfect-stack/ngx-perfect-stack/*": [
+        "../../angular-workspace/dist/ngx-perfect-stack/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

@@ -1,6 +1,6 @@
 {
   "CLIENT_RELEASE": "1.0.0",
-  "API_URL": "http://localhost:3080",
+  "API_URL": "http://127.0.0.1:3080",
   "AUTHENTICATION_PROVIDER": "None",
   "COGNITO_LOGIN_URL": "",
   "DATE_FORMAT": "dd-MMM-yyyy",

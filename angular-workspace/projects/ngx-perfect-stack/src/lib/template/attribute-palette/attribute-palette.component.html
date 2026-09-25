@@ -1,10 +1,11 @@
-<ng-container *ngIf="metaEntity$ | async as metaEntity">
+@if (metaEntity$ | async; as metaEntity) {
   <h4 class="mt-4">{{metaEntity.name}} attributes</h4>
-
-  <ng-container *ngIf="metaEntity && metaEntity.attributes">
-    <div class="draggable-attribute drag-handle" *ngFor="let attribute of metaEntity.attributes" my-draggable [drag-data]="attribute">
-      <span class="material-symbols-outlined align-middle">drag_indicator</span>
-      {{attribute.label}}
-    </div>
-  </ng-container>
-</ng-container>
+  @if (metaEntity && metaEntity.attributes) {
+    @for (attribute of metaEntity.attributes; track attribute) {
+      <div class="draggable-attribute drag-handle" my-draggable [drag-data]="attribute">
+        <span class="material-symbols-outlined align-middle">drag_indicator</span>
+        {{attribute.label}}
+      </div>
+    }
+  }
+}

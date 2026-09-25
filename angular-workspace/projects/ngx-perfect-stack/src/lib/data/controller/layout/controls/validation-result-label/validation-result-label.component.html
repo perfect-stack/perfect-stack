@@ -1,7 +1,11 @@
-
-<ng-container [ngSwitch]="validationResult.resultType">
-  <span *ngSwitchCase="'Error'" class="validation-result text-danger">{{validationResult.message}}</span>
-  <span *ngSwitchCase="'Info'" class="validation-result text-info">{{validationResult.message}}</span>
-  <span *ngSwitchCase="'Warning'" class="validation-result text-warning">{{validationResult.message}}</span>
-</ng-container>
-
+@switch (validationResult.resultType) {
+  @case ('Error') {
+    <span class="validation-result text-danger" [attr.data-testid]="'error-' + (attribute?.name || 'validation')">{{validationResult.message}}</span>
+  }
+  @case ('Info') {
+    <span class="validation-result text-info" [attr.data-testid]="'info-' + (attribute?.name || 'validation')">{{validationResult.message}}</span>
+  }
+  @case ('Warning') {
+    <span class="validation-result text-warning" [attr.data-testid]="'warning-' + (attribute?.name || 'validation')">{{validationResult.message}}</span>
+  }
+}

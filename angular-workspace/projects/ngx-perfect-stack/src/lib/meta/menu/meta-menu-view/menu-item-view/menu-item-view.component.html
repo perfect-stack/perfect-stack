@@ -1,24 +1,26 @@
-<div class="wrapper" *ngIf="menuItem">
-
-  <div>
-    <div>{{menuItem.label}}</div>
-    <div class="small">{{menuItem.route}}</div>
-  </div>
-
-  <div class="overlay" *ngIf="mouseActive">
-    <div class="d-flex">
-      <span class="material-symbols-outlined" (click)="onMenuMoved(-1)">keyboard_arrow_left</span>
-      <span class="material-symbols-outlined" (click)="onMove(-1)">keyboard_arrow_up</span>
-      <span class="material-symbols-outlined" (click)="onMove(+1)">keyboard_arrow_down</span>
-      <span class="material-symbols-outlined" (click)="onMenuMoved(+1)">keyboard_arrow_right</span>
+@if (menuItem) {
+  <div class="wrapper">
+    <div>
+      <div>{{menuItem.label}}</div>
+      <div class="small">{{menuItem.route}}</div>
     </div>
-    <div class="d-flex justify-content-center">
-      <span class="material-symbols-outlined" (click)="onAdd()">add</span>
-      <span class="material-symbols-outlined" (click)="onEditMenuItem(content)">edit</span>
-      <span class="material-symbols-outlined" (click)="onDelete()">delete</span>
-    </div>
+    @if (mouseActive) {
+      <div class="overlay">
+        <div class="d-flex">
+          <span class="material-symbols-outlined" (click)="onMenuMoved(-1)">keyboard_arrow_left</span>
+          <span class="material-symbols-outlined" (click)="onMove(-1)">keyboard_arrow_up</span>
+          <span class="material-symbols-outlined" (click)="onMove(+1)">keyboard_arrow_down</span>
+          <span class="material-symbols-outlined" (click)="onMenuMoved(+1)">keyboard_arrow_right</span>
+        </div>
+        <div class="d-flex justify-content-center">
+          <span class="material-symbols-outlined" (click)="onAdd()">add</span>
+          <span class="material-symbols-outlined" (click)="onEditMenuItem(content)">edit</span>
+          <span class="material-symbols-outlined" (click)="onDelete()">delete</span>
+        </div>
+      </div>
+    }
   </div>
-</div>
+}
 
 <ng-template #content let-modal>
   <div class="modal-header">

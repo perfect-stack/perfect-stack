@@ -3,36 +3,39 @@
     <div class="row">
 
       <!-- Empty Cell -->
-      <div class="col-12"
-           my-dropzone (myDropZoneDroppedEvent)="onDropzoneDropped($event)"
-           [ngStyle]="{'min-height': getCSSHeight(cell)}"
-           *ngIf="!attribute && !cell.template && !cell.tool">
-      </div>
+      @if (!attribute && !cell.template && !cell.tool) {
+        <div class="col-12"
+          my-dropzone (myDropZoneDroppedEvent)="onDropzoneDropped($event)"
+          [ngStyle]="{'min-height': getCSSHeight(cell)}"
+          >
+        </div>
+      }
 
       <!-- MetaAttribute Cell -->
-      <div class="col-12"
-           [ngStyle]="{'min-height': getCSSHeight(cell)}"
-           *ngIf="attribute && !cell.template">
-        <label [for]="attribute.name" *ngIf="isShowLabel(attribute)">
-          <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
-        </label>
-
-        <div [ngSwitch]="attribute.type">
-          <ng-container *ngSwitchCase="'Date'">
-            <ng-container [formGroup]="entityForm">
-              <app-date-picker-control [mode]="'edit'" [attribute]="attribute" [formControlName]="attribute.name"></app-date-picker-control>
-            </ng-container>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'DateTime'">
-            <lib-date-time-control [mode]="'edit'" [formGroup]="entityForm" [name]="attribute.name"></lib-date-time-control>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="['Text', 'Html', 'Double', 'Integer'].includes(attribute.type) ? attribute.type : ''">
-            <ng-container [ngSwitch]="cell.component">
-              <ng-container *ngSwitchCase="'TextArea'">
-                <!--<lib-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>-->
-                <editor class="flex-grow-1"
+      @if (attribute && !cell.template) {
+        <div class="col-12"
+          [ngStyle]="{'min-height': getCSSHeight(cell)}"
+          >
+          @if (isShowLabel(attribute)) {
+            <label [for]="attribute.name">
+              <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
+            </label>
+          }
+          <div>
+            @switch (attribute.type) {
+              @case ('Date') {
+                <ng-container [formGroup]="entityForm">
+                  <app-date-picker-control [mode]="'edit'" [attribute]="attribute" [formControlName]="attribute.name"></app-date-picker-control>
+                </ng-container>
+              }
+              @case ('DateTime') {
+                <lib-date-time-control [mode]="'edit'" [formGroup]="entityForm" [name]="attribute.name"></lib-date-time-control>
+              }
+              @case (['Text', 'Html', 'Double', 'Integer'].includes(attribute.type) ? attribute.type : '') {
+                @switch (cell.component) {
+                  @case ('TextArea') {
+                    <!--<lib-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>-->
+                    <editor class="flex-grow-1"
                         [init]="{
                          base_url: '/tinymce',
                          suffix: '.min',
@@ -41,101 +44,97 @@
                          plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
                          toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
                        }"
-                ></editor>
-              </ng-container>
-
-              <ng-container *ngSwitchDefault>
-                <ng-container [formGroup]="entityForm">
-                  <!--<lib-text-field-control [mode]="'edit'" [formControlName]="attribute.name" [name]="attribute.name"></lib-text-field-control>-->
-                  <input class="form-control">
-                </ng-container>
-              </ng-container>
-            </ng-container>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'Boolean'">
-            <lib-boolean-check-box-control [formGroup]="entityForm" [attribute]="attribute"></lib-boolean-check-box-control>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'Enumeration'">
-            <select class="form-select"></select>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'OneToMany'">
-            <ng-container *ngIf="cell.template">
-              <lib-template-controller [template]="cell.template"></lib-template-controller>
-            </ng-container>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'OneToOne'">
-            <ng-container *ngIf="cell.template">
-              <lib-template-controller [template]="cell.template"></lib-template-controller>
-            </ng-container>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'ManyToOne'">
-            <ng-container [ngSwitch]="cell.component">
-              <ng-container *ngSwitchCase="'Select'">
+                    ></editor>
+                  }
+                  @default {
+                    <ng-container [formGroup]="entityForm">
+                      <!--<lib-text-field-control [mode]="'edit'" [formControlName]="attribute.name" [name]="attribute.name"></lib-text-field-control>-->
+                      <input class="form-control">
+                    </ng-container>
+                  }
+                }
+              }
+              @case ('Boolean') {
+                <lib-boolean-check-box-control [formGroup]="entityForm" [attribute]="attribute"></lib-boolean-check-box-control>
+              }
+              @case ('Enumeration') {
                 <select class="form-select"></select>
-              </ng-container>
-
-              <ng-container *ngSwitchCase="'SelectTwo'">
-                <div class="d-flex">
-                  <select class="form-select"></select>
-                  <select class="form-select"></select>
-                </div>
-              </ng-container>
-
-              <ng-container *ngSwitchDefault>
-                <!-- just present a default input field if no other more specific component available -->
-                <input class="form-control">
-              </ng-container>
-            </ng-container>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'OneToPoly'">
-            <p>CardLayout for OneToPoly goes here...</p>
-          </ng-container>
-
-          <ng-container *ngSwitchDefault>
-            ERROR: Missing or unknown attribute type of: "{{attribute.type}}"
-          </ng-container>
+              }
+              @case ('OneToMany') {
+                @if (cell.template) {
+                  <lib-template-controller [template]="cell.template"></lib-template-controller>
+                }
+              }
+              @case ('OneToOne') {
+                @if (cell.template) {
+                  <lib-template-controller [template]="cell.template"></lib-template-controller>
+                }
+              }
+              @case ('ManyToOne') {
+                @switch (cell.component) {
+                  @case ('Select') {
+                    <select class="form-select"></select>
+                  }
+                  @case ('SelectTwo') {
+                    <div class="d-flex">
+                      <select class="form-select"></select>
+                      <select class="form-select"></select>
+                    </div>
+                  }
+                  @default {
+                    <!-- just present a default input field if no other more specific component available -->
+                    <input class="form-control">
+                  }
+                }
+              }
+              @case ('OneToPoly') {
+                <p>CardLayout for OneToPoly goes here...</p>
+              }
+              @default {
+                ERROR: Missing or unknown attribute type of: "{{attribute.type}}"
+              }
+            }
+          </div>
         </div>
-      </div>
+      }
 
       <!-- Cell with a nested Template -->
-      <div class="col-12" *ngIf="!attribute && cell.template">
-        <lib-template-controller [template]="cell.template"></lib-template-controller>
-      </div>
+      @if (!attribute && cell.template) {
+        <div class="col-12">
+          <lib-template-controller [template]="cell.template"></lib-template-controller>
+        </div>
+      }
 
       <!-- Cell with a Tool -->
-      <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}" *ngIf="!attribute && cell.tool">
-        <lib-tool-view [tool]="cell.tool" [editorMode]="true"></lib-tool-view>
-      </div>
+      @if (!attribute && cell.tool) {
+        <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}">
+          <lib-tool-view [tool]="cell.tool" [editorMode]="true"></lib-tool-view>
+        </div>
+      }
     </div>
   </div>
 
-  <ng-container *ngIf="mouseActive">
+  @if (mouseActive) {
     <div class="overlay-top-right p-1">
       <span class="material-symbols-outlined hover-highlight no_selection" (click)="onChangeWidth(-1, $event)">remove_circle_outline</span>
       <span class="material-symbols-outlined hover-highlight no_selection" (click)="onChangeWidth(1, $event)">add_circle_outline</span>
     </div>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="mouseActive">
+  @if (mouseActive) {
     <div class="overlay-bottom-left p-1">
       <span class="material-symbols-outlined hover-highlight no_selection" (click)="onSettings()">settings</span>
       <span class="material-symbols-outlined hover-highlight no_selection" (click)="onDeleteCell()">highlight_off</span>
       <span class="material-symbols-outlined hover-highlight no_selection" (click)="onClearCell()">block</span>
       <span class="material-symbols-outlined hover-highlight no_selection" (click)="onAddTemplate()">view_quilt</span>
     </div>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="mouseActive">
+  @if (mouseActive) {
     <div class="d-flex flex-column overlay-bottom-right p-1">
       <span class="material-symbols-outlined hover-highlight no_selection" (click)="onChangeHeight(-1)">remove_circle_outline</span>
       <span class="material-symbols-outlined hover-highlight no_selection" (click)="onChangeHeight(1)">add_circle_outline</span>
     </div>
-  </ng-container>
+  }
 
 </div>

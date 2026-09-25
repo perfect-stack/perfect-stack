@@ -8,7 +8,7 @@ import {withBypassAuth} from '../../../authentication/auth-interceptor';
 @Injectable()
 export class MetaMenuService {
 
-  menu: MetaMenu;
+  menu: MetaMenu = new MetaMenu();
 
   constructor(
     @Inject(STACK_CONFIG)
@@ -19,12 +19,12 @@ export class MetaMenuService {
     return () => this.http.get(`${this.stackConfig.apiUrl}/meta/menu`, {
       context: withBypassAuth()
     }).pipe( tap((menu) => {
-      this.menu = menu as MetaMenu;
+      this.menu = (menu as MetaMenu) || new MetaMenu();
     }));
   }
 
   getFirstLoginMenuItem(): MenuItem | null {
-    const menu = this?.menu?.menuList[0];
+    const menu = this.menu?.menuList?.[0];
     if(menu && menu.items && menu.items.length > 0) {
       return menu.items[0];
     }

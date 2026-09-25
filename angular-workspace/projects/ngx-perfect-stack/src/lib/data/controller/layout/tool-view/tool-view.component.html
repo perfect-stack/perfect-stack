@@ -1,61 +1,51 @@
-<ng-container *ngIf="tool && isToolVisible()">
+@if (tool && isToolVisible()) {
   <div [ngClass]="tool.containerStyles">
-    <ng-container [ngSwitch]="tool.type">
-      <ng-container *ngSwitchCase="'Button'">
+    @switch (tool.type) {
+      @case ('Button') {
         <lib-button-tool [buttonTool]="asButtonTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-button-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'ButtonGroup'">
+      }
+      @case ('ButtonGroup') {
         <lib-button-group-tool [buttonGroupTool]="asButtonGroupTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-button-group-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'ButtonTabs'">
+      }
+      @case ('ButtonTabs') {
         <lib-button-tabs-tool [buttonTabsTool]="asButtonTabsTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-button-tabs-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Duration'">
+      }
+      @case ('Duration') {
         <lib-duration-tool [durationTool]="asDurationTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-duration-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Image'">
+      }
+      @case ('Image') {
         <lib-image-tool [imageTool]="asImageTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-image-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'LastSignIn'">
+      }
+      @case ('LastSignIn') {
         <lib-last-sign-in-tool [lastSignInTool]="asLastSignInTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-last-sign-in-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Link'">
+      }
+      @case ('Link') {
         <lib-link-tool [linkTool]="asLinkTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-link-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Map'">
+      }
+      @case ('Map') {
         <lib-map-tool [mapTool]="asMapTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-map-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'PageTitle'">
+      }
+      @case ('PageTitle') {
         <lib-page-title-tool [pageTitleTool]="asPageTitleTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-page-title-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Paginate'">
+      }
+      @case ('Paginate') {
         <lib-paginate-tool [paginateTool]="asPaginateTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-paginate-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'TabTool'">
+      }
+      @case ('TabTool') {
         <lib-tab-tool [tabTool]="asTabTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-tab-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'TextTool'">
+      }
+      @case ('TextTool') {
         <lib-text-tool [textTool]="asTextTool()" [editorMode]="editorMode" [ctx]="ctx" [formGroup]="formGroup"></lib-text-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Icon'">
+      }
+      @case ('Icon') {
         <lib-icon-tool [iconTool]="asIconTool()" [editorMode]="editorMode" [ctx]="ctx" [formGroup]="formGroup"></lib-icon-tool>
-      </ng-container>
-
-      <ng-container *ngSwitchDefault>
+      }
+      @case ('Tree') {
+        <lib-tree-tool [treeTool]="asTreeTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-tree-tool>
+      }
+      @default {
         <div>UNKNOWN tool type of {{tool.type}}</div>
-      </ng-container>
-    </ng-container>
+      }
+    }
   </div>
-</ng-container>
+}

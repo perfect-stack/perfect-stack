@@ -10,13 +10,19 @@
       "cells": [
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
-            "attributeName": "name"
+            "attributeName": "scientific_name"
           },
           {
-            "width": "6",
-            "height": "1"
+            "width": "4",
+            "height": "1",
+            "attributeName": "common_name"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "rank"
           }
         ]
       ],
@@ -27,30 +33,48 @@
       "cells": [
         [
           {
-            "width": "6",
+            "width": "3",
             "height": "1",
-            "attributeName": "name"
+            "attributeName": "scientific_name"
           },
           {
-            "width": "6",
+            "width": "3",
             "height": "1",
-            "attributeName": "sort_index"
+            "attributeName": "common_name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "rank"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "parent"
           }
         ],
         [
           {
-            "width": "6",
+            "width": "3",
             "height": "1"
           },
           {
-            "width": "6",
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
+            "height": "1"
+          },
+          {
+            "width": "3",
             "height": "1"
           }
         ]
       ],
       "metaEntityName": "Species",
       "type": "table",
-      "orderByName": "sort_index",
+      "orderByName": "scientific_name",
       "orderByDir": "ASC"
     }
   ]

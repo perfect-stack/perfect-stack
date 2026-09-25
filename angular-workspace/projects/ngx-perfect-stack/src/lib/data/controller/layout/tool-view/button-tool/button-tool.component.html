@@ -1,13 +1,15 @@
 <lib-permission-check [action]="buttonTool.actionPermit" [subject]="buttonTool.subjectPermit">
-  <button [ngClass]="buttonTool.styles" (click)="onClick()">
-    <ng-container *ngIf="buttonTool.icon">
+  <button [ngClass]="buttonTool.styles" (click)="onClick()"
+    [attr.data-testid]="'btn-tool-' + (buttonTool?.action || buttonTool?.label)"
+    [attr.data-test-label]="buttonTool?.label">
+    @if (buttonTool.icon) {
       <div class="d-flex align-items-center">
         <span class="material-symbols-outlined pe-1">{{buttonTool.icon}}</span>
         {{buttonTool.label}}
       </div>
-    </ng-container>
-    <ng-container *ngIf="!buttonTool.icon">
+    }
+    @if (!buttonTool.icon) {
       {{buttonTool.label}}
-    </ng-container>
+    }
   </button>
 </lib-permission-check>

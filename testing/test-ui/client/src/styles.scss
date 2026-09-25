@@ -1,17 +1,16 @@
 /* Global styles */
 
+@use "bootstrap/scss/bootstrap" as * with (
+  $primary: #056EBA,
+  $success: #027A48,
+  $warning: #F79009,
+  $danger:  #D92D20,
+  $light:   #FFFFFF
+);
+@use "library-styles";
+
 // primary font
 $primary_font: 'Roboto', sans-serif;
-
-// Theme colors
-$primary:       #056EBA;
-$success:       #027A48;
-$warning:       #F79009;
-$danger:        #D92D20;
-$light:         #FFFFFF;
-
-@import "bootstrap/scss/bootstrap";
-@import "library-styles.scss";
 
 @font-face {
   font-family: 'Roboto';

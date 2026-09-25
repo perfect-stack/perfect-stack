@@ -54,24 +54,26 @@ export class MenuBarComponent implements OnInit {
     // sweep through the menus and check permissions for each. store this in a variable and only update it when the
     // user changes
     const nextMenuEnabled: any = {};
-    for(const nextMenu of this.metaMenuService.menu.menuList) {
-      nextMenuEnabled[nextMenu.label] = this.authorizationService.checkPermission(ActionType.Menu, nextMenu.label);
+    if (this.metaMenuService.menu && this.metaMenuService.menu.menuList) {
+      for(const nextMenu of this.metaMenuService.menu.menuList) {
+        nextMenuEnabled[nextMenu.label] = this.authorizationService.checkPermission(ActionType.Menu, nextMenu.label);
 
-      if(nextMenu.items && nextMenu.items.length > 0) {
+        if(nextMenu.items && nextMenu.items.length > 0) {
 
-        for(const nextMenuItem of nextMenu.items) {
-          if(nextMenuItem.roles && nextMenuItem.roles.length > 0) {
-            let inRole = false;
-            for (const nextRole of nextMenuItem.roles) {
-              inRole = this.authorizationService.userInRole(nextRole);
-              if (inRole) {
+          for(const nextMenuItem of nextMenu.items) {
+            if(nextMenuItem.roles && nextMenuItem.roles.length > 0) {
+              let inRole = false;
+              for (const nextRole of nextMenuItem.roles) {
+                inRole = this.authorizationService.userInRole(nextRole);
+                if (inRole) {
+                  break;
+                }
+              }
+
+              if(inRole) {
+                this.menuOptionEnabled[nextMenuItem.label] = inRole;
                 break;
               }
-            }
-
-            if(inRole) {
-              this.menuOptionEnabled[nextMenuItem.label] = inRole;
-              break;
             }
           }
         }

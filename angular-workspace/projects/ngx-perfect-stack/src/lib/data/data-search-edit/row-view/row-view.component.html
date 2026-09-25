@@ -1,8 +1,7 @@
-
-<td id="name">{{entity.name}}</td>
-<td id="description">{{entity.description}}</td>
-<td id="start_date">{{entity.start_date}}</td>
-<td id="end_date">{{entity.end_date}}</td>
+<td id="name" [attr.data-testid]="'view-name'">{{entity.name}}</td>
+<td id="description" [attr.data-testid]="'view-description'">{{entity.description}}</td>
+<td id="start_date" [attr.data-testid]="'view-start_date'">{{entity.start_date}}</td>
+<td id="end_date" [attr.data-testid]="'view-end_date'">{{entity.end_date}}</td>
 
 <td>
   <!-- The div's and btn-group's are all a little bit weird here so that it looks nice on the page. The lib-permission-check
@@ -10,14 +9,14 @@
   it would look funny -->
   <lib-permission-check [action]="ActionType.Edit" [subject]="metaEntity.name">
     <div class="btn-group pe-1">
-      <span class="btn-sm btn-outline-primary material-symbols-outlined" (click)="onMove(-1)" id="upBtn">arrow_upward</span>
-      <span class="btn-sm btn-outline-primary material-symbols-outlined" (click)="onMove(+1)" id="downBtn">arrow_downward</span>
-      <span class="btn-sm btn-success material-symbols-outlined" (click)="onEdit()" id="editBtn">edit</span>
+      <span class="btn-sm btn-outline-primary material-symbols-outlined" (click)="onMove(-1)" id="upBtn" [attr.data-testid]="'btn-up'">arrow_upward</span>
+      <span class="btn-sm btn-outline-primary material-symbols-outlined" (click)="onMove(+1)" id="downBtn" [attr.data-testid]="'btn-down'">arrow_downward</span>
+      <span class="btn-sm btn-success material-symbols-outlined" (click)="onEdit()" id="editBtn" [attr.data-testid]="'btn-edit'">edit</span>
     </div>
 
     <lib-permission-check [action]="ActionType.Delete" [subject]="metaEntity.name">
       <div class="btn-group">
-        <span class="btn-sm btn-danger material-symbols-outlined" (click)="onDelete()" id="deleteBtn">delete</span>
+        <span class="btn-sm btn-danger material-symbols-outlined" (click)="onDelete()" id="deleteBtn" [attr.data-testid]="'btn-delete'">delete</span>
       </div>
     </lib-permission-check>
   </lib-permission-check>

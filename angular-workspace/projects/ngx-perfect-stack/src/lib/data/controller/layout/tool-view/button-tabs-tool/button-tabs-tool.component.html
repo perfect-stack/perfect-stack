@@ -1,20 +1,18 @@
-<ng-container *ngIf="tabContext$ | async as tabContext">
+@if (tabContext$ | async; as tabContext) {
   <div class="row form-row">
     <label class="col-12" id="{{buttonTabsTool.label}}">
       {{buttonTabsTool.label}}
     </label>
-
     <div class="col-12 pb-4">
       <lib-button-group-tool [buttonGroupTool]="tabContext.buttonGroupTool" [editorMode]="false" [ctx]="ctx" (action)="onTabSelected($event, tabContext)"></lib-button-group-tool>
-      <ng-container *ngIf="editorMode">
+      @if (editorMode) {
         <div class="material-symbols-outlined" (click)="doEditorAction()">settings</div>
-      </ng-container>
+      }
     </div>
-
     <div class="col-12 pb-4">
-      <ng-container *ngIf="selectedTemplate">
+      @if (selectedTemplate) {
         <lib-layout [ctx]="ctx" [template]="selectedTemplate"></lib-layout>
-      </ng-container>
+      }
     </div>
   </div>
-</ng-container>
+}

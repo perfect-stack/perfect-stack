@@ -135,6 +135,11 @@ export class FormService {
           } else {
             // No data to load, but that's ok various forms get created without any data loading
             console.log('FormService: load form with no data loaded:');
+            ctx.dataMap = new Map<string, any>();
+            ctx.formMap = new Map<string, AbstractControl>();
+            if(ctx.metaPage.controllers) {
+              this.createControllerForms(ctx, ctx.metaPage, ctx.formMap);
+            }
             return of(ctx);
           }
         }));

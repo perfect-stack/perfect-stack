@@ -1,5 +1,5 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {CommonModule, NgIf} from "@angular/common";
+import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
+import { CommonModule } from "@angular/common";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
 import {BatchService} from "./batch.service";
 import {ToastService} from "../../utils/toasts/toast.service";
@@ -19,10 +19,9 @@ interface BatchJobSummary {
 @Component({
   selector: 'lib-batch',
   imports: [
-    NgIf,
     CommonModule,
     JobProgressMonitorComponent
-  ],
+],
   templateUrl: './batch.component.html',
   styleUrl: './batch.component.css'
 })
@@ -34,7 +33,8 @@ export class BatchComponent implements OnInit {
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly batchService: BatchService,
               protected readonly jobService: JobService,
-              protected readonly toastService: ToastService
+              protected readonly toastService: ToastService,
+              protected readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -51,6 +51,7 @@ export class BatchComponent implements OnInit {
         this.getSummary(job.name);
         this.getLatestJob(job.name);
       });
+      this.cdr.markForCheck();
     });
   }
 
@@ -59,6 +60,7 @@ export class BatchComponent implements OnInit {
       const job = this.batchJobs.find(j => j.name === jobName);
       if (job) {
         job.summary = summary;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -68,6 +70,7 @@ export class BatchComponent implements OnInit {
       const job = this.batchJobs.find(j => j.name === jobName);
       if (job) {
         job.lastJob = latestJob;
+        this.cdr.markForCheck();
         if (latestJob && (latestJob.status === 'Processing' || latestJob.status === 'Submitted')) {
           job.currentJobId = latestJob.id;
           job.isRunning = true;

@@ -54,3 +54,24 @@ This is the roadmap of planned features.
 * Environments & Config Properties
 
 
+## CI/CD & Publishing Releases
+
+The GitHub Actions workflow (`.github/workflows/perfect-stack.yml`) handles build verification, automated testing (`test-server` and `test-ui`), version bumping, package publishing to GitHub Packages, and git tagging.
+
+### Automated Release on `main`
+- Pushing to the `main` branch runs all test suites and automatically triggers the `publish-release` job.
+
+### Publishing Releases from a Feature Branch (`workflow_dispatch`)
+To publish release packages directly from a feature/development branch (such as `tree-structure` or any non-`main` branch):
+
+1. Navigate to the repository's **Actions** tab on GitHub.
+2. Select the **Perfect Stack CI/CD** workflow on the left sidebar.
+3. Click the **Run workflow** dropdown button.
+4. Select your target branch (e.g. `tree-structure`) from the **Use workflow from** dropdown.
+5. Click **Run workflow**.
+
+> **Note:** The `publish-release` job condition checks:
+> ```yaml
+> if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+> ```
+> This allows manual execution via `workflow_dispatch` on any branch to perform the full test pipeline, bump version numbers, publish packages, and commit release tags back to that branch.

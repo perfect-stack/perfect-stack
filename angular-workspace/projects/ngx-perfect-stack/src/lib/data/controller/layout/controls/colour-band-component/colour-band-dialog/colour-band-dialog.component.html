@@ -9,7 +9,9 @@
     <div class="p-2">
       <label for="firstColour" class="form-label">Colour</label>
       <select class="form-control" id="firstColour" [ngModel]="firstColour" (ngModelChange)="onSelectFirstColour($event)" [ngModelOptions]="{standalone: true}">
-        <option *ngFor="let c1 of colourList" [ngValue]="c1">{{c1}}</option>
+        @for (c1 of colourList; track c1) {
+          <option [ngValue]="c1">{{c1}}</option>
+        }
         <option [ngValue]="null"></option>
       </select>
     </div>
@@ -26,7 +28,9 @@
     <div class="p-2">
       <label for="secondColour" class="form-label">Colour</label>
       <select class="form-control" id="secondColour" [ngModel]="secondColour" (ngModelChange)="onSelectSecondColour($event)" [ngModelOptions]="{standalone: true}">
-        <option *ngFor="let c2 of colourList" [ngValue]="c2">{{c2}}</option>
+        @for (c2 of colourList; track c2) {
+          <option [ngValue]="c2">{{c2}}</option>
+        }
         <option [ngValue]="null"></option>
       </select>
     </div>

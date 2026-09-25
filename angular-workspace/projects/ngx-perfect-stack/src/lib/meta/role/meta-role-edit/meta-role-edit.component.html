@@ -1,35 +1,34 @@
 <div class="container-fluid mt-3">
-  <div class="bg-light shadow-sm border py-3 px-2" *ngIf="metaRole$ | async as metaRole">
-
-    <h2>Role Edit</h2>
-
-    <form class="form mb-2" #form="ngForm" [formGroup]="metaRoleForm">
-      <div class="row">
-        <div class="col-2">
-          <label class="form-label" for="name">Name</label>
-          <input class="form-control" type="text" id="name" formControlName="name">
+  @if (metaRole$ | async; as metaRole) {
+    <div class="bg-light shadow-sm border py-3 px-2">
+      <h2>Role Edit</h2>
+      <form class="form mb-2" #form="ngForm" [formGroup]="metaRoleForm">
+        <div class="row">
+          <div class="col-2">
+            <label class="form-label" for="name">Name</label>
+            <input class="form-control" type="text" id="name" formControlName="name">
+          </div>
+          <div class="col-3">
+            <label class="form-label" for="group">Group</label>
+            <input class="form-control" type="text" id="group" formControlName="group">
+          </div>
+          @if (inheritsOptions$|async; as inheritsOptions) {
+            <div class="col-2">
+              <label class="form-label" for="inherits">Inherits</label>
+              <select class="form-select" id="inherits" formControlName="inherits">
+                @for (o of inheritsOptions; track o) {
+                  <option [ngValue]="o.name">{{o.name}}</option>
+                }
+              </select>
+            </div>
+          }
         </div>
-
-        <div class="col-3">
-          <label class="form-label" for="group">Group</label>
-          <input class="form-control" type="text" id="group" formControlName="group">
-        </div>
-
-        <div class="col-2" *ngIf="inheritsOptions$|async as inheritsOptions">
-          <label class="form-label" for="inherits">Inherits</label>
-          <select class="form-select" id="inherits" formControlName="inherits">
-            <option *ngFor="let o of inheritsOptions" [ngValue]="o.name">{{o.name}}</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-7">
-          <label class="form-label">Description</label>
-
-          <editor class="flex-grow-1"
-                  [id]="'description'"
-                  [formControlName]="'description'"
+        <div class="row">
+          <div class="col-7">
+            <label class="form-label">Description</label>
+            <editor class="flex-grow-1"
+              [id]="'description'"
+              [formControlName]="'description'"
                   [init]="{
                      base_url: '/tinymce',
                      suffix: '.min',
@@ -38,120 +37,139 @@
                      plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
                      toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
                    }"
-          >
-          </editor>
-
+              >
+            </editor>
+          </div>
         </div>
-      </div>
-
-
-      <div class="row mt-4">
-        <div class="row">
-          <div class="col-7">
-
-            <h3>Permissions</h3>
-
-            <table class="table table-striped">
-              <thead>
-              <th>Action</th>
-              <th class="subject-col">Subject</th>
-              </thead>
-              <tbody>
-              <tr *ngFor="let actionType of ActionTypeOptions">
-                <td>{{actionType}}</td>
-                <td class="subject-col" my-dropzone (myDropZoneDroppedEvent)="onDropEvent($event, actionType)">
-                  <ng-container *ngFor="let p of inheritedPermissionsMap.get(actionType); let idx = index;">
-                    <span class="badge bg-secondary inherited-permission me-1">
-                      {{p}}
-                    </span>
-                  </ng-container>
-
-                  <ng-container *ngFor="let p of permissionsMap.get(actionType); let idx = index;">
-                    <span class="badge bg-info remove-permission me-1"
-                         (click)="removePermission(actionType, idx)">
-                      <span>{{p}}</span><span class="material-symbols-outlined small ms-2">close</span>
-                    </span>
-                  </ng-container>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-
-            <div class="p-3">
-              <h4>Key</h4>
-              <table class="table table-borderless key-table">
+        <div class="row mt-4">
+          <div class="row">
+            <div class="col-7">
+              <h3>Permissions</h3>
+              <table class="table table-striped">
+                <thead>
+                  <th>Action</th>
+                  <th class="subject-col">Subject</th>
+                </thead>
                 <tbody>
-                  <tr>
-                    <td><span class="badge bg-secondary inherited-permission me-1">Inherited</span></td>
-                    <td class="text-muted">These permissions come from the inherited parent or ancestor. They can only be changed by editing their parent Role.</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge bg-info remove-permission me-1">Permission</span></td>
-                    <td class="text-muted">These permissions can be added or removed from this Role.</td>
-                  </tr>
+                  @for (actionType of ActionTypeOptions; track actionType) {
+                    <tr>
+                      <td>{{actionType}}</td>
+                      <td class="subject-col" my-dropzone (myDropZoneDroppedEvent)="onDropEvent($event, actionType)">
+                        @for (p of inheritedPermissionsMap.get(actionType); track p; let idx = $index) {
+                          <span class="badge bg-secondary inherited-permission me-1">
+                            {{p}}
+                          </span>
+                        }
+                        @for (p of permissionsMap.get(actionType); track p; let idx = $index) {
+                          <span class="badge bg-info remove-permission me-1"
+                            (click)="removePermission(actionType, idx)">
+                            <span>{{p}}</span><span class="material-symbols-outlined small ms-2">close</span>
+                          </span>
+                        }
+                      </td>
+                    </tr>
+                  }
                 </tbody>
               </table>
+              <div class="p-3">
+                <h4>Key</h4>
+                <table class="table table-borderless key-table">
+                  <tbody>
+                    <tr>
+                      <td><span class="badge bg-secondary inherited-permission me-1">Inherited</span></td>
+                      <td class="text-muted">These permissions come from the inherited parent or ancestor. They can only be changed by editing their parent Role.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="badge bg-info remove-permission me-1">Permission</span></td>
+                      <td class="text-muted">These permissions can be added or removed from this Role.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-
-          <div class="col-5">
-
-            <h3 class="pb-4">Subjects</h3>
-
-            <div class="row">
-              <div class="col-4" *ngIf="entitySubjectOptions$|async as entitySubjectOptions">
-                <h4>Entities</h4>
-                <div *ngFor="let subject of entitySubjectOptions">
-                  <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
-                    <ng-container [ngSwitch]="subject.type">
-                      <span *ngSwitchCase="SubjectType.Special" class="material-symbols-outlined align-middle">emergency</span>
-                      <span *ngSwitchCase="SubjectType.Entity" class="material-symbols-outlined align-middle">category</span>
-                      <span *ngSwitchCase="SubjectType.Menu" class="material-symbols-outlined align-middle">menu</span>
-                    </ng-container>
-                    {{subject.name}}
+            <div class="col-5">
+              <h3 class="pb-4">Subjects</h3>
+              <div class="row">
+                @if (entitySubjectOptions$|async; as entitySubjectOptions) {
+                  <div class="col-4">
+                    <h4>Entities</h4>
+                    @for (subject of entitySubjectOptions; track subject) {
+                      <div>
+                        <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                          @switch (subject.type) {
+                            @case (SubjectType.Special) {
+                              <span class="material-symbols-outlined align-middle">emergency</span>
+                            }
+                            @case (SubjectType.Entity) {
+                              <span class="material-symbols-outlined align-middle">category</span>
+                            }
+                            @case (SubjectType.Menu) {
+                              <span class="material-symbols-outlined align-middle">menu</span>
+                            }
+                          }
+                          {{subject.name}}
+                        </div>
+                      </div>
+                    }
                   </div>
-                </div>
-              </div>
-
-              <div class="col-4" *ngIf="menuSubjectOptions$|async as menuSubjectOptions">
-                <h4>Menus</h4>
-                <div *ngFor="let subject of menuSubjectOptions">
-                  <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
-                    <ng-container [ngSwitch]="subject.type">
-                      <span *ngSwitchCase="SubjectType.Special" class="material-symbols-outlined align-middle">emergency</span>
-                      <span *ngSwitchCase="SubjectType.Entity" class="material-symbols-outlined align-middle">category</span>
-                      <span *ngSwitchCase="SubjectType.Menu" class="material-symbols-outlined align-middle">menu</span>
-                    </ng-container>
-                    {{subject.name}}
+                }
+                @if (menuSubjectOptions$|async; as menuSubjectOptions) {
+                  <div class="col-4">
+                    <h4>Menus</h4>
+                    @for (subject of menuSubjectOptions; track subject) {
+                      <div>
+                        <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                          @switch (subject.type) {
+                            @case (SubjectType.Special) {
+                              <span class="material-symbols-outlined align-middle">emergency</span>
+                            }
+                            @case (SubjectType.Entity) {
+                              <span class="material-symbols-outlined align-middle">category</span>
+                            }
+                            @case (SubjectType.Menu) {
+                              <span class="material-symbols-outlined align-middle">menu</span>
+                            }
+                          }
+                          {{subject.name}}
+                        </div>
+                      </div>
+                    }
                   </div>
-                </div>
-              </div>
-
-              <div class="col-4" *ngIf="specialSubjectOptions$|async as specialSubjectOptions">
-                <h4>Specials</h4>
-                <div *ngFor="let subject of specialSubjectOptions">
-                  <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
-                    <ng-container [ngSwitch]="subject.type">
-                      <span *ngSwitchCase="SubjectType.Special" class="material-symbols-outlined align-middle">emergency</span>
-                      <span *ngSwitchCase="SubjectType.Entity" class="material-symbols-outlined align-middle">category</span>
-                      <span *ngSwitchCase="SubjectType.Menu" class="material-symbols-outlined align-middle">menu</span>
-                    </ng-container>
-                    {{subject.name}}
+                }
+                @if (specialSubjectOptions$|async; as specialSubjectOptions) {
+                  <div class="col-4">
+                    <h4>Specials</h4>
+                    @for (subject of specialSubjectOptions; track subject) {
+                      <div>
+                        <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                          @switch (subject.type) {
+                            @case (SubjectType.Special) {
+                              <span class="material-symbols-outlined align-middle">emergency</span>
+                            }
+                            @case (SubjectType.Entity) {
+                              <span class="material-symbols-outlined align-middle">category</span>
+                            }
+                            @case (SubjectType.Menu) {
+                              <span class="material-symbols-outlined align-middle">menu</span>
+                            }
+                          }
+                          {{subject.name}}
+                        </div>
+                      </div>
+                    }
                   </div>
-                </div>
+                }
               </div>
-
             </div>
           </div>
         </div>
+      </form>
+      <div class="d-flex my-5">
+        <div class="flex-grow-1"></div>
+        <button class="btn btn-danger me-2" (click)="onDelete(metaRole)">Delete</button>
+        <button class="btn btn-outline-primary me-2" (click)="onCancel()">Cancel</button>
+        <button class="btn btn-primary" (click)="onSave()">Save</button>
       </div>
-    </form>
-
-    <div class="d-flex my-5">
-      <div class="flex-grow-1"></div>
-      <button class="btn btn-danger me-2" (click)="onDelete(metaRole)">Delete</button>
-      <button class="btn btn-outline-primary me-2" (click)="onCancel()">Cancel</button>
-      <button class="btn btn-primary" (click)="onSave()">Save</button>
     </div>
-  </div>
+  }
 </div>

@@ -1,20 +1,26 @@
-<ngb-toast
-  #myToast
-  *ngFor="let toast of toastService.toasts"
-  [class]="toast.classname"
-  [autohide]="toast.autohide"
-  [delay]="toast.delay || 7000"
-  (hidden)="toastService.remove(toast)"
->
-  <ng-template class="align-items-center" ngbToastHeader>
-    <span class="material-symbols-outlined" *ngIf="toast.header === 'Success'">check_circle</span>
-    <span class="material-symbols-outlined" *ngIf="toast.header === 'Warning'">warning</span>
-    <span class="material-symbols-outlined" *ngIf="toast.header === 'Error'">error_circle_rounded</span>
-    <strong class="ms-2">{{toast.header}}</strong>
-    <span class="me-auto"></span>
-    <span class="material-symbols-outlined my-btn-close" (click)="onClose(myToast)">close</span>
-  </ng-template>
-
-  {{toast.message}}
-
-</ngb-toast>
+@for (toast of toastService.toasts(); track toast) {
+  <ngb-toast
+    #myToast
+    [class]="toast.classname"
+    [attr.data-testid]="'toast-' + toast.header.toLowerCase()"
+    [autohide]="toast.autohide ?? true"
+    [delay]="toast.delay || 7000"
+    (hidden)="toastService.remove(toast)"
+    >
+    <ng-template class="align-items-center" ngbToastHeader>
+      @if (toast.header === 'Success') {
+        <span class="material-symbols-outlined">check_circle</span>
+      }
+      @if (toast.header === 'Warning') {
+        <span class="material-symbols-outlined">warning</span>
+      }
+      @if (toast.header === 'Error') {
+        <span class="material-symbols-outlined">error_circle_rounded</span>
+      }
+      <strong class="ms-2" [attr.data-testid]="'toast-header'">{{toast.header}}</strong>
+      <span class="me-auto"></span>
+      <span class="material-symbols-outlined my-btn-close" [attr.data-testid]="'toast-close'" (click)="onClose(myToast)">close</span>
+    </ng-template>
+    <span [attr.data-testid]="'toast-message'">{{toast.message}}</span>
+  </ngb-toast>
+}

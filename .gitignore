@@ -1,8 +1,18 @@
-
 /.idea
 /angular-workspace/projects/demo-client/src/client-overrides.json
 /aws-login.sh
 /nestjs-server/data-import/
 /nestjs-client/node_modules/
 /nestjs-client/.env
+
+# Node & Build artifacts
+node_modules/
+dist/
+.angular/
+reports/
+
+# Testing test-ui artifacts
 /testing/test-ui/client/.angular/
+/testing/test-ui/client/dist/
+/testing/test-ui/client/node_modules/
+/testing/test-ui/reports/

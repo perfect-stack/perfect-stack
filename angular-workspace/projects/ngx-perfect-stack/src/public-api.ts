@@ -12,6 +12,7 @@ export * from './lib/authentication/authentication.service';
 export * from './lib/authentication/user/no-auth-user';
 export * from './lib/data/data-service/data.service';
 export * from './lib/data/controller/layout/layout.component';
+export * from './lib/data/controller/layout/tool-view/tree-tool/tree-tool.component';
 export * from './lib/data/data-edit/form-service/form.service';
 export * from './lib/data/data-edit/form-service/form-group.service';
 export * from './lib/event/event.service';

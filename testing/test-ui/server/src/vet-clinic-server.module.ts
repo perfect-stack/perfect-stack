@@ -1,4 +1,4 @@
-import { Module, Logger } from '@nestjs/common';
+import { Controller, Get, Module, Post, Body, Param } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import {
@@ -23,6 +23,19 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
   envFilePath: [envFile],
 });
 
+@Controller('authentication')
+export class TestAuthenticationController {
+  @Post('notification')
+  loginNotification(@Body() body: any) {
+    return { success: true };
+  }
+
+  @Get('last-sign-in/:username')
+  lastSignIn(@Param('username') username: string) {
+    return { username, lastSignIn: new Date().toISOString() };
+  }
+}
+
 @Module({
   imports: [
     CONFIG_MODULE,
@@ -39,5 +52,6 @@ export const CONFIG_MODULE = ConfigModule.forRoot({
     TypeaheadModule,
     ClientConfigModule,
   ],
+  controllers: [TestAuthenticationController],
 })
 export class VetClinicServerModule {}

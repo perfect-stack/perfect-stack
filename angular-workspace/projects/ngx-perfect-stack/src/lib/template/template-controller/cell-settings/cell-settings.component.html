@@ -1,41 +1,45 @@
-<ng-container *ngIf="metaEntity && attribute">
+@if (metaEntity && attribute) {
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Cell Settings</h4>
     <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-
   <div class="modal-body">
     <form [formGroup]="settingsForm">
       <div class="form-group">
         <label for="componentType">Component type</label>
         <div class="input-group">
           <select id="componentType" class="form-select" name="componentType" formControlName="componentType">
-            <option *ngFor="let o of getComponentTypeOptions()" [ngValue]="o">{{o}}</option>
+            @for (o of getComponentTypeOptions(); track o) {
+              <option [ngValue]="o">{{o}}</option>
+            }
           </select>
         </div>
       </div>
-
-      <div class="form-group mt-3" *ngIf="isSelectTwoComponentType">
-        <label for="secondaryAttributeName">Secondary attribute from {{metaEntity.name}}</label>
-        <div class="input-group">
-          <select id="secondaryAttributeName" class="form-select" name="secondaryAttributeName" formControlName="secondaryAttributeName">
-            <option *ngFor="let o of attributeNames" [ngValue]="o">{{o}}</option>
-          </select>
+      @if (isSelectTwoComponentType) {
+        <div class="form-group mt-3">
+          <label for="secondaryAttributeName">Secondary attribute from {{metaEntity.name}}</label>
+          <div class="input-group">
+            <select id="secondaryAttributeName" class="form-select" name="secondaryAttributeName" formControlName="secondaryAttributeName">
+              @for (o of attributeNames; track o) {
+                <option [ngValue]="o">{{o}}</option>
+              }
+            </select>
+          </div>
         </div>
-      </div>
-
-      <div class="form-group mt-3" *ngIf="isStaticImageComponentType">
-        <label for="assetUrl">Asset URL</label>
-        <div class="input-group">
-          <input id="assetUrl" class="form-control" name="assetUrl" formControlName="assetUrl">
+      }
+      @if (isStaticImageComponentType) {
+        <div class="form-group mt-3">
+          <label for="assetUrl">Asset URL</label>
+          <div class="input-group">
+            <input id="assetUrl" class="form-control" name="assetUrl" formControlName="assetUrl">
+          </div>
         </div>
-      </div>
+      }
     </form>
   </div>
-
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-dark" (click)="activeModal.close(settingsForm.value)">Ok</button>
   </div>
-</ng-container>
+}

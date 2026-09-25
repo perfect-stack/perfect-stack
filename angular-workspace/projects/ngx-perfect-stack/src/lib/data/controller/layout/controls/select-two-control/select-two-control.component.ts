@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {Cell, LabelLayoutType} from '../../../../../domain/meta.page';
 import {DataService} from '../../../../data-service/data.service';
@@ -32,26 +32,35 @@ export class SelectTwoControlComponent implements OnInit {
 
   combinedValue: string | null = null;
 
-  constructor(protected readonly dataService: DataService) { }
+  constructor(protected readonly dataService: DataService,
+              protected readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.secondaryAttributeName = (this.cell.componentData as any).secondaryAttributeName;
     const id = this.formGroup.get(this.attribute.name + '_id')?.value;
     if(id) {
-      this.dataService.findById(this.attribute.relationshipTarget, id).subscribe((response: any) => {
-        // always run the onSelectedEntity() function so that secondaryOptions gets updated
-        this.onSelectedEntity(response)
+      this.dataService.findById(this.attribute.relationshipTarget, id).subscribe({
+        next: (response: any) => {
+          // always run the onSelectedEntity() function so that secondaryOptions gets updated
+          this.onSelectedEntity(response);
 
-        // calculate the combined value
-        this.combinedValue = response.name;
-        const secondaryAttributeControl = this.formGroup.get(this.secondaryAttributeName);
-        if(secondaryAttributeControl && secondaryAttributeControl.value) {
-          this.combinedValue += ' - ' + secondaryAttributeControl.value;
+          // calculate the combined value
+          this.combinedValue = response.name;
+          const secondaryAttributeControl = this.formGroup.get(this.secondaryAttributeName);
+          if(secondaryAttributeControl && secondaryAttributeControl.value) {
+            this.combinedValue += ' - ' + secondaryAttributeControl.value;
+          }
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.combinedValue = '—';
+          this.cdr.markForCheck();
         }
       });
     }
     else {
-      this.combinedValue = '—'
+      this.combinedValue = '—';
+      this.cdr.markForCheck();
     }
   }
 
@@ -77,6 +86,7 @@ export class SelectTwoControlComponent implements OnInit {
     else {
       this.secondaryOptions = [];
     }
+    this.cdr.markForCheck();
   }
 
   isShowLabelTop(cell: CellAttribute): boolean {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import {MetaPage} from '../../../domain/meta.page';
 import {MetaPageService} from '../meta-page-service/meta-page.service';
@@ -15,7 +15,8 @@ export class MetaPageSearchComponent implements OnInit {
 
   constructor(
     protected readonly router: Router,
-    protected readonly metaPageService: MetaPageService) { }
+    protected readonly metaPageService: MetaPageService,
+    protected readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.onSearch();
@@ -24,6 +25,7 @@ export class MetaPageSearchComponent implements OnInit {
   onSearch() {
     this.metaPageService.findAll().subscribe( response => {
       this.searchResults = response;
+      this.cdr.markForCheck();
     });
   }
 

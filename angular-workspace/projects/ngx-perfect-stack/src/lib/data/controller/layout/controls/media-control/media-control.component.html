@@ -1,40 +1,49 @@
-
-<div class="row p-2">
+<div class="row p-2" [attr.data-testid]="'field-media'">
   <div class="col-6">
     <div class="row">
       <div class="col-12">
         <div class="row">
-          <div class="placeholder-image col-12 bg-light text-center py-5" *ngIf="!imageSrc">
-            <span class="material-symbols-outlined">image</span>
-          </div>
-          <div class="col-12" *ngIf="imageSrc">
-            <img [src]="imageSrc" width="100%" alt="Media file">
-          </div>
+          @if (!imageSrc) {
+            <div class="placeholder-image col-12 bg-light text-center py-5">
+              <span class="material-symbols-outlined">image</span>
+            </div>
+          }
+          @if (imageSrc) {
+            <div class="col-12">
+              <img [src]="imageSrc" width="100%" alt="Media file">
+            </div>
+          }
         </div>
         <div class="row pt-2">
           <div class="col-4">
-            <div class="btn-group" role="group" *ngIf="imageCount > 1">
-              <button class="btn btn-outline-secondary" (click)="decrementIndex()">&lt;</button>
-              <button class="btn btn-outline-secondary" (click)="incrementIndex()">&gt;</button>
-            </div>
+            @if (imageCount > 1) {
+              <div class="btn-group" role="group">
+                <button class="btn btn-outline-secondary" (click)="decrementIndex()" [attr.data-testid]="'btn-media-prev'">&lt;</button>
+                <button class="btn btn-outline-secondary" (click)="incrementIndex()" [attr.data-testid]="'btn-media-next'">&gt;</button>
+              </div>
+            }
           </div>
           <div class="col-4">
             {{index + 1}} of {{imageCount}}
           </div>
           <div class="col-4 text-end">
-            <ng-container *ngIf="mode === 'edit'">
-              <button class="btn btn-danger me-2" (click)="onDelete()" *ngIf="imageSrc">Delete</button>
-              <button class="btn btn-outline-primary" (click)="onUpload()">Upload...</button>
-            </ng-container>
+            @if (mode === 'edit') {
+              @if (imageSrc) {
+                <button class="btn btn-danger me-2" (click)="onDelete()" [attr.data-testid]="'btn-media-delete'">Delete</button>
+              }
+              <button class="btn btn-outline-primary" (click)="onUpload()" [attr.data-testid]="'btn-media-upload'">Upload...</button>
+            }
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="col-6" *ngIf="commentCell && commentCell.attribute">
-    <div>
-      <lib-text-area-control idSuffix="media_files" [mode]="mode" [cell]="commentCell" [formControlName]="commentCell.attribute.name"></lib-text-area-control>
+  @if (commentCell && commentCell.attribute) {
+    <div class="col-6">
+      <div>
+        <lib-text-area-control idSuffix="media_files" [mode]="mode" [cell]="commentCell" [formControlName]="commentCell.attribute.name"></lib-text-area-control>
+      </div>
     </div>
-  </div>
+  }
 </div>

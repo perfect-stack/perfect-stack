@@ -1,67 +1,75 @@
-<div class="bg-light my-3 py-3" *ngIf="metaEntityNames$ | async as metaEntityNames">
-  <h4>Data queries</h4>
-
-  <table class="table table-striped">
-    <thead>
-    <th>Data Name</th>
-    <th>Result Cardinality</th>
-    <th>Query Type</th>
-    <th>Query Name</th>
-    <th>Meta Entity</th>
-    <th>Field Name</th>
-    <th>Parameter</th>
-    <th>Order By</th>
-    <th>Order Dir</th>
-    <th></th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let dataQuery of dataQueryList; index as i">
-      <td>
-        <input class="form-control" [(ngModel)]="dataQuery.dataName">
-      </td>
-      <td>
-        <select class="form-select" [(ngModel)]="dataQuery.resultCardinality">
-          <option *ngFor="let o of getResultCardinalityOptions()" [ngValue]="o">{{o}}</option>
-        </select>
-      </td>
-      <td>
-        <select class="form-select" [(ngModel)]="dataQuery.queryType">
-          <option *ngFor="let o of getQueryTypeOptions()" [ngValue]="o">{{o}}</option>
-        </select>
-      </td>
-      <td>
-        <input class="form-control" [(ngModel)]="dataQuery.queryName">
-      </td>
-      <td>
-        <select class="form-select" [(ngModel)]="dataQuery.metaEntityName">
-          <option *ngFor="let o of metaEntityNames" [ngValue]="o">{{o}}</option>
-        </select>
-      </td>
-      <td>
-        <input class="form-control" [(ngModel)]="dataQuery.fieldName">
-      </td>
-      <td>
-        <input class="form-control" [(ngModel)]="dataQuery.parameter">
-      </td>
-      <td>
-        <input class="form-control" [(ngModel)]="dataQuery.orderByName">
-      </td>
-      <td>
-        <select class="form-select" [(ngModel)]="dataQuery.orderByDir">
-          <option [ngValue]="'ASC'">ASC</option>
-          <option [ngValue]="'DESC'">DESC</option>
-          <option [ngValue]="null"></option>
-        </select>
-      </td>
-      <td>
-        <span class="btn-icon text-danger material-symbols-outlined" (click)="onDelete(i)">remove_circle</span>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-
-  <div class="d-flex">
-    <button class="btn btn-outline-success" (click)="onAddDataQuery()">Add data query</button>
+@if (metaEntityNames$ | async; as metaEntityNames) {
+  <div class="bg-light my-3 py-3">
+    <h4>Data queries</h4>
+    <table class="table table-striped">
+      <thead>
+        <th>Data Name</th>
+        <th>Result Cardinality</th>
+        <th>Query Type</th>
+        <th>Query Name</th>
+        <th>Meta Entity</th>
+        <th>Field Name</th>
+        <th>Parameter</th>
+        <th>Order By</th>
+        <th>Order Dir</th>
+        <th></th>
+      </thead>
+      <tbody>
+        @for (dataQuery of dataQueryList; track dataQuery; let i = $index) {
+          <tr>
+            <td>
+              <input class="form-control" [(ngModel)]="dataQuery.dataName">
+            </td>
+            <td>
+              <select class="form-select" [(ngModel)]="dataQuery.resultCardinality">
+                @for (o of getResultCardinalityOptions(); track o) {
+                  <option [ngValue]="o">{{o}}</option>
+                }
+              </select>
+            </td>
+            <td>
+              <select class="form-select" [(ngModel)]="dataQuery.queryType">
+                @for (o of getQueryTypeOptions(); track o) {
+                  <option [ngValue]="o">{{o}}</option>
+                }
+              </select>
+            </td>
+            <td>
+              <input class="form-control" [(ngModel)]="dataQuery.queryName">
+            </td>
+            <td>
+              <select class="form-select" [(ngModel)]="dataQuery.metaEntityName">
+                @for (o of metaEntityNames; track o) {
+                  <option [ngValue]="o">{{o}}</option>
+                }
+              </select>
+            </td>
+            <td>
+              <input class="form-control" [(ngModel)]="dataQuery.fieldName">
+            </td>
+            <td>
+              <input class="form-control" [(ngModel)]="dataQuery.parameter">
+            </td>
+            <td>
+              <input class="form-control" [(ngModel)]="dataQuery.orderByName">
+            </td>
+            <td>
+              <select class="form-select" [(ngModel)]="dataQuery.orderByDir">
+                <option [ngValue]="'ASC'">ASC</option>
+                <option [ngValue]="'DESC'">DESC</option>
+                <option [ngValue]="null"></option>
+              </select>
+            </td>
+            <td>
+              <span class="btn-icon text-danger material-symbols-outlined" (click)="onDelete(i)">remove_circle</span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <div class="d-flex">
+      <button class="btn btn-outline-success" (click)="onAddDataQuery()">Add data query</button>
+    </div>
   </div>
-</div>
+}
 

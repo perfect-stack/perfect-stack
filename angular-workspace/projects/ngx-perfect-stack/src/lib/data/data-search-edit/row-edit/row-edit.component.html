@@ -1,5 +1,5 @@
 <td [formGroup]="formGroup">
-  <lib-text-field-control [mode]="'edit'" [cell]="getCellFor('name')" [formControlName]="'name'" ></lib-text-field-control>
+  <lib-text-field-control [mode]="'edit'" [cell]="getCellFor('name')" [formControlName]="'name'"></lib-text-field-control>
 </td>
 
 <td [formGroup]="formGroup">
@@ -15,6 +15,6 @@
 </td>
 
 <td>
-  <button class="btn btn-sm btn-outline-primary me-2" (click)="onCancel()" id="cancelBtn">Cancel</button>
-  <button class="btn btn-sm btn-primary" type="submit" [disabled]="!formGroup.valid" (click)="onSave()" id="saveBtn">Save</button>
+  <button class="btn btn-sm btn-outline-primary me-2" (click)="onCancel()" id="cancelBtn" [attr.data-testid]="'btn-cancel'">Cancel</button>
+  <button class="btn btn-sm btn-primary" type="submit" [disabled]="!formGroup.valid" (click)="onSave()" id="saveBtn" [attr.data-testid]="'btn-save'">Save</button>
 </td>

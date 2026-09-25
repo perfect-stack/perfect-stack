@@ -67,6 +67,7 @@ export enum ToolType {
   Button = 'Button',
   ButtonGroup = 'ButtonGroup',
   ButtonTabs = 'ButtonTabs',
+  Duration = 'Duration',
   Icon = 'Icon',
   Image = 'Image',
   LastSignIn = 'LastSignIn',
@@ -77,6 +78,7 @@ export enum ToolType {
   Select = 'Select',
   TabTool = 'TabTool',
   TextTool = 'TextTool',
+  Tree = 'Tree',
 }
 
 export class Tool {
@@ -167,6 +169,15 @@ export class IconTool extends Tool {
   iconName: string;
 }
 
+export class TreeTool extends Tool {
+  metaEntityName: string;
+  displayAttribute?: string;
+  secondaryAttribute?: string;
+  badgeAttribute?: string;
+  initialDepth?: number;
+  route?: string;
+}
+
 export class TemplateLocationMap {
   [key: string]: Tool;
 }
@@ -227,7 +238,7 @@ export enum PageType {
 }
 
 export enum LayoutStyle {
-  NewYork = 'New York',
+  NewYork = 'NewYork',
   Paris = 'Paris',
   Stockholm = 'Stockholm',
   Venice = 'Venice',

@@ -5,11 +5,14 @@
 <lib-environment-banner></lib-environment-banner>
 
 <!-- This is the main menu bar the application -->
-<div class="menu-bar d-flex justify-content-between" [ngStyle]="{'background-color': menuBarBackgroundColor}" id="ngxMenuBar">
+<div class="menu-bar d-flex justify-content-between" [ngStyle]="{'background-color': menuBarBackgroundColor}" id="ngxMenuBar" [attr.data-testid]="'menu-bar'">
   <div class="menu-heading">
-    <img class="menu-heading-logo" [src]="applicationLogo" [width]="applicationLogoWidth" *ngIf="applicationLogo" id="logoImage">
+    @if (applicationLogo) {
+      <img class="menu-heading-logo" [src]="applicationLogo" [width]="applicationLogoWidth" id="logoImage" [attr.data-testid]="'app-logo'">
+    }
     <span class="menu-heading-title"
-       id="applicationTitle"
+      id="applicationTitle"
+      [attr.data-testid]="'app-title'"
        [ngStyle]="{
           'font-family': applicationTitleFont,
           'border-left': menuBarDividerColor
@@ -17,36 +20,38 @@
   </div>
 
   <div class="d-flex justify-content-between w-50">
-    <div class="" ngbDropdown *ngFor="let nextMenu of metaMenuService.menu.menuList">
-      <ng-container *ngIf="menuEnabled[nextMenu.label]">
-        <ng-container *ngIf="nextMenu.items.length > 1">
-          <a class="menu-title" tabindex="0" ngbDropdownToggle id="{{nextMenu.label}}Menu" role="button">
-            {{nextMenu.label}}
-          </a>
-          <div class="dropdown-menu" ngbDropdownMenu>
-            @for(menuItem of nextMenu.items; track menuItem.label) {
-              <a ngbDropdownItem [routerLink]="menuItem.route" id="{{menuItem.label}}MenuItem">
-                {{menuItem.label}}
-              </a>
-            }
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="nextMenu.items.length === 1">
-          <a class="menu-title"
-             routerLinkActive="active-link"
-             id="{{nextMenu.label}}Menu"
-             [routerLink]="nextMenu.items[0].route">
-            {{nextMenu.items[0].label}}
-          </a>
-        </ng-container>
-      </ng-container>
-    </div>
+    @for (nextMenu of (metaMenuService.menu ? metaMenuService.menu.menuList : []); track nextMenu.label) {
+      <div class="" ngbDropdown>
+        @if (menuEnabled[nextMenu.label]) {
+          @if (nextMenu.items && nextMenu.items.length > 1) {
+            <a class="menu-title" tabindex="0" ngbDropdownToggle id="{{nextMenu.label}}Menu" [attr.data-testid]="'menu-' + nextMenu.label" role="button">
+              {{nextMenu.label}}
+            </a>
+            <div class="dropdown-menu" ngbDropdownMenu>
+              @for(menuItem of nextMenu.items; track menuItem.label) {
+                <a ngbDropdownItem [routerLink]="menuItem.route" id="{{menuItem.label}}MenuItem" [attr.data-testid]="'menu-item-' + menuItem.label">
+                  {{menuItem.label}}
+                </a>
+              }
+            </div>
+          }
+          @if (nextMenu.items && nextMenu.items.length === 1) {
+            <a class="menu-title"
+              routerLinkActive="active-link"
+              id="{{nextMenu.label}}Menu"
+              [attr.data-testid]="'menu-' + nextMenu.label"
+              [routerLink]="nextMenu.items[0].route">
+              {{nextMenu.items[0].label}}
+            </a>
+          }
+        }
+      </div>
+    }
   </div>
 
-  <ng-container *ngIf="showDefaultLoginButton()">
+  @if (showDefaultLoginButton()) {
     <div class="menu-profile" [ngStyle]="{'border-left': menuBarDividerColor}" >
       <lib-login-button></lib-login-button>
     </div>
-  </ng-container>
+  }
 </div>

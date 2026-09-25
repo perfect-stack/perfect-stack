@@ -1,0 +1,56 @@
+{
+  "name": "Species.tree",
+  "title": "Species Tree",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Species",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "Species Tree",
+              "modes": "",
+              "nameAttributes": ""
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Species Tree Header",
+      "binding": ""
+    },
+    {
+      "metaEntityName": "Species",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "Tree",
+              "containerStyles": "",
+              "metaEntityName": "Species",
+              "displayAttribute": "scientific_name",
+              "secondaryAttribute": "common_name",
+              "badgeAttribute": "rank",
+              "initialDepth": 3,
+              "route": "/data/Species/view/${id}"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Species Hierarchy",
+      "binding": ""
+    }
+  ]
+}

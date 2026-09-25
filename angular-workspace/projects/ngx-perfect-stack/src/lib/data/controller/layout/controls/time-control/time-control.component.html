@@ -1,17 +1,21 @@
-
 <input class="form-control"
-       [readonly]="disabled"
-       (change)="onTimeChanged($event)"
-       [ngModel]="timeModel"
-       [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}"
-       type="time">
+  [id]="cell?.attribute?.name"
+  [attr.name]="cell?.attribute?.name"
+  [attr.data-testid]="'time-' + cell?.attribute?.name"
+  [readonly]="disabled"
+  (change)="onTimeChanged($event)"
+  [ngModel]="timeModel"
+  [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}"
+  type="time">
 
-<ng-container *ngIf="showModifiers">
-  <span class="badge bg-primary me-1" *ngFor="let modifier of modifierList" (click)="onModify(modifier, $event)">
-    <span role="button">{{modifier.label}}</span>
-  </span>
-</ng-container>
+@if (showModifiers) {
+  @for (modifier of modifierList; track modifier) {
+    <span class="badge bg-primary me-1" (click)="onModify(modifier, $event)">
+      <span role="button">{{modifier.label}}</span>
+    </span>
+  }
+}
 
-<ng-container *ngIf="!parentDisplaysError && hasErrors() && cell.attribute">
+@if (!parentDisplaysError && hasErrors() && cell.attribute) {
   <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
-</ng-container>
+}

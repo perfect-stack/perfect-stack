@@ -1,10 +1,16 @@
-<ng-container *ngIf="linkFragments">
-  <ng-container *ngFor="let nextFragment of linkFragments">
-    <ng-container [ngSwitch]="nextFragment.type">
-      <span *ngSwitchCase="'Text'" (click)="onClick($event)">{{nextFragment.text}}</span>
-      <span *ngSwitchCase="'Link'"><a href="#" (click)="onClick($event)">{{nextFragment.text}}</a></span>
-      <span *ngSwitchDefault (click)="onClick($event)">UNKNOWN LinkFragment type of {{nextFragment.type}}</span>
-    </ng-container>
-  </ng-container>
-</ng-container>
+@if (linkFragments) {
+  @for (nextFragment of linkFragments; track nextFragment) {
+    @switch (nextFragment.type) {
+      @case ('Text') {
+        <span (click)="onClick($event)">{{nextFragment.text}}</span>
+      }
+      @case ('Link') {
+        <span><a href="#" (click)="onClick($event)">{{nextFragment.text}}</a></span>
+      }
+      @default {
+        <span (click)="onClick($event)">UNKNOWN LinkFragment type of {{nextFragment.type}}</span>
+      }
+    }
+  }
+}
 

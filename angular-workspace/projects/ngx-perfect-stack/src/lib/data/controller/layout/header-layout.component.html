@@ -1,27 +1,33 @@
-<ng-container *ngIf="cells$ | async as cells">
-
-  <!-- If template has a binding to the form -->
-  <ng-container *ngIf="template && template.binding">
+@if (cells$ | async; as cells) {
+  @if (formGroup) {
     <div [ngClass]="template.styles" [formGroup]="formGroup">
-      <div class="d-flex flex-row header-layout" *ngFor="let row of cells">
-        <div class="header-cell min-cell-width" *ngFor="let cell of row">
-          <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
-            <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
-          </ng-container>
-          <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+      @for (row of cells; track row) {
+        <div class="d-flex flex-row header-layout">
+          @for (cell of row; track cell) {
+            <div class="header-cell min-cell-width">
+              @if (cell && cell.attribute && isShowLabel(cell)) {
+                <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+              }
+              <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+            </div>
+          }
         </div>
-      </div>
-
-      <!--<hr>-->
-
-      <!--<div class="row header-layout" *ngFor="let row of cells">
-        <div class="col header-cell min-cell-width" *ngFor="let cell of row">
-          <ng-container *ngIf="cell && cell.attribute && isShowLabel(cell)">
-            <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
-          </ng-container>
-          <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
-        </div>
-      </div>-->
+      }
     </div>
-  </ng-container>
-</ng-container>
+  } @else {
+    <div [ngClass]="template.styles">
+      @for (row of cells; track row) {
+        <div class="d-flex flex-row header-layout">
+          @for (cell of row; track cell) {
+            <div class="header-cell min-cell-width">
+              @if (cell && cell.attribute && isShowLabel(cell)) {
+                <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+              }
+              <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell"></lib-cell>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+}

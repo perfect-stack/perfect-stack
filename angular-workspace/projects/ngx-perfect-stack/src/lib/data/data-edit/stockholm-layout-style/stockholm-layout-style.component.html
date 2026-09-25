@@ -1,12 +1,11 @@
-<div class="container-fluid stockholm-layout-style" *ngIf="ctx">
-
-  <!--<a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
+@if (ctx) {
+  <div class="container-fluid stockholm-layout-style">
+    <!--<a class="back-link" [routerLink]="['/data', ctx.metaEntity.name, 'search']">
     <span class="material-symbols-outlined align-middle">keyboard_backspace</span>
     <span class="align-middle">Search {{ctx.metaEntity.pluralName.toLowerCase()}}</span>
   </a>-->
   <lib-back-link [ctx]="ctx"></lib-back-link>
-
-  <ng-container *ngFor="let template of headerTemplates; index as i">
+  @for (template of headerTemplates; track template; let i = $index) {
     <div class="d-flex justify-content-between my-3">
       <div>
         <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
@@ -15,25 +14,26 @@
         <ng-content select="[TopRightActions]"></ng-content>
       </div>
     </div>
-  </ng-container>
-
+  }
   <div class="container-fluid container-border-radius p-0">
-    <ng-container *ngFor="let template of contentTemplates; index as i">
-      <div class="row template" *ngIf="template.showSideHeadings !== 'Disabled'">
-        <div class="col-4">
-          <h4 id="template[{{i}}].sectionHdg">{{template.templateHeading}}</h4>
+    @for (template of contentTemplates; track template; let i = $index) {
+      @if (template.showSideHeadings !== 'Disabled') {
+        <div class="row template">
+          <div class="col-4">
+            <h4 id="template[{{i}}].sectionHdg">{{template.templateHeading}}</h4>
+          </div>
+          <div class="col-8">
+            <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
+          </div>
         </div>
-        <div class="col-8">
+      }
+      <!-- This row doesn't get the "template" class that the row above does so that it stretches full width -->
+      @if (template.showSideHeadings === 'Disabled') {
+        <div>
           <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
         </div>
-      </div>
-
-      <!-- This row doesn't get the "template" class that the row above does so that it stretches full width -->
-      <div *ngIf="template.showSideHeadings === 'Disabled'">
-        <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
-      </div>
-    </ng-container>
-
+      }
+    }
     <div class="d-flex justify-content-between px-4 pb-4">
       <div>
         <ng-content select="[BottomLeftActions]"></ng-content>
@@ -43,7 +43,7 @@
       </div>
     </div>
   </div>
-
   <lib-audit-view [ctx]="ctx"></lib-audit-view>
   <lib-version [style]="'Footer'"></lib-version>
 </div>
+}

@@ -1,41 +1,41 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
-interface CucumberStep {
-  name: string;
-  result: {
-    status: string;
-    duration?: number;
-    error_message?: string;
-  };
-}
-
-interface CucumberElement {
-  name: string;
-  type: string;
-  steps: CucumberStep[];
-}
-
-interface CucumberFeature {
-  name: string;
-  uri: string;
-  elements: CucumberElement[];
-}
+const fs = require('fs');
+const path = require('path');
 
 function generateSummary() {
   const jsonReportPath = path.join(__dirname, '../reports/cucumber-report.json');
+  const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+
   if (!fs.existsSync(jsonReportPath)) {
+    const errorMd = `## 🎭 Playwright UI Test Execution Summary\n\n### ⚠️ Test Execution Incomplete\nNo \`cucumber-report.json\` was produced. The test runner may have failed during setup or before scenarios executed.\n\n`;
+    if (summaryFile) {
+      fs.appendFileSync(summaryFile, errorMd);
+      console.log('Wrote error summary to GITHUB_STEP_SUMMARY');
+    }
     console.log('No cucumber-report.json found at ' + jsonReportPath);
     return;
   }
 
   const raw = fs.readFileSync(jsonReportPath, 'utf8');
   if (!raw.trim()) {
+    const errorMd = `## 🎭 Playwright UI Test Execution Summary\n\n### ⚠️ Empty Report\n\`cucumber-report.json\` was empty.\n\n`;
+    if (summaryFile) {
+      fs.appendFileSync(summaryFile, errorMd);
+      console.log('Wrote empty summary to GITHUB_STEP_SUMMARY');
+    }
     console.log('cucumber-report.json is empty');
     return;
   }
 
-  const features: CucumberFeature[] = JSON.parse(raw);
+  let features = [];
+  try {
+    features = JSON.parse(raw);
+  } catch (e) {
+    const errorMd = `## 🎭 Playwright UI Test Execution Summary\n\n### ⚠️ Invalid Report JSON\nCould not parse \`cucumber-report.json\`: ${e.message}\n\n`;
+    if (summaryFile) {
+      fs.appendFileSync(summaryFile, errorMd);
+    }
+    return;
+  }
 
   let totalScenarios = 0;
   let passedScenarios = 0;
@@ -45,34 +45,34 @@ function generateSummary() {
   let failedSteps = 0;
   let totalDurationNanos = 0;
 
-  const featureRows: string[] = [];
-  const failureDetails: string[] = [];
+  const featureRows = [];
+  const failureDetails = [];
 
   for (const feature of features) {
     let fScenarios = 0;
     let fPassed = 0;
     let fFailed = 0;
 
-    for (const scenario of feature.elements) {
+    for (const scenario of feature.elements || []) {
       if (scenario.type !== 'scenario') continue;
       fScenarios++;
       totalScenarios++;
 
       let scenarioPassed = true;
-      for (const step of scenario.steps) {
+      for (const step of scenario.steps || []) {
         totalSteps++;
-        if (step.result.duration) {
+        if (step.result?.duration) {
           totalDurationNanos += step.result.duration;
         }
 
-        if (step.result.status === 'passed') {
+        if (step.result?.status === 'passed') {
           passedSteps++;
         } else {
           scenarioPassed = false;
           failedSteps++;
-          if (step.result.status === 'failed') {
+          if (step.result?.status === 'failed') {
             failureDetails.push(
-              `### ❌ ${feature.name} > ${scenario.name}\n- **Step**: \`${step.name}\`\n\`\`\`\n${step.result.error_message || 'Unknown error'}\n\`\`\``,
+              `### ❌ ${feature.name} > ${scenario.name}\n- **Step**: \`${step.name}\`\n\`\`\`\n${step.result?.error_message || 'Unknown error'}\n\`\`\``,
             );
           }
         }
@@ -96,10 +96,10 @@ function generateSummary() {
   const totalDurationSec = (totalDurationNanos / 1e9).toFixed(2);
   const overallBadge =
     failedScenarios === 0
-      ? '### 🚀 All Test Scenarios Passed!'
-      : `### ⚠️ ${failedScenarios} Test Scenario(s) Failed`;
+      ? '### 🚀 All UI Test Scenarios Passed!'
+      : `### ⚠️ ${failedScenarios} UI Test Scenario(s) Failed`;
 
-  let md = `## 🥒 Cucumber Test Execution Summary\n\n`;
+  let md = `## 🎭 Playwright UI Test Execution Summary\n\n`;
   md += `${overallBadge}\n\n`;
   md += `| Total Features | Total Scenarios | Passed | Failed | Total Steps | Duration |\n`;
   md += `| --- | --- | --- | --- | --- | --- |\n`;
@@ -115,10 +115,9 @@ function generateSummary() {
     md += failureDetails.join('\n\n') + '\n\n';
   }
 
-  const summaryFile = process.env.GITHUB_STEP_SUMMARY;
   if (summaryFile) {
     fs.appendFileSync(summaryFile, md);
-    console.log(`Summary written to GITHUB_STEP_SUMMARY (${summaryFile})`);
+    console.log('Wrote summary to GITHUB_STEP_SUMMARY');
   } else {
     console.log(md);
   }

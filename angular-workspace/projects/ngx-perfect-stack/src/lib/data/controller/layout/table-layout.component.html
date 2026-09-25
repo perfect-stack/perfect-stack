@@ -1,51 +1,61 @@
-<ng-container *ngIf="debugService.ON">
+@if (debugService.ON) {
   [TABLE_LAYOUT - {{template.templateHeading}} - {{template.binding}}]
-</ng-container>
+}
 
-<ng-container *ngIf="cells$ | async as cells">
-
-  <ng-container *ngIf="cells && attributes && (attributes.length > 0 || mode === 'edit')">
-
-    <div class="results-summary" *ngIf="hasResultsSummary()">
-      {{formGroup.controls['resultsSummary'].value}}
-    </div>
-
-    <table class="table" [ngClass]="getStyleClasses()">
+@if (cells$ | async; as cells) {
+  @if (cells && attributes && (attributes.length > 0 || mode === 'edit')) {
+    @if (hasResultsSummary()) {
+      <div class="results-summary" [attr.data-testid]="'results-summary'">
+        {{formGroup.controls['resultsSummary'].value}}
+      </div>
+    }
+    <table class="table" [ngClass]="getStyleClasses()" [attr.data-testid]="'table-' + (template?.binding || 'data')">
       <thead>
-        <tr *ngIf="cells">
-          <th *ngFor="let nextCell of cells[0]">
-            <ng-container *ngIf="nextCell.attribute">
-              {{nextCell.attribute.label}}
-              <span class="text-danger" *ngIf="mode === 'edit' && nextCell.attribute.visibility === 'Required' && attributes.length > 0">*</span>
-            </ng-container>
-            <ng-container *ngIf="nextCell.tool">
-              {{nextCell.tool.label}}
-            </ng-container>
-          </th>
-          <th *ngIf="mode === 'edit'">
-            <!-- This is an empty th element to act as a header for the delete action below -->
-          </th>
-        </tr>
+        @if (cells) {
+          <tr>
+            @for (nextCell of cells[0]; track nextCell) {
+              <th>
+                @if (nextCell.attribute) {
+                  {{nextCell.attribute.label}}
+                  @if (mode === 'edit' && nextCell.attribute.visibility === 'Required' && attributes.length > 0) {
+                    <span class="text-danger">*</span>
+                  }
+                }
+                @if (nextCell.tool) {
+                  {{nextCell.tool.label}}
+                }
+              </th>
+            }
+            @if (mode === 'edit') {
+              <th>
+                <!-- This is an empty th element to act as a header for the delete action below -->
+              </th>
+            }
+          </tr>
+        }
       </thead>
       <tbody>
-        <ng-container *ngFor="let group of attributes.controls; let i=index">
-          <tr class="align-middle" (click)="onRowClicked(i)">
-            <td [ngStyle]="{'width': getCellWidth(nextCell) }" *ngFor="let nextCell of cells[0]">
-              <ng-container *ngIf="nextCell.attribute || nextCell.tool">
-                <lib-cell [mode]="mode" [ctx]="ctx" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!"></lib-cell>
-              </ng-container>
-            </td>
-            <td *ngIf="mode === 'edit'">
-              <span class="btn-icon text-primary material-symbols-outlined" (click)="onDeleteRow(i)">delete</span>
-            </td>
+        @for (group of attributes.controls; track group; let i = $index) {
+          <tr class="align-middle" (click)="onRowClicked(i)" [attr.data-testid]="'table-row-' + i">
+            @for (nextCell of cells[0]; track nextCell) {
+              <td [ngStyle]="{'width': getCellWidth(nextCell) }">
+                @if (nextCell.attribute || nextCell.tool) {
+                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!"></lib-cell>
+                }
+              </td>
+            }
+            @if (mode === 'edit') {
+              <td>
+                <span class="btn-icon text-primary material-symbols-outlined" (click)="onDeleteRow(i)" [attr.data-testid]="'btn-delete-row-' + i">delete</span>
+              </td>
+            }
           </tr>
-        </ng-container>
+        }
       </tbody>
     </table>
-  </ng-container>
-
-  <ng-container *ngIf="mode !== 'edit' && cells && attributes && attributes.length == 0">
-    <div class="no-items-container">
+  }
+  @if (mode !== 'edit' && cells && attributes && attributes.length == 0) {
+    <div class="no-items-container" [attr.data-testid]="'no-items-container'">
       <div class="d-flex justify-content-center no-items-icon">
         <span class="material-symbols-outlined no-items-icon">manage_search</span>
       </div>
@@ -53,14 +63,13 @@
         <div [innerHtml]="getNoItemsHtml()"></div>
       </div>
     </div>
-  </ng-container>
-
-  <div class="d-flex" *ngIf="mode === 'edit' && attributes">
-    <a class="text-primary" (click)="onAddRow()" id="addRowBtn" role="button">
-      <span class="material-symbols-outlined icon-filled align-middle">add_circle</span>
-      Add another
-    </a>
-  </div>
-</ng-container>
-
-
+  }
+  @if (mode === 'edit' && attributes) {
+    <div class="d-flex">
+      <a class="text-primary" (click)="onAddRow()" id="addRowBtn" [attr.data-testid]="'btn-add-row'" role="button">
+        <span class="material-symbols-outlined icon-filled align-middle">add_circle</span>
+        Add another
+      </a>
+    </div>
+  }
+}

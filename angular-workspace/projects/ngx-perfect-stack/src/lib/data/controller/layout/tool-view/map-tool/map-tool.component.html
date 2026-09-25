@@ -1,22 +1,22 @@
 
-<ng-container *ngIf="editorMode">
+@if (editorMode) {
   <div (click)="doEditorAction()">MAP goes here...</div>
-</ng-container>
+}
 
-<ng-container *ngIf="!editorMode && options">
+@if (!editorMode && options) {
   <div [ngStyle]="{'height': height}"
-       leaflet
-       [leafletOptions]="options"
-       [(leafletCenter)]="center"
-       [leafletBaseLayers]="baseLayers"
-       (leafletClick)="onMapClick($event)"
-  >
-    <div *ngFor="let l of layers" [leafletLayer]="l"></div>
-
+    leaflet
+    [leafletOptions]="options"
+    [(leafletCenter)]="center"
+    [leafletBaseLayers]="baseLayers"
+    (leafletClick)="onMapClick($event)"
+    >
+    @for (l of layers; track l) {
+      <div [leafletLayer]="l"></div>
+    }
     <div [ngClass]="{'overlay-bottom-left': ctx.mode === 'edit'}">
       Shift+Click to set coordinates
     </div>
   </div>
-
-</ng-container>
+}
 

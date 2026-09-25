@@ -1,13 +1,15 @@
-<ng-container [formGroup]="formGroup" *ngIf="cell.metaEntity && cell.attribute">
-  <ng-container *ngIf="entityList$|async as entityList">
-    <ng-container *ngFor="let item of entityList; index as i; count as totalCount">
-      <!-- One has the command and one of these doesn't, this was one easy way to get the comma to conditionally appear, there may be a better way -->
-      <ng-container *ngIf="i < totalCount - 1">
-        <a [routerLink]="['/data', linkAttribute?.relationshipTarget, 'view', item.id]" href="#" [id]="cell.attribute.name">{{item.displayText}}</a>,
-      </ng-container>
-      <ng-container *ngIf="i >= totalCount - 1">
-        <a [routerLink]="['/data', linkAttribute?.relationshipTarget, 'view', item.id]" href="#" [id]="cell.attribute.name">{{item.displayText}}</a>
-      </ng-container>
-    </ng-container>
+@if (cell.metaEntity && cell.attribute) {
+  <ng-container [formGroup]="formGroup">
+    @if (entityList$|async; as entityList) {
+      @for (item of entityList; track item; let i = $index; let totalCount = $count) {
+        <!-- One has the command and one of these doesn't, this was one easy way to get the comma to conditionally appear, there may be a better way -->
+        @if (i < totalCount - 1) {
+          <a [routerLink]="['/data', linkAttribute?.relationshipTarget, 'view', item.id]" href="#" [id]="cell.attribute.name" [attr.data-testid]="'link-' + cell.attribute.name">{{item.displayText}}</a>,
+        }
+        @if (i >= totalCount - 1) {
+          <a [routerLink]="['/data', linkAttribute?.relationshipTarget, 'view', item.id]" href="#" [id]="cell.attribute.name" [attr.data-testid]="'link-' + cell.attribute.name">{{item.displayText}}</a>
+        }
+      }
+    }
   </ng-container>
-</ng-container>
+}

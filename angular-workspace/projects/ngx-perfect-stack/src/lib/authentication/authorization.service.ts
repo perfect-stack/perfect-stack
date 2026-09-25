@@ -151,8 +151,7 @@ export class AuthorizationService {
           const permits = groupPermissions[j].split('.');
           const permitAction = permits[0];
           const permitSubject = permits[1];
-
-          if(permitAction === action && permitSubject === subject) {
+          if (this.isPermittedMatch(action, subject, permitAction, permitSubject)) {
             permitted = true;
           }
         }
@@ -160,5 +159,22 @@ export class AuthorizationService {
     }
 
     return permitted;
+  }
+
+  private isPermittedMatch(
+    action: string,
+    subject: string,
+    permitAction: string,
+    permitSubject: string,
+  ) {
+    const cleanAction = action ? action.trim().toLowerCase() : '';
+    const cleanSubject = subject ? subject.trim().toLowerCase() : '';
+    const cleanPermitAction = permitAction ? permitAction.trim().toLowerCase() : '';
+    const cleanPermitSubject = permitSubject ? permitSubject.trim().toLowerCase() : '';
+
+    const actionMatch = cleanAction === cleanPermitAction || cleanPermitAction === 'any';
+    const subjectMatch = cleanSubject === cleanPermitSubject || cleanPermitSubject === 'any';
+
+    return actionMatch && subjectMatch;
   }
 }

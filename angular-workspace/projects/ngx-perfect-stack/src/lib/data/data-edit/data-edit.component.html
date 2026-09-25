@@ -1,118 +1,130 @@
 <!--suppress XmlDuplicatedId -->
 <div class="d-flex flex-column h-100">
-  <div class="flex-grow-1" *ngIf="ctx$ | async as ctx">
-
-    <ng-container *ngIf="debugService.ON">
-      <p class="small">layoutStyle: {{ctx.metaPage.layoutStyle}}, mode: {{mode}}</p>
-    </ng-container>
-
-    <ng-container [ngSwitch]="ctx.metaPage.layoutStyle">
-
-      <!-- Paris layout style -->
-      <ng-container *ngSwitchCase="'Paris'">
-        <lib-paris-layout-style [ctx]="ctx">
-          <ng-container TopRightActions>
-            <div class="h-100 d-flex align-items-center" *ngIf="mode === 'view'" >
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">{{makeEditLbl()}}</button>
-              </lib-permission-check>
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx" [enabledIf]="false">
-                <div class="read-only-badge small text-muted" [ngbTooltip]="'You have insufficient permissions to edit this data, or the data source is read-only.'">
-                  <div class="material-symbols-outlined icon-filled pe-1">visibility</div>
-                  Read only
+  @if (ctx$ | async; as ctx) {
+    <div class="flex-grow-1">
+      @if (debugService.ON) {
+        <p class="small">layoutStyle: {{ctx.metaPage.layoutStyle}}, mode: {{mode}}</p>
+      }
+      @switch (ctx.metaPage.layoutStyle) {
+        <!-- Paris layout style -->
+        @case ('Paris') {
+          <lib-paris-layout-style [ctx]="ctx">
+            <ng-container TopRightActions>
+              @if (mode === 'view') {
+                <div class="h-100 d-flex align-items-center" >
+                  <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
+                    <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn" [attr.data-testid]="'btn-edit'">{{makeEditLbl()}}</button>
+                  </lib-permission-check>
+                  <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx" [enabledIf]="false">
+                    <div class="read-only-badge small text-muted" [ngbTooltip]="'You have insufficient permissions to edit this data, or the data source is read-only.'">
+                      <div class="material-symbols-outlined icon-filled pe-1">visibility</div>
+                      Read only
+                    </div>
+                  </lib-permission-check>
                 </div>
-              </lib-permission-check>
-            </div>
-          </ng-container>
-          <ng-container BottomLeftActions>
-            <div class="mt-2" *ngIf="mode === 'edit' && deleteAvailable">
-              <lib-permission-check [action]="ActionType.Delete" [subject]="metaName" [ctx]="ctx">
-                <ng-container *ngIf="deleteCheck === DeleteCheckType.No">
-                  <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
-                    <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn">Delete</button>
-                  </span>
-                </ng-container>
-                <ng-container *ngIf="deleteCheck === DeleteCheckType.Yes">
-                  <button type="button" class="btn btn-outline-danger me-2" (click)="onDeletePrompt(ctx)" id="deleteBtn" placement="top" ngbTooltip="This entity can be deleted safely">Delete</button>
-                </ng-container>
-              </lib-permission-check>
-            </div>
-          </ng-container>
-          <ng-container BottomRightActions>
-            <div class="mt-2" *ngIf="mode === 'edit'">
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn">Cancel</button>
-                <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save details</button>
-              </lib-permission-check>
-            </div>
-          </ng-container>
-        </lib-paris-layout-style>
-      </ng-container>
-
-      <!-- Stockholm layout style -->
-      <ng-container *ngSwitchCase="'Stockholm'">
-        <lib-stockholm-layout-style [ctx]="ctx">
-          <ng-container TopRightActions>
-            <div class="h-100 d-flex align-items-center" *ngIf="mode === 'view'" >
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn">{{makeEditLbl()}}</button>
-              </lib-permission-check>
-            </div>
-          </ng-container>
-          <ng-container BottomLeftActions>
-            <div class="mt-2" *ngIf="mode === 'edit' && deleteAvailable">
-              <lib-permission-check [action]="ActionType.Delete" [subject]="metaName" [ctx]="ctx">
-                <ng-container *ngIf="deleteCheck === DeleteCheckType.No">
-                  <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
-                    <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn">Delete</button>
-                  </span>
-                </ng-container>
-                <ng-container *ngIf="deleteCheck === DeleteCheckType.Yes">
-                  <button type="button" class="btn btn-outline-danger me-2" (click)="onDeletePrompt(ctx)" id="deleteBtn" placement="top" ngbTooltip="This entity can be deleted safely">Delete</button>
-                </ng-container>
-              </lib-permission-check>
-            </div>
-          </ng-container>
-          <ng-container BottomRightActions>
-            <div class="mt-2" *ngIf="mode === 'edit'">
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn">Cancel</button>
-                <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save details</button>
-              </lib-permission-check>
-            </div>
-          </ng-container>
-        </lib-stockholm-layout-style>
-      </ng-container>
-
-      <!-- Venice layout style -->
-      <ng-container *ngSwitchCase="'Venice'">
-        <lib-venice-layout-style [ctx]="ctx"></lib-venice-layout-style>
-      </ng-container>
-
-      <!-- New York layout style -->
-      <ng-container *ngSwitchCase="'NewYork'">
-        <lib-new-york-layout-style [ctx]="ctx">
-          <ng-container BottomRightActions [ngSwitch]="mode">
-            <div class="mt-2" *ngSwitchCase="'view'">
-              <button type="button" class="btn btn-outline-primary me-2" (click)="onBack()" id="backBtn">Back</button>
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                <button type="submit" class="btn btn-primary me-2" (click)="onEdit()" id="editBtn">Edit</button>
-              </lib-permission-check>
-            </div>
-            <div class="mt-2" *ngSwitchCase="'edit'">
-              <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-                <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn">Cancel</button>
-                <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn">Save</button>
-              </lib-permission-check>
-            </div>
-          </ng-container>
-        </lib-new-york-layout-style>
-      </ng-container>
-
-      <ng-container *ngSwitchDefault>
-        NO Layout Style specified. Please set the layout style on the Page template.
-      </ng-container>
-
-    </ng-container>
-  </div>
+              }
+            </ng-container>
+            <ng-container BottomLeftActions>
+              @if (mode === 'edit' && deleteAvailable) {
+                <div class="mt-2">
+                  <lib-permission-check [action]="ActionType.Delete" [subject]="metaName" [ctx]="ctx">
+                    @if (deleteCheck === DeleteCheckType.No) {
+                      <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
+                        <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn" [attr.data-testid]="'btn-delete'">Delete</button>
+                      </span>
+                    }
+                    @if (deleteCheck === DeleteCheckType.Yes) {
+                      <button type="button" class="btn btn-outline-danger me-2" (click)="onDeletePrompt(ctx)" id="deleteBtn" [attr.data-testid]="'btn-delete'" placement="top" ngbTooltip="This entity can be deleted safely">Delete</button>
+                    }
+                  </lib-permission-check>
+                </div>
+              }
+            </ng-container>
+            <ng-container BottomRightActions>
+              @if (mode === 'edit') {
+                <div class="mt-2">
+                  <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
+                    <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn" [attr.data-testid]="'btn-cancel'">Cancel</button>
+                    <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn" [attr.data-testid]="'btn-save'">Save details</button>
+                  </lib-permission-check>
+                </div>
+              }
+            </ng-container>
+          </lib-paris-layout-style>
+        }
+        <!-- Stockholm layout style -->
+        @case ('Stockholm') {
+          <lib-stockholm-layout-style [ctx]="ctx">
+            <ng-container TopRightActions>
+              @if (mode === 'view') {
+                <div class="h-100 d-flex align-items-center" >
+                  <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
+                    <button type="submit" class="btn btn-outline-primary" (click)="onEdit()" id="editBtn" [attr.data-testid]="'btn-edit'">{{makeEditLbl()}}</button>
+                  </lib-permission-check>
+                </div>
+              }
+            </ng-container>
+            <ng-container BottomLeftActions>
+              @if (mode === 'edit' && deleteAvailable) {
+                <div class="mt-2">
+                  <lib-permission-check [action]="ActionType.Delete" [subject]="metaName" [ctx]="ctx">
+                    @if (deleteCheck === DeleteCheckType.No) {
+                      <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
+                        <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn" [attr.data-testid]="'btn-delete'">Delete</button>
+                      </span>
+                    }
+                    @if (deleteCheck === DeleteCheckType.Yes) {
+                      <button type="button" class="btn btn-outline-danger me-2" (click)="onDeletePrompt(ctx)" id="deleteBtn" [attr.data-testid]="'btn-delete'" placement="top" ngbTooltip="This entity can be deleted safely">Delete</button>
+                    }
+                  </lib-permission-check>
+                </div>
+              }
+            </ng-container>
+            <ng-container BottomRightActions>
+              @if (mode === 'edit') {
+                <div class="mt-2">
+                  <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
+                    <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn" [attr.data-testid]="'btn-cancel'">Cancel</button>
+                    <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn" [attr.data-testid]="'btn-save'">Save details</button>
+                  </lib-permission-check>
+                </div>
+              }
+            </ng-container>
+          </lib-stockholm-layout-style>
+        }
+        <!-- Venice layout style -->
+        @case ('Venice') {
+          <lib-venice-layout-style [ctx]="ctx"></lib-venice-layout-style>
+        }
+        <!-- New York layout style -->
+        @case ('NewYork') {
+          <lib-new-york-layout-style [ctx]="ctx">
+            <ng-container BottomRightActions>
+              @switch (mode) {
+                @case ('view') {
+                  <div class="mt-2">
+                    <button type="button" class="btn btn-outline-primary me-2" (click)="onBack()" id="backBtn" [attr.data-testid]="'btn-back'">Back</button>
+                    <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
+                      <button type="submit" class="btn btn-primary me-2" (click)="onEdit()" id="editBtn" [attr.data-testid]="'btn-edit'">Edit</button>
+                    </lib-permission-check>
+                  </div>
+                }
+                @case ('edit') {
+                  <div class="mt-2">
+                    <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
+                      <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel(ctx, null)" id="cancelBtn" [attr.data-testid]="'btn-cancel'">Cancel</button>
+                      <button type="submit" class="btn btn-primary me-2" [disabled]="isSaveDisabled(ctx)" (click)="onSave(ctx)" id="saveBtn" [attr.data-testid]="'btn-save'">Save</button>
+                    </lib-permission-check>
+                  </div>
+                }
+              }
+            </ng-container>
+          </lib-new-york-layout-style>
+        }
+        @default {
+          NO Layout Style specified. Please set the layout style on the Page template.
+        }
+      }
+    </div>
+  }
 </div>
