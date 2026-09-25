@@ -75,7 +75,7 @@ export async function ensureFrontendRunning(): Promise<void> {
 
   console.log('Starting Vet Clinic Frontend on http://localhost:4200 (ng serve)...');
   const clientDir = path.resolve(__dirname, '../client');
-  frontendProcess = spawn('npx', ['ng', 'serve', '--port', '4200', '--host', '0.0.0.0'], {
+  frontendProcess = spawn('npx', ['ng', 'serve', '--port', '4200', '--host', '0.0.0.0', '--prebundle=false'], {
     cwd: clientDir,
     stdio: 'pipe',
     env: { ...process.env },
