@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, signal} from '@angular/core';
 
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../ngx-perfect-stack-config";
@@ -46,7 +46,8 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly dataImportService: DataImportService,
-              private http: HttpClient) {
+              private http: HttpClient,
+              protected readonly cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -55,6 +56,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
       if (this.clientMappings.length > 0 && !this.clientMappings.some(m => m.title === this.dataFormat)) {
         this.dataFormat = this.clientMappings[0].title;
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -68,19 +70,21 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
     event.preventDefault(); // Prevent default browser behavior
     event.stopPropagation(); // Stop event bubbling
     this.isDraggingOver = true; // Activate visual feedback
-    // You could also check event.dataTransfer.types here to see if files are being dragged
+    this.cdr.markForCheck();
   }
 
   onDragLeave(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.isDraggingOver = false; // Deactivate visual feedback
+    this.cdr.markForCheck();
   }
 
   onDrop(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.isDraggingOver = false; // Deactivate visual feedback
+    this.cdr.markForCheck();
 
     const files = event.dataTransfer?.files; // Get files from the drop event
     if (files && files.length > 0) {
@@ -121,6 +125,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
       this.fileItems.push(nextFileItem);
 
       console.log('Data Import - file: ', nextFileItem);
+      this.cdr.markForCheck();
       this.upload(nextFileItem); // Start upload processing for this item
     }
   }
@@ -156,6 +161,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
       next: event => {
         if (event.type === HttpEventType.UploadProgress && event.total) {
           fileItem.uploadProgress = Math.round(100 * (event.loaded / event.total));
+          this.cdr.markForCheck();
         }
         else if (event.type === HttpEventType.Response) {
           console.log(`Upload successful for ${fileItem.file.name}`);
@@ -169,6 +175,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
           if(apiResponse && apiResponse.data) {
             this.uploadedData.set(apiResponse);
           }
+          this.cdr.markForCheck();
         }
       },
       error: err => {
@@ -180,6 +187,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
         } else {
           console.log(`Upload cancelled for ${fileItem.file.name}`);
         }
+        this.cdr.markForCheck();
       }
     });
   }
@@ -221,6 +229,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
       itemToCancel.status = 'cancelled';
       itemToCancel.uploadProgress = null;
       itemToCancel.uploadSub = undefined;
+      this.cdr.markForCheck();
     }
   }
 

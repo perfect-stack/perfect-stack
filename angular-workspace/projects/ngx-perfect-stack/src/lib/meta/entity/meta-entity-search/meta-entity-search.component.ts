@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {MetaEntity} from '../../../domain/meta.entity';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {Router} from '@angular/router';
@@ -17,7 +17,8 @@ export class MetaEntitySearchComponent implements OnInit {
   constructor(
     protected readonly router: Router,
     public readonly toastService: ToastService,
-    protected readonly metaEntityService: MetaEntityService) { }
+    protected readonly metaEntityService: MetaEntityService,
+    protected readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.onSearch();
@@ -26,6 +27,7 @@ export class MetaEntitySearchComponent implements OnInit {
   onSearch() {
     this.metaEntityService.findAll().subscribe( response => {
       this.searchResults = response;
+      this.cdr.markForCheck();
     });
   }
 

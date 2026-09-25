@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import {MetaRoleService} from '../meta-role-service/meta-role.service';
 import {MetaRole} from '../../../domain/meta.role';
@@ -15,7 +15,8 @@ export class MetaRoleSearchComponent implements OnInit {
 
   constructor(
     protected readonly router: Router,
-    protected readonly metaRoleService: MetaRoleService) { }
+    protected readonly metaRoleService: MetaRoleService,
+    protected readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.onSearch();
@@ -24,6 +25,7 @@ export class MetaRoleSearchComponent implements OnInit {
   onSearch() {
     this.metaRoleService.findAll().subscribe( response => {
       this.searchResults = response;
+      this.cdr.markForCheck();
     });
   }
 

@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
 import { CommonModule } from "@angular/common";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
 import {BatchService} from "./batch.service";
@@ -33,7 +33,8 @@ export class BatchComponent implements OnInit {
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly batchService: BatchService,
               protected readonly jobService: JobService,
-              protected readonly toastService: ToastService
+              protected readonly toastService: ToastService,
+              protected readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -50,6 +51,7 @@ export class BatchComponent implements OnInit {
         this.getSummary(job.name);
         this.getLatestJob(job.name);
       });
+      this.cdr.markForCheck();
     });
   }
 
@@ -58,6 +60,7 @@ export class BatchComponent implements OnInit {
       const job = this.batchJobs.find(j => j.name === jobName);
       if (job) {
         job.summary = summary;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -67,6 +70,7 @@ export class BatchComponent implements OnInit {
       const job = this.batchJobs.find(j => j.name === jobName);
       if (job) {
         job.lastJob = latestJob;
+        this.cdr.markForCheck();
         if (latestJob && (latestJob.status === 'Processing' || latestJob.status === 'Submitted')) {
           job.currentJobId = latestJob.id;
           job.isRunning = true;

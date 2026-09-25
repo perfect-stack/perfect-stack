@@ -1,4 +1,4 @@
-import {Component, effect, Injector, OnDestroy, OnInit, viewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, effect, Injector, OnDestroy, OnInit, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {DataImportClientMapping, DataImportModel, DataImportSkippedColumn} from "./upload-panel/data-import.model";
@@ -47,16 +47,17 @@ export class DataImportComponent implements OnInit, OnDestroy {
     protected readonly jobService: JobService,
     private route: ActivatedRoute,
     private location: Location,
-    private injector: Injector) {
+    private injector: Injector,
+    protected readonly cdr: ChangeDetectorRef) {
     effect(() => {
       const  uploadPanel = this.uploadPanel();
       if(uploadPanel) {
-        this.data = null;
-        this.importStarted = false;
-
         const  uploadedData = uploadPanel.uploadedData();
         console.log('Data Import: uploadedData:', uploadedData);
         if(uploadedData) {
+          this.data = null;
+          this.form = null as any;
+          this.importStarted = false;
           this.job = uploadedData as Job;
           this.jobIdValidate = this.job.id;
           this.phase = 'validating';
@@ -66,6 +67,8 @@ export class DataImportComponent implements OnInit, OnDestroy {
           // We want to add the jobId and phase to the URL so that if the user refreshes the page,
           // the job progress monitor can pick up the job and continue monitoring it.
           this.location.replaceState(`/data/import?jobId=${this.job.id}&phase=validating`);
+          this.onJobUpdated(this.job);
+          this.cdr.markForCheck();
         }
       }
     }, {injector: this.injector});
@@ -74,6 +77,7 @@ export class DataImportComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.dataImportService.getDataImportClientMapping().subscribe(mappings => {
       this.clientMappings = mappings;
+      this.cdr.markForCheck();
     });
 
     // Initialise the component with the current status of the job taken from the parameters in the URL. This allows
@@ -99,6 +103,7 @@ export class DataImportComponent implements OnInit, OnDestroy {
           this.onJobUpdated(job);
         });
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -351,6 +356,7 @@ export class DataImportComponent implements OnInit, OnDestroy {
   onImportData() {
     if(this.data && !this.importHasErrors()) {
       this.importStarted = true;
+      this.cdr.markForCheck();
       this.dataImportService.importData(this.data).subscribe(result => {
         console.log('Data Import: got result:', result);
         this.job = result;
@@ -358,6 +364,7 @@ export class DataImportComponent implements OnInit, OnDestroy {
         this.phase = 'importing';
         this.location.replaceState(`/data/import?jobId=${result.id}&phase=importing`);
         this.data = JSON.parse(result.data) as DataImportModel;
+        this.cdr.markForCheck();
       });
     }
   }
@@ -378,6 +385,7 @@ export class DataImportComponent implements OnInit, OnDestroy {
 
       console.log(`Data Import: job updated - job:`, this.job);
       console.log(`Data Import: job updated - data:`, this.data);
+      this.cdr.markForCheck();
     }
   }
 }
