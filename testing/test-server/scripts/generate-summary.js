@@ -1,33 +1,12 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
-interface CucumberStep {
-  name: string;
-  result: {
-    status: string;
-    duration?: number;
-    error_message?: string;
-  };
-}
-
-interface CucumberElement {
-  name: string;
-  type: string;
-  steps: CucumberStep[];
-}
-
-interface CucumberFeature {
-  name: string;
-  uri: string;
-  elements: CucumberElement[];
-}
+const fs = require('fs');
+const path = require('path');
 
 function generateSummary() {
   const jsonReportPath = path.join(__dirname, '../reports/cucumber-report.json');
   const summaryFile = process.env.GITHUB_STEP_SUMMARY;
 
   if (!fs.existsSync(jsonReportPath)) {
-    const errorMd = `## 🎭 Playwright UI Test Execution Summary\n\n### ⚠️ Test Execution Incomplete\nNo \`cucumber-report.json\` was produced. The test runner may have failed during setup or before scenarios executed.\n\n`;
+    const errorMd = `## 🥒 Cucumber Test Execution Summary\n\n### ⚠️ Test Execution Incomplete\nNo \`cucumber-report.json\` was produced. The test runner may have failed during setup or before scenarios executed.\n\n`;
     if (summaryFile) {
       fs.appendFileSync(summaryFile, errorMd);
       console.log('Wrote error summary to GITHUB_STEP_SUMMARY');
@@ -38,7 +17,7 @@ function generateSummary() {
 
   const raw = fs.readFileSync(jsonReportPath, 'utf8');
   if (!raw.trim()) {
-    const errorMd = `## 🎭 Playwright UI Test Execution Summary\n\n### ⚠️ Empty Report\n\`cucumber-report.json\` was empty.\n\n`;
+    const errorMd = `## 🥒 Cucumber Test Execution Summary\n\n### ⚠️ Empty Report\n\`cucumber-report.json\` was empty.\n\n`;
     if (summaryFile) {
       fs.appendFileSync(summaryFile, errorMd);
       console.log('Wrote empty summary to GITHUB_STEP_SUMMARY');
@@ -47,11 +26,11 @@ function generateSummary() {
     return;
   }
 
-  let features: CucumberFeature[] = [];
+  let features = [];
   try {
     features = JSON.parse(raw);
-  } catch (e: any) {
-    const errorMd = `## 🎭 Playwright UI Test Execution Summary\n\n### ⚠️ Invalid Report JSON\nCould not parse \`cucumber-report.json\`: ${e.message}\n\n`;
+  } catch (e) {
+    const errorMd = `## 🥒 Cucumber Test Execution Summary\n\n### ⚠️ Invalid Report JSON\nCould not parse \`cucumber-report.json\`: ${e.message}\n\n`;
     if (summaryFile) {
       fs.appendFileSync(summaryFile, errorMd);
     }
@@ -66,8 +45,8 @@ function generateSummary() {
   let failedSteps = 0;
   let totalDurationNanos = 0;
 
-  const featureRows: string[] = [];
-  const failureDetails: string[] = [];
+  const featureRows = [];
+  const failureDetails = [];
 
   for (const feature of features) {
     let fScenarios = 0;
@@ -117,10 +96,10 @@ function generateSummary() {
   const totalDurationSec = (totalDurationNanos / 1e9).toFixed(2);
   const overallBadge =
     failedScenarios === 0
-      ? '### 🚀 All UI Test Scenarios Passed!'
-      : `### ⚠️ ${failedScenarios} UI Test Scenario(s) Failed`;
+      ? '### 🚀 All Test Scenarios Passed!'
+      : `### ⚠️ ${failedScenarios} Test Scenario(s) Failed`;
 
-  let md = `## 🎭 Playwright UI Test Execution Summary\n\n`;
+  let md = `## 🥒 Cucumber Test Execution Summary\n\n`;
   md += `${overallBadge}\n\n`;
   md += `| Total Features | Total Scenarios | Passed | Failed | Total Steps | Duration |\n`;
   md += `| --- | --- | --- | --- | --- | --- |\n`;
@@ -138,7 +117,7 @@ function generateSummary() {
 
   if (summaryFile) {
     fs.appendFileSync(summaryFile, md);
-    console.log('Wrote summary to GITHUB_STEP_SUMMARY');
+    console.log(`Summary written to GITHUB_STEP_SUMMARY (${summaryFile})`);
   } else {
     console.log(md);
   }

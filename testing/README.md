@@ -131,12 +131,12 @@ npm run start
 ## 📊 Test Reports & Summaries
 
 - **HTML Report**: After a test run in `test-ui`, open [`reports/cucumber-report.html`](./test-ui/reports/cucumber-report.html) in your browser for detailed step metrics and failure screenshots.
-- **Markdown Step Summary**: Run `npx ts-node scripts/generate-summary.ts` inside `test-server` or `test-ui` to produce a Markdown table breakdown compatible with GitHub Actions (`$GITHUB_STEP_SUMMARY`).
+- **Markdown Step Summary**: Run `node scripts/generate-summary.js` inside `test-server` or `test-ui` to produce a Markdown table breakdown compatible with GitHub Actions (`$GITHUB_STEP_SUMMARY`).
 
 ---
 
 ## 📋 Data-Driven Test Isolation Principle
 
-- **No Reliance on Global DB Reset**: Rather than dropping or truncating tables between every scenario, tests maintain isolation through **intentional, distinct test datasets**.
+- **No Reliance on Global DB Reset**: Rather than dropping or truncating tables between every scenario, tests maintain isolation through **intentional, distinct test datasets** phases.
 - **Unique Identifying Values**: Use distinctive identifiers, names, or prefixes for scenario-specific data (e.g. `qmc.alice.baker@corp.com`, `QEL-Oliver`).
 - **Targeted Filter Queries**: Queries assert on expected slices of data using explicit search criteria rather than assuming an empty table.
