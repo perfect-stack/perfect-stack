@@ -6,6 +6,8 @@
   "license": "MIT",
   "peerDependencies": {
     "@angular/animations": "^22.1.7",
+    "@angular/aria": "^22.1.7",
+    "@angular/cdk": "^22.1.7",
     "@angular/common": "^22.1.7",
     "@angular/compiler": "^22.1.7",
     "@angular/core": "^22.1.7",
