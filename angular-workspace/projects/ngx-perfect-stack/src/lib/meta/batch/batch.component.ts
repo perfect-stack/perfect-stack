@@ -70,13 +70,13 @@ export class BatchComponent implements OnInit {
       const job = this.batchJobs.find(j => j.name === jobName);
       if (job) {
         job.lastJob = latestJob;
-        this.cdr.markForCheck();
         if (latestJob && (latestJob.status === 'Processing' || latestJob.status === 'Submitted')) {
           job.currentJobId = latestJob.id;
           job.isRunning = true;
         } else if (latestJob && (latestJob.status === 'Completed' || latestJob.status === 'Error' || latestJob.status === 'Stopped')) {
           job.isRunning = false;
         }
+        this.cdr.markForCheck();
       }
     });
   }
@@ -90,12 +90,14 @@ export class BatchComponent implements OnInit {
     if (jobSummary) {
       jobSummary.isRunning = true;
       jobSummary.currentJobId = null;
+      this.cdr.markForCheck();
     }
     this.jobService.startJob(jobName).subscribe({
       next: (job) => {
         if (jobSummary) {
           jobSummary.currentJobId = job.id;
           jobSummary.lastJob = job;
+          this.cdr.markForCheck();
         }
       },
       error: (err) => {
@@ -109,6 +111,7 @@ export class BatchComponent implements OnInit {
               jobSummary.lastJob = latestJob;
               jobSummary.currentJobId = latestJob.id;
               jobSummary.isRunning = (latestJob.status === 'Processing' || latestJob.status === 'Submitted');
+              this.cdr.markForCheck();
             }
           });
         } else {
@@ -118,6 +121,7 @@ export class BatchComponent implements OnInit {
           const errorMsg = err.error?.message || err.message || String(err);
           this.toastService.showError(`Failed to start job ${jobName}: ${errorMsg}`, false);
           this.getLatestJob(jobName);
+          this.cdr.markForCheck();
         }
       }
     });
@@ -126,6 +130,7 @@ export class BatchComponent implements OnInit {
   onStop(jobSummary: BatchJobSummary) {
     const targetJobId = jobSummary.currentJobId || jobSummary.lastJob?.id || jobSummary.name;
     jobSummary.isStopping = true;
+    this.cdr.markForCheck();
     this.jobService.stopJob(targetJobId).subscribe({
       next: (stoppedJob) => {
         jobSummary.isStopping = false;
@@ -133,11 +138,13 @@ export class BatchComponent implements OnInit {
         jobSummary.lastJob = stoppedJob;
         this.toastService.showWarning(`Stop requested for job ${jobSummary.name}`);
         this.getSummary(jobSummary.name);
+        this.cdr.markForCheck();
       },
       error: (err) => {
         jobSummary.isStopping = false;
         const errorMsg = err.error?.message || err.message || String(err);
         this.toastService.showError(`Failed to stop job ${jobSummary.name}: ${errorMsg}`, false);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -170,6 +177,7 @@ export class BatchComponent implements OnInit {
     } else if (job.status === 'Processing' || job.status === 'Submitted') {
       jobSummary.isRunning = true;
     }
+    this.cdr.markForCheck();
   }
 
   formatDuration(durationInMs: number | undefined | null): string {
