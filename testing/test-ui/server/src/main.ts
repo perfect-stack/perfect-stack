@@ -4,6 +4,7 @@ import { Logger } from "@nestjs/common";
 import { VetClinicServerModule } from "./vet-clinic-server.module";
 import { MetaEntityService, OrmService } from "@perfect-stack/nestjs-server";
 import { AllExceptionsFilter } from "./all-exceptions.filter";
+import { seedDatabase } from "./seed-data";
 
 async function bootstrap() {
   const logger = new Logger("VetClinicBootstrap");
@@ -26,6 +27,13 @@ async function bootstrap() {
   await metaEntityService.syncMetaModelWithDatabase(false);
   await ormService.sequelize.sync();
   logger.log("Database schema synchronized and dynamic models initialized");
+
+  // Ensure initial seed data exists for casual manual testing
+  try {
+    await seedDatabase(app);
+  } catch (seedErr) {
+    logger.error("Error during initial database seeding:", seedErr);
+  }
 
   const port = process.env.PORT || 3080;
   await app.listen(port, "0.0.0.0");

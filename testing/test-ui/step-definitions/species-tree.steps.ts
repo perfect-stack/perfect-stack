@@ -71,8 +71,7 @@ const TAXON_NODES: TaxonNode[] = [
   { scientific_name: 'Felis catus', common_name: 'Domestic Cat', rank: 'Species', parent: 'Felis' },
 
   // Birds:
-  // 1. Budgerigar (Melopsittacus undulatus) - Psittaciformes -> Psittaculidae -> Melopsittacus
-  // 2. Cockatiel (Nymphicus hollandicus) - Psittaciformes -> Cacatuidae -> Nymphicus
+  // 1. Psittaciformes (Parrots)
   { scientific_name: 'Psittaciformes', common_name: 'Parrots', rank: 'Order', parent: 'Aves' },
   { scientific_name: 'Psittaculidae', common_name: 'Old World Parrots', rank: 'Family', parent: 'Psittaciformes' },
   { scientific_name: 'Melopsittacus', rank: 'Genus', parent: 'Psittaculidae' },
@@ -82,7 +81,24 @@ const TAXON_NODES: TaxonNode[] = [
   { scientific_name: 'Nymphicus', rank: 'Genus', parent: 'Cacatuidae' },
   { scientific_name: 'Nymphicus hollandicus', common_name: 'Cockatiel', rank: 'Species', parent: 'Nymphicus' },
 
-  // 3. Atlantic Canary (Serinus canaria) - Passeriformes -> Fringillidae -> Serinus
+  // Kakapo (Strigops habroptilus)
+  { scientific_name: 'Strigopidae', common_name: 'New Zealand Parrots', rank: 'Family', parent: 'Psittaciformes' },
+  { scientific_name: 'Strigops', common_name: 'Kākāpō Genus', rank: 'Genus', parent: 'Strigopidae' },
+  { scientific_name: 'Strigops habroptilus', common_name: 'Kakapo', rank: 'Species', parent: 'Strigops' },
+
+  // 2. Apterygiformes (Kiwis)
+  { scientific_name: 'Apterygiformes', common_name: 'Kiwis', rank: 'Order', parent: 'Aves' },
+  { scientific_name: 'Apterygidae', common_name: 'Kiwi Family', rank: 'Family', parent: 'Apterygiformes' },
+  { scientific_name: 'Apteryx', common_name: 'Kiwis', rank: 'Genus', parent: 'Apterygidae' },
+  { scientific_name: 'Apteryx mantelli', common_name: 'Kiwi', rank: 'Species', parent: 'Apteryx' },
+
+  // 3. Sphenisciformes (Penguins)
+  { scientific_name: 'Sphenisciformes', common_name: 'Penguins', rank: 'Order', parent: 'Aves' },
+  { scientific_name: 'Spheniscidae', common_name: 'Penguins', rank: 'Family', parent: 'Sphenisciformes' },
+  { scientific_name: 'Aptenodytes', common_name: 'Great Penguins', rank: 'Genus', parent: 'Spheniscidae' },
+  { scientific_name: 'Aptenodytes forsteri', common_name: 'Penguin', rank: 'Species', parent: 'Aptenodytes' },
+
+  // 4. Passeriformes (Perching Birds)
   { scientific_name: 'Passeriformes', common_name: 'Perching Birds', rank: 'Order', parent: 'Aves' },
   { scientific_name: 'Fringillidae', common_name: 'Finches', rank: 'Family', parent: 'Passeriformes' },
   { scientific_name: 'Serinus', common_name: 'Canaries', rank: 'Genus', parent: 'Fringillidae' },
@@ -108,58 +124,84 @@ const TAXON_NODES: TaxonNode[] = [
   { scientific_name: 'Poecilia reticulata', common_name: 'Guppy', rank: 'Species', parent: 'Poecilia' },
 ];
 
-async function cleanupTaxonTree(): Promise<void> {
-  // First clear pets that reference species
+const SEED_PET_NAMES = new Set(['Jack', 'Molly', 'Thorin', 'Kevin', 'Kelly', 'Peter']);
+
+async function ensureTaxonTree(thisContext: UIWorld, entityName: string): Promise<void> {
+  thisContext.contextData.speciesByName = {};
+
+  // Clean up any test pets (e.g. Barnaby or anything not in seed pets)
   const petsResp = await makeApiRequest('GET', '/data/Pet');
   const pets = petsResp.data?.resultList || petsResp.data || [];
   if (Array.isArray(pets)) {
     for (const pet of pets) {
-      await makeApiRequest('DELETE', `/data/Pet/${pet.id}`);
+      if (!SEED_PET_NAMES.has(pet.name)) {
+        await makeApiRequest('DELETE', `/data/Pet/${pet.id}`);
+      }
     }
   }
 
-  // Delete species from leaves upwards
-  for (let round = 0; round < 10; round++) {
-    const resp = await makeApiRequest('GET', '/data/Species');
-    const speciesList = resp.data?.resultList || resp.data || [];
-    if (!Array.isArray(speciesList) || speciesList.length === 0) break;
-
-    for (const s of speciesList) {
-      await makeApiRequest('DELETE', `/data/Species/${s.id}`);
+  // Fetch all existing species
+  const resp = await makeApiRequest('GET', `/data/${entityName}`);
+  const existingList = resp.data?.resultList || resp.data || [];
+  const existingBySciName: Record<string, any> = {};
+  if (Array.isArray(existingList)) {
+    for (const s of existingList) {
+      existingBySciName[s.scientific_name] = s;
     }
+  }
+
+  for (const node of TAXON_NODES) {
+    let parentId: string | null = null;
+    if (node.parent) {
+      const parentNode = thisContext.contextData.speciesByName[node.parent] || existingBySciName[node.parent];
+      if (!parentNode) {
+        throw new Error(`Parent ${node.parent} not found while ensuring species tree`);
+      }
+      parentId = parentNode.id;
+    }
+
+    let existing = existingBySciName[node.scientific_name];
+    if (!existing) {
+      const createRes = await makeApiRequest('POST', `/data/${entityName}`, {
+        scientific_name: node.scientific_name,
+        common_name: node.common_name,
+        rank: node.rank,
+        parent_id: parentId,
+      });
+      if (createRes.statusCode >= 400 || !createRes.data?.entity) {
+        throw new Error(`Failed to save taxon ${node.scientific_name}: ${JSON.stringify(createRes.data)}`);
+      }
+      existing = createRes.data.entity;
+      existingBySciName[node.scientific_name] = existing;
+    } else {
+      const needsParentFix = existing.parent_id !== parentId;
+      const needsCommonNameFix = node.common_name && existing.common_name !== node.common_name;
+      const needsRankFix = existing.rank !== node.rank;
+
+      if (needsParentFix || needsCommonNameFix || needsRankFix) {
+        const updateRes = await makeApiRequest('POST', `/data/${entityName}`, {
+          id: existing.id,
+          scientific_name: node.scientific_name,
+          common_name: node.common_name,
+          rank: node.rank,
+          parent_id: parentId,
+        });
+        if (updateRes.statusCode >= 400 || !updateRes.data?.entity) {
+          throw new Error(`Failed to restore taxon ${node.scientific_name}: ${JSON.stringify(updateRes.data)}`);
+        }
+        existing = updateRes.data.entity;
+        existingBySciName[node.scientific_name] = existing;
+      }
+    }
+
+    thisContext.contextData.speciesByName[node.scientific_name] = existing;
   }
 }
 
 Given(
   'a populated taxonomic {string} tree containing Mammals, Birds, and Fish',
   async function (this: UIWorld, entityName: string) {
-    this.contextData.speciesByName = {};
-
-    await cleanupTaxonTree();
-
-    for (const node of TAXON_NODES) {
-      let parentId: string | null = null;
-      if (node.parent) {
-        const parentEntity = this.contextData.speciesByName[node.parent];
-        if (!parentEntity) {
-          throw new Error(`Parent ${node.parent} not found while seeding species tree`);
-        }
-        parentId = parentEntity.id;
-      }
-
-      const entityPayload: any = {
-        scientific_name: node.scientific_name,
-        common_name: node.common_name,
-        rank: node.rank,
-        parent_id: parentId,
-      };
-
-      const res = await makeApiRequest('POST', `/data/${entityName}`, entityPayload);
-      if (res.statusCode >= 400 || !res.data?.entity) {
-        throw new Error(`Failed to save taxon ${node.scientific_name}: ${JSON.stringify(res.data)}`);
-      }
-      this.contextData.speciesByName[node.scientific_name] = res.data.entity;
-    }
+    await ensureTaxonTree(this, entityName);
   },
 );
 
@@ -453,6 +495,7 @@ When(
   'I delete leaf {string} node {string}',
   async function (this: UIWorld, entityName: string, nodeIdentifier: string) {
     const node = this.contextData.speciesByName[nodeIdentifier];
+    this.contextData.lastDeletedId = node.id;
     const res = await makeApiRequest('DELETE', `/data/${entityName}/${node.id}`);
     expect(res.statusCode).to.be.lessThan(400);
     delete this.contextData.speciesByName[nodeIdentifier];
@@ -462,9 +505,9 @@ When(
 Then(
   'the node {string} should no longer exist',
   async function (this: UIWorld, nodeIdentifier: string) {
-    const entity = this.contextData.speciesByName[nodeIdentifier];
-    if (entity) {
-      const res = await makeApiRequest('GET', `/data/Species/${entity.id}`);
+    const targetId = this.contextData.lastDeletedId || this.contextData.speciesByName[nodeIdentifier]?.id;
+    if (targetId) {
+      const res = await makeApiRequest('GET', `/data/Species/${targetId}`);
       expect(res.statusCode).to.be.at.least(400);
     }
   },

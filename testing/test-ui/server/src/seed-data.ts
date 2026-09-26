@@ -1,0 +1,290 @@
+import { INestApplicationContext, Logger } from '@nestjs/common';
+import { DataService, OrmService } from '@perfect-stack/nestjs-server';
+
+export interface TaxonNode {
+  scientific_name: string;
+  common_name?: string;
+  rank: string;
+  parent?: string; // parent scientific_name
+}
+
+export const TAXON_NODES: TaxonNode[] = [
+  // Kingdom (Root)
+  { scientific_name: 'Animalia', common_name: 'Animals', rank: 'Kingdom' },
+
+  // Phylum
+  { scientific_name: 'Chordata', common_name: 'Chordates', rank: 'Phylum', parent: 'Animalia' },
+
+  // Classes
+  { scientific_name: 'Mammalia', common_name: 'Mammals', rank: 'Class', parent: 'Chordata' },
+  { scientific_name: 'Aves', common_name: 'Birds', rank: 'Class', parent: 'Chordata' },
+  { scientific_name: 'Actinopterygii', common_name: 'Ray-finned Fishes', rank: 'Class', parent: 'Chordata' },
+
+  // Mammals -> Carnivora
+  { scientific_name: 'Carnivora', common_name: 'Carnivorans', rank: 'Order', parent: 'Mammalia' },
+  { scientific_name: 'Canidae', common_name: 'Canines', rank: 'Family', parent: 'Carnivora' },
+  { scientific_name: 'Canis', common_name: 'Dogs', rank: 'Genus', parent: 'Canidae' },
+  { scientific_name: 'Canis familiaris', common_name: 'Domestic Dog', rank: 'Species', parent: 'Canis' },
+
+  { scientific_name: 'Felidae', common_name: 'Cats', rank: 'Family', parent: 'Carnivora' },
+  { scientific_name: 'Felis', common_name: 'Small Cats', rank: 'Genus', parent: 'Felidae' },
+  { scientific_name: 'Felis catus', common_name: 'Domestic Cat', rank: 'Species', parent: 'Felis' },
+
+  // Birds:
+  // 1. Psittaciformes (Parrots)
+  { scientific_name: 'Psittaciformes', common_name: 'Parrots', rank: 'Order', parent: 'Aves' },
+  { scientific_name: 'Psittaculidae', common_name: 'Old World Parrots', rank: 'Family', parent: 'Psittaciformes' },
+  { scientific_name: 'Melopsittacus', rank: 'Genus', parent: 'Psittaculidae' },
+  { scientific_name: 'Melopsittacus undulatus', common_name: 'Budgerigar', rank: 'Species', parent: 'Melopsittacus' },
+
+  { scientific_name: 'Cacatuidae', common_name: 'Cockatoos', rank: 'Family', parent: 'Psittaciformes' },
+  { scientific_name: 'Nymphicus', rank: 'Genus', parent: 'Cacatuidae' },
+  { scientific_name: 'Nymphicus hollandicus', common_name: 'Cockatiel', rank: 'Species', parent: 'Nymphicus' },
+
+  // Kakapo (Strigops habroptilus)
+  { scientific_name: 'Strigopidae', common_name: 'New Zealand Parrots', rank: 'Family', parent: 'Psittaciformes' },
+  { scientific_name: 'Strigops', common_name: 'Kākāpō Genus', rank: 'Genus', parent: 'Strigopidae' },
+  { scientific_name: 'Strigops habroptilus', common_name: 'Kakapo', rank: 'Species', parent: 'Strigops' },
+
+  // 2. Apterygiformes (Kiwis)
+  { scientific_name: 'Apterygiformes', common_name: 'Kiwis', rank: 'Order', parent: 'Aves' },
+  { scientific_name: 'Apterygidae', common_name: 'Kiwi Family', rank: 'Family', parent: 'Apterygiformes' },
+  { scientific_name: 'Apteryx', common_name: 'Kiwis', rank: 'Genus', parent: 'Apterygidae' },
+  { scientific_name: 'Apteryx mantelli', common_name: 'Kiwi', rank: 'Species', parent: 'Apteryx' },
+
+  // 3. Sphenisciformes (Penguins)
+  { scientific_name: 'Sphenisciformes', common_name: 'Penguins', rank: 'Order', parent: 'Aves' },
+  { scientific_name: 'Spheniscidae', common_name: 'Penguins', rank: 'Family', parent: 'Sphenisciformes' },
+  { scientific_name: 'Aptenodytes', common_name: 'Great Penguins', rank: 'Genus', parent: 'Spheniscidae' },
+  { scientific_name: 'Aptenodytes forsteri', common_name: 'Penguin', rank: 'Species', parent: 'Aptenodytes' },
+
+  // 4. Passeriformes (Perching Birds)
+  { scientific_name: 'Passeriformes', common_name: 'Perching Birds', rank: 'Order', parent: 'Aves' },
+  { scientific_name: 'Fringillidae', common_name: 'Finches', rank: 'Family', parent: 'Passeriformes' },
+  { scientific_name: 'Serinus', common_name: 'Canaries', rank: 'Genus', parent: 'Fringillidae' },
+  { scientific_name: 'Serinus canaria', common_name: 'Atlantic Canary', rank: 'Species', parent: 'Serinus' },
+
+  // Fish:
+  // 1. Goldfish (Carassius auratus) - Cypriniformes -> Cyprinidae -> Carassius
+  { scientific_name: 'Cypriniformes', common_name: 'Carps and Minnows', rank: 'Order', parent: 'Actinopterygii' },
+  { scientific_name: 'Cyprinidae', common_name: 'Carp Family', rank: 'Family', parent: 'Cypriniformes' },
+  { scientific_name: 'Carassius', rank: 'Genus', parent: 'Cyprinidae' },
+  { scientific_name: 'Carassius auratus', common_name: 'Goldfish', rank: 'Species', parent: 'Carassius' },
+
+  // 2. Siamese Fighting Fish (Betta splendens) - Anabantiformes -> Osphronemidae -> Betta
+  { scientific_name: 'Anabantiformes', common_name: 'Labyrinth Fishes', rank: 'Order', parent: 'Actinopterygii' },
+  { scientific_name: 'Osphronemidae', common_name: 'Gouramis', rank: 'Family', parent: 'Anabantiformes' },
+  { scientific_name: 'Betta', rank: 'Genus', parent: 'Osphronemidae' },
+  { scientific_name: 'Betta splendens', common_name: 'Siamese Fighting Fish', rank: 'Species', parent: 'Betta' },
+
+  // 3. Guppy (Poecilia reticulata) - Cyprinodontiformes -> Poeciliidae -> Poecilia
+  { scientific_name: 'Cyprinodontiformes', common_name: 'Toothcarps', rank: 'Order', parent: 'Actinopterygii' },
+  { scientific_name: 'Poeciliidae', common_name: 'Livebearers', rank: 'Family', parent: 'Cyprinodontiformes' },
+  { scientific_name: 'Poecilia', rank: 'Genus', parent: 'Poeciliidae' },
+  { scientific_name: 'Poecilia reticulata', common_name: 'Guppy', rank: 'Species', parent: 'Poecilia' },
+];
+
+export const SEED_OWNER = {
+  first_name: 'Richard',
+  last_name: 'Perfect',
+  email_address: 'rperfect@gmail.com',
+  phone_number: '021400222',
+};
+
+export const SEED_PETS = [
+  {
+    name: 'Jack',
+    speciesScientificName: 'Felis catus',
+    breed: 'cat',
+    microchip_number: 'CHIP-CAT-001',
+    birth_date: '2020-03-15',
+  },
+  {
+    name: 'Molly',
+    speciesScientificName: 'Felis catus',
+    breed: 'cat',
+    microchip_number: 'CHIP-CAT-002',
+    birth_date: '2021-06-20',
+  },
+  {
+    name: 'Thorin',
+    speciesScientificName: 'Felis catus',
+    breed: 'cat',
+    microchip_number: 'CHIP-CAT-003',
+    birth_date: '2019-11-08',
+  },
+  {
+    name: 'Kevin',
+    speciesScientificName: 'Strigops habroptilus',
+    breed: 'Kakapo',
+    microchip_number: 'CHIP-BIRD-001',
+    birth_date: '2022-01-10',
+  },
+  {
+    name: 'Kelly',
+    speciesScientificName: 'Apteryx mantelli',
+    breed: 'Kiwi',
+    microchip_number: 'CHIP-BIRD-002',
+    birth_date: '2022-04-18',
+  },
+  {
+    name: 'Peter',
+    speciesScientificName: 'Aptenodytes forsteri',
+    breed: 'Penguin',
+    microchip_number: 'CHIP-BIRD-003',
+    birth_date: '2021-09-05',
+  },
+];
+
+export async function seedDatabase(app: INestApplicationContext): Promise<void> {
+  const logger = new Logger('VetClinicSeed');
+  const ormService = app.get(OrmService);
+  const dataService = app.get(DataService);
+
+  const speciesModel = ormService.sequelize.model('Species');
+  const ownerModel = ormService.sequelize.model('Owner');
+  const petModel = ormService.sequelize.model('Pet');
+
+  logger.log('Checking and applying initial seed data for Vet Clinic...');
+
+  // 1. Seed Species
+  const speciesByName: Record<string, any> = {};
+  const existingSpecies = await speciesModel.findAll();
+  for (const s of existingSpecies) {
+    const raw = (s as any).get ? (s as any).get({ plain: true }) : (s as any);
+    speciesByName[raw.scientific_name] = raw;
+  }
+
+  for (const node of TAXON_NODES) {
+    let existing = speciesByName[node.scientific_name];
+    let parentId: string | null = null;
+    if (node.parent) {
+      const parent = speciesByName[node.parent];
+      if (parent) {
+        parentId = parent.id;
+      }
+    }
+
+    if (!existing) {
+      const saveRes = await dataService.save('Species', {
+        scientific_name: node.scientific_name,
+        common_name: node.common_name,
+        rank: node.rank,
+        parent_id: parentId,
+      } as any);
+      existing = saveRes.entity;
+      speciesByName[node.scientific_name] = existing;
+      logger.log(`Created Species taxon: ${node.scientific_name} (${node.common_name || node.rank})`);
+    } else {
+      let needsUpdate = false;
+      const updates: any = {};
+      if (existing.parent_id !== parentId) {
+        updates.parent_id = parentId;
+        needsUpdate = true;
+      }
+      if (node.common_name && existing.common_name !== node.common_name) {
+        updates.common_name = node.common_name;
+        needsUpdate = true;
+      }
+      if (existing.rank !== node.rank) {
+        updates.rank = node.rank;
+        needsUpdate = true;
+      }
+      if (needsUpdate) {
+        await speciesModel.update(updates, { where: { id: existing.id } });
+        const updated = await speciesModel.findByPk(existing.id);
+        speciesByName[node.scientific_name] = (updated as any)?.get ? (updated as any).get({ plain: true }) : updated;
+      }
+    }
+  }
+
+  // 2. Seed Owner (Richard Perfect)
+  let ownerRecord: any = await ownerModel.findOne({ where: { email_address: SEED_OWNER.email_address } });
+  let owner: any;
+  if (!ownerRecord) {
+    const saveOwnerRes = await dataService.save('Owner', {
+      first_name: SEED_OWNER.first_name,
+      last_name: SEED_OWNER.last_name,
+      email_address: SEED_OWNER.email_address,
+      phone_number: SEED_OWNER.phone_number,
+    } as any);
+    owner = saveOwnerRes.entity;
+    logger.log(`Created Owner: ${SEED_OWNER.first_name} ${SEED_OWNER.last_name}`);
+  } else {
+    owner = ownerRecord.get ? ownerRecord.get({ plain: true }) : ownerRecord;
+    await ownerModel.update(
+      {
+        first_name: SEED_OWNER.first_name,
+        last_name: SEED_OWNER.last_name,
+        phone_number: SEED_OWNER.phone_number,
+      },
+      { where: { id: owner.id } },
+    );
+  }
+
+  // 3. Seed Pets
+  for (const petDef of SEED_PETS) {
+    const species = speciesByName[petDef.speciesScientificName];
+    if (!species) {
+      logger.warn(`Species ${petDef.speciesScientificName} not found for pet ${petDef.name}`);
+      continue;
+    }
+
+    const petRecord: any = await petModel.findOne({
+      where: {
+        name: petDef.name,
+        owner_id: owner.id,
+      },
+    });
+
+    if (!petRecord) {
+      await dataService.save('Pet', {
+        name: petDef.name,
+        species_id: species.id,
+        owner_id: owner.id,
+        breed: petDef.breed,
+        birth_date: petDef.birth_date,
+        microchip_number: petDef.microchip_number,
+      } as any);
+      logger.log(`Created Pet: ${petDef.name} (${petDef.breed}) for owner ${owner.first_name} ${owner.last_name}`);
+    } else {
+      const pet = petRecord.get ? petRecord.get({ plain: true }) : petRecord;
+      await petModel.update(
+        {
+          species_id: species.id,
+          owner_id: owner.id,
+          breed: petDef.breed,
+          birth_date: petDef.birth_date,
+          microchip_number: petDef.microchip_number,
+        },
+        { where: { id: pet.id } },
+      );
+    }
+  }
+
+  logger.log('Initial seed data verified successfully.');
+}
+
+if (require.main === module) {
+  (async () => {
+    const { NestFactory } = await import('@nestjs/core');
+    const { VetClinicServerModule } = await import('./vet-clinic-server.module');
+    const { MetaEntityService, OrmService } = await import('@perfect-stack/nestjs-server');
+
+    const app = await NestFactory.createApplicationContext(VetClinicServerModule, {
+      logger: ['log', 'error', 'warn'],
+    });
+
+    const metaEntityService = app.get(MetaEntityService);
+    const ormService = app.get(OrmService);
+    await metaEntityService.syncMetaModelWithDatabase(false);
+    await ormService.sequelize.sync();
+
+    await seedDatabase(app);
+    await app.close();
+    process.exit(0);
+  })().catch((err) => {
+    console.error('Failed to seed database:', err);
+    process.exit(1);
+  });
+}
