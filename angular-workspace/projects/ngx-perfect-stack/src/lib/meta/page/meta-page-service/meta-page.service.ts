@@ -25,6 +25,8 @@ export class CellAttribute {
   componentData?: ComponentData;
   noItemsHtml?: string; // Html displayed when no items
   footerHtml?: string; // Footer html that appears under the component (only in edit mode)
+  media_cols?: string;
+  media_rows?: string;
 }
 
 @Injectable({

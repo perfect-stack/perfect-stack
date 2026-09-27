@@ -140,6 +140,7 @@ import { BackLinkComponent } from './data/controller/layout/back-link/back-link.
 import { SelectMultipleControlComponent } from './data/controller/layout/controls/select-multiple-control/select-multiple-control.component';
 import { EnvironmentBannerComponent } from './menu-bar/environment-banner/environment-banner.component';
 import { MediaControlComponent } from './data/controller/layout/controls/media-control/media-control.component';
+import { MediaGalleryControlComponent } from './data/controller/layout/controls/media-gallery-control/media-gallery-control.component';
 import { UploadDialogComponent } from './data/controller/layout/controls/media-control/upload-dialog/upload-dialog.component';
 import {DiscriminatorService} from "./data/data-service/discriminator.service";
 import { ColourBandComponentComponent } from './data/controller/layout/controls/colour-band-component/colour-band-component.component';
@@ -305,12 +306,14 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
     DurationToolComponent,
     EnvironmentBannerComponent,
     MediaControlComponent,
+    MediaGalleryControlComponent,
     UploadDialogComponent,
     ColourBandComponentComponent,
     ColourBandDialogComponent,
   ],
   exports: [
     NgxPerfectStackComponent,
+    MediaGalleryControlComponent,
     ToastsComponent,
     TileButtonPanelComponent,
     LayoutComponent,

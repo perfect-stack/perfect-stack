@@ -373,6 +373,12 @@ export class CellViewComponent implements OnInit, OnChanges {
           case 'Links':
             this.addLinkControl(attribute);
             break;
+          case 'Media':
+            this.addMediaControl(attribute);
+            break;
+          case 'MediaGallery':
+            this.addMediaGalleryControl(attribute);
+            break;
           default:
             throw new Error(`Unknown controlType of ${controlType}`);
         }
@@ -409,6 +415,18 @@ export class CellViewComponent implements OnInit, OnChanges {
     this._attribute = attribute;
     this.cell.attributeName = attribute.name;
     this.cell.component = 'LinkList'
+  }
+
+  private addMediaControl(attribute: MetaAttribute) {
+    this._attribute = attribute;
+    this.cell.attributeName = attribute.name;
+    this.cell.component = 'Media';
+  }
+
+  private addMediaGalleryControl(attribute: MetaAttribute) {
+    this._attribute = attribute;
+    this.cell.attributeName = attribute.name;
+    this.cell.component = 'MediaGallery';
   }
 
 

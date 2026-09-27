@@ -223,6 +223,8 @@ export const CellPropertyList = [
   { name: 'footerHtml', type: PropertyType.string},
   { name: 'spyTemplate', type: PropertyType.metaPage},
   { name: 'displayOnly', type: PropertyType.boolean},
+  { name: 'media_cols', type: PropertyType.string},
+  { name: 'media_rows', type: PropertyType.string},
 ]
 
 

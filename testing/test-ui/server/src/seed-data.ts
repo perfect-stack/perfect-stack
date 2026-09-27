@@ -1,4 +1,8 @@
 import { INestApplicationContext, Logger } from '@nestjs/common';
+import * as fs from "fs";
+import * as path from "path";
+import { v4 as uuid } from "uuid";
+
 import { DataService, OrmService } from '@perfect-stack/nestjs-server';
 
 export interface TaxonNode {
@@ -136,6 +140,25 @@ export const SEED_PETS = [
   },
 ];
 
+
+export const SEED_PET_MEDIA: Record<string, string[]> = {
+  Jack: [
+    "20211125_185945.jpg",
+    "20211125_190034.jpg",
+    "20220613_182750.jpg",
+    "20220905_183756.jpg",
+    "20221123_213030.jpg",
+    "20230425_153333.jpg",
+    "20231112_210538.jpg",
+    "20241001_150951.jpg",
+    "20260306_185155.jpg",
+  ],
+  Molly: [
+    "20180209_173401.jpg",
+    "20230326_191419.jpg",
+  ],
+};
+
 export async function seedDatabase(app: INestApplicationContext): Promise<void> {
   const logger = new Logger('VetClinicSeed');
   const ormService = app.get(OrmService);
@@ -259,6 +282,93 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
         },
         { where: { id: pet.id } },
       );
+    }
+  }
+
+  
+  // 4. Seed Pet Media Files
+  const sourceDir = path.resolve(__dirname, "../../etc/test-data/cat-photos");
+  const targetMediaDir = path.resolve(__dirname, "../media/Image");
+  fs.mkdirSync(targetMediaDir, { recursive: true });
+
+  for (const [petName, imageFilenames] of Object.entries(SEED_PET_MEDIA)) {
+    const petRecord: any = await petModel.findOne({
+      where: {
+        name: petName,
+        owner_id: owner.id,
+      },
+    });
+
+    if (!petRecord) {
+      logger.warn(`Cannot seed media for pet ${petName} - pet record not found.`);
+      continue;
+    }
+
+    const pet = petRecord.get ? petRecord.get({ plain: true }) : petRecord;
+    const validPaths = imageFilenames.map((f) => `Image/${f}`);
+
+    // Clean up any obsolete/orphaned media records for this pet that are not in the seed list
+    await ormService.sequelize.query(
+      `DELETE FROM PetMediaFile WHERE pet_id = :petId AND path NOT IN (:validPaths)`,
+      {
+        replacements: { petId: pet.id, validPaths },
+      },
+    );
+
+    for (const filename of imageFilenames) {
+      const destRelativePath = `Image/${filename}`;
+
+      // Copy file to target media directory
+      if (fs.existsSync(sourceDir)) {
+        const srcFullPath = path.resolve(sourceDir, filename);
+        if (fs.existsSync(srcFullPath)) {
+          const destFullPath = path.resolve(targetMediaDir, filename);
+          if (!fs.existsSync(destFullPath)) {
+            fs.copyFileSync(srcFullPath, destFullPath);
+            logger.log(`Copied ${filename} to ${destFullPath}`);
+          }
+        } else {
+          logger.warn(`Source cat photo not found: ${srcFullPath}`);
+        }
+      }
+
+      // Check if PetMediaFile row exists
+      const [existingRows]: any = await ormService.sequelize.query(
+        `SELECT id FROM PetMediaFile WHERE pet_id = :petId AND path = :path LIMIT 1`,
+        {
+          replacements: { petId: pet.id, path: destRelativePath },
+        },
+      );
+
+      const now = new Date().toISOString();
+      if (!existingRows || existingRows.length === 0) {
+        await ormService.sequelize.query(
+          `INSERT INTO PetMediaFile (id, path, mime_type, comments, created_at, updated_at, pet_id) VALUES (:id, :path, :mimeType, :comments, :now, :now, :petId)`,
+          {
+            replacements: {
+              id: uuid(),
+              path: destRelativePath,
+              mimeType: "image/jpeg",
+              comments: filename,
+              now,
+              petId: pet.id,
+            },
+          },
+        );
+        logger.log(`Created PetMediaFile record for ${petName}: ${filename}`);
+      } else {
+        await ormService.sequelize.query(
+          `UPDATE PetMediaFile SET comments = :comments, mime_type = :mimeType, updated_at = :now WHERE id = :id`,
+          {
+            replacements: {
+              comments: filename,
+              mimeType: "image/jpeg",
+              now,
+              id: existingRows[0].id,
+            },
+          },
+        );
+      }
     }
   }
 

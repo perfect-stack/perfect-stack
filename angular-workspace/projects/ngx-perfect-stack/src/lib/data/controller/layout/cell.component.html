@@ -68,6 +68,9 @@
         @case ('Media') {
           <lib-media-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-media-control>
         }
+        @case ('MediaGallery') {
+          <lib-media-gallery-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-media-gallery-control>
+        }
         @default {
           <lib-one-to-many-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
         }

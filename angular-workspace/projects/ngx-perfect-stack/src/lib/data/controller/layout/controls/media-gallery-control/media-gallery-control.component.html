@@ -1,0 +1,55 @@
+<div class="media-gallery-container" [attr.data-testid]="'field-media-gallery'">
+  @if (totalItems === 0) {
+    <div class="placeholder-gallery bg-light text-center py-5 border rounded">
+      <span class="material-symbols-outlined text-secondary d-block" style="font-size: 64px;">photo_library</span>
+      <p class="text-muted mt-2 mb-0">No media files available</p>
+    </div>
+  }
+
+  @if (totalItems > 0) {
+    <div class="gallery-grid" [style.grid-template-columns]="gridTemplateColumns">
+      @for (item of pageItems; track item.path || item.index) {
+        <div class="gallery-card border rounded overflow-hidden shadow-sm bg-white" [attr.data-testid]="'gallery-item-' + item.index">
+          <div class="image-wrapper d-flex align-items-center justify-content-center bg-light">
+            @if (item.isLoading) {
+              <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            }
+            @if (!item.isLoading && item.imageSrc) {
+              <img [src]="item.imageSrc" alt="Media item" class="gallery-image" />
+            }
+            @if (!item.isLoading && (!item.imageSrc || item.hasError)) {
+              <span class="material-symbols-outlined text-secondary" style="font-size: 40px;">broken_image</span>
+            }
+          </div>
+          @if (item.comments) {
+            <div class="gallery-caption p-2 small text-truncate" [title]="item.comments">
+              {{ item.comments }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Pagination controls -->
+    <div class="gallery-pagination d-flex justify-content-between align-items-center mt-3 pt-2">
+      <div>
+        @if (totalPages > 1) {
+          <ngb-pagination
+            [collectionSize]="totalItems"
+            [(page)]="pageNumber"
+            [pageSize]="pageSize"
+            [maxSize]="5"
+            [rotate]="true"
+            [boundaryLinks]="true"
+            (pageChange)="onPageChange($event)">
+          </ngb-pagination>
+        }
+      </div>
+      <div class="text-muted small">
+        Showing {{startIndex + 1}} - {{endIndex}} of {{totalItems}}
+      </div>
+    </div>
+  }
+</div>

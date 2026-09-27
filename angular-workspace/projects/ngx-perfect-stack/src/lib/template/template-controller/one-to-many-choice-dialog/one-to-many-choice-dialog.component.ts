@@ -14,6 +14,7 @@ export class OneToManyChoiceDialogComponent implements OnInit {
     {name: 'Table', icon: 'table', enabled: true},
     {name: 'Links', icon: 'link', enabled: true},
     {name: 'Media', icon: 'image', enabled: true},
+    {name: 'MediaGallery', icon: 'photo_library', enabled: true},
   ]
 
   controlType: string | null = null;

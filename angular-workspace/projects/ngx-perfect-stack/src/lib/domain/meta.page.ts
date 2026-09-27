@@ -7,6 +7,7 @@ export enum ComponentType {
   FlexibleDateTime = 'FlexibleDateTime',
   LinkList = 'LinkList',
   Media = 'Media',
+  MediaGallery = 'MediaGallery',
   ManyToOnePlain = 'ManyToOnePlain',
   ManyToOneLink = 'ManyToOneLink',
   TextArea = 'TextArea',
@@ -39,6 +40,8 @@ export class Cell {
   tool?: Tool;
   template?: Template;
   displayOnly?: boolean;
+  media_cols?: string;
+  media_rows?: string;
 }
 
 export class ComponentData {}

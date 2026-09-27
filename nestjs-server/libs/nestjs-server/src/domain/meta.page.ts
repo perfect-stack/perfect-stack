@@ -1,6 +1,8 @@
 export enum ComponentType {
   BadgeList = 'BadgeList',
   DatePicker = 'DatePicker',
+  Media = 'Media',
+  MediaGallery = 'MediaGallery',
   TextArea = 'TextArea',
   TextInput = 'TextInput',
   Select = 'Select',
@@ -19,6 +21,8 @@ export class Cell {
   tool?: Tool;
   template?: Template;
   displayOnly?: boolean;
+  media_cols?: string;
+  media_rows?: string;
 }
 
 export class ComponentData {}

@@ -13,15 +13,12 @@
         [
           {
             "width": "12",
-            "height": "1",
-            "tool": {
-              "type": "TextTool",
-              "containerStyles": "",
-              "styles": "",
-              "label": "",
-              "modes": "",
-              "text": "Multiple media will go here"
-            }
+            "height": "2",
+            "attributeName": "media_files",
+            "component": "MediaGallery",
+            "media_cols": "2",
+            "media_rows": "2",
+            "hideLabel": true
           }
         ]
       ],

@@ -23,3 +23,5 @@ export * from './lib/utils/toasts/toast.service';
 export * from './lib/utils/tree-walker/meta-entity-tree-walker';
 export * from './lib/domain/meta.entity';
 export * from './lib/domain/meta.page';
+export * from './lib/data/controller/layout/controls/media-control/media-control.component';
+export * from './lib/data/controller/layout/controls/media-gallery-control/media-gallery-control.component';

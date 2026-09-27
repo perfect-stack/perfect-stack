@@ -64,6 +64,28 @@
                 @if (cell.template) {
                   <lib-template-controller [template]="cell.template"></lib-template-controller>
                 }
+                @if (!cell.template) {
+                  @switch (cell.component) {
+                    @case ('Media') {
+                      <div class="p-2 bg-light text-center border rounded">
+                        <span class="material-symbols-outlined text-secondary">image</span>
+                        <div class="small text-muted">Media Control</div>
+                      </div>
+                    }
+                    @case ('MediaGallery') {
+                      <div class="p-2 bg-light text-center border rounded">
+                        <span class="material-symbols-outlined text-secondary">photo_library</span>
+                        <div class="small text-muted">Media Gallery Control ({{cell.media_cols || '2'}} x {{cell.media_rows || '4'}})</div>
+                      </div>
+                    }
+                    @case ('LinkList') {
+                      <div class="p-2 bg-light text-center border rounded small text-muted">Link List</div>
+                    }
+                    @default {
+                      <div class="p-2 bg-light text-center border rounded small text-muted">OneToMany Control</div>
+                    }
+                  }
+                }
               }
               @case ('OneToOne') {
                 @if (cell.template) {
