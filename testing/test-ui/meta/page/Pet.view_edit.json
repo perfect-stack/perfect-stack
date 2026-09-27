@@ -82,6 +82,23 @@
       ],
       "templateHeading": "Pet Information",
       "binding": "pet"
+    },
+    {
+      "metaEntityName": "Pet",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "2",
+            "attributeName": "media_files",
+            "component": "Media",
+            "hideLabel": true
+          }
+        ]
+      ],
+      "templateHeading": "Media",
+      "binding": "pet"
     }
   ]
 }

@@ -18,9 +18,8 @@ export class MediaRepositoryService {
         protected local: LocalMediaRepository,
         protected s3: S3MediaRepository,
     ) {
-        // TODO: make this configurable
-        this.mediaRepository = local;
-        //this.mediaRepository = s3;
+        const repoType = this.configService?.get('MEDIA_REPOSITORY') || 'local';
+        this.mediaRepository = repoType === 's3' ? s3 : local;
     }
 
     async fileExists(filePath: string): Promise<boolean> {
@@ -39,7 +38,7 @@ export class MediaRepositoryService {
         return this.mediaRepository.createFile(filename);
     }
 
-    async uploadFile(filePath: string, content: string): Promise<void> {
+    async uploadFile(filePath: string, content: any): Promise<void> {
         return this.mediaRepository.uploadFile(filePath, content);
     }
 

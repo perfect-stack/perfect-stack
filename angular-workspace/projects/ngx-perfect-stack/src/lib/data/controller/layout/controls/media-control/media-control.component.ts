@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {CellAttribute} from "../../../../../meta/page/meta-page-service/meta-page.service";
 import {ControlValueAccessor, UntypedFormArray, UntypedFormGroup} from "@angular/forms";
 import {FormContext, FormService} from "../../../../data-edit/form-service/form.service";
@@ -54,7 +54,8 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly formService: FormService,
-              protected readonly formGroupService: FormGroupService)
+              protected readonly formGroupService: FormGroupService,
+              private cdr: ChangeDetectorRef)
   {}
 
   ngOnInit(): void {
@@ -114,8 +115,8 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
         this.loadImage(); // Load the new image when index changes
       }
     } else {
-      this._index = 0; // Reset index if no rows
-      this.imageSrc = null; // Clear image if no rows
+      this._index = 0;
+      this.loadImage();
     }
   }
 
@@ -151,33 +152,45 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
     this.revokeCurrentImageUrl(); // Revoke previous URL
 
     if (!this._valueInitialized && !this.attributes?.length) {
-      console.log('loadImage called before value initialization, skipping.');
-      // Optionally set isLoading to false if you know it won't load yet
-      // this.isLoading = false;
+      console.log('[MediaControl] loadImage called before value initialization, skipping.');
+      this.isLoading = false;
       return;
     }
 
     const path = this.currentPath;
-    console.log(`Load Image: ${path}`);
+    console.log(`[MediaControl] Load Image: currentPath = ${path}, index = ${this.index}, total images = ${this.attributes?.length}`);
     if (!path) {
-      console.warn(`No path available for current media item. currentPath = ${this.currentPath}`);
+      console.warn(`[MediaControl] No path available for current media item. currentPath = ${this.currentPath}`);
       this.isLoading = false;
-      return; // No path to load
+      this.cdr.detectChanges();
+      return;
     }
 
-    this.http.get(this.stackConfig.apiUrl + '/media/locate/' + path, { responseType: 'text'}).subscribe((downloadPath: string) => {
-      if(downloadPath) {
-        this.downloadImage(downloadPath);
-      }
-      else {
-        console.error(`Unable to download file: ${path} at located downloadPath of ${downloadPath}`);
+    const locateUrl = this.stackConfig.apiUrl + '/media/locate/' + path;
+    console.log(`[MediaControl] Requesting locate from: ${locateUrl}`);
+    this.http.get(locateUrl, { responseType: 'text'}).subscribe({
+      next: (downloadPath: string) => {
+        console.log(`[MediaControl] Locate result for ${path}: ${downloadPath}`);
+        if(downloadPath) {
+          this.downloadImage(downloadPath);
+        }
+        else {
+          console.error(`[MediaControl] Unable to download file: ${path} at located downloadPath of ${downloadPath}`);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => {
+        console.error(`[MediaControl] Locate error for ${path}:`, err);
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
-
   }
 
   private downloadImage(path: string): void {
     const downloadPath = path.startsWith('http') ? path : this.stackConfig.apiUrl + "/media" + path;
+    console.log(`[MediaControl] downloadImage: fetching from ${downloadPath}`);
     this.imageSubscription = this.http.get(downloadPath, { responseType: 'blob' })
       .pipe(
         map(blob => {
@@ -189,13 +202,13 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
         next: (safeUrl) => {
           this.imageSrc = safeUrl;
           this.isLoading = false;
-          console.log(`Image loaded for path: ${downloadPath}`);
+          console.log(`[MediaControl] Image loaded successfully for path: ${downloadPath}`);
+          this.cdr.detectChanges();
         },
         error: (err) => {
-          console.error(`Failed to load image from path: ${downloadPath}`, err);
+          console.error(`[MediaControl] Failed to load image from path: ${downloadPath}`, err);
           this.isLoading = false;
-          // Optionally set a placeholder error image source here
-          // this.imageSrc = 'path/to/error-placeholder.png';
+          this.cdr.detectChanges();
         }
     });
   }
@@ -215,69 +228,77 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   writeValue(obj: any[]): void {
-    console.log('MediaControlComponent writeValue:', obj);
-    // Check if obj is the expected array structure for your media files
+    console.log('[MediaControl] writeValue received:', obj);
     if (Array.isArray(obj) && this.attributes) {
-      // Clear existing controls first
       this.attributes.clear();
-      // Create and push new FormGroups for each item in obj
       obj.forEach(itemData => {
         if (this.mode && this.metaEntityName) {
-          // Assuming itemData contains the necessary fields (like 'path')
           const formGroup = this.formGroupService.createFormGroup(this.mode, this.metaEntityName, this.metaPageMap, this.metaEntityMap, itemData);
-          if(this.attributes) {
-            this.attributes.push(formGroup);
-          }
+          this.attributes?.push(formGroup);
         }
       });
-
       this._valueInitialized = true;
       this.index = 0; // Reset index
       this.loadImage(); // Load image AFTER data is processed
     }
     else if (!obj) {
-      // Handle null/undefined value if necessary
       this.attributes?.clear();
       this._valueInitialized = true;
       this.index = 0;
-      this.loadImage(); // Attempt load even if empty (will likely show placeholder)
+      this.loadImage();
     }
     else {
-      console.warn('MediaControlComponent writeValue received unexpected data:', obj);
+      console.warn('[MediaControl] writeValue received unexpected data:', obj);
     }
   }
 
   onUpload() {
+    console.log('[MediaControl] onUpload() clicked. Mode:', this.mode, 'metaEntityName:', this.metaEntityName, 'attributes length:', this.attributes?.length);
     const modalRef = this.modalService.open(UploadDialogComponent);
     modalRef.closed.subscribe((uploadedFiles: string[]) => {
+      console.log('[MediaControl] modalRef.closed emitted with:', uploadedFiles);
       if (uploadedFiles && uploadedFiles.length > 0) {
-        console.log('Upload files returned:', uploadedFiles);
-
         if(this.mode === 'edit') {
           uploadedFiles.map( (nextFilePath) => {
             if(this.mode && this.attributes && this.metaEntityName) {
+              console.log(`[MediaControl] Creating form group for ${this.metaEntityName} with path ${nextFilePath}`);
               const formGroup = this.formGroupService.createFormGroup(this.mode, this.metaEntityName, this.metaPageMap, this.metaEntityMap, null);
               formGroup.controls['path'].setValue(nextFilePath);
               this.attributes.push(formGroup);
+              this.formGroup?.markAsDirty();
               this.index = this.attributes.length - 1;
+              console.log(`[MediaControl] Successfully added form group. Total items now: ${this.attributes.length}, new index: ${this.index}`);
               this.loadImage();
+            } else {
+              console.warn('[MediaControl] Cannot add file, missing dependencies:', {
+                mode: this.mode,
+                hasAttributes: !!this.attributes,
+                metaEntityName: this.metaEntityName
+              });
             }
           });
+          this.cdr.detectChanges();
+        } else {
+          console.warn('[MediaControl] Not in edit mode, current mode is:', this.mode);
         }
       }
       else {
-        console.log('Upload dialog closed without files.');
+        console.log('[MediaControl] Upload dialog closed without files.');
       }
+    });
+
+    modalRef.dismissed.subscribe((reason) => {
+      console.log('[MediaControl] modalRef.dismissed with reason:', reason);
     });
   }
 
   onDelete() {
-    // Only remove the attribute/value for now. Files will be deleted once the request is processed on the server, just
-    // in case the user clicks "cancel".
-    console.log(`onDelete() ${this.index}`);
+    console.log(`[MediaControl] onDelete() index=${this.index}`);
     if(this.attributes) {
       this.attributes.removeAt(this.index);
+      this.formGroup?.markAsDirty();
       this.loadImage();
+      this.cdr.detectChanges();
     }
   }
 }

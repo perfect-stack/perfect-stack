@@ -68,7 +68,7 @@ export class S3MediaRepository implements MediaRepositoryInterface {
         }
     }
 
-    uploadFile(filePath: string, content: string): Promise<void> {
+    uploadFile(filePath: string, content: any): Promise<void> {
         throw new Error("Unexpected method call. This method is deliberately not implemented since caller should have presigned URL");
     }
 

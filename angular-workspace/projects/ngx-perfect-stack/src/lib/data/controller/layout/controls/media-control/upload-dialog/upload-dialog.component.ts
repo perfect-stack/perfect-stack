@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, NgZone, OnDestroy} from '@angular/core';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import { HttpClient, HttpEventType, HttpHeaders } from "@angular/common/http";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../../../../ngx-perfect-stack-config";
@@ -33,11 +33,13 @@ export class UploadDialogComponent implements OnDestroy {
   constructor(public activeModal: NgbActiveModal,
               @Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
-              private http: HttpClient) {
+              private http: HttpClient,
+              private ngZone: NgZone,
+              private cdr: ChangeDetectorRef) {
   }
 
   ngOnDestroy(): void {
-    this.fileItems.forEach(item => item.uploadSub?.unsubscribe())
+    this.fileItems.forEach(item => item.uploadSub?.unsubscribe());
   }
 
   // --- Drag and Drop Handlers ---
@@ -46,7 +48,6 @@ export class UploadDialogComponent implements OnDestroy {
     event.preventDefault(); // Prevent default browser behavior
     event.stopPropagation(); // Stop event bubbling
     this.isDraggingOver = true; // Activate visual feedback
-    // You could also check event.dataTransfer.types here to see if files are being dragged
   }
 
   onDragLeave(event: DragEvent) {
@@ -62,6 +63,7 @@ export class UploadDialogComponent implements OnDestroy {
 
     const files = event.dataTransfer?.files; // Get files from the drop event
     if (files && files.length > 0) {
+      console.log(`[UploadDialog] onDrop: received ${files.length} file(s)`);
       this.processFiles(files); // Process the dropped files
     }
   }
@@ -72,6 +74,7 @@ export class UploadDialogComponent implements OnDestroy {
     const element = event.currentTarget as HTMLInputElement;
     const files: FileList | null = element.files;
     if (files && files.length > 0) {
+      console.log(`[UploadDialog] onFileSelected: selected ${files.length} file(s)`);
       this.processFiles(files); // Process selected files
       element.value = ''; // Reset input value to allow selecting the same file again
     }
@@ -80,11 +83,11 @@ export class UploadDialogComponent implements OnDestroy {
   // --- Common File Processing Logic ---
 
   processFiles(files: FileList): void {
+    console.log(`[UploadDialog] processFiles: processing ${files.length} file(s)`);
     for (const nextFile of Array.from(files)) {
-      // Optional: Add checks here to prevent duplicates or filter by type/size
       if (this.fileItems.some(item => item.file.name === nextFile.name && item.file.size === nextFile.size)) {
-        console.log(`Skipping duplicate file: ${nextFile.name}`);
-        continue; // Skip if already added
+        console.log(`[UploadDialog] Skipping duplicate file: ${nextFile.name}`);
+        continue;
       }
 
       const nextFileItem: FileItem = {
@@ -93,22 +96,36 @@ export class UploadDialogComponent implements OnDestroy {
         uploadProgress: 0,
       };
       this.fileItems.push(nextFileItem);
-      this.createURLForUpload(nextFileItem); // Start upload processing for this item
+      console.log(`[UploadDialog] Enqueued file: ${nextFile.name} (${nextFile.size} bytes, type=${nextFile.type}). Total items: ${this.fileItems.length}`);
+      this.createURLForUpload(nextFileItem);
     }
+    this.cdr.detectChanges();
   }
 
   // --- Upload Logic ---
 
   createURLForUpload(fileItem: FileItem): void {
-    this.http.post<CreateFileResponse>(`${this.stackConfig.apiUrl}/media/create/${fileItem.file.name}`, null).subscribe(createFileResponse => {
-      console.log(`create file URL: ${createFileResponse}`);
-      this.startUpload(fileItem, createFileResponse);
+    const url = `${this.stackConfig.apiUrl}/media/create/${fileItem.file.name}`;
+    console.log(`[UploadDialog] Requesting createFile from: ${url}`);
+    this.http.post<CreateFileResponse>(url, null).subscribe({
+      next: (createFileResponse) => {
+        console.log(`[UploadDialog] createFile response for ${fileItem.file.name}:`, createFileResponse);
+        this.startUpload(fileItem, createFileResponse);
+      },
+      error: (err) => {
+        console.error(`[UploadDialog] createFile error for ${fileItem.file.name}:`, err);
+        this.ngZone.run(() => {
+          fileItem.status = 'error';
+          fileItem.uploadProgress = null;
+          this.cdr.detectChanges();
+        });
+      }
     });
   }
 
   startUpload(fileItem: FileItem, createFileResponse: CreateFileResponse): void {
-
     const uploadUrl = createFileResponse.resourceUrl.startsWith('http') ? createFileResponse.resourceUrl : this.stackConfig.apiUrl + createFileResponse.resourceUrl;
+    console.log(`[UploadDialog] startUpload: uploading to ${uploadUrl}, file type: ${fileItem.file.type}`);
     const headers = new HttpHeaders({'Content-Type': fileItem.file.type});
     const upload$ = this.http.put<{ path: string }>(uploadUrl, fileItem.file, {
       headers: headers,
@@ -116,35 +133,44 @@ export class UploadDialogComponent implements OnDestroy {
       observe: 'events',
       context: withDIY()
     }).pipe(
-      // Finalize runs on completion, error, or unsubscription
       finalize(() => {
-        console.log(`Upload finalized for ${fileItem.file.name} with status ${fileItem.status}`);
-        // Clear subscription reference when finalized
-        fileItem.uploadSub = undefined;
+        this.ngZone.run(() => {
+          console.log(`[UploadDialog] Upload finalized for ${fileItem.file.name} with status: ${fileItem.status}`);
+          fileItem.uploadSub = undefined;
+          this.cdr.detectChanges();
+        });
       })
     );
 
     fileItem.uploadSub = upload$.subscribe({
       next: event => {
-        if (event.type == HttpEventType.UploadProgress && event.total) {
-          fileItem.uploadProgress = Math.round(100 * (event.loaded / event.total));
-        }
-        else if (event.type == HttpEventType.Response) {
-          console.log(`Upload successful for ${fileItem.file.name}`);
-          fileItem.status = 'success';
-          fileItem.remotePath = createFileResponse.resourceKey;
-          fileItem.uploadProgress = 100;
-        }
+        this.ngZone.run(() => {
+          if (event.type == HttpEventType.UploadProgress && event.total) {
+            fileItem.uploadProgress = Math.round(100 * (event.loaded / event.total));
+            console.log(`[UploadDialog] Upload progress for ${fileItem.file.name}: ${fileItem.uploadProgress}% (${event.loaded}/${event.total})`);
+            this.cdr.markForCheck();
+          }
+          else if (event.type == HttpEventType.Response) {
+            console.log(`[UploadDialog] Upload successful for ${fileItem.file.name}:`, event);
+            fileItem.status = 'success';
+            fileItem.remotePath = createFileResponse.resourceKey;
+            fileItem.uploadProgress = 100;
+            console.log(`[UploadDialog] File item marked success: name=${fileItem.file.name}, remotePath=${fileItem.remotePath}, isDoneEnabled=${this.isDoneEnabled()}`);
+            this.cdr.detectChanges();
+          }
+        });
       },
       error: err => {
-        // Check if the error is due to unsubscription (cancellation)
-        if (err.name !== 'SubscriptionError') {
-          console.error(`Error uploading ${fileItem.file.name}:`, err);
-          fileItem.status = 'error';
-          fileItem.uploadProgress = null;
-        } else {
-          console.log(`Upload cancelled for ${fileItem.file.name}`);
-        }
+        this.ngZone.run(() => {
+          if (err.name !== 'SubscriptionError') {
+            console.error(`[UploadDialog] Error uploading ${fileItem.file.name}:`, err);
+            fileItem.status = 'error';
+            fileItem.uploadProgress = null;
+          } else {
+            console.log(`[UploadDialog] Upload cancelled for ${fileItem.file.name}`);
+          }
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -152,35 +178,35 @@ export class UploadDialogComponent implements OnDestroy {
   // --- Modal Actions ---
 
   onCancel() {
-    // Cancel ongoing uploads before dismissing
+    console.log('[UploadDialog] onCancel() clicked.');
     this.fileItems.forEach(item => this.cancelUpload(item));
-    // TODO: Consider deleting successfully uploaded but uncommitted files on the server if needed
     this.activeModal.dismiss('Cancelled by user');
   }
 
-
   onDone() {
+    console.log('[UploadDialog] onDone() clicked. Current fileItems:', this.fileItems.map(i => ({ name: i.file.name, status: i.status, remotePath: i.remotePath })));
     const uploadedPaths = this.fileItems
       .filter(item => item.status === 'success' && item.remotePath)
       .map(item => item.remotePath as string);
 
     const allFinished = this.fileItems.every(item => item.status !== 'loading');
     if (!allFinished) {
-      console.warn('Closing dialog while some uploads may still be in progress.');
-      // Optionally, prevent closing or show a warning
+      console.warn('[UploadDialog] Closing dialog while some uploads may still be in progress.');
     }
 
+    console.log('[UploadDialog] Closing activeModal with uploadedPaths:', uploadedPaths);
     this.activeModal.close(uploadedPaths);
   }
 
   isDoneEnabled(): boolean {
-    // Enable "Done" only if there are files and all of them are finished uploading (successfully or with error/cancelled)
-    return this.fileItems.length > 0 && this.fileItems.every(item => item.status !== 'loading');
+    const hasFiles = this.fileItems.length > 0;
+    const allFinished = hasFiles && this.fileItems.every(item => item.status !== 'loading');
+    return allFinished;
   }
 
   cancelUpload(itemToCancel: FileItem) {
     if (itemToCancel.uploadSub) {
-      console.log(`Cancelling upload for ${itemToCancel.file.name}`);
+      console.log(`[UploadDialog] Cancelling upload for ${itemToCancel.file.name}`);
       itemToCancel.uploadSub.unsubscribe();
       itemToCancel.status = 'cancelled';
       itemToCancel.uploadProgress = null;

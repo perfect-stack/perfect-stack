@@ -46,9 +46,14 @@ export class DataService {
 
   async save(entityName: string, entity: Entity): Promise<EntityResponse> {
     try {
+      this.logger.log(`save(): entityName = ${entityName}, id = ${entity?.id}`);
+      if (entity && entity['media_files']) {
+        this.logger.log(`save(): entity has ${entity['media_files']?.length} media_files: ${JSON.stringify(entity['media_files'])}`);
+      }
       const result = this.saveInTransaction(entityName, entity, null);
       return result;
     } catch (error) {
+      this.logger.error(`save(): failed for ${entityName}`, error);
       throw error;
     }
   }
@@ -426,10 +431,15 @@ export class DataService {
       relationshipAttribute.relationshipTarget,
     );
 
+    const isChildMediaFile =
+      relationshipAttribute &&
+      relationshipAttribute.relationshipTarget &&
+      relationshipAttribute.relationshipTarget.endsWith('MediaFile');
+
     const childList = parentEntity[relationshipAttribute.name] as any[];
     if (childList) {
-      console.log(
-        `saveListOfChildren(${relationshipAttribute.name}) with ${childList.length} items`,
+      this.logger.log(
+        `saveListOfChildren(${relationshipAttribute.name}) with ${childList.length} items (relationshipTarget=${relationshipAttribute.relationshipTarget}, isChildMediaFile=${isChildMediaFile})`,
       );
 
       const existingChildren: Map<string, any> =
@@ -460,8 +470,26 @@ export class DataService {
         // Extract plain data in case 'childEntity' is a Sequelize Model instance
         const childEntityData = typeof (childEntity as any).toJSON === 'function' ? (childEntity as any).toJSON() : childEntity;
 
+        if (isChildMediaFile && childEntityData['path']) {
+          const rawPath = childEntityData['path'];
+          const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath;
+          this.logger.log(`saveListOfChildren: checking media file path: ${rawPath} (clean: ${cleanPath})`);
+          if (cleanPath.startsWith('Temp/')) {
+            this.logger.log(`saveListOfChildren: committing temporary media file: ${cleanPath}`);
+            const committedPath = await this.mediaRepositoryService.commitFile(cleanPath);
+            this.logger.log(`saveListOfChildren: committed to permanent path: ${committedPath}`);
+            if (committedPath) {
+              childEntity['path'] = committedPath;
+              childEntityData['path'] = committedPath;
+            }
+          }
+        }
+
         if (!childEntityModel) {
+          this.logger.log(`saveListOfChildren: creating child record for ${relationshipAttribute.relationshipTarget} with path=${childEntityData['path']}`);
           childEntityModel = await childModel.create(childEntityData as any);
+        } else {
+          this.logger.log(`saveListOfChildren: updating existing child record ${childEntity.id}`);
         }
 
         const metaEntity = metaEntityMap.get(

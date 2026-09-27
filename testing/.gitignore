@@ -4,3 +4,5 @@ dist/
 *.sqlite-journal
 *.log
 reports/
+/test-ui/server/media/Image/
+/test-ui/server/media/Temp/
