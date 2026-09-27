@@ -30,6 +30,10 @@ export class JobService {
         this.jobProcessingMode = configService.get('JOB_PROCESSING_MODE', 'async');
     }
 
+    private get isPostgres(): boolean {
+        return this.ormService.sequelize.getDialect() === 'postgres';
+    }
+
     registerJob(name: string, handler: JobHandler) {
         if (this.jobHandlers.has(name)) {
             throw new Error(`Job '${name}' is already registered`);
@@ -120,25 +124,45 @@ export class JobService {
     async stopJob(jobIdOrName: string): Promise<Job> {
         this.logger.log(`Stopping job: ${jobIdOrName}`);
 
-        // Atomic DB transition: transitions any active matching job (by ID or by name) to Stopped
-        const stoppedRows: Job[] = await this.ormService.sequelize.query(
-            `UPDATE "Job"
-             SET status = 'Stopped',
-                 status_message = 'Job stopped by user',
-                 updated_at = NOW()
-             WHERE (id = :idOrName OR (name = :idOrName AND status IN ('Submitted', 'Processing')))
-               AND status IN ('Submitted', 'Processing')
-             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
-            {
-                replacements: { idOrName: jobIdOrName },
-                type: QueryTypes.SELECT,
-            }
-        );
+        if (this.isPostgres) {
+            // Atomic DB transition: transitions any active matching job (by ID or by name) to Stopped
+            const stoppedRows: Job[] = await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET status = 'Stopped',
+                     status_message = 'Job stopped by user',
+                     updated_at = NOW()
+                 WHERE (id = :idOrName OR (name = :idOrName AND status IN ('Submitted', 'Processing')))
+                   AND status IN ('Submitted', 'Processing')
+                 RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+                {
+                    replacements: { idOrName: jobIdOrName },
+                    type: QueryTypes.SELECT,
+                }
+            );
 
-        if (stoppedRows && stoppedRows.length > 0) {
-            const stoppedJob = stoppedRows[0];
-            this.logger.log(`Job ${stoppedJob.id} (${stoppedJob.name}) atomically transitioned to Stopped in database.`);
-            return stoppedJob;
+            if (stoppedRows && stoppedRows.length > 0) {
+                const stoppedJob = stoppedRows[0];
+                this.logger.log(`Job ${stoppedJob.id} (${stoppedJob.name}) atomically transitioned to Stopped in database.`);
+                return stoppedJob;
+            }
+        } else {
+            await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET status = 'Stopped',
+                     status_message = 'Job stopped by user',
+                     updated_at = CURRENT_TIMESTAMP
+                 WHERE (id = :idOrName OR (name = :idOrName AND status IN ('Submitted', 'Processing')))
+                   AND status IN ('Submitted', 'Processing');`,
+                {
+                    replacements: { idOrName: jobIdOrName },
+                }
+            );
+
+            const stoppedJob = await this.getJobById(jobIdOrName) || await this.getLatestJob(jobIdOrName);
+            if (stoppedJob && stoppedJob.status === 'Stopped') {
+                this.logger.log(`Job ${stoppedJob.id} (${stoppedJob.name}) atomically transitioned to Stopped in database.`);
+                return stoppedJob;
+            }
         }
 
         // If no active job was stopped, check if the job exists (could already be Stopped, Completed, or Error)
@@ -152,26 +176,27 @@ export class JobService {
     }
 
     async submitJob(name: string, stepCount: number, payload: any, chunkSize: number = 1): Promise<Job> {
-        // Use a database transaction and PostgreSQL advisory lock to ensure that across
-        // multiple NestJS server instances, only one instance of a Batch Job can be submitted/running at a given time.
+        // Use a database transaction to ensure that across multiple NestJS server instances,
+        // only one instance of a Batch Job can be submitted/running at a given time.
         return await this.ormService.sequelize.transaction(async (txn: Transaction) => {
-            // Acquire a transaction-level advisory lock specifically for this job name
-            // The lock is automatically released when this transaction commits or rolls back
-            await this.ormService.sequelize.query(
-                `SELECT pg_advisory_xact_lock(hashtext(:lockKey));`,
-                {
-                    replacements: { lockKey: `batch_job_${name}` },
-                    transaction: txn,
-                }
-            );
+            if (this.isPostgres) {
+                // Acquire a transaction-level advisory lock specifically for this job name
+                // The lock is automatically released when this transaction commits or rolls back
+                await this.ormService.sequelize.query(
+                    `SELECT pg_advisory_xact_lock(hashtext(:lockKey));`,
+                    {
+                        replacements: { lockKey: `batch_job_${name}` },
+                        transaction: txn,
+                    }
+                );
+            }
 
             // Check if there is already a running job with this name
             const activeJobs: Job[] = await this.ormService.sequelize.query(
                 `SELECT id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, created_at, updated_at
                  FROM "Job"
                  WHERE name = :name AND status IN ('Submitted', 'Processing')
-                 ORDER BY created_at DESC
-                 FOR UPDATE;`,
+                 ORDER BY created_at DESC${this.isPostgres ? ' FOR UPDATE' : ''};`,
                 {
                     replacements: { name },
                     type: QueryTypes.SELECT,
@@ -219,32 +244,56 @@ export class JobService {
                 updated_at: new Date(),
             };
 
-            const JobModel = this.ormService.sequelize.model('Job');
-            const createdModel = await JobModel.create(newJob as any, { transaction: txn });
-            return (typeof (createdModel as any).toJSON === 'function' ? (createdModel as any).toJSON() : createdModel) as Job;
+            if (this.isPostgres) {
+                const insertRows: Job[] = await this.ormService.sequelize.query(
+                    `INSERT INTO "Job" (id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, created_at, updated_at)
+                     VALUES (:id, :name, :status, :status_message, :step_index, :step_count, :chunk_size, :duration, :data, :result_summary, :created_at, :updated_at)
+                     RETURNING id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, created_at, updated_at;`,
+                    {
+                        replacements: newJob as any,
+                        type: QueryTypes.SELECT,
+                        transaction: txn,
+                    }
+                );
+
+                const createdJob = insertRows && insertRows.length > 0 ? insertRows[0] : newJob;
+                this.logger.log(`Created new job ${createdJob.id} for '${name}' (status: ${createdJob.status}, stepCount: ${stepCount}, chunkSize: ${chunkSize})`);
+                return createdJob;
+            } else {
+                await this.ormService.sequelize.query(
+                    `INSERT INTO "Job" (id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, created_at, updated_at)
+                     VALUES (:id, :name, :status, :status_message, :step_index, :step_count, :chunk_size, :duration, :data, :result_summary, :created_at, :updated_at);`,
+                    {
+                        replacements: newJob as any,
+                        transaction: txn,
+                    }
+                );
+                this.logger.log(`Created new job ${newJob.id} for '${name}' (status: ${newJob.status}, stepCount: ${stepCount}, chunkSize: ${chunkSize})`);
+                return newJob;
+            }
         });
     }
 
     async invokeJob(jobId: string) {
-        switch (this.jobProcessingMode) {
-            case 'sync':
-                return await this.executeJob(jobId);
-            case 'local-async':
-                setImmediate(() => {
-                    this.eventEmitter.emit('job.invoke.local-async', jobId);
-                });
-                break;
-            case 'async':
-                await this.invokeJobLambda(jobId);
-                break;
-            default:
-                throw new Error(`Invalid job processing mode: ${this.jobProcessingMode}`);
+        if (this.jobProcessingMode === 'local-sync') {
+            await this.executeJob(jobId);
+        } else if (this.jobProcessingMode === 'local-async') {
+            this.eventEmitter.emit('job.invoke.local-async', jobId);
+        } else if (this.jobProcessingMode === 'async') {
+            // Default to local-async unless AWS EventBridge target is configured
+            if (this.configService.get('EVENT_BRIDGE_ENDPOINT')) {
+                await this.sendEventToEventBridge({ jobId: jobId });
+            } else {
+                this.eventEmitter.emit('job.invoke.local-async', jobId);
+            }
+        } else {
+            throw new Error(`Unknown jobProcessingMode of ${this.jobProcessingMode}`);
         }
     }
 
-    private async invokeJobLambda(jobId: string) {
-        this.logger.log(`Invoking EventBridge for job ID: ${jobId}`);
-        const detail = { jobId };
+    private async sendEventToEventBridge(detail: any): Promise<void> {
+        this.logger.log('Send event to EventBridge');
+
         const params: PutEventsCommandInput = {
             Entries: [{
                 Detail: JSON.stringify(detail),
@@ -276,19 +325,33 @@ export class JobService {
     }
 
     private async markJobProcessingAtomic(jobId: string): Promise<Job | null> {
-        const rows: Job[] = await this.ormService.sequelize.query(
-            `UPDATE "Job"
-             SET status = 'Processing',
-                 status_message = NULL,
-                 updated_at = NOW()
-             WHERE id = :id AND status IN ('Submitted', 'Processing')
-             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
-            {
-                replacements: { id: jobId },
-                type: QueryTypes.SELECT,
-            }
-        );
-        return rows && rows.length > 0 ? rows[0] : null;
+        if (this.isPostgres) {
+            const rows: Job[] = await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET status = 'Processing',
+                     status_message = NULL,
+                     updated_at = NOW()
+                 WHERE id = :id AND status IN ('Submitted', 'Processing')
+                 RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+                {
+                    replacements: { id: jobId },
+                    type: QueryTypes.SELECT,
+                }
+            );
+            return rows && rows.length > 0 ? rows[0] : null;
+        } else {
+            await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET status = 'Processing',
+                     status_message = NULL,
+                     updated_at = CURRENT_TIMESTAMP
+                 WHERE id = :id AND status IN ('Submitted', 'Processing');`,
+                {
+                    replacements: { id: jobId },
+                }
+            );
+            return await this.getJobById(jobId);
+        }
     }
 
     private async updateJobProgressAtomic(jobId: string, updates: {
@@ -299,31 +362,61 @@ export class JobService {
         data?: string | null;
         resultSummary?: string | null;
     }): Promise<Job | null> {
-        const rows: Job[] = await this.ormService.sequelize.query(
-            `UPDATE "Job"
-             SET step_index = COALESCE(:stepIndex, step_index),
-                 step_count = COALESCE(:stepCount, step_count),
-                 status_message = COALESCE(:statusMessage, status_message),
-                 duration = COALESCE(:duration, duration),
-                 data = COALESCE(:data, data),
-                 result_summary = COALESCE(:resultSummary, result_summary),
-                 updated_at = NOW()
-             WHERE id = :id AND status = 'Processing'
-             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
-            {
-                replacements: {
-                    id: jobId,
-                    stepIndex: updates.stepIndex !== undefined ? updates.stepIndex : null,
-                    stepCount: updates.stepCount !== undefined ? updates.stepCount : null,
-                    statusMessage: updates.statusMessage !== undefined ? updates.statusMessage : null,
-                    duration: updates.duration !== undefined ? updates.duration : null,
-                    data: updates.data !== undefined ? updates.data : null,
-                    resultSummary: updates.resultSummary !== undefined ? updates.resultSummary : null,
-                },
-                type: QueryTypes.SELECT,
+        if (this.isPostgres) {
+            const rows: Job[] = await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET step_index = COALESCE(:stepIndex, step_index),
+                     step_count = COALESCE(:stepCount, step_count),
+                     status_message = COALESCE(:statusMessage, status_message),
+                     duration = COALESCE(:duration, duration),
+                     data = COALESCE(:data, data),
+                     result_summary = COALESCE(:resultSummary, result_summary),
+                     updated_at = NOW()
+                 WHERE id = :id AND status = 'Processing'
+                 RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+                {
+                    replacements: {
+                        id: jobId,
+                        stepIndex: updates.stepIndex !== undefined ? updates.stepIndex : null,
+                        stepCount: updates.stepCount !== undefined ? updates.stepCount : null,
+                        statusMessage: updates.statusMessage !== undefined ? updates.statusMessage : null,
+                        duration: updates.duration !== undefined ? updates.duration : null,
+                        data: updates.data !== undefined ? updates.data : null,
+                        resultSummary: updates.resultSummary !== undefined ? updates.resultSummary : null,
+                    },
+                    type: QueryTypes.SELECT,
+                }
+            );
+            return rows && rows.length > 0 ? rows[0] : null;
+        } else {
+            const current = await this.getJobById(jobId);
+            if (!current || current.status !== 'Processing') {
+                return null;
             }
-        );
-        return rows && rows.length > 0 ? rows[0] : null;
+            await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET step_index = COALESCE(:stepIndex, step_index),
+                     step_count = COALESCE(:stepCount, step_count),
+                     status_message = COALESCE(:statusMessage, status_message),
+                     duration = COALESCE(:duration, duration),
+                     data = COALESCE(:data, data),
+                     result_summary = COALESCE(:resultSummary, result_summary),
+                     updated_at = CURRENT_TIMESTAMP
+                 WHERE id = :id AND status = 'Processing';`,
+                {
+                    replacements: {
+                        id: jobId,
+                        stepIndex: updates.stepIndex !== undefined ? updates.stepIndex : null,
+                        stepCount: updates.stepCount !== undefined ? updates.stepCount : null,
+                        statusMessage: updates.statusMessage !== undefined ? updates.statusMessage : null,
+                        duration: updates.duration !== undefined ? updates.duration : null,
+                        data: updates.data !== undefined ? updates.data : null,
+                        resultSummary: updates.resultSummary !== undefined ? updates.resultSummary : null,
+                    },
+                }
+            );
+            return await this.getJobById(jobId);
+        }
     }
 
     private async markJobCompletedAtomic(jobId: string, updates: {
@@ -332,51 +425,99 @@ export class JobService {
         data?: string | null;
         stepIndex?: number;
     }): Promise<Job | null> {
-        const rows: Job[] = await this.ormService.sequelize.query(
-            `UPDATE "Job"
-             SET status = 'Completed',
-                 step_index = COALESCE(:stepIndex, step_count, step_index),
-                 duration = COALESCE(:duration, duration),
-                 data = COALESCE(:data, data),
-                 result_summary = COALESCE(:resultSummary, result_summary),
-                 updated_at = NOW()
-             WHERE id = :id AND status = 'Processing'
-             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
-            {
-                replacements: {
-                    id: jobId,
-                    stepIndex: updates.stepIndex !== undefined ? updates.stepIndex : null,
-                    duration: updates.duration !== undefined ? updates.duration : null,
-                    data: updates.data !== undefined ? updates.data : null,
-                    resultSummary: updates.resultSummary !== undefined ? updates.resultSummary : null,
-                },
-                type: QueryTypes.SELECT,
+        if (this.isPostgres) {
+            const rows: Job[] = await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET status = 'Completed',
+                     step_index = COALESCE(:stepIndex, step_count, step_index),
+                     duration = COALESCE(:duration, duration),
+                     data = COALESCE(:data, data),
+                     result_summary = COALESCE(:resultSummary, result_summary),
+                     updated_at = NOW()
+                 WHERE id = :id AND status = 'Processing'
+                 RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+                {
+                    replacements: {
+                        id: jobId,
+                        stepIndex: updates.stepIndex !== undefined ? updates.stepIndex : null,
+                        duration: updates.duration !== undefined ? updates.duration : null,
+                        data: updates.data !== undefined ? updates.data : null,
+                        resultSummary: updates.resultSummary !== undefined ? updates.resultSummary : null,
+                    },
+                    type: QueryTypes.SELECT,
+                }
+            );
+            return rows && rows.length > 0 ? rows[0] : null;
+        } else {
+            const current = await this.getJobById(jobId);
+            if (!current || current.status !== 'Processing') {
+                return null;
             }
-        );
-        return rows && rows.length > 0 ? rows[0] : null;
+            await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET status = 'Completed',
+                     step_index = COALESCE(:stepIndex, step_count, step_index),
+                     duration = COALESCE(:duration, duration),
+                     data = COALESCE(:data, data),
+                     result_summary = COALESCE(:resultSummary, result_summary),
+                     updated_at = CURRENT_TIMESTAMP
+                 WHERE id = :id AND status = 'Processing';`,
+                {
+                    replacements: {
+                        id: jobId,
+                        stepIndex: updates.stepIndex !== undefined ? updates.stepIndex : null,
+                        duration: updates.duration !== undefined ? updates.duration : null,
+                        data: updates.data !== undefined ? updates.data : null,
+                        resultSummary: updates.resultSummary !== undefined ? updates.resultSummary : null,
+                    },
+                }
+            );
+            return await this.getJobById(jobId);
+        }
     }
 
     private async markJobErrorAtomic(jobId: string, errorMessage: string, duration?: number, data?: string | null): Promise<Job | null> {
-        const rows: Job[] = await this.ormService.sequelize.query(
-            `UPDATE "Job"
-             SET status = 'Error',
-                 status_message = :errorMessage,
-                 duration = COALESCE(:duration, duration),
-                 data = COALESCE(:data, data),
-                 updated_at = NOW()
-             WHERE id = :id AND status IN ('Submitted', 'Processing')
-             RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
-            {
-                replacements: {
-                    id: jobId,
-                    errorMessage,
-                    duration: duration !== undefined ? duration : null,
-                    data: data !== undefined ? data : null,
-                },
-                type: QueryTypes.SELECT,
-            }
-        );
-        return rows && rows.length > 0 ? rows[0] : null;
+        if (this.isPostgres) {
+            const rows: Job[] = await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET status = 'Error',
+                     status_message = :errorMessage,
+                     duration = COALESCE(:duration, duration),
+                     data = COALESCE(:data, data),
+                     updated_at = NOW()
+                 WHERE id = :id AND status IN ('Submitted', 'Processing')
+                 RETURNING id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at;`,
+                {
+                    replacements: {
+                        id: jobId,
+                        errorMessage,
+                        duration: duration !== undefined ? duration : null,
+                        data: data !== undefined ? data : null,
+                    },
+                    type: QueryTypes.SELECT,
+                }
+            );
+            return rows && rows.length > 0 ? rows[0] : null;
+        } else {
+            await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET status = 'Error',
+                     status_message = :errorMessage,
+                     duration = COALESCE(:duration, duration),
+                     data = COALESCE(:data, data),
+                     updated_at = CURRENT_TIMESTAMP
+                 WHERE id = :id AND status IN ('Submitted', 'Processing');`,
+                {
+                    replacements: {
+                        id: jobId,
+                        errorMessage,
+                        duration: duration !== undefined ? duration : null,
+                        data: data !== undefined ? data : null,
+                    },
+                }
+            );
+            return await this.getJobById(jobId);
+        }
     }
 
     async executeJob(jobId: string): Promise<Job> {

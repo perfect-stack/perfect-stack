@@ -19,6 +19,12 @@
       ],
       "@perfect-stack/nestjs-server/*": [
         "../../../nestjs-server/libs/nestjs-server/src/*"
+      ],
+      "@nestjs/*": [
+        "./node_modules/@nestjs/*"
+      ],
+      "eventemitter2": [
+        "./node_modules/eventemitter2"
       ]
     }
   },

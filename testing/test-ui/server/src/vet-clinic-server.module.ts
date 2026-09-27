@@ -1,9 +1,22 @@
-import { Controller, Get, Module, Post, Body, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Injectable,
+  Logger,
+  Module,
+  OnApplicationBootstrap,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import {
   ClientConfigModule,
+  DataImportModule,
   DataModule,
+  JobModule,
+  JobService,
   KnexModule,
   MetaEntityModule,
   MetaMenuModule,
@@ -15,6 +28,7 @@ import {
   TypeaheadModule,
 } from '@perfect-stack/nestjs-server';
 import * as path from 'path';
+import { PetScanBatchJobService } from './pet-scan-batch-job.service';
 
 const envFile = process.env.NESTJS_ENV || path.resolve(__dirname, '../local.env');
 
@@ -36,11 +50,33 @@ export class TestAuthenticationController {
   }
 }
 
+@Injectable()
+export class VetClinicServerService implements OnApplicationBootstrap {
+  private readonly logger = new Logger(VetClinicServerService.name);
+
+  constructor(
+    protected readonly jobService: JobService,
+    protected readonly petScanBatchJobService: PetScanBatchJobService,
+  ) {}
+
+  async onApplicationBootstrap(): Promise<void> {
+    this.logger.log('VetClinicServerService: initializing application bootstrap');
+    this.addBatchJobs();
+  }
+
+  private addBatchJobs(): void {
+    this.jobService.registerJob(PetScanBatchJobService.JOB_NAME, this.petScanBatchJobService);
+    this.logger.log(`Registered batch job: ${PetScanBatchJobService.JOB_NAME}`);
+  }
+}
+
 @Module({
   imports: [
     CONFIG_MODULE,
     EventEmitterModule.forRoot(),
     OrmModule,
+    DataImportModule,
+    JobModule,
     KnexModule,
     MetaEntityModule,
     MetaMenuModule,
@@ -53,5 +89,7 @@ export class TestAuthenticationController {
     ClientConfigModule,
   ],
   controllers: [TestAuthenticationController],
+  providers: [VetClinicServerService, PetScanBatchJobService],
+  exports: [VetClinicServerService, PetScanBatchJobService],
 })
 export class VetClinicServerModule {}
