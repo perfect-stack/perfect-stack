@@ -1,0 +1,32 @@
+{
+  "name": "PetMediaMultiple.tab",
+  "title": "Multiple",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Pet",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "TextTool",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "text": "Multiple media will go here"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "",
+      "binding": "pet"
+    }
+  ]
+}
