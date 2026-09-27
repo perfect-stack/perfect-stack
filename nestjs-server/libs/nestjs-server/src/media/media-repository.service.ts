@@ -5,7 +5,10 @@ import {LocalMediaRepository} from "./local-media-repository";
 import {S3MediaRepository} from "./s3-media-repository";
 import {CreateFileResponse} from "./create-file-response";
 
-
+export enum MediaRepositoryType {
+    local = 'local',
+    s3 = 's3',
+}
 
 @Injectable()
 export class MediaRepositoryService {
@@ -18,8 +21,20 @@ export class MediaRepositoryService {
         protected local: LocalMediaRepository,
         protected s3: S3MediaRepository,
     ) {
-        const repoType = this.configService?.get('MEDIA_REPOSITORY') || 'local';
-        this.mediaRepository = repoType === 's3' ? s3 : local;
+        const repoType = this.configService?.get('MEDIA_REPOSITORY');
+        if (!repoType) {
+            const availableOptions = Object.values(MediaRepositoryType).join(', ');
+            throw new Error(`MEDIA_REPOSITORY configuration property is not defined. Available options are: ${availableOptions}`);
+        } else if (repoType === MediaRepositoryType.local) {
+            this.mediaRepository = local;
+        } else if (repoType === MediaRepositoryType.s3) {
+            this.mediaRepository = s3;
+        } else {
+            const availableOptions = Object.values(MediaRepositoryType).join(', ');
+            throw new Error(`Unknown MEDIA_REPOSITORY type: "${repoType}". Available options are: ${availableOptions}`);
+        }
+
+        this.logger.log(`MEDIA_REPOSITORY = ${repoType}`);
     }
 
     async fileExists(filePath: string): Promise<boolean> {
