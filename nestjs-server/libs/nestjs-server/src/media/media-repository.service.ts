@@ -19,9 +19,8 @@ export class MediaRepositoryService {
         protected s3: S3MediaRepository,
     ) {
         // TODO: make this configurable
-        //this.mediaRepository = local;
-        this.mediaRepository = s3;
-
+        this.mediaRepository = local;
+        //this.mediaRepository = s3;
     }
 
     async fileExists(filePath: string): Promise<boolean> {

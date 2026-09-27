@@ -4,8 +4,9 @@
   "icon": "",
   "type": "Database",
   "rootNode": true,
-  "permanentDelete": true,
   "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": true,
   "attributes": [
     {
       "name": "id",
@@ -120,6 +121,20 @@
         "first_name",
         "last_name"
       ],
+      "rules": []
+    },
+    {
+      "name": "media_files",
+      "label": "Media files",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "PetMediaFile",
+      "typeaheadSearch": [],
       "rules": []
     }
   ]
