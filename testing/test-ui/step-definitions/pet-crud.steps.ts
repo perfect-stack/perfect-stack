@@ -86,6 +86,7 @@ When('I click the {string} button', async function (this: UIWorld, buttonLabel: 
   const slug = buttonLabel.toLowerCase().replace(/\s+/g, '-');
   const testIdMap: Record<string, string> = {
     'add pet': 'btn-add',
+    'add owner': 'btn-add',
     'add': 'btn-add',
     'save details': 'btn-save',
     'save': 'btn-save',
@@ -212,4 +213,23 @@ Then('I should not see {string} in the search results table', async function (th
     const bodyContent = await this.page.textContent('body');
     expect(bodyContent || '').to.not.include(unexpectedText);
   }
+});
+
+Then('I should see an error message {string} under the {string} field', async function (this: UIWorld, errorMessage: string, fieldName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  // Look for error label by data-testid or class
+  const errorElem = this.page.getByTestId(`error-${fieldName}`)
+    .or(this.page.locator(`[data-testid="field-${fieldName}"] ~ lib-validation-result-label .validation-result`))
+    .or(this.page.locator(`lib-validation-result-label [data-testid="error-${fieldName}"]`))
+    .or(this.page.locator(`.validation-result.text-danger:has-text("${errorMessage}")`));
+
+  const target = errorElem.first();
+  await target.waitFor({ state: 'visible', timeout: 5000 });
+  const text = await target.textContent();
+  const normalizedActual = (text?.trim() || "").toLowerCase().replace(/\s+/g, " ");
+  const normalizedExpected = errorMessage.toLowerCase().replace(/\s+/g, " ");
+  const matches = normalizedActual.includes(normalizedExpected) ||
+    normalizedActual.replace(/\bis\b/g, "").replace(/\s+/g, " ").trim().includes(normalizedExpected);
+  expect(matches, `Expected "${text?.trim()}" to match "${errorMessage}"`).to.be.true;
 });

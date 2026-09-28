@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {AttributeType} from '../../../../../domain/meta.entity';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
@@ -32,8 +32,9 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
 
   touched = false;
   touchSubscription: Subscription;
+  statusSubscription: Subscription;
 
-  constructor(public ngControl: NgControl) {
+  constructor(public ngControl: NgControl, private readonly cdr: ChangeDetectorRef) {
     ngControl.valueAccessor = this;
   }
 
@@ -41,6 +42,10 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
     if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
       this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
         this.touched = true;
+        this.cdr.markForCheck();
+      });
+      this.statusSubscription = this.ngControl.control.statusChanges.subscribe(() => {
+        this.cdr.markForCheck();
       });
     }
     else {
@@ -139,6 +144,9 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
   ngOnDestroy(): void {
     if(this.touchSubscription) {
       this.touchSubscription.unsubscribe();
+    }
+    if(this.statusSubscription) {
+      this.statusSubscription.unsubscribe();
     }
   }
 }

@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Injector, OnInit} from '@angular/core';
 import {combineLatest, Observable, tap, switchMap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
@@ -55,7 +55,8 @@ export class DataEditComponent implements OnInit {
               protected readonly toastService: ToastService,
               protected readonly eventService: EventService,
               protected readonly modalService: NgbModal,
-              protected readonly injector: Injector) {}
+              protected readonly injector: Injector,
+              protected readonly cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.ctx$ = combineLatest([this.route.paramMap, this.route.queryParamMap]).pipe(
@@ -191,6 +192,7 @@ export class DataEditComponent implements OnInit {
   }
 
   saveRejected(ctx: FormContext, response: SaveResponse) {
+    this.cdr.markForCheck();
     console.log(`Save rejected:`, response.validationResults);
     this.toastService.showError('Error while saving. Please check form for errors.', true);
     const form = this.getDataForm(ctx) as FormGroup;
@@ -218,6 +220,7 @@ export class DataEditComponent implements OnInit {
         }
       }
     });
+    this.cdr.markForCheck();
   }
 
   saveCompleted(ctx: FormContext, response: SaveResponse) {
