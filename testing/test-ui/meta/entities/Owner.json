@@ -5,6 +5,8 @@
   "type": "Database",
   "rootNode": true,
   "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": true,
   "attributes": [
     {
       "name": "id",
@@ -90,8 +92,12 @@
       "typeaheadSearch": [
         "email_address"
       ],
-      "rules": []
+      "rules": [
+        {
+          "type": "Email",
+          "config": ""
+        }
+      ]
     }
-  ],
-  "permanentDelete": true
+  ]
 }

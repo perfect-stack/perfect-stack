@@ -28,22 +28,13 @@ export class ColourBandComponentComponent implements OnInit, OnDestroy, ControlV
 
   disabled = false;
 
-  touched = false;
-  touchSubscription: Subscription;
 
   constructor(public ngControl: NgControl, private modalService: NgbModal) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
-    if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
-      this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
-        this.touched = true;
-      });
-    }
-    else {
-      console.warn(`This component is NOT using a FormControlWithAttribute`);
-    }
+
   }
 
   isReadOnly() {
@@ -95,18 +86,23 @@ export class ColourBandComponentComponent implements OnInit, OnDestroy, ControlV
     this.value = nextValue;
   }
 
+  get formControl(): FormControlWithAttribute | null {
+    return this.ngControl.control instanceof FormControlWithAttribute ? this.ngControl.control : null;
+  }
+
+  get touched(): boolean {
+    return this.formControl ? this.formControl.touchedSignal() : (this.ngControl.control?.touched ?? false);
+  }
+
   hasErrors() {
-    return this.ngControl.errors !== null;
+    return this.formControl ? this.formControl.hasErrorsSignal() : (this.ngControl.errors !== null);
   }
 
   get validationResult() {
-    return this.ngControl.errors as ValidationResult;
+    return (this.formControl ? this.formControl.errorsSignal() : this.ngControl.errors) as ValidationResult;
   }
 
   ngOnDestroy(): void {
-    if(this.touchSubscription) {
-      this.touchSubscription.unsubscribe();
-    }
   }
 
   onBandDialogClick() {

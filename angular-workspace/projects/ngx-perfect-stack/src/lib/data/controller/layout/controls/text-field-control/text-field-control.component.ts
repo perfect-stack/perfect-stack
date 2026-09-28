@@ -1,9 +1,8 @@
-import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {AttributeType} from '../../../../../domain/meta.entity';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
-import {Subscription} from 'rxjs';
 import {ValidationResult} from '../../../../../domain/meta.rule';
 
 @Component({
@@ -30,25 +29,20 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
 
   disabled = false;
 
-  touched = false;
-  touchSubscription: Subscription;
-  statusSubscription: Subscription;
+  get formControl(): FormControlWithAttribute | null {
+    return this.ngControl.control instanceof FormControlWithAttribute ? this.ngControl.control : null;
+  }
 
-  constructor(public ngControl: NgControl, private readonly cdr: ChangeDetectorRef) {
+  get touched(): boolean {
+    return this.formControl ? this.formControl.touchedSignal() : (this.ngControl.control?.touched ?? false);
+  }
+
+  constructor(public ngControl: NgControl) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
-    if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
-      this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
-        this.touched = true;
-        this.cdr.markForCheck();
-      });
-      this.statusSubscription = this.ngControl.control.statusChanges.subscribe(() => {
-        this.cdr.markForCheck();
-      });
-    }
-    else {
+    if(!this.formControl) {
       console.warn(`This component is NOT using a FormControlWithAttribute`);
     }
   }
@@ -134,20 +128,14 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
   }
 
   hasErrors() {
-    return this.ngControl.errors !== null;
+    return this.formControl ? this.formControl.hasErrorsSignal() : (this.ngControl.errors !== null);
   }
 
   get validationResult() {
-    return this.ngControl.errors as ValidationResult;
+    return (this.formControl ? this.formControl.errorsSignal() : this.ngControl.errors) as ValidationResult;
   }
 
   ngOnDestroy(): void {
-    if(this.touchSubscription) {
-      this.touchSubscription.unsubscribe();
-    }
-    if(this.statusSubscription) {
-      this.statusSubscription.unsubscribe();
-    }
   }
 }
 

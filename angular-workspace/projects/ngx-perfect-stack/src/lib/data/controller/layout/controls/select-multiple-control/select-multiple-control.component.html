@@ -17,7 +17,7 @@
 
 @if (mode !== 'view') {
   <div ngbDropdown [attr.data-testid]="'field-' + (cell?.attribute?.name || name)">
-    <div class="form-select w-100" style="white-space: normal;" [id]="name || 'dropdownBasic1'" [attr.data-testid]="'select-multiple-' + (cell?.attribute?.name || name)" ngbDropdownToggle>
+    <div class="form-select w-100" [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}" style="white-space: normal;" [id]="name || 'dropdownBasic1'" [attr.data-testid]="'select-multiple-' + (cell?.attribute?.name || name)" ngbDropdownToggle>
       @if (selectedOptions.length === 0) {
         <span>&nbsp;</span>
       }

@@ -38,8 +38,6 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
   selectedOption: string | null;
   disabled = false;
 
-  touched = false;
-  touchSubscription: Subscription;
 
   constructor(public ngControl: NgControl,
               @Inject(STACK_CONFIG)
@@ -49,14 +47,7 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
   }
 
   ngOnInit(): void {
-    if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
-      this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
-        this.touched = true;
-      });
-    }
-    else {
-      console.warn(`This component is NOT using a FormControlWithAttribute`);
-    }
+
 
     if(this.attribute && this.attribute.enumeration) {
       this.options = this.attribute.enumeration;
@@ -162,12 +153,20 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
     this.value = obj;
   }
 
+  get formControl(): FormControlWithAttribute | null {
+    return this.ngControl.control instanceof FormControlWithAttribute ? this.ngControl.control : null;
+  }
+
+  get touched(): boolean {
+    return this.formControl ? this.formControl.touchedSignal() : (this.ngControl.control?.touched ?? false);
+  }
+
   hasErrors() {
-    return this.ngControl.errors !== null;
+    return this.formControl ? this.formControl.hasErrorsSignal() : (this.ngControl.errors !== null);
   }
 
   get validationResult() {
-    return this.ngControl.errors as ValidationResult;
+    return (this.formControl ? this.formControl.errorsSignal() : this.ngControl.errors) as ValidationResult;
   }
 
   onSelectOption(option: string) {
@@ -175,8 +174,5 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
   }
 
   ngOnDestroy(): void {
-    if (this.touchSubscription) {
-      this.touchSubscription.unsubscribe();
-    }
   }
 }

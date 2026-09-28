@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {computed, EventEmitter, Injectable, Signal, signal, WritableSignal} from '@angular/core';
 import {CellAttribute, MetaPageService} from '../../../meta/page/meta-page-service/meta-page.service';
 import {MetaEntityService} from '../../../meta/entity/meta-entity-service/meta-entity.service';
 import {DataService} from '../../data-service/data.service';
@@ -7,7 +7,8 @@ import {
   AbstractControl,
   AbstractControlOptions,
   AsyncValidatorFn, FormArray, FormControl,
-  FormControlOptions, FormGroup,
+  FormControlOptions, FormControlStatus, FormGroup,
+  ValidationErrors,
   UntypedFormArray,
   UntypedFormControl,
   UntypedFormGroup,
@@ -15,6 +16,7 @@ import {
 } from '@angular/forms';
 import {Observable, of, switchMap} from 'rxjs';
 import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
+import {ValidationResult} from '../../../domain/meta.rule';
 import {DataMapService} from './data-map.service';
 import {ParamMap} from '@angular/router';
 import {FormGroupService} from './form-group.service';
@@ -53,14 +55,71 @@ export class FormGroupWithMetaEntity extends UntypedFormGroup {
 
 export class FormControlWithAttribute extends UntypedFormControl {
   attribute: MetaAttribute;
+
+  readonly errorsSignal: WritableSignal<ValidationResult | null> = signal<ValidationResult | null>(null);
+  readonly touchedSignal: WritableSignal<boolean> = signal<boolean>(false);
+  readonly statusSignal: WritableSignal<FormControlStatus> = signal<FormControlStatus>('VALID');
+  readonly hasErrorsSignal: Signal<boolean> = computed(() => this.errorsSignal() !== null);
+
   touched$ = new EventEmitter<void>();
-  constructor(formState?: any, validatorOrOpts?: ValidatorFn | ValidatorFn[] | FormControlOptions | null, asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
+
+  constructor(
+    formState?: any,
+    validatorOrOpts?: ValidatorFn | ValidatorFn[] | FormControlOptions | null,
+    asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null
+  ) {
     super(formState, validatorOrOpts, asyncValidator);
+    this.syncSignals();
+
+    this.statusChanges.subscribe(() => {
+      this.syncSignals();
+    });
   }
 
-  override markAsTouched(opts: { onlySelf?: boolean } | undefined): void {
-    super.markAsTouched(opts)
-    this.touched$.next();
+  private syncSignals(): void {
+    if (this.errorsSignal) {
+      this.errorsSignal.set(this.errors as ValidationResult | null);
+    }
+    if (this.touchedSignal) {
+      this.touchedSignal.set(this.touched);
+    }
+    if (this.statusSignal) {
+      this.statusSignal.set(this.status);
+    }
+  }
+
+  override setErrors(errors: ValidationErrors | null, opts?: { emitEvent?: boolean }): void {
+    super.setErrors(errors, opts);
+    if (this.errorsSignal) {
+      this.errorsSignal.set(this.errors as ValidationResult | null);
+    }
+  }
+
+  override markAsTouched(opts?: { onlySelf?: boolean }): void {
+    super.markAsTouched(opts);
+    if (this.touchedSignal) {
+      this.touchedSignal.set(true);
+    }
+    if (this.touched$) {
+      this.touched$.next();
+    }
+  }
+
+  override markAsUntouched(opts?: { onlySelf?: boolean }): void {
+    super.markAsUntouched(opts);
+    if (this.touchedSignal) {
+      this.touchedSignal.set(false);
+    }
+  }
+
+  override reset(formState?: any, opts?: { onlySelf?: boolean; emitEvent?: boolean }): void {
+    super.reset(formState, opts);
+    this.syncSignals();
+  }
+
+  override updateValueAndValidity(opts?: { onlySelf?: boolean; emitEvent?: boolean }): void {
+    super.updateValueAndValidity(opts);
+    this.syncSignals();
   }
 }
 

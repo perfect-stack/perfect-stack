@@ -5,6 +5,7 @@ import {Locale} from '@js-joda/locale_en';
 import {DateTimeFormatter, Instant, LocalTime, ZonedDateTime, ZoneId} from '@js-joda/core';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 import {ValidationResult} from '../../../../../domain/meta.rule';
+import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
 import {TimeService} from '../../../../../utils/time/time.service';
 
 @Component({
@@ -125,32 +126,41 @@ export class FlexibleDateTimeControlComponent implements OnInit {
     }
   }
 
+  get formControl(): FormControlWithAttribute | null {
+    const ctrl = this.formGroup?.controls[this.name];
+    return ctrl instanceof FormControlWithAttribute ? ctrl : null;
+  }
+
+  get touched(): boolean {
+    return this.formControl ? this.formControl.touchedSignal() : (this.formGroup?.controls[this.name]?.touched ?? false);
+  }
+
   hasErrors() {
-    const formControl = this.formGroup.controls[this.name];
-    return formControl && formControl.errors !== null;
+    const formControl = this.formControl;
+    return formControl ? formControl.hasErrorsSignal() : (this.formGroup?.controls[this.name]?.errors !== null);
   }
 
   hasDateErrors() {
-    const formControl = this.formGroup.controls[this.name];
-    const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl.value);
+    const formControl = this.formGroup?.controls[this.name];
+    const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl?.value);
     return this.hasErrors() && !dateTimeComponents.date;
   }
 
   hasTimeErrors() {
-    const formControl = this.formGroup.controls[this.name];
-    const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl.value);
+    const formControl = this.formGroup?.controls[this.name];
+    const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl?.value);
     return this.hasErrors() && !dateTimeComponents.time;
   }
 
   hasDateTimeErrors() {
-    const formControl = this.formGroup.controls[this.name];
-    const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl.value);
+    const formControl = this.formGroup?.controls[this.name];
+    const dateTimeComponents = this.timeService.parseDateTimeFormValue(formControl?.value);
     return this.hasErrors() && dateTimeComponents.date && dateTimeComponents.time;
   }
 
   get validationResult() {
-    const formControl = this.formGroup.controls[this.name];
-    return formControl && formControl.errors as ValidationResult;
+    const formControl = this.formControl;
+    return (formControl ? formControl.errorsSignal() : this.formGroup?.controls[this.name]?.errors) as ValidationResult;
   }
 }
 

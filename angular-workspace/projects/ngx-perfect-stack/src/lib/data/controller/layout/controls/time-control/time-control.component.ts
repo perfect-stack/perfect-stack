@@ -44,8 +44,6 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
 
   timeModel: string | null = null;
 
-  touched = false;
-  touchSubscription: Subscription;
   subscription: Subscription | undefined;
 
   showModifiers = false;
@@ -63,14 +61,7 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
   }
 
   ngOnInit(): void {
-    if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
-      this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
-        this.touched = true;
-      });
-    }
-    else {
-      console.warn(`This component is NOT using a FormControlWithAttribute`);
-    }
+
 
     if(this.cell && this.cell.showModifiers) {
       this.showModifiers = this.cell.showModifiers === 'true';
@@ -187,19 +178,23 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
     this.disabled = isDisabled;
   }
 
+  get formControl(): FormControlWithAttribute | null {
+    return this.ngControl.control instanceof FormControlWithAttribute ? this.ngControl.control : null;
+  }
+
+  get touched(): boolean {
+    return this.formControl ? this.formControl.touchedSignal() : (this.ngControl.control?.touched ?? false);
+  }
+
   hasErrors() {
-    return this.ngControl.errors !== null;
+    return this.formControl ? this.formControl.hasErrorsSignal() : (this.ngControl.errors !== null);
   }
 
   get validationResult() {
-    return this.ngControl.errors as ValidationResult;
+    return (this.formControl ? this.formControl.errorsSignal() : this.ngControl.errors) as ValidationResult;
   }
 
   ngOnDestroy(): void {
-    if (this.touchSubscription) {
-      this.touchSubscription.unsubscribe();
-    }
-
     if(this.subscription) {
       this.subscription.unsubscribe();
     }

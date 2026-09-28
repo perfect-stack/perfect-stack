@@ -4,7 +4,6 @@ import {Cell} from '../../../../../domain/meta.page';
 import {CellAttribute} from "../../../../../meta/page/meta-page-service/meta-page.service";
 import {ValidationResult} from "../../../../../domain/meta.rule";
 import {FormControlWithAttribute} from "../../../../data-edit/form-service/form.service";
-import {Subscription} from "rxjs";
 
 @Component({
     selector: 'lib-text-area-control',
@@ -30,23 +29,19 @@ export class TextAreaControlComponent implements OnInit, ControlValueAccessor {
   internalValue: any;
   disabled = false;
 
-  touched = false;
-  touchSubscription: Subscription;
-
-
   constructor(public ngControl: NgControl) {
     ngControl.valueAccessor = this;
   }
 
   ngOnInit(): void {
-    if(this.ngControl.control && this.ngControl.control instanceof FormControlWithAttribute) {
-      this.touchSubscription = this.ngControl.control.touched$.subscribe(() => {
-        this.touched = true;
-      });
-    }
-    else {
-      console.warn(`This component is NOT using a FormControlWithAttribute`);
-    }
+  }
+
+  get formControl(): FormControlWithAttribute | null {
+    return this.ngControl.control instanceof FormControlWithAttribute ? this.ngControl.control : null;
+  }
+
+  get touched(): boolean {
+    return this.formControl ? this.formControl.touchedSignal() : (this.ngControl.control?.touched ?? false);
   }
 
   onChange: any = () => {}
@@ -87,17 +82,11 @@ export class TextAreaControlComponent implements OnInit, ControlValueAccessor {
   }
 
   hasErrors() {
-    return this.ngControl.errors !== null;
+    return this.formControl ? this.formControl.hasErrorsSignal() : (this.ngControl.errors !== null);
   }
 
   get validationResult() {
-    return this.ngControl.errors as ValidationResult;
-  }
-
-  ngOnDestroy(): void {
-    if(this.touchSubscription) {
-      this.touchSubscription.unsubscribe();
-    }
+    return (this.formControl ? this.formControl.errorsSignal() : this.ngControl.errors) as ValidationResult;
   }
 
   get componentId() : string {

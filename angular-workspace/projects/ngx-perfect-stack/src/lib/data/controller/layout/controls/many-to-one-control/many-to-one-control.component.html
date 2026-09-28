@@ -7,8 +7,8 @@
     <div class="d-flex w-100 wrapper">
       <input #searchInput type="text" class="form-control" placeholder="Search..."
              [ngClass]="{
-               'ng-invalid': ngControl.invalid,
-               'ng-touched': ngControl.touched
+               'ng-invalid': hasErrors(),
+               'ng-touched': touched
              }"
         [class.is-invalid]="searchFailed"
         [ngbTypeahead]="search"

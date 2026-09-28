@@ -27,7 +27,7 @@ import {Item} from './typeahead.response';
 import {NgbTypeaheadSelectItemEvent} from '@ng-bootstrap/ng-bootstrap';
 import {DataService} from '../../../../data-service/data.service';
 import {EventService} from '../../../../../event/event.service';
-import {FormContext} from '../../../../data-edit/form-service/form.service';
+import {FormContext, FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
 import {ValidationResult} from '../../../../../domain/meta.rule';
 import {Cell} from '../../../../../domain/meta.page';
 
@@ -219,12 +219,20 @@ export class ManyToOneControlComponent implements OnInit, OnChanges, OnDestroy, 
     this.writeValue(this.selectedModelId);
   }
 
+  get formControl(): FormControlWithAttribute | null {
+    return this.ngControl.control instanceof FormControlWithAttribute ? this.ngControl.control : null;
+  }
+
+  get touched(): boolean {
+    return this.formControl ? this.formControl.touchedSignal() : (this.ngControl.control?.touched ?? false);
+  }
+
   hasErrors() {
-    return this.ngControl.errors !== null;
+    return this.formControl ? this.formControl.hasErrorsSignal() : (this.ngControl.errors !== null);
   }
 
   get validationResult() {
-    return this.ngControl.errors as ValidationResult;
+    return (this.formControl ? this.formControl.errorsSignal() : this.ngControl.errors) as ValidationResult;
   }
 
   get showClear(): boolean {
