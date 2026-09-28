@@ -64,6 +64,7 @@ export * from './domain/entity';
 export * from './domain/meta.entity';
 export * from './data/query.request';
 export * from './data/query.response';
+export * from './data/import';
 export { EsriModule, ESRIModule, ESRIService, EsriService };
 export { EventModule };
 export {

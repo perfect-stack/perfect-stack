@@ -50,6 +50,10 @@ export class DataFormatService {
       .sort((a, b) => a.title.localeCompare(b.title));
   }
 
+  addDataFormat(dataFormat: DataImportMapping) {
+    this.getDataFormatMap().set(dataFormat.title, dataFormat);
+  }
+
   private getDataFormatMap() {
     if (!this._dataFormatMap) {
       const formats: DataImportMapping[] = [
@@ -57,8 +61,8 @@ export class DataFormatService {
         this.getMonitoringStationFormat(),
         this.getRfidFormat(),
         this.getTransmitterFormat(),
-        this.getDocmonSpeciesFormat(),
-        this.getAlitaPredictionFormat(),
+        // this.getDocmonSpeciesFormat(),
+        // this.getAlitaPredictionFormat(),
       ];
       this._dataFormatMap = new Map<string, DataImportMapping>(
         formats.map((format) => [format.title, format]),
