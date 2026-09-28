@@ -89,8 +89,8 @@ export const TAXON_NODES: TaxonNode[] = [
 ];
 
 export const SEED_OWNER = {
-  first_name: 'Richard',
-  last_name: 'Perfect',
+  given_name: 'Richard',
+  family_name: 'Perfect',
   email_address: 'rperfect@gmail.com',
   phone_number: '021400222',
 };
@@ -226,19 +226,19 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
   let owner: any;
   if (!ownerRecord) {
     const saveOwnerRes = await dataService.save('Owner', {
-      first_name: SEED_OWNER.first_name,
-      last_name: SEED_OWNER.last_name,
+      given_name: SEED_OWNER.given_name,
+      family_name: SEED_OWNER.family_name,
       email_address: SEED_OWNER.email_address,
       phone_number: SEED_OWNER.phone_number,
     } as any);
     owner = saveOwnerRes.entity;
-    logger.log(`Created Owner: ${SEED_OWNER.first_name} ${SEED_OWNER.last_name}`);
+    logger.log(`Created Owner: ${SEED_OWNER.given_name} ${SEED_OWNER.family_name}`);
   } else {
     owner = ownerRecord.get ? ownerRecord.get({ plain: true }) : ownerRecord;
     await ownerModel.update(
       {
-        first_name: SEED_OWNER.first_name,
-        last_name: SEED_OWNER.last_name,
+        given_name: SEED_OWNER.given_name,
+        family_name: SEED_OWNER.family_name,
         phone_number: SEED_OWNER.phone_number,
       },
       { where: { id: owner.id } },
@@ -269,7 +269,7 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
         birth_date: petDef.birth_date,
         microchip_number: petDef.microchip_number,
       } as any);
-      logger.log(`Created Pet: ${petDef.name} (${petDef.breed}) for owner ${owner.first_name} ${owner.last_name}`);
+      logger.log(`Created Pet: ${petDef.name} (${petDef.breed}) for owner ${owner.given_name || owner.first_name} ${owner.family_name || owner.last_name}`);
     } else {
       const pet = petRecord.get ? petRecord.get({ plain: true }) : petRecord;
       await petModel.update(

@@ -118,8 +118,8 @@
       "comparisonOperator": "Equals",
       "relationshipTarget": "Owner",
       "typeaheadSearch": [
-        "first_name",
-        "last_name"
+        "given_name",
+        "family_name"
       ],
       "rules": []
     },

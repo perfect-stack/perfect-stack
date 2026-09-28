@@ -21,9 +21,9 @@
       "rules": []
     },
     {
-      "name": "first_name",
-      "label": "First Name",
-      "description": "Owner first name",
+      "name": "given_name",
+      "label": "Given Name",
+      "description": "Owner given name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -32,7 +32,7 @@
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": [
-        "first_name"
+        "given_name"
       ],
       "rules": [
         {
@@ -42,9 +42,9 @@
       ]
     },
     {
-      "name": "last_name",
-      "label": "Last Name",
-      "description": "Owner last name",
+      "name": "family_name",
+      "label": "Family Name",
+      "description": "Owner family name",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -53,7 +53,7 @@
       "comparisonOperator": "InsensitiveStartsWith",
       "relationshipTarget": "",
       "typeaheadSearch": [
-        "last_name"
+        "family_name"
       ],
       "rules": [
         {
