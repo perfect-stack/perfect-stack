@@ -1,3 +1,9 @@
+const path = require('path');
+const dotenv = require('dotenv');
+
+// Load environment properties from local.env if present
+dotenv.config({ path: path.resolve(__dirname, 'local.env') });
+
 module.exports = {
   default: {
     paths: ['features/**/*.feature'],
