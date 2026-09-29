@@ -21,7 +21,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from "node:os";
 import {v4 as uuidv4} from "uuid";
-import {DataImportFileService} from "../data/import/data-import-file.service";
+import {DataImportService} from "../data/import/data-import.service";
 import {ConfigService} from "@nestjs/config";
 
 
@@ -62,7 +62,7 @@ export class DataImportJobController {
 
     constructor(protected configService: ConfigService,
                 protected readonly jobService: JobService,
-                protected readonly dataImportFileService: DataImportFileService
+                protected readonly dataImportService: DataImportService
     ) {
         this.jobProcessingMode = configService.get('JOB_PROCESSING_MODE', 'sync');
     }
@@ -111,7 +111,7 @@ export class DataImportJobController {
             console.log('Mimetype:', file.mimetype);
             console.log('Size:', file.size);
 
-            const dataImportModel = await this.dataImportFileService.parseFile(dataFormat, file.path);
+            const dataImportModel = await this.dataImportService.parseFile(dataFormat, file.path);
             dataImportModel.status = 'loaded';
 
             const job = await this.jobService.submitJob('Data Import - Validate', dataImportModel.dataRows.length, dataImportModel);

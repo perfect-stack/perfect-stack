@@ -3,7 +3,6 @@ export * from './data-import.model';
 export * from './data-import.types';
 export * from './data-format.service';
 export * from './data-import.service';
-export * from './data-import-file.service';
 export * from './data-import.controller';
 export * from './data-import.module';
 export * from './duplicate-event-check';

@@ -7,7 +7,6 @@ import { DuplicateEventCheck } from './duplicate-event-check';
 import { DuplicateMonitoringStationCheck } from './duplicate-monitoring-station-check';
 import { DuplicatePlaceCheck } from './duplicate-place-check';
 import { PostImportEventActions } from './post-import-event-actions';
-import { DataImportFileService } from './data-import-file.service';
 import { DataFormatService } from './data-format.service';
 import { EsriModule } from '../../esri/esri.module';
 import { JobModule } from '../../job/job.module';
@@ -19,14 +18,13 @@ import { DataImportJobController } from '../../job/data-import-job.controller';
   imports: [DataModule, MetaEntityModule, EsriModule, JobModule],
   providers: [
     DataImportService,
-    DataImportFileService,
     DuplicateEventCheck,
     DuplicateMonitoringStationCheck,
     DuplicatePlaceCheck,
     PostImportEventActions,
     DataFormatService,
   ],
-  exports: [DataImportService, DataImportFileService],
+  exports: [DataImportService, DataFormatService],
 })
 export class DataImportModule implements OnApplicationBootstrap {
   constructor(

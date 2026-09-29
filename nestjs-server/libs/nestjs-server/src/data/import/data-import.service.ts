@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as csv from 'fast-csv';
 import {Injectable} from "@nestjs/common";
 import {DataImportError, DataImportModel, DataImportRowResult, DataImportSkippedColumn} from "./data-import.model";
 import {CreateEntityResponse, DataAttributeMapping, DataImportClientMapping, DataImportMapping} from "./data-import.types";
@@ -57,6 +59,69 @@ export class DataImportService {
 
     getDataImportClientMapping(): DataImportClientMapping[] {
         return this.dataFormatService.getDataImportClientMapping();
+    }
+
+    async parseFile(dataFormat: string, filePath: string): Promise<DataImportModel> {
+
+        try {
+            // Use fast-csv and parse the file into a 2d array of raw values
+            // The 'async' keyword means this function will always return a Promise.
+            // We wrap the stream-based parser in a new Promise so we can 'await' its completion.
+            const data: string[][] = await new Promise((resolve, reject) => {
+                const data: string[][] = [];
+
+                // read the file from the filePath and create a stream for it
+                const stream = fs.createReadStream(filePath);
+
+                stream
+                    .pipe(csv.parse({headers: false})) // 'headers: false' ensures the header row is treated like any other data row.
+                    .on('error', (error) => reject(error))
+                    .on('data', (row: string[]) => data.push(row))
+                    .on('end', (rowCount: number) => {
+                        console.log(`Successfully parsed ${rowCount} rows.`);
+                        resolve(data);
+                    });
+            });
+
+            if(!this.dataFormatService.isValidDataFormat(dataFormat)) {
+                throw new Error(`Unknown data format of: ${dataFormat}`);
+            }
+
+            const dataImportModel = new DataImportModel();
+            if (data && data.length > 0) {
+                dataImportModel.dataFormat = dataFormat;
+                dataImportModel.headers = data[0];
+                dataImportModel.dataRows = data.slice(1);
+                dataImportModel.duplicateCheckList = [];
+                dataImportModel.importResult = [];
+            }
+
+            return dataImportModel;
+        }
+        catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            return {
+                status: 'error',
+                dataFormat: dataFormat,
+                headers: ["Error parsing file"],
+                dataRows: [[errorMessage]],
+                importedEntityList: [],
+                duplicateCheckList: [],
+                importResult: [{
+                    skipReason: "Processed",
+                    skipFlag: false,
+                    errors: [{
+                        cols: [0],
+                        row: 0,
+                        message: errorMessage
+                    }],
+                    importedEntity: null,
+                    skippedColumns: [],
+                    proposedEntity: null,
+                    actualEntity: null
+                }]
+            }
+        }
     }
 
     async dataImportValidate(stepIndex: number, dataImportModel: DataImportModel) {
