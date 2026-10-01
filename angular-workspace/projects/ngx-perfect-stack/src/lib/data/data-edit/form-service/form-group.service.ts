@@ -65,6 +65,9 @@ export class FormGroupService {
         case AttributeType.Boolean:
           abstractControl = this.formControlForBoolean();
           break;
+        case AttributeType.Geometry:
+          abstractControl = new FormControlWithAttribute({value: null, disabled: mode === "view"});
+          break;
         default:
           // WARNING: This has been a bit of a cockroach problem. One of these two lines is "correct" but depending on
           // the low level sequence of processing elsewhere the "right" answer is either '' or null. If you change this

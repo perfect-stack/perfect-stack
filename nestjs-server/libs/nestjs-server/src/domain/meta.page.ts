@@ -105,6 +105,7 @@ export class LinkTool extends Tool {
 }
 
 export class MapTool extends Tool {
+  geometry?: string;
   easting: string;
   northing: string;
 }

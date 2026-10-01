@@ -186,3 +186,16 @@ export class ManyToOneVisitor implements Visitor {
     node[attribute.name + '_id'] = value ? value : null;
   }
 }
+
+/**
+ * For each AttributeType.Geometry, convert empty strings and empty objects into nulls
+ */
+export class GeometryVisitor implements Visitor {
+  visit(node: any, value: any, metaEntity: MetaEntity, attribute: MetaAttribute): void {
+    if (!value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)) {
+      node[attribute.name] = null;
+    } else {
+      node[attribute.name] = value;
+    }
+  }
+}

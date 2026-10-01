@@ -16,6 +16,7 @@ export enum AttributeType {
   OneToOne = 'OneToOne',
   OneToPoly = 'OneToPoly',
   SelectMultiple = 'SelectMultiple',
+  Geometry = 'Geometry',
 }
 
 export enum ComparisonOperator {

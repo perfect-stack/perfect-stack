@@ -105,6 +105,7 @@ export class ToolPaletteComponent implements OnInit {
     styles: '',
     label: '',
     modes: '',
+    geometry: "",
     easting: 'easting',
     northing: 'northing'
   }

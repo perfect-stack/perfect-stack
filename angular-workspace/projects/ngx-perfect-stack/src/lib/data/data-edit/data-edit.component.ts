@@ -7,6 +7,7 @@ import * as uuid from 'uuid';
 import {AttributeType} from '../../domain/meta.entity';
 import {
   DoubleVisitor,
+  GeometryVisitor,
   IdentifierVisitor,
   IntegerVisitor,
   MetaEntityTreeWalker
@@ -165,6 +166,7 @@ export class DataEditComponent implements OnInit {
       treeWalker.byType(AttributeType.Double, new DoubleVisitor());
       treeWalker.byType(AttributeType.Integer, new IntegerVisitor());
       treeWalker.byType(AttributeType.Identifier, new IdentifierVisitor());
+      treeWalker.byType(AttributeType.Geometry, new GeometryVisitor());
       treeWalker.walk(entityData, ctx.metaEntity);
       console.log(`DataEdit: save value:`, entityData);
 

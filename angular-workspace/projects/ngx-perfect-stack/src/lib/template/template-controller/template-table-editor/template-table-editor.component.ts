@@ -111,6 +111,8 @@ export class TemplateTableEditorComponent implements OnInit {
             return 'Search...';
           case AttributeType.Enumeration:
             return 'Enumeration';
+          case AttributeType.Geometry:
+            return 'Geometry...';
           default:
             return `UNKNOWN: data type ${attribute.type}`;
         }

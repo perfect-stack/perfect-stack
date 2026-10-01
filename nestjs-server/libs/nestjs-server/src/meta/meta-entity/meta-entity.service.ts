@@ -230,6 +230,22 @@ export class MetaEntityService {
           };
         }
 
+        if (nextMetaAttribute.type === AttributeType.Geometry) {
+          modelAttribute = {
+            type: DataTypes.GEOMETRY("GEOMETRY", 4326),
+            allowNull: true,
+            set(value: any) {
+              if (
+                value != null &&
+                (value === "" || (typeof value === "object" && Object.keys(value).length === 0))
+              ) {
+                value = null;
+              }
+              this.setDataValue(nextMetaAttribute.name, value);
+            },
+          };
+        }
+
         if (modelAttribute) {
           modelAttributeList[nextMetaAttribute.name] = modelAttribute;
         }

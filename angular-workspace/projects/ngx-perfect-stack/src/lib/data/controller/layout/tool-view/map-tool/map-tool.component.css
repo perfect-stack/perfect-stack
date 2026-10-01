@@ -1,9 +1,25 @@
-
-
 .overlay-bottom-left {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 1000; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
+  bottom: 8px;
+  left: 8px;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+.map-toolbar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
