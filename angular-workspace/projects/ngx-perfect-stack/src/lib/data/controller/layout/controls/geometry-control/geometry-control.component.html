@@ -1,102 +1,96 @@
 @if (!isReadOnly()) {
-  <div class="geometry-edit-container" [attr.data-testid]="'field-' + attributeName()">
-    <div class="d-flex justify-content-end mb-1 gap-1">
+  <div class="geometry-edit-container position-relative" [attr.data-testid]="'field-' + attributeName()">
+    <div class="geometry-action-buttons">
       <button type="button"
-              class="btn btn-sm btn-outline-secondary d-flex align-items-center"
-              [title]="copied() ? 'Copied!' : 'Copy to clipboard'"
-              [attr.data-testid]="'copy-edit-' + attributeName()"
-              (click)="copyToClipboard()"
-              [disabled]="!hasValue()">
-        <span class="material-symbols-outlined fs-6 me-1">{{ copied() ? 'check' : 'content_copy' }}</span>
-        <span>{{ copied() ? 'Copied' : 'Copy' }}</span>
+              class="btn btn-sm btn-light border geometry-action-btn"
+              title="Format GeoJSON"
+              [disabled]="!hasValue() || hasErrors()"
+              (click)="formatGeoJson()"
+              [attr.data-testid]="'format-edit-' + attributeName()">
+        <span class="material-symbols-outlined action-icon">format_align_left</span>
       </button>
       <button type="button"
-              class="btn btn-sm btn-outline-secondary d-flex align-items-center"
-              title="Format GeoJSON"
-              [attr.data-testid]="'format-edit-' + attributeName()"
-              (click)="formatGeoJson()"
-              [disabled]="!isValidGeoJson()">
-        <span class="material-symbols-outlined fs-6 me-1">format_align_left</span>
-        <span>Format</span>
+              class="btn btn-sm btn-light border geometry-action-btn"
+              [title]="copied() ? 'Copied!' : 'Copy GeoJSON'"
+              [disabled]="!hasValue()"
+              (click)="copyToClipboard()"
+              [attr.data-testid]="'copy-edit-' + attributeName()">
+        <span class="material-symbols-outlined action-icon">{{ copied() ? 'check' : 'content_copy' }}</span>
       </button>
     </div>
 
-    <textarea class="form-control font-monospace geometry-textarea"
+    <textarea rows="6"
+              class="form-control font-monospace geometry-textarea"
+              [class.is-invalid]="hasErrors() && touched"
               [id]="attributeName()"
-              [attr.name]="attributeName()"
-              [attr.data-testid]="'textarea-' + attributeName()"
-              [class.is-invalid]="hasErrors()"
-              [class.ng-invalid]="hasErrors()"
-              [class.ng-touched]="touched"
+              [name]="attributeName()"
+              [disabled]="disabled"
               [value]="rawText()"
               (input)="onTextInput($event)"
               (blur)="onBlur()"
-              [disabled]="disabled"
-              [style.height]="cell && cell.height ? getCSSHeight(cell) : null"
-              rows="6"
-              placeholder="Paste or enter GeoJSON here..."></textarea>
+              placeholder="Paste or enter GeoJSON here..."
+              [attr.data-testid]="'textarea-' + attributeName()"></textarea>
 
-    @if (hasErrors()) {
-      @if (cell && cell.attribute) {
-        <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult!"></lib-validation-result-label>
-      } @else if (validationResult && validationResult.message) {
-        <div class="text-danger small mt-1" [attr.data-testid]="'error-' + attributeName()">{{ validationResult.message }}</div>
-      }
+    @if (hasErrors() && touched && validationResult && attribute) {
+      <div class="mt-1">
+        <lib-validation-result-label [attribute]="attribute"
+                                     [validationResult]="validationResult"></lib-validation-result-label>
+      </div>
     }
   </div>
 }
 
 @if (isReadOnly()) {
   @if (hasValue()) {
-    <div class="input-group geometry-view-group" [attr.data-testid]="'field-' + attributeName()">
-      <!-- Triangle twisty button -->
-      <button class="btn btn-outline-secondary geometry-twisty-btn"
-              type="button"
-              [attr.aria-expanded]="isExpanded()"
-              [attr.aria-label]="isExpanded() ? 'Collapse to single line' : 'Expand to multi-line'"
-              [title]="isExpanded() ? 'Collapse to single line' : 'Expand to multi-line'"
-              [attr.data-testid]="'twisty-' + attributeName()"
-              (click)="toggleExpanded()">
-        <span class="material-symbols-outlined twisty-icon">
-          {{ isExpanded() ? 'arrow_drop_down' : 'arrow_right' }}
-        </span>
-      </button>
+    <div class="geometry-view-container position-relative"
+         [class.is-expanded]="isExpanded()"
+         [attr.data-testid]="'field-' + attributeName()"
+         (click)="onViewControlClick($event)">
 
-      <!-- Geometry string display: single line (truncated) vs multi-line (scrollable with upper bound) -->
+      <div class="geometry-action-buttons" (click)="$event.stopPropagation()">
+        <button type="button"
+                class="btn btn-sm btn-light border geometry-action-btn"
+                (click)="toggleExpanded()"
+                [title]="isExpanded() ? 'Contract' : 'Expand'"
+                [attr.data-testid]="'expand-view-' + attributeName()">
+          <span class="material-symbols-outlined action-icon">{{ isExpanded() ? 'unfold_less' : 'unfold_more' }}</span>
+        </button>
+        <button type="button"
+                class="btn btn-sm btn-light border geometry-action-btn"
+                (click)="copyToClipboard()"
+                [title]="copied() ? 'Copied!' : 'Copy GeoJSON'"
+                [attr.data-testid]="'copy-view-' + attributeName()">
+          <span class="material-symbols-outlined action-icon">{{ copied() ? 'check' : 'content_copy' }}</span>
+        </button>
+      </div>
+
       @if (!isExpanded()) {
         <div class="form-control font-monospace geometry-view-single text-truncate"
-             readonly
              [id]="attributeName()"
-             [attr.data-testid]="'view-' + attributeName()"
-             [title]="singleLineText()">
-          {{ singleLineText() }}
-        </div>
-      } @else {
-        <div class="form-control font-monospace geometry-view-multi"
-             readonly
-             [id]="attributeName()"
+             [title]="'Click to expand'"
              [attr.data-testid]="'view-' + attributeName()">
-          <pre class="geometry-pre mb-0">{{ multiLineText() }}</pre>
+          {{ singleLineText() }}
         </div>
       }
 
-      <!-- Copy button -->
-      <button class="btn btn-outline-secondary geometry-copy-btn"
-              type="button"
-              [attr.aria-label]="'Copy GeoJSON to clipboard'"
-              [title]="copied() ? 'Copied!' : 'Copy to clipboard'"
-              [attr.data-testid]="'copy-' + attributeName()"
-              (click)="copyToClipboard()">
-        <span class="material-symbols-outlined copy-icon">
-          {{ copied() ? 'check' : 'content_copy' }}
-        </span>
-      </button>
+      @if (isExpanded()) {
+        <div class="form-control font-monospace geometry-view-multi"
+             [id]="attributeName()"
+             [title]="'Click to contract'"
+             [attr.data-testid]="'view-' + attributeName()">
+          <pre class="m-0 font-monospace geometry-pre"><code>{{ multiLineText() }}</code></pre>
+        </div>
+      }
     </div>
   }
 
   @if (!hasValue()) {
-    <div class="input-group" [attr.data-testid]="'field-' + attributeName()">
-      <span class="form-control empty-value" readonly [id]="attributeName()" [attr.data-testid]="'view-' + attributeName()">&mdash;</span>
+    <div class="geometry-view-container" [attr.data-testid]="'field-' + attributeName()">
+      <div class="form-control empty-value d-flex align-items-center"
+           [id]="attributeName()"
+           [attr.data-testid]="'view-' + attributeName()">
+        <span>&mdash;</span>
+      </div>
     </div>
   }
 }

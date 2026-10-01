@@ -1,78 +1,99 @@
-.geometry-view-group {
-  display: flex;
-  align-items: stretch;
+.geometry-view-container,
+.geometry-edit-container {
   width: 100%;
 }
 
-.geometry-twisty-btn,
-.geometry-copy-btn {
+.geometry-view-container {
+  cursor: pointer;
+}
+
+.geometry-action-buttons {
+  position: absolute;
+  top: 4px;
+  right: 20px;
   display: flex;
-  align-items: flex-start;
+  gap: 4px;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* In view mode, show on hover or when expanded */
+.geometry-view-container:hover .geometry-action-buttons,
+.geometry-view-container.is-expanded .geometry-action-buttons,
+.geometry-view-container:focus-within .geometry-action-buttons,
+/* In edit mode, show on hover or when focused */
+.geometry-edit-container:hover .geometry-action-buttons,
+.geometry-edit-container:focus-within .geometry-action-buttons {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.geometry-action-btn {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  padding-top: 0.45rem;
-  padding-bottom: 0.45rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  flex-shrink: 0;
-  min-width: 38px;
+  padding: 3px 6px;
+  line-height: 1;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(2px);
+}
+
+.geometry-action-btn:hover:not(:disabled) {
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.action-icon {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .geometry-view-single {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  border-radius: var(--bs-border-radius, 0.375rem);
   font-family: var(--bs-font-monospace, monospace);
   font-size: 0.875rem;
   background-color: var(--bs-secondary-bg, #e9ecef);
-  cursor: text;
   line-height: 1.5;
   height: 38px;
-  padding: 0.375rem 0.75rem;
+  padding: 0.375rem 5.5rem 0.375rem 0.75rem;
+  user-select: text;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .geometry-view-multi {
-  flex: 1 1 auto;
   max-height: 250px;
   overflow-y: auto;
   overflow-x: auto;
   font-family: var(--bs-font-monospace, monospace);
   font-size: 0.85rem;
   background-color: var(--bs-secondary-bg, #e9ecef);
-  padding: 0.375rem 0.75rem;
-  border-radius: 0;
+  padding: 0.375rem 5.5rem 0.375rem 0.75rem;
+  user-select: text;
 }
 
 .geometry-pre {
   margin: 0;
-  font-family: inherit;
-  font-size: inherit;
   white-space: pre;
-}
-
-.twisty-icon {
-  font-size: 1.25rem;
-  user-select: none;
-  line-height: 1;
-}
-
-.copy-icon {
-  font-size: 1.1rem;
-  line-height: 1;
-}
-
-.geometry-edit-container {
-  width: 100%;
 }
 
 .geometry-textarea {
   font-family: var(--bs-font-monospace, monospace);
   font-size: 0.875rem;
-  min-height: 120px;
+  line-height: 1.4;
   max-height: 400px;
   resize: vertical;
   tab-size: 2;
+  padding-right: 5.5rem;
 }
 
 .empty-value {
   color: var(--bs-secondary-color, #6c757d);
+  background-color: var(--bs-secondary-bg, #e9ecef);
+  height: 38px;
 }

@@ -1,6 +1,7 @@
 import {Component, computed, Input, OnInit, Optional, signal, WritableSignal} from '@angular/core';
 import {ControlValueAccessor, NgControl, UntypedFormGroup} from '@angular/forms';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
 import {ResultType, ValidationResult} from '../../../../../domain/meta.rule';
 import {ToastService} from '../../../../../utils/toasts/toast.service';
@@ -26,6 +27,52 @@ const VALID_GEOJSON_TYPES = [
   'Feature',
   'FeatureCollection',
 ];
+
+/**
+ * Normalizes GeoJSON object:
+ * - Removes deprecated/legacy 'crs' attribute (RFC 7946 specifies default WGS 84 and removed 'crs').
+ * - Orders 'type' first, followed by standard keys (coordinates, geometries, geometry, features, properties, bbox, etc.).
+ */
+export function normalizeGeoJson(obj: any): any {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(normalizeGeoJson);
+  }
+
+  const ordered: any = {};
+  // Put 'type' first if present
+  if ('type' in obj) {
+    ordered.type = obj.type;
+  }
+
+  // Desired order for common GeoJSON top-level / geometry keys
+  // Note: 'crs' is intentionally removed per RFC 7946
+  const preferredOrder = [
+    'coordinates',
+    'geometries',
+    'geometry',
+    'features',
+    'properties',
+    'bbox',
+  ];
+
+  for (const key of preferredOrder) {
+    if (key in obj && key !== 'type' && key !== 'crs') {
+      ordered[key] = normalizeGeoJson(obj[key]);
+    }
+  }
+
+  // Any remaining keys not in preferredOrder (excluding 'crs')
+  for (const key of Object.keys(obj)) {
+    if (key !== 'type' && key !== 'crs' && !preferredOrder.includes(key)) {
+      ordered[key] = normalizeGeoJson(obj[key]);
+    }
+  }
+
+  return ordered;
+}
 
 export function validateGeoJson(rawText: string | null | undefined): GeoJsonValidationResult {
   if (rawText === null || rawText === undefined || rawText.trim() === '') {
@@ -156,6 +203,10 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
     return this._cell();
   }
 
+  get attribute(): MetaAttribute | undefined {
+    return this._cell()?.attribute;
+  }
+
   @Input()
   formGroup: UntypedFormGroup;
 
@@ -189,13 +240,13 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
   readonly singleLineText = computed(() => {
     const val = this.geometryValue();
     if (val && typeof val === 'object' && Object.keys(val).length > 0) {
-      return JSON.stringify(val);
+      return JSON.stringify(normalizeGeoJson(val));
     }
     const text = this.rawText();
     if (text && text.trim().length > 0) {
       try {
         const parsed = JSON.parse(text);
-        return JSON.stringify(parsed);
+        return JSON.stringify(normalizeGeoJson(parsed));
       } catch (e) {
         return text.replace(/\s+/g, ' ').trim();
       }
@@ -206,13 +257,13 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
   readonly multiLineText = computed(() => {
     const val = this.geometryValue();
     if (val && typeof val === 'object' && Object.keys(val).length > 0) {
-      return JSON.stringify(val, null, 2);
+      return JSON.stringify(normalizeGeoJson(val), null, 2);
     }
     const text = this.rawText();
     if (text && text.trim().length > 0) {
       try {
         const parsed = JSON.parse(text);
-        return JSON.stringify(parsed, null, 2);
+        return JSON.stringify(normalizeGeoJson(parsed), null, 2);
       } catch (e) {
         return text;
       }
@@ -239,6 +290,14 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
 
   toggleExpanded(): void {
     this.isExpanded.update(v => !v);
+  }
+
+  onViewControlClick(event: MouseEvent): void {
+    const selection = window.getSelection();
+    if (selection && selection.toString().length > 0) {
+      return;
+    }
+    this.toggleExpanded();
   }
 
   getCSSHeight(cell: CellAttribute | null): string {
@@ -280,8 +339,9 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
   writeValue(obj: any): void {
     if (obj) {
       if (typeof obj === 'object') {
-        this.geometryValue.set(obj);
-        this.rawText.set(JSON.stringify(obj, null, 2));
+        const normalized = normalizeGeoJson(obj);
+        this.geometryValue.set(normalized);
+        this.rawText.set(JSON.stringify(normalized, null, 2));
         this.validationError.set(null);
       } else if (typeof obj === 'string') {
         const text = obj.trim();
@@ -292,9 +352,10 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
         } else {
           const result = validateGeoJson(text);
           if (result.valid) {
-            const geom = result.parsed?.type === 'Feature' ? result.parsed.geometry : result.parsed;
-            this.geometryValue.set(geom);
-            this.rawText.set(geom ? JSON.stringify(geom, null, 2) : text);
+            const rawGeometry = result.parsed?.type === 'Feature' ? result.parsed.geometry : result.parsed;
+            const geometry = normalizeGeoJson(rawGeometry);
+            this.geometryValue.set(geometry);
+            this.rawText.set(geometry ? JSON.stringify(geometry, null, 2) : text);
             this.validationError.set(null);
           } else {
             this.geometryValue.set(null);
@@ -349,13 +410,14 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
 
     const result = validateGeoJson(text);
     if (result.valid) {
-      const geom = result.parsed?.type === 'Feature' ? result.parsed.geometry : result.parsed;
-      this.geometryValue.set(geom);
+      const rawGeometry = result.parsed?.type === 'Feature' ? result.parsed.geometry : result.parsed;
+      const geometry = normalizeGeoJson(rawGeometry);
+      this.geometryValue.set(geometry);
       this.validationError.set(null);
       if (this.ngControl?.control) {
         this.ngControl.control.setErrors(null);
       }
-      this.onChange(geom);
+      this.onChange(geometry);
     } else {
       this.geometryValue.set(null);
       this.validationError.set(result.error || 'Invalid GeoJSON');
@@ -374,13 +436,15 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
   formatGeoJson(): void {
     const val = this.geometryValue();
     if (val && typeof val === 'object') {
-      const formatted = JSON.stringify(val, null, 2);
+      const normalized = normalizeGeoJson(val);
+      const formatted = JSON.stringify(normalized, null, 2);
       this.rawText.set(formatted);
     } else {
       const text = this.rawText();
       try {
         const parsed = JSON.parse(text);
-        const formatted = JSON.stringify(parsed, null, 2);
+        const normalized = normalizeGeoJson(parsed);
+        const formatted = JSON.stringify(normalized, null, 2);
         this.rawText.set(formatted);
       } catch (e) {
         // do nothing if invalid

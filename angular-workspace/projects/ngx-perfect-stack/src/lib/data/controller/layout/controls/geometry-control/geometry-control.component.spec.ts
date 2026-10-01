@@ -1,8 +1,46 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { GeometryControlComponent, validateGeoJson } from './geometry-control.component';
+import { GeometryControlComponent, validateGeoJson, normalizeGeoJson } from './geometry-control.component';
 import { ToastService } from '../../../../../utils/toasts/toast.service';
 import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
+
+describe('normalizeGeoJson', () => {
+  it('should remove crs attribute and place type first', () => {
+    const inputWithCrs = {
+      crs: { type: 'name', properties: { name: 'EPSG:4326' } },
+      coordinates: [174.77, -41.28],
+      type: 'Point',
+    };
+
+    const normalized = normalizeGeoJson(inputWithCrs);
+    const keys = Object.keys(normalized);
+    expect(keys[0]).toBe('type');
+    expect(keys[1]).toBe('coordinates');
+    expect('crs' in normalized).toBeFalse();
+
+    const jsonString = JSON.stringify(normalized);
+    expect(jsonString).toBe('{"type":"Point","coordinates":[174.77,-41.28]}');
+  });
+
+  it('should recursively remove crs from nested features and order type first', () => {
+    const featureWithCrs = {
+      crs: { properties: { name: 'EPSG:4326' }, type: 'name' },
+      properties: { name: 'Test' },
+      geometry: {
+        crs: { properties: { name: 'EPSG:4326' }, type: 'name' },
+        coordinates: [100.0, 0.0],
+        type: 'Point',
+      },
+      type: 'Feature',
+    };
+
+    const normalized = normalizeGeoJson(featureWithCrs);
+    expect(Object.keys(normalized)[0]).toBe('type');
+    expect(Object.keys(normalized.geometry)[0]).toBe('type');
+    expect('crs' in normalized).toBeFalse();
+    expect('crs' in normalized.geometry).toBeFalse();
+  });
+});
 
 describe('validateGeoJson', () => {
   it('should accept null, undefined or empty string as valid null', () => {
@@ -121,104 +159,182 @@ describe('GeometryControlComponent', () => {
 
     fixture = TestBed.createComponent(GeometryControlComponent);
     component = fixture.componentInstance;
-    component.cell = {
-      attribute: {
-        name: 'boundary',
-        label: 'Boundary',
-        type: 'Geometry',
-      },
-    } as unknown as CellAttribute;
   });
 
   it('should create', () => {
-    fixture.detectChanges();
     expect(component).toBeTruthy();
-    expect(component.attributeName()).toBe('boundary');
   });
 
-  describe('View mode', () => {
+  describe('View Mode', () => {
     beforeEach(() => {
       component.mode = 'view';
+      component.cell = { attribute: { name: 'boundary' } } as CellAttribute;
     });
 
-    it('should show empty dash if no value is set', () => {
+    it('should be readOnly in view mode', () => {
+      expect(component.isReadOnly()).toBeTrue();
+    });
+
+    it('should display em-dash when value is empty', () => {
       component.writeValue(null);
       fixture.detectChanges();
-
       expect(component.hasValue()).toBeFalse();
-      expect(component.isReadOnly()).toBeTrue();
-      const el: HTMLElement = fixture.nativeElement;
-      const emptyEl = el.querySelector('.empty-value');
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const emptyEl = compiled.querySelector('.empty-value');
       expect(emptyEl).toBeTruthy();
-      expect(emptyEl?.textContent).toContain('—');
     });
 
-    it('should display compact single-line GeoJSON by default', () => {
-      const point = { type: 'Point', coordinates: [174.77, -41.28] };
-      component.writeValue(point);
+    it('should display single-line truncated text when collapsed', () => {
+      const geometry = { type: 'Point', coordinates: [174.77, -41.28] };
+      component.writeValue(geometry);
       fixture.detectChanges();
 
-      expect(component.hasValue()).toBeTrue();
       expect(component.isExpanded()).toBeFalse();
-
-      const el: HTMLElement = fixture.nativeElement;
-      const singleEl = el.querySelector('.geometry-view-single');
+      const compiled = fixture.nativeElement as HTMLElement;
+      const singleEl = compiled.querySelector('.geometry-view-single');
       expect(singleEl).toBeTruthy();
-      expect(singleEl?.textContent?.trim()).toBe(JSON.stringify(point));
+      expect(singleEl?.classList.contains('text-truncate')).toBeTrue();
+      expect(singleEl?.textContent?.trim()).toBe(JSON.stringify(geometry));
     });
 
-    it('should toggle twisty between single line and multi-line', () => {
-      const point = { type: 'Point', coordinates: [174.77, -41.28] };
-      component.writeValue(point);
+    it('should display multi-line preformatted text when expanded', () => {
+      const geometry = { type: 'Point', coordinates: [174.77, -41.28] };
+      component.writeValue(geometry);
+      component.toggleExpanded();
       fixture.detectChanges();
 
-      expect(component.isExpanded()).toBeFalse();
-      component.toggleExpanded();
       expect(component.isExpanded()).toBeTrue();
-      fixture.detectChanges();
-
-      const el: HTMLElement = fixture.nativeElement;
-      const multiEl = el.querySelector('.geometry-view-multi');
+      const compiled = fixture.nativeElement as HTMLElement;
+      const multiEl = compiled.querySelector('.geometry-view-multi');
       expect(multiEl).toBeTruthy();
-      expect(multiEl?.textContent).toContain(JSON.stringify(point, null, 2));
-
-      component.toggleExpanded();
-      expect(component.isExpanded()).toBeFalse();
-      fixture.detectChanges();
-      expect(el.querySelector('.geometry-view-single')).toBeTruthy();
+      expect(multiEl?.textContent).toContain('{\n  "type": "Point"');
     });
 
-    it('should copy GeoJSON to clipboard and show toast', async () => {
-      const point = { type: 'Point', coordinates: [174.77, -41.28] };
-      component.writeValue(point);
+    it('should strip crs attribute and order type first in singleLineText and multiLineText', () => {
+      const geometryWithCrs = {
+        crs: { type: 'name', properties: { name: 'EPSG:4326' } },
+        coordinates: [174.77, -41.28],
+        type: 'Point',
+      };
+      component.writeValue(geometryWithCrs);
+      fixture.detectChanges();
+
+      const single = component.singleLineText();
+      expect(single).toBe('{"type":"Point","coordinates":[174.77,-41.28]}');
+      expect(single.includes('"crs"')).toBeFalse();
+
+      const multi = component.multiLineText();
+      expect(multi).toBe(JSON.stringify({ type: 'Point', coordinates: [174.77, -41.28] }, null, 2));
+      expect(multi.includes('"crs"')).toBeFalse();
+    });
+
+    it('should toggle expansion when clicking on view container', () => {
+      const geometry = { type: 'Point', coordinates: [174.77, -41.28] };
+      component.writeValue(geometry);
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const container = compiled.querySelector('.geometry-view-container') as HTMLElement;
+      expect(container).toBeTruthy();
+
+      expect(component.isExpanded()).toBeFalse();
+      container.click();
+      fixture.detectChanges();
+      expect(component.isExpanded()).toBeTrue();
+
+      container.click();
+      fixture.detectChanges();
+      expect(component.isExpanded()).toBeFalse();
+    });
+
+    it('should have unfold_more icon when collapsed and unfold_less when expanded', () => {
+      const geometry = { type: 'Point', coordinates: [174.77, -41.28] };
+      component.writeValue(geometry);
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const expandBtn = compiled.querySelector('[data-testid=\"expand-view-boundary\"]');
+      expect(expandBtn?.textContent?.trim()).toBe('unfold_more');
+
+      component.toggleExpanded();
+      fixture.detectChanges();
+      expect(expandBtn?.textContent?.trim()).toBe('unfold_less');
+    });
+
+    it('should position copy button as the rightmost button in view mode', () => {
+      const geometry = { type: 'Point', coordinates: [174.77, -41.28] };
+      component.writeValue(geometry);
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const buttons = compiled.querySelectorAll('.geometry-action-buttons button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0].getAttribute('data-testid')).toBe('expand-view-boundary');
+      expect(buttons[1].getAttribute('data-testid')).toBe('copy-view-boundary');
+    });
+
+    it('should copy text to clipboard when copy button clicked', async () => {
+      const geometry = { type: 'Point', coordinates: [174.77, -41.28] };
+      component.writeValue(geometry);
       fixture.detectChanges();
 
       spyOn(navigator.clipboard, 'writeText').and.returnValue(Promise.resolve());
-
       await component.copyToClipboard();
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(JSON.stringify(point));
-      expect(toastServiceSpy.showSuccess).toHaveBeenCalledWith('GeoJSON copied to clipboard');
+
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(JSON.stringify(geometry));
+      expect(toastServiceSpy.showSuccess).toHaveBeenCalled();
       expect(component.copied()).toBeTrue();
     });
   });
 
-  describe('Edit mode', () => {
+  describe('Edit Mode', () => {
     beforeEach(() => {
       component.mode = 'edit';
+      component.cell = { attribute: { name: 'boundary' } } as CellAttribute;
     });
 
-    it('should render textarea with formatted GeoJSON value', () => {
-      const point = { type: 'Point', coordinates: [174.77, -41.28] };
-      component.writeValue(point);
+    it('should not be readOnly in edit mode', () => {
+      expect(component.isReadOnly()).toBeFalse();
+    });
+
+    it('should position copy button as the rightmost button in edit mode', () => {
+      component.writeValue({ type: 'Point', coordinates: [10, 20] });
       fixture.detectChanges();
 
-      const el: HTMLElement = fixture.nativeElement;
-      const textarea = el.querySelector('textarea.geometry-textarea') as HTMLTextAreaElement;
-      expect(textarea).toBeTruthy();
-      expect(textarea.value).toBe(JSON.stringify(point, null, 2));
+      const compiled = fixture.nativeElement as HTMLElement;
+      const buttons = compiled.querySelectorAll('.geometry-action-buttons button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0].getAttribute('data-testid')).toBe('format-edit-boundary');
+      expect(buttons[1].getAttribute('data-testid')).toBe('copy-edit-boundary');
     });
 
-    it('should emit parsed geometry when valid GeoJSON is typed', () => {
+    it('should display textarea with formatted JSON on writeValue', () => {
+      const geometry = { type: 'Point', coordinates: [174.77, -41.28] };
+      component.writeValue(geometry);
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const textarea = compiled.querySelector('textarea') as HTMLTextAreaElement;
+      expect(textarea).toBeTruthy();
+      expect(textarea.value).toBe(JSON.stringify(geometry, null, 2));
+    });
+
+    it('should strip crs attribute when writeValue is called with an object containing crs', () => {
+      const geometryWithCrs = {
+        crs: { type: 'name', properties: { name: 'EPSG:4326' } },
+        coordinates: [174.77, -41.28],
+        type: 'Point',
+      };
+      component.writeValue(geometryWithCrs);
+      fixture.detectChanges();
+
+      const raw = component.rawText();
+      expect(raw.includes('"crs"')).toBeFalse();
+      expect(raw).toBe(JSON.stringify({ type: 'Point', coordinates: [174.77, -41.28] }, null, 2));
+    });
+
+    it('should update model and emit valid GeoJSON on input', () => {
       fixture.detectChanges();
       let emittedValue: any = null;
       component.registerOnChange((val: any) => {
@@ -248,13 +364,15 @@ describe('GeometryControlComponent', () => {
       expect(component.validationResult?.message).toContain('at least 2 numbers');
     });
 
-    it('should format GeoJSON on button click', () => {
+    it('should format GeoJSON on button click and strip crs', () => {
       fixture.detectChanges();
-      const compactText = '{"type":"Point","coordinates":[174.77,-41.28]}';
-      component.onTextInput({ target: { value: compactText } } as unknown as Event);
+      const inputWithCrs = '{"crs":{"type":"name","properties":{"name":"EPSG:4326"}},"coordinates":[174.77,-41.28],"type":"Point"}';
+      component.onTextInput({ target: { value: inputWithCrs } } as unknown as Event);
 
       component.formatGeoJson();
-      expect(component.rawText()).toBe(JSON.stringify({ type: 'Point', coordinates: [174.77, -41.28] }, null, 2));
+      const formatted = component.rawText();
+      expect(formatted.includes('"crs"')).toBeFalse();
+      expect(formatted).toBe(JSON.stringify({ type: 'Point', coordinates: [174.77, -41.28] }, null, 2));
     });
   });
 });
