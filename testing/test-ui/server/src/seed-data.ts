@@ -140,6 +140,32 @@ export const SEED_PETS = [
   },
 ];
 
+export const SEED_CLINICS = [
+  {
+    name: 'PETVET Lower Hutt',
+    address: '53 Rutherford St, Lower Hutt',
+    phone: '04 569 8830',
+    is_24_hour: true,
+  },
+  {
+    name: 'Central Hutt Vets',
+    address: '47 Collingwoord St, Lower Hutt',
+    phone: '04 569 3939',
+    is_24_hour: false,
+  },
+  {
+    name: 'Animal Health Centre',
+    address: '109 Oxford Terrace, Lower Hutt',
+    phone: '04 577 3717',
+    is_24_hour: false,
+  },
+  {
+    name: 'Animates Vetcare Clinic',
+    address: '376 Jackson St, Petone',
+    phone: '04 380 9827',
+    is_24_hour: false,
+  },
+];
 
 export const SEED_PET_MEDIA: Record<string, string[]> = {
   Jack: [
@@ -293,7 +319,6 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
     }
   }
 
-  
   // 4. Seed Pet Media Files
   const sourceDir = path.resolve(__dirname, "../../etc/test-data/cat-photos");
   const targetMediaDir = path.resolve(__dirname, "../media/Image");
@@ -377,6 +402,37 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
           },
         );
       }
+    }
+  }
+
+  // 5. Seed Clinics
+  const clinicModel = ormService.sequelize.model('Clinic');
+  for (const clinicDef of SEED_CLINICS) {
+    const clinicRecord: any = await clinicModel.findOne({
+      where: {
+        name: clinicDef.name,
+      },
+    });
+
+    if (!clinicRecord) {
+      await dataService.save('Clinic', {
+        name: clinicDef.name,
+        address: clinicDef.address,
+        phone: clinicDef.phone,
+        is_24_hour: clinicDef.is_24_hour,
+      } as any);
+      logger.log(`Created Clinic: ${clinicDef.name}`);
+    } else {
+      const clinic = clinicRecord.get ? clinicRecord.get({ plain: true }) : clinicRecord;
+      await clinicModel.update(
+        {
+          address: clinicDef.address,
+          phone: clinicDef.phone,
+          is_24_hour: clinicDef.is_24_hour,
+        },
+        { where: { id: clinic.id } },
+      );
+      logger.log(`Updated Clinic: ${clinicDef.name}`);
     }
   }
 

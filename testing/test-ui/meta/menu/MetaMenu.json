@@ -23,6 +23,17 @@
       ]
     },
     {
+      "label": "Clinics",
+      "items": [
+        {
+          "label": "Clinics",
+          "route": "/data/Clinic/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
       "label": "Admin",
       "items": [
         {

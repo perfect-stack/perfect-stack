@@ -1,0 +1,73 @@
+{
+  "name": "Clinic.view_edit",
+  "title": "Clinic Details",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "clinic",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Clinic",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Clinic",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "name"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Clinic Header",
+      "binding": "clinic"
+    },
+    {
+      "metaEntityName": "Clinic",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "phone"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "is_24_hour"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "address"
+          }
+        ]
+      ],
+      "templateHeading": "Clinic Details",
+      "binding": "clinic"
+    }
+  ]
+}
