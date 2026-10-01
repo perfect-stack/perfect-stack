@@ -1,0 +1,78 @@
+.geometry-view-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.geometry-twisty-btn,
+.geometry-copy-btn {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  flex-shrink: 0;
+  min-width: 38px;
+}
+
+.geometry-view-single {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--bs-font-monospace, monospace);
+  font-size: 0.875rem;
+  background-color: var(--bs-secondary-bg, #e9ecef);
+  cursor: text;
+  line-height: 1.5;
+  height: 38px;
+  padding: 0.375rem 0.75rem;
+}
+
+.geometry-view-multi {
+  flex: 1 1 auto;
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: auto;
+  font-family: var(--bs-font-monospace, monospace);
+  font-size: 0.85rem;
+  background-color: var(--bs-secondary-bg, #e9ecef);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0;
+}
+
+.geometry-pre {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  white-space: pre;
+}
+
+.twisty-icon {
+  font-size: 1.25rem;
+  user-select: none;
+  line-height: 1;
+}
+
+.copy-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.geometry-edit-container {
+  width: 100%;
+}
+
+.geometry-textarea {
+  font-family: var(--bs-font-monospace, monospace);
+  font-size: 0.875rem;
+  min-height: 120px;
+  max-height: 400px;
+  resize: vertical;
+  tab-size: 2;
+}
+
+.empty-value {
+  color: var(--bs-secondary-color, #6c757d);
+}

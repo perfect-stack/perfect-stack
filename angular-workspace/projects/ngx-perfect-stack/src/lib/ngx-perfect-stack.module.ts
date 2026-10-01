@@ -41,6 +41,7 @@ import {
 } from './data/controller/layout/controls/many-to-one-control/many-to-one-control.component';
 import {SelectControlComponent} from './data/controller/layout/controls/select-control/select-control.component';
 import {TextAreaControlComponent} from './data/controller/layout/controls/text-area-control/text-area-control.component';
+import {GeometryControlComponent} from './data/controller/layout/controls/geometry-control/geometry-control.component';
 import {AuthInterceptor} from './authentication/auth-interceptor';
 import {CustomDateAdapterService} from './data/controller/layout/controls/date-picker-control/custom-date-adapter.service';
 import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
@@ -224,6 +225,7 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
     ManyToOneControlComponent,
     SelectControlComponent,
     TextAreaControlComponent,
+    GeometryControlComponent,
     DataSearchEditComponent,
     RowViewComponent,
     RowEditComponent,

@@ -112,7 +112,7 @@
     }
     @case ('Geometry') {
       <ng-container [formGroup]="formGroup">
-        <input class="form-control" readonly [value]="formGroup.controls[cell.attribute.name]?.value ? (formGroup.controls[cell.attribute.name]?.value?.type || 'Geometry') : ''">
+        <lib-geometry-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [formControlName]="cell.attribute.name"></lib-geometry-control>
       </ng-container>
     }
     @default {

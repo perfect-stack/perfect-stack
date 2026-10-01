@@ -25,3 +25,4 @@ export * from './lib/domain/meta.entity';
 export * from './lib/domain/meta.page';
 export * from './lib/data/controller/layout/controls/media-control/media-control.component';
 export * from './lib/data/controller/layout/controls/media-gallery-control/media-gallery-control.component';
+export * from './lib/data/controller/layout/controls/geometry-control/geometry-control.component';
