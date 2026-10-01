@@ -16,7 +16,7 @@
             "height": "2",
             "attributeName": "media_files",
             "component": "MediaGallery",
-            "media_cols": "2",
+            "media_cols": "3",
             "media_rows": "2",
             "hideLabel": true
           }
