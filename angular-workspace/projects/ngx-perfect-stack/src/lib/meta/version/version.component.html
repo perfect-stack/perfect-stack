@@ -7,35 +7,81 @@
       Debug Mode: {{debugService.ON}}
       <button class="btn btn-sm btn-outline-primary ms-2" (click)="onToggleDebug()">Toggle</button>
     </div>
-    <br>
-      <br>
-        <br>
-          <!--<div class="py-3">
-          <div><button class="btn btn-warning me-2" (click)="onMigrateData()">Migrate Data</button></div>
-          <div><button class="btn btn-warning mt-2 me-2" (click)="onMigrateImages()">Migrate Images</button></div>
-          <div><button class="btn btn-warning mt-2 me-2" (click)="onMigrateImagesReset()">Migrate Images - RESET</button></div>
-        </div>-->
-      </div>
-    }
 
-    @if (style === 'Footer') {
-      <div>
-        <div class="d-flex justify-content-between small text-footer py-3">
-          <div>Version: {{clientVersion}} / {{serverVersion}}</div>
-          @if (supportEmail || copyrightFooter) {
-            <div>
-              @if (supportEmail) {
-                <span>Contact the team by email - <a
-                href="mailto:{{supportEmail}}">{{supportEmail}}</a></span>
-              }
-              @if (supportEmail && copyrightFooter) {
-                <span class="copyright-separator">|</span>
-              }
-              @if (copyrightFooter) {
-                <span>{{copyrightFooter}}</span>
-              }
-            </div>
-          }
+    <div class="card mt-4 shadow-sm" style="max-width: 900px;">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">PostGIS</h5>
+        <div>
+          <button class="btn btn-sm btn-primary me-2" (click)="onGetPostGisVersion()" [disabled]="postGisStatus === 'loading'">
+            @if (postGisStatus === 'loading' && postGisAction === 'Get PostGIS Version') {
+              <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            }
+            Get PostGIS Version
+          </button>
+          <button class="btn btn-sm btn-outline-success" (click)="onCreatePostGisExtension()" [disabled]="postGisStatus === 'loading'">
+            @if (postGisStatus === 'loading' && postGisAction === 'Create PostGIS Extension') {
+              <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            }
+            Create PostGIS Extension
+          </button>
         </div>
       </div>
-    }
+      <div class="card-body">
+        @if (postGisStatus === 'idle') {
+          <p class="text-muted mb-0">Click a button above to query the PostGIS version or create the PostGIS extension.</p>
+        }
+        @if (postGisStatus === 'loading') {
+          <div class="d-flex align-items-center text-muted">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>Executing {{postGisAction}} against database...</span>
+          </div>
+        }
+        @if (postGisStatus === 'success') {
+          <div class="alert alert-success py-2 mb-2">
+            <strong>{{postGisAction}}:</strong> Success
+          </div>
+          <div>
+            <label class="form-label text-muted small fw-bold">Result:</label>
+            <pre class="bg-light p-3 border rounded text-dark mb-0 font-monospace" style="white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow-y: auto;">{{postGisResultText}}</pre>
+          </div>
+        }
+        @if (postGisStatus === 'error') {
+          <div class="alert alert-danger py-2 mb-0">
+            <strong>{{postGisAction}} Failed:</strong> {{postGisError}}
+          </div>
+        }
+      </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <!--<div class="py-3">
+      <div><button class="btn btn-warning me-2" (click)="onMigrateData()">Migrate Data</button></div>
+      <div><button class="btn btn-warning mt-2 me-2" (click)="onMigrateImages()">Migrate Images</button></div>
+      <div><button class="btn btn-warning mt-2 me-2" (click)="onMigrateImagesReset()">Migrate Images - RESET</button></div>
+    </div>-->
+  </div>
+}
+
+@if (style === 'Footer') {
+  <div>
+    <div class="d-flex justify-content-between small text-footer py-3">
+      <div>Version: {{clientVersion}} / {{serverVersion}}</div>
+      @if (supportEmail || copyrightFooter) {
+        <div>
+          @if (supportEmail) {
+            <span>Contact the team by email - <a
+            href="mailto:{{supportEmail}}">{{supportEmail}}</a></span>
+          }
+          @if (supportEmail && copyrightFooter) {
+            <span class="copyright-separator">|</span>
+          }
+          @if (copyrightFooter) {
+            <span>{{copyrightFooter}}</span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}

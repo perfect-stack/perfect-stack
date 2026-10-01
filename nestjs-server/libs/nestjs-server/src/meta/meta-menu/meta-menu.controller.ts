@@ -55,4 +55,32 @@ export class MetaMenuController {
   getVersion(): string {
     return this.metaMenuService.getVersion();
   }
+
+  @ActionPermit(ActionType.Edit)
+  @SubjectName('Meta')
+  @ApiOperation({
+    summary: 'Get the PostGIS version from the database',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The PostGIS version',
+  })
+  @Get('/postgis-version')
+  getPostGisVersion() {
+    return this.metaMenuService.getPostGisVersion();
+  }
+
+  @ActionPermit(ActionType.Edit)
+  @SubjectName('Meta')
+  @ApiOperation({
+    summary: 'Create the PostGIS extension in the database',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Result of creating PostGIS extension',
+  })
+  @Post('/postgis-extension')
+  createPostGisExtension() {
+    return this.metaMenuService.createPostGisExtension();
+  }
 }

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MetaMenu } from '../../domain/meta.menu';
 import { FileRepositoryService } from '../../file/file-repository.service';
 import { ConfigService } from '@nestjs/config';
+import { OrmService } from '../../orm/orm.service';
 
 @Injectable()
 export class MetaMenuService {
@@ -10,6 +11,7 @@ export class MetaMenuService {
   constructor(
     protected readonly configService: ConfigService,
     protected readonly fileRepositoryService: FileRepositoryService,
+    protected readonly ormService: OrmService,
   ) { }
 
   async findOne() {
@@ -38,5 +40,31 @@ export class MetaMenuService {
     return {
       serverRelease: serverRelease,
     };
+  }
+
+  async getPostGisVersion(): Promise<any> {
+    try {
+      return await this.ormService.sequelize.query(
+        'SELECT postgis_full_version();',
+      );
+    } catch (e: any) {
+      throw new HttpException(
+        e.original?.message || e.message || 'Error executing query',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async createPostGisExtension(): Promise<any> {
+    try {
+      return await this.ormService.sequelize.query(
+        'CREATE EXTENSION IF NOT EXISTS postgis;',
+      );
+    } catch (e: any) {
+      throw new HttpException(
+        e.original?.message || e.message || 'Error executing query',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

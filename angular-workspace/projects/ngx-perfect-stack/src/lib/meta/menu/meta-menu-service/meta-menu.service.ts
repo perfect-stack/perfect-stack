@@ -38,4 +38,12 @@ export class MetaMenuService {
   update(metaMenu: MetaMenu) {
     return this.http.post<void>(`${this.stackConfig.apiUrl}/meta/menu`, metaMenu);
   }
+
+  getPostGisVersion() {
+    return this.http.get<any>(`${this.stackConfig.apiUrl}/meta/menu/postgis-version`);
+  }
+
+  createPostGisExtension() {
+    return this.http.post<any>(`${this.stackConfig.apiUrl}/meta/menu/postgis-extension`, null);
+  }
 }
