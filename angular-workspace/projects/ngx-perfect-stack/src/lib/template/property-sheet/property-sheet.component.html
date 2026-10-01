@@ -1,61 +1,63 @@
-@if (editEvent && metaEntityOptions$ | async; as metaEntityOptions) {
+@if (editEvent) {
   <div>
-    @if (metaPageOptions$ | async; as metaPageOptions) {
-      <h4>{{editEvent.title}} Properties</h4>
-      @for (property of editEvent.propertyList; track property) {
-        <div class="row">
-          <div class="property-name col-5 px-2 mb-1">{{property.name}}</div>
-          <div class="col-7">
-            @switch (property.type) {
-              @case (PropertyType.string) {
-                @if (property.options) {
+    @if (metaEntityOptions$ | async; as metaEntityOptions) {
+      @if (metaPageOptions$ | async; as metaPageOptions) {
+        <h4>{{editEvent.title}} Properties</h4>
+        @for (property of editEvent.propertyList; track property.name) {
+          <div class="row">
+            <div class="property-name col-5 px-2 mb-1">{{property.name}}</div>
+            <div class="col-7">
+              @switch (property.type) {
+                @case (PropertyType.string) {
+                  @if (property.options) {
+                    <select class="property-editor w-100" [(ngModel)]="editEvent.source[property.name]">
+                      @for (o of getOptions(property.options); track o) {
+                        <option [ngValue]="o">{{o}}</option>
+                      }
+                    </select>
+                  }
+                  @if (!property.options) {
+                    <input class="property-editor w-100" type="text" [(ngModel)]="editEvent.source[property.name]">
+                  }
+                }
+                @case (PropertyType.number) {
+                  <input class="property-editor w-100" type="number" [(ngModel)]="editEvent.source[property.name]">
+                }
+                @case (PropertyType.boolean) {
                   <select class="property-editor w-100" [(ngModel)]="editEvent.source[property.name]">
-                    @for (o of getOptions(property.options); track o) {
-                      <option [ngValue]="o">{{o}}</option>
+                    <option [ngValue]="true">true</option>
+                    <option [ngValue]="false">false</option>
+                    <option [ngValue]="null"></option>
+                  </select>
+                }
+                @case (PropertyType.route) {
+                  <input class="property-editor w-100" type="text" [(ngModel)]="editEvent.source[property.name]">
+                }
+                @case (PropertyType.metaEntity) {
+                  <select class="property-editor w-100" [ngModel]="getMetaEntity(property, metaEntityOptions)"  (ngModelChange)="onEntityChange(property, $event)">
+                    @for (me of metaEntityOptions; track me.name) {
+                      <option [ngValue]="me">{{me.name}}</option>
                     }
                   </select>
                 }
-                @if (!property.options) {
-                  <input class="property-editor w-100" type="text" [(ngModel)]="editEvent.source[property.name]">
+                @case (PropertyType.metaPage) {
+                  <select class="property-editor w-100"
+                    [ngModel]="getMetaPage(property, metaPageOptions)"
+                    (ngModelChange)="onMetaPageChange(property, $event)">
+                    @for (mp of metaPageOptions; track mp.name) {
+                      <option [ngValue]="mp">{{mp.name}}</option>
+                    }
+                  </select>
+                }
+                @case (PropertyType.componentType) {
+                }
+                @default {
+                  <div>UNKNOWN Property type: {{property.type}}</div>
                 }
               }
-              @case (PropertyType.number) {
-                <input class="property-editor w-100" type="number" [(ngModel)]="editEvent.source[property.name]">
-              }
-              @case (PropertyType.boolean) {
-                <select class="property-editor w-100" [(ngModel)]="editEvent.source[property.name]">
-                  <option [ngValue]="true">true</option>
-                  <option [ngValue]="false">false</option>
-                  <option [ngValue]="null"></option>
-                </select>
-              }
-              @case (PropertyType.route) {
-                <input class="property-editor w-100" type="text" [(ngModel)]="editEvent.source[property.name]">
-              }
-              @case (PropertyType.metaEntity) {
-                <select class="property-editor w-100" [ngModel]="getMetaEntity(property, metaEntityOptions)"  (ngModelChange)="onEntityChange(property, $event)">
-                  @for (me of metaEntityOptions; track me) {
-                    <option [ngValue]="me">{{me.name}}</option>
-                  }
-                </select>
-              }
-              @case (PropertyType.metaPage) {
-                <select class="property-editor w-100"
-                  [ngModel]="getMetaPage(property, metaPageOptions)"
-                  (ngModelChange)="onMetaPageChange(property, $event)">
-                  @for (mp of metaPageOptions; track mp) {
-                    <option [ngValue]="mp">{{mp.name}}</option>
-                  }
-                </select>
-              }
-              @case (PropertyType.componentType) {
-              }
-              @default {
-                <div>UNKNOWN Property type: {{property.type}}</div>
-              }
-            }
+            </div>
           </div>
-        </div>
+        }
       }
     }
   </div>

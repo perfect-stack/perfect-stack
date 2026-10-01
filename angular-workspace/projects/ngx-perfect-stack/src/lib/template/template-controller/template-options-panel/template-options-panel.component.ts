@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Template, TemplateLocationType} from '../../../domain/meta.page';
 import {TemplateOptionsModalComponent} from './template-options-modal/template-options-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -25,7 +25,8 @@ export class TemplateOptionsPanelComponent implements OnInit {
   constructor(protected readonly modalService: NgbModal,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly propertySheetService: PropertySheetService,
-              protected readonly attributePaletteService: AttributePaletteService) { }
+              protected readonly attributePaletteService: AttributePaletteService,
+              protected readonly changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
   }
@@ -34,26 +35,28 @@ export class TemplateOptionsPanelComponent implements OnInit {
     return TemplateLocationType;
   }
 
-  openTemplateOptions() {
-    // const modalRef = this.modalService.open(TemplateOptionsModalComponent, {});
-    // modalRef.componentInstance.assignTemplate(this.template);
+  openTemplateOptions(metaEntityMap: Map<string, MetaEntity>, $event?: Event) {
+    $event?.stopPropagation();
+    this.onClick(metaEntityMap, $event);
   }
 
-  onClick(metaEntityMap: Map<string, MetaEntity>, $event: Event) {
-    if(!this.selected) {
-      this.selected = true;
+  onClick(metaEntityMap: Map<string, MetaEntity>, $event?: Event) {
+    this.selected = true;
+    if (metaEntityMap) {
       const metaEntity = metaEntityMap.get(this.template.metaEntityName);
       if(metaEntity) {
         this.attributePaletteService.metaEntity$.next(metaEntity);
-        TemplateOptionsPanelComponent.switchSelected(this);
       }
-
-      this.propertySheetService.editWithType('Template', this.template, 'Template');
     }
+    TemplateOptionsPanelComponent.switchSelected(this);
+
+    this.propertySheetService.editWithType('Template', this.template, 'Template');
+    this.changeDetectorRef.markForCheck();
   }
 
   disableSelected() {
     this.selected = false;
+    this.changeDetectorRef.markForCheck();
   }
 
   static lastTemplateOptionsPanelComponent: TemplateOptionsPanelComponent;
@@ -64,7 +67,7 @@ export class TemplateOptionsPanelComponent implements OnInit {
    * from the previous component.
    */
   static switchSelected(nextTemplateOptionsPanelComponent: TemplateOptionsPanelComponent) {
-    if(TemplateOptionsPanelComponent.lastTemplateOptionsPanelComponent) {
+    if(TemplateOptionsPanelComponent.lastTemplateOptionsPanelComponent && TemplateOptionsPanelComponent.lastTemplateOptionsPanelComponent !== nextTemplateOptionsPanelComponent) {
       TemplateOptionsPanelComponent.lastTemplateOptionsPanelComponent.disableSelected();
     }
     TemplateOptionsPanelComponent.lastTemplateOptionsPanelComponent = nextTemplateOptionsPanelComponent;
