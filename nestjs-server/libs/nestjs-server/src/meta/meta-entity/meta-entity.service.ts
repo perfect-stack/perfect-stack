@@ -231,19 +231,48 @@ export class MetaEntityService {
         }
 
         if (nextMetaAttribute.type === AttributeType.Geometry) {
-          modelAttribute = {
-            type: DataTypes.GEOMETRY("GEOMETRY", 4326),
-            allowNull: true,
-            set(value: any) {
-              if (
-                value != null &&
-                (value === "" || (typeof value === "object" && Object.keys(value).length === 0))
-              ) {
-                value = null;
+          const isSqlite =
+            this.ormService?.sequelize?.getDialect
+              ? this.ormService.sequelize.getDialect() === "sqlite"
+              : false;
+
+          modelAttribute = isSqlite
+            ? {
+                type: DataTypes.JSON,
+                allowNull: true,
+                set(value: any) {
+                  if (
+                    value != null &&
+                    (value === "" ||
+                      (typeof value === "object" &&
+                        Object.keys(value).length === 0))
+                  ) {
+                    value = null;
+                  } else if (typeof value === "string") {
+                    try {
+                      value = JSON.parse(value);
+                    } catch (e) {
+                      // leave as string if not valid JSON
+                    }
+                  }
+                  this.setDataValue(nextMetaAttribute.name, value);
+                },
               }
-              this.setDataValue(nextMetaAttribute.name, value);
-            },
-          };
+            : {
+                type: DataTypes.GEOMETRY("GEOMETRY", 4326),
+                allowNull: true,
+                set(value: any) {
+                  if (
+                    value != null &&
+                    (value === "" ||
+                      (typeof value === "object" &&
+                        Object.keys(value).length === 0))
+                  ) {
+                    value = null;
+                  }
+                  this.setDataValue(nextMetaAttribute.name, value);
+                },
+              };
         }
 
         if (modelAttribute) {

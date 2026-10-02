@@ -23,6 +23,13 @@ export class RequiredRuleValidator extends RuleValidator {
       valid = value || value === false;
     } else if (attribute.type === AttributeType.DateTime) {
       valid = this.isValidDateTime(value);
+    } else if (attribute.type === AttributeType.Geometry) {
+      valid =
+        value !== null &&
+        value !== undefined &&
+        (typeof value === "object"
+          ? Object.keys(value).length > 0
+          : String(value).trim().length > 0);
     } else {
       valid = value !== null && value !== undefined && String(value).length > 0;
     }

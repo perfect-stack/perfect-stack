@@ -8,6 +8,13 @@ Given(
   function (this: CustomWorld, entityName: string, dataTable: DataTable) {
     this.currentEntityName = entityName;
     const attributes = dataTable.rowsHash();
+    for (const [k, v] of Object.entries(attributes)) {
+      if (typeof v === "string" && (v.startsWith("{") || v.startsWith("["))) {
+        try {
+          attributes[k] = JSON.parse(v);
+        } catch (e) {}
+      }
+    }
     this.currentEntity = {
       ...attributes,
     };
@@ -121,6 +128,13 @@ Then(
     const expected = dataTable.rowsHash();
 
     for (const [key, value] of Object.entries(expected)) {
+      if (typeof this.retrievedEntity[key] === "object" && this.retrievedEntity[key] !== null) {
+        try {
+          const parsed = JSON.parse(value);
+          expect(this.retrievedEntity[key], `Field "${key}" mismatch`).to.deep.equal(parsed);
+          continue;
+        } catch (e) {}
+      }
       expect(this.retrievedEntity[key], `Field "${key}" mismatch`).to.equal(value);
     }
   },
@@ -209,6 +223,13 @@ When(
   'I update the entity attributes:',
   function (this: CustomWorld, dataTable: DataTable) {
     const updates = dataTable.rowsHash();
+    for (const [k, v] of Object.entries(updates)) {
+      if (typeof v === "string" && (v.startsWith("{") || v.startsWith("["))) {
+        try {
+          updates[k] = JSON.parse(v);
+        } catch (e) {}
+      }
+    }
     // Keep the id and existing children intact and apply updates
     const base = this.retrievedEntity || this.savedEntity || this.currentEntity;
     this.currentEntity = {
@@ -327,5 +348,14 @@ Then(
       expect(sorted[i].name).to.equal(expected[i].name);
       expect(sorted[i].sort_index).to.equal(parseInt(expected[i].sort_index, 10));
     }
+  },
+);
+
+Then(
+  'the retrieved entity should have null or empty {string}',
+  function (this: CustomWorld, fieldName: string) {
+    expect(this.retrievedEntity, 'Retrieved entity should exist').to.be.ok;
+    const val = this.retrievedEntity[fieldName];
+    expect(val === null || val === undefined || val === '').to.be.true;
   },
 );
