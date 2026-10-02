@@ -1,11 +1,35 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {MapTool} from '../../../../../domain/meta.page';
-import {circleMarker, geoJSON, latLng, LeafletMouseEvent, tileLayer} from 'leaflet';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {MapService} from './map.service';
 import {distinctUntilChanged, map, Subject, takeUntil} from 'rxjs';
+
+import Map from '@arcgis/core/Map';
+import MapView from '@arcgis/core/views/MapView';
+import TileLayer from '@arcgis/core/layers/TileLayer';
+import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
+import Graphic from '@arcgis/core/Graphic';
+import Point from '@arcgis/core/geometry/Point';
+import Polyline from '@arcgis/core/geometry/Polyline';
+import Polygon from '@arcgis/core/geometry/Polygon';
+import SimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
+import SimpleLineSymbol from '@arcgis/core/symbols/SimpleLineSymbol';
+import SimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
+import Sketch from '@arcgis/core/widgets/Sketch';
+
+export const LINZ_MAP_SERVICE_URL = 'https://services1.arcgisonline.co.nz/arcgis/rest/services/LINZ/geotiffs/MapServer';
 
 @Component({
   selector: 'lib-map-tool',
@@ -13,13 +37,16 @@ import {distinctUntilChanged, map, Subject, takeUntil} from 'rxjs';
   styleUrls: ['./map-tool.component.css'],
   standalone: false
 })
-export class MapToolComponent implements OnInit, OnDestroy {
+export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input()
   mapTool: MapTool;
 
   @Input()
   ctx: FormContext;
+
+  @Input()
+  formGroup?: FormGroup;
 
   @Input()
   editorMode = false;
@@ -30,16 +57,18 @@ export class MapToolComponent implements OnInit, OnDestroy {
   @Input()
   zoom = 10;
 
-  options: any = null;
-  center = latLng(-41.20588830649284, 174.91502957335638);
-  baseLayers = {
-    'tileLayer': tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: 'OpenStreetMap' }),
-  };
+  @ViewChild('mapContainer', { static: false })
+  mapContainer?: ElementRef<HTMLDivElement>;
 
-  layers: any[] = [];
+  mapView?: MapView;
+  graphicsLayer?: GraphicsLayer;
+  tileLayer?: TileLayer;
+  map?: Map;
+  sketch?: Sketch;
 
-  drawMode: 'Point' | 'LineString' | 'Polygon' = 'Point';
-  drawingCoords: [number, number][] = [];
+  hasMarker = false;
+  private hasInitializedView = false;
+  private isInternalMapUpdate = false;
 
   geometryControl?: AbstractControl;
   eastingControl?: AbstractControl;
@@ -50,40 +79,370 @@ export class MapToolComponent implements OnInit, OnDestroy {
 
   constructor(
     protected readonly mapService: MapService,
-    protected readonly propertySheetService: PropertySheetService
+    protected readonly propertySheetService: PropertySheetService,
+    protected readonly ngZone: NgZone,
+    protected readonly cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.initFormListeners();
-    this.options = { zoom: this.zoom, center: this.center };
+  }
+
+  ngAfterViewInit(): void {
+    if (this.editorMode) {
+      return;
+    }
+    this.initMap();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.sketch) {
+      this.sketch.destroy();
+    }
+    if (this.mapView) {
+      this.mapView.destroy();
+    }
   }
 
-  initFormListeners() {
-    const locationForm = this.getLocationForm();
-    if (!locationForm) {
+  private initMap(): void {
+    if (!this.mapContainer?.nativeElement) {
       return;
     }
 
-    if (this.mapTool.geometry) {
-      this.geometryControl = locationForm.controls[this.mapTool.geometry];
+    this.tileLayer = new TileLayer({
+      url: LINZ_MAP_SERVICE_URL
+    });
+
+    this.graphicsLayer = new GraphicsLayer();
+
+    this.map = new Map({
+      layers: [this.tileLayer, this.graphicsLayer]
+    });
+
+    const defaultNZTM = this.mapService.toNZTM({ lat: -41.20588830649284, lng: 174.91502957335638 });
+
+    this.mapView = new MapView({
+      container: this.mapContainer.nativeElement,
+      map: this.map,
+      center: new Point({
+        x: defaultNZTM.easting,
+        y: defaultNZTM.northing,
+        spatialReference: { wkid: 2193 }
+      }),
+      zoom: this.zoom
+    });
+
+    this.mapView.ui.components = ['zoom'];
+
+    this.mapView.on('click', (event: any) => {
+      this.ngZone.run(() => {
+        this.onMapClick(event);
+      });
+    });
+
+    this.mapView.when(() => {
+      this.ngZone.run(() => {
+        this.updateMapLocation(true);
+        if (this.ctx && this.ctx.mode === 'edit') {
+          this.initSketch();
+        }
+      });
+    });
+  }
+
+  private initSketch(): void {
+    if (!this.mapView || !this.graphicsLayer) {
+      return;
     }
 
-    if (this.mapTool.easting) {
-      this.eastingControl = locationForm.controls[this.mapTool.easting];
+    this.sketch = new Sketch({
+      view: this.mapView,
+      layer: this.graphicsLayer,
+      creationMode: 'update',
+      visibleElements: {
+        createTools: {
+          point: true,
+          polyline: true,
+          polygon: true,
+          circle: false,
+          rectangle: false,
+          multipoint: false
+        },
+        selectionTools: {
+          'lasso-selection': false,
+          'rectangle-selection': false
+        },
+        settingsMenu: false
+      }
+    });
+
+    const pointSymbol = new SimpleMarkerSymbol({
+      style: 'circle',
+      color: '#ff2dc0',
+      size: 12,
+      outline: { color: '#ff2dc0', width: 1 }
+    });
+
+    const polylineSymbol = new SimpleLineSymbol({
+      color: '#ff2dc0',
+      width: 3
+    });
+
+    const polygonSymbol = new SimpleFillSymbol({
+      color: [255, 45, 192, 0.3],
+      outline: { color: '#ff2dc0', width: 3 }
+    });
+
+    this.sketch.viewModel.pointSymbol = pointSymbol;
+    this.sketch.viewModel.polylineSymbol = polylineSymbol;
+    this.sketch.viewModel.polygonSymbol = polygonSymbol;
+    this.sketch.viewModel.activeFillSymbol = polygonSymbol;
+
+    this.mapView.ui.add(this.sketch, 'top-right');
+
+    this.sketch.on('create', (event: any) => {
+      this.ngZone.run(() => {
+        if (event.state === 'complete' && event.graphic) {
+          // Keep only the newly created graphic
+          const others = this.graphicsLayer?.graphics.filter(g => g !== event.graphic).toArray() || [];
+          if (others.length > 0) {
+            this.graphicsLayer?.removeMany(others);
+          }
+          this.saveGraphicToForm(event.graphic);
+        }
+      });
+    });
+
+    this.sketch.on('update', (event: any) => {
+      this.ngZone.run(() => {
+        const isCompleteOrStopped =
+          event.state === 'complete' ||
+          !event.toolEventInfo ||
+          event.toolEventInfo?.type === 'move-stop' ||
+          event.toolEventInfo?.type === 'reshape-stop' ||
+          event.toolEventInfo?.type === 'rotate-stop' ||
+          event.toolEventInfo?.type === 'scale-stop' ||
+          event.toolEventInfo?.type === 'vertex-add' ||
+          event.toolEventInfo?.type === 'vertex-remove';
+
+        if (isCompleteOrStopped && event.graphics?.length > 0) {
+          this.saveGraphicToForm(event.graphics[0]);
+        }
+      });
+    });
+
+    this.sketch.on('delete', () => {
+      this.ngZone.run(() => {
+        this.clearCoordinates();
+      });
+    });
+  }
+
+  private saveGraphicToForm(graphic: Graphic): void {
+    const geomCtrl = this.getGeometryControl();
+    const eastingCtrl = this.getEastingControl();
+    const northingCtrl = this.getNorthingControl();
+
+    const geom = graphic.geometry;
+    if (!geom) {
+      return;
     }
 
-    if (this.mapTool.northing) {
-      this.northingControl = locationForm.controls[this.mapTool.northing];
+    this.isInternalMapUpdate = true;
+    try {
+      if (geom.type === 'point') {
+        const pt = geom as Point;
+        const easting = Math.round(pt.x);
+        const northing = Math.round(pt.y);
+        const latLng = this.mapService.toLatLng({ easting, northing });
+
+        const pointGeoJson = {
+          type: 'Point',
+          coordinates: [latLng.lng, latLng.lat]
+        };
+
+        if (geomCtrl) {
+          geomCtrl.patchValue(pointGeoJson);
+          geomCtrl.markAsDirty();
+          geomCtrl.updateValueAndValidity();
+        }
+
+        if (eastingCtrl && northingCtrl) {
+          eastingCtrl.patchValue(easting);
+          northingCtrl.patchValue(northing);
+          eastingCtrl.markAsDirty();
+          northingCtrl.markAsDirty();
+          eastingCtrl.updateValueAndValidity();
+          northingCtrl.updateValueAndValidity();
+        }
+
+        this.clearLocationControl();
+        this.hasMarker = true;
+      } else if (geom.type === 'polyline') {
+        const pl = geom as Polyline;
+        if (pl.paths?.[0]) {
+          const coordinates = pl.paths[0].map(p => {
+            const latLng = this.mapService.toLatLng({ easting: p[0], northing: p[1] });
+            return [latLng.lng, latLng.lat];
+          });
+
+          const lineGeoJson = {
+            type: 'LineString',
+            coordinates
+          };
+
+          if (geomCtrl) {
+            geomCtrl.patchValue(lineGeoJson);
+            geomCtrl.markAsDirty();
+            geomCtrl.updateValueAndValidity();
+          }
+
+          this.clearLocationControl();
+          this.hasMarker = true;
+        }
+      } else if (geom.type === 'polygon') {
+        const pg = geom as Polygon;
+        if (pg.rings) {
+          const coordinates = pg.rings.map(ring => {
+            const pts = ring.map(p => {
+              const latLng = this.mapService.toLatLng({ easting: p[0], northing: p[1] });
+              return [latLng.lng, latLng.lat];
+            });
+            // Ensure linear ring is closed (first and last points match)
+            if (pts.length > 0) {
+              const first = pts[0];
+              const last = pts[pts.length - 1];
+              if (first[0] !== last[0] || first[1] !== last[1]) {
+                pts.push([first[0], first[1]]);
+              }
+            }
+            return pts;
+          });
+
+          const polyGeoJson = {
+            type: 'Polygon',
+            coordinates
+          };
+
+          if (geomCtrl) {
+            geomCtrl.patchValue(polyGeoJson);
+            geomCtrl.markAsDirty();
+            geomCtrl.updateValueAndValidity();
+          }
+
+          this.clearLocationControl();
+          this.hasMarker = true;
+        }
+      }
+    } finally {
+      this.isInternalMapUpdate = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  getGeometryControlName(): string {
+    if (this.mapTool?.geometry && typeof this.mapTool.geometry === 'string' && this.mapTool.geometry.trim().length > 0) {
+      return this.mapTool.geometry.trim();
+    }
+    return 'geometry';
+  }
+
+  getGeometryControl(): AbstractControl | null {
+    if (this.geometryControl) {
+      return this.geometryControl;
+    }
+    const geomName = this.getGeometryControlName();
+    if (this.formGroup?.controls[geomName]) {
+      this.geometryControl = this.formGroup.controls[geomName];
+      return this.geometryControl;
+    }
+    const locationForm = this.getLocationForm();
+    if (locationForm?.controls[geomName]) {
+      this.geometryControl = locationForm.controls[geomName];
+      return this.geometryControl;
+    }
+    if (this.ctx?.formMap) {
+      for (const form of this.ctx.formMap.values()) {
+        if (form instanceof FormGroup && form.controls[geomName]) {
+          this.geometryControl = form.controls[geomName];
+          return this.geometryControl;
+        }
+      }
+    }
+    return null;
+  }
+
+  getEastingControl(): AbstractControl | null {
+    if (this.eastingControl) {
+      return this.eastingControl;
+    }
+    const name = (this.mapTool?.easting && this.mapTool.easting.trim().length > 0)
+      ? this.mapTool.easting.trim()
+      : 'easting';
+    if (this.formGroup?.controls[name]) {
+      this.eastingControl = this.formGroup.controls[name];
+      return this.eastingControl;
+    }
+    const locationForm = this.getLocationForm();
+    if (locationForm?.controls[name]) {
+      this.eastingControl = locationForm.controls[name];
+      return this.eastingControl;
+    }
+    if (this.ctx?.formMap) {
+      for (const form of this.ctx.formMap.values()) {
+        if (form instanceof FormGroup && form.controls[name]) {
+          this.eastingControl = form.controls[name];
+          return this.eastingControl;
+        }
+      }
+    }
+    return null;
+  }
+
+  getNorthingControl(): AbstractControl | null {
+    if (this.northingControl) {
+      return this.northingControl;
+    }
+    const name = (this.mapTool?.northing && this.mapTool.northing.trim().length > 0)
+      ? this.mapTool.northing.trim()
+      : 'northing';
+    if (this.formGroup?.controls[name]) {
+      this.northingControl = this.formGroup.controls[name];
+      return this.northingControl;
+    }
+    const locationForm = this.getLocationForm();
+    if (locationForm?.controls[name]) {
+      this.northingControl = locationForm.controls[name];
+      return this.northingControl;
+    }
+    if (this.ctx?.formMap) {
+      for (const form of this.ctx.formMap.values()) {
+        if (form instanceof FormGroup && form.controls[name]) {
+          this.northingControl = form.controls[name];
+          return this.northingControl;
+        }
+      }
+    }
+    return null;
+  }
+
+  initFormListeners(): void {
+    this.geometryControl = this.getGeometryControl() ?? undefined;
+    this.eastingControl = this.getEastingControl() ?? undefined;
+    this.northingControl = this.getNorthingControl() ?? undefined;
+
+    const locationForm = this.getLocationForm();
+    if (locationForm?.controls['location_id']) {
+      this.locationControl = locationForm.controls['location_id'];
+    } else if (this.formGroup?.controls['location_id']) {
+      this.locationControl = this.formGroup.controls['location_id'];
     }
 
-    this.locationControl = locationForm.controls['location_id'];
     if (this.locationControl) {
       this.locationControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        this.hasInitializedView = false;
         if (this.geometryControl) this.geometryControl.markAsPristine();
         if (this.eastingControl) this.eastingControl.markAsPristine();
         if (this.northingControl) this.northingControl.markAsPristine();
@@ -91,12 +450,6 @@ export class MapToolComponent implements OnInit, OnDestroy {
     }
 
     if (this.geometryControl) {
-      // Sync draw mode if geometry already has a known type
-      const currentVal = this.getParsedGeometry();
-      if (currentVal && ['Point', 'LineString', 'Polygon'].includes(currentVal.type)) {
-        this.drawMode = currentVal.type;
-      }
-
       this.geometryControl.statusChanges.pipe(
         takeUntil(this.destroy$),
         map(() => this.geometryControl?.dirty),
@@ -110,7 +463,10 @@ export class MapToolComponent implements OnInit, OnDestroy {
       this.geometryControl.valueChanges.pipe(
         takeUntil(this.destroy$)
       ).subscribe(() => {
-        this.updateMapLocation();
+        if (this.isInternalMapUpdate) {
+          return;
+        }
+        this.updateMapLocation(false);
       });
     }
 
@@ -128,8 +484,11 @@ export class MapToolComponent implements OnInit, OnDestroy {
       this.eastingControl.valueChanges.pipe(
         takeUntil(this.destroy$)
       ).subscribe(() => {
+        if (this.isInternalMapUpdate) {
+          return;
+        }
         if (!this.geometryControl?.value) {
-          this.updateMapLocation();
+          this.updateMapLocation(false);
         }
       });
     }
@@ -148,42 +507,35 @@ export class MapToolComponent implements OnInit, OnDestroy {
       this.northingControl.valueChanges.pipe(
         takeUntil(this.destroy$)
       ).subscribe(() => {
+        if (this.isInternalMapUpdate) {
+          return;
+        }
         if (!this.geometryControl?.value) {
-          this.updateMapLocation();
+          this.updateMapLocation(false);
         }
       });
     }
 
-    this.updateMapLocation();
+    this.updateMapLocation(false);
   }
 
   static toNumber(value: any): number {
-    // Handle actual numbers first
     if (typeof value === 'number') {
-      // Ensure the number is finite (not NaN or Infinity)
       return Number.isFinite(value) ? value : 0;
     }
-
-    // Handle strings
     if (typeof value === 'string') {
-      // Number() can parse strings with leading/trailing whitespace.
-      // It converts an empty string or whitespace-only string to 0.
-      // For non-numeric strings like "abc" or "123px", Number() returns NaN.
       const num = Number(value);
-      // Ensure the parsed number is finite
       return Number.isFinite(num) ? num : 0;
     }
-
-    // For all other types (boolean, object, null, undefined, etc.),
-    // return 0 as they are not directly number or string representations of numbers.
     return 0;
   }
 
   getParsedGeometry(): any {
-    if (!this.geometryControl) {
+    const geomCtrl = this.getGeometryControl();
+    if (!geomCtrl) {
       return null;
     }
-    let val = this.geometryControl.value;
+    let val = geomCtrl.value;
     if (typeof val === 'string' && val.trim().length > 0) {
       try {
         val = JSON.parse(val);
@@ -194,145 +546,207 @@ export class MapToolComponent implements OnInit, OnDestroy {
     return val && typeof val === 'object' && val.type ? val : null;
   }
 
-  updateMapLocation() {
-    this.layers = [];
-
-    // Temporary preview while drawing LineString with 1 vertex
-    if (this.drawMode === 'LineString' && this.drawingCoords.length === 1) {
-      const coord = this.drawingCoords[0];
-      this.layers.push(
-        circleMarker(latLng(coord[1], coord[0]), {
-          radius: 5,
-          color: '#ff2dc0',
-          fill: true,
-          fillOpacity: 1.0,
-          fillColor: '#ff2dc0'
-        })
-      );
+  updateMapLocation(initialLoad = false): void {
+    if (!this.graphicsLayer) {
       return;
     }
 
-    // Temporary preview while drawing Polygon with 1 or 2 vertices
-    if (this.drawMode === 'Polygon' && this.drawingCoords.length === 1) {
-      const coord = this.drawingCoords[0];
-      this.layers.push(
-        circleMarker(latLng(coord[1], coord[0]), {
-          radius: 5,
-          color: '#ff2dc0',
-          fill: true,
-          fillOpacity: 1.0,
-          fillColor: '#ff2dc0'
-        })
-      );
-      return;
-    } else if (this.drawMode === 'Polygon' && this.drawingCoords.length === 2) {
-      const gLayer = geoJSON({
-        type: 'LineString',
-        coordinates: this.drawingCoords
-      } as any, {
-        style: () => ({ color: '#ff2dc0', weight: 3, opacity: 0.9 })
-      });
-      this.layers.push(gLayer);
-      return;
-    }
+    this.graphicsLayer.removeAll();
+    this.hasMarker = false;
+
+    const geomCtrl = this.getGeometryControl();
+    const eastingCtrl = this.getEastingControl();
+    const northingCtrl = this.getNorthingControl();
 
     // 1. Check Geometry attribute first
     const geoValue = this.getParsedGeometry();
     if (geoValue && geoValue.type && geoValue.coordinates) {
       try {
-        const gLayer = geoJSON(geoValue, {
-          pointToLayer: (_feature, latlng) => {
-            return circleMarker(latlng, {
-              radius: 6,
-              color: '#ff2dc0',
-              fill: true,
-              fillOpacity: 1.0,
-              fillColor: '#ff2dc0'
-            });
-          },
-          style: () => ({
+        if (geoValue.type === 'Point') {
+          const [lng, lat] = geoValue.coordinates;
+          const nztm = this.mapService.toNZTM({ lat, lng });
+          const point = new Point({
+            x: nztm.easting,
+            y: nztm.northing,
+            spatialReference: { wkid: 2193 }
+          });
+          const symbol = new SimpleMarkerSymbol({
+            style: 'circle',
             color: '#ff2dc0',
-            weight: 3,
-            opacity: 0.9,
-            fillColor: '#ff2dc0',
-            fillOpacity: 0.3
-          })
-        });
+            size: 12,
+            outline: { color: '#ff2dc0', width: 1 }
+          });
+          this.graphicsLayer.add(new Graphic({ geometry: point, symbol }));
+          this.hasMarker = true;
 
-        this.layers.push(gLayer);
+          // Keep easting/northing in sync if present
+          if (eastingCtrl && northingCtrl && !this.isInternalMapUpdate) {
+            const easting = Math.round(nztm.easting);
+            const northing = Math.round(nztm.northing);
+            if (eastingCtrl.value !== easting || northingCtrl.value !== northing) {
+              this.isInternalMapUpdate = true;
+              try {
+                eastingCtrl.patchValue(easting);
+                northingCtrl.patchValue(northing);
+              } finally {
+                this.isInternalMapUpdate = false;
+              }
+            }
+          }
 
-        const bounds = gLayer.getBounds();
-        if (bounds.isValid()) {
-          this.center = bounds.getCenter();
+          // Only center/zoom on initial load
+          if (initialLoad || !this.hasInitializedView) {
+            this.hasInitializedView = true;
+            this.mapView?.goTo({ center: point, zoom: this.zoom }, { animate: false }).catch(() => {});
+          }
+          return;
+        } else if (geoValue.type === 'LineString') {
+          const paths = [
+            geoValue.coordinates.map((c: [number, number]) => {
+              const n = this.mapService.toNZTM({ lat: c[1], lng: c[0] });
+              return [n.easting, n.northing];
+            })
+          ];
+          const polyline = new Polyline({
+            paths,
+            spatialReference: { wkid: 2193 }
+          });
+          const symbol = new SimpleLineSymbol({
+            color: '#ff2dc0',
+            width: 3
+          });
+          this.graphicsLayer.add(new Graphic({ geometry: polyline, symbol }));
+          this.hasMarker = true;
+
+          // Only center/zoom on initial load
+          if (initialLoad || !this.hasInitializedView) {
+            this.hasInitializedView = true;
+            if (polyline.extent && this.mapView) {
+              this.mapView.goTo(polyline.extent.expand(1.3), { animate: false }).catch(() => {});
+            }
+          }
+          return;
+        } else if (geoValue.type === 'Polygon') {
+          const rings = geoValue.coordinates.map((ring: [number, number][]) =>
+            ring.map(c => {
+              const n = this.mapService.toNZTM({ lat: c[1], lng: c[0] });
+              return [n.easting, n.northing];
+            })
+          );
+          const polygon = new Polygon({
+            rings,
+            spatialReference: { wkid: 2193 }
+          });
+          const symbol = new SimpleFillSymbol({
+            color: [255, 45, 192, 0.3],
+            outline: {
+              color: '#ff2dc0',
+              width: 3
+            }
+          });
+          this.graphicsLayer.add(new Graphic({ geometry: polygon, symbol }));
+          this.hasMarker = true;
+
+          // Only center/zoom on initial load
+          if (initialLoad || !this.hasInitializedView) {
+            this.hasInitializedView = true;
+            if (polygon.extent && this.mapView) {
+              this.mapView.goTo(polygon.extent.expand(1.3), { animate: false }).catch(() => {});
+            }
+          }
+          return;
         }
-        return;
       } catch (e) {
-        console.error('Error rendering GeoJSON layer:', e);
+        console.error('Error rendering GeoJSON graphic:', e);
       }
     }
 
     // 2. Fallback to easting/northing if geometry is not set
-    if (this.eastingControl && this.northingControl) {
-      const easting = MapToolComponent.toNumber(this.eastingControl.value);
-      const northing = MapToolComponent.toNumber(this.northingControl.value);
+    if (eastingCtrl && northingCtrl) {
+      const easting = MapToolComponent.toNumber(eastingCtrl.value);
+      const northing = MapToolComponent.toNumber(northingCtrl.value);
 
       if (easting > 0 && northing > 0) {
-        this.center = this.mapService.toLatLng({ easting, northing });
-        this.layers.push(
-          circleMarker(this.center, {
-            radius: 5,
-            color: '#ff2dc0',
-            fill: true,
-            fillOpacity: 1.0,
-            fillColor: '#ff2dc0'
-          })
-        );
+        const point = new Point({
+          x: easting,
+          y: northing,
+          spatialReference: { wkid: 2193 }
+        });
+        const symbol = new SimpleMarkerSymbol({
+          style: 'circle',
+          color: '#ff2dc0',
+          size: 10,
+          outline: { color: '#ff2dc0', width: 1 }
+        });
+        this.graphicsLayer.add(new Graphic({ geometry: point, symbol }));
+        this.hasMarker = true;
+
+        // Auto-populate geometryControl if geometry is not set
+        if (geomCtrl && !geomCtrl.value) {
+          const latLng = this.mapService.toLatLng({ easting, northing });
+          const pointGeoJson = {
+            type: 'Point',
+            coordinates: [latLng.lng, latLng.lat]
+          };
+          this.isInternalMapUpdate = true;
+          try {
+            geomCtrl.patchValue(pointGeoJson);
+          } finally {
+            this.isInternalMapUpdate = false;
+          }
+        }
+
+        // Only center/zoom on initial load
+        if (initialLoad || !this.hasInitializedView) {
+          this.hasInitializedView = true;
+          this.mapView?.goTo({ center: point, zoom: this.zoom }, { animate: false }).catch(() => {});
+        }
       }
     }
   }
 
-  setDrawMode(mode: 'Point' | 'LineString' | 'Polygon') {
-    this.drawMode = mode;
-    this.drawingCoords = [];
-    const currentVal = this.getParsedGeometry();
-    if (currentVal && currentVal.type === mode && Array.isArray(currentVal.coordinates)) {
-      if (mode === 'LineString') {
-        this.drawingCoords = [...currentVal.coordinates];
-      } else if (mode === 'Polygon' && currentVal.coordinates[0]) {
-        const ring = currentVal.coordinates[0];
-        this.drawingCoords = ring.length > 1 ? ring.slice(0, ring.length - 1) : [...ring];
+  clearCoordinates(): void {
+    const geomCtrl = this.getGeometryControl();
+    const eastingCtrl = this.getEastingControl();
+    const northingCtrl = this.getNorthingControl();
+
+    this.isInternalMapUpdate = true;
+    try {
+      if (geomCtrl) {
+        geomCtrl.patchValue(null);
+        geomCtrl.markAsDirty();
+        geomCtrl.updateValueAndValidity();
       }
+      if (eastingCtrl) {
+        eastingCtrl.patchValue(null);
+        eastingCtrl.markAsDirty();
+        eastingCtrl.updateValueAndValidity();
+      }
+      if (northingCtrl) {
+        northingCtrl.patchValue(null);
+        northingCtrl.markAsDirty();
+        northingCtrl.updateValueAndValidity();
+      }
+      this.clearLocationControl();
+      if (this.graphicsLayer) {
+        this.graphicsLayer.removeAll();
+      }
+      this.hasMarker = false;
+    } finally {
+      this.isInternalMapUpdate = false;
+      this.cdr.markForCheck();
     }
   }
 
-  finishDrawing() {
-    this.drawingCoords = [];
-    this.updateMapLocation();
-  }
-
-  clearCoordinates() {
-    this.drawingCoords = [];
-    if (this.geometryControl) {
-      this.geometryControl.patchValue(null);
-      this.geometryControl.markAsDirty();
-    }
-    if (this.eastingControl) {
-      this.eastingControl.patchValue(null);
-      this.eastingControl.markAsDirty();
-    }
-    if (this.northingControl) {
-      this.northingControl.patchValue(null);
-      this.northingControl.markAsDirty();
-    }
-    this.clearLocationControl();
-    this.layers = [];
-  }
-
-  doEditorAction() {
+  doEditorAction(): void {
     this.propertySheetService.edit('Map', this.mapTool);
   }
 
   getLocationForm(): FormGroup | null {
+    if (this.formGroup) {
+      return this.formGroup;
+    }
+
     if (!this.ctx?.formMap) {
       return null;
     }
@@ -342,12 +756,21 @@ export class MapToolComponent implements OnInit, OnDestroy {
       locationForm = this.ctx.formMap.get('event') as FormGroup;
     }
 
+    const geomName = this.getGeometryControlName();
+    const eastingName = (this.mapTool?.easting && this.mapTool.easting.trim().length > 0)
+      ? this.mapTool.easting.trim()
+      : 'easting';
+    const northingName = (this.mapTool?.northing && this.mapTool.northing.trim().length > 0)
+      ? this.mapTool.northing.trim()
+      : 'northing';
+
     if (!locationForm) {
       for (const form of this.ctx.formMap.values()) {
         if (form instanceof FormGroup) {
           if (
-            (this.mapTool.geometry && form.controls[this.mapTool.geometry]) ||
-            (this.mapTool.easting && form.controls[this.mapTool.easting])
+            form.controls[geomName] ||
+            form.controls[eastingName] ||
+            form.controls[northingName]
           ) {
             locationForm = form;
             break;
@@ -370,71 +793,55 @@ export class MapToolComponent implements OnInit, OnDestroy {
     return locationForm;
   }
 
-  clearLocationControl() {
+  clearLocationControl(): void {
     if (this.locationControl) {
       this.locationControl.patchValue(null);
     }
   }
 
-  onMapClick(event: LeafletMouseEvent) {
+  onMapClick(event: any): void {
     const editMode = this.ctx && this.ctx.mode === 'edit';
-    const shiftKeyPressed = event.originalEvent.shiftKey;
+    const shiftKeyPressed = !!(event?.native?.shiftKey);
 
-    if (editMode && shiftKeyPressed) {
-      console.log(`Map Click at: ${event.latlng}`);
+    // Shift+Click quick shortcut for dropping a point at the current cursor location without resetting zoom
+    if (editMode && shiftKeyPressed && event.mapPoint) {
+      const geomCtrl = this.getGeometryControl();
+      const eastingCtrl = this.getEastingControl();
+      const northingCtrl = this.getNorthingControl();
 
-      if (this.drawMode === 'Point') {
-        const pointGeoJson = {
-          type: 'Point',
-          coordinates: [event.latlng.lng, event.latlng.lat]
-        };
+      const easting = Math.round(event.mapPoint.x);
+      const northing = Math.round(event.mapPoint.y);
+      const latLng = this.mapService.toLatLng({ easting, northing });
 
-        if (this.geometryControl) {
-          this.geometryControl.patchValue(pointGeoJson);
-          this.geometryControl.markAsDirty();
+      const pointGeoJson = {
+        type: 'Point',
+        coordinates: [latLng.lng, latLng.lat]
+      };
+
+      this.isInternalMapUpdate = true;
+      try {
+        if (geomCtrl) {
+          geomCtrl.patchValue(pointGeoJson);
+          geomCtrl.markAsDirty();
+          geomCtrl.updateValueAndValidity();
         }
 
-        // Dual-binding: update easting/northing from WGS84 point
-        if (this.eastingControl && this.northingControl) {
-          const nztm = this.mapService.toNZTM(event.latlng);
-          this.eastingControl.patchValue(nztm.easting);
-          this.northingControl.patchValue(nztm.northing);
-          this.eastingControl.markAsDirty();
-          this.northingControl.markAsDirty();
+        if (eastingCtrl && northingCtrl) {
+          eastingCtrl.patchValue(easting);
+          northingCtrl.patchValue(northing);
+          eastingCtrl.markAsDirty();
+          northingCtrl.markAsDirty();
+          eastingCtrl.updateValueAndValidity();
+          northingCtrl.updateValueAndValidity();
         }
 
         this.clearLocationControl();
-        this.updateMapLocation();
-      } else if (this.drawMode === 'LineString') {
-        this.drawingCoords.push([event.latlng.lng, event.latlng.lat]);
-        if (this.drawingCoords.length >= 2) {
-          const lineGeoJson = {
-            type: 'LineString',
-            coordinates: [...this.drawingCoords]
-          };
-          if (this.geometryControl) {
-            this.geometryControl.patchValue(lineGeoJson);
-            this.geometryControl.markAsDirty();
-          }
-        }
-        this.clearLocationControl();
-        this.updateMapLocation();
-      } else if (this.drawMode === 'Polygon') {
-        this.drawingCoords.push([event.latlng.lng, event.latlng.lat]);
-        if (this.drawingCoords.length >= 3) {
-          const ring = [...this.drawingCoords, this.drawingCoords[0]];
-          const polyGeoJson = {
-            type: 'Polygon',
-            coordinates: [ring]
-          };
-          if (this.geometryControl) {
-            this.geometryControl.patchValue(polyGeoJson);
-            this.geometryControl.markAsDirty();
-          }
-        }
-        this.clearLocationControl();
-        this.updateMapLocation();
+      } finally {
+        this.isInternalMapUpdate = false;
+        this.cdr.markForCheck();
       }
+
+      this.updateMapLocation(false);
     }
   }
 }

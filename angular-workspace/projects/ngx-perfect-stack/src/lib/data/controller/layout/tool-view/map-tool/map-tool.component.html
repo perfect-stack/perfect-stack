@@ -2,36 +2,13 @@
   <div (click)="doEditorAction()">MAP goes here...</div>
 }
 
-@if (!editorMode && options) {
-  <div [ngStyle]="{'height': height}"
-    leaflet
-    [leafletOptions]="options"
-    [(leafletCenter)]="center"
-    [leafletBaseLayers]="baseLayers"
-    (leafletClick)="onMapClick($event)"
-    style="position: relative;"
-    >
-    @for (l of layers; track l) {
-      <div [leafletLayer]="l"></div>
-    }
-    @if (ctx && ctx.mode === 'edit') {
-      <div class="map-toolbar">
-        <div class="btn-group btn-group-sm" role="group">
-          <button type="button" class="btn btn-outline-secondary btn-sm" [class.active]="drawMode === 'Point'" (click)="setDrawMode('Point')">Point</button>
-          <button type="button" class="btn btn-outline-secondary btn-sm" [class.active]="drawMode === 'LineString'" (click)="setDrawMode('LineString')">Line</button>
-          <button type="button" class="btn btn-outline-secondary btn-sm" [class.active]="drawMode === 'Polygon'" (click)="setDrawMode('Polygon')">Polygon</button>
-        </div>
-        @if (drawingCoords.length > 0) {
-          <button type="button" class="btn btn-sm btn-outline-success ms-1" (click)="finishDrawing()">Finish</button>
-        }
-        <button type="button" class="btn btn-sm btn-outline-danger ms-1" (click)="clearCoordinates()">Clear</button>
-      </div>
-      <div class="overlay-bottom-left">
-        Shift+Click to {{ drawMode === 'Point' ? 'set point' : (drawMode === 'LineString' ? 'add line vertex' : 'add polygon vertex') }}
-        @if (drawingCoords.length > 0) {
-          ({{ drawingCoords.length }} points)
-        }
-      </div>
-    }
+@if (!editorMode) {
+  <div class="map-wrapper" style="position: relative;" [ngStyle]="{'height': height}">
+    <div
+      #mapContainer
+      class="esri-view"
+      [attr.data-has-marker]="hasMarker ? 'true' : null"
+      style="width: 100%; height: 100%;">
+    </div>
   </div>
 }

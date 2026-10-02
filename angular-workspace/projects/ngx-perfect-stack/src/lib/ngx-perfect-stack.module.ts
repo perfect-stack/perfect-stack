@@ -118,7 +118,6 @@ import { SelectTestPageComponent } from './select-test-page/select-test-page.com
 import { BadgeListComponent } from './data/controller/layout/controls/badge-list/badge-list.component';
 import { ButtonGroupToolComponent } from './data/controller/layout/tool-view/button-group-tool/button-group-tool.component';
 import { MapTestPageComponent } from './map-test-page/map-test-page.component';
-import {LeafletModule} from '@bluehalo/ngx-leaflet';
 import { MapToolComponent } from './data/controller/layout/tool-view/map-tool/map-tool.component';
 import { LinkToolComponent } from './data/controller/layout/tool-view/link-tool/link-tool.component';
 import { RuleEditDialogComponent } from './meta/entity/meta-entity-edit/rule-edit-dialog/rule-edit-dialog.component';
@@ -327,7 +326,6 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
     ReactiveFormsModule,
     NgbModule,
     EditorModule,
-    LeafletModule,
     Tree,
     TreeItem,
     TreeItemGroup,

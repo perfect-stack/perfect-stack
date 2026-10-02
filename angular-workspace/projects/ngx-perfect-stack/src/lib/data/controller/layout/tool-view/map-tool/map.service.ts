@@ -1,11 +1,24 @@
 import { Injectable } from '@angular/core';
-import {latLng, LatLng} from 'leaflet';
 import * as proj4 from 'proj4';
 
 export class Nztm {
   easting: number;
   northing: number;
   altitude?: number;
+}
+
+export class LatLng {
+  lat: number;
+  lng: number;
+  altitude?: number;
+}
+
+export function latLng(latitude: number, longitude: number, altitude?: number): LatLng {
+  return {
+    lat: latitude,
+    lng: longitude,
+    altitude,
+  };
 }
 
 @Injectable({
@@ -26,6 +39,6 @@ export class MapService {
     return {
       easting: forwardResult[0],
       northing: forwardResult[1]
-    }
+    };
   }
 }

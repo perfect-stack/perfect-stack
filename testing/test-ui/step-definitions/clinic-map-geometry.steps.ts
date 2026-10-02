@@ -44,16 +44,26 @@ Then(
   async function (this: UIWorld, geometryType: string) {
     if (!this.page) throw new Error('Playwright page is not initialized');
 
-    const geomField = this.page
-      .getByTestId('view-geometry')
-      .or(this.page.getByTestId('field-geometry'))
-      .first();
+    const textarea = this.page.locator('textarea[data-testid="textarea-geometry"], textarea#geometry').first();
+    const isEdit = (await textarea.count()) > 0 && (await textarea.isVisible());
 
-    await geomField.waitFor({ state: 'visible', timeout: 30000 });
-    const content = (await geomField.textContent()) || '';
+    if (isEdit) {
+      await textarea.waitFor({ state: 'visible', timeout: 30000 });
+      const val = await textarea.inputValue();
+      expect(val).to.include(`"type": "${geometryType}"`);
+      expect(val).to.include('"coordinates"');
+    } else {
+      const geomField = this.page
+        .getByTestId('view-geometry')
+        .or(this.page.getByTestId('field-geometry'))
+        .first();
 
-    expect(content).to.include(`"type":"${geometryType}"`);
-    expect(content).to.include('"coordinates"');
+      await geomField.waitFor({ state: 'visible', timeout: 30000 });
+      const content = (await geomField.textContent()) || '';
+
+      expect(content).to.include(`"type":"${geometryType}"`);
+      expect(content).to.include('"coordinates"');
+    }
   },
 );
 
@@ -93,4 +103,41 @@ Then('the geometry field should not be expanded', async function (this: UIWorld)
 
   await singleLineView.waitFor({ state: 'visible', timeout: 10000 });
   expect(await singleLineView.isVisible()).to.be.true;
+});
+
+When('I shift-click on the map to change the location', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const canvas = this.page.locator('lib-map-tool .esri-view canvas').first();
+  await canvas.waitFor({ state: 'visible', timeout: 30000 });
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error('Could not find map canvas bounding box');
+
+  await this.page.keyboard.down('Shift');
+  await this.page.mouse.click(box.x + box.width / 2 + 50, box.y + box.height / 2 + 50);
+  await this.page.keyboard.up('Shift');
+  await this.page.waitForTimeout(500);
+});
+
+When('I use the sketch tool to place a point on the map', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const pointBtn = this.page
+    .getByRole('button', { name: /draw a point/i })
+    .or(this.page.locator('button[title*="point" i]'))
+    .or(this.page.locator('calcite-action[text*="point" i]'))
+    .or(this.page.locator('.esri-sketch__button'))
+    .first();
+
+  await pointBtn.waitFor({ state: 'visible', timeout: 30000 });
+  await pointBtn.click();
+  await this.page.waitForTimeout(500);
+
+  const canvas = this.page.locator('lib-map-tool .esri-view canvas').first();
+  await canvas.waitFor({ state: 'visible', timeout: 30000 });
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error('Could not find map canvas bounding box');
+
+  await this.page.mouse.click(box.x + box.width / 2 - 40, box.y + box.height / 2 - 40);
+  await this.page.waitForTimeout(1000);
 });

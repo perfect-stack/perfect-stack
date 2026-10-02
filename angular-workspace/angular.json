@@ -74,7 +74,7 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "./node_modules/leaflet/dist/leaflet.css",
+              "node_modules/@arcgis/core/assets/esri/themes/light/main.css",
               "projects/demo-client/src/styles.scss"
             ],
             "scripts": [
@@ -83,7 +83,6 @@
             "browser": "projects/demo-client/src/main.ts",
             "allowedCommonJsDependencies": [
               "tinymce",
-              "leaflet",
               "proj4",
               "ng-drag-drop"
             ]
@@ -199,7 +198,7 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "./node_modules/leaflet/dist/leaflet.css",
+              "node_modules/@arcgis/core/assets/esri/themes/light/main.css",
               "projects/capture-client/src/styles.scss"
             ],
             "scripts": [
@@ -207,7 +206,6 @@
             ],
             "allowedCommonJsDependencies": [
               "tinymce",
-              "leaflet",
               "proj4",
               "ng-drag-drop"
             ]
@@ -319,7 +317,7 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "./node_modules/leaflet/dist/leaflet.css",
+              "node_modules/@arcgis/core/assets/esri/themes/light/main.css",
               "projects/test-ui-client/src/styles.scss"
             ],
             "scripts": [
@@ -328,7 +326,6 @@
             "browser": "projects/test-ui-client/src/main.ts",
             "allowedCommonJsDependencies": [
               "tinymce",
-              "leaflet",
               "proj4",
               "ng-drag-drop"
             ],

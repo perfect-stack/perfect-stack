@@ -11,3 +11,21 @@ Feature: Clinic Map Tool Display
     And I should see "PETVET Lower Hutt" in the "name" field
     And I should see the map tool component
     And the map should display a location marker
+
+  Scenario: Update geometry control when changing map via shift-click in edit mode
+    When I navigate to "/data/Clinic/search"
+    And I click on the clinic row for "PETVET Lower Hutt"
+    And I click the "Edit" button
+    Then the page title should not be empty
+    And I should see the map tool component
+    When I shift-click on the map to change the location
+    Then the geometry field should display GeoJSON for a "Point"
+
+  Scenario: Update geometry control when changing map via sketch tool in edit mode
+    When I navigate to "/data/Clinic/search"
+    And I click on the clinic row for "PETVET Lower Hutt"
+    And I click the "Edit" button
+    Then the page title should not be empty
+    And I should see the map tool component
+    When I use the sketch tool to place a point on the map
+    Then the geometry field should display GeoJSON for a "Point"

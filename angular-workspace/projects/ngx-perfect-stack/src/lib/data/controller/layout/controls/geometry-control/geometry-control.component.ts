@@ -1,4 +1,4 @@
-import {Component, computed, Input, OnInit, Optional, signal, WritableSignal} from '@angular/core';
+import {ChangeDetectorRef, Component, computed, Input, OnInit, Optional, signal, WritableSignal} from '@angular/core';
 import {ControlValueAccessor, NgControl, UntypedFormGroup} from '@angular/forms';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
@@ -278,7 +278,8 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
 
   constructor(
     @Optional() public ngControl: NgControl,
-    protected readonly toastService: ToastService
+    protected readonly toastService: ToastService,
+    protected readonly cdr: ChangeDetectorRef
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -369,6 +370,7 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
       this.rawText.set('');
       this.validationError.set(null);
     }
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: any): void {
@@ -454,7 +456,7 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
 
   async copyToClipboard(): Promise<void> {
     const textToCopy = this.isReadOnly()
-      ? (this.isExpanded() ? this.multiLineText() : this.singleLineText())
+      ? (this.isExpanded() ? this.multiLineText() : this.singleLineText() || '')
       : this.rawText();
 
     if (!textToCopy) {
