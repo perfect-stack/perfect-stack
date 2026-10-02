@@ -68,6 +68,38 @@
       ],
       "templateHeading": "Clinic Details",
       "binding": "clinic"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "Map",
+              "channel": "",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "geometry": "",
+              "easting": "easting",
+              "northing": "northing"
+            }
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "attributeName": "geometry"
+          }
+        ]
+      ],
+      "metaEntityName": "Clinic",
+      "type": "form",
+      "templateHeading": "Map",
+      "binding": "clinic"
     }
   ]
 }

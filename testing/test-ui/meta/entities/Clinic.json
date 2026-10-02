@@ -84,6 +84,48 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "easting",
+      "label": "Easting",
+      "description": "NZTM longitude",
+      "unitOfMeasure": "",
+      "scale": "0",
+      "type": "Double",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "northing",
+      "label": "Northing",
+      "description": "NZTM latitude",
+      "unitOfMeasure": "",
+      "scale": "0",
+      "type": "Double",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "geometry",
+      "label": "Geometry",
+      "description": "Point, line or polygon of location in WGS84",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Geometry",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { v4 as uuid } from "uuid";
 
-import { DataService, OrmService } from '@perfect-stack/nestjs-server';
+import { DataService, MapService, OrmService } from '@perfect-stack/nestjs-server';
 
 export interface TaxonNode {
   scientific_name: string;
@@ -140,7 +140,45 @@ export const SEED_PETS = [
   },
 ];
 
-export const SEED_CLINICS = [
+export const ADDRESS_COORDINATES: Record<string, { lat: number; lng: number }> = {
+  '53 Rutherford St, Lower Hutt': { lat: -41.20690, lng: 174.90594 },
+  '47 Collingwoord St, Lower Hutt': { lat: -41.21487, lng: 174.92150 },
+  '47 Collingwood St, Lower Hutt': { lat: -41.21487, lng: 174.92150 },
+  '109 Oxford Terrace, Lower Hutt': { lat: -41.20728, lng: 174.92962 },
+  '376 Jackson St, Petone': { lat: -41.22670, lng: 174.88580 },
+};
+
+export interface ClinicCoordinates {
+  easting: number | null;
+  northing: number | null;
+  geometry: { type: string; coordinates: [number, number] } | null;
+}
+
+export function calculateCoordinatesFromAddress(
+  address: string,
+  mapService: MapService = new MapService(),
+): ClinicCoordinates {
+  if (!address) {
+    return { easting: null, northing: null, geometry: null };
+  }
+
+  const coords = ADDRESS_COORDINATES[address.trim()];
+  if (!coords) {
+    return { easting: null, northing: null, geometry: null };
+  }
+
+  const nztm = mapService.toNZTM({ lat: coords.lat, lng: coords.lng });
+  return {
+    easting: Math.round(nztm.easting),
+    northing: Math.round(nztm.northing),
+    geometry: {
+      type: 'Point',
+      coordinates: [coords.lng, coords.lat],
+    },
+  };
+}
+
+export const RAW_SEED_CLINICS = [
   {
     name: 'PETVET Lower Hutt',
     address: '53 Rutherford St, Lower Hutt',
@@ -166,6 +204,18 @@ export const SEED_CLINICS = [
     is_24_hour: false,
   },
 ];
+
+const defaultMapService = new MapService();
+
+export const SEED_CLINICS = RAW_SEED_CLINICS.map((clinic) => {
+  const coords = calculateCoordinatesFromAddress(clinic.address, defaultMapService);
+  return {
+    ...clinic,
+    easting: coords.easting,
+    northing: coords.northing,
+    geometry: coords.geometry,
+  };
+});
 
 export const SEED_PET_MEDIA: Record<string, string[]> = {
   Jack: [
@@ -407,6 +457,23 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
 
   // 5. Seed Clinics
   const clinicModel = ormService.sequelize.model('Clinic');
+
+  try {
+    const [cols]: any = await ormService.sequelize.query('PRAGMA table_info(Clinic)');
+    const colNames = Array.isArray(cols) ? cols.map((c: any) => c.name) : [];
+    if (!colNames.includes('easting')) {
+      await ormService.sequelize.query('ALTER TABLE Clinic ADD COLUMN easting DOUBLE');
+    }
+    if (!colNames.includes('northing')) {
+      await ormService.sequelize.query('ALTER TABLE Clinic ADD COLUMN northing DOUBLE');
+    }
+    if (!colNames.includes('geometry')) {
+      await ormService.sequelize.query('ALTER TABLE Clinic ADD COLUMN geometry JSON');
+    }
+  } catch (colErr: any) {
+    logger.warn(`Could not verify/add Clinic columns: ${colErr.message}`);
+  }
+
   for (const clinicDef of SEED_CLINICS) {
     const clinicRecord: any = await clinicModel.findOne({
       where: {
@@ -420,6 +487,9 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
         address: clinicDef.address,
         phone: clinicDef.phone,
         is_24_hour: clinicDef.is_24_hour,
+        easting: clinicDef.easting,
+        northing: clinicDef.northing,
+        geometry: clinicDef.geometry,
       } as any);
       logger.log(`Created Clinic: ${clinicDef.name}`);
     } else {
@@ -429,6 +499,9 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
           address: clinicDef.address,
           phone: clinicDef.phone,
           is_24_hour: clinicDef.is_24_hour,
+          easting: clinicDef.easting,
+          northing: clinicDef.northing,
+          geometry: clinicDef.geometry,
         },
         { where: { id: clinic.id } },
       );
