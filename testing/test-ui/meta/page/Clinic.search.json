@@ -66,6 +66,8 @@
       ],
       "metaEntityName": "Clinic",
       "type": "table",
+      "navigation": "Enabled",
+      "route": "/data/Clinic/view/${id}",
       "orderByName": "name",
       "orderByDir": "ASC"
     }
