@@ -82,10 +82,22 @@
               "styles": "",
               "label": "",
               "modes": "",
-              "geometry": "",
+              "geometry": "geometry",
               "easting": "easting",
               "northing": "northing"
             }
+          }
+        ],
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "easting"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "northing"
           }
         ],
         [

@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {AttributeType} from '../../../../../domain/meta.entity';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
@@ -37,7 +37,7 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
     return this.formControl ? this.formControl.touchedSignal() : (this.ngControl.control?.touched ?? false);
   }
 
-  constructor(public ngControl: NgControl) {
+  constructor(public ngControl: NgControl, private cdr: ChangeDetectorRef) {
     ngControl.valueAccessor = this;
   }
 
@@ -120,7 +120,22 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
   }
 
   writeValue(obj: any): void {
-    this.value = obj;
+    if (obj === null || obj === undefined || obj === "") {
+      this.internalValue = "";
+      this.cdr.markForCheck();
+      return;
+    }
+    let nextValue = obj;
+    if (this.cell && this.cell.attribute) {
+      if (this.cell.attribute?.type === AttributeType.Double) {
+        nextValue = this.changeScaleOfNumber(nextValue, this.cell.attribute.scale);
+      }
+      if (this.cell.attribute?.type === AttributeType.Integer) {
+        nextValue = this.changeScaleOfNumber(nextValue, 0);
+      }
+    }
+    this.internalValue = nextValue;
+    this.cdr.markForCheck();
   }
 
   onModelChange(nextValue: any) {
@@ -138,4 +153,3 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
   ngOnDestroy(): void {
   }
 }
-

@@ -1,5 +1,6 @@
 import { When, Then } from '@cucumber/cucumber';
 import { expect } from 'chai';
+import { expect as playwrightExpect } from '@playwright/test';
 import { UIWorld } from '../support/world';
 
 When('I click on the clinic row for {string}', async function (this: UIWorld, clinicName: string) {
@@ -139,5 +140,80 @@ When('I use the sketch tool to place a point on the map', async function (this: 
   if (!box) throw new Error('Could not find map canvas bounding box');
 
   await this.page.mouse.click(box.x + box.width / 2 - 40, box.y + box.height / 2 - 40);
+  await this.page.waitForTimeout(1000);
+});
+
+Then('the easting and northing fields should not be empty', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const eastingInput = this.page.locator('input[data-testid="input-easting"], input#easting').first();
+  const northingInput = this.page.locator('input[data-testid="input-northing"], input#northing').first();
+
+  await eastingInput.waitFor({ state: 'visible', timeout: 10000 });
+  await northingInput.waitFor({ state: 'visible', timeout: 10000 });
+
+  const eastingVal = await eastingInput.inputValue();
+  const northingVal = await northingInput.inputValue();
+
+  expect(eastingVal.trim().length, 'Easting should not be empty').to.be.greaterThan(0);
+  expect(northingVal.trim().length, 'Northing should not be empty').to.be.greaterThan(0);
+});
+
+Then('the easting and northing fields should be empty', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const eastingInput = this.page.locator('input[data-testid="input-easting"], input#easting').first();
+  const northingInput = this.page.locator('input[data-testid="input-northing"], input#northing').first();
+
+  await eastingInput.waitFor({ state: 'visible', timeout: 10000 });
+  await northingInput.waitFor({ state: 'visible', timeout: 10000 });
+
+  await playwrightExpect(eastingInput).toHaveValue('', { timeout: 10000 });
+  await playwrightExpect(northingInput).toHaveValue('', { timeout: 10000 });
+});
+
+When(
+  'I set the easting field to {string} and northing field to {string}',
+  async function (this: UIWorld, easting: string, northing: string) {
+    if (!this.page) throw new Error('Playwright page is not initialized');
+
+    const eastingInput = this.page.locator('input[data-testid="input-easting"], input#easting').first();
+    const northingInput = this.page.locator('input[data-testid="input-northing"], input#northing').first();
+
+    await eastingInput.fill(easting);
+    await eastingInput.dispatchEvent('input');
+    await eastingInput.dispatchEvent('change');
+
+    await northingInput.fill(northing);
+    await northingInput.dispatchEvent('input');
+    await northingInput.dispatchEvent('change');
+
+    await this.page.waitForTimeout(500);
+  },
+);
+
+When('I use the sketch tool to draw a polyline on the map', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const polylineBtn = this.page
+    .getByRole('button', { name: /draw a polyline/i })
+    .or(this.page.locator('button[title*="polyline" i]'))
+    .or(this.page.locator('calcite-action[text*="polyline" i]'))
+    .first();
+
+  await polylineBtn.waitFor({ state: 'visible', timeout: 30000 });
+  await polylineBtn.click();
+  await this.page.waitForTimeout(500);
+
+  const canvas = this.page.locator('lib-map-tool .esri-view canvas').first();
+  await canvas.waitFor({ state: 'visible', timeout: 30000 });
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error('Could not find map canvas bounding box');
+
+  // Click point 1
+  await this.page.mouse.click(box.x + box.width / 2 - 30, box.y + box.height / 2 - 30);
+  await this.page.waitForTimeout(300);
+  // Double-click point 2 to complete polyline
+  await this.page.mouse.dblclick(box.x + box.width / 2 + 30, box.y + box.height / 2 + 30);
   await this.page.waitForTimeout(1000);
 });

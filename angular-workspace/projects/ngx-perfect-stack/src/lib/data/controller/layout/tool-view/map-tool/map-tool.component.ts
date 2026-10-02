@@ -106,14 +106,143 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  hasGeometryBinding(): boolean {
+    return !!(this.mapTool?.geometry && typeof this.mapTool.geometry === 'string' && this.mapTool.geometry.trim().length > 0);
+  }
+
+  hasEastingBinding(): boolean {
+    return !!(this.mapTool?.easting && typeof this.mapTool.easting === 'string' && this.mapTool.easting.trim().length > 0);
+  }
+
+  hasNorthingBinding(): boolean {
+    return !!(this.mapTool?.northing && typeof this.mapTool.northing === 'string' && this.mapTool.northing.trim().length > 0);
+  }
+
+  getGeometryControl(): AbstractControl | null {
+    if (!this.hasGeometryBinding()) {
+      return null;
+    }
+    if (this.geometryControl) {
+      return this.geometryControl;
+    }
+    const geomName = this.mapTool.geometry!.trim();
+    const locationForm = this.getLocationForm();
+    if (locationForm?.controls[geomName]) {
+      this.geometryControl = locationForm.controls[geomName];
+      return this.geometryControl;
+    }
+    if (this.ctx?.formMap) {
+      for (const form of this.ctx.formMap.values()) {
+        if (form instanceof FormGroup && form.controls[geomName]) {
+          this.geometryControl = form.controls[geomName];
+          return this.geometryControl;
+        }
+      }
+    }
+    return null;
+  }
+
+  getEastingControl(): AbstractControl | null {
+    if (!this.hasEastingBinding()) {
+      return null;
+    }
+    if (this.eastingControl) {
+      return this.eastingControl;
+    }
+    const name = this.mapTool.easting!.trim();
+    const locationForm = this.getLocationForm();
+    if (locationForm?.controls[name]) {
+      this.eastingControl = locationForm.controls[name];
+      return this.eastingControl;
+    }
+    if (this.ctx?.formMap) {
+      for (const form of this.ctx.formMap.values()) {
+        if (form instanceof FormGroup && form.controls[name]) {
+          this.eastingControl = form.controls[name];
+          return this.eastingControl;
+        }
+      }
+    }
+    return null;
+  }
+
+  getNorthingControl(): AbstractControl | null {
+    if (!this.hasNorthingBinding()) {
+      return null;
+    }
+    if (this.northingControl) {
+      return this.northingControl;
+    }
+    const name = this.mapTool.northing!.trim();
+    const locationForm = this.getLocationForm();
+    if (locationForm?.controls[name]) {
+      this.northingControl = locationForm.controls[name];
+      return this.northingControl;
+    }
+    if (this.ctx?.formMap) {
+      for (const form of this.ctx.formMap.values()) {
+        if (form instanceof FormGroup && form.controls[name]) {
+          this.northingControl = form.controls[name];
+          return this.northingControl;
+        }
+      }
+    }
+    return null;
+  }
+
+  getLocationForm(): FormGroup | null {
+    if (this.formGroup) {
+      return this.formGroup;
+    }
+
+    if (!this.ctx?.formMap) {
+      return null;
+    }
+
+    let locationForm = this.ctx.formMap.get('location') as FormGroup;
+    if (!locationForm) {
+      locationForm = this.ctx.formMap.get('event') as FormGroup;
+    }
+
+    const geomName = this.hasGeometryBinding() ? this.mapTool.geometry!.trim() : null;
+    const eastingName = this.hasEastingBinding() ? this.mapTool.easting!.trim() : null;
+    const northingName = this.hasNorthingBinding() ? this.mapTool.northing!.trim() : null;
+
+    if (!locationForm) {
+      for (const form of this.ctx.formMap.values()) {
+        if (form instanceof FormGroup) {
+          if (
+            (geomName && form.controls[geomName]) ||
+            (eastingName && form.controls[eastingName]) ||
+            (northingName && form.controls[northingName])
+          ) {
+            locationForm = form;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!locationForm && this.ctx.formMap.size > 0) {
+      const first = this.ctx.formMap.values().next().value;
+      if (first instanceof FormGroup) {
+        locationForm = first;
+      }
+    }
+
+    if (!locationForm) {
+      console.warn('UNABLE to find a form to update with location coordinates');
+    }
+
+    return locationForm;
+  }
+
   private initMap(): void {
     if (!this.mapContainer?.nativeElement) {
       return;
     }
 
-    this.tileLayer = new TileLayer({
-      url: LINZ_MAP_SERVICE_URL
-    });
+    this.tileLayer = new TileLayer({ url: LINZ_MAP_SERVICE_URL });
 
     this.graphicsLayer = new GraphicsLayer();
 
@@ -204,6 +333,31 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.sketch.on('create', (event: any) => {
       this.ngZone.run(() => {
+        if (event.tool === 'polyline' || event.tool === 'polygon') {
+          const eastingCtrl = this.getEastingControl();
+          const northingCtrl = this.getNorthingControl();
+          if (eastingCtrl && eastingCtrl.value !== null) {
+            this.isInternalMapUpdate = true;
+            try {
+              eastingCtrl.patchValue(null);
+              eastingCtrl.markAsDirty();
+              eastingCtrl.updateValueAndValidity();
+            } finally {
+              this.isInternalMapUpdate = false;
+            }
+          }
+          if (northingCtrl && northingCtrl.value !== null) {
+            this.isInternalMapUpdate = true;
+            try {
+              northingCtrl.patchValue(null);
+              northingCtrl.markAsDirty();
+              northingCtrl.updateValueAndValidity();
+            } finally {
+              this.isInternalMapUpdate = false;
+            }
+          }
+        }
+
         if (event.state === 'complete' && event.graphic) {
           // Keep only the newly created graphic
           const others = this.graphicsLayer?.graphics.filter(g => g !== event.graphic).toArray() || [];
@@ -217,17 +371,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.sketch.on('update', (event: any) => {
       this.ngZone.run(() => {
-        const isCompleteOrStopped =
-          event.state === 'complete' ||
-          !event.toolEventInfo ||
-          event.toolEventInfo?.type === 'move-stop' ||
-          event.toolEventInfo?.type === 'reshape-stop' ||
-          event.toolEventInfo?.type === 'rotate-stop' ||
-          event.toolEventInfo?.type === 'scale-stop' ||
-          event.toolEventInfo?.type === 'vertex-add' ||
-          event.toolEventInfo?.type === 'vertex-remove';
-
-        if (isCompleteOrStopped && event.graphics?.length > 0) {
+        if (event.graphics?.length > 0) {
           this.saveGraphicToForm(event.graphics[0]);
         }
       });
@@ -269,12 +413,14 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
           geomCtrl.updateValueAndValidity();
         }
 
-        if (eastingCtrl && northingCtrl) {
+        if (eastingCtrl) {
           eastingCtrl.patchValue(easting);
-          northingCtrl.patchValue(northing);
           eastingCtrl.markAsDirty();
-          northingCtrl.markAsDirty();
           eastingCtrl.updateValueAndValidity();
+        }
+        if (northingCtrl) {
+          northingCtrl.patchValue(northing);
+          northingCtrl.markAsDirty();
           northingCtrl.updateValueAndValidity();
         }
 
@@ -297,6 +443,16 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
             geomCtrl.patchValue(lineGeoJson);
             geomCtrl.markAsDirty();
             geomCtrl.updateValueAndValidity();
+          }
+
+          // If line or polygon is selected/changed, easting and northing must be null
+          if (eastingCtrl && northingCtrl) {
+            eastingCtrl.patchValue(null);
+            northingCtrl.patchValue(null);
+            eastingCtrl.markAsDirty();
+            northingCtrl.markAsDirty();
+            eastingCtrl.updateValueAndValidity();
+            northingCtrl.updateValueAndValidity();
           }
 
           this.clearLocationControl();
@@ -332,6 +488,16 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
             geomCtrl.updateValueAndValidity();
           }
 
+          // If line or polygon is selected/changed, easting and northing must be null
+          if (eastingCtrl && northingCtrl) {
+            eastingCtrl.patchValue(null);
+            northingCtrl.patchValue(null);
+            eastingCtrl.markAsDirty();
+            northingCtrl.markAsDirty();
+            eastingCtrl.updateValueAndValidity();
+            northingCtrl.updateValueAndValidity();
+          }
+
           this.clearLocationControl();
           this.hasMarker = true;
         }
@@ -342,92 +508,6 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  getGeometryControlName(): string {
-    if (this.mapTool?.geometry && typeof this.mapTool.geometry === 'string' && this.mapTool.geometry.trim().length > 0) {
-      return this.mapTool.geometry.trim();
-    }
-    return 'geometry';
-  }
-
-  getGeometryControl(): AbstractControl | null {
-    if (this.geometryControl) {
-      return this.geometryControl;
-    }
-    const geomName = this.getGeometryControlName();
-    if (this.formGroup?.controls[geomName]) {
-      this.geometryControl = this.formGroup.controls[geomName];
-      return this.geometryControl;
-    }
-    const locationForm = this.getLocationForm();
-    if (locationForm?.controls[geomName]) {
-      this.geometryControl = locationForm.controls[geomName];
-      return this.geometryControl;
-    }
-    if (this.ctx?.formMap) {
-      for (const form of this.ctx.formMap.values()) {
-        if (form instanceof FormGroup && form.controls[geomName]) {
-          this.geometryControl = form.controls[geomName];
-          return this.geometryControl;
-        }
-      }
-    }
-    return null;
-  }
-
-  getEastingControl(): AbstractControl | null {
-    if (this.eastingControl) {
-      return this.eastingControl;
-    }
-    const name = (this.mapTool?.easting && this.mapTool.easting.trim().length > 0)
-      ? this.mapTool.easting.trim()
-      : 'easting';
-    if (this.formGroup?.controls[name]) {
-      this.eastingControl = this.formGroup.controls[name];
-      return this.eastingControl;
-    }
-    const locationForm = this.getLocationForm();
-    if (locationForm?.controls[name]) {
-      this.eastingControl = locationForm.controls[name];
-      return this.eastingControl;
-    }
-    if (this.ctx?.formMap) {
-      for (const form of this.ctx.formMap.values()) {
-        if (form instanceof FormGroup && form.controls[name]) {
-          this.eastingControl = form.controls[name];
-          return this.eastingControl;
-        }
-      }
-    }
-    return null;
-  }
-
-  getNorthingControl(): AbstractControl | null {
-    if (this.northingControl) {
-      return this.northingControl;
-    }
-    const name = (this.mapTool?.northing && this.mapTool.northing.trim().length > 0)
-      ? this.mapTool.northing.trim()
-      : 'northing';
-    if (this.formGroup?.controls[name]) {
-      this.northingControl = this.formGroup.controls[name];
-      return this.northingControl;
-    }
-    const locationForm = this.getLocationForm();
-    if (locationForm?.controls[name]) {
-      this.northingControl = locationForm.controls[name];
-      return this.northingControl;
-    }
-    if (this.ctx?.formMap) {
-      for (const form of this.ctx.formMap.values()) {
-        if (form instanceof FormGroup && form.controls[name]) {
-          this.northingControl = form.controls[name];
-          return this.northingControl;
-        }
-      }
-    }
-    return null;
-  }
-
   initFormListeners(): void {
     this.geometryControl = this.getGeometryControl() ?? undefined;
     this.eastingControl = this.getEastingControl() ?? undefined;
@@ -436,8 +516,6 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
     const locationForm = this.getLocationForm();
     if (locationForm?.controls['location_id']) {
       this.locationControl = locationForm.controls['location_id'];
-    } else if (this.formGroup?.controls['location_id']) {
-      this.locationControl = this.formGroup.controls['location_id'];
     }
 
     if (this.locationControl) {
@@ -466,7 +544,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.isInternalMapUpdate) {
           return;
         }
-        this.updateMapLocation(false);
+        this.onGeometryControlChanged();
       });
     }
 
@@ -487,9 +565,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.isInternalMapUpdate) {
           return;
         }
-        if (!this.geometryControl?.value) {
-          this.updateMapLocation(false);
-        }
+        this.onEastingNorthingControlChanged();
       });
     }
 
@@ -510,13 +586,120 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.isInternalMapUpdate) {
           return;
         }
-        if (!this.geometryControl?.value) {
-          this.updateMapLocation(false);
-        }
+        this.onEastingNorthingControlChanged();
       });
     }
 
     this.updateMapLocation(false);
+  }
+
+  private onGeometryControlChanged(): void {
+    const geoValue = this.getParsedGeometry();
+    if (geoValue && geoValue.type && geoValue.coordinates) {
+      if (geoValue.type === 'Point') {
+        const [lng, lat] = geoValue.coordinates;
+        const nztm = this.mapService.toNZTM({ lat, lng });
+        const easting = Math.round(nztm.easting);
+        const northing = Math.round(nztm.northing);
+
+        const eastingCtrl = this.getEastingControl();
+        const northingCtrl = this.getNorthingControl();
+        if (eastingCtrl && northingCtrl) {
+          if (eastingCtrl.value !== easting || northingCtrl.value !== northing) {
+            this.isInternalMapUpdate = true;
+            try {
+              eastingCtrl.patchValue(easting);
+              northingCtrl.patchValue(northing);
+              eastingCtrl.updateValueAndValidity();
+              northingCtrl.updateValueAndValidity();
+            } finally {
+              this.isInternalMapUpdate = false;
+            }
+          }
+        }
+      } else if (geoValue.type === 'LineString' || geoValue.type === 'Polygon') {
+        // Line or Polygon: set easting and northing to null
+        const eastingCtrl = this.getEastingControl();
+        const northingCtrl = this.getNorthingControl();
+        if (eastingCtrl && northingCtrl) {
+          if (eastingCtrl.value !== null || northingCtrl.value !== null) {
+            this.isInternalMapUpdate = true;
+            try {
+              eastingCtrl.patchValue(null);
+              northingCtrl.patchValue(null);
+              eastingCtrl.updateValueAndValidity();
+              northingCtrl.updateValueAndValidity();
+            } finally {
+              this.isInternalMapUpdate = false;
+            }
+          }
+        }
+      }
+    }
+    this.updateMapLocation(false);
+  }
+
+  private onEastingNorthingControlChanged(): void {
+    const eastingCtrl = this.getEastingControl();
+    const northingCtrl = this.getNorthingControl();
+    if (!eastingCtrl || !northingCtrl) {
+      return;
+    }
+
+    const easting = MapToolComponent.toNumber(eastingCtrl.value);
+    const northing = MapToolComponent.toNumber(northingCtrl.value);
+
+    if (easting > 0 && northing > 0) {
+      const latLng = this.mapService.toLatLng({ easting, northing });
+      const pointGeoJson = {
+        type: 'Point',
+        coordinates: [latLng.lng, latLng.lat]
+      };
+
+      const geomCtrl = this.getGeometryControl();
+      if (geomCtrl) {
+        this.isInternalMapUpdate = true;
+        try {
+          geomCtrl.patchValue(pointGeoJson);
+          geomCtrl.updateValueAndValidity();
+        } finally {
+          this.isInternalMapUpdate = false;
+        }
+      }
+
+      this.renderPoint(easting, northing, false);
+    } else {
+      if (!this.getGeometryControl()?.value) {
+        this.graphicsLayer?.removeAll();
+        this.hasMarker = false;
+      }
+    }
+  }
+
+  private renderPoint(easting: number, northing: number, initialLoad = false): void {
+    if (!this.graphicsLayer) {
+      return;
+    }
+    this.graphicsLayer.removeAll();
+
+    const point = new Point({
+      x: easting,
+      y: northing,
+      spatialReference: { wkid: 2193 }
+    });
+    const symbol = new SimpleMarkerSymbol({
+      style: 'circle',
+      color: '#ff2dc0',
+      size: 12,
+      outline: { color: '#ff2dc0', width: 1 }
+    });
+    this.graphicsLayer.add(new Graphic({ geometry: point, symbol }));
+    this.hasMarker = true;
+
+    if (initialLoad || !this.hasInitializedView) {
+      this.hasInitializedView = true;
+      this.mapView?.goTo({ center: point, zoom: this.zoom }, { animate: false }).catch(() => {});
+    }
   }
 
   static toNumber(value: any): number {
@@ -667,19 +850,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
       const northing = MapToolComponent.toNumber(northingCtrl.value);
 
       if (easting > 0 && northing > 0) {
-        const point = new Point({
-          x: easting,
-          y: northing,
-          spatialReference: { wkid: 2193 }
-        });
-        const symbol = new SimpleMarkerSymbol({
-          style: 'circle',
-          color: '#ff2dc0',
-          size: 10,
-          outline: { color: '#ff2dc0', width: 1 }
-        });
-        this.graphicsLayer.add(new Graphic({ geometry: point, symbol }));
-        this.hasMarker = true;
+        this.renderPoint(easting, northing, initialLoad);
 
         // Auto-populate geometryControl if geometry is not set
         if (geomCtrl && !geomCtrl.value) {
@@ -694,12 +865,6 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
           } finally {
             this.isInternalMapUpdate = false;
           }
-        }
-
-        // Only center/zoom on initial load
-        if (initialLoad || !this.hasInitializedView) {
-          this.hasInitializedView = true;
-          this.mapView?.goTo({ center: point, zoom: this.zoom }, { animate: false }).catch(() => {});
         }
       }
     }
@@ -740,57 +905,6 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
 
   doEditorAction(): void {
     this.propertySheetService.edit('Map', this.mapTool);
-  }
-
-  getLocationForm(): FormGroup | null {
-    if (this.formGroup) {
-      return this.formGroup;
-    }
-
-    if (!this.ctx?.formMap) {
-      return null;
-    }
-
-    let locationForm = this.ctx.formMap.get('location') as FormGroup;
-    if (!locationForm) {
-      locationForm = this.ctx.formMap.get('event') as FormGroup;
-    }
-
-    const geomName = this.getGeometryControlName();
-    const eastingName = (this.mapTool?.easting && this.mapTool.easting.trim().length > 0)
-      ? this.mapTool.easting.trim()
-      : 'easting';
-    const northingName = (this.mapTool?.northing && this.mapTool.northing.trim().length > 0)
-      ? this.mapTool.northing.trim()
-      : 'northing';
-
-    if (!locationForm) {
-      for (const form of this.ctx.formMap.values()) {
-        if (form instanceof FormGroup) {
-          if (
-            form.controls[geomName] ||
-            form.controls[eastingName] ||
-            form.controls[northingName]
-          ) {
-            locationForm = form;
-            break;
-          }
-        }
-      }
-    }
-
-    if (!locationForm && this.ctx.formMap.size > 0) {
-      const first = this.ctx.formMap.values().next().value;
-      if (first instanceof FormGroup) {
-        locationForm = first;
-      }
-    }
-
-    if (!locationForm) {
-      console.warn('UNABLE to find a form to update with location coordinates');
-    }
-
-    return locationForm;
   }
 
   clearLocationControl(): void {
