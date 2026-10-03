@@ -16,7 +16,10 @@
     "sourceMap": true,
     "paths": {
       "@perfect-stack/ngx-perfect-stack": [
-        "dist/ngx-perfect-stack"
+        "projects/ngx-perfect-stack/src/public-api.ts"
+      ],
+      "@perfect-stack/ngx-perfect-stack/*": [
+        "projects/ngx-perfect-stack/src/*"
       ]
     },
     "declaration": false,
@@ -31,6 +34,11 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "extendedDiagnostics": {
+      "checks": {
+        "optionalChainNotNullable": "suppress"
+      }
+    }
   }
 }

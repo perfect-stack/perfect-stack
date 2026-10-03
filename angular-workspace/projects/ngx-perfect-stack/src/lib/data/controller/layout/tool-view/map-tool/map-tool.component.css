@@ -13,3 +13,8 @@
   height: 100%;
   outline: none;
 }
+
+/* Suppress in-canvas Esri attribution bar completely */
+:host ::ng-deep .esri-attribution {
+  display: none !important;
+}

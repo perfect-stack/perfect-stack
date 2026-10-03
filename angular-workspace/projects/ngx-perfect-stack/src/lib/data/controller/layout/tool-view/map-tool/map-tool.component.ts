@@ -12,6 +12,9 @@ import {
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {MapTool} from '../../../../../domain/meta.page';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
+import {MapAttributionService} from './map-attribution.service';
+import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
+import type { ResourceHandle } from "@arcgis/core/core/Handles";
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {MapService} from './map.service';
 import {distinctUntilChanged, map, Subject, takeUntil} from 'rxjs';
@@ -75,13 +78,16 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
   northingControl?: AbstractControl;
   locationControl?: AbstractControl;
 
+  private attributionHandle?: ResourceHandle;
+
   private destroy$ = new Subject<void>();
 
   constructor(
     protected readonly mapService: MapService,
     protected readonly propertySheetService: PropertySheetService,
     protected readonly ngZone: NgZone,
-    protected readonly cdr: ChangeDetectorRef
+    protected readonly cdr: ChangeDetectorRef,
+    protected readonly attributionService: MapAttributionService
   ) {}
 
   ngOnInit(): void {
@@ -98,6 +104,10 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.attributionHandle) {
+      this.attributionHandle.remove();
+    }
+    this.attributionService.clearAttribution();
     if (this.sketch) {
       this.sketch.destroy();
     }
@@ -260,10 +270,27 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
         y: defaultNZTM.northing,
         spatialReference: { wkid: 2193 }
       }),
-      zoom: this.zoom
+      zoom: this.zoom,
+      attributionVisible: false
     });
 
+    this.mapView.attributionVisible = false;
     this.mapView.ui.components = ['zoom'];
+
+    this.attributionHandle = reactiveUtils.watch(
+      () => this.mapView?.attributionItems,
+      (items) => {
+        this.ngZone.run(() => {
+          if (!items || items.length === 0) {
+            this.attributionService.setAttribution(null);
+            return;
+          }
+          const credits = items.map((item: any) => item.text).join(' | ');
+          this.attributionService.setAttribution(`Powered by Esri | ${credits}`);
+        });
+      },
+      { initial: true }
+    );
 
     this.mapView.on('click', (event: any) => {
       this.ngZone.run(() => {

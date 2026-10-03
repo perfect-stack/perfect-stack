@@ -1,3 +1,33 @@
 .copyright-separator {
   padding: 0px 24px;
 }
+
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+
+  .footer-meta {
+    /* Existing styles for copyright and support line */
+  }
+
+  .footer-esri-attribution {
+    font-size: 0.75rem;
+    color: inherit;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+    max-width: 600px;
+    word-break: break-word;
+    line-height: 1.3;
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}

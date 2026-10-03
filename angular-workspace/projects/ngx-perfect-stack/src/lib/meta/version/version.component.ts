@@ -1,10 +1,11 @@
-import {ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, Inject, Input, OnInit} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../ngx-perfect-stack-config';
 import { HttpClient } from '@angular/common/http';
 import {DebugService} from '../../utils/debug/debug.service';
 import {ToastService} from '../../utils/toasts/toast.service';
 import {BatchService} from "../batch/batch.service";
 import {MetaMenuService} from '../menu/meta-menu-service/meta-menu.service';
+import {MapAttributionService} from '../../data/controller/layout/tool-view/map-tool/map-attribution.service';
 
 @Component({
     selector: 'lib-version',
@@ -28,6 +29,8 @@ export class VersionComponent implements OnInit {
   postGisResult: any = null;
   postGisResultText = '';
   postGisError = '';
+
+  readonly attributionService = inject(MapAttributionService);
 
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,

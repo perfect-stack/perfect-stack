@@ -27,10 +27,10 @@
     "useDefineForClassFields": false,
     "paths": {
       "@perfect-stack/ngx-perfect-stack": [
-        "../../angular-workspace/dist/ngx-perfect-stack"
+        "../../angular-workspace/projects/ngx-perfect-stack/src/public-api.ts"
       ],
       "@perfect-stack/ngx-perfect-stack/*": [
-        "../../angular-workspace/dist/ngx-perfect-stack/*"
+        "../../angular-workspace/projects/ngx-perfect-stack/src/*"
       ]
     }
   },
@@ -38,6 +38,11 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "extendedDiagnostics": {
+      "checks": {
+        "optionalChainNotNullable": "suppress"
+      }
+    }
   }
 }
