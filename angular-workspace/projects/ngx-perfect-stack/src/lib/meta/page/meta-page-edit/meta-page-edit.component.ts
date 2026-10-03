@@ -25,6 +25,8 @@ import {TemplateLocationType} from '../../../domain/meta.page';
 })
 export class MetaPageEditComponent implements OnInit {
 
+  activeTab = 'template';
+
   metaPageName: string | null;
   metaPage$: Observable<MetaPage>;
 
