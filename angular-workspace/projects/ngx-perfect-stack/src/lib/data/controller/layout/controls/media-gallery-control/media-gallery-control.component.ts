@@ -2,10 +2,12 @@ import {
   ChangeDetectorRef,
   Component,
   Inject,
+  Injector,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Optional,
   SimpleChanges
 } from '@angular/core';
 import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
@@ -20,16 +22,25 @@ import { MetaPage } from '../../../../../domain/meta.page';
 import { MetaEntityService } from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
 import { MetaPageService } from '../../../../../meta/page/meta-page-service/meta-page.service';
 import { NgxPerfectStackConfig, STACK_CONFIG } from '../../../../../ngx-perfect-stack-config';
+import {
+  MEDIA_DATA_PROVIDERS,
+  MediaDataProvider,
+  MediaItem,
+  MediaPageQuery,
+  MediaPageResult
+} from '../media-data-provider';
+import { DefaultMediaDataProvider } from '../default-media-data-provider.service';
 
 export interface GalleryItem {
   id: any;
   path: string;
   comments?: string;
   mimeType?: string;
-  imageSrc: SafeUrl | null;
+  imageSrc: SafeUrl | string | null;
   isLoading: boolean;
   hasError: boolean;
   index: number;
+  data?: any;
 }
 
 @Component({
@@ -57,12 +68,18 @@ export class MediaGalleryControlComponent implements OnInit, OnChanges, OnDestro
 
   pageNumber = 1;
   pageItems: GalleryItem[] = [];
+  totalItemCount = 0;
 
   private destroy$ = new Subject<void>();
   private pageSubscriptions = new Subscription();
-  private imageCache = new Map<string, { safeUrl: SafeUrl; rawUrl: string }>();
+  private imageCache = new Map<string, { safeUrl: SafeUrl | string; rawUrl?: string }>();
 
   constructor(
+    private injector: Injector,
+    private defaultProvider: DefaultMediaDataProvider,
+    @Optional()
+    @Inject(MEDIA_DATA_PROVIDERS)
+    private readonly providerMap: Map<string, MediaDataProvider> | null,
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     @Inject(STACK_CONFIG)
@@ -92,7 +109,7 @@ export class MediaGalleryControlComponent implements OnInit, OnChanges, OnDestro
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['cell'] || changes['formGroup']) {
+    if (changes['cell'] || changes['formGroup'] || changes['ctx']) {
       this.subscribeToFormChanges();
       this.loadPage(this.pageNumber);
     }
@@ -110,6 +127,24 @@ export class MediaGalleryControlComponent implements OnInit, OnChanges, OnDestro
       }
     });
     this.imageCache.clear();
+  }
+
+  private getProvider(): MediaDataProvider {
+    const name = this.cell?.dataProvider;
+    if (name) {
+      if (this.providerMap && this.providerMap.has(name)) {
+        return this.providerMap.get(name)!;
+      }
+      try {
+        const custom = this.injector.get<MediaDataProvider>(name as any, null as any);
+        if (custom) {
+          return custom;
+        }
+      } catch (err) {
+        console.warn(`[MediaGalleryControl] Could not resolve provider "${name}" from Injector:`, err);
+      }
+    }
+    return this.defaultProvider;
   }
 
   private subscribeToFormChanges(): void {
@@ -147,7 +182,10 @@ export class MediaGalleryControlComponent implements OnInit, OnChanges, OnDestro
   }
 
   get totalItems(): number {
-    return this.attributes ? this.attributes.length : 0;
+    if (this.cell?.dataProvider) {
+      return this.totalItemCount;
+    }
+    return this.attributes ? this.attributes.length : this.totalItemCount;
   }
 
   get totalPages(): number {
@@ -174,103 +212,106 @@ export class MediaGalleryControlComponent implements OnInit, OnChanges, OnDestro
     if (targetPage < 1) {
       targetPage = 1;
     }
-    const maxPage = this.totalPages;
-    if (targetPage > maxPage && maxPage > 0) {
-      targetPage = maxPage;
-    }
     this.pageNumber = targetPage;
 
-    // Cancel ongoing downloads from previous page
+    // Cancel ongoing requests from previous page
     this.pageSubscriptions.unsubscribe();
     this.pageSubscriptions = new Subscription();
 
-    if (!this.attributes || this.totalItems === 0) {
-      this.pageItems = [];
-      this.cdr.detectChanges();
-      return;
-    }
+    const provider = this.getProvider();
+    const query: MediaPageQuery = {
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize
+    };
 
-    const start = this.startIndex;
-    const end = this.endIndex;
-    const slice = this.attributes.controls.slice(start, end);
-
-    this.pageItems = slice.map((ctrl, i) => {
-      const fg = ctrl as UntypedFormGroup;
-      const path = fg.controls['path']?.value;
-      const comments = fg.controls['comments']?.value;
-      const mimeType = fg.controls['mime_type']?.value;
-      const id = fg.controls['id']?.value;
-
-      return {
-        id,
-        path,
-        comments,
-        mimeType,
-        imageSrc: null,
-        isLoading: !!path,
-        hasError: false,
-        index: start + i
-      };
-    });
-
-    this.pageItems.forEach(item => {
-      if (!item.path) {
-        item.isLoading = false;
-        return;
-      }
-
-      if (this.imageCache.has(item.path)) {
-        const cached = this.imageCache.get(item.path)!;
-        item.imageSrc = cached.safeUrl;
-        item.isLoading = false;
-      } else {
-        this.fetchImage(item);
-      }
-    });
-
-    this.cdr.detectChanges();
-  }
-
-  private fetchImage(item: GalleryItem): void {
-    const locateUrl = `${this.stackConfig.apiUrl}/media/locate/${item.path}`;
-    const locateSub = this.http.get(locateUrl, { responseType: 'text' }).subscribe({
-      next: (downloadPath: string) => {
-        if (downloadPath) {
-          const finalUrl = downloadPath.startsWith('http')
-            ? downloadPath
-            : `${this.stackConfig.apiUrl}/media${downloadPath}`;
-
-          const dlSub = this.http.get(finalUrl, { responseType: 'blob' }).subscribe({
-            next: (blob) => {
-              const rawUrl = URL.createObjectURL(blob);
-              const safeUrl = this.sanitizer.bypassSecurityTrustUrl(rawUrl);
-              this.imageCache.set(item.path, { safeUrl, rawUrl });
-              item.imageSrc = safeUrl;
-              item.isLoading = false;
-              this.cdr.detectChanges();
-            },
-            error: (err) => {
-              console.error(`[MediaGalleryControl] Failed to download image from ${finalUrl}:`, err);
-              item.isLoading = false;
-              item.hasError = true;
-              this.cdr.detectChanges();
-            }
-          });
-          this.pageSubscriptions.add(dlSub);
-        } else {
-          item.isLoading = false;
-          item.hasError = true;
-          this.cdr.detectChanges();
+    const loadSub = provider.loadMedia(this.ctx, this.cell, query, this.formGroup).subscribe({
+      next: (result: MediaPageResult) => {
+        this.totalItemCount = result?.totalCount || 0;
+        const maxPage = this.totalPages;
+        if (this.pageNumber > maxPage && maxPage > 0) {
+          this.pageNumber = maxPage;
         }
+
+        const items = result?.items || [];
+        const start = (this.pageNumber - 1) * this.pageSize;
+
+        this.pageItems = items.map((item, i) => {
+          const pathOrUrl = item.path || item.url || '';
+          return {
+            id: item.id,
+            path: pathOrUrl,
+            comments: item.comments,
+            mimeType: item.mimeType,
+            imageSrc: null,
+            isLoading: !!pathOrUrl,
+            hasError: false,
+            index: start + i,
+            data: item.data
+          };
+        });
+
+        this.pageItems.forEach((galleryItem, idx) => {
+          const rawItem = items[idx];
+          const cacheKey = rawItem.path || rawItem.url || (rawItem.id != null ? String(rawItem.id) : null);
+          if (!cacheKey) {
+            galleryItem.isLoading = false;
+            return;
+          }
+
+          if (this.imageCache.has(cacheKey)) {
+            const cached = this.imageCache.get(cacheKey)!;
+            galleryItem.imageSrc = cached.safeUrl;
+            galleryItem.isLoading = false;
+          } else {
+            this.resolveImage(galleryItem, rawItem, provider, cacheKey);
+          }
+        });
+
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error(`[MediaGalleryControl] Failed to locate image ${item.path}:`, err);
-        item.isLoading = false;
-        item.hasError = true;
+        console.error('[MediaGalleryControl] Failed to load media items from provider:', err);
+        this.pageItems = [];
+        this.totalItemCount = 0;
         this.cdr.detectChanges();
       }
     });
-    this.pageSubscriptions.add(locateSub);
+
+    this.pageSubscriptions.add(loadSub);
+  }
+
+  private resolveImage(
+    galleryItem: GalleryItem,
+    rawItem: MediaItem,
+    provider: MediaDataProvider,
+    cacheKey: string
+  ): void {
+    if (provider.resolveUrl) {
+      const resolveSub = provider.resolveUrl(rawItem, this.ctx, this.cell).subscribe({
+        next: (resolvedUrl: SafeUrl | string) => {
+          this.imageCache.set(cacheKey, { safeUrl: resolvedUrl });
+          galleryItem.imageSrc = resolvedUrl;
+          galleryItem.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error(`[MediaGalleryControl] Failed to resolve media URL for ${cacheKey}:`, err);
+          galleryItem.isLoading = false;
+          galleryItem.hasError = true;
+          this.cdr.detectChanges();
+        }
+      });
+      this.pageSubscriptions.add(resolveSub);
+    } else if (rawItem.url) {
+      this.imageCache.set(cacheKey, { safeUrl: rawItem.url });
+      galleryItem.imageSrc = rawItem.url;
+      galleryItem.isLoading = false;
+      this.cdr.detectChanges();
+    } else {
+      galleryItem.isLoading = false;
+      galleryItem.hasError = true;
+      this.cdr.detectChanges();
+    }
   }
 
   // ControlValueAccessor implementation
@@ -303,8 +344,10 @@ export class MediaGalleryControlComponent implements OnInit, OnChanges, OnDestro
         }
       });
       this.loadPage(1);
-    } else if (!obj) {
-      this.attributes?.clear();
+    } else if (!obj && this.attributes) {
+      this.attributes.clear();
+      this.loadPage(1);
+    } else if (this.cell?.dataProvider) {
       this.loadPage(1);
     }
   }

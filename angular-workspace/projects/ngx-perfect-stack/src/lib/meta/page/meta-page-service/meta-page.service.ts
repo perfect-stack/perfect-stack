@@ -27,6 +27,7 @@ export class CellAttribute {
   footerHtml?: string; // Footer html that appears under the component (only in edit mode)
   media_cols?: string;
   media_rows?: string;
+  dataProvider?: string;
 }
 
 @Injectable({
@@ -35,7 +36,7 @@ export class CellAttribute {
 export class MetaPageService {
 
   // Caching strategy followed is here; https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
-  private metaPageMapCache$: Observable<Map<string, MetaPage>>;
+  private metaPageMapCache$: Observable<Map<string, MetaPage>> | undefined;
 
   constructor(
     @Inject(STACK_CONFIG)

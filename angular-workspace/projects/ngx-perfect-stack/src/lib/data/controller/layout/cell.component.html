@@ -1,8 +1,17 @@
 @if (cell && cell.tool) {
   <lib-tool-view [tool]="cell.tool" [ctx]="ctx" [formGroup]="formGroup"></lib-tool-view>
 }
-
-@if (formGroup && mode && cell && cell.attribute && !cell.tool) {
+@else if (cell && (cell.component === 'MediaGallery' || cell.component === 'Media')) {
+  @switch (cell.component) {
+    @case ('MediaGallery') {
+      <lib-media-gallery-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-media-gallery-control>
+    }
+    @case ('Media') {
+      <lib-media-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-media-control>
+    }
+  }
+}
+@else if (formGroup && mode && cell && cell.attribute && !cell.tool) {
   @switch (cell.attribute.type) {
     @case ('Date') {
       <ng-container [formGroup]="formGroup">
@@ -32,7 +41,7 @@
           </ng-container>
         }
         @case ('BadgeList') {
-          <lib-badge-list  [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-badge-list>
+          <lib-badge-list [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-badge-list>
         }
         @case ('ColourBand') {
           <ng-container [formGroup]="formGroup">

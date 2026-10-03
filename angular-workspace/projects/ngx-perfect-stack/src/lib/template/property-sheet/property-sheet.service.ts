@@ -125,7 +125,7 @@ export const LastSignInPropertyList = [
   { name: 'username', type: PropertyType.string},
 ];
 
-export const LinkPropertyList = [
+export const LinkToolPropertyList = [
   { name: 'channel', type: PropertyType.string},
   { name: 'containerStyles', type: PropertyType.string},
   { name: 'styles', type: PropertyType.string},
@@ -226,7 +226,8 @@ export const CellPropertyList = [
   { name: 'displayOnly', type: PropertyType.boolean},
   { name: 'media_cols', type: PropertyType.string},
   { name: 'media_rows', type: PropertyType.string},
-]
+  { name: 'dataProvider', type: PropertyType.string},
+];
 
 
 export type PropertyListMapType = {
@@ -240,7 +241,7 @@ export const PropertyListMap: PropertyListMapType = {
   'Icon': IconPropertyList,
   'Image': ImagePropertyList,
   'LastSignIn': LastSignInPropertyList,
-  'Link': LinkPropertyList,
+  'Link': LinkToolPropertyList,
   'Map': MapPropertyList,
   'PageTitle': PageTitlePropertyList,
   'Paginate': PaginatePropertyList,

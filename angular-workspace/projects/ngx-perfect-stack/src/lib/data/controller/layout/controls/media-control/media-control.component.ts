@@ -1,4 +1,15 @@
-import {ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  Injector,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Optional,
+  SimpleChanges
+} from '@angular/core';
 import {CellAttribute} from "../../../../../meta/page/meta-page-service/meta-page.service";
 import {ControlValueAccessor, UntypedFormArray, UntypedFormGroup} from "@angular/forms";
 import {FormContext, FormService} from "../../../../data-edit/form-service/form.service";
@@ -12,6 +23,14 @@ import {MetaEntity} from "../../../../../domain/meta.entity";
 import {Cell, MetaPage} from "../../../../../domain/meta.page";
 import {MetaEntityService} from "../../../../../meta/entity/meta-entity-service/meta-entity.service";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../../../ngx-perfect-stack-config";
+import {
+  MEDIA_DATA_PROVIDERS,
+  MediaDataProvider,
+  MediaItem,
+  MediaPageQuery,
+  MediaPageResult
+} from "../media-data-provider";
+import { DefaultMediaDataProvider } from "../default-media-data-provider.service";
 
 @Component({
     selector: 'lib-media-control',
@@ -19,7 +38,7 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../../../ngx-perfect-st
     styleUrls: ['./media-control.component.css'],
     standalone: false
 })
-export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class MediaControlComponent implements OnInit, OnChanges, OnDestroy, ControlValueAccessor {
 
   @Input()
   mode: string | null;
@@ -47,16 +66,25 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
 
   commentCell: CellAttribute;
 
-  constructor(private modalService: NgbModal,
-              private http: HttpClient,
-              private sanitizer: DomSanitizer,
-              @Inject(STACK_CONFIG)
-              protected readonly stackConfig: NgxPerfectStackConfig,
-              protected readonly metaEntityService: MetaEntityService,
-              protected readonly formService: FormService,
-              protected readonly formGroupService: FormGroupService,
-              private cdr: ChangeDetectorRef)
-  {}
+  providerItems: MediaItem[] = [];
+  private providerLoaded = false;
+
+  constructor(
+    private injector: Injector,
+    private defaultProvider: DefaultMediaDataProvider,
+    @Optional()
+    @Inject(MEDIA_DATA_PROVIDERS)
+    private readonly providerMap: Map<string, MediaDataProvider> | null,
+    private modalService: NgbModal,
+    private http: HttpClient,
+    private sanitizer: DomSanitizer,
+    @Inject(STACK_CONFIG)
+    protected readonly stackConfig: NgxPerfectStackConfig,
+    protected readonly metaEntityService: MetaEntityService,
+    protected readonly formService: FormService,
+    protected readonly formGroupService: FormGroupService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.metaEntityService.metaEntityMap$.pipe(
@@ -73,7 +101,22 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
         }, this.cell.metaEntity);
       }
     });
-    this.loadImage();
+
+    if (this.cell?.dataProvider) {
+      this.loadFromProvider();
+    } else {
+      this.loadImage();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['cell'] || changes['ctx'] || changes['formGroup']) {
+      if (this.cell?.dataProvider) {
+        this.loadFromProvider();
+      } else {
+        this.loadImage();
+      }
+    }
   }
 
   ngOnDestroy(): void {
@@ -85,6 +128,87 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
     this.destroy$.complete();
   }
 
+  private getProvider(): MediaDataProvider {
+    const name = this.cell?.dataProvider;
+    if (name) {
+      if (this.providerMap && this.providerMap.has(name)) {
+        return this.providerMap.get(name)!;
+      }
+      try {
+        const custom = this.injector.get<MediaDataProvider>(name as any, null as any);
+        if (custom) {
+          return custom;
+        }
+      } catch (err) {
+        console.warn(`[MediaControl] Could not resolve provider "${name}" from Injector:`, err);
+      }
+    }
+    return this.defaultProvider;
+  }
+
+  private loadFromProvider(): void {
+    const provider = this.getProvider();
+    const query: MediaPageQuery = { pageNumber: 1, pageSize: 100 };
+    this.isLoading = true;
+
+    this.imageSubscription?.unsubscribe();
+    this.imageSubscription = provider.loadMedia(this.ctx, this.cell, query, this.formGroup).subscribe({
+      next: (result: MediaPageResult) => {
+        this.providerItems = result?.items || [];
+        this.providerLoaded = true;
+        this.index = 0;
+        this.loadProviderImage();
+      },
+      error: (err) => {
+        console.error('[MediaControl] Error loading media from provider:', err);
+        this.providerItems = [];
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private loadProviderImage(): void {
+    this.isLoading = true;
+    this.imageSrc = null;
+    this.revokeCurrentImageUrl();
+
+    if (!this.providerItems.length || this.index >= this.providerItems.length) {
+      this.isLoading = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const item = this.providerItems[this.index];
+    const provider = this.getProvider();
+
+    if (provider.resolveUrl) {
+      this.imageSubscription?.unsubscribe();
+      this.imageSubscription = provider.resolveUrl(item, this.ctx, this.cell).subscribe({
+        next: (resolvedUrl) => {
+          this.imageSrc = typeof resolvedUrl === 'string'
+            ? this.sanitizer.bypassSecurityTrustUrl(resolvedUrl)
+            : resolvedUrl;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('[MediaControl] Error resolving media item URL:', err);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } else if (item.url || item.path) {
+      const url = item.url || item.path!;
+      this.imageSrc = this.sanitizer.bypassSecurityTrustUrl(url);
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    } else {
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    }
+  }
+
   get metaEntityName(): string | undefined {
     return this.cell.attribute?.relationshipTarget;
   }
@@ -94,6 +218,9 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   get imageCount(): number {
+    if (this.cell?.dataProvider) {
+      return this.providerItems.length;
+    }
     return this.attributes ? this.attributes.length : 0;
   }
 
@@ -102,21 +229,30 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   set index(value: number) {
-    if (this.attributes && this.attributes.length > 0) {
+    const count = this.imageCount;
+    if (count > 0) {
       let newIndex = value;
-      if (newIndex >= this.attributes.length) {
+      if (newIndex >= count) {
         newIndex = 0;
       } else if (newIndex < 0) {
-        newIndex = this.attributes.length - 1;
+        newIndex = count - 1;
       }
 
       if (this._index !== newIndex) {
         this._index = newIndex;
-        this.loadImage(); // Load the new image when index changes
+        if (this.cell?.dataProvider) {
+          this.loadProviderImage();
+        } else {
+          this.loadImage();
+        }
       }
     } else {
       this._index = 0;
-      this.loadImage();
+      if (this.cell?.dataProvider) {
+        this.loadProviderImage();
+      } else {
+        this.loadImage();
+      }
     }
   }
 
@@ -146,6 +282,11 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   private loadImage(): void {
+    if (this.cell?.dataProvider) {
+      this.loadProviderImage();
+      return;
+    }
+
     this.isLoading = true;
     this.imageSrc = null; // Clear previous image immediately
     this.imageSubscription?.unsubscribe(); // Cancel any pending request
@@ -241,11 +382,14 @@ export class MediaControlComponent implements OnInit, OnDestroy, ControlValueAcc
       this.index = 0; // Reset index
       this.loadImage(); // Load image AFTER data is processed
     }
-    else if (!obj) {
+    else if (!obj && this.attributes) {
       this.attributes?.clear();
       this._valueInitialized = true;
       this.index = 0;
       this.loadImage();
+    }
+    else if (this.cell?.dataProvider) {
+      this.loadFromProvider();
     }
     else {
       console.warn('[MediaControl] writeValue received unexpected data:', obj);

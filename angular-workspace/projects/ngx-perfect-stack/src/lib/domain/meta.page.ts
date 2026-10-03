@@ -42,6 +42,7 @@ export class Cell {
   displayOnly?: boolean;
   media_cols?: string;
   media_rows?: string;
+  dataProvider?: string;
 }
 
 export class ComponentData {}
