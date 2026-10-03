@@ -3,7 +3,7 @@
     <div class="row">
 
       <!-- Empty Cell -->
-      @if (!attribute && !cell.template && !cell.tool) {
+      @if (!attribute && !cell.template && !cell.tool && cell.component !== 'MediaGallery' && cell.component !== 'Media') {
         <div class="col-12"
           my-dropzone (myDropZoneDroppedEvent)="onDropzoneDropped($event)"
           [ngStyle]="{'min-height': getCSSHeight(cell)}"
@@ -29,7 +29,7 @@
                 </ng-container>
               }
               @case ('DateTime') {
-                <lib-date-time-control [mode]="'edit'" [formGroup]="entityForm" [name]="attribute.name"></lib-date-time-control>
+                <lib-date-time-control [mode]="'edit'" [cell]="cell" [formGroup]="entityForm" [name]="attribute.name"></lib-date-time-control>
               }
               @case (['Text', 'Html', 'Double', 'Integer'].includes(attribute.type) ? attribute.type : '') {
                 @switch (cell.component) {
@@ -131,6 +131,26 @@
       @if (!attribute && cell.tool) {
         <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}">
           <lib-tool-view [tool]="cell.tool" [editorMode]="true"></lib-tool-view>
+        </div>
+      }
+
+      <!-- Standalone Media / MediaGallery Cell -->
+      @if (!attribute && (cell.component === 'MediaGallery' || cell.component === 'Media')) {
+        <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}">
+          @switch (cell.component) {
+            @case ('MediaGallery') {
+              <div class="p-2 bg-light text-center border rounded">
+                <span class="material-symbols-outlined text-secondary">photo_library</span>
+                <div class="small text-muted">Media Gallery Control ({{cell.media_cols || '2'}} x {{cell.media_rows || '4'}})</div>
+              </div>
+            }
+            @case ('Media') {
+              <div class="p-2 bg-light text-center border rounded">
+                <span class="material-symbols-outlined text-secondary">image</span>
+                <div class="small text-muted">Media Control</div>
+              </div>
+            }
+          }
         </div>
       }
     </div>

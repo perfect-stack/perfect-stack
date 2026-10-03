@@ -185,6 +185,9 @@ export class CellViewComponent implements OnInit, OnChanges {
   @Input()
   set attribute(value: MetaAttribute | undefined) {
     this._attribute = value;
+    if (this.cell && value) {
+      this.cell.attribute = value;
+    }
     if(value && value.name) {
       this.entityForm.addControl(value.name, new UntypedFormControl(''));
     }
@@ -220,6 +223,9 @@ export class CellViewComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if(this.cell && this.attribute) {
+      this.cell.attribute = this.attribute;
+    }
     if(changes['cell']) {
       this.onCellChange(changes['cell'].currentValue);
     }
@@ -278,6 +284,9 @@ export class CellViewComponent implements OnInit, OnChanges {
     delete this.cell.attributeName;
     delete this.cell.template;
     delete this.cell.tool;
+    delete this.cell.component;
+    delete this.cell.dataProvider;
+    delete this.cell.attribute;
     this.attribute = undefined;
     this.entityForm = new UntypedFormGroup([] as any);
   }
@@ -387,6 +396,7 @@ export class CellViewComponent implements OnInit, OnChanges {
     else {
       this._attribute = attribute;
       this.cell.attributeName = attribute.name;
+      this.cell.attribute = attribute;
     }
   }
 
@@ -414,18 +424,21 @@ export class CellViewComponent implements OnInit, OnChanges {
   private addLinkControl(attribute: MetaAttribute) {
     this._attribute = attribute;
     this.cell.attributeName = attribute.name;
+    this.cell.attribute = attribute;
     this.cell.component = 'LinkList'
   }
 
   private addMediaControl(attribute: MetaAttribute) {
     this._attribute = attribute;
     this.cell.attributeName = attribute.name;
+    this.cell.attribute = attribute;
     this.cell.component = 'Media';
   }
 
   private addMediaGalleryControl(attribute: MetaAttribute) {
     this._attribute = attribute;
     this.cell.attributeName = attribute.name;
+    this.cell.attribute = attribute;
     this.cell.component = 'MediaGallery';
   }
 

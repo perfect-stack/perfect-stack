@@ -16,6 +16,6 @@
   }
 }
 
-@if (!parentDisplaysError && hasErrors() && cell.attribute) {
+@if (!parentDisplaysError && hasErrors() && cell?.attribute) {
   <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
 }

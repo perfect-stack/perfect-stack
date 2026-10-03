@@ -1,4 +1,5 @@
 import {ActionType} from './meta.role';
+import {MetaAttribute} from './meta.entity';
 
 export enum ComponentType {
   BadgeList = 'BadgeList',
@@ -43,6 +44,7 @@ export class Cell {
   media_cols?: string;
   media_rows?: string;
   dataProvider?: string;
+  attribute?: MetaAttribute;
 }
 
 export class ComponentData {}
