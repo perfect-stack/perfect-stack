@@ -1,8 +1,10 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {AuthenticationService} from '../authentication/authentication.service';
 import {MetaMenuService} from '../meta/menu/meta-menu-service/meta-menu.service';
 import {AuthorizationService} from '../authentication/authorization.service';
 import {ActionType} from '../domain/meta.role';
+import {MenuItem, OpenIn} from '../domain/meta.menu';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
 
 @Component({
@@ -39,13 +41,14 @@ export class MenuBarComponent implements OnInit {
               public readonly stackConfig: NgxPerfectStackConfig,
               public readonly authenticationService: AuthenticationService,
               public readonly authorizationService: AuthorizationService,
-              public readonly metaMenuService: MetaMenuService) {
+              public readonly metaMenuService: MetaMenuService,
+              public readonly router: Router) {
   }
 
   ngOnInit(): void {
     this.authenticationService.user$.subscribe((user) => {
       // The first value through this handler can be null if it needs to be but that's ok.
-      console.log('MenuBarComponent User updated: ', user)
+      console.log('MenuBarComponent User updated: ', user);
       this.updateMenuEnabled();
     });
   }
@@ -85,5 +88,41 @@ export class MenuBarComponent implements OnInit {
 
   showDefaultLoginButton() {
     return this.authenticationService.isLoggedIn || this.stackConfig.showMenuLoginBtn;
+  }
+
+  onMenuItemClick(menuItem: MenuItem, event: MouseEvent): void {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
+    const openIn = menuItem.openIn || OpenIn.Current;
+    const route = menuItem.route;
+
+    switch (openIn) {
+      case OpenIn.NewTab:
+        window.open(route, '_blank');
+        break;
+      case OpenIn.NewWindow:
+        window.open(route, '_blank', 'location=yes,height=700,width=1000,scrollbars=yes,status=yes');
+        break;
+      case OpenIn.Current:
+      default:
+        if (this.isExternalOrServerRoute(route)) {
+          window.location.href = route;
+        } else {
+          this.router.navigateByUrl(route);
+        }
+        break;
+    }
+  }
+
+  isInternalRoute(menuItem: MenuItem): boolean {
+    const openIn = menuItem.openIn || OpenIn.Current;
+    return openIn === OpenIn.Current && !this.isExternalOrServerRoute(menuItem.route);
+  }
+
+  isExternalOrServerRoute(route: string): boolean {
+    return !route || route === '/api' || route.startsWith('/api/') || route.startsWith('http://') || route.startsWith('https://');
   }
 }

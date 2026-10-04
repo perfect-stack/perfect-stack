@@ -1,9 +1,7 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
-import {Menu, MenuItem} from '../../../../domain/meta.menu';
+import {Menu, MenuItem, OpenIn} from '../../../../domain/meta.menu';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {UntypedFormBuilder} from '@angular/forms';
-
-
 
 @Component({
     selector: 'lib-menu-item-view',
@@ -33,9 +31,12 @@ export class MenuItemViewComponent implements OnInit {
 
   mouseActive = false;
 
+  openInOptions = Object.values(OpenIn);
+
   menuItemForm = this.fb.group({
     label: [''],
     route: [''],
+    openIn: [OpenIn.Current],
   });
 
   constructor(
@@ -59,7 +60,11 @@ export class MenuItemViewComponent implements OnInit {
 
   onEditMenuItem(content: any) {
     if(this.menuItem) {
-      this.menuItemForm.patchValue(this.menuItem);
+      this.menuItemForm.patchValue({
+        label: this.menuItem.label,
+        route: this.menuItem.route,
+        openIn: this.menuItem.openIn || OpenIn.Current,
+      });
       this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
         console.log(`closed: ${result}`);
       }, (reason) => {
@@ -73,7 +78,8 @@ export class MenuItemViewComponent implements OnInit {
       const menuItem = new MenuItem();
       menuItem.label = 'Label';
       menuItem.route = '/route/here';
-      this.menuItemAdded.next(menuItem)
+      menuItem.openIn = OpenIn.Current;
+      this.menuItemAdded.next(menuItem);
     }
   }
 
@@ -92,11 +98,15 @@ export class MenuItemViewComponent implements OnInit {
   }
 
   onSave(modal: any) {
-    modal.close('Save click')
-    if(this.menuItem) {
+    modal.close('Save click');
+    const menuItem = this.menuItem;
+    if(menuItem) {
       const editedItem = this.menuItemForm.value;
       console.log(`Edited item: ${JSON.stringify(editedItem)}`);
-      this.menuItem = Object.assign(this.menuItem, editedItem);
+      Object.assign(menuItem, editedItem);
+      if (!menuItem.openIn) {
+        menuItem.openIn = OpenIn.Current;
+      }
     }
   }
 }

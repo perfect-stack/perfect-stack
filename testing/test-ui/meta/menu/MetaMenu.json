@@ -87,7 +87,8 @@
           "editable": true,
           "roles": [],
           "label": "API",
-          "route": "/api/api-docs"
+          "route": "/api/api-docs",
+          "openIn": "New Tab"
         },
         {
           "editable": true,

@@ -67,6 +67,28 @@ export class SpaStaticServer {
   private handleRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
     const rawUrl = req.url || '/';
     const parsedPath = rawUrl.split('?')[0];
+
+    // Forward /api and /api/* requests to backend NestJS server on port 3080
+    if (parsedPath === '/api' || parsedPath.startsWith('/api/')) {
+      const backendPort = parseInt(process.env.BACKEND_PORT || '3080', 10);
+      const proxyReq = http.request({
+        hostname: '127.0.0.1',
+        port: backendPort,
+        path: rawUrl,
+        method: req.method,
+        headers: req.headers,
+      }, (proxyRes) => {
+        res.writeHead(proxyRes.statusCode || 500, proxyRes.headers);
+        proxyRes.pipe(res);
+      });
+      proxyReq.on('error', (err) => {
+        res.writeHead(502, { 'Content-Type': 'text/plain' });
+        res.end(`Bad Gateway: ${err.message}`);
+      });
+      req.pipe(proxyReq);
+      return;
+    }
+
     let decodedPath = '';
     try {
       decodedPath = decodeURIComponent(parsedPath);

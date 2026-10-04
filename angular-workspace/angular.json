@@ -110,6 +110,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "projects/test-ui-client/proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "test-ui-client:build:production"

@@ -29,7 +29,12 @@
             </a>
             <div class="dropdown-menu" ngbDropdownMenu>
               @for(menuItem of nextMenu.items; track menuItem.label) {
-                <a ngbDropdownItem [routerLink]="menuItem.route" id="{{menuItem.label}}MenuItem" [attr.data-testid]="'menu-item-' + menuItem.label">
+                <a ngbDropdownItem
+                  [routerLink]="isInternalRoute(menuItem) ? menuItem.route : null"
+                  [href]="menuItem.route"
+                  (click)="onMenuItemClick(menuItem, $event)"
+                  id="{{menuItem.label}}MenuItem"
+                  [attr.data-testid]="'menu-item-' + menuItem.label">
                   {{menuItem.label}}
                 </a>
               }
@@ -40,7 +45,9 @@
               routerLinkActive="active-link"
               id="{{nextMenu.label}}Menu"
               [attr.data-testid]="'menu-' + nextMenu.label"
-              [routerLink]="nextMenu.items[0].route">
+              [routerLink]="isInternalRoute(nextMenu.items[0]) ? nextMenu.items[0].route : null"
+              [href]="nextMenu.items[0].route"
+              (click)="onMenuItemClick(nextMenu.items[0], $event)">
               {{nextMenu.items[0].label}}
             </a>
           }

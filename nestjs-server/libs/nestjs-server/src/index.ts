@@ -62,6 +62,7 @@ export {
 };
 export * from './domain/entity';
 export * from './domain/meta.entity';
+export * from './domain/meta.menu';
 export * from './data/query.request';
 export * from './data/query.response';
 export * from './data/import';
