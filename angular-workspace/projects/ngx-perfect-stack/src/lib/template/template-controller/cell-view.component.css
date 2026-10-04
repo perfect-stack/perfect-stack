@@ -1,15 +1,46 @@
 .cell-highlight {
-  background: lightgray;
-  border: #343a40 solid thin;
+  background: #FAFAFB;
+  border: 1px dashed #D0D5DD;
+  border-radius: 6px;
   margin: 2px 2px;
+  transition: all 0.15s ease-in-out;
+  box-sizing: border-box;
+}
+
+.cell-highlight.has-content {
+  background: #FFFFFF;
+  border: 1px solid #EAECF0;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.cell-highlight.empty-cell {
+  cursor: copy;
+}
+
+.cell-highlight.empty-cell.drag-hint-border {
+  border: 2px dashed #3c763d;
+  margin: 1px 1px;
+}
+
+.cell-highlight.empty-cell.drag-hint-border:hover {
+  border-color: #3c763d;
+  background-color: #FAFAFB;
+}
+
+.cell-highlight.empty-cell.over,
+.cell-highlight.empty-cell.drag-hint-border.over {
+  border-color: #027A48 !important;
+  background-color: #ECFDF3 !important;
+  box-shadow: 0 0 0 3px rgba(2, 122, 72, 0.25) !important;
 }
 
 .hover-highlight:hover {
-  background: lavender;
+  background: #F0F7FF;
+  border-color: #056EBA;
 }
 
 .hover-highlight:active {
-  background: #ffe8a1;
+  background: #E0F2FE;
 }
 
 .display-none {
@@ -21,42 +52,70 @@
 }
 
 .no_selection {
-  user-select: none; /* standard syntax */
-  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
-  -moz-user-select: none; /* mozilla browsers */
-  -khtml-user-select: none; /* webkit (konqueror) browsers */
-  -ms-user-select: none; /* IE10+ */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select: none;
 }
 
 /**************************************/
-
 
 .wrapper {
   position: relative;
 }
 
-.overlay-top-right {
+.overlay-top-right,
+.overlay-bottom-left,
+.overlay-bottom-right {
   position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border: 1px solid #EAECF0;
+  border-radius: 6px;
+  padding: 2px 4px;
+  box-shadow: 0 2px 4px rgba(16, 24, 40, 0.08);
+}
+
+.overlay-top-right {
+  top: 4px;
+  right: 4px;
 }
 
 .overlay-bottom-left {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
+  bottom: 4px;
+  left: 4px;
 }
 
 .overlay-bottom-right {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
+  bottom: 4px;
+  right: 4px;
 }
 
+.overlay-top-right .material-symbols-outlined,
+.overlay-bottom-left .material-symbols-outlined,
+.overlay-bottom-right .material-symbols-outlined {
+  font-size: 18px;
+  color: #667085;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px;
+  transition: all 0.15s ease;
+}
 
+.overlay-top-right .material-symbols-outlined:hover,
+.overlay-bottom-left .material-symbols-outlined:hover,
+.overlay-bottom-right .material-symbols-outlined:hover {
+  color: #056EBA;
+  background: #EFF8FF;
+}
+
+.overlay-bottom-left .material-symbols-outlined:hover:nth-child(2) {
+  /* highlight_off (delete cell) */
+  color: #D92D20;
+  background: #FEF3F2;
+}

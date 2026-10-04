@@ -1,20 +1,30 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DragService {
 
-  dragInProgress$ = new EventEmitter<string>();
+  dragInProgress$ = new BehaviorSubject<string>('stopped');
+  dragData: any;
 
-  constructor() { }
+  get isDragging(): boolean {
+    return this.dragInProgress$.value === 'started';
+  }
 
-  startDrag() {
-    this.dragInProgress$.emit('started');
+  constructor() {
+    (this.dragInProgress$ as any).emit = (val: string) => this.dragInProgress$.next(val);
+  }
+
+  startDrag(data?: any) {
+    this.dragData = data;
+    this.dragInProgress$.next('started');
   }
 
   stopDrag() {
-    this.dragInProgress$.emit('stopped');
+    this.dragData = undefined;
+    this.dragInProgress$.next('stopped');
   }
 
 }

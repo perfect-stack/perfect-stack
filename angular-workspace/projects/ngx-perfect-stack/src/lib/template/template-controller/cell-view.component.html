@@ -1,181 +1,206 @@
 <div class="wrapper">
-  <div class="p-2 cell-highlight hover-highlight">
-    <div class="row">
+  <!-- Empty Cell Drop Target -->
+  @if (isEmptyCell) {
+    <div class="cell-highlight hover-highlight empty-cell"
+         [ngStyle]="{'min-height': getCSSHeight(cell)}"
+         my-dropzone
+         (myDropZoneDroppedEvent)="onDropzoneDropped($event)">
+    </div>
+  }
 
-      <!-- Empty Cell -->
-      @if (!attribute && !cell.template && !cell.tool && cell.component !== 'MediaGallery' && cell.component !== 'Media') {
-        <div class="col-12"
-          my-dropzone (myDropZoneDroppedEvent)="onDropzoneDropped($event)"
-          [ngStyle]="{'min-height': getCSSHeight(cell)}"
-          >
-        </div>
-      }
-
-      <!-- MetaAttribute Cell -->
-      @if (attribute && !cell.template) {
-        <div class="col-12"
-          [ngStyle]="{'min-height': getCSSHeight(cell)}"
-          >
-          @if (isShowLabel(attribute)) {
-            <label [for]="attribute.name">
-              <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
-            </label>
-          }
-          <div>
-            @switch (attribute.type) {
-              @case ('Date') {
-                <ng-container [formGroup]="entityForm">
-                  <app-date-picker-control [mode]="'edit'" [attribute]="attribute" [formControlName]="attribute.name"></app-date-picker-control>
-                </ng-container>
-              }
-              @case ('DateTime') {
-                <lib-date-time-control [mode]="'edit'" [cell]="cell" [formGroup]="entityForm" [name]="attribute.name"></lib-date-time-control>
-              }
-              @case (['Text', 'Html', 'Double', 'Integer'].includes(attribute.type) ? attribute.type : '') {
-                @switch (cell.component) {
-                  @case ('TextArea') {
-                    <!--<lib-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>-->
-                    <editor class="flex-grow-1"
-                        [init]="{
-                         base_url: '/tinymce',
-                         suffix: '.min',
-                         height: getCSSHeight(cell),
-                         menubar: false,
-                         plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
-                         toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-                       }"
-                    ></editor>
+  <!-- Cell with Content -->
+  @if (hasContent) {
+    <div class="p-2 cell-highlight has-content">
+      <div class="row">
+        <!-- MetaAttribute Cell -->
+        @if (attribute && !cell.template) {
+          <div class="col-12"
+            [ngStyle]="{'min-height': getCSSHeight(cell)}"
+            >
+            @if (isShowLabel(attribute)) {
+              <label [for]="attribute.name">
+                <span placement="right" [ngbTooltip]="attribute.description">{{attribute.label}}</span>
+              </label>
+            }
+            <div>
+              @switch (attribute.type) {
+                @case ('Date') {
+                  <ng-container [formGroup]="entityForm">
+                    <app-date-picker-control [mode]="'edit'" [attribute]="attribute" [formControlName]="attribute.name"></app-date-picker-control>
+                  </ng-container>
+                }
+                @case ('DateTime') {
+                  <lib-date-time-control [mode]="'edit'" [cell]="cell" [formGroup]="entityForm" [name]="attribute.name"></lib-date-time-control>
+                }
+                @case (['Text', 'Html', 'Double', 'Integer'].includes(attribute.type) ? attribute.type : '') {
+                  @switch (cell.component) {
+                    @case ('TextArea') {
+                      <!--<lib-text-area-control [cell]="cell" [formGroup]="entityForm" [attribute]="attribute"></app-text-area-control>-->
+                      <editor class="flex-grow-1"
+                          [init]="{
+                           base_url: '/tinymce',
+                           suffix: '.min',
+                           height: getCSSHeight(cell),
+                           menubar: false,
+                           plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
+                           toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+                         }"
+                      ></editor>
+                    }
+                    @default {
+                      <ng-container [formGroup]="entityForm">
+                        <!--<lib-text-field-control [mode]="'edit'" [formControlName]="attribute.name" [name]="attribute.name"></lib-text-field-control>-->
+                        <input class="form-control">
+                      </ng-container>
+                    }
                   }
-                  @default {
-                    <ng-container [formGroup]="entityForm">
-                      <!--<lib-text-field-control [mode]="'edit'" [formControlName]="attribute.name" [name]="attribute.name"></lib-text-field-control>-->
+                }
+                @case ('Boolean') {
+                  <lib-boolean-check-box-control [formGroup]="entityForm" [attribute]="attribute"></lib-boolean-check-box-control>
+                }
+                @case ('Enumeration') {
+                  <select class="form-select"></select>
+                }
+                @case ('OneToMany') {
+                  @if (cell.template) {
+                    <lib-template-controller [template]="cell.template"></lib-template-controller>
+                  }
+                  @if (!cell.template) {
+                    @switch (cell.component) {
+                      @case ('Media') {
+                        <div class="p-2 bg-light text-center border rounded">
+                          <span class="material-symbols-outlined text-secondary">image</span>
+                          <div class="small text-muted">Media Control</div>
+                        </div>
+                      }
+                      @case ('MediaGallery') {
+                        <div class="p-2 bg-light text-center border rounded">
+                          <span class="material-symbols-outlined text-secondary">photo_library</span>
+                          <div class="small text-muted">Media Gallery Control ({{cell.media_cols || '2'}} x {{cell.media_rows || '4'}})</div>
+                        </div>
+                      }
+                      @case ('LinkList') {
+                        <div class="p-2 bg-light text-center border rounded small text-muted">Link List</div>
+                      }
+                      @default {
+                        <div class="p-2 bg-light text-center border rounded small text-muted">OneToMany Control</div>
+                      }
+                    }
+                  }
+                }
+                @case ('OneToOne') {
+                  @if (cell.template) {
+                    <lib-template-controller [template]="cell.template"></lib-template-controller>
+                  }
+                }
+                @case ('ManyToOne') {
+                  @switch (cell.component) {
+                    @case ('Select') {
+                      <select class="form-select"></select>
+                    }
+                    @case ('SelectTwo') {
+                      <div class="d-flex">
+                        <select class="form-select"></select>
+                        <select class="form-select"></select>
+                      </div>
+                    }
+                    @default {
+                      <!-- just present a default input field if no other more specific component available -->
                       <input class="form-control">
+                    }
+                  }
+                }
+                @case ('OneToPoly') {
+                  <p>CardLayout for OneToPoly goes here...</p>
+                }
+                @case ('Time') {
+                  @if (entityForm.contains(attribute.name)) {
+                    <ng-container [formGroup]="entityForm">
+                      <lib-time-control [mode]="'edit'" [cell]="cell" [formControlName]="attribute.name" [includesDate]="false"></lib-time-control>
                     </ng-container>
                   }
                 }
-              }
-              @case ('Boolean') {
-                <lib-boolean-check-box-control [formGroup]="entityForm" [attribute]="attribute"></lib-boolean-check-box-control>
-              }
-              @case ('Enumeration') {
-                <select class="form-select"></select>
-              }
-              @case ('OneToMany') {
-                @if (cell.template) {
-                  <lib-template-controller [template]="cell.template"></lib-template-controller>
-                }
-                @if (!cell.template) {
-                  @switch (cell.component) {
-                    @case ('Media') {
-                      <div class="p-2 bg-light text-center border rounded">
-                        <span class="material-symbols-outlined text-secondary">image</span>
-                        <div class="small text-muted">Media Control</div>
-                      </div>
-                    }
-                    @case ('MediaGallery') {
-                      <div class="p-2 bg-light text-center border rounded">
-                        <span class="material-symbols-outlined text-secondary">photo_library</span>
-                        <div class="small text-muted">Media Gallery Control ({{cell.media_cols || '2'}} x {{cell.media_rows || '4'}})</div>
-                      </div>
-                    }
-                    @case ('LinkList') {
-                      <div class="p-2 bg-light text-center border rounded small text-muted">Link List</div>
-                    }
-                    @default {
-                      <div class="p-2 bg-light text-center border rounded small text-muted">OneToMany Control</div>
-                    }
+                @case ('SelectMultiple') {
+                  @if (entityForm.contains(attribute.name)) {
+                    <ng-container [formGroup]="entityForm">
+                      <lib-select-multiple-control [mode]="'edit'" [formControlName]="attribute.name" [cell]="cell"></lib-select-multiple-control>
+                    </ng-container>
                   }
                 }
-              }
-              @case ('OneToOne') {
-                @if (cell.template) {
-                  <lib-template-controller [template]="cell.template"></lib-template-controller>
-                }
-              }
-              @case ('ManyToOne') {
-                @switch (cell.component) {
-                  @case ('Select') {
-                    <select class="form-select"></select>
-                  }
-                  @case ('SelectTwo') {
-                    <div class="d-flex">
-                      <select class="form-select"></select>
-                      <select class="form-select"></select>
-                    </div>
-                  }
-                  @default {
-                    <!-- just present a default input field if no other more specific component available -->
-                    <input class="form-control">
+                @case ('Geometry') {
+                  @if (entityForm.contains(attribute.name)) {
+                    <ng-container [formGroup]="entityForm">
+                      <lib-geometry-control [mode]="'edit'" [cell]="cell" [formGroup]="entityForm" [formControlName]="attribute.name"></lib-geometry-control>
+                    </ng-container>
+                  } @else {
+                    <lib-geometry-control [mode]="'edit'" [cell]="cell" [name]="attribute.name"></lib-geometry-control>
                   }
                 }
+                @default {
+                  ERROR: Missing or unknown attribute type of: "{{attribute.type}}"
+                }
               }
-              @case ('OneToPoly') {
-                <p>CardLayout for OneToPoly goes here...</p>
+            </div>
+          </div>
+        }
+
+        <!-- Cell with a nested Template -->
+        @if (!attribute && cell.template) {
+          <div class="col-12">
+            <lib-template-controller [template]="cell.template"></lib-template-controller>
+          </div>
+        }
+
+        <!-- Cell with a Tool -->
+        @if (!attribute && cell.tool) {
+          <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}">
+            <lib-tool-view [tool]="cell.tool" [editorMode]="true"></lib-tool-view>
+          </div>
+        }
+
+        <!-- Standalone Media / MediaGallery Cell -->
+        @if (!attribute && (cell.component === 'MediaGallery' || cell.component === 'Media')) {
+          <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}">
+            @switch (cell.component) {
+              @case ('MediaGallery') {
+                <div class="p-2 bg-light text-center border rounded">
+                  <span class="material-symbols-outlined text-secondary">photo_library</span>
+                  <div class="small text-muted">Media Gallery Control ({{cell.media_cols || '2'}} x {{cell.media_rows || '4'}})</div>
+                </div>
               }
-              @default {
-                ERROR: Missing or unknown attribute type of: "{{attribute.type}}"
+              @case ('Media') {
+                <div class="p-2 bg-light text-center border rounded">
+                  <span class="material-symbols-outlined text-secondary">image</span>
+                  <div class="small text-muted">Media Control</div>
+                </div>
               }
             }
           </div>
-        </div>
-      }
-
-      <!-- Cell with a nested Template -->
-      @if (!attribute && cell.template) {
-        <div class="col-12">
-          <lib-template-controller [template]="cell.template"></lib-template-controller>
-        </div>
-      }
-
-      <!-- Cell with a Tool -->
-      @if (!attribute && cell.tool) {
-        <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}">
-          <lib-tool-view [tool]="cell.tool" [editorMode]="true"></lib-tool-view>
-        </div>
-      }
-
-      <!-- Standalone Media / MediaGallery Cell -->
-      @if (!attribute && (cell.component === 'MediaGallery' || cell.component === 'Media')) {
-        <div class="col-12" [ngStyle]="{'min-height': getCSSHeight(cell)}">
-          @switch (cell.component) {
-            @case ('MediaGallery') {
-              <div class="p-2 bg-light text-center border rounded">
-                <span class="material-symbols-outlined text-secondary">photo_library</span>
-                <div class="small text-muted">Media Gallery Control ({{cell.media_cols || '2'}} x {{cell.media_rows || '4'}})</div>
-              </div>
-            }
-            @case ('Media') {
-              <div class="p-2 bg-light text-center border rounded">
-                <span class="material-symbols-outlined text-secondary">image</span>
-                <div class="small text-muted">Media Control</div>
-              </div>
-            }
-          }
-        </div>
-      }
+        }
+      </div>
     </div>
-  </div>
+  }
 
   @if (mouseActive) {
     <div class="overlay-top-right p-1">
-      <span class="material-symbols-outlined hover-highlight no_selection" (click)="onChangeWidth(-1, $event)">remove_circle_outline</span>
-      <span class="material-symbols-outlined hover-highlight no_selection" (click)="onChangeWidth(1, $event)">add_circle_outline</span>
+      <span class="material-symbols-outlined no_selection" (click)="onChangeWidth(-1, $event)">remove_circle_outline</span>
+      <span class="material-symbols-outlined no_selection" (click)="onChangeWidth(1, $event)">add_circle_outline</span>
     </div>
   }
 
   @if (mouseActive) {
     <div class="overlay-bottom-left p-1">
-      <span class="material-symbols-outlined hover-highlight no_selection" (click)="onSettings()">settings</span>
-      <span class="material-symbols-outlined hover-highlight no_selection" (click)="onDeleteCell()">highlight_off</span>
-      <span class="material-symbols-outlined hover-highlight no_selection" (click)="onClearCell()">block</span>
-      <span class="material-symbols-outlined hover-highlight no_selection" (click)="onAddTemplate()">view_quilt</span>
+      <span class="material-symbols-outlined no_selection" (click)="onSettings()">settings</span>
+      <span class="material-symbols-outlined no_selection" (click)="onDeleteCell()">highlight_off</span>
+      <span class="material-symbols-outlined no_selection" (click)="onClearCell()">block</span>
+      <span class="material-symbols-outlined no_selection" (click)="onAddTemplate()">view_quilt</span>
     </div>
   }
 
   @if (mouseActive) {
     <div class="d-flex flex-column overlay-bottom-right p-1">
-      <span class="material-symbols-outlined hover-highlight no_selection" (click)="onChangeHeight(-1)">remove_circle_outline</span>
-      <span class="material-symbols-outlined hover-highlight no_selection" (click)="onChangeHeight(1)">add_circle_outline</span>
+      <span class="material-symbols-outlined no_selection" (click)="onChangeHeight(-1)">remove_circle_outline</span>
+      <span class="material-symbols-outlined no_selection" (click)="onChangeHeight(1)">add_circle_outline</span>
     </div>
   }
 

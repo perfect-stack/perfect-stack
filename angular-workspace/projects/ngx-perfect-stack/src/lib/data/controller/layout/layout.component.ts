@@ -1020,7 +1020,7 @@ export class SpyControlComponent implements OnInit, OnDestroy, ControlValueAcces
 export class ToolViewComponent implements OnInit {
 
   @Input()
-  tool: Tool;
+  tool: Tool | undefined;
 
   @Input()
   ctx: FormContext;
@@ -1093,6 +1093,7 @@ export class ToolViewComponent implements OnInit {
   }
 
   isToolVisible() {
+    if (!this.tool) return false;
     const modes = this.tool.modes;
     if(modes && this.ctx && this.ctx.mode) {
       return modes.indexOf(this.ctx.mode) >= 0;

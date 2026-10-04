@@ -127,9 +127,9 @@ export class TreeTool extends Tool {
   route?: string;
 }
 
-export class TemplateLocationMap {
-  [key: string]: Tool;
-}
+export type TemplateLocationMap = {
+  [key in TemplateLocationType]?: Tool;
+};
 
 export class Template {
   templateHeading: string;

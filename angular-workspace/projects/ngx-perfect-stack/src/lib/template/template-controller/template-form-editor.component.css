@@ -1,6 +1,5 @@
-
 .drag-border {
-  border: #ff525b dashed 2px;
+  border: #056EBA dashed 2px;
 }
 
 .drag-handle {
@@ -30,18 +29,48 @@
   border: #3500FF dashed 2px;
 }
 
-
 .add-cell {
   width: 32px;
-  margin: 8px 0 4px  4px;
-  background: #e5e5e5;
+  min-height: 48px;
+  margin: 2px 0 2px 4px;
+  background: #F9FAFB;
+  border: 1px dashed #D0D5DD;
+  border-radius: 6px;
+  color: #667085;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
 }
 
-.hover-highlight:hover {
-  background: lavender;
+.add-cell:hover {
+  background: #EFF8FF;
+  border-color: #056EBA;
+  color: #056EBA;
 }
 
-.hover-highlight:active {
-  background: #ffe8a1;
+.add-cell .material-symbols-outlined {
+  font-size: 18px;
 }
 
+.no_selection {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select: none;
+}
+
+.btn-group-sm > .btn {
+  height: 32px !important;
+  line-height: 1.2 !important;
+  font-size: 13px !important;
+  padding: 4px 12px !important;
+  border-color: #D0D5DD;
+  color: #344054;
+  background-color: #FFFFFF;
+}
+
+.btn-group-sm > .btn:hover {
+  background-color: #F9FAFB;
+  border-color: #98A2B3;
+  color: #101828;
+}

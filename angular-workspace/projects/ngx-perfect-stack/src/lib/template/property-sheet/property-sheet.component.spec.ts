@@ -59,7 +59,7 @@ describe('PropertySheetComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const titleEl = compiled.querySelector('h4');
     expect(titleEl).toBeTruthy();
-    expect(titleEl?.textContent).toContain('Template Properties');
+    expect(titleEl?.textContent?.trim()).toBe('Properties');
 
     const propertyRows = compiled.querySelectorAll('.property-name');
     expect(propertyRows.length).toBeGreaterThan(0);

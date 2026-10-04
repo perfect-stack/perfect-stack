@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import {ComponentData, LabelLayoutType, MetaPage, Template, Tool} from '../../../domain/meta.page';
 import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
-import {Observable, of, shareReplay, switchMap} from 'rxjs';
+import {BehaviorSubject, Observable, of, shareReplay, switchMap} from 'rxjs';
 
 
 export class CellAttribute {
@@ -37,6 +37,8 @@ export class MetaPageService {
 
   // Caching strategy followed is here; https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
   private metaPageMapCache$: Observable<Map<string, MetaPage>> | undefined;
+
+  currentMetaPage$ = new BehaviorSubject<MetaPage | null>(null);
 
   constructor(
     @Inject(STACK_CONFIG)

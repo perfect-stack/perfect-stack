@@ -1,30 +1,34 @@
-<div>
+<div class="template-card">
   <lib-template-options-panel [template]="template"></lib-template-options-panel>
 
-  <!--<div class="d-flex justify-content-between">
-  <div></div>
-  <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
-</div>-->
+  <div class="template-body">
+    @switch (template.type) {
+      @case ('header') {
+        <lib-template-header-editor [template]="template"></lib-template-header-editor>
+      }
+      @case ('form') {
+        <lib-template-form-editor [template]="template"></lib-template-form-editor>
+      }
+      @case ('table') {
+        <lib-template-table-editor [template]="template"></lib-template-table-editor>
+      }
+      @default {
+        <p>Unknown template.type of {{template.type}}</p>
+      }
+    }
+  </div>
 
-@switch (template.type) {
-  @case ('header') {
-    <lib-template-header-editor [template]="template"></lib-template-header-editor>
-  }
-  @case ('form') {
-    <lib-template-form-editor [template]="template"></lib-template-form-editor>
-  }
-  @case ('table') {
-    <lib-template-table-editor [template]="template"></lib-template-table-editor>
-  }
-  @default {
-    <div>UNKNOWN template type of {{template.type}}</div>
-  }
-}
-
-<div class="d-flex justify-content-between">
-  <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomLeft" [editorMode]="true"></lib-tool-drop-zone>
-  <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomMiddle" [editorMode]="true"></lib-tool-drop-zone>
-  <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.BottomRight" [editorMode]="true"></lib-tool-drop-zone>
+  <div class="template-footer" [class.d-none]="!hasBottomTools && !isDragging">
+    <div class="row align-items-center g-2">
+      <div class="col-4">
+        <lib-tool-drop-zone class="w-100" [template]="template" [templateLocationType]="TemplateLocationType.BottomLeft" [editorMode]="true" (toolChanged)="onToolChanged()"></lib-tool-drop-zone>
+      </div>
+      <div class="col-4 text-center">
+        <lib-tool-drop-zone class="w-100" [template]="template" [templateLocationType]="TemplateLocationType.BottomMiddle" [editorMode]="true" (toolChanged)="onToolChanged()"></lib-tool-drop-zone>
+      </div>
+      <div class="col-4 text-end">
+        <lib-tool-drop-zone class="w-100" [template]="template" [templateLocationType]="TemplateLocationType.BottomRight" [editorMode]="true" (toolChanged)="onToolChanged()"></lib-tool-drop-zone>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-

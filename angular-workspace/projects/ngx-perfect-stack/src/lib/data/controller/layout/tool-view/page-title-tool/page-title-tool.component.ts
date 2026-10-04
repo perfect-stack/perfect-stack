@@ -1,8 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit, Optional} from '@angular/core';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
-import {PageTitleTool} from '../../../../../domain/meta.page';
+import {MetaPage, PageTitleTool, PageType} from '../../../../../domain/meta.page';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
-import {AbstractControl, FormGroup} from '@angular/forms';
+import {MetaPageService} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {FormGroup} from '@angular/forms';
+import {Subject, takeUntil} from 'rxjs';
 
 @Component({
     selector: 'lib-page-title-tool',
@@ -10,7 +12,7 @@ import {AbstractControl, FormGroup} from '@angular/forms';
     styleUrls: ['./page-title-tool.component.css'],
     standalone: false
 })
-export class PageTitleToolComponent implements OnInit {
+export class PageTitleToolComponent implements OnInit, OnDestroy {
 
   @Input()
   pageTitleTool: PageTitleTool;
@@ -26,10 +28,26 @@ export class PageTitleToolComponent implements OnInit {
 
   formGroup: FormGroup;
 
-  constructor(protected readonly propertySheetService: PropertySheetService) { }
+  metaPage: MetaPage | null = null;
+  private readonly destroy$ = new Subject<void>();
+
+  constructor(
+    protected readonly propertySheetService: PropertySheetService,
+    @Optional() protected readonly metaPageService?: MetaPageService,
+    @Optional() private readonly cd?: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
-    if(!this.editorMode) {
+    if (this.editorMode) {
+      if (this.metaPageService) {
+        this.metaPageService.currentMetaPage$
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(metaPage => {
+            this.metaPage = metaPage;
+            this.cd?.markForCheck();
+          });
+      }
+    } else {
       console.log('formMap:', this.ctx.formMap);
 
       // This is probably a bit dodgy since it probably should feed off the Template's binding, but will do for now.
@@ -37,24 +55,59 @@ export class PageTitleToolComponent implements OnInit {
       // that only worked for Edit and not for View. Wasn't able to figure out why, so asked the Controls for their
       // values instead
       const abstractControl = this.ctx.formMap.values().next().value;
-      if(abstractControl instanceof FormGroup) {
+      if (abstractControl instanceof FormGroup) {
         this.formGroup = abstractControl;
 
         const isNew = !this.formGroup.get('id')?.value;
         this.pageMode = PageTitleToolComponent.toPageMode(this.ctx.mode, isNew);
-        if(this.pageTitleTool && this.pageTitleTool.nameAttributes) {
+        if (this.pageTitleTool && this.pageTitleTool.nameAttributes) {
           this.nameAttributes = this.pageTitleTool.nameAttributes.split(',');
         }
       }
     }
   }
 
-  isStaticTitle() {
-    return this.ctx.metaPage.title !== '$PageTitle';
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  usingNames() {
+  get currentMetaPage(): MetaPage | null {
+    return this.ctx?.metaPage || this.metaPage || this.metaPageService?.currentMetaPage$?.value || null;
+  }
+
+  isStaticTitle(): boolean {
+    const metaPage = this.currentMetaPage;
+    return !!(metaPage && metaPage.title && metaPage.title !== '$PageTitle');
+  }
+
+  usingNames(): boolean {
+    if (this.editorMode) {
+      return !!(this.pageTitleTool?.nameAttributes && this.pageTitleTool.nameAttributes.trim().length > 0);
+    }
     return this.nameAttributes !== null && this.nameAttributes.length > 0;
+  }
+
+  get editorTitle(): string {
+    if (this.isStaticTitle()) {
+      return this.currentMetaPage?.title || '';
+    }
+
+    const pageType = this.currentMetaPage?.type;
+    switch (pageType) {
+      case PageType.search:
+      case PageType.search_edit:
+        return 'Search {{entityNamePlural}}';
+      case PageType.view_edit:
+      case PageType.composite:
+        return this.usingNames() ? '{{fullName}}' : '{{entityNameSingular}}';
+      case PageType.map:
+        return 'Map {{entityNamePlural}}';
+      case PageType.content:
+        return '{{title}}';
+      default:
+        return 'Search {{entityNamePlural}}';
+    }
   }
 
   get entityNameSingular() {
@@ -78,10 +131,9 @@ export class PageTitleToolComponent implements OnInit {
   }
 
   static toPageMode(mode: string, isNew: boolean) {
-    if(mode === 'edit') {
+    if (mode === 'edit') {
       return isNew ? 'add' : 'update';
-    }
-    else {
+    } else {
       return mode;
     }
   }

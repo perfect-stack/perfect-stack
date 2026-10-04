@@ -24,7 +24,7 @@ export class DraggableDirective {
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/plain', JSON.stringify(this.data));
 
-      this.dragService.startDrag();
+      this.dragService.startDrag(this.data);
     });
 
     el.addEventListener('dragend', (e: any) => {

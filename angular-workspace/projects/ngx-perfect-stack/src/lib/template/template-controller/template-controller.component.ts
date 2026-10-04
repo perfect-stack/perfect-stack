@@ -1,12 +1,13 @@
-import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Cell, Template, TemplateLocationType, TemplateType, Tool} from '../../domain/meta.page';
 import {AttributeType, MetaAttribute, MetaEntity} from '../../domain/meta.entity';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {FormGroup, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {PropertySheetService} from '../property-sheet/property-sheet.service';
 import {OneToManyChoiceDialogComponent} from './one-to-many-choice-dialog/one-to-many-choice-dialog.component';
+import {DragService} from '../../utils/dragdrop/drag.service';
 
 // This file contains many Components because they have a circular dependency on the top-level component of
 // TemplateControllerComponent. When Angular builds this as a library it doesn't allow this sort of circular dependency to
@@ -21,14 +22,43 @@ import {OneToManyChoiceDialogComponent} from './one-to-many-choice-dialog/one-to
     styleUrls: ['./template-controller.component.css'],
     standalone: false
 })
-export class TemplateControllerComponent implements OnInit { //, OnChanges {
+export class TemplateControllerComponent implements OnInit, OnDestroy {
 
   @Input()
   public template: Template;
 
-  constructor() { }
+  isDragging = false;
+  private dragSub: Subscription;
 
-  ngOnInit(): void {}
+  constructor(
+    protected dragService: DragService,
+    protected changeDetectorRef: ChangeDetectorRef
+  ) { }
+
+  ngOnInit(): void {
+    this.isDragging = this.dragService.isDragging;
+    this.dragSub = this.dragService.dragInProgress$.subscribe((status: string) => {
+      this.isDragging = status === 'started';
+      this.changeDetectorRef.detectChanges();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.dragSub?.unsubscribe();
+  }
+
+  onToolChanged(): void {
+    this.changeDetectorRef.detectChanges();
+  }
+
+  get hasBottomTools(): boolean {
+    if (!this.template || !this.template.locations) return false;
+    return !!(
+      this.template.locations[TemplateLocationType.BottomLeft] ||
+      this.template.locations[TemplateLocationType.BottomMiddle] ||
+      this.template.locations[TemplateLocationType.BottomRight]
+    );
+  }
 
   get TemplateLocationType() {
     return TemplateLocationType;
@@ -189,7 +219,9 @@ export class CellViewComponent implements OnInit, OnChanges {
       this.cell.attribute = value;
     }
     if(value && value.name) {
-      this.entityForm.addControl(value.name, new UntypedFormControl(''));
+      if (!this.entityForm.contains(value.name)) {
+        this.entityForm.addControl(value.name, new UntypedFormControl(''));
+      }
     }
   }
 
@@ -216,8 +248,23 @@ export class CellViewComponent implements OnInit, OnChanges {
 
   closeResult = '';
 
+  get isEmptyCell(): boolean {
+    return (
+      !this.attribute &&
+      !this.cell?.template &&
+      !this.cell?.tool &&
+      this.cell?.component !== 'MediaGallery' &&
+      this.cell?.component !== 'Media'
+    );
+  }
+
+  get hasContent(): boolean {
+    return !this.isEmptyCell;
+  }
+
   constructor(protected readonly modalService: NgbModal,
-              protected readonly propertySheetService: PropertySheetService) { }
+              protected readonly propertySheetService: PropertySheetService,
+              protected readonly changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
   }
@@ -233,17 +280,6 @@ export class CellViewComponent implements OnInit, OnChanges {
 
   onCellChange(cell: Cell) {
     console.log(`onCellChange() attribute type = ${this.attribute?.type}`);
-    // if(!cell.template) {
-    //   const template = new Template();
-    //   template.type = TemplateType.table;
-    //   if(this.attribute) {
-    //     template.metaEntityName = this.attribute.relationshipTarget;
-    //   }
-    //   else {
-    //     console.warn('UNABLE to set template metaEntityName since attribute is unknown');
-    //   }
-    //   cell.template = template;
-    // }
   }
 
   @HostListener('mouseenter')
@@ -289,44 +325,14 @@ export class CellViewComponent implements OnInit, OnChanges {
     delete this.cell.attribute;
     this.attribute = undefined;
     this.entityForm = new UntypedFormGroup([] as any);
+    this.changeDetectorRef.detectChanges();
   }
 
   isDropDisabled() {
     return this.cell.template !== undefined;
   }
 
-  onItemDrop($event: DragEvent) {
-    console.log(`onItemDrop()`, $event);
-/*    const attribute: MetaAttribute = $event.dragData;
-    this._attribute = attribute;
-    this.cell.attributeName = attribute.name;
-
-    if(attribute.type === AttributeType.OneToMany) {
-      this.cell.template = {
-        binding: '',
-        templateHeading: '',
-        type: TemplateType.table,
-        metaEntityName: attribute.relationshipTarget,
-        orderByName: 'UNKNOWN',
-        orderByDir: 'ASC',
-        cells: [[
-          {
-            width: '3',
-            height: '1',
-          },
-          {
-            width: '3',
-            height: '1',
-          }
-        ]]
-      };
-    }*/
-  }
-
   onSettings() {
-    // if(this.cell && this.attribute && this.metaEntity) {
-    //   this.propertySheetService.editWithType('Cell', this.cell, 'Cell');
-    // }
     if(this.cell) {
       this.propertySheetService.editWithType('Cell', this.cell, 'Cell');
     }
@@ -369,7 +375,6 @@ export class CellViewComponent implements OnInit, OnChanges {
   }
 
   private addAttribute(attribute: MetaAttribute) {
-
     this.onClearCell();
 
     if(attribute.type === AttributeType.OneToMany) {
@@ -397,6 +402,10 @@ export class CellViewComponent implements OnInit, OnChanges {
       this._attribute = attribute;
       this.cell.attributeName = attribute.name;
       this.cell.attribute = attribute;
+      if (attribute.name && !this.entityForm.contains(attribute.name)) {
+        this.entityForm.addControl(attribute.name, new UntypedFormControl(''));
+      }
+      this.changeDetectorRef.detectChanges();
     }
   }
 
@@ -442,13 +451,13 @@ export class CellViewComponent implements OnInit, OnChanges {
     this.cell.component = 'MediaGallery';
   }
 
-
   private addTool(toolPrototype: Tool) {
     console.log('addTool', toolPrototype);
     this.onClearCell();
 
     this.cell.tool = Object.assign({}, toolPrototype);
     this.propertySheetService.edit(this.cell.tool.type, this.cell.tool);
+    this.changeDetectorRef.detectChanges();
   }
 
   isShowLabel(attribute: MetaAttribute) {
@@ -473,12 +482,6 @@ export class TemplateHeaderEditorComponent implements OnInit{
 
   ngOnInit(): void {
   }
-
-  /*getCSS(cell: Cell): string[] {
-    return [
-      `col-${cell.width}`
-    ];
-  }*/
 
   getAttribute(name: string | undefined, metaEntityMap: Map<string, MetaEntity>, metaEntityName: string): MetaAttribute | undefined {
     if(name && metaEntityMap && metaEntityName) {

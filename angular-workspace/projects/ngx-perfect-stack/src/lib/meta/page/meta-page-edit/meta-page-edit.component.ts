@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable, of, switchMap, tap} from 'rxjs';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Observable, of, Subscription, switchMap, tap} from 'rxjs';
 import {
   Controller,
   DataQuery,
@@ -23,7 +23,7 @@ import {TemplateLocationType} from '../../../domain/meta.page';
     styleUrls: ['./meta-page-edit.component.css'],
     standalone: false
 })
-export class MetaPageEditComponent implements OnInit {
+export class MetaPageEditComponent implements OnInit, OnDestroy {
 
   activeTab = 'template';
 
@@ -33,6 +33,8 @@ export class MetaPageEditComponent implements OnInit {
   dataQueryList: DataQuery[];
   templates: Template[];
   controllers: Controller[];
+
+  private formChangesSub?: Subscription;
 
   metaPageForm = new UntypedFormGroup({
     name: new UntypedFormControl(''),
@@ -56,6 +58,13 @@ export class MetaPageEditComponent implements OnInit {
         this.controllers = metaPage.controllers ? metaPage.controllers : [];
         this.templates = metaPage.templates;
         this.metaPageForm.patchValue(metaPage);
+        this.metaPageService.currentMetaPage$.next(metaPage);
+
+        this.formChangesSub?.unsubscribe();
+        this.formChangesSub = this.metaPageForm.valueChanges.subscribe(val => {
+          Object.assign(metaPage, val);
+          this.metaPageService.currentMetaPage$.next(metaPage);
+        });
       }));
     }));
   }
@@ -66,6 +75,11 @@ export class MetaPageEditComponent implements OnInit {
 
   loadMetaPage() {
     return this.metaPageService.findById(this.metaPageName);
+  }
+
+  ngOnDestroy(): void {
+    this.formChangesSub?.unsubscribe();
+    this.metaPageService.currentMetaPage$.next(null);
   }
 
   onAddTemplate() {

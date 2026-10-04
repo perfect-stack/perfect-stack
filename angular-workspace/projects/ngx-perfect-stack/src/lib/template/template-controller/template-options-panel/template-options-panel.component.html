@@ -1,15 +1,32 @@
 @if (metaEntityMap$ | async; as metaEntityMap) {
-  <div class="alert alert-info" [ngClass]="{'glowing-border': selected}" (click)="onClick(metaEntityMap, $event)">
-    <div class="d-flex justify-content-between">
-      <div class="d-flex">
-        <div class="material-symbols-outlined me-2" (click)="openTemplateOptions(metaEntityMap, $event)">settings</div>
-        <!--<div class="h4">{{template.type}} - </div>-->
-        <input class="form-control me-2" type="text" [(ngModel)]="template.templateHeading">
-        <!--<div>
-        {{template.binding}}:{{template.metaEntityName}}&nbsp;-&nbsp;{{template.type}}<ng-container *ngIf="template.type === 'table'">, order by: {{template.orderByName}}, {{template.orderByDir}}</ng-container>
-      </div>-->
+  <div class="template-header-bar d-flex align-items-center justify-content-between px-3 py-2"
+       [class.selected]="selected"
+       (click)="onClick(metaEntityMap, $event)">
+    <div class="d-flex align-items-center flex-grow-1 me-3">
+      <span class="material-symbols-outlined text-muted me-2 template-type-icon">
+        @switch (template.type) {
+          @case ('table') { table_chart }
+          @case ('header') { view_headline }
+          @default { feed }
+        }
+      </span>
+      <input class="form-control form-control-sm template-title-input me-2"
+             type="text"
+             [(ngModel)]="template.templateHeading"
+             placeholder="Template heading..."
+             (click)="$event.stopPropagation()">
+      <span class="badge rounded-pill template-badge">
+        {{template.type | titlecase}} &bull; {{template.metaEntityName}}
+      </span>
     </div>
-    <lib-tool-drop-zone [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
+    <div class="d-flex align-items-center">
+      <lib-tool-drop-zone class="me-2" [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
+      <button type="button"
+              class="btn-icon-round text-secondary"
+              title="Template Settings"
+              (click)="openTemplateOptions(metaEntityMap, $event)">
+        <span class="material-symbols-outlined">settings</span>
+      </button>
+    </div>
   </div>
-</div>
 }

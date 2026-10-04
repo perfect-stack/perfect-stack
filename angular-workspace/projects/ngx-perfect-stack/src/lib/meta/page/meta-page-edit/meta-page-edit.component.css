@@ -1,2 +1,53 @@
 /*@import "../../../library-styles.scss";*/
 
+.sticky-sidebar {
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  align-self: flex-start;
+  padding-left: 0.5rem;
+}
+
+.tab-content-panel {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 1.5rem;
+}
+
+.sidebar-card {
+  background: #F2F4F7;
+  border: 1px solid #D0D5DD;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+  overflow: hidden;
+}
+
+.sidebar-card-header {
+  background-color: #E4E7EC;
+  border-bottom: 1px solid #D0D5DD;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-icon {
+  font-size: 18px;
+  color: #475467;
+}
+
+.header-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1D2939 !important;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.sidebar-card-body {
+  padding: 12px;
+}

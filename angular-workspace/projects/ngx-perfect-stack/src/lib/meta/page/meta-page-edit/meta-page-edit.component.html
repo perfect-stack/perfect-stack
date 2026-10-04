@@ -31,42 +31,46 @@
     </form>
   </div>
 
-  <div class="container-border-radius m-3 p-3">
-    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" [destroyOnHide]="false" class="nav-tabs mb-3">
-      <li [ngbNavItem]="'template'">
-        <button ngbNavLink>Template</button>
-        <ng-template ngbNavContent>
-          <div class="row">
-            <div class="col-10">
-              <h4>Tools</h4>
-              <div class="pb-2">
+  <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" [destroyOnHide]="false" class="nav-tabs mx-3">
+    <li [ngbNavItem]="'template'">
+      <button ngbNavLink>Template</button>
+      <ng-template ngbNavContent>
+        <div class="row">
+          <div class="col-10 pe-3">
+            @for (nextTemplate of templates; track nextTemplate) {
+              <div class="mb-4">
+                <lib-template-controller [template]="nextTemplate"></lib-template-controller>
+              </div>
+            }
+          </div>
+          <div class="col-2 sticky-sidebar">
+            <div class="sidebar-card mb-3">
+              <div class="sidebar-card-header">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="material-symbols-outlined header-icon">handyman</span>
+                  <span class="header-title">Tools</span>
+                </div>
+              </div>
+              <div class="sidebar-card-body">
                 <lib-tool-palette></lib-tool-palette>
               </div>
-              <h4>Templates</h4>
-              @for (nextTemplate of templates; track nextTemplate) {
-                <div class="mb-4">
-                  <lib-template-controller [template]="nextTemplate"></lib-template-controller>
-                </div>
-              }
             </div>
-            <div class="col-2">
-              <lib-property-sheet></lib-property-sheet>
-              <lib-attribute-palette></lib-attribute-palette>
-            </div>
+            <lib-property-sheet></lib-property-sheet>
+            <lib-attribute-palette></lib-attribute-palette>
           </div>
-        </ng-template>
-      </li>
-      <li [ngbNavItem]="'data'">
-        <button ngbNavLink>Data</button>
-        <ng-template ngbNavContent>
-          <lib-data-query-map [dataQueryList]="dataQueryList"></lib-data-query-map>
-          <lib-controller-list [controllers]="controllers"></lib-controller-list>
-        </ng-template>
-      </li>
-    </ul>
+        </div>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="'data'">
+      <button ngbNavLink>Data</button>
+      <ng-template ngbNavContent>
+        <lib-data-query-map [dataQueryList]="dataQueryList"></lib-data-query-map>
+        <lib-controller-list [controllers]="controllers"></lib-controller-list>
+      </ng-template>
+    </li>
+  </ul>
 
-    <div [ngbNavOutlet]="nav"></div>
-  </div>
+  <div [ngbNavOutlet]="nav" class="tab-content-panel mx-3"></div>
 
   <div class="d-flex my-5 px-3">
     <button class="btn btn-danger" (click)="onDelete(metaPage)">Delete</button>

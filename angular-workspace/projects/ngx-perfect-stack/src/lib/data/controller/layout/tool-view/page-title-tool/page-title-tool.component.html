@@ -1,6 +1,6 @@
-<div class="pt-2">
+<div [class.pt-2]="!editorMode" [class.page-title-editor-wrapper]="editorMode">
   @if (editorMode) {
-    <h1 (click)="onEditorModeClick()" [attr.data-testid]="'page-title'">Page title here</h1>
+    <h1 class="page-title-editor-text" (click)="onEditorModeClick()" [attr.data-testid]="'page-title'" title="Click to edit Page Title properties">{{editorTitle}}</h1>
   } @else {
     @if (isStaticTitle()) {
       <h1 [attr.data-testid]="'page-title'">{{this.ctx.metaPage.title}}</h1>

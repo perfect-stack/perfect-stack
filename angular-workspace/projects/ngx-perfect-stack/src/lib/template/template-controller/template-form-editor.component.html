@@ -17,16 +17,20 @@
           </div>
         }
         @if (getTotalWidth(nextRow) < 12) {
-          <div class="add-cell cell-highlight hover-highlight rounded-2 d-flex align-items-center justify-content-center" (click)="onAddCell(nextRow)">
-            <div class="material-symbols-outlined no_selection">add_circle_outline</div>
+          <div class="add-cell d-flex align-items-center justify-content-center" (click)="onAddCell(nextRow)" title="Add Cell">
+            <div class="material-symbols-outlined no_selection">add</div>
           </div>
         }
       </div>
     }
-    <div class="d-flex my-2">
-      <button class="btn btn-outline-success me-2" (click)="onAddRow(1)">Add Row</button>
-      <button class="btn btn-outline-success me-2" (click)="onAddRow(5)">x5</button>
-      <button class="btn btn-outline-success" (click)="onAddRow(10)">x10</button>
+    <div class="d-flex align-items-center my-3">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Add Rows">
+        <button type="button" class="btn btn-outline-secondary d-flex align-items-center" (click)="onAddRow(1)">
+          <span class="material-symbols-outlined me-1" style="font-size: 16px;">add</span> Add Row
+        </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="onAddRow(5)">+5</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="onAddRow(10)">+10</button>
+      </div>
       <div class="flex-grow-1"></div>
     </div>
   }

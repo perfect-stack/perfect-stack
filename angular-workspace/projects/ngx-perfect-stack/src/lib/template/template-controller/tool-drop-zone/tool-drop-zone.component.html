@@ -1,10 +1,31 @@
+@if (tool || isDragging) {
+  <div class="tool-component-drop-zone d-flex"
+       [class.empty-drop-slot]="!tool"
+       [class.occupied-tool-slot]="tool"
+       [class.justify-content-center]="!tool || templateLocationType === 'BottomMiddle'"
+       [class.justify-content-start]="tool && templateLocationType === 'BottomLeft'"
+       [class.justify-content-end]="tool && (templateLocationType === 'BottomRight' || templateLocationType === 'TopRight')"
+       my-dropzone
+       (myDropZoneDroppedEvent)="onDropEvent($event)">
+    @if (!tool) {
+      <div class="drop-hint-content">
+        <span class="material-symbols-outlined drop-icon">add_circle</span>
+        <div class="d-flex flex-column align-items-center lh-sm">
+          <span class="drop-title">Drop Tool Here</span>
+          @if (getLocationLabel()) {
+            <span class="location-tag">{{getLocationLabel()}}</span>
+          }
+        </div>
+      </div>
+    }
 
-<div class="tool-component-drop-zone drag-border" my-dropzone (myDropZoneDroppedEvent)="onDropEvent($event)">
-  @if (!tool) {
-    <span class="small text-secondary"><i>add tool here...</i></span>
-  }
-
-  @if (tool) {
-    <lib-tool-view [tool]="tool" [editorMode]="editorMode"></lib-tool-view>
-  }
-</div>
+    @if (tool) {
+      <div class="occupied-tool-wrapper position-relative d-inline-flex align-items-center">
+        <lib-tool-view [tool]="tool" [editorMode]="editorMode"></lib-tool-view>
+        @if (editorMode) {
+          <span class="material-symbols-outlined remove-tool-btn ms-1" title="Remove tool" (click)="onRemoveTool($event)">close</span>
+        }
+      </div>
+    }
+  </div>
+}

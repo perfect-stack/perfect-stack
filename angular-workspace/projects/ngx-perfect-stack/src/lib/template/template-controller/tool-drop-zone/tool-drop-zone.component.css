@@ -1,7 +1,108 @@
+:host {
+  display: block;
+}
+
+:host(:empty) {
+  display: none;
+}
 
 .tool-component-drop-zone {
-  height: 3rem;
-  padding: 4px;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  min-height: 2rem;
+  padding: 2px 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.empty-drop-slot {
+  border: 2px dashed #056EBA;
+  border-radius: 8px;
+  background-color: #F0F7FF;
+  min-height: 48px;
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #056EBA;
+  box-shadow: 0 0 0 3px rgba(5, 110, 186, 0.15);
+  animation: pulse-drop-target 1.8s infinite ease-in-out;
+  cursor: copy;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@keyframes pulse-drop-target {
+  0%, 100% {
+    border-color: #056EBA;
+    background-color: #F0F7FF;
+    box-shadow: 0 0 0 3px rgba(5, 110, 186, 0.15);
+  }
+  50% {
+    border-color: #027A48;
+    background-color: #ECFDF3;
+    box-shadow: 0 0 0 5px rgba(2, 122, 72, 0.2);
+  }
+}
+
+.empty-drop-slot:hover,
+.empty-drop-slot.over {
+  border-color: #027A48 !important;
+  background-color: #ECFDF3 !important;
+  color: #027A48 !important;
+  transform: scale(1.02);
+  box-shadow: 0 0 0 6px rgba(2, 122, 72, 0.25) !important;
+}
+
+.drop-hint-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.drop-icon {
+  font-size: 24px;
+  color: #056EBA;
+}
+
+.empty-drop-slot:hover .drop-icon,
+.empty-drop-slot.over .drop-icon {
+  color: #027A48;
+}
+
+.drop-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.location-tag {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+}
+
+.occupied-tool-wrapper {
+  background-color: #FFFFFF;
+  border: 1px solid #EAECF0;
+  border-radius: 6px;
+  padding: 4px 8px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+.remove-tool-btn {
+  font-size: 16px;
+  color: #98A2B3;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 2px;
+  transition: all 0.15s ease;
+}
+
+.remove-tool-btn:hover {
+  color: #D92D20;
+  background-color: #FEF3F2;
 }

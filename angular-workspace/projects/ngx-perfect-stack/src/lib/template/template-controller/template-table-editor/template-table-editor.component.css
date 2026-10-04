@@ -1,5 +1,5 @@
 .hover-highlight:hover {
-  background: lavender;
+  background: #F0F7FF;
 }
 
 .wrapper {
@@ -19,7 +19,7 @@
 /**************************************/
 
 .drag-border {
-  border: #ff525b dashed 2px;
+  border: #056EBA dashed 2px;
 }
 
 .drag-handle {

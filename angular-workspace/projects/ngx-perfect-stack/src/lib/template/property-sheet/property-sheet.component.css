@@ -1,10 +1,65 @@
+.sidebar-card {
+  background: #F2F4F7;
+  border: 1px solid #D0D5DD;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+  overflow: hidden;
+}
+
+.sidebar-card-header {
+  background-color: #E4E7EC;
+  border-bottom: 1px solid #D0D5DD;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-icon {
+  font-size: 18px;
+  color: #475467;
+}
+
+.header-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1D2939 !important;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.sidebar-card-body {
+  padding: 12px;
+}
+
+.property-row {
+  font-size: 12px;
+}
 
 .property-name {
-  background-color: #444444;
-  color: #dddddd;
+  color: #344054;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: transparent !important;
 }
 
 .property-editor {
-  height: 24px;
-  border: #2c2c2c solid 1px;
+  height: 28px;
+  font-size: 12px;
+  color: #101828;
+  background-color: #FFFFFF !important;
+  border: 1px solid #D0D5DD;
+  border-radius: 4px;
+  padding: 2px 6px;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.property-editor:focus {
+  border-color: #056EBA;
+  box-shadow: 0 0 0 2px rgba(5, 110, 186, 0.15);
 }

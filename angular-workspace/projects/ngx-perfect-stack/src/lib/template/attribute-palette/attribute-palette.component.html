@@ -1,11 +1,23 @@
 @if (metaEntity$ | async; as metaEntity) {
-  <h4 class="mt-4">{{metaEntity.name}} attributes</h4>
-  @if (metaEntity && metaEntity.attributes) {
-    @for (attribute of metaEntity.attributes; track attribute) {
-      <div class="draggable-attribute drag-handle" my-draggable [drag-data]="attribute">
-        <span class="material-symbols-outlined align-middle">drag_indicator</span>
-        {{attribute.label}}
+  <div class="sidebar-card mb-3">
+    <div class="sidebar-card-header">
+      <div class="d-flex align-items-center gap-2">
+        <span class="material-symbols-outlined header-icon">data_object</span>
+        <h4 class="header-title mb-0">Entity Attributes</h4>
+      </div>
+      <span class="entity-badge">{{metaEntity.name}}</span>
+    </div>
+    @if (metaEntity && metaEntity.attributes) {
+      <div class="sidebar-card-body">
+        <div class="attribute-list">
+          @for (attribute of metaEntity.attributes; track attribute) {
+            <div class="draggable-attribute drag-handle" my-draggable [drag-data]="attribute">
+              <span class="material-symbols-outlined drag-icon">drag_indicator</span>
+              <span class="attribute-label text-truncate">{{attribute.label}}</span>
+            </div>
+          }
+        </div>
       </div>
     }
-  }
+  </div>
 }
