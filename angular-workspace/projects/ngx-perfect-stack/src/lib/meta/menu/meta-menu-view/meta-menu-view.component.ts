@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Observable, of, tap} from 'rxjs';
-import {ActivatedRoute, Router} from '@angular/router';
-import {MenuItem, MetaMenu} from '../../../domain/meta.menu';
-import {MetaMenuService} from '../meta-menu-service/meta-menu.service';
+import { Observable, of, tap } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MenuItem, Menu, MetaMenu, OpenIn } from '../../../domain/meta.menu';
+import { MetaMenuService } from '../meta-menu-service/meta-menu.service';
 
 @Component({
     selector: 'lib-meta-menu-view',
@@ -53,7 +53,7 @@ export class MetaMenuViewComponent implements OnInit {
   getMenuItem(metaMenu: MetaMenu, colIdx: number, rowIdx: number) {
     let menuItem = null;
     const menu = this.getMenu(metaMenu, colIdx);
-    if(rowIdx < menu.items.length) {
+    if(menu && rowIdx < menu.items.length) {
       menuItem = menu.items[rowIdx];
     }
     return menuItem;
@@ -69,6 +69,14 @@ export class MetaMenuViewComponent implements OnInit {
     }
   }
 
+  onCancel(metaMenu?: MetaMenu) {
+    if (metaMenu) {
+      this.onBack(this.getMenuItem(metaMenu, 0, 0));
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
   onMenuAdded(metaMenu: MetaMenu, colIdx: number) {
     const newMenu = {
       label: 'Label',
@@ -76,7 +84,8 @@ export class MetaMenuViewComponent implements OnInit {
         label: 'Label',
         route: '/route/here',
         editable: true,
-        roles: []
+        roles: [],
+        openIn: OpenIn.Current
       }]
     };
 
@@ -85,6 +94,10 @@ export class MetaMenuViewComponent implements OnInit {
 
     this.examine(metaMenu);
     this.metaMenu$ = of(metaMenu);
+  }
+
+  onAddColumn(metaMenu: MetaMenu) {
+    this.onMenuAdded(metaMenu, metaMenu.menuList.length);
   }
 
   onMenuDeleted(metaMenu: MetaMenu, colIdx: number) {
@@ -99,7 +112,7 @@ export class MetaMenuViewComponent implements OnInit {
     const canMove = targetColIdx >= 0 && targetColIdx <= (metaMenu.menuList.length - 1);
     if(canMove) {
       const sourceMenu = metaMenu.menuList[colIdx];
-      const targetMenu = metaMenu.menuList[targetColIdx]
+      const targetMenu = metaMenu.menuList[targetColIdx];
       metaMenu.menuList[targetColIdx] = sourceMenu;
       metaMenu.menuList[colIdx] = targetMenu;
     }
@@ -117,6 +130,17 @@ export class MetaMenuViewComponent implements OnInit {
     this.metaMenu$ = of(metaMenu);
   }
 
+  onAddItem(metaMenu: MetaMenu, colIdx: number) {
+    const newItem = new MenuItem();
+    newItem.label = 'Label';
+    newItem.route = '/route/here';
+    newItem.openIn = OpenIn.Current;
+    const menu = metaMenu.menuList[colIdx];
+    menu.items.push(newItem);
+    this.examine(metaMenu);
+    this.metaMenu$ = of(metaMenu);
+  }
+
   onMenuItemDeleted(metaMenu: MetaMenu, colIdx: number, rowIdx: number) {
     const menu = metaMenu.menuList[colIdx];
     menu.items.splice(rowIdx, 1);
@@ -130,7 +154,7 @@ export class MetaMenuViewComponent implements OnInit {
     const canMove = targetRowIdx >= 0 && targetRowIdx <= (menu.items.length - 1);
     if(canMove) {
       const sourceMenuItem = menu.items[rowIdx];
-      const targetMenuItem = menu.items[targetRowIdx]
+      const targetMenuItem = menu.items[targetRowIdx];
       menu.items[targetRowIdx] = sourceMenuItem;
       menu.items[rowIdx] = targetMenuItem;
     }
@@ -162,7 +186,7 @@ export class MetaMenuViewComponent implements OnInit {
 
   onSaveMetaMenu(metaMenu: MetaMenu) {
     this.metaMenuService.update(metaMenu).subscribe(() => {
-      console.log('Meta Menu updated')
+      console.log('Meta Menu updated');
     });
   }
 }

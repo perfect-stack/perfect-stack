@@ -1,13 +1,79 @@
-.wrapper {
+.menu-header-bar {
   position: relative;
+  padding: 10px 14px;
+  background-color: #E4E7EC;
+  border-bottom: 1px solid #D0D5DD;
+  min-height: 48px;
+  box-sizing: border-box;
 }
 
-.overlay {
+.header-title-area {
+  min-width: 0;
+  flex: 1;
+}
+
+.header-icon {
+  font-size: 18px;
+  color: #475467;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1D2939 !important;
+  margin: 0;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-badge {
+  background-color: #ffffff;
+  color: #475467;
+  border: 1px solid #D0D5DD;
+  font-weight: 500;
+  font-size: 11px;
+  padding: 2px 7px;
+  flex-shrink: 0;
+}
+
+.header-actions-overlay {
   position: absolute;
-  top: 0;
-  right: 0;
-  /*background-color: rgba(0,0,0,0.5); !* Black background with opacity *!*/
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border: 1px solid #EAECF0;
+  border-radius: 6px;
+  padding: 2px 4px;
+  box-shadow: 0 2px 4px rgba(16, 24, 40, 0.08);
 }
 
+.action-icon {
+  font-size: 18px;
+  color: #667085;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-icon:hover {
+  color: #056EBA;
+  background: #EFF8FF;
+}
+
+.action-icon.action-delete:hover {
+  color: #D92D20;
+  background: #FEF3F2;
+}

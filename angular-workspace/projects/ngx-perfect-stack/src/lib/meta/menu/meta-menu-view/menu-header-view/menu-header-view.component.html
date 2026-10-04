@@ -1,15 +1,16 @@
 @if (menu) {
-  <div class="wrapper">
-    <div>
-      {{menu.label}}
+  <div class="menu-header-bar d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2 header-title-area">
+      <span class="material-symbols-outlined header-icon">folder</span>
+      <span class="header-title">{{menu.label}}</span>
     </div>
     @if (mouseActive) {
-      <div class="overlay">
-        <span class="material-symbols-outlined" (click)="onMove(-1)">keyboard_arrow_left</span>
-        <span class="material-symbols-outlined" (click)="onMove(+1)">keyboard_arrow_right</span>
-        <span class="material-symbols-outlined" (click)="onAdd()">add</span>
-        <span class="material-symbols-outlined" (click)="onDelete()">delete</span>
-        <span class="material-symbols-outlined" (click)="onEditMenu(content)">edit</span>
+      <div class="header-actions-overlay">
+        <span class="material-symbols-outlined action-icon" (click)="onMove(-1)" title="Move Left">keyboard_arrow_left</span>
+        <span class="material-symbols-outlined action-icon" (click)="onMove(+1)" title="Move Right">keyboard_arrow_right</span>
+        <span class="material-symbols-outlined action-icon" (click)="onAdd()" title="Add Menu Left">add</span>
+        <span class="material-symbols-outlined action-icon" (click)="onEditMenu(content)" title="Edit Menu">edit</span>
+        <span class="material-symbols-outlined action-icon action-delete" (click)="onDelete()" title="Delete Menu">delete</span>
       </div>
     }
   </div>
@@ -18,14 +19,12 @@
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Edit Menu</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
     <form [formGroup]="menuForm" (ngSubmit)="modal.close('Save click')">
-      <div class="form-group">
-        <label for="label">Label</label>
+      <div class="form-group mb-3">
+        <label class="form-label" for="label">Label</label>
         <input id="label" class="form-control" [formControlName]="'label'">
       </div>
     </form>

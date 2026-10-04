@@ -1,9 +1,9 @@
 @if (menuItem) {
-  <div class="wrapper">
-    <div>
-      <div>{{menuItem.label}}</div>
-      <div class="small d-flex align-items-center">
-        <span>{{menuItem.route}}</span>
+  <div class="item-card">
+    <div class="item-content">
+      <div class="item-label">{{menuItem.label}}</div>
+      <div class="item-route d-flex align-items-center">
+        <span class="text-truncate">{{menuItem.route}}</span>
         @if (isOpenDifferentToCurrent()) {
           <span class="material-symbols-outlined open-in-icon ms-1"
                 [ngbTooltip]="getOpenInTooltip()"
@@ -14,17 +14,19 @@
       </div>
     </div>
     @if (mouseActive) {
-      <div class="overlay">
-        <div class="d-flex">
-          <span class="material-symbols-outlined" (click)="onMenuMoved(-1)">keyboard_arrow_left</span>
-          <span class="material-symbols-outlined" (click)="onMove(-1)">keyboard_arrow_up</span>
-          <span class="material-symbols-outlined" (click)="onMove(+1)">keyboard_arrow_down</span>
-          <span class="material-symbols-outlined" (click)="onMenuMoved(+1)">keyboard_arrow_right</span>
-        </div>
-        <div class="d-flex justify-content-center">
-          <span class="material-symbols-outlined" (click)="onAdd()">add</span>
-          <span class="material-symbols-outlined" (click)="onEditMenuItem(content)">edit</span>
-          <span class="material-symbols-outlined" (click)="onDelete()">delete</span>
+      <div class="item-actions-row">
+        <div class="item-actions-overlay">
+          <div class="d-flex align-items-center">
+            <span class="material-symbols-outlined action-icon" (click)="onMenuMoved(-1)" title="Move Left">keyboard_arrow_left</span>
+            <span class="material-symbols-outlined action-icon" (click)="onMove(-1)" title="Move Up">keyboard_arrow_up</span>
+            <span class="material-symbols-outlined action-icon" (click)="onMove(+1)" title="Move Down">keyboard_arrow_down</span>
+            <span class="material-symbols-outlined action-icon" (click)="onMenuMoved(+1)" title="Move Right">keyboard_arrow_right</span>
+          </div>
+          <div class="action-divider"></div>
+          <div class="d-flex align-items-center">
+            <span class="material-symbols-outlined action-icon" (click)="onEditMenuItem(content)" title="Edit Item">edit</span>
+            <span class="material-symbols-outlined action-icon action-delete" (click)="onDelete()" title="Delete Item">delete</span>
+          </div>
         </div>
       </div>
     }
@@ -34,22 +36,20 @@
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Edit Menu Item</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
     <form [formGroup]="menuItemForm" (ngSubmit)="modal.close('Save click')">
       <div class="form-group mb-3">
-        <label for="label">Label</label>
+        <label class="form-label" for="label">Label</label>
         <input id="label" class="form-control" [formControlName]="'label'">
       </div>
       <div class="form-group mb-3">
-        <label for="route">Route</label>
+        <label class="form-label" for="route">Route</label>
         <input id="route" class="form-control" [formControlName]="'route'">
       </div>
       <div class="form-group">
-        <label for="openIn">Open In</label>
+        <label class="form-label" for="openIn">Open In</label>
         <select id="openIn" class="form-select" [formControlName]="'openIn'">
           @for (option of openInOptions; track option) {
             <option [value]="option">{{option}}</option>
