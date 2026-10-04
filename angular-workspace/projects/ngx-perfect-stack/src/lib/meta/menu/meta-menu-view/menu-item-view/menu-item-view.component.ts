@@ -58,6 +58,30 @@ export class MenuItemViewComponent implements OnInit {
     this.mouseActive = false;
   }
 
+  isOpenDifferentToCurrent(): boolean {
+    return !!this.menuItem && !!this.menuItem.openIn && this.menuItem.openIn !== OpenIn.Current;
+  }
+
+  getOpenInIcon(): string {
+    if (this.menuItem?.openIn === OpenIn.NewWindow) {
+      return 'new_window';
+    }
+    if (this.menuItem?.openIn === OpenIn.NewTab) {
+      return 'open_in_new';
+    }
+    return '';
+  }
+
+  getOpenInTooltip(): string {
+    if (this.menuItem?.openIn === OpenIn.NewWindow) {
+      return 'Opens in a new window';
+    }
+    if (this.menuItem?.openIn === OpenIn.NewTab) {
+      return 'Opens in a new tab';
+    }
+    return '';
+  }
+
   onEditMenuItem(content: any) {
     if(this.menuItem) {
       this.menuItemForm.patchValue({

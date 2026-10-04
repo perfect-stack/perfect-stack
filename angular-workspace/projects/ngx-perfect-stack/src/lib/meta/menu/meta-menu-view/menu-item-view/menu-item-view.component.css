@@ -11,3 +11,9 @@
   cursor: pointer; /* Add a pointer on hover */
 }
 
+.open-in-icon {
+  font-size: 15px;
+  color: #6c757d;
+  cursor: help;
+  vertical-align: middle;
+}

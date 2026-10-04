@@ -2,7 +2,16 @@
   <div class="wrapper">
     <div>
       <div>{{menuItem.label}}</div>
-      <div class="small">{{menuItem.route}}</div>
+      <div class="small d-flex align-items-center">
+        <span>{{menuItem.route}}</span>
+        @if (isOpenDifferentToCurrent()) {
+          <span class="material-symbols-outlined open-in-icon ms-1"
+                [ngbTooltip]="getOpenInTooltip()"
+                placement="top">
+            {{getOpenInIcon()}}
+          </span>
+        }
+      </div>
     </div>
     @if (mouseActive) {
       <div class="overlay">
