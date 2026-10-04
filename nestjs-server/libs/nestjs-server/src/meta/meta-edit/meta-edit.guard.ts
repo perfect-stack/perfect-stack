@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   Injectable,
   Logger,
+  Optional,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
@@ -12,11 +13,14 @@ import { META_EDIT_ACTION_PERMIT } from './meta-edit-action-permit.decorator';
 @Injectable()
 export class MetaEditGuard implements CanActivate {
   private readonly logger = new Logger(MetaEditGuard.name);
+  protected readonly reflector: Reflector;
 
   constructor(
-    protected readonly reflector: Reflector,
+    @Optional() reflector: Reflector,
     protected readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.reflector = reflector || new Reflector();
+  }
 
   canActivate(context: ExecutionContext): boolean {
     const controlValue = this.reflector.getAllAndOverride<string>(
