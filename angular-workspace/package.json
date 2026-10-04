@@ -3,8 +3,6 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start:demo-client": "ng serve demo-client",
-    "start:capture-client": "ng serve capture-client --ssl",
     "build": "ng build ngx-perfect-stack",
     "build:lib": "ng build ngx-perfect-stack",
     "build:lib:yalc": "nodemon --watch projects/ngx-perfect-stack --ext ts,html,scss,css,json --exec \"ng build ngx-perfect-stack && cd dist/ngx-perfect-stack && yalc push\"",

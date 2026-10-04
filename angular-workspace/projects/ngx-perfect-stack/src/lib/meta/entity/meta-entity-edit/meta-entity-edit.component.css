@@ -1,0 +1,43 @@
+.tab-content-panel {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 1.5rem;
+}
+
+/* Add Attribute End Card */
+.add-attribute-end-card {
+  border: 2px dashed #D0D5DD;
+  border-radius: 8px;
+  background-color: #FAFAFB;
+  transition: all 0.2s ease-in-out;
+}
+
+.add-attribute-end-card:hover {
+  border-color: #056EBA;
+  background-color: #F8FBFE;
+}
+
+.rule-badge {
+  padding: 0.35em 0.55em;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+.action-icon {
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+  transition: transform 0.15s ease-in-out;
+}
+
+.action-icon:hover {
+  transform: scale(1.15);
+}
+
+.add-rule-btn {
+  padding: 0.15rem 0.4rem;
+  line-height: 1;
+}

@@ -14,6 +14,8 @@ import {AttributeDeleteDialogComponent} from '../attribute-delete-dialog/attribu
 })
 export class MetaEntityViewComponent implements OnInit {
 
+  activeTab = 'attributes';
+
   public metaName: string | null;
   public metaEntity$: Observable<MetaEntity>;
 

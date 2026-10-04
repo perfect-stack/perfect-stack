@@ -31,6 +31,8 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 })
 export class MetaEntityEditComponent implements OnInit {
 
+  activeTab = 'attributes';
+
   public metaName: string | null;
   public metaEntity$: Observable<MetaEntity>;
 
@@ -125,6 +127,10 @@ export class MetaEntityEditComponent implements OnInit {
       rules: this.fb.array([])
       // discriminator: [{}]  // Don't add this one here, the way the ngOnInit() in OneToPolyEditComponent works means this will be done when it is needed
     });
+  }
+
+  onDeleteAttributeRow(idx: number) {
+    this.attributes.removeAt(idx);
   }
 
   onSave(metaEntity: MetaEntity) {
