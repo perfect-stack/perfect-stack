@@ -82,12 +82,77 @@ export class MetaPageEditComponent implements OnInit, OnDestroy {
     this.metaPageService.currentMetaPage$.next(null);
   }
 
-  onAddTemplate() {
-    console.log(`Add Template`);
+  onAddTemplate(type: TemplateType = TemplateType.form, index?: number): void {
+    console.log(`Add Template of type: ${type} at index: ${index}`);
+    const defaultEntity = this.templates?.find(t => t.metaEntityName)?.metaEntityName
+      || this.dataQueryList?.[0]?.metaEntityName
+      || 'Person';
+
     const template = new Template();
-    template.metaEntityName = 'Person';
-    template.type = TemplateType.form;
-    this.templates.push(template);
+    template.metaEntityName = defaultEntity;
+    template.type = type;
+    template.locations = {};
+
+    switch (type) {
+      case TemplateType.table:
+        template.templateHeading = `${defaultEntity} Table`;
+        template.cells = [
+          [
+            { width: '12', height: '1' }
+          ]
+        ];
+        template.orderByName = 'UNKNOWN';
+        template.orderByDir = 'ASC';
+        break;
+      case TemplateType.header:
+        template.templateHeading = `${defaultEntity} Header`;
+        template.cells = [];
+        break;
+      case TemplateType.form:
+      default:
+        template.templateHeading = `${defaultEntity} Form`;
+        template.cells = [
+          [
+            { width: '3', height: '1' },
+            { width: '3', height: '1' },
+            { width: '3', height: '1' },
+            { width: '3', height: '1' },
+          ],
+          [
+            { width: '6', height: '1' },
+            { width: '6', height: '1' },
+          ],
+        ];
+        break;
+    }
+
+    if (index !== undefined && index >= 0 && index <= this.templates.length) {
+      this.templates.splice(index, 0, template);
+    } else {
+      this.templates.push(template);
+    }
+  }
+
+  onDeleteTemplate(template: Template, index?: number): void {
+    const heading = template.templateHeading || `${template.type || 'Template'}`;
+    const modalRef = this.modalService.open(MessageDialogComponent);
+    const modalComponent: MessageDialogComponent = modalRef.componentInstance;
+    modalComponent.title = 'Delete Template Confirmation';
+    modalComponent.text = `Are you sure you want to delete the template "${heading}"? It cannot be undone.`;
+    modalComponent.actions = [
+      {name: 'Cancel', style: 'btn btn-outline-primary'},
+      {name: 'Delete', style: 'btn btn-danger'},
+    ];
+
+    modalRef.closed.subscribe((closedResult) => {
+      console.log(`Message Dialog closedResult = ${closedResult}`);
+      if (closedResult === 'Delete') {
+        const targetIndex = index !== undefined ? index : this.templates.indexOf(template);
+        if (targetIndex >= 0) {
+          this.templates.splice(targetIndex, 1);
+        }
+      }
+    });
   }
 
   onCancel() {
@@ -118,7 +183,7 @@ export class MetaPageEditComponent implements OnInit, OnDestroy {
 
   onDelete(metaPage: MetaPage) {
     console.log(`Delete metaPage: ${metaPage.name}`);
-    const modalRef = this.modalService.open(MessageDialogComponent)
+    const modalRef = this.modalService.open(MessageDialogComponent);
     const modalComponent: MessageDialogComponent = modalRef.componentInstance;
     modalComponent.title = 'Delete Meta Page Confirmation';
     modalComponent.text = `This action will delete the Meta Page ${metaPage.name}. It cannot be undone.`;
@@ -147,6 +212,10 @@ export class MetaPageEditComponent implements OnInit, OnDestroy {
 
   get TemplateLocationType() {
     return TemplateLocationType;
+  }
+
+  get TemplateType() {
+    return TemplateType;
   }
 
 }

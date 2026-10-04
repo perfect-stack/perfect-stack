@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Template, TemplateLocationType} from '../../../domain/meta.page';
 import {TemplateOptionsModalComponent} from './template-options-modal/template-options-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -18,6 +18,8 @@ export class TemplateOptionsPanelComponent implements OnInit {
   @Input()
   template: Template;
 
+  @Output()
+  deleteTemplate = new EventEmitter<Template>();
 
   metaEntityMap$ = this.metaEntityService.metaEntityMap$;
   selected = false;
@@ -38,6 +40,11 @@ export class TemplateOptionsPanelComponent implements OnInit {
   openTemplateOptions(metaEntityMap: Map<string, MetaEntity>, $event?: Event) {
     $event?.stopPropagation();
     this.onClick(metaEntityMap, $event);
+  }
+
+  onDeleteTemplate($event: Event) {
+    $event?.stopPropagation();
+    this.deleteTemplate.emit(this.template);
   }
 
   onClick(metaEntityMap: Map<string, MetaEntity>, $event?: Event) {

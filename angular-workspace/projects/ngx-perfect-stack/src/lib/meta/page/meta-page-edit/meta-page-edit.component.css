@@ -51,3 +51,16 @@
 .sidebar-card-body {
   padding: 12px;
 }
+
+/* Add Template End Card */
+.add-template-end-card {
+  border: 2px dashed #D0D5DD;
+  border-radius: 8px;
+  background-color: #FAFAFB;
+  transition: all 0.2s ease-in-out;
+}
+
+.add-template-end-card:hover {
+  border-color: #056EBA;
+  background-color: #F8FBFE;
+}

@@ -27,6 +27,9 @@ export class TemplateControllerComponent implements OnInit, OnDestroy {
   @Input()
   public template: Template;
 
+  @Output()
+  deleteTemplate = new EventEmitter<Template>();
+
   isDragging = false;
   private dragSub: Subscription;
 
@@ -49,6 +52,10 @@ export class TemplateControllerComponent implements OnInit, OnDestroy {
 
   onToolChanged(): void {
     this.changeDetectorRef.detectChanges();
+  }
+
+  onDeleteTemplate(template: Template): void {
+    this.deleteTemplate.emit(template);
   }
 
   get hasBottomTools(): boolean {

@@ -37,11 +37,44 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-10 pe-3">
-            @for (nextTemplate of templates; track nextTemplate) {
+            @for (nextTemplate of templates; track nextTemplate; let i = $index) {
               <div class="mb-4">
-                <lib-template-controller [template]="nextTemplate"></lib-template-controller>
+                <lib-template-controller [template]="nextTemplate" (deleteTemplate)="onDeleteTemplate($event, i)"></lib-template-controller>
               </div>
             }
+
+            <div class="add-template-end-card text-center p-3 mb-4">
+              <div class="text-muted small mb-2">Append a new section to this page</div>
+              <div ngbDropdown class="d-inline-block">
+                <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1 mx-auto" id="addTemplateBottomDropdown" ngbDropdownToggle>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                  <span>Add Template</span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="addTemplateBottomDropdown" class="shadow-sm">
+                  <button ngbDropdownItem class="d-flex align-items-center gap-2 py-2" (click)="onAddTemplate(TemplateType.form)">
+                    <span class="material-symbols-outlined text-primary" style="font-size: 20px;">article</span>
+                    <div>
+                      <div class="fw-semibold">Form Template</div>
+                      <small class="text-muted">Standard form with editable cells & fields</small>
+                    </div>
+                  </button>
+                  <button ngbDropdownItem class="d-flex align-items-center gap-2 py-2" (click)="onAddTemplate(TemplateType.table)">
+                    <span class="material-symbols-outlined text-success" style="font-size: 20px;">table_chart</span>
+                    <div>
+                      <div class="fw-semibold">Table Template</div>
+                      <small class="text-muted">Tabular layout for list/search results</small>
+                    </div>
+                  </button>
+                  <button ngbDropdownItem class="d-flex align-items-center gap-2 py-2" (click)="onAddTemplate(TemplateType.header)">
+                    <span class="material-symbols-outlined text-info" style="font-size: 20px;">web_asset</span>
+                    <div>
+                      <div class="fw-semibold">Header Template</div>
+                      <small class="text-muted">Top banner or summary header section</small>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="col-2 sticky-sidebar">
             <div class="sidebar-card mb-3">
@@ -75,7 +108,6 @@
   <div class="d-flex my-5 px-3">
     <button class="btn btn-danger" (click)="onDelete(metaPage)">Delete</button>
     <div class="flex-grow-1"></div>
-    <button class="btn btn-outline-success me-2" (click)="onAddTemplate()">Add Template</button>
     <button class="btn btn-outline-primary me-2" (click)="onCancel()">Cancel</button>
     <button class="btn btn-primary" (click)="onSave()">Save</button>
   </div>

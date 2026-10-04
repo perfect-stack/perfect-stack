@@ -1,5 +1,5 @@
 <div class="template-card">
-  <lib-template-options-panel [template]="template"></lib-template-options-panel>
+  <lib-template-options-panel [template]="template" (deleteTemplate)="onDeleteTemplate($event)"></lib-template-options-panel>
 
   <div class="template-body">
     @switch (template.type) {

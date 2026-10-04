@@ -22,10 +22,16 @@
     <div class="d-flex align-items-center">
       <lib-tool-drop-zone class="me-2" [template]="template" [templateLocationType]="TemplateLocationType.TopRight" [editorMode]="true"></lib-tool-drop-zone>
       <button type="button"
-              class="btn-icon-round text-secondary"
+              class="btn-icon-round text-secondary me-1"
               title="Template Settings"
               (click)="openTemplateOptions(metaEntityMap, $event)">
         <span class="material-symbols-outlined">settings</span>
+      </button>
+      <button type="button"
+              class="btn-icon-round text-secondary hover-danger"
+              title="Delete Template"
+              (click)="onDeleteTemplate($event)">
+        <span class="material-symbols-outlined">delete</span>
       </button>
     </div>
   </div>

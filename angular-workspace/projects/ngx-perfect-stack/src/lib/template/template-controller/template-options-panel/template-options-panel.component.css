@@ -74,6 +74,11 @@
   color: #101828;
 }
 
+.btn-icon-round.hover-danger:hover {
+  background: #FEE4E2;
+  color: #D92D20 !important;
+}
+
 .btn-icon-round span {
   font-size: 20px;
 }
