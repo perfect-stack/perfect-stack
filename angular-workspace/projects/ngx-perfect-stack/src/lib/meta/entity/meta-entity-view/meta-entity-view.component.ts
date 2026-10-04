@@ -5,6 +5,7 @@ import {MetaAttribute, MetaEntity} from '../../../domain/meta.entity';
 import {MetaEntityService} from '../meta-entity-service/meta-entity.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AttributeDeleteDialogComponent} from '../attribute-delete-dialog/attribute-delete-dialog.component';
+import {ClientConfigService} from '../../../client/config/client-config.service';
 
 @Component({
     selector: 'app-meta-entity-view',
@@ -18,14 +19,17 @@ export class MetaEntityViewComponent implements OnInit {
 
   public metaName: string | null;
   public metaEntity$: Observable<MetaEntity>;
+  public isMetaEditEnabled$: Observable<boolean>;
 
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly modalService: NgbModal,
-              protected readonly metaEntityService: MetaEntityService) {
+              protected readonly metaEntityService: MetaEntityService,
+              protected readonly clientConfigService: ClientConfigService) {
   }
 
   ngOnInit(): void {
+    this.isMetaEditEnabled$ = this.clientConfigService.isMetaEditEnabled('Entity');
     this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
       return this.metaEntityService.findById(this.metaName);

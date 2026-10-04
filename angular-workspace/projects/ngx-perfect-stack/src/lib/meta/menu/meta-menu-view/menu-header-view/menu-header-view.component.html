@@ -4,7 +4,7 @@
       <span class="material-symbols-outlined header-icon">folder</span>
       <span class="header-title">{{menu.label}}</span>
     </div>
-    @if (mouseActive) {
+    @if (mouseActive && !disabled) {
       <div class="header-actions-overlay">
         <span class="material-symbols-outlined action-icon" (click)="onMove(-1)" title="Move Left">keyboard_arrow_left</span>
         <span class="material-symbols-outlined action-icon" (click)="onMove(+1)" title="Move Right">keyboard_arrow_right</span>

@@ -16,6 +16,7 @@ import {MetaEntityService} from '../../entity/meta-entity-service/meta-entity.se
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MessageDialogComponent} from '../../../utils/message-dialog/message-dialog.component';
 import {TemplateLocationType} from '../../../domain/meta.page';
+import {ClientConfigService} from '../../../client/config/client-config.service';
 
 @Component({
     selector: 'app-meta-page-edit',
@@ -29,6 +30,7 @@ export class MetaPageEditComponent implements OnInit, OnDestroy {
 
   metaPageName: string | null;
   metaPage$: Observable<MetaPage>;
+  public isMetaEditEnabled$: Observable<boolean>;
 
   dataQueryList: DataQuery[];
   templates: Template[];
@@ -47,9 +49,11 @@ export class MetaPageEditComponent implements OnInit, OnDestroy {
               protected readonly router: Router,
               protected modalService: NgbModal,
               protected readonly metaEntityService: MetaEntityService,
-              protected readonly metaPageService: MetaPageService) { }
+              protected readonly metaPageService: MetaPageService,
+              protected readonly clientConfigService: ClientConfigService) { }
 
   ngOnInit(): void {
+    this.isMetaEditEnabled$ = this.clientConfigService.isMetaEditEnabled('Page');
     this.metaPage$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaPageName = params.get('metaPageName');
       const obs = this.metaPageName === '**NEW**' ? this.newMetaPage() : this.loadMetaPage();

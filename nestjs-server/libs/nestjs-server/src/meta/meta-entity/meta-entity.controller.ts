@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PublicApi } from '../../authentication/public-api';
 import { MetaEntity } from '../../domain/meta.entity';
@@ -17,6 +18,9 @@ import { ActionPermit } from '../../authentication/action-permit';
 import { ActionType } from '../../domain/meta.role';
 import { SubjectName } from '../../authentication/subject';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { MetaEditGuard } from '../meta-edit/meta-edit.guard';
+import { MetaEditActionPermit } from '../meta-edit/meta-edit-action-permit.decorator';
+import { MetaEditControlValue } from '../meta-edit/meta-edit-control-value';
 
 @ApiTags('meta')
 @Controller('meta/entity')
@@ -54,6 +58,8 @@ export class MetaEntityController {
     return this.metaEntityService.findOne(metaName);
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Entity)
   @ActionPermit(ActionType.Edit)
   @ApiOperation({
     summary: 'Create a new Meta Entity file',
@@ -77,6 +83,8 @@ export class MetaEntityController {
     return this.metaEntityService.create(metaEntity);
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Entity)
   @ActionPermit(ActionType.Edit)
   @SubjectName('Meta')
   @ApiOperation({
@@ -100,6 +108,8 @@ export class MetaEntityController {
     return this.metaEntityService.update(metaEntity);
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Entity)
   @ActionPermit(ActionType.Delete)
   @ApiOperation({
     summary:
@@ -125,6 +135,8 @@ export class MetaEntityController {
     });
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Entity)
   @ActionPermit(ActionType.Archive)
   @SubjectName('Meta')
   @ApiOperation({

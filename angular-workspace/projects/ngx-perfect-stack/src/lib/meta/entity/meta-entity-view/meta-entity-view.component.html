@@ -100,7 +100,9 @@
                   <td>{{attribute.comparisonField}}</td>
                   <td>{{attribute.comparisonOperator}}</td>
                   <td class="text-center">
-                    <span class="btn-icon text-danger material-symbols-outlined action-icon" (click)="onDeleteAttribute(attribute)" title="Delete attribute">remove_circle</span>
+                    @if (isMetaEditEnabled$ | async) {
+                      <span class="btn-icon text-danger material-symbols-outlined action-icon" (click)="onDeleteAttribute(attribute)" title="Delete attribute">remove_circle</span>
+                    }
                   </td>
                 </tr>
               }
@@ -115,7 +117,7 @@
 
   <div class="d-flex my-5 px-3">
     <div class="flex-grow-1"></div>
-    <button type="button" class="btn btn-outline-primary me-2" (click)="onBack()">Back</button>
-    <button type="button" class="btn btn-primary" (click)="onEdit()">Edit</button>
+    <button type="button" class="btn btn-outline-primary me-2" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onBack()">Back</button>
+    <button type="button" class="btn btn-primary" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onEdit()">Edit</button>
   </div>
 }

@@ -10,6 +10,8 @@ export * from './lib/ngx-perfect-stack-controller-list';
 export * from './lib/authentication/auth-interceptor';
 export * from './lib/authentication/authentication.service';
 export * from './lib/authentication/user/no-auth-user';
+export * from './lib/client/config/client-config.service';
+export * from './lib/domain/meta-edit';
 export * from './lib/data/data-service/data.service';
 export * from './lib/data/controller/layout/layout.component';
 export * from './lib/data/controller/layout/tool-view/tree-tool/tree-tool.component';

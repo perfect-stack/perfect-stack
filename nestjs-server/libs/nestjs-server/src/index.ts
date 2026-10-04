@@ -41,6 +41,12 @@ import { MigrateModule } from './migrate/mirgrate.module';
 import { RuleModule } from './data/rule/rule.module';
 import { SettingsModule } from './settings/settings.module';
 import { SettingsService } from './settings/settings.service';
+import { MetaEditGuard } from './meta/meta-edit/meta-edit.guard';
+import {
+  MetaEditActionPermit,
+  META_EDIT_ACTION_PERMIT,
+} from './meta/meta-edit/meta-edit-action-permit.decorator';
+import { MetaEditControlValue } from './meta/meta-edit/meta-edit-control-value';
 
 export {
   AuthenticationModule,
@@ -48,6 +54,10 @@ export {
   AuditModule,
   PublicApi,
   JwtAuthGuard,
+  MetaEditGuard,
+  MetaEditActionPermit,
+  META_EDIT_ACTION_PERMIT,
+  MetaEditControlValue,
 };
 export { BatchModule, BatchJob, BatchService };
 export { ClientConfigModule, ClientConfigService };

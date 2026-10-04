@@ -14,6 +14,9 @@ export class MenuHeaderViewComponent implements OnInit {
   @Input()
   public menu: Menu | null;
 
+  @Input()
+  public disabled = false;
+
   @Output()
   menuDeleted = new EventEmitter();
 

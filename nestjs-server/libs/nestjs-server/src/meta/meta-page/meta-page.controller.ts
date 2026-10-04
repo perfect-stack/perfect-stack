@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PublicApi } from '../../authentication/public-api';
 import { MetaPageService } from './meta-page.service';
@@ -15,6 +16,9 @@ import { ActionPermit } from '../../authentication/action-permit';
 import { ActionType } from '../../domain/meta.role';
 import { SubjectName } from '../../authentication/subject';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { MetaEditGuard } from '../meta-edit/meta-edit.guard';
+import { MetaEditActionPermit } from '../meta-edit/meta-edit-action-permit.decorator';
+import { MetaEditControlValue } from '../meta-edit/meta-edit-control-value';
 
 @ApiTags('meta')
 @Controller('meta/page')
@@ -52,6 +56,8 @@ export class MetaPageController {
     return this.metaPageService.findOne(metaPageName);
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Page)
   @ActionPermit(ActionType.Edit)
   @SubjectName('Meta')
   @ApiOperation({
@@ -75,6 +81,8 @@ export class MetaPageController {
     return this.metaPageService.create(metaPage);
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Page)
   @ActionPermit(ActionType.Edit)
   @SubjectName('Meta')
   @ApiOperation({
@@ -98,6 +106,8 @@ export class MetaPageController {
     return this.metaPageService.update(metaPage);
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Page)
   @ActionPermit(ActionType.Delete)
   @SubjectName('Meta')
   @ApiOperation({

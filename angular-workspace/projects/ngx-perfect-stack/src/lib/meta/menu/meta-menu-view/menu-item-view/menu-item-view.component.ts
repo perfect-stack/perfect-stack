@@ -17,6 +17,9 @@ export class MenuItemViewComponent implements OnInit {
   @Input()
   public menuItem: MenuItem | null;
 
+  @Input()
+  public disabled = false;
+
   @Output()
   public menuItemAdded = new EventEmitter<MenuItem>();
 

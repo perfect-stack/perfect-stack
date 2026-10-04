@@ -46,7 +46,7 @@
             <div class="add-template-end-card text-center p-3 mb-4">
               <div class="text-muted small mb-2">Append a new section to this page</div>
               <div ngbDropdown class="d-inline-block">
-                <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1 mx-auto" id="addTemplateBottomDropdown" ngbDropdownToggle>
+                <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1 mx-auto" id="addTemplateBottomDropdown" ngbDropdownToggle [disabled]="!(isMetaEditEnabled$ | async)">
                   <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
                   <span>Add Template</span>
                 </button>
@@ -106,9 +106,9 @@
   <div [ngbNavOutlet]="nav" class="tab-content-panel mx-3"></div>
 
   <div class="d-flex my-5 px-3">
-    <button class="btn btn-danger" (click)="onDelete(metaPage)">Delete</button>
+    <button class="btn btn-danger" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onDelete(metaPage)">Delete</button>
     <div class="flex-grow-1"></div>
-    <button class="btn btn-outline-primary me-2" (click)="onCancel()">Cancel</button>
-    <button class="btn btn-primary" (click)="onSave()">Save</button>
+    <button class="btn btn-outline-primary me-2" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onCancel()">Cancel</button>
+    <button class="btn btn-primary" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onSave()">Save</button>
   </div>
 }

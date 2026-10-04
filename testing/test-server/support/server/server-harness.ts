@@ -62,6 +62,7 @@ export class ServerHarness {
     process.env.META_SOURCE_LOCATION_DIR = metaDir;
     process.env.META_BUCKET_NAME = 'test-meta-bucket';
     process.env.MEDIA_BUCKET_NAME = 'test-media-bucket';
+    process.env.META_EDIT_ENABLED = 'Entity,Menu,Page,Role';
 
     const configModule = ConfigModule.forRoot({
       isGlobal: true,
@@ -75,6 +76,7 @@ export class ServerHarness {
           META_SOURCE_LOCATION_DIR: metaDir,
           META_BUCKET_NAME: 'test-meta-bucket',
           MEDIA_BUCKET_NAME: 'test-media-bucket',
+          META_EDIT_ENABLED: 'Entity,Menu,Page,Role',
         }),
       ],
     });

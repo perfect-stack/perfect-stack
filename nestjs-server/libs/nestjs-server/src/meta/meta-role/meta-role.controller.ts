@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PublicApi } from '../../authentication/public-api';
 import { MetaRoleService } from './meta-role.service';
@@ -14,6 +15,9 @@ import { ActionType, MetaRole } from '../../domain/meta.role';
 import { ActionPermit } from '../../authentication/action-permit';
 import { SubjectName } from '../../authentication/subject';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { MetaEditGuard } from '../meta-edit/meta-edit.guard';
+import { MetaEditActionPermit } from '../meta-edit/meta-edit-action-permit.decorator';
+import { MetaEditControlValue } from '../meta-edit/meta-edit-control-value';
 
 @ApiTags('meta')
 @Controller('meta/role')
@@ -51,6 +55,8 @@ export class MetaRoleController {
     return this.metaRoleService.findOne(metaRoleName);
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Role)
   @ActionPermit(ActionType.Edit)
   @SubjectName('Meta')
   @ApiOperation({
@@ -74,6 +80,8 @@ export class MetaRoleController {
     return this.metaRoleService.create(metaRole);
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Role)
   @ActionPermit(ActionType.Edit)
   @SubjectName('Meta')
   @ApiOperation({
@@ -97,6 +105,8 @@ export class MetaRoleController {
     return this.metaRoleService.update(metaRole);
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Role)
   @ActionPermit(ActionType.Delete)
   @SubjectName('Meta')
   @ApiOperation({

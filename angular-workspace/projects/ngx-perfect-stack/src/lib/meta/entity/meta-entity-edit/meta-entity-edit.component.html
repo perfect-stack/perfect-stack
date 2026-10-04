@@ -133,11 +133,13 @@
                             @for (r of getAttributeAt(i).rules; track r; let ri = $index) {
                               <span class="badge bg-danger me-1 d-inline-flex align-items-center gap-1 rule-badge">
                                 <span role="button" (click)="editRule(i, ri)">{{r.type}}</span>
-                                <span role="button" class="material-symbols-outlined" style="font-size: 14px;" (click)="removeRule(i, ri)">close</span>
+                                @if (isMetaEditEnabled$ | async) {
+                                  <span role="button" class="material-symbols-outlined" style="font-size: 14px;" (click)="removeRule(i, ri)">close</span>
+                                }
                               </span>
                             }
                           }
-                          <button type="button" class="btn btn-outline-primary btn-sm add-rule-btn" (click)="onAddRule(i)" title="Add Rule">
+                          <button type="button" class="btn btn-outline-primary btn-sm add-rule-btn" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onAddRule(i)" title="Add Rule">
                             <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">add</span>
                           </button>
                         </td>
@@ -152,7 +154,9 @@
                           </select>
                         </td>
                         <td class="text-center">
-                          <span class="btn-icon text-danger material-symbols-outlined action-icon" (click)="onDeleteAttributeRow(i)" title="Remove attribute">remove_circle</span>
+                          @if (isMetaEditEnabled$ | async) {
+                            <span class="btn-icon text-danger material-symbols-outlined action-icon" (click)="onDeleteAttributeRow(i)" title="Remove attribute">remove_circle</span>
+                          }
                         </td>
                       </tr>
                     </ng-container>
@@ -164,12 +168,12 @@
             <div class="add-attribute-end-card text-center p-3 mb-2">
               <div class="text-muted small mb-2">Append attributes to this entity</div>
               <div class="d-flex justify-content-center align-items-center gap-2">
-                <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" (click)="onAddAttribute(1)">
+                <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onAddAttribute(1)">
                   <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
                   <span>Add Attribute</span>
                 </button>
                 <div ngbDropdown class="d-inline-block">
-                  <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" id="addMultipleDropdown" ngbDropdownToggle>
+                  <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" id="addMultipleDropdown" ngbDropdownToggle [disabled]="!(isMetaEditEnabled$ | async)">
                     <span>Add Multiple</span>
                   </button>
                   <div ngbDropdownMenu aria-labelledby="addMultipleDropdown" class="shadow-sm">
@@ -199,8 +203,8 @@
 
       <div class="d-flex my-5 px-3">
         <div class="flex-grow-1"></div>
-        <button type="button" class="btn btn-outline-primary me-2" (click)="onCancel()">Cancel</button>
-        <button type="button" class="btn btn-primary" [disabled]="!metaEntityForm.valid" (click)="onSave(metaEntity)">Save</button>
+        <button type="button" class="btn btn-outline-primary me-2" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onCancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" [disabled]="!metaEntityForm.valid || !(isMetaEditEnabled$ | async)" (click)="onSave(metaEntity)">Save</button>
       </div>
     </form>
   }

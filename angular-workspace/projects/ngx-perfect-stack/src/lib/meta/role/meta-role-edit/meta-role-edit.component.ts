@@ -7,6 +7,7 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {MetaEntityService} from '../../entity/meta-entity-service/meta-entity.service';
 import {MetaEntity} from '../../../domain/meta.entity';
 import {MetaMenuService} from '../../menu/meta-menu-service/meta-menu.service';
+import {ClientConfigService} from '../../../client/config/client-config.service';
 
 @Component({
     selector: 'lib-meta-role-edit',
@@ -18,6 +19,7 @@ export class MetaRoleEditComponent implements OnInit {
 
   metaRoleName: string | null;
   metaRole$: Observable<MetaRole>;
+  public isMetaEditEnabled$: Observable<boolean>;
 
   metaRoleForm = new UntypedFormGroup({
     name: new UntypedFormControl(''),
@@ -38,10 +40,12 @@ export class MetaRoleEditComponent implements OnInit {
   constructor(protected readonly metaRoleService: MetaRoleService,
               protected readonly metaEntityService: MetaEntityService,
               protected readonly metaMenuService: MetaMenuService,
+              protected readonly clientConfigService: ClientConfigService,
               protected readonly route: ActivatedRoute,
               protected readonly router: Router) { }
 
   ngOnInit(): void {
+    this.isMetaEditEnabled$ = this.clientConfigService.isMetaEditEnabled('Role');
     this.metaRole$ = this.route.paramMap.pipe(switchMap((params: ParamMap) => {
       this.metaRoleName = params.get('metaRoleName');
       const obs = this.metaRoleName === '**NEW**' ? this.newMetaRole() : this.loadMetaRole();

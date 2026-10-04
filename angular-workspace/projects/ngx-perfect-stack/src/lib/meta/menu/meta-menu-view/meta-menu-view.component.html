@@ -9,9 +9,10 @@
             <div class="menu-column-header">
               <lib-menu-header-view
                 [menu]="menu"
+                [disabled]="!(isMetaEditEnabled$ | async)"
                 (menuAdded)="onMenuAdded(metaMenu, colIdx)"
                 (menuDeleted)="onMenuDeleted(metaMenu, colIdx)"
-                (menuMoved)="onMenuMove(metaMenu, colIdx, $event)"
+                (menuMoved)="onMove(metaMenu, colIdx, $event)"
                 (menuEdited)="onMenuEdited(metaMenu)">
               </lib-menu-header-view>
             </div>
@@ -20,6 +21,7 @@
                 <lib-menu-item-view
                   [menu]="menu"
                   [menuItem]="item"
+                  [disabled]="!(isMetaEditEnabled$ | async)"
                   (menuItemDeleted)="onMenuItemDeleted(metaMenu, colIdx, rowIdx)"
                   (menuItemMoved)="onMenuItemMoved(metaMenu, colIdx, rowIdx, $event)"
                   (menuItemMenuMoved)="onMenuItemMenuMoved(metaMenu, colIdx, rowIdx, $event)"
@@ -27,7 +29,7 @@
                 </lib-menu-item-view>
               }
 
-              <button type="button" class="btn add-item-btn w-100" (click)="onAddItem(metaMenu, colIdx)">
+              <button type="button" class="btn add-item-btn w-100" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onAddItem(metaMenu, colIdx)">
                 <span class="material-symbols-outlined me-1" style="font-size: 16px;">add</span>
                 <span>Add Item</span>
               </button>
@@ -37,7 +39,7 @@
 
         <div class="add-menu-column-card text-center p-3">
           <div class="text-muted small mb-2">Append a new menu</div>
-          <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1 mx-auto" (click)="onAddColumn(metaMenu)">
+          <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1 mx-auto" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onAddColumn(metaMenu)">
             <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
             <span>Add Menu</span>
           </button>
@@ -47,8 +49,8 @@
 
     <div class="d-flex my-5 px-3">
       <div class="flex-grow-1"></div>
-      <button class="btn btn-outline-primary me-2" [disabled]="!isDirty" (click)="onCancel(metaMenu)">Cancel</button>
-      <button class="btn btn-primary" [disabled]="!isDirty" (click)="onSaveMetaMenu(metaMenu)">Save</button>
+      <button class="btn btn-outline-primary me-2" [disabled]="!isDirty || !(isMetaEditEnabled$ | async)" (click)="onCancel(metaMenu)">Cancel</button>
+      <button class="btn btn-primary" [disabled]="!isDirty || !(isMetaEditEnabled$ | async)" (click)="onSaveMetaMenu(metaMenu)">Save</button>
     </div>
   </div>
 }

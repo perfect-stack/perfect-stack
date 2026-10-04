@@ -166,9 +166,9 @@
       </form>
       <div class="d-flex my-5">
         <div class="flex-grow-1"></div>
-        <button class="btn btn-danger me-2" (click)="onDelete(metaRole)">Delete</button>
-        <button class="btn btn-outline-primary me-2" (click)="onCancel()">Cancel</button>
-        <button class="btn btn-primary" (click)="onSave()">Save</button>
+        <button class="btn btn-danger me-2" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onDelete(metaRole)">Delete</button>
+        <button class="btn btn-outline-primary me-2" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onCancel()">Cancel</button>
+        <button class="btn btn-primary" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onSave()">Save</button>
       </div>
     </div>
   }

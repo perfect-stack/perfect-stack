@@ -22,6 +22,7 @@ import {OneToPolyEditComponent} from './one-to-poly-edit/one-to-poly-edit.compon
 import {EnumeratonEditComponent} from './enumeraton-edit/enumeraton-edit.component';
 import {RuleEditDialogComponent} from './rule-edit-dialog/rule-edit-dialog.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ClientConfigService} from '../../../client/config/client-config.service';
 
 @Component({
     selector: 'app-meta-entity-edit',
@@ -35,6 +36,7 @@ export class MetaEntityEditComponent implements OnInit {
 
   public metaName: string | null;
   public metaEntity$: Observable<MetaEntity>;
+  public isMetaEditEnabled$: Observable<boolean>;
 
   metaEntityForm = this.fb.group({
     name: ['', Validators.required],
@@ -54,9 +56,11 @@ export class MetaEntityEditComponent implements OnInit {
               protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               private modalService: NgbModal,
-              protected readonly metaEntityService: MetaEntityService) { }
+              protected readonly metaEntityService: MetaEntityService,
+              protected readonly clientConfigService: ClientConfigService) { }
 
   ngOnInit(): void {
+    this.isMetaEditEnabled$ = this.clientConfigService.isMetaEditEnabled('Entity');
     this.metaEntity$ = this.route.paramMap.pipe(switchMap(params => {
       this.metaName = params.get('metaName');
       return this.metaName === '**NEW**' ? of(this.createNewMetaEntity()) : this.metaEntityService.findById(this.metaName);
@@ -294,4 +298,4 @@ export const uniqueNameValidator = (control: AbstractControl): ValidationErrors 
   }
 
   return null;
-}
+};

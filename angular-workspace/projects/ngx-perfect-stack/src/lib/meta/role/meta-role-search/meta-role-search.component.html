@@ -6,7 +6,7 @@
     <div class="col-6">
       <div class="d-flex">
         <div class="flex-grow-1"></div>
-        <button class="btn btn-outline-success" (click)="onNew()">New Role...</button>
+        <button class="btn btn-outline-success" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onNew()">New Role...</button>
       </div>
     </div>
   </div>

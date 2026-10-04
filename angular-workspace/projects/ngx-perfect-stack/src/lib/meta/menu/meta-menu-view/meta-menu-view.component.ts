@@ -7,6 +7,7 @@ import { ComponentCanDeactivate } from '../../../utils/can-deactivate.guard';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MessageDialogComponent } from '../../../utils/message-dialog/message-dialog.component';
 import { ToastService } from '../../../utils/toasts/toast.service';
+import { ClientConfigService } from '../../../client/config/client-config.service';
 
 @Component({
     selector: 'lib-meta-menu-view',
@@ -17,6 +18,7 @@ import { ToastService } from '../../../utils/toasts/toast.service';
 export class MetaMenuViewComponent implements OnInit, ComponentCanDeactivate {
 
   public metaMenu$: Observable<MetaMenu>;
+  public isMetaEditEnabled$: Observable<boolean>;
 
   public columnCount = 0;
   public rowCount = 0;
@@ -30,11 +32,13 @@ export class MetaMenuViewComponent implements OnInit, ComponentCanDeactivate {
   constructor(protected readonly route: ActivatedRoute,
               protected readonly router: Router,
               protected readonly metaMenuService: MetaMenuService,
+              protected readonly clientConfigService: ClientConfigService,
               protected readonly modalService: NgbModal,
               protected readonly toastService: ToastService) {
   }
 
   ngOnInit(): void {
+    this.isMetaEditEnabled$ = this.clientConfigService.isMetaEditEnabled('Menu');
     this.metaMenu$ = this.metaMenuService.find().pipe(
       tap(menu => {
         this.originalMenuJson = JSON.stringify(menu);
@@ -173,7 +177,7 @@ export class MetaMenuViewComponent implements OnInit, ComponentCanDeactivate {
     this.metaMenu$ = of(metaMenu);
   }
 
-  onMenuMove(metaMenu: MetaMenu, colIdx: number, direction: number) {
+  onMove(metaMenu: MetaMenu, colIdx: number, direction: number) {
     const targetColIdx = colIdx + direction;
     const canMove = targetColIdx >= 0 && targetColIdx <= (metaMenu.menuList.length - 1);
     if(canMove) {

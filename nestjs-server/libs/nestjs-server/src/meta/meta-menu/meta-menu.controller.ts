@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { MetaMenuService } from './meta-menu.service';
 import { PublicApi } from '../../authentication/public-api';
 import { MetaMenu } from '../../domain/meta.menu';
@@ -6,6 +6,9 @@ import { ActionPermit } from '../../authentication/action-permit';
 import { ActionType } from '../../domain/meta.role';
 import { SubjectName } from '../../authentication/subject';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { MetaEditGuard } from '../meta-edit/meta-edit.guard';
+import { MetaEditActionPermit } from '../meta-edit/meta-edit-action-permit.decorator';
+import { MetaEditControlValue } from '../meta-edit/meta-edit-control-value';
 
 @ApiTags('meta')
 @Controller('meta/menu')
@@ -26,6 +29,8 @@ export class MetaMenuController {
     return this.metaMenuService.findOne();
   }
 
+  @UseGuards(MetaEditGuard)
+  @MetaEditActionPermit(MetaEditControlValue.Menu)
   @ActionPermit(ActionType.Edit)
   @SubjectName('Meta')
   @ApiOperation({
