@@ -29,6 +29,9 @@ export class MenuItemViewComponent implements OnInit {
   @Output()
   menuItemMenuMoved = new EventEmitter<number>();
 
+  @Output()
+  public menuItemEdited = new EventEmitter<MenuItem | null>();
+
   mouseActive = false;
 
   openInOptions = Object.values(OpenIn);
@@ -131,6 +134,7 @@ export class MenuItemViewComponent implements OnInit {
       if (!menuItem.openIn) {
         menuItem.openIn = OpenIn.Current;
       }
+      this.menuItemEdited.emit(menuItem);
     }
   }
 }

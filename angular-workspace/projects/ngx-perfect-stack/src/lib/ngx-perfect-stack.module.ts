@@ -14,6 +14,7 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import {AuthenticationService} from './authentication/authentication.service';
 import {ClientConfigService} from './client/config/client-config.service';
 import {AuthGuard} from './authentication/auth-guard.service';
+import { CanDeactivateGuard } from './utils/can-deactivate.guard';
 import {
   CellViewComponent,
   TemplateControllerComponent,
@@ -164,7 +165,7 @@ export const STACK_ROUTES: Routes = [
   { path: 'meta/entity/view/:metaName', component: MetaEntityViewComponent, canActivate: [AuthGuard] },
   { path: 'meta/entity/edit/:metaName', component: MetaEntityEditComponent, canActivate: [AuthGuard] },
 
-  { path: 'meta/menu/view', component: MetaMenuViewComponent, canActivate: [AuthGuard] },
+  { path: 'meta/menu/view', component: MetaMenuViewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard] },
 
   { path: 'meta/page/search', component: MetaPageSearchComponent, canActivate: [AuthGuard] },
   { path: 'meta/page/edit/:metaPageName', component: MetaPageEditComponent, canActivate: [AuthGuard] },

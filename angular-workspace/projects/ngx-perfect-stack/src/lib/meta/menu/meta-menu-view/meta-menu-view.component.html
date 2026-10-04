@@ -11,7 +11,8 @@
                 [menu]="menu"
                 (menuAdded)="onMenuAdded(metaMenu, colIdx)"
                 (menuDeleted)="onMenuDeleted(metaMenu, colIdx)"
-                (menuMoved)="onMenuMove(metaMenu, colIdx, $event)">
+                (menuMoved)="onMenuMove(metaMenu, colIdx, $event)"
+                (menuEdited)="onMenuEdited(metaMenu)">
               </lib-menu-header-view>
             </div>
             <div class="menu-column-body">
@@ -21,7 +22,8 @@
                   [menuItem]="item"
                   (menuItemDeleted)="onMenuItemDeleted(metaMenu, colIdx, rowIdx)"
                   (menuItemMoved)="onMenuItemMoved(metaMenu, colIdx, rowIdx, $event)"
-                  (menuItemMenuMoved)="onMenuItemMenuMoved(metaMenu, colIdx, rowIdx, $event)">
+                  (menuItemMenuMoved)="onMenuItemMenuMoved(metaMenu, colIdx, rowIdx, $event)"
+                  (menuItemEdited)="onMenuItemEdited(metaMenu)">
                 </lib-menu-item-view>
               }
 
@@ -45,8 +47,8 @@
 
     <div class="d-flex my-5 px-3">
       <div class="flex-grow-1"></div>
-      <button class="btn btn-outline-primary me-2" (click)="onCancel(metaMenu)">Cancel</button>
-      <button class="btn btn-primary" (click)="onSaveMetaMenu(metaMenu)">Save</button>
+      <button class="btn btn-outline-primary me-2" [disabled]="!isDirty" (click)="onCancel(metaMenu)">Cancel</button>
+      <button class="btn btn-primary" [disabled]="!isDirty" (click)="onSaveMetaMenu(metaMenu)">Save</button>
     </div>
   </div>
 }

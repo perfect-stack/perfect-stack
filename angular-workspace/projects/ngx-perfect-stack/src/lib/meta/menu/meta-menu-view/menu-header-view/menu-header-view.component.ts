@@ -23,6 +23,9 @@ export class MenuHeaderViewComponent implements OnInit {
   @Output()
   menuMoved = new EventEmitter<number>();
 
+  @Output()
+  menuEdited = new EventEmitter<Menu | null>();
+
   public mouseActive = false;
 
   menuForm = this.fb.group({
@@ -72,10 +75,11 @@ export class MenuHeaderViewComponent implements OnInit {
   }
 
   onSave(modal: any) {
-    modal.close('Save click')
+    modal.close('Save click');
     if(this.menu) {
       const editedItem = this.menuForm.value;
       this.menu = Object.assign(this.menu, editedItem);
+      this.menuEdited.emit(this.menu);
     }
   }
 }
