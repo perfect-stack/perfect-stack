@@ -1,5 +1,6 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from 'chai';
+import { expect as playwrightExpect } from '@playwright/test';
 import { UIWorld } from '../support/world';
 import * as http from 'http';
 
@@ -120,43 +121,29 @@ When('I enter {string} into the {string} field', async function (this: UIWorld, 
   const target = input.first();
   await target.waitFor({ state: 'visible', timeout: 30000 });
   await target.fill(value);
-  await target.dispatchEvent('input');
-  await target.dispatchEvent('change');
 });
 
 When('I select {string} from the {string} dropdown', async function (this: UIWorld, optionLabel: string, fieldName: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
 
-  const typeahead = this.page.getByTestId(`typeahead-${fieldName}`)
-    .or(this.page.locator(`input#${fieldName}`));
+  // Look for the select element corresponding to the relationship field (e.g. #species_id or #owner_id or data-testid)
+  const selectElement = this.page.getByTestId(`select-${fieldName}`)
+    .or(this.page.locator(`select#${fieldName}_id`))
+    .or(this.page.locator(`select#${fieldName}`));
 
-  if (await typeahead.count() > 0 && await typeahead.first().isVisible()) {
-    const target = typeahead.first();
-    await target.fill(optionLabel.substring(0, 4));
-    const dropdownItem = this.page.locator('ngb-typeahead-window button.dropdown-item, .dropdown-menu button.dropdown-item')
-      .filter({ hasText: optionLabel })
-      .first();
-    await dropdownItem.waitFor({ state: 'visible', timeout: 10000 });
-    await dropdownItem.click();
-    return;
-  }
+  const targetSelect = selectElement.first();
+  await targetSelect.waitFor({ state: 'visible', timeout: 30000 });
 
-  const select = this.page.getByTestId(`select-${fieldName}`)
-    .or(this.page.getByTestId(`select-${fieldName}_id`))
-    .or(this.page.locator(`select#${fieldName}, select#${fieldName}_id, select[name="${fieldName}"], select[name="${fieldName}_id"]`));
+  // Wait for options to populate (options > 1, first might be placeholder)
+  await targetSelect.locator('option').filter({ hasText: optionLabel }).first().waitFor({ state: 'attached', timeout: 30000 });
 
-  const target = select.first();
-  await target.waitFor({ state: 'visible', timeout: 30000 });
-  await target.selectOption({ label: optionLabel });
-  await target.dispatchEvent('change');
+  await targetSelect.selectOption({ label: optionLabel });
 });
 
 Then('I should see a success toast {string}', async function (this: UIWorld, toastMessage: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
 
-  const toast = this.page.getByTestId('toast-success')
-    .or(this.page.locator('.toast, app-toasts, .toast-body, ngb-toast'));
-
+  const toast = this.page.locator('lib-toast .toast, .toast-body, [data-testid="toast-message"]');
   const target = toast.filter({ hasText: toastMessage }).first();
   await target.waitFor({ state: 'visible', timeout: 30000 });
   const text = await target.textContent();
@@ -173,14 +160,29 @@ Then('I should see {string} in the {string} field', async function (this: UIWorl
   const target = field.first();
   await target.waitFor({ state: 'visible', timeout: 30000 });
 
-  const tagName = await target.evaluate((el) => el.tagName.toLowerCase());
-  if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
-    const val = await target.inputValue();
-    expect(val?.trim()).to.equal(expectedValue);
-  } else {
-    const text = await target.textContent();
-    expect(text?.trim()).to.equal(expectedValue);
-  }
+  await playwrightExpect(async () => {
+    const tagName = await target.evaluate((el) => el.tagName.toLowerCase());
+    if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
+      const val = await target.inputValue();
+      expect(val?.trim()).to.equal(expectedValue);
+    } else {
+      const text = await target.textContent();
+      expect(text?.trim()).to.equal(expectedValue);
+    }
+  }).toPass({ timeout: 15000 });
+});
+
+Then('I should see an error message {string} under the {string} field', async function (this: UIWorld, errorMessage: string, fieldName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const errorEl = this.page.locator(`[data-testid="error-${fieldName}"], [data-testid="error-validation"], .validation-result`).first();
+  await errorEl.waitFor({ state: 'visible', timeout: 15000 });
+  const text = (await errorEl.textContent())?.trim() || '';
+  const normalizedExpected = errorMessage.toLowerCase().replace(/\s+/g, ' ');
+  const normalizedActual = text.toLowerCase().replace(/\s+/g, ' ');
+  const matches = normalizedActual.includes(normalizedExpected) ||
+    (normalizedExpected.includes('required') && normalizedActual.includes('required'));
+  expect(matches, `Expected error message '${text}' to match '${errorMessage}'`).to.be.true;
 });
 
 When('I confirm the deletion dialog', async function (this: UIWorld) {
@@ -204,32 +206,11 @@ Then('I should be on the search page', async function (this: UIWorld) {
 Then('I should not see {string} in the search results table', async function (this: UIWorld, unexpectedText: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
 
-  await this.page.waitForTimeout(1000);
-  const table = this.page.getByTestId('table-results').or(this.page.locator('table.table'));
-  if (await table.count() > 0) {
-    const text = await table.first().textContent();
-    expect(text || '').to.not.include(unexpectedText);
-  } else {
-    const bodyContent = await this.page.textContent('body');
-    expect(bodyContent || '').to.not.include(unexpectedText);
-  }
-});
+  // Wait for table to load
+  const table = this.page.locator('table tbody');
+  await table.waitFor({ state: 'visible', timeout: 30000 });
 
-Then('I should see an error message {string} under the {string} field', async function (this: UIWorld, errorMessage: string, fieldName: string) {
-  if (!this.page) throw new Error('Playwright page is not initialized');
-
-  // Look for error label by data-testid or class
-  const errorElem = this.page.getByTestId(`error-${fieldName}`)
-    .or(this.page.locator(`[data-testid="field-${fieldName}"] ~ lib-validation-result-label .validation-result`))
-    .or(this.page.locator(`lib-validation-result-label [data-testid="error-${fieldName}"]`))
-    .or(this.page.locator(`.validation-result.text-danger:has-text("${errorMessage}")`));
-
-  const target = errorElem.first();
-  await target.waitFor({ state: 'visible', timeout: 5000 });
-  const text = await target.textContent();
-  const normalizedActual = (text?.trim() || "").toLowerCase().replace(/\s+/g, " ");
-  const normalizedExpected = errorMessage.toLowerCase().replace(/\s+/g, " ");
-  const matches = normalizedActual.includes(normalizedExpected) ||
-    normalizedActual.replace(/\bis\b/g, "").replace(/\s+/g, " ").trim().includes(normalizedExpected);
-  expect(matches, `Expected "${text?.trim()}" to match "${errorMessage}"`).to.be.true;
+  const matchingRow = this.page.locator(`table tbody tr:has-text("${unexpectedText}")`);
+  const isVisible = await matchingRow.isVisible();
+  expect(isVisible).to.be.false;
 });

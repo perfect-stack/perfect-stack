@@ -102,6 +102,18 @@ export const SEED_PETS = [
     breed: 'cat',
     microchip_number: 'CHIP-CAT-001',
     birth_date: '2020-03-15',
+    vaccinations: [
+      {
+        vaccine_name: 'Rabies',
+        date_administered: '2023-01-15',
+        batch_number: 'RAB-2023-01',
+      },
+      {
+        vaccine_name: 'FVRCP',
+        date_administered: '2023-06-20',
+        batch_number: 'FVR-2023-99',
+      },
+    ],
   },
   {
     name: 'Molly',
@@ -352,6 +364,8 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
         breed: petDef.breed,
         birth_date: petDef.birth_date,
         microchip_number: petDef.microchip_number,
+        passport: (petDef as any).passport,
+        vaccinations: (petDef as any).vaccinations,
       } as any);
       logger.log(`Created Pet: ${petDef.name} (${petDef.breed}) for owner ${owner.given_name || owner.first_name} ${owner.family_name || owner.last_name}`);
     } else {
@@ -366,6 +380,24 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
         },
         { where: { id: pet.id } },
       );
+
+
+
+      if ((petDef as any).vaccinations) {
+        const vaccinationModel = ormService.sequelize.model('Vaccination');
+        for (const v of (petDef as any).vaccinations) {
+          await vaccinationModel.findOrCreate({
+            where: {
+              vaccine_name: v.vaccine_name,
+              PetId: pet.id,
+            },
+            defaults: {
+              ...v,
+              PetId: pet.id,
+            },
+          });
+        }
+      }
     }
   }
 

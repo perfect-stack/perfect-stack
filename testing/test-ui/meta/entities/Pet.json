@@ -136,6 +136,20 @@
       "relationshipTarget": "PetMediaFile",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "vaccinations",
+      "label": "Vaccinations",
+      "description": "Pet vaccination records",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "Vaccination",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

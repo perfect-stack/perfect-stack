@@ -1,0 +1,70 @@
+{
+  "name": "Vaccination",
+  "pluralName": "Vaccinations",
+  "icon": "",
+  "type": "Database",
+  "rootNode": false,
+  "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Entity Identifier",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Hidden",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "vaccine_name",
+      "label": "Vaccine",
+      "description": "Vaccine name",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveStartsWith",
+      "relationshipTarget": "",
+      "typeaheadSearch": [
+        "vaccine_name"
+      ],
+      "rules": []
+    },
+    {
+      "name": "date_administered",
+      "label": "Date Administered",
+      "description": "Date administered",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Date",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "batch_number",
+      "label": "Batch Number",
+      "description": "Batch / Lot Number",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}

@@ -45,24 +45,101 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "given_name"
+            "attributeName": "given_name",
+            "attribute": {
+              "name": "given_name",
+              "label": "Given Name",
+              "description": "Owner given name",
+              "type": "Text",
+              "visibility": "Required",
+              "comparisonField": "",
+              "comparisonOperator": "InsensitiveStartsWith",
+              "relationshipTarget": "",
+              "typeaheadSearch": [
+                "given_name"
+              ],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": [
+                {
+                  "type": "Required",
+                  "config": ""
+                }
+              ]
+            }
           },
           {
             "width": "6",
             "height": "1",
-            "attributeName": "family_name"
+            "attributeName": "family_name",
+            "attribute": {
+              "name": "family_name",
+              "label": "Family Name",
+              "description": "Owner family name",
+              "type": "Text",
+              "visibility": "Required",
+              "comparisonField": "",
+              "comparisonOperator": "InsensitiveStartsWith",
+              "relationshipTarget": "",
+              "typeaheadSearch": [
+                "family_name"
+              ],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": [
+                {
+                  "type": "Required",
+                  "config": ""
+                }
+              ]
+            }
           }
         ],
         [
           {
             "width": "6",
             "height": "1",
-            "attributeName": "phone_number"
+            "attributeName": "phone_number",
+            "attribute": {
+              "name": "phone_number",
+              "label": "Phone Number",
+              "description": "Contact phone number",
+              "type": "Text",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "Equals",
+              "relationshipTarget": "",
+              "typeaheadSearch": [],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
+            }
           },
           {
             "width": "6",
             "height": "1",
-            "attributeName": "email_address"
+            "attributeName": "email_address",
+            "attribute": {
+              "name": "email_address",
+              "label": "Email Address",
+              "description": "Contact email address",
+              "type": "Text",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "Equals",
+              "relationshipTarget": "",
+              "typeaheadSearch": [
+                "email_address"
+              ],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": [
+                {
+                  "type": "Email",
+                  "config": ""
+                }
+              ]
+            }
           }
         ]
       ],

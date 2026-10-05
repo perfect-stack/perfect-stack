@@ -91,6 +91,48 @@
           {
             "width": "12",
             "height": "1",
+            "attributeName": "vaccinations",
+            "template": {
+              "binding": "vaccinations",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "Vaccination",
+              "cells": [
+                [
+                  {
+                    "width": "4",
+                    "height": "1",
+                    "attributeName": "vaccine_name"
+                  },
+                  {
+                    "width": "4",
+                    "height": "1",
+                    "attributeName": "date_administered"
+                  },
+                  {
+                    "width": "4",
+                    "height": "1",
+                    "attributeName": "batch_number"
+                  }
+                ]
+              ],
+              "orderByName": "date_administered",
+              "orderByDir": "DESC"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Vaccinations",
+      "binding": "pet"
+    },
+    {
+      "metaEntityName": "Pet",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
             "tool": {
               "type": "TabTool",
               "containerStyles": "",
