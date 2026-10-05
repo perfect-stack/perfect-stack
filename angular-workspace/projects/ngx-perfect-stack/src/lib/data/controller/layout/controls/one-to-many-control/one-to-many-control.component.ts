@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { CellAttribute } from '../../../meta/page/meta-page-service/meta-page.service';
-import { FormContext } from '../../data-edit/form-service/form.service';
+import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
+import { FormContext } from '../../../../data-edit/form-service/form.service';
 
 @Component({
   selector: 'lib-one-to-many-control',

@@ -2,14 +2,14 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Cell, MetaPage, Template } from '../../../domain/meta.page';
-import { MetaEntity } from '../../../domain/meta.entity';
-import { MetaEntityService } from '../../../meta/entity/meta-entity-service/meta-entity.service';
-import { MetaPageService } from '../../../meta/page/meta-page-service/meta-page.service';
-import { DiscriminatorMapping, DiscriminatorService } from '../../data-service/discriminator.service';
-import { FormArrayWithAttribute, FormContext } from '../../data-edit/form-service/form.service';
-import { FormGroupService } from '../../data-edit/form-service/form-group.service';
-import { CardItemDialogComponent } from './controls/card-item-dialog/card-item-dialog.component';
+import { Cell, MetaPage, Template } from '../../../../../domain/meta.page';
+import { MetaEntity } from '../../../../../domain/meta.entity';
+import { MetaEntityService } from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
+import { MetaPageService } from '../../../../../meta/page/meta-page-service/meta-page.service';
+import { DiscriminatorMapping, DiscriminatorService } from '../../../../data-service/discriminator.service';
+import { FormArrayWithAttribute, FormContext } from '../../../../data-edit/form-service/form.service';
+import { FormGroupService } from '../../../../data-edit/form-service/form-group.service';
+import { CardItemDialogComponent } from '../../controls/card-item-dialog/card-item-dialog.component';
 
 @Component({
   selector: 'lib-card-layout',

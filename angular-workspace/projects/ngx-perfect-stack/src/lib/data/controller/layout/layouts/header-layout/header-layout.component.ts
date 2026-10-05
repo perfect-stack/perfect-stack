@@ -1,20 +1,20 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { Observable, of, switchMap } from 'rxjs';
 import { UntypedFormGroup } from '@angular/forms';
-import { Cell, LabelLayoutType, Template } from '../../../domain/meta.page';
-import { AttributeType, MetaEntity } from '../../../domain/meta.entity';
-import { CellAttribute } from '../../../meta/page/meta-page-service/meta-page.service';
-import { MetaEntityService } from '../../../meta/entity/meta-entity-service/meta-entity.service';
-import { FormContext, FormService } from '../../data-edit/form-service/form.service';
-import { DebugService } from '../../../utils/debug/debug.service';
+import { Observable, of, switchMap } from 'rxjs';
+import { Cell, Template } from '../../../../../domain/meta.page';
+import { AttributeType, MetaEntity } from '../../../../../domain/meta.entity';
+import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
+import { MetaEntityService } from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
+import { FormContext, FormService } from '../../../../data-edit/form-service/form.service';
+import { DebugService } from '../../../../../utils/debug/debug.service';
 
 @Component({
-  selector: 'lib-form-layout',
-  templateUrl: './form-layout.component.html',
-  styleUrls: ['./form-layout.component.css'],
+  selector: 'lib-header-layout',
+  templateUrl: './header-layout.component.html',
+  styleUrls: ['./header-layout.component.css'],
   standalone: false
 })
-export class FormLayoutComponent implements OnInit, OnChanges {
+export class HeaderLayoutComponent implements OnInit, OnChanges {
 
   @Input()
   mode: string | null;
@@ -40,16 +40,7 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     if(this.ctx && this.ctx.formMap) {
       console.log('FormLayoutComponent: initialising things the new way');
-      console.log(' - formGroup:', this.formGroup);
-      if(!this.template) {
-        throw new Error('No template defined, cannot proceed sensibly');
-      }
-
       this.mode = this.ctx.mode;
-      if(this.formGroup) {
-        console.log(' - formGroup is supplied return early');
-        return;
-      }
 
       let formLookupKey;
       let form;
@@ -64,20 +55,21 @@ export class FormLayoutComponent implements OnInit, OnChanges {
         }
         else {
           formLookupKey = binding;
+          console.log(`Binding ROOT - ${binding}`)
           form = this.ctx.formMap.get(formLookupKey) as UntypedFormGroup;
-          console.log(`Binding ROOT - ${binding}`);
-          console.log(' - form:', form);
         }
 
         this.formGroup = form;
       }
       else {
-        console.warn(`BINDING: "${binding}" - NOT FOUND. Keep calm and carry on but you might be getting NG01052: formGroup expects a FormGroup instance from here onwards 🙂`);
+        console.log('Binding - Not found. Keep calm and carry on 🙂');
       }
     }
     else {
       console.warn('UNABLE to initialise FormLayoutComponent sensibly');
     }
+
+    //this.updateCells$();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -108,18 +100,8 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   }
 
   isShowLabel(cell: CellAttribute) {
-    const hiddenAttributeTypes = new Set<AttributeType>([AttributeType.OneToPoly, AttributeType.Boolean]);
-    const hideAttributeType = cell && cell.attribute && hiddenAttributeTypes.has(cell.attribute.type);
-    const hideLabel = cell.hideLabel || cell.labelLayout === LabelLayoutType.Hidden;
-    return !(hideAttributeType || hideLabel);
-  }
-
-  isShowLabelTop(cell: CellAttribute): boolean {
-    return cell.labelLayout === undefined || cell.labelLayout === LabelLayoutType.Top;
-  }
-
-  isShowLabelLeft(cell: CellAttribute): boolean {
-    return cell.labelLayout === LabelLayoutType.Left;
+    const hideLabelsSet = new Set<AttributeType>([AttributeType.OneToPoly, AttributeType.Boolean]);
+    return cell && cell.attribute ? !hideLabelsSet.has(cell.attribute.type) : true;
   }
 
   get AttributeType() {
@@ -127,7 +109,10 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   }
 
   isFormRow(row: CellAttribute[]) {
+    // Was in a hurry and needed to suppress the form-row class on rows that used the Map component. Ideally the Row
+    // object of the MetaPage would have metadata to control this, but have gone with a hunt-and-shoot-to-kill approach
+    // for now. If the row has one cell and that Cell is a ToolView, and it has a Map component then "form-row" is
+    // disabled.
     return !(row && row.length === 1 && row[0].tool && row[0].tool.type === 'Map');
   }
-
 }

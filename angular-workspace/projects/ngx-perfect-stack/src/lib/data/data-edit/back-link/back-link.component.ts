@@ -1,11 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormContext} from '../../../data-edit/form-service/form.service';
+import {FormContext} from '../form-service/form.service';
 
 @Component({
-    selector: 'lib-back-link',
-    templateUrl: './back-link.component.html',
-    styleUrls: ['./back-link.component.css'],
-    standalone: false
+  selector: 'lib-back-link',
+  templateUrl: './back-link.component.html',
+  styleUrls: ['./back-link.component.css'],
+  standalone: false
 })
 export class BackLinkComponent implements OnInit {
 

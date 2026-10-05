@@ -2,13 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MetaPage, Template } from '../../../domain/meta.page';
-import { MetaEntity } from '../../../domain/meta.entity';
-import { CellAttribute } from '../../../meta/page/meta-page-service/meta-page.service';
-import { MetaEntityService } from '../../../meta/entity/meta-entity-service/meta-entity.service';
-import { FormContext, FormService } from '../../data-edit/form-service/form.service';
-import { FormGroupService } from '../../data-edit/form-service/form-group.service';
-import { DebugService } from '../../../utils/debug/debug.service';
+import { MetaPage, Template } from '../../../../../domain/meta.page';
+import { MetaEntity } from '../../../../../domain/meta.entity';
+import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
+import { MetaEntityService } from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
+import { FormContext, FormService } from '../../../../data-edit/form-service/form.service';
+import { FormGroupService } from '../../../../data-edit/form-service/form-group.service';
+import { DebugService } from '../../../../../utils/debug/debug.service';
 
 @Component({
   selector: 'lib-table-layout',

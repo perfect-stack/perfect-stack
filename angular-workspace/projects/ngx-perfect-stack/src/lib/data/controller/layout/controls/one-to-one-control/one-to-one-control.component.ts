@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { CellAttribute } from '../../../meta/page/meta-page-service/meta-page.service';
-import { Template, TemplateType } from '../../../domain/meta.page';
-import { FormService } from '../../data-edit/form-service/form.service';
-import { MetaEntityService } from '../../../meta/entity/meta-entity-service/meta-entity.service';
+import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
+import { Template, TemplateType } from '../../../../../domain/meta.page';
+import { FormService } from '../../../../data-edit/form-service/form.service';
+import { MetaEntityService } from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
 
 @Component({
   selector: 'lib-one-to-one-control',

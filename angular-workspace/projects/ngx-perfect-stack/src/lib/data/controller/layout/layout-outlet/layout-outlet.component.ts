@@ -2,7 +2,6 @@ import {
   Component,
   ComponentRef,
   Inject,
-  InjectionToken,
   Input,
   OnChanges,
   OnDestroy,
@@ -15,12 +14,14 @@ import { UntypedFormGroup } from '@angular/forms';
 import { Template } from '../../../../domain/meta.page';
 import { MetaEntity } from '../../../../domain/meta.entity';
 import { FormContext } from '../../../data-edit/form-service/form.service';
+import { LAYOUT_COMPONENT } from './layout.token';
 
-export const LAYOUT_COMPONENT = new InjectionToken<Type<any>>('LAYOUT_COMPONENT');
+export { LAYOUT_COMPONENT } from './layout.token';
 
 @Component({
   selector: 'lib-layout-outlet',
   template: '',
+  styles: [':host { display: contents; }'],
   standalone: false
 })
 export class LayoutOutletComponent implements OnInit, OnChanges, OnDestroy {

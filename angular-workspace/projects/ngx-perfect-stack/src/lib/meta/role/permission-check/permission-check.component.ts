@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ActionType} from '../../../../domain/meta.role';
-import {AuthorizationService} from '../../../../authentication/authorization.service';
-import {FormContext} from '../../../data-edit/form-service/form.service';
+import {ActionType} from '../../../domain/meta.role';
+import {AuthorizationService} from '../../../authentication/authorization.service';
+import {FormContext} from '../../../data/data-edit/form-service/form.service';
 import {FormGroup} from "@angular/forms";
 
 /**
@@ -9,10 +9,10 @@ import {FormGroup} from "@angular/forms";
  * permissions. If the current user has the required permissions then the nested child component will be displayed.
  */
 @Component({
-    selector: 'lib-permission-check',
-    templateUrl: './permission-check.component.html',
-    styleUrls: ['./permission-check.component.css'],
-    standalone: false
+  selector: 'lib-permission-check',
+  templateUrl: './permission-check.component.html',
+  styleUrls: ['./permission-check.component.css'],
+  standalone: false
 })
 export class PermissionCheckComponent implements OnInit, OnChanges {
 

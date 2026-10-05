@@ -137,11 +137,11 @@ import {STANDARD_CONTROLLERS, standardControllers} from './data/controller/stand
 import { MetaRoleSearchComponent } from './meta/role/meta-role-search/meta-role-search.component';
 import { MetaRoleEditComponent } from './meta/role/meta-role-edit/meta-role-edit.component';
 import {MetaRoleService} from './meta/role/meta-role-service/meta-role.service';
-import { PermissionCheckComponent } from './data/controller/layout/permission-check/permission-check.component';
+import { PermissionCheckComponent } from './meta/role/permission-check/permission-check.component';
 import { AuthorizationErrorComponent } from './authentication/authorization-error/authorization-error.component';
 import { LinkListControlComponent } from './data/controller/layout/controls/link-list-control/link-list-control.component';
 import { OneToManyChoiceDialogComponent } from './template/template-controller/one-to-many-choice-dialog/one-to-many-choice-dialog.component';
-import { BackLinkComponent } from './data/controller/layout/back-link/back-link.component';
+import { BackLinkComponent } from './data/data-edit/back-link/back-link.component';
 import { SelectMultipleControlComponent } from './data/controller/layout/controls/select-multiple-control/select-multiple-control.component';
 import { EnvironmentBannerComponent } from './menu-bar/environment-banner/environment-banner.component';
 import { MediaControlComponent } from './data/controller/layout/controls/media-control/media-control.component';
