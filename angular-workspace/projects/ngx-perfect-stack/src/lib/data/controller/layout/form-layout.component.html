@@ -44,7 +44,7 @@
                 @if (debugService.ON) {
                   [NESTED]
                 }
-                <lib-layout [ctx]="ctx" [template]="cell.template" [formGroup]="formGroup" [relationshipProperty]="cell.template.binding"></lib-layout>
+                <lib-layout-outlet [ctx]="ctx" [template]="cell.template" [formGroup]="formGroup" [relationshipProperty]="cell.template.binding"></lib-layout-outlet>
               }
             </div>
           }
@@ -90,7 +90,7 @@
                 @if (debugService.ON) {
                   [OTHER-FORM]
                 }
-                <lib-layout [ctx]="ctx" [template]="cell.template"></lib-layout>
+                <lib-layout-outlet [ctx]="ctx" [template]="cell.template"></lib-layout-outlet>
               }
             </div>
           }

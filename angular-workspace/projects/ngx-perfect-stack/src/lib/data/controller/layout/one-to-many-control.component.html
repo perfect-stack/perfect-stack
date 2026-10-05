@@ -1,13 +1,13 @@
 @if (cell && cell.template) {
   <div class="border-top">
     @if (cell && cell.attribute && cell.attribute.name) {
-      <lib-layout
+      <lib-layout-outlet
         [mode]="mode"
         [ctx]="ctx"
         [template]="cell.template"
         [formGroup]="formGroup"
         [relationshipProperty]="cell.attribute.name">
-      </lib-layout>
+      </lib-layout-outlet>
     }
   </div>
 }

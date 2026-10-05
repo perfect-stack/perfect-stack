@@ -11,7 +11,7 @@
     </div>
     <div class="col-12 pb-4">
       @if (selectedTemplate) {
-        <lib-layout [ctx]="ctx" [template]="selectedTemplate"></lib-layout>
+        <lib-layout-outlet [ctx]="ctx" [template]="selectedTemplate"></lib-layout-outlet>
       }
     </div>
   </div>

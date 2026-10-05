@@ -4,7 +4,7 @@
     <!--<app-form-layout [mode]="mode" [cells]="childCells" [formGroup]="childFormGroup"></app-form-layout>-->
     <!--<lib-child-form-layout [mode]="mode" [cells]="childCells" [formGroup]="childFormGroup"></lib-child-form-layout>-->
     @if (cell && cell.template) {
-      <lib-layout [mode]="mode" [template]="cell.template" [formGroup]="childFormGroup"></lib-layout>
+      <lib-layout-outlet [mode]="mode" [template]="cell.template" [formGroup]="childFormGroup"></lib-layout-outlet>
     }
   </div>
 }

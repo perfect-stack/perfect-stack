@@ -74,6 +74,10 @@ import {
   ButtonTabsToolComponent,
   ToolViewComponent, HeaderLayoutComponent, TabToolComponent, DurationToolComponent
 } from './data/controller/layout/layout.component';
+import {
+  LAYOUT_COMPONENT,
+  LayoutOutletComponent
+} from './data/controller/layout/layout-outlet/layout-outlet.component';
 import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
 import {CacheInterceptor} from './utils/cache-interceptor';
@@ -198,6 +202,10 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
   });
 }
 
+export function layoutComponentFactory() {
+  return LayoutComponent;
+}
+
 @NgModule({
   declarations: [
     NgxPerfectStackComponent,
@@ -239,6 +247,7 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
     LoginButtonComponent,
     ControllerComponent,
     LayoutComponent,
+    LayoutOutletComponent,
     CellComponent,
     TextFieldControlComponent,
     OneToOneControlComponent,
@@ -319,6 +328,7 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
     ToastsComponent,
     TileButtonPanelComponent,
     LayoutComponent,
+    LayoutOutletComponent,
     TreeToolComponent,
   ],
   imports: [
@@ -364,6 +374,7 @@ export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClien
     { provide: NgbDateAdapter, useClass: CustomDateAdapterService },
     { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
     { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' },
+    { provide: LAYOUT_COMPONENT, useFactory: layoutComponentFactory },
     NgbDropdown,
     provideHttpClient(withInterceptorsFromDi()),
   ],

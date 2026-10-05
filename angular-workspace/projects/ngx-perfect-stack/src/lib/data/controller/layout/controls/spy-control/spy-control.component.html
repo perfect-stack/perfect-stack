@@ -1,8 +1,7 @@
 @if (targetValue) {
   <div class="spy-bg p-2">
     @if (spyCtx$ | async; as spyCtx) {
-      <!--<lib-layout [ctx]="spyCtx" [template]="spyCtx.metaPage.templates[0]" [showTemplateHeadings]="false"></lib-layout>-->
-      <lib-layout [ctx]="spyCtx" [template]="getSpyTemplate(spyCtx.metaPageMap)" [showTemplateHeadings]="false"></lib-layout>
+      <lib-layout-outlet [ctx]="spyCtx" [template]="getSpyTemplate(spyCtx.metaPageMap)" [showTemplateHeadings]="false"></lib-layout-outlet>
     }
   </div>
 }

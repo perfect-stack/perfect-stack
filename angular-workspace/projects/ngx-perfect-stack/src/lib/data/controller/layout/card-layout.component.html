@@ -11,12 +11,12 @@
               }
             </div>
             @if (getTemplateForRow(i, metaPageMap, discriminatorMap); as template) {
-              <lib-form-layout
+              <lib-layout-outlet
                 [mode]="mode"
                 [ctx]="ctx"
                 [template]="template"
                 [formGroup]="getFormGroupForRow(i)">
-              </lib-form-layout>
+              </lib-layout-outlet>
             }
             <br>
             </div>

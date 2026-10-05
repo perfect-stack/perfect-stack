@@ -26,7 +26,7 @@
       @for (metaPage of tabContext.tabList; track metaPage; let i = $index) {
         @if (selectedTabIdx === i) {
           <div class="col-12">
-            <lib-layout [ctx]="ctx" [template]="tabContext.tabList[i].templates[0]"></lib-layout>
+            <lib-layout-outlet [ctx]="ctx" [template]="tabContext.tabList[i].templates[0]"></lib-layout-outlet>
           </div>
         }
       }
