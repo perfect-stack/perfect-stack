@@ -1,3 +1,21 @@
+/**
+ * @packageDocumentation
+ * # Layout Subsystem
+ *
+ * The dynamic metadata-driven layout rendering engine of `ngx-perfect-stack`.
+ *
+ * Interprets declarative `MetaPage`, `Template`, `Row`, and `Cell` definitions to render
+ * responsive layouts (`HeaderLayout`, `FormLayout`, `TableLayout`, `CardLayout`),
+ * relational controls (`OneToManyControl`, `OneToOneControl`, `OneToPolyControl`),
+ * and interactive page tools (`TabTool`, `ButtonTabsTool`, `DurationTool`).
+ *
+ * All recursive layout rendering is decoupled via {@link LayoutOutletComponent} and
+ * {@link LAYOUT_COMPONENT} to guarantee a Directed Acyclic Graph (DAG) and prevent
+ * Angular compiler import cycles (`NG3003`).
+ *
+ * See `README.md` in this directory for architectural diagrams and design rules.
+ */
+
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { Template, TemplateLocationType } from '../../../domain/meta.page';
@@ -21,6 +39,12 @@ export * from './tool-view/button-tabs-tool/button-tabs-tool.component';
 export * from './tool-view/duration-tool/duration-tool.component';
 export * from './tool-view/tab-tool/tab-tool.component';
 
+/**
+ * Root dispatcher component for the Layout Subsystem.
+ *
+ * Evaluates the `template.type` on the input {@link Template} and dispatches to the
+ * appropriate structural layout (`HeaderLayout`, `FormLayout`, `TableLayout`, `CardLayout`).
+ */
 @Component({
   selector: 'lib-layout',
   templateUrl: './layout.component.html',
