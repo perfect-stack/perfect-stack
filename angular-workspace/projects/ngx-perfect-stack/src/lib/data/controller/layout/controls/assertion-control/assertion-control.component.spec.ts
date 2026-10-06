@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { Component, forwardRef, Input, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, forwardRef, Input, NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
 import { of } from 'rxjs';
 import { AssertionControlComponent } from './assertion-control.component';
 import { AssertionTypeService } from '../../../../data-service/assertion-type.service';
@@ -97,5 +97,48 @@ describe('AssertionControlComponent', () => {
     spyOn(component.delete, 'emit');
     component.onDelete();
     expect(component.delete.emit).toHaveBeenCalledWith(0);
+  });
+
+  it('should correctly parse pipe-delimited enum options', () => {
+    const parsed = component.parseEnumOptions('Female | Male | Hermaphrodite | Undetermined');
+    expect(parsed).toEqual(['Female', 'Male', 'Hermaphrodite', 'Undetermined']);
+  });
+
+  it('should correctly parse JSON array enum options', () => {
+    const parsed = component.parseEnumOptions('["Info", "Warning", "Error"]');
+    expect(parsed).toEqual(['Info', 'Warning', 'Error']);
+  });
+
+  it('should correctly parse comma-delimited enum options as fallback', () => {
+    const parsed = component.parseEnumOptions('Cat, Dog, Bird');
+    expect(parsed).toEqual(['Cat', 'Dog', 'Bird']);
+  });
+
+  it('should handle empty or whitespace enum options gracefully', () => {
+    expect(component.parseEnumOptions('')).toEqual([]);
+    expect(component.parseEnumOptions('   ')).toEqual([]);
+    expect(component.parseEnumOptions(undefined)).toEqual([]);
+    expect(component.parseEnumOptions(null)).toEqual([]);
+  });
+
+  it('should initialize enumeration cell and attribute when assertionType is Enumeration', () => {
+    const enumType: AssertionType = {
+      id: 'type-sex',
+      assertion_type_name: 'Sex',
+      assertion_value_class: AssertionValueClass.Enumeration,
+      assertion_value_enum_options: 'Female | Male | Hermaphrodite | Undetermined',
+    };
+
+    component.assertionType = enumType;
+    component.ngOnChanges({
+      assertionType: new SimpleChange(null, enumType, false),
+    });
+
+    expect(component.valueClass).toBe(AssertionValueClass.Enumeration);
+    expect(component.enumOptions).toEqual(['Female', 'Male', 'Hermaphrodite', 'Undetermined']);
+    expect(component.enumerationAttribute).toBeDefined();
+    expect(component.enumerationAttribute.enumeration).toEqual(['Female', 'Male', 'Hermaphrodite', 'Undetermined']);
+    expect(component.enumerationCell).toBeDefined();
+    expect(component.enumerationCell.attribute).toBe(component.enumerationAttribute);
   });
 });

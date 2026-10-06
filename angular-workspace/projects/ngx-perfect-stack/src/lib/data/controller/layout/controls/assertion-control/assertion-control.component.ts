@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { AssertionType, AssertionValueClass } from '../../../../../domain/assertion';
 import { AttributeType, MetaAttribute, VisibilityType } from '../../../../../domain/meta.entity';
@@ -12,7 +12,7 @@ import { AssertionTypeService } from '../../../../data-service/assertion-type.se
   styleUrls: ['./assertion-control.component.css'],
   standalone: false
 })
-export class AssertionControlComponent implements OnInit {
+export class AssertionControlComponent implements OnInit, OnChanges {
 
   @Input()
   formGroup: UntypedFormGroup;
@@ -26,10 +26,12 @@ export class AssertionControlComponent implements OnInit {
   @Input()
   index: number;
 
+  @Input()
+  assertionType?: AssertionType;
+
   @Output()
   delete = new EventEmitter<number>();
 
-  assertionType?: AssertionType;
   valueClass: string = AssertionValueClass.Text;
   enumOptions: string[] = [];
   expanded: boolean = false;
@@ -41,10 +43,17 @@ export class AssertionControlComponent implements OnInit {
   dateTimeCell: CellAttribute;
   geometryCell: CellAttribute;
   booleanAttribute: MetaAttribute;
+  enumerationAttribute: MetaAttribute;
+  enumerationCell: CellAttribute;
 
   constructor(protected readonly assertionTypeService: AssertionTypeService) { }
 
   ngOnInit(): void {
+    if (this.assertionType) {
+      this.initTypeDetails();
+      return;
+    }
+
     const assertionTypeId = this.formGroup?.get('assertion_type_id')?.value;
     if (assertionTypeId) {
       const cached = this.assertionTypeService.getAssertionType(assertionTypeId);
@@ -58,6 +67,12 @@ export class AssertionControlComponent implements OnInit {
         });
       }
     } else {
+      this.initTypeDetails();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['assertionType'] && !changes['assertionType'].firstChange) {
       this.initTypeDetails();
     }
   }
@@ -89,6 +104,41 @@ export class AssertionControlComponent implements OnInit {
     this.delete.emit(this.index);
   }
 
+  parseEnumOptions(rawOptions?: string | null): string[] {
+    if (!rawOptions) {
+      return [];
+    }
+    const raw = rawOptions.trim();
+    if (!raw) {
+      return [];
+    }
+
+    if (raw.startsWith('[') && raw.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          return parsed.map((s) => String(s).trim()).filter((s) => s.length > 0);
+        }
+      } catch {
+        // Fall back to delimiter splitting below
+      }
+    }
+
+    // Support pipe-separated (e.g. "Female | Male | Hermaphrodite | Undetermined")
+    if (raw.includes('|')) {
+      return raw
+        .split('|')
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+    }
+
+    // Fall back to comma-separated
+    return raw
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+  }
+
   private initTypeDetails(): void {
     if (this.assertionType?.assertion_value_class) {
       this.valueClass = this.assertionType.assertion_value_class;
@@ -96,20 +146,7 @@ export class AssertionControlComponent implements OnInit {
       this.valueClass = AssertionValueClass.Text;
     }
 
-    if (this.assertionType?.assertion_value_enum_options) {
-      const raw = this.assertionType.assertion_value_enum_options.trim();
-      if (raw.startsWith('[') && raw.endsWith(']')) {
-        try {
-          this.enumOptions = JSON.parse(raw);
-        } catch {
-          this.enumOptions = raw.split(',').map(s => s.trim()).filter(s => s.length > 0);
-        }
-      } else {
-        this.enumOptions = raw.split(',').map(s => s.trim()).filter(s => s.length > 0);
-      }
-    } else {
-      this.enumOptions = [];
-    }
+    this.enumOptions = this.parseEnumOptions(this.assertionType?.assertion_value_enum_options);
 
     const scale = this.assertionType?.assertion_value_decimal_places !== undefined
       ? String(this.assertionType.assertion_value_decimal_places)
@@ -126,6 +163,11 @@ export class AssertionControlComponent implements OnInit {
     this.dateTimeCell = this.createSyntheticCell('assertion_value_date_time', AttributeType.DateTime);
     this.geometryCell = this.createSyntheticCell('assertion_value_geometry', AttributeType.Geometry);
     this.booleanAttribute = this.createSyntheticAttribute('assertion_value_boolean', AttributeType.Boolean);
+
+    this.enumerationAttribute = this.createSyntheticAttribute('assertion_value_text', AttributeType.Enumeration);
+    this.enumerationAttribute.enumeration = this.enumOptions;
+    this.enumerationCell = this.createSyntheticCell('assertion_value_text', AttributeType.Enumeration);
+    this.enumerationCell.attribute = this.enumerationAttribute;
   }
 
   private createSyntheticAttribute(name: string, type: AttributeType, scale = ''): MetaAttribute {

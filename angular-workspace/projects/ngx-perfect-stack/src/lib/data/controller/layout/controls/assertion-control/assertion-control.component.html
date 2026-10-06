@@ -20,7 +20,7 @@
               <lib-text-field-control [mode]="mode || 'edit'" [cell]="numericCell" formControlName="assertion_value_numeric"></lib-text-field-control>
             }
             @case ('Enumeration') {
-              <lib-enumeration-control [mode]="mode || 'edit'" [formGroup]="formGroup" formControlName="assertion_value_text" [options]="enumOptions"></lib-enumeration-control>
+              <lib-enumeration-control [mode]="mode || 'edit'" [cell]="enumerationCell" [attribute]="enumerationAttribute" [formGroup]="formGroup" formControlName="assertion_value_text" [options]="enumOptions"></lib-enumeration-control>
             }
             @case ('Date') {
               <app-date-picker-control [mode]="mode || 'edit'" [attribute]="dateAttribute" formControlName="assertion_value_date"></app-date-picker-control>

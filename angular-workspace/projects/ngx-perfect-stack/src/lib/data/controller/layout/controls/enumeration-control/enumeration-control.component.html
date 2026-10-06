@@ -1,5 +1,5 @@
 @if (options) {
-  @if (mode !== 'view' && !cell.displayOnly) {
+  @if (mode !== 'view' && !cell?.displayOnly) {
     <div class="input-group" [attr.data-testid]="'field-' + (attribute?.name || ngControl.name)">
       <select [ngClass]="{'form-control': isReadOnly(), 'form-select': !isReadOnly(), 'ng-invalid': this.hasErrors(), 'ng-touched': touched}"
         [id]="ngControl.name"
@@ -17,15 +17,15 @@
       }
     </div>
   }
-  @if (mode === 'view' || cell.displayOnly) {
+  @if (mode === 'view' || cell?.displayOnly) {
     @if (selectedOption) {
-      <div class="input-group" [attr.data-testid]="'field-' + attribute.name">
-        <input class="form-control" readonly [id]="attribute.name" [attr.data-testid]="'view-' + attribute.name" value="{{selectedOption}}">
+      <div class="input-group" [attr.data-testid]="'field-' + (attribute?.name || ngControl.name)">
+        <input class="form-control" readonly [id]="attribute?.name || ngControl.name" [attr.data-testid]="'view-' + (attribute?.name || ngControl.name)" value="{{selectedOption}}">
       </div>
     }
     @if (!selectedOption) {
-      <div class="input-group" [attr.data-testid]="'field-' + attribute.name">
-        <input class="form-control empty-value" readonly [id]="attribute.name" [attr.data-testid]="'view-' + attribute.name" value="&mdash;">
+      <div class="input-group" [attr.data-testid]="'field-' + (attribute?.name || ngControl.name)">
+        <input class="form-control empty-value" readonly [id]="attribute?.name || ngControl.name" [attr.data-testid]="'view-' + (attribute?.name || ngControl.name)" value="&mdash;">
       </div>
     }
   }

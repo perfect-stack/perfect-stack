@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {ControlValueAccessor, FormGroup, NgControl} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {ValidationResult} from '../../../../../domain/meta.rule';
@@ -14,7 +14,7 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-st
     styleUrls: ['./enumeration-control.component.css'],
     standalone: false
 })
-export class EnumerationControlComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class EnumerationControlComponent implements OnInit, OnChanges, OnDestroy, ControlValueAccessor {
 
   @Input()
   mode: string | null;
@@ -47,9 +47,7 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
   }
 
   ngOnInit(): void {
-
-
-    if(this.attribute && this.attribute.enumeration) {
+    if(this.attribute && this.attribute.enumeration && this.attribute.enumeration.length > 0) {
       this.options = this.attribute.enumeration;
     }
     else if(this.cell && this.cell.dependsOn) {
@@ -73,7 +71,12 @@ export class EnumerationControlComponent implements OnInit, OnDestroy, ControlVa
       }
     }
     // if no enumeration supplied by the MetaAttribute then the options can be @Input() directly. See "SelectTwoControl"
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['attribute'] && this.attribute?.enumeration && this.attribute.enumeration.length > 0) {
+      this.options = this.attribute.enumeration;
+    }
   }
 
   getSourceControl(): FormControlWithAttribute | null {
