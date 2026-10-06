@@ -1,0 +1,103 @@
+@if (formGroup) {
+  <div class="card mb-2 assertion-card" [ngClass]="{'border-primary': expanded}" [formGroup]="formGroup">
+    <div class="card-body py-2 px-3">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <!-- Fact / Assertion Name -->
+        <div class="assertion-name-col">
+          <span class="fw-semibold text-dark">{{ assertionTypeName }}</span>
+          @if (assertionUnit) {
+            <span class="badge bg-light text-secondary border ms-2">{{ assertionUnit }}</span>
+          }
+        </div>
+
+        <!-- Dynamic Value Input -->
+        <div class="assertion-value-col flex-grow-1">
+          @switch (valueClass) {
+            @case ('Integer') {
+              <lib-text-field-control [mode]="mode || 'edit'" [cell]="numericCell" formControlName="assertion_value_numeric"></lib-text-field-control>
+            }
+            @case ('Double') {
+              <lib-text-field-control [mode]="mode || 'edit'" [cell]="numericCell" formControlName="assertion_value_numeric"></lib-text-field-control>
+            }
+            @case ('Enumeration') {
+              <lib-enumeration-control [mode]="mode || 'edit'" [formGroup]="formGroup" formControlName="assertion_value_text" [options]="enumOptions"></lib-enumeration-control>
+            }
+            @case ('Date') {
+              <app-date-picker-control [mode]="mode || 'edit'" [attribute]="dateAttribute" formControlName="assertion_value_date"></app-date-picker-control>
+            }
+            @case ('Time') {
+              <lib-time-control [mode]="mode || 'edit'" [cell]="timeCell" formControlName="assertion_value_time" [includesDate]="false"></lib-time-control>
+            }
+            @case ('DateTime') {
+              <lib-date-time-control [mode]="mode || 'edit'" [formGroup]="formGroup" [cell]="dateTimeCell" name="assertion_value_date_time"></lib-date-time-control>
+            }
+            @case ('Geometry') {
+              <lib-geometry-control [mode]="mode || 'edit'" [cell]="geometryCell" [formGroup]="formGroup" formControlName="assertion_value_geometry"></lib-geometry-control>
+            }
+            @case ('Boolean') {
+              <lib-boolean-check-box-control [mode]="mode || 'edit'" [formGroup]="formGroup" [attribute]="booleanAttribute"></lib-boolean-check-box-control>
+            }
+            @default {
+              <lib-text-field-control [mode]="mode || 'edit'" [cell]="textCell" formControlName="assertion_value_text"></lib-text-field-control>
+            }
+          }
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="assertion-actions-col d-flex align-items-center gap-1">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary d-flex align-items-center"
+            [class.active]="expanded"
+            (click)="toggleDetails()"
+            title="Additional details (method, accuracy, notes)"
+            data-testid="btn-toggle-assertion-details">
+            <span class="material-symbols-outlined fs-6">tune</span>
+          </button>
+          @if (mode === 'edit') {
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger d-flex align-items-center"
+              (click)="onDelete()"
+              title="Delete this assertion"
+              data-testid="btn-delete-assertion">
+              <span class="material-symbols-outlined fs-6">delete</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Collapsible Supplementary Context / Details -->
+      @if (expanded || (mode !== 'edit' && hasDetails)) {
+        <div class="assertion-details-panel border-top pt-2 mt-2">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label class="form-label small text-muted mb-0">Method</label>
+              @if (mode === 'edit') {
+                <input type="text" class="form-control form-control-sm" formControlName="assertion_method" placeholder="e.g. hoist scale, visual estimate" />
+              } @else {
+                <div class="small">{{ formGroup.get('assertion_method')?.value || '-' }}</div>
+              }
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small text-muted mb-0">Accuracy</label>
+              @if (mode === 'edit') {
+                <input type="text" class="form-control form-control-sm" formControlName="assertion_accuracy" placeholder="e.g. ±0.5 mm" />
+              } @else {
+                <div class="small">{{ formGroup.get('assertion_accuracy')?.value || '-' }}</div>
+              }
+            </div>
+            <div class="col-12">
+              <label class="form-label small text-muted mb-0">Notes</label>
+              @if (mode === 'edit') {
+                <textarea class="form-control form-control-sm" formControlName="assertion_notes" rows="2" placeholder="Descriptive fact notes..."></textarea>
+              } @else {
+                <div class="small" [innerHTML]="formGroup.get('assertion_notes')?.value || '-'"></div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

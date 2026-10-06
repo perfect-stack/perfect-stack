@@ -1,0 +1,79 @@
+{
+  "name": "Occurrence.search",
+  "title": "Occurrence Search",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "species",
+            "component": "Select"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "organism_id"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "occurrence_date"
+          }
+        ]
+      ],
+      "metaEntityName": "Occurrence",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "occurrence_date"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "species"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "organism_id"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "organism_quantity"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "organism_quantity_type"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Occurrence",
+      "type": "table",
+      "orderByName": "occurrence_date",
+      "orderByDir": "DESC"
+    }
+  ]
+}

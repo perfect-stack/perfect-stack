@@ -1,0 +1,104 @@
+{
+  "name": "AssertionType.view_edit",
+  "title": "Assertion Type Details",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "assertionType",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "AssertionType",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "AssertionType",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "assertion_type_name"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Assertion Type Header",
+      "binding": "assertionType"
+    },
+    {
+      "metaEntityName": "AssertionType",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "assertion_type_name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "assertion_unit"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "assertion_value_class"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "assertion_value_enum_options"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "assertion_value_number_min"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "assertion_value_number_max"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "assertion_value_decimal_places"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "attributeName": "assertion_method"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "2",
+            "attributeName": "assertion_type_notes"
+          }
+        ]
+      ],
+      "templateHeading": "Assertion Type Information",
+      "binding": "assertionType"
+    }
+  ]
+}

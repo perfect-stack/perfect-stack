@@ -1,0 +1,110 @@
+{
+  "name": "Occurrence.view_edit",
+  "title": "Occurrence Details",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "occurrence",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Occurrence",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Occurrence",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "species,occurrence_date"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Occurrence Header",
+      "binding": "occurrence"
+    },
+    {
+      "metaEntityName": "Occurrence",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "species",
+            "component": "Select"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "organism_id"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "occurrence_date"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "location"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "organism_quantity"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "organism_quantity_type"
+          }
+        ],
+        [
+          {
+            "width": "12",
+            "height": "2",
+            "attributeName": "occurrence_notes"
+          }
+        ]
+      ],
+      "templateHeading": "Occurrence Information",
+      "binding": "occurrence"
+    },
+    {
+      "metaEntityName": "Occurrence",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "2",
+            "attributeName": "assertions",
+            "component": "AssertionList",
+            "hideLabel": true
+          }
+        ]
+      ],
+      "templateHeading": "Facts & Assertions",
+      "binding": "occurrence"
+    }
+  ]
+}

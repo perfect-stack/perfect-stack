@@ -1,0 +1,22 @@
+@if (mode === 'edit') {
+  <div class="assertion-selector-container my-3">
+    <div class="input-group">
+      <span class="input-group-text bg-white border-end-0">
+        <span class="material-symbols-outlined text-muted align-middle">add_circle</span>
+      </span>
+      <input
+        #typeaheadInput
+        type="text"
+        class="form-control border-start-0 ps-0"
+        placeholder="Type to search and add a fact / assertion (e.g. Weight, Length, Sex, Behavior)..."
+        [(ngModel)]="searchTerm"
+        [ngbTypeahead]="search"
+        [inputFormatter]="formatter"
+        [resultFormatter]="formatter"
+        [editable]="false"
+        (selectItem)="onSelectItem($event)"
+        data-testid="assertion-selector-input"
+      />
+    </div>
+  </div>
+}

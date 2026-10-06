@@ -1,0 +1,23 @@
+.assertion-card {
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: #fafbfc;
+}
+
+.assertion-card:hover {
+  background-color: #ffffff;
+}
+
+.assertion-name-col {
+  min-width: 180px;
+  max-width: 250px;
+}
+
+.assertion-value-col {
+  min-width: 200px;
+}
+
+.assertion-details-panel {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 8px 12px;
+}

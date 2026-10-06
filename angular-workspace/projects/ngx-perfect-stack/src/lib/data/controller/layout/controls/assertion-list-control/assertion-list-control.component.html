@@ -1,0 +1,32 @@
+<div class="assertion-list-wrapper" [attr.data-testid]="'assertion-list-' + relationshipProperty">
+  <!-- Selector input (edit mode only) -->
+  @if (mode === 'edit' && attributes) {
+    <lib-assertion-selector
+      [mode]="mode"
+      [formArray]="attributes"
+      (assertionTypeSelected)="onAddAssertion($event)">
+    </lib-assertion-selector>
+  }
+
+  <!-- Assertions List -->
+  @if (attributes && attributes.length > 0) {
+    <div class="assertion-items-list mt-2">
+      @for (ctrl of attributes.controls; track ctrl; let i = $index) {
+        <lib-assertion-control
+          [formGroup]="getFormGroup(i)"
+          [mode]="mode"
+          [ctx]="ctx"
+          [index]="i"
+          (delete)="onDeleteAssertion(i)">
+        </lib-assertion-control>
+      }
+    </div>
+  } @else {
+    <div class="text-muted small py-3 fst-italic text-center border rounded bg-light" data-testid="no-assertions-message">
+      No facts or assertions recorded.
+      @if (mode === 'edit') {
+        <span> Use the search box above to add facts to this observation.</span>
+      }
+    </div>
+  }
+</div>

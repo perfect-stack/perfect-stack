@@ -1,6 +1,17 @@
 {
   "menuList": [
     {
+      "label": "Occurrences",
+      "items": [
+        {
+          "label": "Occurrences",
+          "route": "/data/Occurrence/search",
+          "editable": true,
+          "roles": []
+        }
+      ]
+    },
+    {
       "label": "Pets",
       "items": [
         {
@@ -59,6 +70,12 @@
           "route": "/data/Species/tree",
           "editable": true,
           "roles": []
+        },
+        {
+          "label": "Assertion Types",
+          "route": "/data/AssertionType/search",
+          "editable": true,
+          "roles": []
         }
       ]
     },
@@ -88,13 +105,11 @@
           "roles": [],
           "label": "API",
           "route": "/api/api-docs",
-          "openIn": "New Tab"
-        },
-        {
-          "editable": true,
-          "roles": [],
-          "label": "Version",
-          "route": "/meta/version"
+          "metaEntity": {
+            "name": "API",
+            "type": "Basic",
+            "attributes": []
+          }
         }
       ]
     }

@@ -1,0 +1,8 @@
+.assertion-list-wrapper {
+  width: 100%;
+}
+
+.assertion-items-list {
+  display: flex;
+  flex-direction: column;
+}

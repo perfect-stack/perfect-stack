@@ -33,6 +33,9 @@ export * from './cell/cell.component';
 export * from './controls/one-to-many-control/one-to-many-control.component';
 export * from './controls/one-to-poly-control/one-to-poly-control.component';
 export * from './controls/one-to-one-control/one-to-one-control.component';
+export * from './controls/assertion-selector/assertion-selector.component';
+export * from './controls/assertion-control/assertion-control.component';
+export * from './controls/assertion-list-control/assertion-list-control.component';
 export * from './controls/spy-control/spy-control.component';
 export * from './tool-view/tool-view.component';
 export * from './tool-view/button-tabs-tool/button-tabs-tool.component';
@@ -40,11 +43,7 @@ export * from './tool-view/duration-tool/duration-tool.component';
 export * from './tool-view/tab-tool/tab-tool.component';
 
 /**
- * Root dispatcher component for the Layout Subsystem.
- *
- * Evaluates the `template.type` on the input {@link Template} and dispatches to the
- * appropriate structural layout (`HeaderLayout`, `FormLayout`, `TableLayout`, `CardLayout`).
- */
+ * Root dispatcher component for the Layout Subsystem.\n *\n * Evaluates the `template.type` on the input {@link Template} and dispatches to the\n * appropriate structural layout (`HeaderLayout`, `FormLayout`, `TableLayout`, `CardLayout`).\n */
 @Component({
   selector: 'lib-layout',
   templateUrl: './layout.component.html',
