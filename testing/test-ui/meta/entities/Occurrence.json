@@ -48,8 +48,8 @@
       "comparisonOperator": "Equals",
       "relationshipTarget": "Species",
       "typeaheadSearch": [
-        "canonical_name",
-        "scientific_name"
+        "scientific_name",
+        "common_name"
       ],
       "rules": []
     },
