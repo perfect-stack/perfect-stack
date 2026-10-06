@@ -28,7 +28,7 @@
       "description": "References Location where the occurrence was observed",
       "unitOfMeasure": "",
       "scale": "",
-      "type": "geometry",
+      "type": "Geometry",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "Equals",
