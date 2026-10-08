@@ -125,6 +125,8 @@ export interface TreeNodeTypeConfig {
   secondaryAttribute?: string;
   badgeAttribute?: string;
   badge?: string;
+  badgeColor?: string;
+  badgeClass?: string;
   icon?: string;
   route?: string;
   pageView?: string;
@@ -150,6 +152,7 @@ export class TreeTool extends Tool {
   secondaryAttribute?: string;
   badgeAttribute?: string;
   initialDepth?: number;
+  initialExpandDepth?: number;
   route?: string;
   treeType?: 'SelfReferencing' | 'EntityChain';
   nodeTypes?: Record<string, TreeNodeTypeConfig>;

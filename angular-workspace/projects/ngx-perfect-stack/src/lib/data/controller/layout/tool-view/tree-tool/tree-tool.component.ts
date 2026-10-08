@@ -103,8 +103,9 @@ export class TreeToolComponent implements OnInit {
           this.rootNodes = [];
         }
         this.loading = false;
+        const expandDepth = this.treeTool?.initialExpandDepth ?? 1;
         for (const root of this.rootNodes) {
-          this.autoExpandInitialLevels(root, 2);
+          this.autoExpandInitialLevels(root, expandDepth);
         }
         if (this.treeTool?.masterDetail && this.rootNodes.length > 0) {
           this.selectNode(this.rootNodes[0]);
@@ -540,6 +541,54 @@ export class TreeToolComponent implements OnInit {
       return node[this.treeTool.badgeAttribute];
     }
     if (node['rank']) return node['rank'];
+    return null;
+  }
+
+  readonly badgeColorPalette: string[] = [
+    'text-bg-primary',
+    'text-bg-success',
+    'text-bg-info',
+    'text-bg-warning',
+    'text-bg-danger',
+    'text-bg-dark',
+    'text-bg-secondary',
+  ];
+
+  private readonly badgeColorMap = new Map<string, string>();
+
+  getBadgeColorForValue(badge: string): string {
+    if (!this.badgeColorMap.has(badge)) {
+      const index = this.badgeColorMap.size % this.badgeColorPalette.length;
+      this.badgeColorMap.set(badge, this.badgeColorPalette[index]);
+    }
+    return this.badgeColorMap.get(badge)!;
+  }
+
+  getBadgeClass(node: any): string {
+    if (!node) return 'text-bg-secondary';
+    const config = this.getNodeConfig(node);
+    const badgeColor = config?.badgeColor || config?.badgeClass || node['badgeColor'] || node['badge_color'] || node['badgeClass'];
+    if (badgeColor) {
+      if (badgeColor.startsWith('#') || badgeColor.startsWith('rgb')) {
+        return '';
+      }
+      if (badgeColor.startsWith('text-bg-') || badgeColor.startsWith('bg-')) {
+        return badgeColor;
+      }
+      return `text-bg-${badgeColor}`;
+    }
+    const badge = this.getBadgeValue(node);
+    if (!badge) return 'text-bg-secondary';
+    return this.getBadgeColorForValue(badge);
+  }
+
+  getBadgeStyle(node: any): { [key: string]: string } | null {
+    if (!node) return null;
+    const config = this.getNodeConfig(node);
+    const badgeColor = config?.badgeColor || node['badgeColor'] || node['badge_color'];
+    if (badgeColor && (badgeColor.startsWith('#') || badgeColor.startsWith('rgb'))) {
+      return { 'background-color': badgeColor };
+    }
     return null;
   }
 

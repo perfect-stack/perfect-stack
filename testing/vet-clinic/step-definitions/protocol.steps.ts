@@ -46,6 +46,15 @@ Then('I should see the tree node {string}', async function (this: UIWorld, nodeN
   expect(await node.isVisible()).to.be.true;
 });
 
+Then('I should not see the tree node {string}', async function (this: UIWorld, nodeName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const node = this.page.locator('.ps-tree-node-link').filter({ hasText: nodeName });
+  const count = await node.count();
+  if (count > 0) {
+    expect(await node.first().isVisible()).to.be.false;
+  }
+});
+
 When('I click the tree node {string}', async function (this: UIWorld, nodeName: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
   const node = this.page.locator('.ps-tree-node-link').filter({ hasText: nodeName }).first();
@@ -67,6 +76,16 @@ Then('I should see the tree badge {string} on node {string}', async function (th
   await row.waitFor({ state: 'visible', timeout: 30000 });
   const badge = row.locator('.ps-tree-badge').filter({ hasText: badgeText }).first();
   expect(await badge.isVisible()).to.be.true;
+});
+
+Then('I should see the tree badge {string} on node {string} with color class {string}', async function (this: UIWorld, badgeText: string, nodeName: string, colorClass: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const row = this.page.locator('.ps-tree-node-row').filter({ hasText: nodeName }).first();
+  await row.waitFor({ state: 'visible', timeout: 30000 });
+  const badge = row.locator('.ps-tree-badge').filter({ hasText: badgeText }).first();
+  expect(await badge.isVisible()).to.be.true;
+  const classes = await badge.getAttribute('class');
+  expect(classes).to.include(colorClass);
 });
 
 Then('I should see the detail panel header {string}', async function (this: UIWorld, expectedHeader: string) {

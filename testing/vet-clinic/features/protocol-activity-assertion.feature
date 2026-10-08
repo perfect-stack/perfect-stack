@@ -39,7 +39,10 @@ Feature: Protocol, Activity Template, and Assertion Type Hierarchy
   Scenario: View Protocol Hierarchy Tree and inspect Master-Detail Views
     When I navigate to "/data/Protocol/tree"
     Then I should see the tree node "Bird Capture"
-    And I should see the tree badge "Protocol" on node "Bird Capture"
+    And I should see the tree badge "Protocol" on node "Bird Capture" with color class "text-bg-primary"
+    And I should see the tree node "Capture detail"
+    And I should see the tree badge "Activity" on node "Capture detail" with color class "text-bg-success"
+    And I should not see the tree node "Capture technique"
     And I should see the detail panel header "Bird Capture"
     And I should see the edit node button for "Protocol"
     And I should see the nested one-to-many "activity_templates" table
@@ -49,15 +52,18 @@ Feature: Protocol, Activity Template, and Assertion Type Hierarchy
     And I should see the edit node button for "ActivityTemplate"
     And I should see the nested one-to-many "assertion_types" table
     And I should see "Capture technique" in the "assertion_types" table
-    When I click the tree node "Capture technique"
-    Then I should see the detail panel header "Capture technique"
+    When I expand the tree node "Capture detail"
+    And I click the tree node "Capture technique"
+    Then I should see the tree badge "Assertion" on node "Capture technique" with color class "text-bg-info"
+    And I should see the detail panel header "Capture technique"
     And I should see the edit node button for "AssertionType"
 
   @protocol-tree-edit @regression
   Scenario: Edit tree node in place and prompt on unsaved changes
     When I navigate to "/data/Protocol/tree"
     Then I should see the tree node "Bird Capture"
-    When I click the tree node "Capture technique"
+    When I expand the tree node "Capture detail"
+    And I click the tree node "Capture technique"
     Then I should see the detail panel header "Capture technique"
     When I click the edit node button
     Then I should see the save node button

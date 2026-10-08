@@ -78,7 +78,7 @@
                         <small class="text-muted fst-italic me-2">({{ sec }})</small>
                       }
                       @if (getBadgeValue(selectedNode); as badge) {
-                        <span class="badge bg-secondary ps-tree-badge">{{ badge }}</span>
+                        <span class="badge ps-tree-badge" [ngClass]="getBadgeClass(selectedNode)" [ngStyle]="getBadgeStyle(selectedNode)">{{ badge }}</span>
                       }
                     </div>
                   </div>
@@ -214,7 +214,7 @@
               }
 
               @if (getBadgeValue(node); as badge) {
-                <span class="badge bg-secondary ms-2 ps-tree-badge">{{ badge }}</span>
+                <span class="badge ms-2 ps-tree-badge" [ngClass]="getBadgeClass(node)" [ngStyle]="getBadgeStyle(node)">{{ badge }}</span>
               }
             </div>
 
