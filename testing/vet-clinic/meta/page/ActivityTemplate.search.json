@@ -1,0 +1,59 @@
+{
+  "name": "ActivityTemplate.search",
+  "title": "Activity Template Search",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "activity_template_name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "protocol",
+            "component": "Select"
+          }
+        ]
+      ],
+      "metaEntityName": "ActivityTemplate",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "activity_template_name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "protocol"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "ActivityTemplate",
+      "type": "table",
+      "orderByName": "activity_template_name",
+      "orderByDir": "ASC"
+    }
+  ]
+}

@@ -72,6 +72,18 @@
           "roles": []
         },
         {
+          "label": "Protocols",
+          "route": "/data/Protocol/search",
+          "editable": true,
+          "roles": []
+        },
+        {
+          "label": "Activity Templates",
+          "route": "/data/ActivityTemplate/search",
+          "editable": true,
+          "roles": []
+        },
+        {
           "label": "Assertion Types",
           "route": "/data/AssertionType/search",
           "editable": true,

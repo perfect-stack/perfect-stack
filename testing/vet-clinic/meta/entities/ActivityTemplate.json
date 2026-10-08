@@ -1,0 +1,77 @@
+{
+  "name": "ActivityTemplate",
+  "pluralName": "ActivityTemplates",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Primary key identifier for the activity template",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "activity_template_name",
+      "label": "Activity template name",
+      "description": "Name of the activity template",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveLike",
+      "relationshipTarget": "",
+      "typeaheadSearch": [
+        "activity_template_name"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "protocol",
+      "label": "Protocol",
+      "description": "Protocol this activity template belongs to",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "Protocol",
+      "typeaheadSearch": [
+        "protocol_name"
+      ],
+      "rules": []
+    },
+    {
+      "name": "assertion_types",
+      "label": "Assertion types",
+      "description": "Assertion types associated with this activity template",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "AssertionType",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}

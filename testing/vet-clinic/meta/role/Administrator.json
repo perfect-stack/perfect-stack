@@ -1,7 +1,7 @@
 {
   "name": "Administrator",
   "group": "Administrator",
-  "description": "<p>Full access to Vet Clinic administration, Pet, Owner, Clinic, and Species records</p>",
+  "description": "<p>Full access to Vet Clinic administration, Pet, Owner, Clinic, Species, Protocol, ActivityTemplate, and AssertionType records</p>",
   "permissions": [
     {
       "action": "Menu",
@@ -74,6 +74,42 @@
     {
       "action": "Delete",
       "subject": "Species"
+    },
+    {
+      "action": "Edit",
+      "subject": "Protocol"
+    },
+    {
+      "action": "Read",
+      "subject": "Protocol"
+    },
+    {
+      "action": "Delete",
+      "subject": "Protocol"
+    },
+    {
+      "action": "Edit",
+      "subject": "ActivityTemplate"
+    },
+    {
+      "action": "Read",
+      "subject": "ActivityTemplate"
+    },
+    {
+      "action": "Delete",
+      "subject": "ActivityTemplate"
+    },
+    {
+      "action": "Edit",
+      "subject": "AssertionType"
+    },
+    {
+      "action": "Read",
+      "subject": "AssertionType"
+    },
+    {
+      "action": "Delete",
+      "subject": "AssertionType"
     }
   ]
 }

@@ -1,0 +1,90 @@
+{
+  "name": "Protocol.view_edit",
+  "title": "Protocol Details",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [
+    {
+      "dataName": "protocol",
+      "resultCardinality": "QueryOne",
+      "queryType": "Entity",
+      "queryName": "Protocol",
+      "fieldName": "id",
+      "parameter": "id"
+    }
+  ],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Protocol",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "",
+              "modes": "",
+              "nameAttributes": "protocol_name"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Protocol Header",
+      "binding": "protocol"
+    },
+    {
+      "metaEntityName": "Protocol",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "attributeName": "protocol_name"
+          }
+        ]
+      ],
+      "templateHeading": "Protocol Information",
+      "binding": "protocol"
+    },
+    {
+      "metaEntityName": "Protocol",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "attributeName": "activity_templates",
+            "template": {
+              "binding": "activity_templates",
+              "templateHeading": "",
+              "type": "table",
+              "metaEntityName": "ActivityTemplate",
+              "cells": [
+                [
+                  {
+                    "width": "12",
+                    "height": "1",
+                    "attributeName": "activity_template_name"
+                  }
+                ]
+              ],
+              "orderByName": "activity_template_name",
+              "orderByDir": "ASC",
+              "navigation": "Enabled",
+              "route": "/data/ActivityTemplate/view/${id}"
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Activity Templates",
+      "binding": "protocol"
+    }
+  ]
+}

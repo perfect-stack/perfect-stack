@@ -37,6 +37,22 @@
       "rules": []
     },
     {
+      "name": "activity_template",
+      "label": "Activity template",
+      "description": "Activity template this assertion type belongs to",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "ActivityTemplate",
+      "typeaheadSearch": [
+        "activity_template_name"
+      ],
+      "rules": []
+    },
+    {
       "name": "assertion_unit",
       "label": "Assertion unit",
       "description": "Controlled vocabulary unit (e.g. mm, g, %, MHz)",

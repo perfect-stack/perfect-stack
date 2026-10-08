@@ -4,6 +4,13 @@ import * as path from "path";
 import { v4 as uuid } from "uuid";
 
 import { DataService, MapService, OrmService } from '@perfect-stack/nestjs-server';
+import {
+  SeedAssertionType,
+  SEED_ASSERTION_TYPES,
+  seedProtocolsAndAssertions,
+} from './protocol-seed-data';
+
+export { SeedAssertionType, SEED_ASSERTION_TYPES };
 
 export interface TaxonNode {
   scientific_name: string;
@@ -228,98 +235,6 @@ export const SEED_CLINICS = RAW_SEED_CLINICS.map((clinic) => {
     geometry: coords.geometry,
   };
 });
-
-export interface SeedAssertionType {
-  assertion_type_name: string;
-  assertion_unit?: string;
-  assertion_value_class: "Integer" | "Double" | "Text" | "Enumeration" | "Date" | "Time" | "DateTime" | "Geometry" | "Boolean";
-  assertion_value_enum_options?: string;
-  assertion_value_number_min?: number;
-  assertion_value_number_max?: number;
-  assertion_value_decimal_places?: number;
-  assertion_method?: string;
-  assertion_type_notes?: string;
-}
-
-export const SEED_ASSERTION_TYPES: SeedAssertionType[] = [
-  {
-    assertion_type_name: "Sex",
-    assertion_unit: "",
-    assertion_value_class: "Enumeration",
-    assertion_value_enum_options: "Female | Male | Hermaphrodite | Undetermined",
-    assertion_type_notes: "The sex of the biological individual(s) represented in the Occurrence (Darwin Core term: sex).",
-  },
-  {
-    assertion_type_name: "Life Stage",
-    assertion_unit: "",
-    assertion_value_class: "Enumeration",
-    assertion_value_enum_options: "Adult | Subadult | Juvenile | Larva | Egg | Nymph | Pupa",
-    assertion_type_notes: "The age class or life stage of the biological individual(s) at the time the Occurrence was recorded (Darwin Core term: lifeStage).",
-  },
-  {
-    assertion_type_name: "Reproductive Condition",
-    assertion_unit: "",
-    assertion_value_class: "Enumeration",
-    assertion_value_enum_options: "Non-reproductive | Breeding | Gravid | Pregnant | Lactating | Courting | In bloom | Fruiting",
-    assertion_type_notes: "The reproductive condition of the individual(s) or colony observed (Darwin Core term: reproductiveCondition).",
-  },
-  {
-    assertion_type_name: "Body Mass",
-    assertion_unit: "g",
-    assertion_value_class: "Double",
-    assertion_value_number_min: 0.01,
-    assertion_value_number_max: 1000000,
-    assertion_value_decimal_places: 2,
-    assertion_method: "Electronic balance",
-    assertion_type_notes: "Total body mass of the organism at observation or capture (Darwin Core MeasurementOrFact: body mass).",
-  },
-  {
-    assertion_type_name: "Total Length",
-    assertion_unit: "mm",
-    assertion_value_class: "Double",
-    assertion_value_number_min: 0.1,
-    assertion_value_number_max: 50000,
-    assertion_value_decimal_places: 1,
-    assertion_method: "Caliper / measuring tape",
-    assertion_type_notes: "Total length from anterior-most point to posterior-most point (Darwin Core MeasurementOrFact: total length).",
-  },
-  {
-    assertion_type_name: "Behavior",
-    assertion_unit: "",
-    assertion_value_class: "Text",
-    assertion_type_notes: "Observed behavior or activity at the time of encounter, e.g. foraging, roosting, calling, territorial display (Darwin Core term: behavior).",
-  },
-  {
-    assertion_type_name: "Tagged or Banded",
-    assertion_unit: "",
-    assertion_value_class: "Boolean",
-    assertion_type_notes: "Indicates whether the observed animal had a physical marker, leg band, wing tag, or PIT tag attached.",
-  },
-  {
-    assertion_type_name: "Ambient Temperature",
-    assertion_unit: "°C",
-    assertion_value_class: "Double",
-    assertion_value_number_min: -50,
-    assertion_value_number_max: 60,
-    assertion_value_decimal_places: 1,
-    assertion_method: "Field thermometer",
-    assertion_type_notes: "Ambient air or water temperature recorded at the occurrence site during observation.",
-  },
-  {
-    assertion_type_name: "Identification Date Time",
-    assertion_unit: "",
-    assertion_value_class: "DateTime",
-    assertion_method: "Expert morphological determination",
-    assertion_type_notes: "The date and time on which the subject was determined or verified to represent the Taxon (Darwin Core term: dateIdentified).",
-  },
-  {
-    assertion_type_name: "Spatial Footprint",
-    assertion_unit: "",
-    assertion_value_class: "Geometry",
-    assertion_method: "Field GPS boundary mapping / polygon capture",
-    assertion_type_notes: "A polygon or multipolygon geometry defining the search plot boundary, quadrat, or survey area encompassing the occurrence (Darwin Core term: footprintWKT).",
-  },
-];
 
 export const SEED_PET_MEDIA: Record<string, string[]> = {
   Jack: [
@@ -631,46 +546,8 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
     }
   }
 
-  // 6. Seed AssertionTypes (Darwin Core facts and measurements)
-  const assertionTypeModel = ormService.sequelize.model('AssertionType');
-  for (const atDef of SEED_ASSERTION_TYPES) {
-    const existingRecord: any = await assertionTypeModel.findOne({
-      where: {
-        assertion_type_name: atDef.assertion_type_name,
-      },
-    });
-
-    if (!existingRecord) {
-      await dataService.save('AssertionType', {
-        assertion_type_name: atDef.assertion_type_name,
-        assertion_unit: atDef.assertion_unit ?? '',
-        assertion_value_class: atDef.assertion_value_class,
-        assertion_value_enum_options: atDef.assertion_value_enum_options ?? null,
-        assertion_value_number_min: atDef.assertion_value_number_min ?? null,
-        assertion_value_number_max: atDef.assertion_value_number_max ?? null,
-        assertion_value_decimal_places: atDef.assertion_value_decimal_places ?? null,
-        assertion_method: atDef.assertion_method ?? null,
-        assertion_type_notes: atDef.assertion_type_notes ?? null,
-      } as any);
-      logger.log(`Created AssertionType: ${atDef.assertion_type_name} (${atDef.assertion_value_class})`);
-    } else {
-      const existing = existingRecord.get ? existingRecord.get({ plain: true }) : existingRecord;
-      await assertionTypeModel.update(
-        {
-          assertion_unit: atDef.assertion_unit ?? '',
-          assertion_value_class: atDef.assertion_value_class,
-          assertion_value_enum_options: atDef.assertion_value_enum_options ?? null,
-          assertion_value_number_min: atDef.assertion_value_number_min ?? null,
-          assertion_value_number_max: atDef.assertion_value_number_max ?? null,
-          assertion_value_decimal_places: atDef.assertion_value_decimal_places ?? null,
-          assertion_method: atDef.assertion_method ?? null,
-          assertion_type_notes: atDef.assertion_type_notes ?? null,
-        },
-        { where: { id: existing.id } },
-      );
-      logger.log(`Updated AssertionType: ${atDef.assertion_type_name}`);
-    }
-  }
+  // 6. Seed Protocols, ActivityTemplates, and AssertionTypes
+  await seedProtocolsAndAssertions(app);
 
   logger.log('Initial seed data verified successfully.');
 }

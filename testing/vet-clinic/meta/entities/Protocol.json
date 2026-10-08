@@ -1,0 +1,61 @@
+{
+  "name": "Protocol",
+  "pluralName": "Protocols",
+  "icon": "",
+  "type": "Database",
+  "rootNode": true,
+  "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Primary key identifier for the protocol",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "protocol_name",
+      "label": "Protocol name",
+      "description": "Name of the protocol",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "InsensitiveLike",
+      "relationshipTarget": "",
+      "typeaheadSearch": [
+        "protocol_name"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "activity_templates",
+      "label": "Activity templates",
+      "description": "Activity templates associated with this protocol",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "OneToMany",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "ActivityTemplate",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}
