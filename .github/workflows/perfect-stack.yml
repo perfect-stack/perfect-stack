@@ -86,8 +86,8 @@ jobs:
           path: ./testing/test-server/reports/cucumber-report.html
           retention-days: 14
 
-  test-ui:
-    name: Test UI (test-ui)
+  vet-clinic:
+    name: Vet Clinic E2E Tests (vet-clinic)
     needs: [test-server, build-ngx-perfect-stack]
     runs-on: ubuntu-latest
     steps:
@@ -111,36 +111,36 @@ jobs:
       - name: npm run build:lib
         working-directory: ./angular-workspace
         run: npm run build:lib
-      - name: npm ci (test-ui server)
-        working-directory: ./testing/test-ui/server
+      - name: npm ci (vet-clinic server)
+        working-directory: ./testing/vet-clinic/server
         run: npm ci
-      - name: npm run build (test-ui client)
-        working-directory: ./testing/test-ui/client
+      - name: npm run build (vet-clinic client)
+        working-directory: ./testing/vet-clinic/client
         run: npm run build
-      - name: npm ci (test-ui)
-        working-directory: ./testing/test-ui
+      - name: npm ci (vet-clinic)
+        working-directory: ./testing/vet-clinic
         run: npm ci
       - name: install playwright browsers
-        working-directory: ./testing/test-ui
+        working-directory: ./testing/vet-clinic
         run: npx playwright install --with-deps chromium
       - name: run playwright ui tests
-        working-directory: ./testing/test-ui
+        working-directory: ./testing/vet-clinic
         run: npm test
       - name: generate test summary
         if: always()
-        working-directory: ./testing/test-ui
+        working-directory: ./testing/vet-clinic
         run: node scripts/generate-summary.js
       - name: upload playwright ui cucumber report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-cucumber-report
-          path: ./testing/test-ui/reports/
+          name: vet-clinic-cucumber-report
+          path: ./testing/vet-clinic/reports/
           retention-days: 14
 
   publish-release:
     name: Version & Publish Packages
-    needs: [test-ui]
+    needs: [vet-clinic]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     permissions:

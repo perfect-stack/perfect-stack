@@ -56,7 +56,7 @@ This is the roadmap of planned features.
 
 ## CI/CD & Publishing Releases
 
-The GitHub Actions workflow (`.github/workflows/perfect-stack.yml`) handles build verification, automated testing (`test-server` and `test-ui`), version bumping, package publishing to GitHub Packages, and git tagging.
+The GitHub Actions workflow (`.github/workflows/perfect-stack.yml`) handles build verification, automated testing (`test-server` and `vet-clinic`), version bumping, package publishing to GitHub Packages, and git tagging.
 
 ### Automated Release on `main`
 - Pushing to the `main` branch runs all test suites and automatically triggers the `publish-release` job.

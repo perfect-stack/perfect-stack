@@ -124,13 +124,23 @@ export class QueryService {
     entityName: string,
     rootId?: string,
     depth?: number,
-  ): Promise<Entity> {
+    treeType?: string,
+  ): Promise<any> {
     const metaEntity = await this.metaEntityService.findOne(entityName);
     const parentAttr = metaEntity.attributes.find(
       (a) =>
         a.type === AttributeType.ManyToOne &&
         a.relationshipTarget === metaEntity.name,
     );
+
+    const isEntityChain =
+      treeType === 'EntityChain' ||
+      (!parentAttr && !metaEntity.treeNode);
+
+    if (isEntityChain) {
+      return this.findEntityChainTree(entityName, rootId, depth);
+    }
+
     const parentFkName = parentAttr ? parentAttr.name + '_id' : 'parent_id';
     const childrenAttr = metaEntity.attributes.find(
       (a) =>
@@ -200,6 +210,155 @@ export class QueryService {
     }
 
     return rootResult;
+  }
+
+  private async findEntityChainTree(
+    entityName: string,
+    rootId?: string,
+    depth?: number,
+  ): Promise<any> {
+    const model = this.ormService.sequelize.model(entityName);
+    const effectiveDepth =
+      depth != null && !isNaN(Number(depth)) ? Number(depth) : 5;
+    const includes = await this.buildIncludeTree(entityName, 1, effectiveDepth);
+
+    const findOptions: any = {};
+    if (includes.length > 0) {
+      findOptions.include = includes;
+    }
+
+    if (rootId) {
+      const record = await model.findByPk(rootId, findOptions);
+      if (!record) {
+        throw new DataNotFound();
+      }
+      return this.mapEntityToTreeNode(entityName, record.toJSON());
+    } else {
+      const records = await model.findAll(findOptions);
+      const rawList = records.map((r: any) => r.toJSON());
+      return Promise.all(
+        rawList.map((item: any) => this.mapEntityToTreeNode(entityName, item)),
+      );
+    }
+  }
+
+  private async buildIncludeTree(
+    entityName: string,
+    currentDepth: number,
+    maxDepth: number,
+  ): Promise<any[]> {
+    if (currentDepth >= maxDepth) {
+      return [];
+    }
+
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    if (!metaEntity) {
+      return [];
+    }
+
+    const includes: any[] = [];
+    const oneToManyAttrs = metaEntity.attributes.filter(
+      (a) =>
+        a.type === AttributeType.OneToMany &&
+        a.relationshipTarget !== entityName,
+    );
+
+    for (const attr of oneToManyAttrs) {
+      const targetModel = this.ormService.sequelize.model(
+        attr.relationshipTarget,
+      );
+      if (targetModel) {
+        const nestedIncludes = await this.buildIncludeTree(
+          attr.relationshipTarget,
+          currentDepth + 1,
+          maxDepth,
+        );
+        const includeItem: any = {
+          model: targetModel,
+          as: attr.name,
+          required: false,
+        };
+        if (nestedIncludes.length > 0) {
+          includeItem.include = nestedIncludes;
+        }
+        includes.push(includeItem);
+      }
+    }
+
+    return includes;
+  }
+
+  private async mapEntityToTreeNode(
+    entityName: string,
+    entity: any,
+  ): Promise<any> {
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    const oneToManyAttrs = metaEntity
+      ? metaEntity.attributes.filter(
+          (a) =>
+            a.type === AttributeType.OneToMany &&
+            a.relationshipTarget !== entityName,
+        )
+      : [];
+
+    let label =
+      entity.label ||
+      entity.protocol_name ||
+      entity.activity_template_name ||
+      entity.assertion_type_name ||
+      entity.scientific_name ||
+      entity.name ||
+      entity.title;
+
+    if (!label && metaEntity) {
+      const textAttr = metaEntity.attributes.find(
+        (a) =>
+          a.type === AttributeType.Text ||
+          a.type === AttributeType.Identifier,
+      );
+      if (textAttr && entity[textAttr.name]) {
+        label = entity[textAttr.name];
+      }
+    }
+    if (!label) {
+      label = entity.id || 'Unnamed Node';
+    }
+
+    const secondaryLabel =
+      entity.secondaryLabel ||
+      entity.common_name ||
+      entity.code ||
+      null;
+
+    const badge = entityName;
+
+    const children: any[] = [];
+    for (const attr of oneToManyAttrs) {
+      const childList = entity[attr.name];
+      if (Array.isArray(childList) && childList.length > 0) {
+        for (const childItem of childList) {
+          const childNode = await this.mapEntityToTreeNode(
+            attr.relationshipTarget,
+            childItem,
+          );
+          children.push(childNode);
+        }
+      }
+    }
+
+    const isLeaf = oneToManyAttrs.length === 0 || children.length === 0;
+
+    return {
+      ...entity,
+      id: entity.id,
+      entityType: entityName,
+      label: label,
+      secondaryLabel: secondaryLabel,
+      badge: badge,
+      route: `/data/${entityName}/view_edit/${entity.id}`,
+      children: children,
+      isLeaf: isLeaf,
+    };
   }
 
   async findAncestors(entityName: string, nodeId: string): Promise<Entity[]> {

@@ -1,0 +1,48 @@
+{
+  "name": "Protocol.search",
+  "title": "Protocol Search",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "attributeName": "protocol_name"
+          }
+        ]
+      ],
+      "metaEntityName": "Protocol",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "attributeName": "protocol_name"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "Protocol",
+      "type": "table",
+      "orderByName": "protocol_name",
+      "orderByDir": "ASC"
+    }
+  ]
+}

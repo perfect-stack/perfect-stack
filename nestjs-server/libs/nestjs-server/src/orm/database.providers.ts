@@ -161,6 +161,7 @@ export const newSequelize = async (
     min: number,
     max: number,
     acquire: number = 60000,
+    logging: boolean | ((sql: string) => void) = false,
 ) => {
     const useSsl = shouldUseSsl(databaseSettings.databaseHost);
 
@@ -172,9 +173,7 @@ export const newSequelize = async (
         username: databaseSettings.databaseUser,
         password: databasePassword,
         database: databaseSettings.databaseName,
-        // uncomment one of the following two logging options
-        logging: false,
-        //logging: (msg) => logger.log(msg),
+        logging: logging,
         logQueryParameters: true,
         ssl: useSsl,
         ...(useSsl
@@ -209,6 +208,7 @@ export const loadOrm = async (
     min: number,
     max: number,
     acquire: number = 60000,
+    logging: boolean | ((sql: string) => void) = false,
 ): Promise<Sequelize> => {
     const databasePassword = await findPassword(databaseSettings);
 
@@ -216,13 +216,13 @@ export const loadOrm = async (
 
     let sequelize: Sequelize;
     try {
-        sequelize = await newSequelize(databasePassword, databaseSettings, min, max, acquire);
+        sequelize = await newSequelize(databasePassword, databaseSettings, min, max, acquire, logging);
         return sequelize;
     } catch (e) {
-        logger.error(`Error connecting to database: ${e.message}`);
+        logger.error(`Error connecting to database: ${e.message}`, e.stack);
         if (e.message.includes('kims_db') && e.message.includes('does not exist')) {
             await renameDatabase(databasePassword, databaseSettings);
-            sequelize = await newSequelize(databasePassword, databaseSettings, min, max, acquire);
+            sequelize = await newSequelize(databasePassword, databaseSettings, min, max, acquire, logging);
             return sequelize;
         } else {
             throw e;
@@ -246,20 +246,22 @@ const createPostgresSequelize = async (configService: ConfigService): Promise<Se
     const min = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MIN', '2'), 10);
     const max = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MAX', '10'), 10);
     const acquire = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_ACQUIRE', '60000'), 10);
-    logger.log(`Sequelize pool settings; min: ${min}, max: ${max}, acquire: ${acquire}`);
+    const logging = configService.get<string>('DATABASE_LOGGING', 'false') === 'true';
+    logger.log(`Sequelize pool settings; min: ${min}, max: ${max}, acquire: ${acquire}, logging: ${logging}`);
 
-    return await loadOrm(databaseSettings, min, max, acquire);
+    return await loadOrm(databaseSettings, min, max, acquire, logging ? (msg) => logger.log(msg) : false);
 };
 
 const createSqliteSequelize = async (configService: ConfigService): Promise<Sequelize> => {
     const storage = configService.get<string>('DATABASE_STORAGE', ':memory:');
     const logging = configService.get<string>('DATABASE_LOGGING', 'false') === 'true';
-    logger.log(`SEQUELIZE factory: SQLite dialect configured (storage: ${storage})`);
+    logger.log(`SEQUELIZE factory: SQLite dialect configured (storage: ${storage}, logging: ${logging})`);
 
     const sequelize = new Sequelize({
         dialect: 'sqlite',
         storage: storage,
         logging: logging ? (msg) => logger.log(msg) : false,
+        logQueryParameters: true,
     });
     await sequelize.authenticate();
     return sequelize;

@@ -11,8 +11,8 @@ dist/
 .angular/
 reports/
 
-# Testing test-ui artifacts
-/testing/test-ui/client/.angular/
-/testing/test-ui/client/dist/
-/testing/test-ui/client/node_modules/
-/testing/test-ui/reports/
+# Testing vet-clinic artifacts
+/testing/vet-clinic/client/.angular/
+/testing/vet-clinic/client/dist/
+/testing/vet-clinic/client/node_modules/
+/testing/vet-clinic/reports/

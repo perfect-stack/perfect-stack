@@ -7,7 +7,9 @@
           <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
         </div>
         <div>
-          <lib-tool-view [tool]="template.locations[TemplateLocationType.TopRight]" [ctx]="ctx"></lib-tool-view>
+          @if (template.locations && template.locations[TemplateLocationType.TopRight]) {
+            <lib-tool-view [tool]="template.locations[TemplateLocationType.TopRight]" [ctx]="ctx"></lib-tool-view>
+          }
         </div>
       </div>
     }

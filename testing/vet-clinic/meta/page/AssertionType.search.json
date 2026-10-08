@@ -1,0 +1,68 @@
+{
+  "name": "AssertionType.search",
+  "title": "Assertion Type Search",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "assertion_type_name"
+          },
+          {
+            "width": "6",
+            "height": "1",
+            "attributeName": "assertion_value_class"
+          }
+        ]
+      ],
+      "metaEntityName": "AssertionType",
+      "type": "form"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "assertion_type_name"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "assertion_value_class"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "assertion_unit"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "assertion_method"
+          }
+        ],
+        [
+          {
+            "width": "6",
+            "height": "1"
+          },
+          {
+            "width": "6",
+            "height": "1"
+          }
+        ]
+      ],
+      "metaEntityName": "AssertionType",
+      "type": "table",
+      "orderByName": "assertion_type_name",
+      "orderByDir": "ASC"
+    }
+  ]
+}

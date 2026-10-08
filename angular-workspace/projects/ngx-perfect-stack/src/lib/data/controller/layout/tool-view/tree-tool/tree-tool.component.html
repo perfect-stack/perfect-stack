@@ -21,26 +21,149 @@
       </div>
     }
 
-    @if (!loading && !error && rootNode) {
-      <div class="ps-tree-toolbar mb-3 d-flex justify-content-end gap-2">
-        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" (click)="expandAll()">
-          <span class="material-symbols-outlined fs-6 me-1">unfold_more</span>
-          Expand All
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" (click)="collapseAll()">
-          <span class="material-symbols-outlined fs-6 me-1">unfold_less</span>
-          Collapse All
-        </button>
-      </div>
+    @if (!loading && !error && rootNodes.length > 0) {
+      @if (treeTool?.masterDetail) {
+        <div class="row g-3 ps-tree-master-detail-row">
+          <!-- Left: Tree Panel -->
+          <div [class]="getMasterColumnClass()">
+            <div class="ps-tree-toolbar mb-2 d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" (click)="expandAll()">
+                <span class="material-symbols-outlined fs-6 me-1">unfold_more</span>
+                Expand All
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" (click)="collapseAll()">
+                <span class="material-symbols-outlined fs-6 me-1">unfold_less</span>
+                Collapse All
+              </button>
+            </div>
 
-      <div class="ps-tree-card card p-3 shadow-sm">
-        <ul ngTree #tree="ngTree" class="ps-tree-root list-unstyled mb-0">
-          <ng-template
-            [ngTemplateOutlet]="treeNodes"
-            [ngTemplateOutletContext]="{nodes: [rootNode], parent: tree}"
-          />
-        </ul>
-      </div>
+            <div class="ps-tree-card card p-3 shadow-sm">
+              <ul ngTree #tree="ngTree" class="ps-tree-root list-unstyled mb-0">
+                <ng-template
+                  [ngTemplateOutlet]="treeNodes"
+                  [ngTemplateOutletContext]="{nodes: rootNodes, parent: tree}"
+                />
+              </ul>
+            </div>
+          </div>
+
+          <!-- Right: Detail Panel -->
+          <div [class]="getDetailColumnClass()">
+            <div class="ps-tree-detail-card card p-3 shadow-sm">
+              @if (loadingDetail) {
+                <div class="d-flex align-items-center justify-content-center p-5 text-muted">
+                  <div class="spinner-border spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Loading details...</span>
+                  </div>
+                  <span>Loading details...</span>
+                </div>
+              }
+
+              @if (errorDetail) {
+                <div class="alert alert-warning m-3" role="alert">
+                  <span class="material-symbols-outlined align-middle me-1">warning</span>
+                  {{ errorDetail }}
+                </div>
+              }
+
+              @if (!loadingDetail && !errorDetail && selectedNode && detailCtx) {
+                <div class="ps-tree-detail-header d-flex justify-content-between align-items-center pb-3 mb-3 border-bottom">
+                  <div class="d-flex align-items-center">
+                    <span class="material-symbols-outlined fs-3 me-2 text-primary">
+                      {{ getNodeIcon(selectedNode) }}
+                    </span>
+                    <div>
+                      <h4 class="mb-0 text-dark">{{ getNodeLabel(selectedNode) }}</h4>
+                      @if (getSecondaryLabel(selectedNode); as sec) {
+                        <small class="text-muted fst-italic me-2">({{ sec }})</small>
+                      }
+                      @if (getBadgeValue(selectedNode); as badge) {
+                        <span class="badge bg-secondary ps-tree-badge">{{ badge }}</span>
+                      }
+                    </div>
+                  </div>
+                  <div>
+                    @if (detailMode === 'view') {
+                      <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center" id="editNodeBtn" (click)="onEdit()">
+                        <span class="material-symbols-outlined fs-6 me-1">edit</span>
+                        Edit {{ selectedNode.entityType }}
+                      </button>
+                    } @else {
+                      <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center" id="cancelEditNodeBtn" (click)="onCancelEdit()">
+                          <span class="material-symbols-outlined fs-6 me-1">close</span>
+                          Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm d-flex align-items-center" id="saveNodeBtn" (click)="onSaveNode()" [disabled]="savingDetail">
+                          @if (savingDetail) {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                          } @else {
+                            <span class="material-symbols-outlined fs-6 me-1">save</span>
+                          }
+                          Save
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="ps-tree-detail-body">
+                  @for (template of getDetailContentTemplates(); track template) {
+                    <div class="mb-4">
+                      @if (template.templateHeading && template.showSideHeadings !== 'Disabled') {
+                        <h5 class="text-secondary border-bottom pb-1 mb-3">{{ template.templateHeading }}</h5>
+                      }
+                      <lib-layout-outlet [ctx]="detailCtx" [template]="template" [mode]="detailMode"></lib-layout-outlet>
+                    </div>
+                  }
+
+                  @if (detailMode === 'edit') {
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                      <button type="button" class="btn btn-outline-secondary" id="bottomCancelEditNodeBtn" (click)="onCancelEdit()">Cancel</button>
+                      <button type="button" class="btn btn-primary" id="bottomSaveNodeBtn" (click)="onSaveNode()" [disabled]="savingDetail">
+                        @if (savingDetail) {
+                          <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        } @else {
+                          <span class="material-symbols-outlined fs-6 me-1">save</span>
+                        }
+                        Save
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (!loadingDetail && !errorDetail && !selectedNode) {
+                <div class="p-5 text-center text-muted">
+                  <span class="material-symbols-outlined fs-1 d-block mb-2 text-secondary">arrow_back</span>
+                  <span>Select an item in the tree to view its details.</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- Single Column Mode (Backward Compatible) -->
+        <div class="ps-tree-toolbar mb-3 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" (click)="expandAll()">
+            <span class="material-symbols-outlined fs-6 me-1">unfold_more</span>
+            Expand All
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" (click)="collapseAll()">
+            <span class="material-symbols-outlined fs-6 me-1">unfold_less</span>
+            Collapse All
+          </button>
+        </div>
+
+        <div class="ps-tree-card card p-3 shadow-sm">
+          <ul ngTree #tree="ngTree" class="ps-tree-root list-unstyled mb-0">
+            <ng-template
+              [ngTemplateOutlet]="treeNodes"
+              [ngTemplateOutletContext]="{nodes: rootNodes, parent: tree}"
+            />
+          </ul>
+        </div>
+      }
 
       <ng-template #treeNodes let-nodes="nodes" let-parent="parent">
         @for (node of nodes; track node.id) {
@@ -53,7 +176,9 @@
               (expandedChange)="onExpandedChange(node, $event)"
               class="ps-tree-item"
               [class.is-expanded]="isExpanded(node)">
-            <div class="ps-tree-node-row d-flex align-items-center py-1 px-2 rounded">
+            <div class="ps-tree-node-row d-flex align-items-center py-1 px-2 rounded"
+                 [class.ps-tree-node-selected]="isSelected(node)"
+                 (click)="treeTool?.masterDetail ? selectNode(node, $event) : null">
               @if (hasChildren(node)) {
                 <button type="button" class="btn btn-sm btn-link ps-tree-toggle-btn p-0 text-secondary me-1"
                         (click)="toggleNode(node, $event)"
@@ -69,12 +194,20 @@
               }
 
               <span class="material-symbols-outlined ps-tree-node-icon me-2 text-muted fs-5">
-                {{ hasChildren(node) ? (isExpanded(node) ? 'folder_open' : 'folder') : 'subdirectory_arrow_right' }}
+                {{ getNodeIcon(node) }}
               </span>
 
-              <a [routerLink]="getNodeRoute(node)" class="ps-tree-node-link text-decoration-none fw-medium text-primary">
-                {{ getNodeLabel(node) }}
-              </a>
+              @if (treeTool?.masterDetail) {
+                <span class="ps-tree-node-link text-decoration-none fw-medium text-primary cursor-pointer flex-grow-1"
+                      (click)="selectNode(node, $event)"
+                      [class.fw-bold]="isSelected(node)">
+                  {{ getNodeLabel(node) }}
+                </span>
+              } @else {
+                <a [routerLink]="getNodeRoute(node)" class="ps-tree-node-link text-decoration-none fw-medium text-primary">
+                  {{ getNodeLabel(node) }}
+                </a>
+              }
 
               @if (getSecondaryLabel(node); as sec) {
                 <span class="ps-tree-node-secondary ms-2 text-muted fs-7 fst-italic">({{ sec }})</span>
@@ -100,7 +233,7 @@
       </ng-template>
     }
 
-    @if (!loading && !error && !rootNode) {
+    @if (!loading && !error && rootNodes.length === 0) {
       <div class="p-4 text-center text-muted">
         <span class="material-symbols-outlined fs-2 d-block mb-2">account_tree</span>
         <span>No tree data available.</span>

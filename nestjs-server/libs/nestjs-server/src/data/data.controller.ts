@@ -84,8 +84,9 @@ export class DataController {
   findRootTree(
     @Param('entityName') entityName: string,
     @Query('depth') depth?: number,
-  ): Promise<Entity> {
-    return this.queryService.findTree(entityName, undefined, depth);
+    @Query('treeType') treeType?: string,
+  ): Promise<any> {
+    return this.queryService.findTree(entityName, undefined, depth, treeType);
   }
 
   @ActionPermit(ActionType.Read)
@@ -101,8 +102,9 @@ export class DataController {
     @Param('entityName') entityName: string,
     @Param('id') id: string,
     @Query('depth') depth?: number,
-  ): Promise<Entity> {
-    return this.queryService.findTree(entityName, id, depth);
+    @Query('treeType') treeType?: string,
+  ): Promise<any> {
+    return this.queryService.findTree(entityName, id, depth, treeType);
   }
 
   @ActionPermit(ActionType.Read)

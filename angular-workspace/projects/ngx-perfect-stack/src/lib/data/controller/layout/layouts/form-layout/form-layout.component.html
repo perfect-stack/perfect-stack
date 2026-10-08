@@ -38,13 +38,14 @@
               @if (mode !== 'view' && cell.footerHtml) {
                 <div [innerHtml]="cell.footerHtml">WOOF</div>
               }
-              <!-- If the cell has it's own template then we recursively nest the template inside of the cell. Which means
-              we need to pass down the formGroup of the cell and name of the property for that formGroup -->
-              @if (cell.template && cell.template.binding) {
+              <!-- If the cell has it's own template and is not handled by lib-cell/lib-one-to-many-control (i.e. !cell.attribute),
+              then we recursively nest the template inside of the cell. Which means we need to pass down the formGroup of the cell
+              and name of the property for that formGroup -->
+              @if (cell.template && cell.template.binding && !cell.attribute) {
                 @if (debugService.ON) {
                   [NESTED]
                 }
-                <lib-layout-outlet [ctx]="ctx" [template]="cell.template" [formGroup]="formGroup" [relationshipProperty]="cell.template.binding"></lib-layout-outlet>
+                <lib-layout-outlet [mode]="mode" [ctx]="ctx" [template]="cell.template" [formGroup]="formGroup" [relationshipProperty]="cell.template.binding"></lib-layout-outlet>
               }
             </div>
           }
@@ -86,7 +87,7 @@
               @if (mode !== 'view' && cell.footerHtml) {
                 <div [innerHtml]="cell.footerHtml">WOOF</div>
               }
-              @if (cell.template) {
+              @if (cell.template && !cell.attribute) {
                 @if (debugService.ON) {
                   [OTHER-FORM]
                 }
