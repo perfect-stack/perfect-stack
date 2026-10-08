@@ -45,18 +45,83 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "activity_template_name"
+            "attributeName": "activity_template_name",
+            "attribute": {
+              "name": "activity_template_name",
+              "label": "Activity template name",
+              "description": "Name of the activity template",
+              "type": "Text",
+              "visibility": "Required",
+              "comparisonField": "",
+              "comparisonOperator": "InsensitiveLike",
+              "relationshipTarget": "",
+              "typeaheadSearch": [
+                "activity_template_name"
+              ],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": [
+                {
+                  "type": "Required",
+                  "config": ""
+                }
+              ]
+            }
           },
           {
             "width": "6",
             "height": "1",
             "attributeName": "protocol",
+            "component": "Select",
+            "attribute": {
+              "name": "protocol",
+              "label": "Protocol",
+              "description": "Protocol this activity template belongs to",
+              "type": "ManyToOne",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "Equals",
+              "relationshipTarget": "Protocol",
+              "typeaheadSearch": [
+                "protocol_name"
+              ],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
+            }
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "layout_style",
+            "attribute": {
+              "name": "layout_style",
+              "label": "Layout style",
+              "description": "",
+              "type": "Enumeration",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "",
+              "typeaheadSearch": [],
+              "enumeration": [
+                "Card",
+                "Field",
+                "Table"
+              ],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
+            },
             "component": "Select"
           }
         ]
       ],
       "templateHeading": "Activity Template Information",
-      "binding": "activityTemplate"
+      "binding": "activityTemplate",
+      "showSideHeadings": "Disabled"
     },
     {
       "metaEntityName": "ActivityTemplate",
@@ -100,12 +165,27 @@
               "orderByDir": "ASC",
               "navigation": "Enabled",
               "route": "/data/AssertionType/view/${id}"
+            },
+            "attribute": {
+              "name": "assertion_types",
+              "label": "Assertion types",
+              "description": "Assertion types associated with this activity template",
+              "type": "OneToMany",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "AssertionType",
+              "typeaheadSearch": [],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
             }
           }
         ]
       ],
       "templateHeading": "Assertion Types",
-      "binding": "activityTemplate"
+      "binding": "activityTemplate",
+      "showSideHeadings": "Disabled"
     }
   ]
 }

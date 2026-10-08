@@ -173,7 +173,7 @@
               "relationshipTarget": "",
               "typeaheadSearch": [],
               "enumeration": [
-                "Single",
+                "None",
                 "Multiple"
               ],
               "unitOfMeasure": "",
@@ -213,6 +213,7 @@
       "type": "form",
       "locations": {},
       "templateHeading": "Tree structure",
+      "binding": "protocol",
       "showSideHeadings": "Disabled"
     },
     {

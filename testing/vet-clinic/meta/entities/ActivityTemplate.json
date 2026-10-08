@@ -72,6 +72,25 @@
       "relationshipTarget": "AssertionType",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "layout_style",
+      "label": "Layout style",
+      "description": "",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "Card",
+        "Field",
+        "Table"
+      ]
     }
   ]
 }

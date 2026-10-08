@@ -127,7 +127,7 @@
       "typeaheadSearch": [],
       "rules": [],
       "enumeration": [
-        "Single",
+        "None",
         "Multiple"
       ]
     },
