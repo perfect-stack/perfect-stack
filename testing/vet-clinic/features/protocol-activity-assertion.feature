@@ -26,3 +26,13 @@ Feature: Protocol, Activity Template, and Assertion Type Hierarchy
   Scenario: Search Assertion Types
     When I navigate to "/data/AssertionType/search"
     Then I should see "Capture technique" in the search results table
+
+  @protocol-tree @regression
+  Scenario: View Protocol Hierarchy Tree
+    When I navigate to "/data/Protocol/tree"
+    Then I should see the tree node "Bird Capture"
+    And I should see the tree badge "Protocol" on node "Bird Capture"
+    And I should see the tree node "Capture detail"
+    And I should see the tree badge "Activity" on node "Capture detail"
+    And I should see the tree node "Capture technique"
+    And I should see the tree badge "Assertion" on node "Capture technique"

@@ -74,14 +74,20 @@ export class DataService {
     }
   }
 
-  findRootTree(entityName: string, depth?: number): Observable<Entity> {
-    const query = depth !== undefined && depth !== null ? `?depth=${depth}` : '';
-    return this.http.get<Entity>(`${this.stackConfig.apiUrl}/data/${entityName}/tree${query}`);
+  findRootTree(entityName: string, depth?: number, treeType?: string): Observable<any> {
+    const params: string[] = [];
+    if (depth !== undefined && depth !== null) params.push(`depth=${depth}`);
+    if (treeType) params.push(`treeType=${treeType}`);
+    const query = params.length > 0 ? `?${params.join('&')}` : '';
+    return this.http.get<any>(`${this.stackConfig.apiUrl}/data/${entityName}/tree${query}`);
   }
 
-  findSubTree(entityName: string, id: string, depth?: number): Observable<Entity> {
-    const query = depth !== undefined && depth !== null ? `?depth=${depth}` : '';
-    return this.http.get<Entity>(`${this.stackConfig.apiUrl}/data/${entityName}/${id}/tree${query}`);
+  findSubTree(entityName: string, id: string, depth?: number, treeType?: string): Observable<any> {
+    const params: string[] = [];
+    if (depth !== undefined && depth !== null) params.push(`depth=${depth}`);
+    if (treeType) params.push(`treeType=${treeType}`);
+    const query = params.length > 0 ? `?${params.join('&')}` : '';
+    return this.http.get<any>(`${this.stackConfig.apiUrl}/data/${entityName}/${id}/tree${query}`);
   }
 
   findChildren(entityName: string, parentId: string, pageNumber = 1, pageSize = 50): Observable<PageQueryResponse<Entity>> {

@@ -78,6 +78,12 @@
           "roles": []
         },
         {
+          "label": "Protocol Tree",
+          "route": "/data/Protocol/tree",
+          "editable": true,
+          "roles": []
+        },
+        {
           "label": "Activity Templates",
           "route": "/data/ActivityTemplate/search",
           "editable": true,

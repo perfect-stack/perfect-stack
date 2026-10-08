@@ -1,0 +1,83 @@
+{
+  "name": "Protocol.tree",
+  "title": "Protocol Tree",
+  "type": "view_edit",
+  "layoutStyle": "Stockholm",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "metaEntityName": "Protocol",
+      "type": "header",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "PageTitle",
+              "containerStyles": "",
+              "styles": "",
+              "label": "Protocol Tree",
+              "modes": "",
+              "nameAttributes": ""
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Protocol Tree Header",
+      "binding": ""
+    },
+    {
+      "metaEntityName": "Protocol",
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "Tree",
+              "containerStyles": "",
+              "metaEntityName": "Protocol",
+              "treeType": "EntityChain",
+              "initialDepth": 3,
+              "nodeTypes": {
+                "Protocol": {
+                  "metaEntityName": "Protocol",
+                  "displayAttribute": "protocol_name",
+                  "badge": "Protocol",
+                  "icon": "folder",
+                  "route": "/data/Protocol/view_edit/${id}",
+                  "childRelationships": [
+                    "activity_templates"
+                  ]
+                },
+                "ActivityTemplate": {
+                  "metaEntityName": "ActivityTemplate",
+                  "displayAttribute": "activity_template_name",
+                  "badge": "Activity",
+                  "icon": "assignment",
+                  "route": "/data/ActivityTemplate/view_edit/${id}",
+                  "childRelationships": [
+                    "assertion_types"
+                  ]
+                },
+                "AssertionType": {
+                  "metaEntityName": "AssertionType",
+                  "displayAttribute": "assertion_type_name",
+                  "badge": "Assertion",
+                  "icon": "task_alt",
+                  "route": "/data/AssertionType/view_edit/${id}",
+                  "childRelationships": []
+                }
+              }
+            }
+          }
+        ]
+      ],
+      "templateHeading": "Protocol Hierarchy",
+      "binding": ""
+    }
+  ]
+}

@@ -21,7 +21,7 @@
       </div>
     }
 
-    @if (!loading && !error && rootNode) {
+    @if (!loading && !error && rootNodes.length > 0) {
       <div class="ps-tree-toolbar mb-3 d-flex justify-content-end gap-2">
         <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" (click)="expandAll()">
           <span class="material-symbols-outlined fs-6 me-1">unfold_more</span>
@@ -37,7 +37,7 @@
         <ul ngTree #tree="ngTree" class="ps-tree-root list-unstyled mb-0">
           <ng-template
             [ngTemplateOutlet]="treeNodes"
-            [ngTemplateOutletContext]="{nodes: [rootNode], parent: tree}"
+            [ngTemplateOutletContext]="{nodes: rootNodes, parent: tree}"
           />
         </ul>
       </div>
@@ -69,7 +69,7 @@
               }
 
               <span class="material-symbols-outlined ps-tree-node-icon me-2 text-muted fs-5">
-                {{ hasChildren(node) ? (isExpanded(node) ? 'folder_open' : 'folder') : 'subdirectory_arrow_right' }}
+                {{ getNodeIcon(node) }}
               </span>
 
               <a [routerLink]="getNodeRoute(node)" class="ps-tree-node-link text-decoration-none fw-medium text-primary">
@@ -100,7 +100,7 @@
       </ng-template>
     }
 
-    @if (!loading && !error && !rootNode) {
+    @if (!loading && !error && rootNodes.length === 0) {
       <div class="p-4 text-center text-muted">
         <span class="material-symbols-outlined fs-2 d-block mb-2">account_tree</span>
         <span>No tree data available.</span>

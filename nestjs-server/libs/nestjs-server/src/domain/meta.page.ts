@@ -118,6 +118,32 @@ export class IconTool extends Tool {
   iconName: string;
 }
 
+export interface TreeNodeTypeConfig {
+  metaEntityName: string;
+  displayAttribute?: string;
+  displayTemplate?: string;
+  secondaryAttribute?: string;
+  badgeAttribute?: string;
+  badge?: string;
+  icon?: string;
+  route?: string;
+  pageView?: string;
+  childRelationships?: string[];
+}
+
+export interface TreeNodeDto {
+  id: string;
+  entityType: string;
+  label: string;
+  secondaryLabel?: string;
+  badge?: string;
+  icon?: string;
+  route?: string;
+  pageView?: string;
+  children?: TreeNodeDto[];
+  isLeaf?: boolean;
+}
+
 export class TreeTool extends Tool {
   metaEntityName: string;
   displayAttribute?: string;
@@ -125,6 +151,8 @@ export class TreeTool extends Tool {
   badgeAttribute?: string;
   initialDepth?: number;
   route?: string;
+  treeType?: 'SelfReferencing' | 'EntityChain';
+  nodeTypes?: Record<string, TreeNodeTypeConfig>;
 }
 
 export type TemplateLocationMap = {
