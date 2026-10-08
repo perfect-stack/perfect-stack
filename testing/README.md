@@ -9,7 +9,7 @@ Integration and Behavior-Driven Development (BDD) testing suite for the Perfect 
 The testing suite is decoupled into two independent sub-projects to keep backend service integration and frontend browser automation cleanly separated with domain-specific focus:
 
 1. **[`testing/test-server`](./test-server)**: Fast, service-level integration testing for `@perfect-stack/nestjs-server` modules (`DataService`, `QueryService`, `OrmService`, `RuleService`, `KnexModule`).
-2. **[`testing/test-ui`](./test-ui)**: End-to-end browser testing using Playwright and Cucumber against a dedicated **Vet Clinic** application (`Pet`, `Species`, `Owner`), running with its own standalone NestJS server and Angular client.
+2. **[`testing/vet-clinic`](./vet-clinic)**: End-to-end browser testing using Playwright and Cucumber against a dedicated **Vet Clinic** application (`Pet`, `Species`, `Owner`), running with its own standalone NestJS server and Angular client.
 
 ---
 
@@ -29,7 +29,7 @@ testing/
 │   ├── cucumber.js
 │   └── package.json
 │
-└── test-ui/                       # Frontend & E2E Browser Testing Suite (Vet Clinic)
+└── vet-clinic/                    # Frontend & E2E Browser Testing Suite (Vet Clinic)
     ├── client/                    # Angular client importing @perfect-stack/ngx-perfect-stack
     ├── server/                    # Standalone NestJS server running Vet Clinic backend
     ├── meta/                      # Vet Clinic domain metadata (Species.json, Pet.json, Owner.json)
@@ -56,12 +56,12 @@ npm test
 
 ---
 
-### 2. UI & Playwright End-to-End Tests (`test-ui`)
+### 2. UI & Playwright End-to-End Tests (`vet-clinic`)
 
 All test execution commands below automatically manage both the NestJS backend server (`http://localhost:3080`) and the Angular frontend dev server (`http://localhost:4200`) lifecycle:
 
 ```bash
-cd testing/test-ui
+cd testing/vet-clinic
 ```
 
 #### A. Headless Mode (Default / CI)
@@ -114,14 +114,14 @@ You can start the Vet Clinic frontend and backend servers independently outside 
 
 #### Start Backend Server
 ```bash
-cd testing/test-ui/server
+cd testing/vet-clinic/server
 npm run start
 # Server listens on http://localhost:3080 with SQLite persistence
 ```
 
 #### Start Frontend Client
 ```bash
-cd testing/test-ui/client
+cd testing/vet-clinic/client
 npm run start
 # Client serves on http://localhost:4200
 ```
@@ -130,13 +130,11 @@ npm run start
 
 ## 📊 Test Reports & Summaries
 
-- **HTML Report**: After a test run in `test-ui`, open [`reports/cucumber-report.html`](./test-ui/reports/cucumber-report.html) in your browser for detailed step metrics and failure screenshots.
-- **Markdown Step Summary**: Run `node scripts/generate-summary.js` inside `test-server` or `test-ui` to produce a Markdown table breakdown compatible with GitHub Actions (`$GITHUB_STEP_SUMMARY`).
+- **HTML Report**: After a test run in `vet-clinic`, open [`reports/cucumber-report.html`](./vet-clinic/reports/cucumber-report.html) in your browser for detailed step metrics and failure screenshots.
+- **Markdown Step Summary**: Run `node scripts/generate-summary.js` inside `test-server` or `vet-clinic` to produce a Markdown table breakdown compatible with GitHub Actions (`$GITHUB_STEP_SUMMARY`).
 
 ---
 
 ## 📋 Data-Driven Test Isolation Principle
 
 - **No Reliance on Global DB Reset**: Rather than dropping or truncating tables between every scenario, tests maintain isolation through **intentional, distinct test datasets** phases.
-- **Unique Identifying Values**: Use distinctive identifiers, names, or prefixes for scenario-specific data (e.g. `qmc.alice.baker@corp.com`, `QEL-Oliver`).
-- **Targeted Filter Queries**: Queries assert on expected slices of data using explicit search criteria rather than assuming an empty table.

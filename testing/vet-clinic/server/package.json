@@ -1,8 +1,8 @@
 {
-  "name": "@perfect-stack/test-ui-server",
+  "name": "@perfect-stack/vet-clinic-server",
   "version": "1.0.0",
   "private": true,
-  "description": "Standalone Vet Clinic NestJS test server for UI testing",
+  "description": "Standalone Vet Clinic NestJS test server for UI prototyping and regression testing",
   "scripts": {
     "start": "node --watch -r ts-node/register -r tsconfig-paths/register src/main.ts",
     "seed": "ts-node -r tsconfig-paths/register src/seed-data.ts"

@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "test-ui-client": {
+    "vet-clinic-client": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -22,7 +22,7 @@
           "options": {
             "preserveSymlinks": true,
             "outputPath": {
-              "base": "dist/test-ui-client"
+              "base": "dist/vet-clinic-client"
             },
             "index": "src/index.html",
             "polyfills": [
@@ -95,10 +95,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "test-ui-client:build:production"
+              "buildTarget": "vet-clinic-client:build:production"
             },
             "development": {
-              "buildTarget": "test-ui-client:build:development"
+              "buildTarget": "vet-clinic-client:build:development"
             }
           },
           "defaultConfiguration": "development"

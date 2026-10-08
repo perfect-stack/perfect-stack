@@ -1,14 +1,14 @@
 {
-  "name": "@perfect-stack/test-ui",
+  "name": "@perfect-stack/vet-clinic",
   "version": "1.0.0",
   "private": true,
-  "description": "End-to-end BDD UI testing suite for Perfect Stack with Playwright",
+  "description": "End-to-end BDD UI prototyping and regression testing suite for Perfect Stack with Playwright",
   "scripts": {
     "test": "cucumber-js --config cucumber.js",
     "test:headed": "HEADED=true cucumber-js --config cucumber.js",
     "test:debug": "PWDEBUG=1 cucumber-js --config cucumber.js",
     "start:server": "cd server && npm run start",
-    "start:client": "cd ../../angular-workspace && npm run start:test-ui-client"
+    "start:client": "cd ../../angular-workspace && npm run start:vet-clinic-client"
   },
   "dependencies": {
     "@cucumber/cucumber": "^10.9.0",

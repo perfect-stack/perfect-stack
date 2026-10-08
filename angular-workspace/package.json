@@ -9,7 +9,7 @@
     "watch": "ng build --watch",
     "publish:github": "./publish-github.sh",
     "test": "ng test",
-    "start:test-ui-client": "ng serve test-ui-client"
+    "start:vet-clinic-client": "ng serve vet-clinic-client"
   },
   "private": true,
   "dependencies": {
