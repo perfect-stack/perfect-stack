@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 /**
@@ -23,7 +23,7 @@ export class MessageDialogComponent implements OnInit {
     style: 'btn btn-outline-primary'
   }];
 
-  constructor(public activeModal: NgbActiveModal) { }
+  constructor(public activeModal: NgbActiveModal, public cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
   }

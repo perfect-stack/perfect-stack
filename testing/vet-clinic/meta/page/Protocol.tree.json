@@ -2,13 +2,14 @@
   "name": "Protocol.tree",
   "title": "Protocol Tree",
   "type": "view_edit",
-  "layoutStyle": "Stockholm",
+  "layoutStyle": "Venice",
   "dataQueryList": [],
   "controllers": [],
   "templates": [
     {
       "metaEntityName": "Protocol",
       "type": "header",
+      "locations": {},
       "cells": [
         [
           {
@@ -31,6 +32,7 @@
     {
       "metaEntityName": "Protocol",
       "type": "form",
+      "locations": {},
       "cells": [
         [
           {
@@ -41,6 +43,8 @@
               "containerStyles": "",
               "metaEntityName": "Protocol",
               "treeType": "EntityChain",
+              "masterDetail": true,
+              "splitRatio": 4,
               "initialDepth": 3,
               "nodeTypes": {
                 "Protocol": {
@@ -49,6 +53,7 @@
                   "badge": "Protocol",
                   "icon": "folder",
                   "route": "/data/Protocol/view_edit/${id}",
+                  "pageView": "Protocol.view_edit",
                   "childRelationships": [
                     "activity_templates"
                   ]
@@ -59,6 +64,7 @@
                   "badge": "Activity",
                   "icon": "assignment",
                   "route": "/data/ActivityTemplate/view_edit/${id}",
+                  "pageView": "ActivityTemplate.view_edit",
                   "childRelationships": [
                     "assertion_types"
                   ]
@@ -69,6 +75,7 @@
                   "badge": "Assertion",
                   "icon": "task_alt",
                   "route": "/data/AssertionType/view_edit/${id}",
+                  "pageView": "AssertionType.view_edit",
                   "childRelationships": []
                 }
               }

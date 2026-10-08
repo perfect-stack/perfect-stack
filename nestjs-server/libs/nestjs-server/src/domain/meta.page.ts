@@ -153,6 +153,8 @@ export class TreeTool extends Tool {
   route?: string;
   treeType?: 'SelfReferencing' | 'EntityChain';
   nodeTypes?: Record<string, TreeNodeTypeConfig>;
+  masterDetail?: boolean;
+  splitRatio?: number;
 }
 
 export type TemplateLocationMap = {

@@ -28,11 +28,43 @@ Feature: Protocol, Activity Template, and Assertion Type Hierarchy
     Then I should see "Capture technique" in the search results table
 
   @protocol-tree @regression
-  Scenario: View Protocol Hierarchy Tree
+  Scenario: View Protocol Hierarchy Tree and inspect Master-Detail Views
     When I navigate to "/data/Protocol/tree"
     Then I should see the tree node "Bird Capture"
     And I should see the tree badge "Protocol" on node "Bird Capture"
-    And I should see the tree node "Capture detail"
-    And I should see the tree badge "Activity" on node "Capture detail"
-    And I should see the tree node "Capture technique"
-    And I should see the tree badge "Assertion" on node "Capture technique"
+    And I should see the detail panel header "Bird Capture"
+    And I should see the edit node button for "Protocol"
+    And I should see the nested one-to-many "activity_templates" table
+    And I should see "Capture detail" in the "activity_templates" table
+    When I click the tree node "Capture detail"
+    Then I should see the detail panel header "Capture detail"
+    And I should see the edit node button for "ActivityTemplate"
+    And I should see the nested one-to-many "assertion_types" table
+    And I should see "Capture technique" in the "assertion_types" table
+    When I click the tree node "Capture technique"
+    Then I should see the detail panel header "Capture technique"
+    And I should see the edit node button for "AssertionType"
+
+  @protocol-tree-edit @regression
+  Scenario: Edit tree node in place and prompt on unsaved changes
+    When I navigate to "/data/Protocol/tree"
+    Then I should see the tree node "Bird Capture"
+    When I click the tree node "Capture technique"
+    Then I should see the detail panel header "Capture technique"
+    When I click the edit node button
+    Then I should see the save node button
+    And I should see "Capture technique" in the "assertion_type_name" field
+    When I enter "Capture technique modified" into the "assertion_type_name" field
+    When I click the tree node "Capture detail"
+    Then I should see the unsaved changes dialog
+    When I click "Cancel" in the dialog
+    Then I should see the save node button
+    When I click the save node button
+    Then I should see the edit node button for "AssertionType"
+    And I should see the detail panel header "Capture technique modified"
+    And I should see the tree node "Capture technique modified"
+    When I click the edit node button
+    And I enter "Capture technique" into the "assertion_type_name" field
+    When I click the save node button
+    Then I should see the edit node button for "AssertionType"
+    And I should see the detail panel header "Capture technique"
