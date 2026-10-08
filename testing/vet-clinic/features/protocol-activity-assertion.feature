@@ -4,14 +4,22 @@ Feature: Protocol, Activity Template, and Assertion Type Hierarchy
   So that I can verify the nested hierarchical relationships and navigation
 
   @protocol @regression
-  Scenario: Search Protocols and view nested Activity Templates
+  Scenario: Search Protocols and view nested Activity Templates in view and edit mode
     When I navigate to "/data/Protocol/search"
     Then I should see "Bird Capture" in the search results table
     When I click on the protocol row for "Bird Capture"
     Then I should see "Bird Capture" in the "protocol_name" field
     And I should see the nested one-to-many "activity_templates" table
+    And the nested one-to-many "activity_templates" table should have exactly 1 instance
+    And the nested one-to-many "activity_templates" table should have 6 rows
+    And each row in the "activity_templates" table should be unique
     And I should see "Capture detail" in the "activity_templates" table
     And I should see "Marking by Banding" in the "activity_templates" table
+    When I click the "Edit" button
+    Then I should see the nested one-to-many "activity_templates" table
+    And the nested one-to-many "activity_templates" table should have exactly 1 instance
+    And the nested one-to-many "activity_templates" table should have 6 rows
+    And each row in the "activity_templates" table should be unique
 
   @activity-template @regression
   Scenario: Search Activity Templates and view nested Assertion Types

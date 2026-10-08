@@ -45,22 +45,187 @@
           {
             "width": "12",
             "height": "1",
-            "attributeName": "protocol_name"
+            "attributeName": "protocol_name",
+            "attribute": {
+              "name": "protocol_name",
+              "label": "Protocol name",
+              "description": "Name of the protocol",
+              "type": "Text",
+              "visibility": "Required",
+              "comparisonField": "",
+              "comparisonOperator": "InsensitiveLike",
+              "relationshipTarget": "",
+              "typeaheadSearch": [
+                "protocol_name"
+              ],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": [
+                {
+                  "type": "Required",
+                  "config": ""
+                }
+              ]
+            }
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "sample_size_unit",
+            "attribute": {
+              "name": "sample_size_unit",
+              "label": "Sample size unit",
+              "description": "",
+              "type": "Text",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "",
+              "typeaheadSearch": [],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
+            }
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "sample_size_value",
+            "attribute": {
+              "name": "sample_size_value",
+              "label": "Sample size value",
+              "description": "",
+              "type": "Text",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "",
+              "typeaheadSearch": [],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
+            }
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "sampling_effort",
+            "attribute": {
+              "name": "sampling_effort",
+              "label": "Sampling effort",
+              "description": "",
+              "type": "Text",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "",
+              "typeaheadSearch": [],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
+            }
+          }
+        ],
+        [
+          {
+            "width": "8",
+            "height": "5",
+            "attributeName": "protocol_notes",
+            "attribute": {
+              "name": "protocol_notes",
+              "label": "Protocol notes",
+              "description": "",
+              "type": "Html",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "",
+              "typeaheadSearch": [],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
+            },
+            "component": "TextArea"
           }
         ]
       ],
-      "templateHeading": "Protocol Information",
-      "binding": "protocol"
+      "templateHeading": "Protocol Details",
+      "binding": "protocol",
+      "showSideHeadings": "Disabled"
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "event_children",
+            "attribute": {
+              "name": "event_children",
+              "label": "Event children",
+              "description": "",
+              "type": "Enumeration",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "",
+              "typeaheadSearch": [],
+              "enumeration": [
+                "Single",
+                "Multiple"
+              ],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
+            },
+            "component": "Select"
+          },
+          {
+            "width": "3",
+            "height": "1",
+            "attributeName": "occurrence_children",
+            "attribute": {
+              "name": "occurrence_children",
+              "label": "Occurrence children",
+              "description": "",
+              "type": "Enumeration",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "",
+              "typeaheadSearch": [],
+              "enumeration": [
+                "None",
+                "Single",
+                "Multiple"
+              ],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
+            },
+            "component": "Select"
+          }
+        ]
+      ],
+      "metaEntityName": "Protocol",
+      "type": "form",
+      "locations": {},
+      "templateHeading": "Tree structure",
+      "showSideHeadings": "Disabled"
     },
     {
       "metaEntityName": "Protocol",
       "type": "form",
+      "showSideHeadings": "Disabled",
       "cells": [
         [
           {
             "width": "12",
             "height": "1",
             "attributeName": "activity_templates",
+            "hideLabel": true,
             "template": {
               "binding": "activity_templates",
               "templateHeading": "",
@@ -79,6 +244,20 @@
               "orderByDir": "ASC",
               "navigation": "Enabled",
               "route": "/data/ActivityTemplate/view/${id}"
+            },
+            "attribute": {
+              "name": "activity_templates",
+              "label": "Activity templates",
+              "description": "Activity templates associated with this protocol",
+              "type": "OneToMany",
+              "visibility": "Visible",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "ActivityTemplate",
+              "typeaheadSearch": [],
+              "unitOfMeasure": "",
+              "scale": "",
+              "rules": []
             }
           }
         ]

@@ -110,7 +110,7 @@
                 <div class="ps-tree-detail-body">
                   @for (template of getDetailContentTemplates(); track template) {
                     <div class="mb-4">
-                      @if (template.templateHeading) {
+                      @if (template.templateHeading && template.showSideHeadings !== 'Disabled') {
                         <h5 class="text-secondary border-bottom pb-1 mb-3">{{ template.templateHeading }}</h5>
                       }
                       <lib-layout-outlet [ctx]="detailCtx" [template]="template" [mode]="detailMode"></lib-layout-outlet>

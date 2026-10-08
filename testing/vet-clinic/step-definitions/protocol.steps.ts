@@ -131,3 +131,35 @@ When('I click {string} in the dialog', async function (this: UIWorld, actionName
   await btn.click();
   await this.page.locator('.modal-dialog').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
 });
+
+Then('the nested one-to-many {string} table should have exactly {int} instance', async function (this: UIWorld, bindingName: string, count: number) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const tables = this.page.locator(`table[data-testid="table-${bindingName}"]`);
+  expect(await tables.count()).to.equal(count);
+});
+
+Then('the nested one-to-many {string} table should have {int} rows', async function (this: UIWorld, bindingName: string, expectedRows: number) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const rows = this.page.locator(`table[data-testid="table-${bindingName}"] tbody tr`);
+  await rows.first().waitFor({ state: 'visible', timeout: 15000 });
+  expect(await rows.count()).to.equal(expectedRows);
+});
+
+Then('each row in the {string} table should be unique', async function (this: UIWorld, bindingName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const rows = this.page.locator(`table[data-testid="table-${bindingName}"] tbody tr`);
+  const rowCount = await rows.count();
+  const seenTexts = new Set<string>();
+  for (let i = 0; i < rowCount; i++) {
+    const firstCell = rows.nth(i).locator('td').first();
+    const input = firstCell.locator('input');
+    let text: string;
+    if (await input.count() > 0) {
+      text = (await input.inputValue()).trim();
+    } else {
+      text = (await firstCell.innerText()).trim();
+    }
+    expect(seenTexts.has(text), `Row duplicate found: "${text}" in table "${bindingName}"`).to.be.false;
+    seenTexts.add(text);
+  }
+});
