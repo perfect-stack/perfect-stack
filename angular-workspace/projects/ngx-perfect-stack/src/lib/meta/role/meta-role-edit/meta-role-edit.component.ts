@@ -99,6 +99,10 @@ export class MetaRoleEditComponent implements OnInit {
       },
       {
         type: SubjectType.Special,
+        name: "Meta"
+      },
+      {
+        type: SubjectType.Special,
         name: "Batch"
       },
       {

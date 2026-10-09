@@ -1,11 +1,76 @@
 {
   "name": "Administrator",
-  "group": "Administrator",
+  "group": "Administrator,admin",
+  "inherits": "",
   "description": "<p>Full access to Vet Clinic administration, Pet, Owner, Clinic, Species, Protocol, ActivityTemplate, and AssertionType records</p>",
   "permissions": [
     {
-      "action": "Menu",
-      "subject": "Vet Clinic"
+      "action": "Read",
+      "subject": "Any"
+    },
+    {
+      "action": "Edit",
+      "subject": "Meta"
+    },
+    {
+      "action": "Edit",
+      "subject": "Pet"
+    },
+    {
+      "action": "Edit",
+      "subject": "Owner"
+    },
+    {
+      "action": "Edit",
+      "subject": "Clinic"
+    },
+    {
+      "action": "Edit",
+      "subject": "Species"
+    },
+    {
+      "action": "Edit",
+      "subject": "Protocol"
+    },
+    {
+      "action": "Edit",
+      "subject": "ActivityTemplate"
+    },
+    {
+      "action": "Edit",
+      "subject": "AssertionType"
+    },
+    {
+      "action": "Edit",
+      "subject": "Occurrence"
+    },
+    {
+      "action": "Delete",
+      "subject": "Pet"
+    },
+    {
+      "action": "Delete",
+      "subject": "Owner"
+    },
+    {
+      "action": "Delete",
+      "subject": "Clinic"
+    },
+    {
+      "action": "Delete",
+      "subject": "Species"
+    },
+    {
+      "action": "Delete",
+      "subject": "Protocol"
+    },
+    {
+      "action": "Delete",
+      "subject": "ActivityTemplate"
+    },
+    {
+      "action": "Delete",
+      "subject": "AssertionType"
     },
     {
       "action": "Menu",
@@ -21,95 +86,15 @@
     },
     {
       "action": "Menu",
-      "subject": "Clinic"
+      "subject": "Meta"
     },
     {
       "action": "Menu",
-      "subject": "Species"
+      "subject": "Occurrences"
     },
     {
-      "action": "Edit",
-      "subject": "Pet"
-    },
-    {
-      "action": "Read",
-      "subject": "Pet"
-    },
-    {
-      "action": "Delete",
-      "subject": "Pet"
-    },
-    {
-      "action": "Edit",
-      "subject": "Owner"
-    },
-    {
-      "action": "Read",
-      "subject": "Owner"
-    },
-    {
-      "action": "Delete",
-      "subject": "Owner"
-    },
-    {
-      "action": "Edit",
-      "subject": "Clinic"
-    },
-    {
-      "action": "Read",
-      "subject": "Clinic"
-    },
-    {
-      "action": "Delete",
-      "subject": "Clinic"
-    },
-    {
-      "action": "Edit",
-      "subject": "Species"
-    },
-    {
-      "action": "Read",
-      "subject": "Species"
-    },
-    {
-      "action": "Delete",
-      "subject": "Species"
-    },
-    {
-      "action": "Edit",
-      "subject": "Protocol"
-    },
-    {
-      "action": "Read",
-      "subject": "Protocol"
-    },
-    {
-      "action": "Delete",
-      "subject": "Protocol"
-    },
-    {
-      "action": "Edit",
-      "subject": "ActivityTemplate"
-    },
-    {
-      "action": "Read",
-      "subject": "ActivityTemplate"
-    },
-    {
-      "action": "Delete",
-      "subject": "ActivityTemplate"
-    },
-    {
-      "action": "Edit",
-      "subject": "AssertionType"
-    },
-    {
-      "action": "Read",
-      "subject": "AssertionType"
-    },
-    {
-      "action": "Delete",
-      "subject": "AssertionType"
+      "action": "Menu",
+      "subject": "Admin"
     }
   ]
 }

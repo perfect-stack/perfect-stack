@@ -18,7 +18,8 @@ export class AuthGuard implements CanActivate {
 
     this.actionTypeMap.set('search', ActionType.Read);
     this.actionTypeMap.set('search_edit', ActionType.Read);
-    this.actionTypeMap.set('view', ActionType.Read)
+    this.actionTypeMap.set('view', ActionType.Read);
+    this.actionTypeMap.set('tree', ActionType.Read);
     this.actionTypeMap.set('edit', ActionType.Edit);
   }
 
@@ -26,22 +27,17 @@ export class AuthGuard implements CanActivate {
     if(this.authenticationService.isLoggedIn) {
       const actionSubject = this.findActionAndSubjectFromURL(state.url);
       if(actionSubject) {
-        const actionSubjectPermission = this.authorizationService.checkPermission(actionSubject.action, actionSubject.subject);
-
-        const menuSubject = this.findMenuSubject(actionSubject);
-        const menuSubjectPermission = this.authorizationService.checkPermission(ActionType.Menu, menuSubject);
-
-        let canActivate = actionSubjectPermission && menuSubjectPermission;
+        const canActivate = this.authorizationService.checkPermission(actionSubject.action, actionSubject.subject);
         if(canActivate) {
-          return canActivate;
+          return true;
         }
         else {
-          console.log(`NOT AUTHORISED: ${actionSubject.action}.${actionSubject.subject},  actionSubjectPermission = ${actionSubjectPermission}, menuSubject = ${menuSubject}, menuSubjectPermission = ${menuSubjectPermission}`);
+          console.log(`NOT AUTHORISED: ${actionSubject.action}.${actionSubject.subject}`);
           return this.router.navigate(['/authorization-error']);
         }
       }
       else {
-        console.log(`findActionAndSubjectFromURL: NO Action or subject found. Keep calm and carry on.`)
+        console.log(`findActionAndSubjectFromURL: NO Action or subject found. Keep calm and carry on.`);
         return true;
       }
     }
@@ -55,16 +51,17 @@ export class AuthGuard implements CanActivate {
   }
 
   findActionAndSubjectFromURL(url: string): ActionSubject | null {
-    const segments = url.split('/')
+    const segments = url.split('/');
     if(url.startsWith('/data/')) {
       const actionSegment = segments[3];
       const subjectSegment = segments[2];
       if(actionSegment && subjectSegment) {
         const action = this.actionTypeMap.get(actionSegment);
-        if(action)
-        return {
-          action: action,
-          subject: subjectSegment
+        if(action) {
+          return {
+            action: action,
+            subject: subjectSegment
+          };
         }
       }
       // else return null at the bottom of the method
@@ -76,47 +73,10 @@ export class AuthGuard implements CanActivate {
       return {
         action: url.includes('/edit/') ? ActionType.Edit : ActionType.Menu,
         subject: 'Meta'
-      }
+      };
     }
 
     return null;
-  }
-
-  findMenuSubject(actionSubject: ActionSubject): string | null {
-    if(actionSubject) {
-
-      if(actionSubject.subject === 'Person') {
-        return 'People';
-      }
-
-      const adminSubjects = [
-        'ActivityType',
-        'CaptureMethodType',
-        'CountType',
-        'HabitatType',
-        'Instrument',
-        'LocationType',
-        'NestStatusType',
-        'NestFailureReason',
-        'ObserverRole',
-        'ObservationType',
-        'Organisation',
-        'ProjectStatus',
-        'ProjectRole',
-        'ProjectTeamStatus',
-        'Species',
-      ];
-
-      if(adminSubjects.indexOf(actionSubject.subject) >= 0) {
-        return 'Admin'
-      }
-      else  {
-        return actionSubject.subject;
-      }
-    }
-    else {
-      return  null;
-    }
   }
 }
 
@@ -124,4 +84,3 @@ class ActionSubject {
   action: ActionType;
   subject: string;
 }
-
