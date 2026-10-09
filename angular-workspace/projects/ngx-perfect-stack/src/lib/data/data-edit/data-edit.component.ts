@@ -3,7 +3,6 @@ import {combineLatest, Observable, tap, switchMap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
 import {FormContext, FormService} from './form-service/form.service';
-import * as uuid from 'uuid';
 import {AttributeType} from '../../domain/meta.entity';
 import {
   DoubleVisitor,
@@ -114,7 +113,10 @@ export class DataEditComponent implements OnInit {
       return null;
     }
     else {
-      uuid.parse(value);
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(value)) {
+        throw new Error(`Invalid UUID of ${value}`);
+      }
       return value;
     }
   }

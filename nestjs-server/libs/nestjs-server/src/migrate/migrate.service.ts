@@ -1,5 +1,4 @@
 import * as csv from 'fast-csv';
-import * as uuid from 'uuid';
 import {Pool, PoolClient} from 'pg';
 import {Injectable} from "@nestjs/common";
 import {AttributeType, MetaAttribute, MetaEntity} from "../domain/meta.entity";
@@ -10,6 +9,7 @@ import {ConfigService} from "@nestjs/config";
 
 const CSV_DIRECTORY = '/Users/richardperfect/dev/perfect-consulting/data-migration/data-migration-2025-07-16';
 const BATCH_SIZE = 200;
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const filesToProcess: FileProcessingConfig[] = [
     {
@@ -489,7 +489,7 @@ class MetaEntityRowProcessor {
         }
 
         if(attribute.type === AttributeType.Identifier) {
-            if(value === null || !uuid.validate(value)) {
+            if(value === null || !UUID_REGEX.test(value)) {
                 const fullAttributeName = this.metaEntity.name + "." + attribute.name;
                 throw new Error("Unable to convert value of " + value + " to a valid UUID for " + fullAttributeName );
             }
@@ -509,7 +509,7 @@ class MetaEntityRowProcessor {
         csvRow: { [key: string]: string },
         csvHeaders: string[]
     ): { columns: string[]; values: any[] } | null => {
-        const idValid = uuid.validate(csvRow['ID']);
+        const idValid = UUID_REGEX.test(csvRow['ID']);
         if (!idValid) {
             console.warn(`Skipping ${this.metaEntity.name} row due to invalid ID:`, csvRow);
             return null;

@@ -37,9 +37,9 @@ export class DataService {
   ) {}
 
   validateUuid(value: string) {
-    try {
-      uuid.parse(value);
-    } catch (error) {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(value)) {
       throw new Error(`Invalid UUID of ${value}`);
     }
   }
