@@ -1,5 +1,9 @@
 # Engineering Standards & Architecture Rules
 
+## System Architecture & Onboarding Instructions
+- **FIRST STEP FOR NEW CONVERSATIONS**: Before exploring the codebase, running exploratory search commands, or implementing features, **read [`Architecture.md`](../../Architecture.md)** (or [`Architecture.md`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/Architecture.md)). It provides the authoritative architectural map, glossary of terms (clarifying Meta Entity / Meta Page JSON vs. runtime objects), monorepo layout, and links to canonical reference files like [`testing/vet-clinic/meta`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta).
+- **Architecture Maintenance Rule**: If you introduce or modify any architectural patterns, core abstractions, directory structures, or design conventions, you **must update [`Architecture.md`](../../Architecture.md)** so that the living documentation remains strictly in sync with the codebase.
+
 ## Baseline & Relationship to Standard Practices
 - Apply standard idiomatic practices and clean code conventions for the relevant language/framework unless a rule below explicitly dictates otherwise.
 - In the event of a conflict between general industry defaults and the project-specific rules listed here, these project rules take precedence.
