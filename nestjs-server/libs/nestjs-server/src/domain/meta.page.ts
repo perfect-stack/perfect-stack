@@ -37,6 +37,7 @@ export enum TemplateType {
   card = 'card',
   map = 'map',
   chart = 'chart',
+  formList = 'formList',
 }
 
 export enum TemplateLocationType {

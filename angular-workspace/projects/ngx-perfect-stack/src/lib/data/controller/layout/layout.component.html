@@ -46,6 +46,15 @@
           [relationshipProperty]="relationshipProperty">
         </lib-card-layout>
       }
+      @case ('formList') {
+        <lib-form-list-layout
+          [ctx]="ctx"
+          [template]="template"
+          [mode]="mode"
+          [formGroup]="formGroup"
+          [relationshipProperty]="relationshipProperty">
+        </lib-form-list-layout>
+      }
     }
     @if (hasBottomLocations) {
       <div>

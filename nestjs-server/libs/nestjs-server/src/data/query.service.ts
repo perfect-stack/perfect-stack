@@ -66,8 +66,10 @@ export class QueryService {
 
   async findOne(entityName: string, id: string): Promise<Entity> {
     const model = this.ormService.sequelize.model(entityName);
+    const includes = await this.buildFindOneIncludes(entityName, 1, 4);
+
     const entityModel = await model.findByPk(id, {
-      include: { all: true, nested: true },
+      include: includes.length > 0 ? includes : undefined,
     });
 
     if (entityModel) {
@@ -82,6 +84,83 @@ export class QueryService {
     } else {
       throw new DataNotFound();
     }
+  }
+
+  async buildFindOneIncludes(
+    entityName: string,
+    currentDepth: number = 1,
+    maxDepth: number = 4,
+  ): Promise<any[]> {
+    if (currentDepth >= maxDepth) {
+      return [];
+    }
+
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    if (!metaEntity) {
+      return [];
+    }
+
+    const includes: any[] = [];
+
+    for (const attr of metaEntity.attributes) {
+      // Rule 1: ManyToOne and OneToOne references (e.g. parent_event, location, protocol)
+      // Only fetch 1 level so display label is available. Never recurse into children.
+      if (
+        attr.type === AttributeType.ManyToOne ||
+        attr.type === AttributeType.OneToOne
+      ) {
+        if (this.ormService.sequelize.isDefined(attr.relationshipTarget)) {
+          const targetModel = this.ormService.sequelize.model(
+            attr.relationshipTarget,
+          );
+          if (targetModel) {
+            includes.push({
+              model: targetModel,
+              as: attr.name,
+              required: false,
+            });
+          }
+        }
+      }
+
+      // Rule 2: OneToMany child collections (e.g. occurrences -> activities -> assertions)
+      // Recurse downwards down the ownership hierarchy. For self-references, load 1 level only without recursing.
+      if (attr.type === AttributeType.OneToMany) {
+        if (this.ormService.sequelize.isDefined(attr.relationshipTarget)) {
+          const targetModel = this.ormService.sequelize.model(
+            attr.relationshipTarget,
+          );
+          if (targetModel) {
+            if (attr.relationshipTarget === entityName) {
+              if (currentDepth === 1) {
+                includes.push({
+                  model: targetModel,
+                  as: attr.name,
+                  required: false,
+                });
+              }
+            } else {
+              const nestedIncludes = await this.buildFindOneIncludes(
+                attr.relationshipTarget,
+                currentDepth + 1,
+                maxDepth,
+              );
+              const includeItem: any = {
+                model: targetModel,
+                as: attr.name,
+                required: false,
+              };
+              if (nestedIncludes.length > 0) {
+                includeItem.include = nestedIncludes;
+              }
+              includes.push(includeItem);
+            }
+          }
+        }
+      }
+    }
+
+    return includes;
   }
 
   private async loadOneToPoly(
@@ -127,6 +206,10 @@ export class QueryService {
     treeType?: string,
   ): Promise<any> {
     const metaEntity = await this.metaEntityService.findOne(entityName);
+    if (!metaEntity) {
+      throw new DataNotFound();
+    }
+
     const parentAttr = metaEntity.attributes.find(
       (a) =>
         a.type === AttributeType.ManyToOne &&
@@ -188,12 +271,73 @@ export class QueryService {
       throw new DataNotFound();
     }
 
+    // 1. Identify any child OneToMany collections on this entity (e.g. "occurrences")
+    const childCollections = metaEntity.attributes.filter(
+      (a) =>
+        a.type === AttributeType.OneToMany &&
+        a.relationshipTarget !== entityName,
+    );
+
+    const allIds = rows.map((r: any) => r.id);
+
+    // 2. Fetch children for all returned nodes in one query using bounded includes
+    const childDataMap = new Map<string, Map<string, any[]>>();
+    for (const childAttr of childCollections) {
+      if (this.ormService.sequelize.isDefined(childAttr.relationshipTarget)) {
+        const childModel = this.ormService.sequelize.model(
+          childAttr.relationshipTarget,
+        );
+        const candidateFkNames = [
+          entityName.toLowerCase() + '_id',
+          entityName + 'Id',
+          entityName.charAt(0).toLowerCase() + entityName.slice(1) + 'Id',
+        ];
+        let foreignKeyName = candidateFkNames[0];
+        if (childModel && childModel.rawAttributes) {
+          for (const cand of candidateFkNames) {
+            if (childModel.rawAttributes[cand]) {
+              foreignKeyName = cand;
+              break;
+            }
+          }
+        }
+
+        const childIncludes = await this.buildFindOneIncludes(
+          childAttr.relationshipTarget,
+          1,
+          3,
+        );
+
+        const children = await childModel.findAll({
+          where: { [foreignKeyName]: { [Op.in]: allIds } },
+          include: childIncludes.length > 0 ? childIncludes : undefined,
+        });
+
+        const grouped = new Map<string, any[]>();
+        for (const c of children) {
+          const raw = typeof c.toJSON === 'function' ? c.toJSON() : c;
+          const parentFk = raw[foreignKeyName];
+          if (parentFk) {
+            if (!grouped.has(parentFk)) grouped.set(parentFk, []);
+            grouped.get(parentFk)!.push(raw);
+          }
+        }
+        childDataMap.set(childAttr.name, grouped);
+      }
+    }
+
+    // 3. Attach child collections to each node when building nodeMap
     const nodeMap = new Map<string, any>();
     for (const row of rows) {
-      nodeMap.set(row.id, {
+      const nodeData: any = {
         ...row,
         [childrenAttrName]: [],
-      });
+      };
+      for (const childAttr of childCollections) {
+        const items = childDataMap.get(childAttr.name)?.get(row.id) || [];
+        nodeData[childAttr.name] = items;
+      }
+      nodeMap.set(row.id, nodeData);
     }
 
     let rootResult: any = null;

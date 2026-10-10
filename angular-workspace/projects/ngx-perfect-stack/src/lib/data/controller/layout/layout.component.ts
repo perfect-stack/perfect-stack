@@ -5,7 +5,7 @@
  * The dynamic metadata-driven layout rendering engine of `ngx-perfect-stack`.
  *
  * Interprets declarative `MetaPage`, `Template`, `Row`, and `Cell` definitions to render
- * responsive layouts (`HeaderLayout`, `FormLayout`, `TableLayout`, `CardLayout`),
+ * responsive layouts (`HeaderLayout`, `FormLayout`, `TableLayout`, `CardLayout`, `FormListLayout`),
  * relational controls (`OneToManyControl`, `OneToOneControl`, `OneToPolyControl`),
  * and interactive page tools (`TabTool`, `ButtonTabsTool`, `DurationTool`).
  *
@@ -29,6 +29,7 @@ export * from './layouts/table-layout/table-layout.component';
 export * from './layouts/card-layout/card-layout.component';
 export * from './layouts/form-layout/form-layout.component';
 export * from './layouts/header-layout/header-layout.component';
+export * from './layouts/form-list-layout/form-list-layout.component';
 export * from './cell/cell.component';
 export * from './controls/one-to-many-control/one-to-many-control.component';
 export * from './controls/one-to-poly-control/one-to-poly-control.component';
@@ -43,7 +44,11 @@ export * from './tool-view/duration-tool/duration-tool.component';
 export * from './tool-view/tab-tool/tab-tool.component';
 
 /**
- * Root dispatcher component for the Layout Subsystem.\n *\n * Evaluates the `template.type` on the input {@link Template} and dispatches to the\n * appropriate structural layout (`HeaderLayout`, `FormLayout`, `TableLayout`, `CardLayout`).\n */
+ * Root dispatcher component for the Layout Subsystem.
+ *
+ * Evaluates the `template.type` on the input {@link Template} and dispatches to the
+ * appropriate structural layout (`HeaderLayout`, `FormLayout`, `TableLayout`, `CardLayout`, `FormListLayout`).
+ */
 @Component({
   selector: 'lib-layout',
   templateUrl: './layout.component.html',

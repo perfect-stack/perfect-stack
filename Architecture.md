@@ -80,7 +80,7 @@ Located at [`angular-workspace/projects/ngx-perfect-stack/src/lib`](file:///User
   - `data-edit/`: Dynamic create/edit forms with automatic validation, dirty checking, and save handlers.
   - `data-service/`: Angular HTTP client communicating with backend `DataService` and `QueryService`.
 - **[`template/`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/template)**:
-  - Layout rendering engine: Interprets templates, cell coordinates, and widget component bindings.
+  - Layout rendering engine: Interprets templates, cell coordinates, and widget component bindings across header, form, table, card, and formList (card-based form lists for child collections).
   - Property sheets, attribute palettes, and template controllers.
 - **[`meta/`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/meta)**:
   - TypeScript types and models for entities, pages, menus, roles, and schema versions.
@@ -91,7 +91,7 @@ Located at [`angular-workspace/projects/ngx-perfect-stack/src/lib`](file:///User
 Located at [`nestjs-server/libs/nestjs-server/src`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src):
 - **[`data/`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src/data)**:
   - [`data.service.ts`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src/data/data.service.ts): Universal CRUD engine handling creates, updates, soft/permanent deletes, cascading children, and audit logs.
-  - [`query.service.ts`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src/data/query.service.ts): Dynamic query engine executing criteria queries, eager loading of relations, pagination, and sorting.
+  - [`query.service.ts`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src/data/query.service.ts): Dynamic query engine executing criteria queries, depth-bounded include queries (`buildFindOneIncludes`), recursive CTE hierarchy trees with child collections, eager loading of relations, pagination, and sorting.
   - [`data.controller.ts`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src/data/data.controller.ts): REST endpoints for entity operations.
 - **[`meta/`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src/meta)**:
   - `meta-entity/`: MetaEntity service and controller; reads entity JSON definitions from disk and generates runtime schema.
