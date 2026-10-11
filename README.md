@@ -1,58 +1,74 @@
 # Perfect-Stack
 
-Perfect-stack is a low-code platform and application stack for building enterprise level web applications. Based on 
-Angular/NestJS/Docker and PostgreSQL it contains ready to run working code and utilities for getting started quickly 
-with modern enterprise development.
+Perfect-Stack is a metadata-driven low-code platform and enterprise application stack for building modern web applications. Based on Angular, NestJS, Docker, and PostgreSQL/SQLite, it provides a complete runtime and tooling ecosystem to eliminate repetitive CRUD boilerplate.
 
-Define an entity-model within the application. Generate the schema and update the database. Add web pages to search,
-view and edit the data all without writing any code.
+Define an entity model declaratively. Generate schemas and sync databases automatically. Add web pages to search, view, edit, and navigate data—all without writing boilerplate code.
 
-* Define
-* View
-* Edit
+* **Define** (Meta Entities & Validation Rules)
+* **View** (Dynamic Search, Tables, Trees & Card Layouts)
+* **Edit** (Reactive Forms, Parent-Child Cascades, Typeaheads & Pickers)
 
+---
 
-## Why
+## Documentation
 
-- Low code
-- Speed of development
-- Modern future-proof architecture
-- Lots of baked-in features that otherwise get missed
-- Less cost
+Comprehensive documentation is available in the [`docs/`](docs/) directory:
 
+- [**Development Guide**](docs/Development%20Guide.md) ([`docs/Development Guide.md`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/docs/Development%20Guide.md)): Practical onboarding guide for developers working on downstream applications. Explains core concepts, the 80/20 rule, developer playbooks (adding entities, forms, relationships, navigation, roles), batch jobs, and extending with custom code.
+- [**System Architecture**](docs/Architecture.md) ([`docs/Architecture.md`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/docs/Architecture.md)): Authoritative architectural blueprint covering the monorepo structure, core subsystem locations, end-to-end execution flow, local `yalc` workflows, and testing harnesses.
 
-## What
+---
 
-- Angular
-- NestJS
-- PostgresSQL
-- JWT authentication
-- Docker / Lambda
+## Why Perfect-Stack
 
+- **Low Code, High Control**: 80% of standard business domain features require zero code, while remaining fully extensible with custom NestJS and Angular code.
+- **Speed of Development**: Instant schema generation, universal REST endpoints, and dynamic UI rendering.
+- **Modern Architecture**: Clean TypeScript monorepo with strict separation of concerns.
+- **Enterprise Features Built-In**: Auditing, role-based access control, file attachments, and batch job execution out of the box.
 
-## Features
+---
 
-This is the roadmap of planned features.
+## Tech Stack
 
-* User defined data model
-* User defined web forms
-* User defined queries
-* Pagination
-* Table sorting
-* Data Validation rules
-* Rich text data types
-* Media attachments
-* UI controls for Text, Numeric, Dates, Dropdown lists
-* Charts
-* Maps
-* Tags
-* Reference data
-* Data Exports
-* Data Imports
-* Authentication
-* Role-based access control
-* Environments & Config Properties
+- **Frontend**: Angular, `@ng-bootstrap/ng-bootstrap`, TinyMCE, Azure MSAL
+- **Backend**: NestJS, Node.js, TypeScript
+- **Database & ORM**: PostgreSQL, SQLite, Knex.js, Sequelize
+- **Authentication**: JWT & Azure Active Directory (MSAL)
+- **Deployment & Infra**: Docker, AWS Lambda
 
+---
+
+## Core Features
+
+- **Dynamic Data Modeling**: Declarative entities with typed attributes, validation rules, timestamps, and relationships (`ManyToOne`, `OneToMany`, `OneToOne`, `OneToPoly`).
+- **Automatic Schema Management**: Generates and syncs database tables, columns, indexes, and foreign keys at startup.
+- **Universal REST & Query APIs**: Generic CRUD endpoints (`/data/{entity}`) with multi-criteria filtering, depth-bounded relations, and pagination.
+- **Recursive CTE Hierarchy Trees**: Native support for parent-child tree hierarchies and tree view UI.
+- **Adaptive 12-Column UI Renderer**: Dynamic search pages, reactive edit forms, and layout styles (`Stockholm`, `Paris`, `Venice`, `New York`).
+- **Rich Control Palette**: Input widgets for Text, Numeric, Dates, Dropdown pickers, Typeahead auto-complete, Colour bands, and Maps.
+- **Visual In-App Designers**: Built-in visual editors to create entities, design page layouts, configure menus, and set up roles directly in the browser (`/meta/*`).
+- **Role-Based Access Control (RBAC)**: Fine-grained permission model (`Read`, `Edit`, `Delete`, `Menu`) mapped to user groups.
+- **Media & File Attachments**: Integrated file upload, media gallery, and local/S3 repository support.
+- **Background & Batch Jobs**: Extensible job runner with execution context and monitoring dashboard (`/batch/view`).
+- **Audit Trails**: Built-in entity modification tracking.
+- **Data Imports**: CSV/data import framework (`/data/import`).
+
+### Planned Roadmap
+- Charts & Metric Dashboards
+- Tags & Freeform Tagging
+- Data Exports (CSV / Excel)
+- Reference Data Management Utilities
+
+---
+
+## Reference Implementation & Testing
+
+The repository includes canonical reference implementations and test harnesses:
+
+- **BDD Integration Tests (`testing/test-server`)**: Fast, headless service integration tests using Cucumber against SQLite. Run via `cd testing/test-server && npm test`.
+- **Reference Application & E2E Tests (`testing/vet-clinic`)**: Full-stack reference implementation demonstrating the entire stack with Playwright E2E browser tests. Run via `cd testing/vet-clinic && npm test`.
+
+---
 
 ## CI/CD & Publishing Releases
 

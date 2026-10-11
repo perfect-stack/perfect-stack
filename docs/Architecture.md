@@ -2,6 +2,8 @@
 
 > **Living Documentation**: This document is the primary architectural map for the Perfect-Stack platform. It is designed to be easily read and reviewed by humans, as well as serve as an immediate architectural kickstart for AI assistants.
 > 
+> *Companion Reading*: For developer onboarding, core concepts, and practical feature implementation techniques, see [**`Development Guide.md`**](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/docs/Development%20Guide.md).
+>
 > *Rule*: If any architectural patterns, core abstractions, or directory conventions change, this document must be updated accordingly.
 
 ---
@@ -43,7 +45,9 @@ The repository is structured as a multi-package monorepo without a single root `
 
 ```text
 perfect-stack/
-├── Architecture.md                   # This architectural reference guide
+├── docs/
+│   ├── Architecture.md                 # This architectural reference guide
+│   └── Development Guide.md            # Developer onboarding guide & practical techniques
 ├── README.md                         # Project overview and roadmap
 │
 ├── .agents/skills/

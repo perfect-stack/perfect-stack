@@ -2,7 +2,7 @@
 
 > **Developer Onboarding Guide**: This guide is designed for developers who are joining an existing project powered by **Perfect-Stack**. It assumes your application environment is already running and configured. Rather than walking through blank-slate setup tutorials, this guide explains how the framework thinks, summarizes its major capabilities, and provides practical techniques for building and extending business features using both declarative metadata and custom code.
 > 
-> *Companion Reading*: For system internals, monorepo layout, and low-level subsystem topologies, see [`Architecture.md`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/Architecture.md).
+> *Companion Reading*: For system internals, monorepo layout, and low-level subsystem topologies, see [`Architecture.md`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/docs/Architecture.md).
 
 ---
 
@@ -563,4 +563,4 @@ When joining an active project:
 - [ ] **Run the App Locally**: Confirm your backend starts and connects to PostgreSQL/SQLite, and the Angular client loads.
 - [ ] **Explore `/meta/*` in the Browser**: Log in with administrative privileges and explore the Entity Designer (`/meta/entity/search`), Page Designer (`/meta/page/search`), and Menu Designer (`/meta/menu/view`).
 - [ ] **Inspect the `meta/` Directory**: Look at existing JSON models in the project to understand the domain conventions and entity naming patterns.
-- [ ] **Review [`Architecture.md`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/Architecture.md)**: Gain a deeper understanding of library builds (`yalc`), core package distributions, and end-to-end data flow.
+- [ ] **Review [`Architecture.md`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/docs/Architecture.md)**: Gain a deeper understanding of library builds (`yalc`), core package distributions, and end-to-end data flow.
