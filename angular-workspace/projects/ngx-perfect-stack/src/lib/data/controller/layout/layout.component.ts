@@ -38,6 +38,7 @@ export * from './controls/assertion-selector/assertion-selector.component';
 export * from './controls/assertion-control/assertion-control.component';
 export * from './controls/assertion-list-control/assertion-list-control.component';
 export * from './controls/spy-control/spy-control.component';
+export * from './controls/enumeration-edit-control/enumeration-edit-control.component';
 export * from './tool-view/tool-view.component';
 export * from './tool-view/button-tabs-tool/button-tabs-tool.component';
 export * from './tool-view/duration-tool/duration-tool.component';

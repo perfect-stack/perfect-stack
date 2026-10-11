@@ -54,6 +54,11 @@
             <lib-enumeration-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
           </ng-container>
         }
+        @case ('EnumerationEdit') {
+          <ng-container [formGroup]="formGroup">
+            <lib-enumeration-edit-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-edit-control>
+          </ng-container>
+        }
         @default {
           <ng-container [formGroup]="formGroup">
             <lib-text-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-text-field-control>
@@ -66,7 +71,14 @@
     }
     @case ('Enumeration') {
       <ng-container [formGroup]="formGroup">
-        <lib-enumeration-control [mode]="mode" [cell]="cell" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
+        @switch (cell.component) {
+          @case ('EnumerationEdit') {
+            <lib-enumeration-edit-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-edit-control>
+          }
+          @default {
+            <lib-enumeration-control [mode]="mode" [cell]="cell" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
+          }
+        }
       </ng-container>
     }
     @case ('OneToMany') {
@@ -81,7 +93,7 @@
           <lib-media-gallery-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [ctx]="ctx"></lib-media-gallery-control>
         }
         @case ('AssertionList') {
-          <lib-assertion-list-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-assertion-list-control>
+          <lib-assertion-list-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup" [layoutStyle]="cell.options"></lib-assertion-list-control>
         }
         @default {
           <lib-one-to-many-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>

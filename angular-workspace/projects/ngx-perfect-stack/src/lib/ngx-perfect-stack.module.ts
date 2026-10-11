@@ -91,6 +91,7 @@ import {LoadingBarHttpClientModule} from '@ngx-loading-bar/http-client';
 import { VersionComponent } from './meta/version/version.component';
 import { EnumeratonEditComponent } from './meta/entity/meta-entity-edit/enumeraton-edit/enumeraton-edit.component';
 import { EnumerationControlComponent } from './data/controller/layout/controls/enumeration-control/enumeration-control.component';
+import { EnumerationEditControlComponent } from './data/controller/layout/controls/enumeration-edit-control/enumeration-edit-control.component';
 import { SelectTwoControlComponent } from './data/controller/layout/controls/select-two-control/select-two-control.component';
 import { AuditViewComponent } from './audit/audit-view/audit-view.component';
 import { NewYorkLayoutStyleComponent } from './data/data-edit/new-york-layout-style/new-york-layout-style.component';
@@ -270,6 +271,8 @@ export function layoutComponentFactory() {
     VersionComponent,
     EnumeratonEditComponent,
     EnumerationControlComponent,
+    EnumerationEditControlComponent,
+    EnumerationEditControlComponent,
     SelectTwoControlComponent,
     CellSettingsComponent,
     AuditViewComponent,

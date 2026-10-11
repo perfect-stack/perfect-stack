@@ -1,0 +1,44 @@
+<div class="enumeration-edit-control" [attr.data-testid]="cell?.attributeName ? 'enum-edit-' + cell?.attributeName : 'enum-edit-control'">
+  @if (mode !== 'view') {
+    <!-- Selected items (active badges with remove close icon) -->
+    <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+      @for (val of selectedValues; track val; let i = $index) {
+        <span class="badge bg-primary d-inline-flex align-items-center gap-1 py-1 px-2" [attr.data-testid]="'selected-item-' + i">
+          <span>{{ val }}</span>
+          @if (!disabled) {
+            <span class="material-symbols-outlined remove-icon" role="button" (click)="removeValue(i)" title="Remove {{ val }}">close</span>
+          }
+        </span>
+      }
+      @if (selectedValues.length === 0) {
+        <span class="text-muted small fst-italic">None selected</span>
+      }
+    </div>
+
+    <!-- Available predefined options to add -->
+    @if (availableOptions.length > 0 && !disabled) {
+      <div class="d-flex flex-wrap align-items-center gap-1">
+        @for (opt of availableOptions; track opt) {
+          <button
+            type="button"
+            class="badge bg-light text-secondary border available-opt-btn d-inline-flex align-items-center gap-1 py-1 px-2"
+            (click)="addValue(opt)"
+            title="Add {{ opt }}">
+            <span class="material-symbols-outlined add-icon">add</span>
+            <span>{{ opt }}</span>
+          </button>
+        }
+      </div>
+    }
+  } @else {
+    <!-- Read-only view -->
+    <div class="d-flex flex-wrap align-items-center gap-1">
+      @for (val of selectedValues; track val) {
+        <span class="badge bg-primary d-inline-flex align-items-center py-1 px-2">{{ val }}</span>
+      }
+      @if (selectedValues.length === 0) {
+        <span class="text-muted small">&mdash;</span>
+      }
+    </div>
+  }
+</div>

@@ -16,6 +16,7 @@ export enum ComponentType {
   Select = 'Select',
   SelectTwo = 'SelectTwo',
   SelectMultiple = 'SelectMultiple',
+  EnumerationEdit = 'EnumerationEdit',
   Spy = 'Spy',
 }
 
@@ -44,6 +45,7 @@ export class Cell {
   media_cols?: string;
   media_rows?: string;
   dataProvider?: string;
+  options?: string;
   attribute?: MetaAttribute;
 }
 

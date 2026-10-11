@@ -84,6 +84,29 @@
         ],
         [
           {
+            "width": "4",
+            "height": "1",
+            "attributeName": "card_layout_attributes",
+            "component": "EnumerationEdit",
+            "options": "value | unit | method | accuracy | notes"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "field_layout_attributes",
+            "component": "EnumerationEdit",
+            "options": "value | unit | method | accuracy | notes"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "table_layout_attributes",
+            "component": "EnumerationEdit",
+            "options": "value | unit | method | accuracy | notes"
+          }
+        ],
+        [
+          {
             "width": "12",
             "height": "1",
             "attributeName": "assertion_method"

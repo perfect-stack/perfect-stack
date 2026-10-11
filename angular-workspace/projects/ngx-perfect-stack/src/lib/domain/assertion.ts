@@ -10,6 +10,12 @@ export enum AssertionValueClass {
   Boolean = 'Boolean',
 }
 
+export enum AssertionLayoutStyle {
+  Card = 'Card',
+  Field = 'Field',
+  Table = 'Table',
+}
+
 export interface AssertionType {
   id: string;
   assertion_type_name: string;
@@ -21,6 +27,9 @@ export interface AssertionType {
   assertion_value_decimal_places?: number;
   assertion_method?: string;
   assertion_type_notes?: string;
+  card_layout_attributes?: string;
+  field_layout_attributes?: string;
+  table_layout_attributes?: string;
 }
 
 export interface Assertion {

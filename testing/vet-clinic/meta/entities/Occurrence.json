@@ -110,6 +110,25 @@
       "rules": []
     },
     {
+      "name": "layout_style",
+      "label": "Layout style",
+      "description": "Visual layout style for assertions",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Enumeration",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": [],
+      "enumeration": [
+        "Card",
+        "Field",
+        "Table"
+      ]
+    },
+    {
       "name": "occurrence_notes",
       "label": "Occurrence notes",
       "description": "General occurrence notes",

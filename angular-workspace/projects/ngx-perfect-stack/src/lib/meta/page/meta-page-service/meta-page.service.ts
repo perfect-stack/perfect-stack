@@ -28,6 +28,7 @@ export class CellAttribute {
   media_cols?: string;
   media_rows?: string;
   dataProvider?: string;
+  options?: string;
 }
 
 @Injectable({

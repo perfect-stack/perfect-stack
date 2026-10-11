@@ -80,6 +80,13 @@
         ],
         [
           {
+            "width": "6",
+            "height": "1",
+            "attributeName": "layout_style"
+          }
+        ],
+        [
+          {
             "width": "12",
             "height": "2",
             "attributeName": "occurrence_notes"

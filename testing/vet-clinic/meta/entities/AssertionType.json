@@ -174,6 +174,48 @@
       "relationshipTarget": "",
       "typeaheadSearch": [],
       "rules": []
+    },
+    {
+      "name": "card_layout_attributes",
+      "label": "Card layout attributes",
+      "description": "Pipe-separated list of visible assertion attributes for Card layout (e.g. value | unit | method | accuracy | notes)",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "field_layout_attributes",
+      "label": "Field layout attributes",
+      "description": "Pipe-separated list of visible assertion attributes for Field layout (e.g. value | unit)",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "table_layout_attributes",
+      "label": "Table layout attributes",
+      "description": "Pipe-separated list of visible assertion attributes for Table layout (e.g. value | unit)",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Text",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
     }
   ]
 }

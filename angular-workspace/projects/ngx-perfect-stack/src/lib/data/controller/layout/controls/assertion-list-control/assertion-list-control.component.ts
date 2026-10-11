@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
 import { FormContext } from '../../../../data-edit/form-service/form.service';
 import { FormGroupService } from '../../../../data-edit/form-service/form-group.service';
@@ -30,6 +30,9 @@ export class AssertionListControlComponent implements OnInit {
   @Input()
   formGroup: UntypedFormGroup;
 
+  @Input()
+  layoutStyle?: string;
+
   metaEntityMap: Map<string, MetaEntity> = new Map();
   metaPageMap: Map<string, MetaPage> = new Map();
 
@@ -50,6 +53,30 @@ export class AssertionListControlComponent implements OnInit {
     });
 
     this.assertionTypeService.loadAssertionTypes().subscribe();
+  }
+
+  get resolvedLayoutStyle(): string | undefined {
+    if (this.layoutStyle) {
+      return this.layoutStyle;
+    }
+    if (this.cell?.options) {
+      return this.cell.options;
+    }
+    return this.findLayoutStyleInGroup(this.formGroup);
+  }
+
+  private findLayoutStyleInGroup(group: AbstractControl | null): string | undefined {
+    let current: AbstractControl | null = group;
+    while (current) {
+      if (current instanceof FormGroup || current instanceof UntypedFormGroup) {
+        const ctrl = current.get('layout_style');
+        if (ctrl) {
+          return ctrl.value || 'Card';
+        }
+      }
+      current = current.parent;
+    }
+    return undefined;
   }
 
   get relationshipProperty(): string {

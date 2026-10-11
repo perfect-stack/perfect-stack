@@ -8,6 +8,7 @@ export enum ComponentType {
   Select = 'Select',
   SelectTwo = 'SelectTwo',
   Spy = 'Spy',
+  EnumerationEdit = 'EnumerationEdit',
 }
 
 export class Cell {
@@ -23,6 +24,7 @@ export class Cell {
   displayOnly?: boolean;
   media_cols?: string;
   media_rows?: string;
+  options?: string;
 }
 
 export class ComponentData {}
