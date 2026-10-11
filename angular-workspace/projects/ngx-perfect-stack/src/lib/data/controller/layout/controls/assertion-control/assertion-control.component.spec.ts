@@ -209,6 +209,33 @@ describe('AssertionControlComponent', () => {
     expect(valueDisplayEl?.textContent?.trim()).toBe('1100 g');
   });
 
+  it('should render em-dash for empty Notes field instead of falling back to No', () => {
+    const notesType: AssertionType = {
+      id: 'type-notes',
+      assertion_type_name: 'Notes',
+      assertion_value_class: AssertionValueClass.Text,
+    };
+    mockAssertionTypeService.getAssertionType.and.returnValue(notesType);
+    component.assertionType = notesType;
+
+    const notesForm = new UntypedFormGroup({
+      assertion_type_id: new UntypedFormControl('type-notes'),
+      assertion_type_name: new UntypedFormControl('Notes'),
+      assertion_value_text: new UntypedFormControl(null),
+      assertion_value_boolean: new UntypedFormControl(false),
+    });
+    component.formGroup = notesForm;
+    component.layoutStyle = 'Field';
+    component.mode = 'view';
+    fixture.detectChanges();
+
+    expect(component.assertionValueDisplay).toBe('');
+
+    const rootEl: HTMLElement = fixture.nativeElement;
+    const valueDisplayEl = rootEl.querySelector('.assertion-value-display');
+    expect(valueDisplayEl?.textContent?.trim()).toBe('—');
+  });
+
   it('should render Field layout in view mode without input-group and with space before unit', () => {
     component.layoutStyle = 'Field';
     component.mode = 'view';
@@ -243,7 +270,7 @@ describe('AssertionControlComponent', () => {
     const unitEl = inputGroupEl?.querySelector('.input-group-text');
     expect(unitEl?.textContent?.trim()).toBe('kg');
 
-    const inputEl = inputGroupEl?.querySelector('input[type=\"number\"]');
+    const inputEl = inputGroupEl?.querySelector('input[type="number"]');
     expect(inputEl).toBeTruthy();
   });
 });

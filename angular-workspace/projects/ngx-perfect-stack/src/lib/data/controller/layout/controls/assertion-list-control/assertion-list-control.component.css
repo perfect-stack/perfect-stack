@@ -2,7 +2,7 @@
   width: 100%;
 }
 
-.assertion-items-list {
+.assertion-items-list:not(.row) {
   display: flex;
   flex-direction: column;
 }

@@ -126,6 +126,9 @@ export class AssertionControlComponent implements OnInit, OnChanges {
     if (type?.assertion_value_class) {
       return String(type.assertion_value_class);
     }
+    if (this._valueClass && this._valueClass !== AssertionValueClass.Text) {
+      return this._valueClass;
+    }
     if (this.formGroup) {
       const num = this.formGroup.get('assertion_value_numeric')?.value;
       if (num !== null && num !== undefined && num !== '') {
@@ -143,10 +146,6 @@ export class AssertionControlComponent implements OnInit, OnChanges {
       if (t !== null && t !== undefined && t !== '') {
         return AssertionValueClass.Time;
       }
-      const b = this.formGroup.get('assertion_value_boolean')?.value;
-      if (b !== null && b !== undefined && b !== '') {
-        return AssertionValueClass.Boolean;
-      }
       const geom = this.formGroup.get('assertion_value_geometry')?.value;
       if (geom !== null && geom !== undefined && geom !== '') {
         return AssertionValueClass.Geometry;
@@ -156,7 +155,7 @@ export class AssertionControlComponent implements OnInit, OnChanges {
         return AssertionValueClass.Text;
       }
     }
-    return AssertionValueClass.Text;
+    return this._valueClass || AssertionValueClass.Text;
   }
 
   get valueClass(): string {
@@ -283,9 +282,6 @@ export class AssertionControlComponent implements OnInit, OnChanges {
         if (t !== null && t !== undefined && t !== '') {
           return t;
         }
-        const b = this.formGroup.get('assertion_value_boolean')?.value;
-        if (b === true) return 'Yes';
-        if (b === false) return 'No';
         return '';
       }
     }

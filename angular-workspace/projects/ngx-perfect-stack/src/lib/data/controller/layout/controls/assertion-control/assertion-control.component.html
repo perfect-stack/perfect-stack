@@ -145,7 +145,7 @@
                   @if (mode !== 'view') {
                     <input type="text" class="form-control form-control-sm" formControlName="assertion_method" placeholder="e.g. hoist scale, visual estimate" />
                   } @else {
-                    <div class="small">{{ formGroup.get('assertion_method')?.value || '-' }}</div>
+                    <div class="small">{{ formGroup.get('assertion_method')?.value || '—' }}</div>
                   }
                 </div>
               }
@@ -155,7 +155,7 @@
                   @if (mode !== 'view') {
                     <input type="text" class="form-control form-control-sm" formControlName="assertion_accuracy" placeholder="e.g. ±0.5 mm" />
                   } @else {
-                    <div class="small">{{ formGroup.get('assertion_accuracy')?.value || '-' }}</div>
+                    <div class="small">{{ formGroup.get('assertion_accuracy')?.value || '—' }}</div>
                   }
                 </div>
               }
@@ -165,7 +165,7 @@
                   @if (mode !== 'view') {
                     <textarea class="form-control form-control-sm" formControlName="assertion_notes" rows="2" placeholder="Descriptive fact notes..."></textarea>
                   } @else {
-                    <div class="small" [innerHTML]="formGroup.get('assertion_notes')?.value || '-'"></div>
+                    <div class="small" [innerHTML]="formGroup.get('assertion_notes')?.value || '&mdash;'"></div>
                   }
                 </div>
               }
@@ -184,14 +184,14 @@
                 @if (mode === 'edit') {
                   <input type="number" step="1" class="form-control form-control-sm text-end" style="width: 100px;" formControlName="assertion_value_numeric" />
                 } @else {
-                  <span>{{ formGroup.get('assertion_value_numeric')?.value ?? '-' }}</span>
+                  <span>{{ assertionValueDisplay || '—' }}</span>
                 }
               }
               @case ('Double') {
                 @if (mode === 'edit') {
                   <input type="number" step="any" class="form-control form-control-sm text-end" style="width: 100px;" formControlName="assertion_value_numeric" />
                 } @else {
-                  <span>{{ formGroup.get('assertion_value_numeric')?.value ?? '-' }}</span>
+                  <span>{{ assertionValueDisplay || '—' }}</span>
                 }
               }
               @case ('Enumeration') {
@@ -203,21 +203,21 @@
                     }
                   </select>
                 } @else {
-                  <span>{{ formGroup.get('assertion_value_text')?.value || '-' }}</span>
+                  <span>{{ assertionValueDisplay || '—' }}</span>
                 }
               }
               @case ('Boolean') {
                 @if (mode === 'edit') {
                   <input type="checkbox" class="form-check-input" formControlName="assertion_value_boolean" />
                 } @else {
-                  <span>{{ formGroup.get('assertion_value_boolean')?.value ? 'Yes' : 'No' }}</span>
+                  <span>{{ assertionValueDisplay || '—' }}</span>
                 }
               }
               @default {
                 @if (mode === 'edit') {
                   <input type="text" class="form-control form-control-sm" style="min-width: 120px;" formControlName="assertion_value_text" />
                 } @else {
-                  <span>{{ formGroup.get('assertion_value_text')?.value || '-' }}</span>
+                  <span>{{ assertionValueDisplay || '—' }}</span>
                 }
               }
             }
@@ -261,7 +261,7 @@
                 @if (mode === 'edit') {
                   <input type="text" class="form-control form-control-sm" formControlName="assertion_method" />
                 } @else {
-                  <div class="small">{{ formGroup.get('assertion_method')?.value || '-' }}</div>
+                  <div class="small">{{ formGroup.get('assertion_method')?.value || '—' }}</div>
                 }
               </div>
             }
@@ -271,7 +271,7 @@
                 @if (mode === 'edit') {
                   <input type="text" class="form-control form-control-sm" formControlName="assertion_accuracy" />
                 } @else {
-                  <div class="small">{{ formGroup.get('assertion_accuracy')?.value || '-' }}</div>
+                  <div class="small">{{ formGroup.get('assertion_accuracy')?.value || '—' }}</div>
                 }
               </div>
             }
@@ -281,7 +281,7 @@
                 @if (mode === 'edit') {
                   <textarea class="form-control form-control-sm" formControlName="assertion_notes" rows="2"></textarea>
                 } @else {
-                  <div class="small" [innerHTML]="formGroup.get('assertion_notes')?.value || '-'"></div>
+                  <div class="small" [innerHTML]="formGroup.get('assertion_notes')?.value || '&mdash;'"></div>
                 }
               </div>
             }
@@ -373,7 +373,7 @@
                     @if (mode === 'edit') {
                       <input type="text" class="form-control form-control-sm" formControlName="assertion_method" placeholder="e.g. hoist scale, visual estimate" />
                     } @else {
-                      <div class="small">{{ formGroup.get('assertion_method')?.value || '-' }}</div>
+                      <div class="small">{{ formGroup.get('assertion_method')?.value || '—' }}</div>
                     }
                   </div>
                 }
@@ -383,7 +383,7 @@
                     @if (mode === 'edit') {
                       <input type="text" class="form-control form-control-sm" formControlName="assertion_accuracy" placeholder="e.g. ±0.5 mm" />
                     } @else {
-                      <div class="small">{{ formGroup.get('assertion_accuracy')?.value || '-' }}</div>
+                      <div class="small">{{ formGroup.get('assertion_accuracy')?.value || '—' }}</div>
                     }
                   </div>
                 }
@@ -393,7 +393,7 @@
                     @if (mode === 'edit') {
                       <textarea class="form-control form-control-sm" formControlName="assertion_notes" rows="2" placeholder="Descriptive fact notes..."></textarea>
                     } @else {
-                      <div class="small" [innerHTML]="formGroup.get('assertion_notes')?.value || '-'"></div>
+                      <div class="small" [innerHTML]="formGroup.get('assertion_notes')?.value || '&mdash;'"></div>
                     }
                   </div>
                 }

@@ -59,6 +59,7 @@ describe('AssertionListControlComponent', () => {
     component.formGroup = new UntypedFormGroup({
       assertions: formArray,
     });
+    component.layoutStyle = 'Card';
     component.mode = 'edit';
     fixture.detectChanges();
   });
@@ -107,5 +108,27 @@ describe('AssertionListControlComponent', () => {
 
     component.onDeleteAssertion(0);
     expect(component.attributes?.length).toBe(0);
+  });
+
+  it('should lay out Field style assertions in a row with col-4 grid items', () => {
+    const fixture2 = TestBed.createComponent(AssertionListControlComponent);
+    const comp2 = fixture2.componentInstance;
+    comp2.layoutStyle = 'Field';
+    comp2.cell = component.cell;
+    comp2.formGroup = new UntypedFormGroup({
+      assertions: new UntypedFormArray([
+        new UntypedFormGroup({ id: new UntypedFormControl('1') }),
+        new UntypedFormGroup({ id: new UntypedFormControl('2') }),
+        new UntypedFormGroup({ id: new UntypedFormControl('3') }),
+      ]),
+    });
+    fixture2.detectChanges();
+
+    const rootEl: HTMLElement = fixture2.nativeElement;
+    const rowEl = rootEl.querySelector('.row.assertion-items-list');
+    expect(rowEl).toBeTruthy();
+
+    const colEls = rootEl.querySelectorAll('.col-4');
+    expect(colEls.length).toBe(3);
   });
 });
