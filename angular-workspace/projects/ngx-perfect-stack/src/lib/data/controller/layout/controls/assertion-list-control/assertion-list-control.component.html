@@ -9,6 +9,7 @@
       <lib-assertion-selector
         [mode]="mode"
         [formArray]="attributes"
+        [activityTemplate]="activityTemplate"
         (assertionTypeSelected)="onAddAssertion($event)">
       </lib-assertion-selector>
     }
@@ -25,6 +26,7 @@
                 [ctx]="ctx"
                 [index]="i"
                 [layoutStyle]="resolvedLayoutStyle"
+                [activityTemplate]="activityTemplate"
                 (delete)="onDeleteAssertion(i)">
               </lib-assertion-control>
             </div>
@@ -39,6 +41,7 @@
               [ctx]="ctx"
               [index]="i"
               [layoutStyle]="resolvedLayoutStyle"
+              [activityTemplate]="activityTemplate"
               (delete)="onDeleteAssertion(i)">
             </lib-assertion-control>
           }

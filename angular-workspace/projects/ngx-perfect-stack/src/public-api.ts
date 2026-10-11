@@ -14,6 +14,7 @@ export * from './lib/client/config/client-config.service';
 export * from './lib/domain/meta-edit';
 export * from './lib/data/data-service/data.service';
 export * from './lib/data/data-service/assertion-type.service';
+export * from './lib/data/data-service/activity-template.service';
 export * from './lib/data/controller/layout/layout.component';
 export * from './lib/data/controller/layout/tool-view/tree-tool/tree-tool.component';
 export * from './lib/data/controller/layout/tool-view/map-tool/map-attribution.service';

@@ -254,6 +254,12 @@ describe('AssertionControlComponent', () => {
     expect(valueDisplayEl?.textContent?.trim()).toBe('14.5 kg');
   });
 
+  it('should accept activityTemplate as input', () => {
+    const tmpl = { id: 'tmpl-123', activity_template_name: 'Test Activity Template' };
+    component.activityTemplate = tmpl;
+    expect(component.activityTemplate).toEqual(tmpl);
+  });
+
   it('should render Field layout in edit mode with label on top and input-group below', () => {
     component.layoutStyle = 'Field';
     component.mode = 'edit';

@@ -7,6 +7,7 @@ import { FormGroupService } from '../../../../data-edit/form-service/form-group.
 import { MetaEntityService } from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
 import { MetaPageService, CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
 import { AssertionTypeService } from '../../../../data-service/assertion-type.service';
+import { ActivityTemplateService } from '../../../../data-service/activity-template.service';
 import { AssertionType, AssertionValueClass } from '../../../../../domain/assertion';
 import { AttributeType, MetaAttribute } from '../../../../../domain/meta.entity';
 
@@ -17,6 +18,7 @@ describe('AssertionListControlComponent', () => {
   let mockMetaEntityService: jasmine.SpyObj<MetaEntityService>;
   let mockMetaPageService: jasmine.SpyObj<MetaPageService>;
   let mockAssertionTypeService: jasmine.SpyObj<AssertionTypeService>;
+  let mockActivityTemplateService: jasmine.SpyObj<ActivityTemplateService>;
 
   beforeEach(async () => {
     mockFormGroupService = jasmine.createSpyObj<FormGroupService>('FormGroupService', ['createFormGroup']);
@@ -33,6 +35,13 @@ describe('AssertionListControlComponent', () => {
     ]);
     mockAssertionTypeService.loadAssertionTypes.and.returnValue(of([]));
 
+    mockActivityTemplateService = jasmine.createSpyObj<ActivityTemplateService>('ActivityTemplateService', [
+      'getActivityTemplate',
+      'getSynchronous',
+      'clearCache',
+    ]);
+    mockActivityTemplateService.getActivityTemplate.and.returnValue(of(null));
+
     await TestBed.configureTestingModule({
       declarations: [AssertionListControlComponent],
       providers: [
@@ -40,6 +49,7 @@ describe('AssertionListControlComponent', () => {
         { provide: MetaEntityService, useValue: mockMetaEntityService },
         { provide: MetaPageService, useValue: mockMetaPageService },
         { provide: AssertionTypeService, useValue: mockAssertionTypeService },
+        { provide: ActivityTemplateService, useValue: mockActivityTemplateService },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
@@ -130,5 +140,51 @@ describe('AssertionListControlComponent', () => {
 
     const colEls = rootEl.querySelectorAll('.col-4');
     expect(colEls.length).toBe(3);
+  });
+
+  it('should resolve layoutStyle dynamically from activityTemplate when layoutStyle is not set', () => {
+    component.layoutStyle = undefined;
+    component.activityTemplate = {
+      id: 'tmpl-1',
+      activity_template_name: 'Visual Health Check',
+      layout_style: 'Field',
+    };
+
+    expect(component.resolvedLayoutStyle).toBe('Field');
+  });
+
+  it('should reactively load ActivityTemplate when activity_template_id changes on formGroup', () => {
+    const mockTmplField = { id: 'tmpl-field', layout_style: 'Field' };
+    const mockTmplTable = { id: 'tmpl-table', layout_style: 'Table' };
+
+    mockActivityTemplateService.getActivityTemplate.and.callFake((id: string) => {
+      if (id === 'tmpl-field') return of(mockTmplField);
+      if (id === 'tmpl-table') return of(mockTmplTable);
+      return of(null);
+    });
+
+    const templateIdControl = new UntypedFormControl('tmpl-field');
+    const formGroupWithTemplate = new UntypedFormGroup({
+      activity_template_id: templateIdControl,
+      assertions: new UntypedFormArray([]),
+    });
+
+    const fixture2 = TestBed.createComponent(AssertionListControlComponent);
+    const comp2 = fixture2.componentInstance;
+    comp2.cell = component.cell;
+    comp2.formGroup = formGroupWithTemplate;
+
+    fixture2.detectChanges();
+
+    expect(mockActivityTemplateService.getActivityTemplate).toHaveBeenCalledWith('tmpl-field');
+    expect(comp2.activityTemplate).toEqual(mockTmplField);
+    expect(comp2.resolvedLayoutStyle).toBe('Field');
+
+    // Change template ID reactively
+    templateIdControl.setValue('tmpl-table');
+
+    expect(mockActivityTemplateService.getActivityTemplate).toHaveBeenCalledWith('tmpl-table');
+    expect(comp2.activityTemplate).toEqual(mockTmplTable);
+    expect(comp2.resolvedLayoutStyle).toBe('Table');
   });
 });

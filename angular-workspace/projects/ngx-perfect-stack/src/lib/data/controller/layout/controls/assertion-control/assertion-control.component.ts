@@ -36,6 +36,9 @@ export class AssertionControlComponent implements OnInit, OnChanges {
   @Input()
   layoutStyle?: string;
 
+  @Input()
+  activityTemplate?: any;
+
   @Output()
   delete = new EventEmitter<number>();
 

@@ -60,6 +60,12 @@ describe('AssertionSelectorComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should accept activityTemplate as input', () => {
+    const tmpl = { id: 'tmpl-123', activity_template_name: 'Test Template' };
+    component.activityTemplate = tmpl;
+    expect(component.activityTemplate).toEqual(tmpl);
+  });
+
   it('should filter out assertion types that already exist in formArray (uniqueness rule)', (done) => {
     // Add type-1 to formArray
     const existingRow = new UntypedFormGroup({

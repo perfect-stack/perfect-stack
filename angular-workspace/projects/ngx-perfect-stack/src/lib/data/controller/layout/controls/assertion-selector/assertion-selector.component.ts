@@ -20,6 +20,9 @@ export class AssertionSelectorComponent implements OnInit {
   @Input()
   mode: string | null;
 
+  @Input()
+  activityTemplate?: any;
+
   @Output()
   assertionTypeSelected = new EventEmitter<AssertionType>();
 
