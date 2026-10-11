@@ -801,7 +801,11 @@ export class DataService {
       let hasRelationship = false;
       if (s.type === EntityType.Database) {
         for (const attribute of s.attributes) {
-          if (attribute.relationshipTarget === entityName) {
+          if (
+            attribute.relationshipTarget === entityName &&
+            (attribute.type === AttributeType.ManyToOne ||
+              attribute.type === AttributeType.OneToOne)
+          ) {
             hasRelationship = true;
             break;
           }
@@ -818,35 +822,43 @@ export class DataService {
     toTargetEntityName: string,
     id: string,
   ): Promise<boolean> {
-    const relationshipAttribute = fromMetaEntity.attributes.find(
-      (a) => a.relationshipTarget === toTargetEntityName,
+    const fkAttributes = fromMetaEntity.attributes.filter(
+      (a) =>
+        a.relationshipTarget === toTargetEntityName &&
+        (a.type === AttributeType.ManyToOne ||
+          a.type === AttributeType.OneToOne),
     );
 
-    if (!relationshipAttribute) {
-      throw new Error(
-        `Unable to find relationship attribute on ${fromMetaEntity.name} that points to ${toTargetEntityName}`,
-      );
+    if (fkAttributes.length === 0) {
+      return false;
     }
 
-    const queryRequest = new QueryRequest();
-    queryRequest.metaEntityName = fromMetaEntity.name;
-    queryRequest.criteria = [
-      {
-        name: `${relationshipAttribute.name}_id`,
-        attributeType: AttributeType.ManyToOne,
-        operator: ComparisonOperator.Equals,
-        value: id,
-      },
-    ];
+    for (const attr of fkAttributes) {
+      const queryRequest = new QueryRequest();
+      queryRequest.metaEntityName = fromMetaEntity.name;
+      queryRequest.criteria = [
+        {
+          name: `${attr.name}_id`,
+          attributeType: attr.type,
+          operator: ComparisonOperator.Equals,
+          value: id,
+        },
+      ];
 
-    const queryResponse = await this.queryService.findByCriteria(queryRequest);
-    const hasRelationships = queryResponse.totalCount > 0;
+      const queryResponse = await this.queryService.findByCriteria(queryRequest);
+      if (queryResponse.totalCount > 0) {
+        this.logger.log(
+          `Destroy check hasRelationships() from ${fromMetaEntity.name}.${attr.name} to ${toTargetEntityName} for ${id} is true`,
+        );
+        return true;
+      }
+    }
 
     this.logger.log(
-      `Destroy check hasRelationships() from ${fromMetaEntity.name} to ${toTargetEntityName} for ${id} is ${hasRelationships}`,
+      `Destroy check hasRelationships() from ${fromMetaEntity.name} to ${toTargetEntityName} for ${id} is false`,
     );
 
-    return hasRelationships;
+    return false;
   }
 
   truncateTable(tableName: string) {

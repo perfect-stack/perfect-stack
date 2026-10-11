@@ -359,3 +359,34 @@ Then(
     expect(val === null || val === undefined || val === '').to.be.true;
   },
 );
+
+When(
+  "I perform a destroy check on {string} {string}",
+  async function (this: CustomWorld, entityName: string, alias: string) {
+    const targetEntity = this.contextData[alias];
+    if (!targetEntity) {
+      throw new Error(`Alias ${alias} not found in scenario context`);
+    }
+    try {
+      this.contextData["destroyCheckResult"] = await this.dataService.destroyCheck(entityName, targetEntity.id);
+    } catch (error) {
+      this.lastError = error;
+    }
+  },
+);
+
+Then(
+  "the destroy check should be allowed",
+  function (this: CustomWorld) {
+    expect(this.lastError, "Expected no error during destroy check").to.not.be.ok;
+    expect(this.contextData["destroyCheckResult"]).to.be.true;
+  },
+);
+
+Then(
+  "the destroy check should be disallowed",
+  function (this: CustomWorld) {
+    expect(this.lastError, "Expected no error during destroy check").to.not.be.ok;
+    expect(this.contextData["destroyCheckResult"]).to.be.false;
+  },
+);
