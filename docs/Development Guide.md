@@ -65,6 +65,7 @@ flowchart LR
 | **Hierarchy & Tree CTE Queries** | Native recursive Common Table Expression (CTE) hierarchy trees with child collections and dedicated tree view UI. | `tree-structure.feature`<br/>[`TreeToolComponent`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/data/controller/layout/tool-view/tree-tool/tree-tool.component.ts) |
 | **Dynamic Form & Table Renderer** | 12-column grid layout engine interpreting JSON templates into reactive forms, table layouts, card lists, and tabbed panels. | [`LayoutComponent`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/data/controller/layout/layout.component.ts)<br/>[`DataEditComponent`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/data/data-edit/data-edit.component.ts) |
 | **Rich Control & Tool Palette** | Built-in components for `Text`, `TextArea`, `Select`, `SelectMultiple`, `Date`, `DateTime`, `FlexibleDateTime`, `BooleanCheckBox`, `Media`, `BadgeList`, `ColourBand`, `Map`, `Tree`, `PageTitle`, and buttons. | [`ngx-perfect-stack/src/lib/data/controller/layout/controls`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/data/controller/layout/controls) |
+| **GIS & Spatial Mapping** | Built-in ArcGIS mapping component powered by `@arcgis/core`, supporting NZTM2000 (EPSG:2193) & Web Mercator, two-way coordinate bindings (`eastingBinding`, `northingBinding`), GeoJSON geometry bindings (`locationBinding`), external ArcGIS REST reference layers, in-map ESRI `Expand` layer toggles, hit-test landmark selection (`placeBinding`), and heterogeneous multi-geometry query rendering. | [`MapToolComponent`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/data/controller/layout/controls/map-tool/map-tool.component.ts)<br/>[`Clinic.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Clinic.view_edit.json) |
 | **Visual In-App Designers** | Built-in web UI editors for creating entities, designing page layouts visually with drag-and-drop, editing menus, and configuring roles directly in the running app. | Routes: `/meta/entity/*`, `/meta/page/*`, `/meta/menu/*`, `/meta/role/*` |
 | **Validation & Business Rules** | Client and server validation rules (`Required`, `Unique`, `Range`, custom expressions) executed before persistence. | [`RuleModule`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src/data/rule/rule.module.ts)<br/>[`ValidationMessageComponent`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/utils/validation/validation-message/validation-message.component.ts) |
 | **Role-Based Access Control (RBAC)** | Declarative role permissions (`Read`, `Edit`, `Delete`, `Menu`) mapped to authentication token roles/groups. | `meta/role/*.json`<br/>[`MetaRoleModule`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src/meta/meta-role/meta-role.module.ts) |
@@ -89,7 +90,7 @@ meta/
 
 #### 1. Meta Entity (`meta/entities/<EntityName>.json`)
 Defines the schema, attributes, constraints, and relationships of a domain object.
-- **Attributes**: Typed fields like `Identifier`, `Text`, `Date`, `DateTime`, `Boolean`, `Enumeration`, `Integer`, `Decimal`, or relationship pointers.
+- **Attributes**: Typed fields like `Identifier`, `Text`, `Date`, `DateTime`, `Boolean`, `Enumeration`, `Integer`, `Decimal`, `Geometry`, or relationship pointers.
 - **Relationships**:
   - `ManyToOne`: Foreign key pointing to a parent entity (e.g., `Pet` points to `Owner`).
   - `OneToMany`: Collection of child records owned by this entity (e.g., `Pet` has many `Vaccinations`).
@@ -103,13 +104,13 @@ Defines the schema, attributes, constraints, and relationships of a domain objec
 #### 2. Meta Page (`meta/page/<EntityName>.<pageType>.json`)
 Defines how data is presented and edited on screen. Common page types include:
 - `.search.json`: Search criteria form and paginated results table (e.g. [`Pet.search.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.search.json)).
-- `.view_edit.json`: View/edit form layout with header, sections, and child panels (e.g. [`Pet.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.view_edit.json)).
+- `.view_edit.json`: View/edit form layout with header, sections, and child panels (e.g. [`Pet.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.view_edit.json), [`Clinic.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Clinic.view_edit.json)).
 - `.tree.json`: Recursive tree hierarchy view (e.g. [`Protocol.tree.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Protocol.tree.json)).
 
 A Meta Page is organized into:
 - **`dataQueryList`**: Defines what queries fetch the page's data (e.g. query `Pet` by `id` from route parameter).
 - **`templates`**: Structural sections of the page (`header`, `form`, `table`, `card`, `formList`).
-- **`cells`**: 2D grid arrangement within each template based on a **12-column grid**. Each cell specifies a `width` (1 to 12), `height`, target `attributeName`, and optional `component` override (e.g. `Select`, `Media`, `DatePicker`).
+- **`cells`**: 2D grid arrangement within each template based on a **12-column grid**. Each cell specifies a `width` (1 to 12), `height`, target `attributeName`, and optional `component` override (e.g. `Select`, `Media`, `DatePicker`, `Map`).
 - **Layout Styles**: Pre-styled visual presentations such as `Stockholm`, `Paris`, `Venice`, or `New York`.
 
 #### 3. Meta Menu (`meta/menu/MetaMenu.json`)
@@ -393,6 +394,89 @@ In `meta/role/Administrator.json` (and any other relevant roles):
 
 ---
 
+### Playbook 5: Adding GIS Mapping, Reference Layers & Landmark Auto-Population
+
+Perfect-Stack provides native geospatial mapping capabilities via the `MapTool` component without requiring custom Leaflet/OpenLayers code or manual WebGL integration.
+
+#### Step 1: Define Spatial & Landmark Attributes on Your Entity
+In `meta/entities/Clinic.json` (or any spatial entity):
+```json
+{
+  "name": "Clinic",
+  "attributes": [
+    {
+      "name": "location",
+      "label": "Location",
+      "type": "Geometry"
+    },
+    {
+      "name": "easting",
+      "label": "Easting",
+      "type": "Double"
+    },
+    {
+      "name": "northing",
+      "label": "Northing",
+      "type": "Double"
+    },
+    {
+      "name": "nearest_hut",
+      "label": "Nearest Hut",
+      "type": "Text"
+    }
+  ]
+}
+```
+
+#### Step 2: Configure `MapTool` on the Meta Page
+In `meta/page/Clinic.view_edit.json`:
+```json
+{
+  "width": "12",
+  "height": "6",
+  "tool": {
+    "type": "Map",
+    "spatialReference": "2193",
+    "basemap": "linz-topo",
+    "locationBinding": "clinic.location",
+    "eastingBinding": "clinic.easting",
+    "northingBinding": "clinic.northing",
+    "placeBinding": "clinic.nearest_hut",
+    "referenceLayers": [
+      {
+        "id": "DOC_Huts_Layer",
+        "title": "Huts",
+        "url": "https://services1.arcgis.com/3JjYDyG3oajxU6HO/arcgis/rest/services/DOC_Huts/FeatureServer/0",
+        "visible": true,
+        "selectable": true
+      },
+      {
+        "id": "DOC_Tracks_Layer",
+        "title": "Tracks",
+        "url": "https://services1.arcgis.com/3JjYDyG3oajxU6HO/arcgis/rest/services/DOCTracks/FeatureServer/0",
+        "visible": true,
+        "selectable": false
+      }
+    ]
+  }
+}
+```
+
+#### Step 3: Interactive Features in Action
+1. **ESRI Expand Reference Layer Toggle**:
+   - The map includes an interactive ArcGIS `Expand` control located at the top-left of the viewport.
+   - Expanding the button reveals toggle switches for each configured reference layer (e.g. `Huts`, `Tracks`), letting users inspect or hide complex spatial contexts on demand.
+2. **HitTest Landmark Identification & Auto-Population**:
+   - Clicking on any selectable reference feature (such as a DOC Hut) performs a client-side `hitTest()`, extracts the feature's primary name (`FACILITY_N`, `NAME`, `SITE_NAME`, etc.), and automatically patches the form control defined in `placeBinding` (`clinic.nearest_hut`).
+   - Detailed diagnostic information (`layerTitle`, `layerId`, `geometryType`, `attributes`, `geometry`, `mapPoint`) is printed to the browser console for debugging.
+3. **Dual-Coordinate Synchronization**:
+   - Entering Easting and Northing values automatically converts the coordinates to GeoJSON and updates the map pin.
+   - Clicking or sketching on the map immediately synchronizes Easting, Northing, and GeoJSON controls.
+4. **Heterogeneous Multi-Geometry Result Overlays**:
+   - In search/query views, `renderMultipleGeometries` renders mixed geometry types (Points, Polylines, Polygons, Multipolygons) within a single graphics overlay with distinct styling, popups, and automatic extent framing.
+
+---
+
 ## 5. Extending with Custom Code
 
 When business requirements exceed metadata modeling (such as calling third-party payment gateways, triggering notifications, or running custom batch processing), you can extend the stack cleanly.
@@ -550,7 +634,7 @@ Whenever you are unsure of the correct syntax for a layout, relationship, or rul
 > Always check [`testing/vet-clinic/meta`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta).
 > It serves as the official, canonical testbed demonstrating:
 > - Complex entity relationships: [`Pet.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/entities/Pet.json), [`Owner.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/entities/Owner.json).
-> - Rich page layouts & controls: [`Pet.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.view_edit.json), [`Pet.search.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.search.json).
+> - Rich page layouts & controls: [`Pet.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.view_edit.json), [`Pet.search.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.search.json), [`Clinic.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Clinic.view_edit.json).
 > - Recursive hierarchy trees: [`Protocol.tree.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Protocol.tree.json).
 > - Navigation menus: [`MetaMenu.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/menu/MetaMenu.json).
 > - Security role definitions: [`Administrator.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/role/Administrator.json).
