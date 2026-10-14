@@ -39,6 +39,9 @@ export class ToolViewComponent implements OnInit {
   @Input()
   formGroup: UntypedFormGroup;
 
+  @Input()
+  mode: string | null = null;
+
   constructor() { }
 
   ngOnInit(): void {

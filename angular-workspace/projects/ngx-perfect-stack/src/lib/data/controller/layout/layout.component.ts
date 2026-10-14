@@ -92,7 +92,7 @@ export class LayoutComponent implements OnInit {
     }
 
     if(this.ctx) {
-      this.mode = this.ctx.mode;
+      this.mode = this.mode ? this.mode : this.ctx.mode;
       this.metaEntity = this.ctx.metaEntityMap.get(this.template.metaEntityName) as MetaEntity;
       if(!this.formGroup && this.ctx.formMap && this.template.binding) {
         this.formGroup = this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable, of, switchMap } from 'rxjs';
+import { UntypedFormGroup } from '@angular/forms';
 import { MetaPage, TabTool, Template } from '../../../../../domain/meta.page';
 import { FormContext } from '../../../../data-edit/form-service/form.service';
 import { PropertySheetService } from '../../../../../template/property-sheet/property-sheet.service';
@@ -25,6 +26,12 @@ export class TabToolComponent implements OnInit {
 
   @Input()
   editorMode = false;
+
+  @Input()
+  mode: string | null = null;
+
+  @Input()
+  formGroup?: UntypedFormGroup;
 
   tabContext$: Observable<TabToolContext>;
   selectedMetaPage: MetaPage;

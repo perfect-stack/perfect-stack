@@ -33,6 +33,10 @@ export class FormLayoutComponent implements OnInit, OnChanges {
 
   cells$: Observable<CellAttribute[][]>;
 
+  get hasFormGroup(): boolean {
+    return !!(this.formGroup && typeof this.formGroup.get === 'function');
+  }
+
   constructor(public readonly debugService: DebugService,
               private metaEntityService: MetaEntityService,
               private formService: FormService) { }
@@ -45,8 +49,8 @@ export class FormLayoutComponent implements OnInit, OnChanges {
         throw new Error('No template defined, cannot proceed sensibly');
       }
 
-      this.mode = this.ctx.mode;
-      if(this.formGroup) {
+      this.mode = this.mode ? this.mode : this.ctx.mode;
+      if(this.hasFormGroup) {
         console.log(' - formGroup is supplied return early');
         return;
       }
@@ -60,7 +64,9 @@ export class FormLayoutComponent implements OnInit, OnChanges {
           const childFormGroup = binding.substring(binding.indexOf('.') + 1);
           console.log(`Binding NESTED for: ${binding}, formLookupKey = "${formLookupKey}", childFormGroup = "${childFormGroup}"`);
           form = this.ctx.formMap.get(formLookupKey) as UntypedFormGroup;
-          form = form.controls[childFormGroup] as UntypedFormGroup;
+          if (form && form.controls) {
+            form = form.controls[childFormGroup] as UntypedFormGroup;
+          }
         }
         else {
           formLookupKey = binding;
@@ -69,10 +75,14 @@ export class FormLayoutComponent implements OnInit, OnChanges {
           console.log(' - form:', form);
         }
 
-        this.formGroup = form;
+        if (form && typeof form.get === 'function') {
+          this.formGroup = form;
+        } else {
+          this.formGroup = undefined as any;
+        }
       }
       else {
-        console.warn(`BINDING: "${binding}" - NOT FOUND. Keep calm and carry on but you might be getting NG01052: formGroup expects a FormGroup instance from here onwards 🙂`);
+        this.formGroup = undefined as any;
       }
     }
     else {
@@ -83,6 +93,11 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['template']) {
       this.updateCells$();
+    }
+    if(changes['formGroup']) {
+      if (this.formGroup && typeof this.formGroup.get !== 'function') {
+        this.formGroup = undefined as any;
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 @if (cell && cell.tool) {
-  <lib-tool-view [tool]="cell.tool" [ctx]="ctx" [formGroup]="formGroup"></lib-tool-view>
+  <lib-tool-view [tool]="cell.tool" [ctx]="ctx" [formGroup]="formGroup" [mode]="mode"></lib-tool-view>
 }
 @else if (cell && (cell.component === 'MediaGallery' || cell.component === 'Media')) {
   @switch (cell.component) {

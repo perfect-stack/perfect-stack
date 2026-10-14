@@ -55,6 +55,10 @@ export class TableLayoutComponent implements OnInit {
       `TableLayoutComponent: template.binding = ${this.template.binding} did not get formGroup from formMap`
     }
 
+    if (!this.relationshipProperty && this.template?.binding) {
+      this.relationshipProperty = this.template.binding;
+    }
+
     console.log(`TableLayoutComponent: template.binding = ${this.template.binding} found formGroup:`, this.formGroup);
 
     if(!this.template.metaEntityName) {

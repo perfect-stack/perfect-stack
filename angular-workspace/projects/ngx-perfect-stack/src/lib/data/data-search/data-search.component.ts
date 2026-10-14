@@ -5,7 +5,7 @@ import {DataService} from '../data-service/data.service';
 import {FormContext, FormControlWithAttribute, FormService} from '../data-edit/form-service/form.service';
 import {MetaEntityService} from '../../meta/entity/meta-entity-service/meta-entity.service';
 import {Criteria, QueryRequest} from '../data-service/query.request';
-import {ResultCardinalityType, Template, TemplateNavigationType} from '../../domain/meta.page';
+import {ResultCardinalityType, TabTool, Template, TemplateNavigationType, ToolType} from '../../domain/meta.page';
 import {
   CustomDateParserFormatter
 } from '../controller/layout/controls/date-picker-control/custom-date-parser-formatter';
@@ -14,7 +14,7 @@ import {combineLatest, Observable, of, switchMap} from 'rxjs';
 import {FormGroupService} from '../data-edit/form-service/form-group.service';
 import {CriteriaService} from './criteria.service';
 import {ActionType} from '../../domain/meta.role';
-import {makeLabel} from "../../utils/string-utils";
+import {makeLabel} from '../../utils/string-utils';
 
 @Component({
     selector: 'app-data-search',
@@ -34,9 +34,10 @@ export class DataSearchComponent implements OnInit {
   collectionSize = 0;
 
   searchCriteriaTemplate: Template;
+  resultTemplate: Template;
   resultTableTemplate: Template;
   resultTableMetaEntity: MetaEntity;
-  searchResultsFormGroup: UntypedFormGroup | null;
+  searchResultsFormGroup: UntypedFormGroup = new UntypedFormGroup({});
 
   resultsMessage = '';
 
@@ -74,15 +75,21 @@ export class DataSearchComponent implements OnInit {
               criteriaForm.patchValue(searchState.criteria);
               this.pageNumber = searchState.pageNumber;
 
-              // Hmm - not ideal but going to set the binding name of the template so that the later formGroup stuff can be more consistent
-              this.resultTableTemplate = ctx.metaPage.templates[1];
+              this.resultTemplate = ctx.metaPage.templates[1];
+              if (!this.resultTemplate.binding) {
+                this.resultTemplate.binding = "results";
+              }
+              this.resultTableTemplate = this.findTableTemplate(this.resultTemplate, ctx);
+
               if (!this.resultTableTemplate.binding) {
                 this.resultTableTemplate.binding = 'results';
+              }
+              if (!this.resultTableTemplate.navigation) {
                 this.resultTableTemplate.navigation = TemplateNavigationType.Enabled;
                 this.resultTableTemplate.route = '/data/' + this.metaName + '/view/${id}'; // the ${id} parameter is being passed in as an expression to be resolved later
               }
 
-              const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName;
+              const resultTableMetaEntityName = this.resultTableTemplate.metaEntityName || this.metaName!;
               const rtme = ctx.metaEntityMap.get(resultTableMetaEntityName);
               if (rtme) {
                 this.resultTableMetaEntity = rtme;
@@ -100,9 +107,58 @@ export class DataSearchComponent implements OnInit {
     );
   }
 
+  private findTableTemplate(template: Template, ctx: FormContext): Template {
+    if (!template) {
+      return template;
+    }
+    if (template.type === 'table') {
+      return template;
+    }
+
+    // Check if the template contains a TabTool
+    const tabTool = this.findTabTool(template);
+    if (tabTool) {
+      const tabNames = [
+        tabTool.template1,
+        tabTool.template2,
+        tabTool.template3,
+        tabTool.template4,
+        tabTool.template5,
+        tabTool.template6,
+        tabTool.template7,
+      ].filter((n): n is string => !!n && n.length > 0);
+
+      for (const tabName of tabNames) {
+        const metaPage = ctx.metaPageMap?.get(tabName);
+        if (metaPage?.templates) {
+          const tableT = metaPage.templates.find(t => t.type === 'table');
+          if (tableT) {
+            return tableT;
+          }
+        }
+      }
+    }
+
+    return template;
+  }
+
+  private findTabTool(template: Template): TabTool | null {
+    if (!template?.cells) return null;
+    for (const row of template.cells) {
+      for (const cell of row) {
+        if (cell.tool && cell.tool.type === ToolType.TabTool) {
+          return cell.tool as TabTool;
+        }
+      }
+    }
+    return null;
+  }
+
   onSearch(ctx: FormContext, resetToFirstPage = true) {
     if(this.metaName) {
-      this.searchResultsFormGroup = null;
+      if (!this.searchResultsFormGroup) {
+        this.searchResultsFormGroup = new UntypedFormGroup({});
+      }
       this.cdr.markForCheck();
 
       if(resetToFirstPage) {
@@ -138,12 +194,24 @@ export class DataSearchComponent implements OnInit {
           if(!ctx.formMap) {
             ctx.formMap = new Map<string, AbstractControl>();
           }
-          ctx.formMap.set('results', this.searchResultsFormGroup);
+          const binding = this.resultTableTemplate.binding || 'results';
+          ctx.formMap.set(binding, this.searchResultsFormGroup);
+          if (binding !== 'results') {
+            ctx.formMap.set('results', this.searchResultsFormGroup);
+          }
+
+          if (!ctx.dataMap) {
+            ctx.dataMap = new Map<string, any>();
+          }
+          ctx.dataMap.set(binding, { result: response.resultList });
+          if (binding !== 'results') {
+            ctx.dataMap.set('results', { result: response.resultList });
+          }
 
           const startRow = Math.min(((queryRequest.pageNumber - 1) * queryRequest.pageSize) + 1, response.totalCount);
           const endRow = Math.min(startRow + queryRequest.pageSize - 1, response.totalCount);
           const totalRows = response.totalCount;
-          const pluralName = this.resultTableMetaEntity.pluralName ? this.resultTableMetaEntity.pluralName.toLowerCase() : '';
+          const pluralName = this.resultTableMetaEntity?.pluralName ? this.resultTableMetaEntity.pluralName.toLowerCase() : '';
           this.resultsMessage = `Showing ${startRow}-${endRow} of ${totalRows} ${pluralName}`;
 
           this.showPagination = totalRows > this.pageSize;
@@ -156,7 +224,20 @@ export class DataSearchComponent implements OnInit {
           if(!ctx.formMap) {
             ctx.formMap = new Map<string, AbstractControl>();
           }
-          ctx.formMap.set('results', this.searchResultsFormGroup);
+          const binding = this.resultTableTemplate.binding || 'results';
+          ctx.formMap.set(binding, this.searchResultsFormGroup);
+          if (binding !== 'results') {
+            ctx.formMap.set('results', this.searchResultsFormGroup);
+          }
+
+          if (!ctx.dataMap) {
+            ctx.dataMap = new Map<string, any>();
+          }
+          ctx.dataMap.set(binding, { result: [] });
+          if (binding !== 'results') {
+            ctx.dataMap.set('results', { result: [] });
+          }
+
           this.resultsMessage = '';
           this.showPagination = false;
           this.cdr.markForCheck();

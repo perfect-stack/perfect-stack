@@ -473,7 +473,103 @@ In `meta/page/Clinic.view_edit.json`:
    - Entering Easting and Northing values automatically converts the coordinates to GeoJSON and updates the map pin.
    - Clicking or sketching on the map immediately synchronizes Easting, Northing, and GeoJSON controls.
 4. **Heterogeneous Multi-Geometry Result Overlays**:
-   - In search/query views, `renderMultipleGeometries` renders mixed geometry types (Points, Polylines, Polygons, Multipolygons) within a single graphics overlay with distinct styling, popups, and automatic extent framing.
+   - In search/query views, `renderMultipleGeometries` renders mixed geometry types (Points, Polylines, Polygons, Multipolygons) within a single graphics overlay with distinct styling, interactive popup templates, and automatic camera extent framing.
+   - Supports dot notation for nested geometry resolution (e.g. `"location.geometry"`, `"location.easting_derived"`, `"location.northing_derived"`).
+   - Dynamically binds to search results in `ctx.dataMap` and `ctx.formMap` with reactive change detection.
+   - Configurable viewport height via `mapTool.height` (e.g. `"100%"`, `"calc(100vh - 380px)"`).
+
+---
+
+### Playbook 6: Tabbed Search Results (Table & Map Views)
+
+Search pages can display search results inside a tabbed container using `TabTool`, allowing users to switch between a tabular grid view and a geospatial map view of the same result set.
+
+#### Step 1: Configure the Search Page Definition
+In `meta/page/{Entity}.search.json`, configure `templates[1]` to host a `TabTool`:
+```json
+{
+  "name": "CaptureEvent.search",
+  "title": "$PageTitle",
+  "type": "search",
+  "templates": [
+    {
+      "type": "form",
+      "metaEntityName": "CaptureEventSearchCriteria",
+      "cells": [...]
+    },
+    {
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "TabTool",
+              "template1": "CaptureEventSearchResultsTable.tab",
+              "template2": "CaptureEventSearchResultsMap.tab"
+            }
+          }
+        ]
+      ]
+    }
+  ]
+}
+```
+
+#### Step 2: Define the Table Tab (`.tab.json`)
+In `meta/page/CaptureEventSearchResultsTable.tab.json`:
+```json
+{
+  "name": "CaptureEventSearchResultsTable.tab",
+  "title": "Table",
+  "type": "view_edit",
+  "templates": [
+    {
+      "type": "table",
+      "metaEntityName": "CaptureEvent",
+      "binding": "results",
+      "customQuery": "CaptureEventSearch",
+      "orderByName": "field_number",
+      "orderByDir": "ASC",
+      "cells": [...]
+    }
+  ]
+}
+```
+
+#### Step 3: Define the Map Tab (`.tab.json`)
+In `meta/page/CaptureEventSearchResultsMap.tab.json`:
+```json
+{
+  "name": "CaptureEventSearchResultsMap.tab",
+  "title": "Map",
+  "type": "view_edit",
+  "templates": [
+    {
+      "type": "form",
+      "cells": [
+        [
+          {
+            "width": "12",
+            "height": "1",
+            "tool": {
+              "type": "Map",
+              "geometry": "location.geometry",
+              "easting": "location.easting_derived",
+              "northing": "location.northing_derived",
+              "height": "calc(100vh - 380px)",
+              "referenceLayers": [...]
+            }
+          }
+        ]
+      ]
+    }
+  ]
+}
+```
+
+`DataSearchComponent` automatically inspects the `TabTool` hierarchy, binds `results` to both tabs, dispatches rendering through `<lib-layout-outlet>`, and synchronizes map markers whenever new criteria are executed or pages change.
 
 ---
 

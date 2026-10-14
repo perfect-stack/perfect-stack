@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  DoCheck,
   ElementRef,
   Input,
   NgZone,
@@ -17,9 +18,10 @@ import {PropertySheetService} from '../../../../../template/property-sheet/prope
 import {MapAttributionService} from './map-attribution.service';
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import type { ResourceHandle } from "@arcgis/core/core/Handles";
-import {AbstractControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {MapService} from './map.service';
 import {distinctUntilChanged, map, Subject, takeUntil} from 'rxjs';
+import {Router} from '@angular/router';
 
 import Map from '@arcgis/core/Map';
 import MapView from '@arcgis/core/views/MapView';
@@ -42,7 +44,82 @@ export const LINZ_MAP_SERVICE_URL = 'https://services1.arcgisonline.co.nz/arcgis
   styleUrls: ['./map-tool.component.css'],
   standalone: false
 })
-export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoCheck {
+
+  get mapHeight(): string {
+    if (this.mapTool?.height) {
+      return this.mapTool.height;
+    }
+    return this.height || '300px';
+  }
+
+  private lastItemsRef: any[] | null = null;
+
+  ngDoCheck(): void {
+    if (this.editorMode) {
+      return;
+    }
+    const currentItems = this.getItems();
+    if (currentItems !== this.lastItemsRef) {
+      this.lastItemsRef = currentItems;
+      if (this.mapView && this.graphicsLayer) {
+        this.updateMapLocation(false);
+      }
+    }
+  }
+
+  getItems(): any[] {
+    if (this.items && this.items.length > 0) {
+      return this.items;
+    }
+
+    const binding = this.mapTool?.binding || 'results';
+
+    // 1. Check ctx.dataMap
+    if (this.ctx?.dataMap) {
+      const dataResult = this.ctx.dataMap.get(binding)?.result || this.ctx.dataMap.get('results')?.result;
+      if (Array.isArray(dataResult) && dataResult.length > 0) {
+        return dataResult;
+      }
+    }
+
+    // 2. Check ctx.formMap
+    if (this.ctx?.formMap) {
+      const formGroup = (this.ctx.formMap.get(binding) || this.ctx.formMap.get('results')) as FormGroup;
+      if (formGroup) {
+        const formArray = formGroup.get(binding) || formGroup.get('results');
+        if (formArray && (formArray instanceof FormArray || (formArray as any)?.controls)) {
+          return typeof (formArray as any).getRawValue === "function" ? (formArray as any).getRawValue() : formArray.value;
+        }
+        if (typeof (formGroup as any).getRawValue === "function") {
+          const raw = (formGroup as any).getRawValue();
+          if (Array.isArray(raw)) return raw;
+          if (raw[binding] && Array.isArray(raw[binding])) return raw[binding];
+          if (raw.results && Array.isArray(raw.results)) return raw.results;
+        }
+        if (Array.isArray(formGroup.value)) {
+          return formGroup.value;
+        }
+      }
+    }
+
+    return [];
+  }
+
+  static resolveProperty(obj: any, path: string | undefined): any {
+    if (!obj || !path) {
+      return undefined;
+    }
+    const parts = path.split('.');
+    let current = obj;
+    for (const part of parts) {
+      if (current == null) {
+        return undefined;
+      }
+      current = current[part];
+    }
+    return current;
+  }
 
   @Input()
   mapTool: MapTool;
@@ -87,6 +164,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
   locationControl?: AbstractControl;
 
   private attributionHandle?: ResourceHandle;
+  private globalClickListener?: (event: MouseEvent) => void;
 
   private destroy$ = new Subject<void>();
 
@@ -95,7 +173,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
     protected readonly propertySheetService: PropertySheetService,
     protected readonly ngZone: NgZone,
     protected readonly cdr: ChangeDetectorRef,
-    protected readonly attributionService: MapAttributionService
+    protected readonly attributionService: MapAttributionService,
+    protected readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -112,6 +191,10 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.globalClickListener) {
+      window.removeEventListener('click', this.globalClickListener, { capture: true });
+      this.globalClickListener = undefined;
+    }
     if (this.attributionHandle) {
       this.attributionHandle.remove();
     }
@@ -326,6 +409,38 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     });
+
+    this.mapView?.popup?.on('trigger-action', (event: any) => {
+      if (event.action && event.action.id === 'view-details') {
+        const item = this.mapView?.popup?.selectedFeature?.attributes;
+        if (item) {
+          const metaEntity = this.getMetaEntityName();
+          const entityId = item.id || item.entity_id;
+          if (entityId) {
+            this.ngZone.run(() => {
+              this.router.navigateByUrl(`/data/${metaEntity}/view/${entityId}`);
+            });
+          }
+        }
+      }
+    });
+
+    this.globalClickListener = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const el = target?.closest?.('[data-entity-id]') as HTMLElement | null;
+      if (el) {
+        const metaEntity = el.getAttribute('data-meta-entity') || this.getMetaEntityName();
+        const entityId = el.getAttribute('data-entity-id');
+        if (metaEntity && entityId) {
+          event.preventDefault();
+          event.stopPropagation();
+          this.ngZone.run(() => {
+            this.router.navigateByUrl(`/data/${metaEntity}/view/${entityId}`);
+          });
+        }
+      }
+    };
+    window.addEventListener('click', this.globalClickListener, { capture: true });
   }
 
   private initSketch(): void {
@@ -816,8 +931,9 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
     this.graphicsLayer.removeAll();
     this.hasMarker = false;
 
-    if (this.items && this.items.length > 0) {
-      this.renderMultipleGeometries(this.items);
+    const items = this.getItems();
+    if (items && items.length > 0) {
+      this.renderMultipleGeometries(items);
       return;
     }
 
@@ -1117,11 +1233,20 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
 
   renderMultipleGeometries(items: any[]): void {
     if (!this.graphicsLayer || !items || items.length === 0) {
+      this.graphicsLayer?.removeAll();
+      this.hasMarker = false;
       return;
     }
+
+    this.graphicsLayer.removeAll();
+    this.hasMarker = false;
+
     const geomAttr = this.mapTool?.geometry || 'geometry';
     for (const item of items) {
-      let geo = item[geomAttr];
+      let geo = MapToolComponent.resolveProperty(item, geomAttr);
+      if (!geo) {
+        geo = item.location?.geometry ?? item.geometry ?? item.location_geometry;
+      }
       if (typeof geo === 'string') {
         try {
           geo = JSON.parse(geo);
@@ -1129,11 +1254,43 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
           geo = null;
         }
       }
+
+      // Fallback to easting/northing if geometry is not set
+      if (!geo || !geo.coordinates) {
+        const easting = MapToolComponent.resolveProperty(item, this.mapTool?.easting)
+          ?? item.location?.easting_derived
+          ?? item.location_easting_derived
+          ?? item.easting_derived
+          ?? item.location?.easting
+          ?? item.easting;
+
+        const northing = MapToolComponent.resolveProperty(item, this.mapTool?.northing)
+          ?? item.location?.northing_derived
+          ?? item.location_northing_derived
+          ?? item.northing_derived
+          ?? item.location?.northing
+          ?? item.northing;
+
+        if (easting && northing) {
+          const eNum = MapToolComponent.toNumber(easting);
+          const nNum = MapToolComponent.toNumber(northing);
+          if (eNum > 0 && nNum > 0) {
+            const latLng = this.mapService.toLatLng({ easting: eNum, northing: nNum });
+            geo = {
+              type: 'Point',
+              coordinates: [latLng.lng, latLng.lat]
+            };
+          }
+        }
+      }
+
       if (!geo || !geo.type || !geo.coordinates) {
         continue;
       }
 
       try {
+        const popupTemplate = this.createPopupTemplate(item);
+
         if (geo.type === 'Point') {
           const [lng, lat] = geo.coordinates;
           const nztm = this.mapService.toNZTM({ lat, lng });
@@ -1144,7 +1301,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
             size: 10,
             outline: { color: '#ffffff', width: 1.5 }
           });
-          this.graphicsLayer.add(new Graphic({ geometry: pt, symbol, attributes: item }));
+          this.graphicsLayer.add(new Graphic({ geometry: pt, symbol, attributes: item, popupTemplate }));
+          this.hasMarker = true;
         } else if (geo.type === 'LineString') {
           const paths = [
             geo.coordinates.map((c: [number, number]) => {
@@ -1154,7 +1312,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
           ];
           const polyline = new Polyline({ paths, spatialReference: { wkid: 2193 } });
           const symbol = new SimpleLineSymbol({ color: '#6f42c1', width: 3 });
-          this.graphicsLayer.add(new Graphic({ geometry: polyline, symbol, attributes: item }));
+          this.graphicsLayer.add(new Graphic({ geometry: polyline, symbol, attributes: item, popupTemplate }));
+          this.hasMarker = true;
         } else if (geo.type === 'Polygon') {
           const rings = geo.coordinates.map((ring: [number, number][]) =>
             ring.map(c => {
@@ -1167,12 +1326,92 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
             color: [253, 126, 20, 0.25],
             outline: { color: '#fd7e14', width: 2 }
           });
-          this.graphicsLayer.add(new Graphic({ geometry: polygon, symbol, attributes: item }));
+          this.graphicsLayer.add(new Graphic({ geometry: polygon, symbol, attributes: item, popupTemplate }));
+          this.hasMarker = true;
         }
       } catch (e) {
         console.warn('Error rendering item geometry in map:', e);
       }
     }
+
+    if (this.graphicsLayer.graphics.length > 0 && this.mapView) {
+      const graphicsArray = this.graphicsLayer.graphics.toArray();
+      if (graphicsArray.length === 1) {
+        const geom = graphicsArray[0].geometry;
+        if (geom && geom.type === 'point') {
+          this.mapView.goTo({ center: geom as Point, zoom: Math.max(this.zoom, 12) }, { animate: false }).catch(() => {});
+        } else if (geom && (geom as any).extent) {
+          this.mapView.goTo((geom as any).extent.expand(1.3), { animate: false }).catch(() => {});
+        }
+      } else {
+        this.mapView.goTo(graphicsArray).catch(() => {});
+      }
+    }
+  }
+
+  getMetaEntityName(): string {
+    return this.mapTool?.metaEntityName
+      || this.ctx?.metaEntity?.name
+      || this.ctx?.metaName
+      || (this.ctx?.metaPage?.templates && this.ctx.metaPage.templates.find(t => t.metaEntityName)?.metaEntityName)
+      || 'CaptureEvent';
+  }
+
+  private createPopupTemplate(item: any): any {
+    const title = item.field_number || item.name || item.title || (item.id ? 'Item ' + String(item.id).substring(0, 8) : 'Result');
+    const metaEntity = this.getMetaEntityName();
+    const entityId = item.id || item.entity_id;
+
+    return {
+      title: String(title),
+      content: () => {
+        const div = document.createElement('div');
+        div.className = 'p-1';
+        if (item.event_type) {
+          const typeDiv = document.createElement('div');
+          typeDiv.innerHTML = `<strong>Event Type:</strong> ${item.event_type}`;
+          div.appendChild(typeDiv);
+        }
+        const place = item.place_name || item.location?.place_name || item.location_place_name;
+        if (place) {
+          const placeDiv = document.createElement('div');
+          placeDiv.innerHTML = `<strong>Place:</strong> ${place}`;
+          div.appendChild(placeDiv);
+        }
+        if (item.event_begin_date) {
+          const dateDiv = document.createElement('div');
+          dateDiv.innerHTML = `<strong>Date:</strong> ${item.event_begin_date}`;
+          div.appendChild(dateDiv);
+        }
+        if (entityId) {
+          const btnDiv = document.createElement('div');
+          btnDiv.className = 'mt-2';
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'btn btn-sm btn-primary text-white';
+          btn.setAttribute('data-meta-entity', metaEntity);
+          btn.setAttribute('data-entity-id', String(entityId));
+          btn.innerText = 'View Details';
+          btn.onclick = (e: MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.ngZone.run(() => {
+              this.router.navigateByUrl(`/data/${metaEntity}/view/${entityId}`);
+            });
+          };
+          btnDiv.appendChild(btn);
+          div.appendChild(btnDiv);
+        }
+        return div;
+      },
+      actions: entityId ? [
+        {
+          id: 'view-details',
+          title: 'View Details',
+          className: 'esri-icon-launch-link-external'
+        }
+      ] : []
+    };
   }
 
   private initReferenceLayers(): void {

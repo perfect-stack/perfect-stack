@@ -32,7 +32,7 @@
         <lib-paginate-tool [paginateTool]="asPaginateTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-paginate-tool>
       }
       @case ('TabTool') {
-        <lib-tab-tool [tabTool]="asTabTool()" [editorMode]="editorMode" [ctx]="ctx"></lib-tab-tool>
+        <lib-tab-tool [tabTool]="asTabTool()" [editorMode]="editorMode" [ctx]="ctx" [mode]="mode" [formGroup]="formGroup"></lib-tab-tool>
       }
       @case ('TextTool') {
         <lib-text-tool [textTool]="asTextTool()" [editorMode]="editorMode" [ctx]="ctx" [formGroup]="formGroup"></lib-text-tool>

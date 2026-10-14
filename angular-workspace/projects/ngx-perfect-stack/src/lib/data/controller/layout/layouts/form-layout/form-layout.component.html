@@ -3,7 +3,7 @@
 }
 @if (cells$ | async; as cells) {
   <!-- If template has a formGroup -->
-  @if (formGroup) {
+  @if (hasFormGroup) {
     <div [formGroup]="formGroup">
       @for (row of cells; track row) {
         <div class="row" [ngClass]="{'form-row': isFormRow(row)}">

@@ -164,6 +164,9 @@ export class MapTool extends Tool {
   northing: string;
   placeBinding?: string;
   referenceLayers?: MapReferenceLayer[];
+  height?: string;
+  binding?: string;
+  metaEntityName?: string;
 }
 
 export class PageTitleTool extends Tool {
