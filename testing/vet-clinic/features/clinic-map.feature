@@ -51,3 +51,16 @@ Feature: Clinic Map Tool Display
     When I set the easting field to "1759000" and northing field to "5430000"
     Then the geometry field should display GeoJSON for a "Point"
     And the map should display a location marker
+
+  Scenario: Toggle reference layers on the map using ESRI Expand control
+    When I navigate to "/data/Clinic/search"
+    And I click on the clinic row for "PETVET Lower Hutt"
+    Then the page title should not be empty
+    And I should see the map tool component
+    And I should see the map layer toggle button
+    When I expand the map layer toggle panel
+    Then I should see reference layer checkboxes for "Huts" and "Tracks"
+    When I uncheck the "Huts" reference layer
+    Then the "Huts" reference layer checkbox should be unchecked
+    When I check the "Huts" reference layer
+    Then the "Huts" reference layer checkbox should be checked

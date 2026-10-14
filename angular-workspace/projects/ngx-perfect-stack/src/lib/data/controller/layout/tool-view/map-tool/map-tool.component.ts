@@ -10,7 +10,9 @@ import {
   ViewChild
 } from '@angular/core';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
-import {MapTool} from '../../../../../domain/meta.page';
+import {MapReferenceLayer, MapTool} from '../../../../../domain/meta.page';
+import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
+import Expand from '@arcgis/core/widgets/Expand';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
 import {MapAttributionService} from './map-attribution.service';
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
@@ -59,6 +61,12 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input()
   zoom = 10;
+
+  @Input()
+  items?: any[];
+
+  referenceFeatureLayers: { layer: FeatureLayer; config: MapReferenceLayer }[] = [];
+  expandWidget?: Expand;
 
   @ViewChild('mapContainer', { static: false })
   mapContainer?: ElementRef<HTMLDivElement>;
@@ -110,6 +118,16 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
     this.attributionService.clearAttribution();
     if (this.sketch) {
       this.sketch.destroy();
+    }
+    if (this.expandWidget) {
+      this.expandWidget.destroy();
+      this.expandWidget = undefined;
+    }
+    if (this.referenceFeatureLayers.length > 0) {
+      for (const ref of this.referenceFeatureLayers) {
+        ref.layer.destroy();
+      }
+      this.referenceFeatureLayers = [];
     }
     if (this.mapView) {
       this.mapView.destroy();
@@ -276,6 +294,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.mapView.attributionVisible = false;
     this.mapView.ui.components = ['zoom'];
+
+    this.initReferenceLayers();
 
     this.attributionHandle = reactiveUtils.watch(
       () => this.mapView?.attributionItems,
@@ -554,6 +574,38 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }
 
+    if (this.mapTool?.placeBinding) {
+      const placeCtrlName = this.mapTool.placeBinding.trim();
+      const locationForm = this.getLocationForm();
+      let placeCtrl = locationForm?.controls[placeCtrlName];
+      if (!placeCtrl && this.ctx?.formMap) {
+        for (const form of this.ctx.formMap.values()) {
+          if (form instanceof FormGroup && form.controls[placeCtrlName]) {
+            placeCtrl = form.controls[placeCtrlName];
+            break;
+          }
+        }
+      }
+      if (placeCtrl) {
+        placeCtrl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(val => {
+          if (val && typeof val === 'object' && val.geometry && this.mapView) {
+            try {
+              const parsed = typeof val.geometry === 'string' ? JSON.parse(val.geometry) : val.geometry;
+              if (parsed && parsed.coordinates && parsed.type === 'Point') {
+                const nztm = this.mapService.toNZTM({ lat: parsed.coordinates[1], lng: parsed.coordinates[0] });
+                this.mapView.goTo({
+                  center: new Point({ x: nztm.easting, y: nztm.northing, spatialReference: { wkid: 2193 } }),
+                  zoom: Math.max(this.zoom, 13)
+                }).catch(() => {});
+              }
+            } catch (e) {
+              console.warn('Error parsing place geometry for map zoom:', e);
+            }
+          }
+        });
+      }
+    }
+
     if (this.geometryControl) {
       this.geometryControl.statusChanges.pipe(
         takeUntil(this.destroy$),
@@ -763,6 +815,11 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.graphicsLayer.removeAll();
     this.hasMarker = false;
+
+    if (this.items && this.items.length > 0) {
+      this.renderMultipleGeometries(this.items);
+      return;
+    }
 
     const geomCtrl = this.getGeometryControl();
     const eastingCtrl = this.getEastingControl();
@@ -983,6 +1040,233 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.updateMapLocation(false);
+      return;
     }
+
+    if (this.mapView && this.referenceFeatureLayers?.length > 0) {
+      const selectableLayers = this.referenceFeatureLayers
+        .filter(r => r.config.selectable !== false)
+        .map(r => r.layer);
+
+      if (selectableLayers.length > 0) {
+        this.mapView.hitTest(event, { include: selectableLayers }).then((response: any) => {
+          this.ngZone.run(() => {
+            if (response.results?.length > 0) {
+              const hit = response.results.find((r: any) => r.type === 'graphic' && r.graphic);
+              if (hit && hit.graphic) {
+                console.log('%c[MapTool] Feature Clicked:', 'color: #0d6efd; font-weight: bold;', {
+                  layerId: hit.graphic.layer?.id,
+                  layerTitle: hit.graphic.layer?.title,
+                  geometryType: hit.graphic.geometry?.type,
+                  attributes: hit.graphic.attributes,
+                  geometry: hit.graphic.geometry,
+                  mapPoint: event.mapPoint ? { x: Math.round(event.mapPoint.x), y: Math.round(event.mapPoint.y) } : undefined
+                });
+                this.handleReferenceFeatureSelected(hit.graphic);
+              }
+            }
+          });
+        }).catch((err: any) => {
+          console.warn('hitTest error:', err);
+        });
+      }
+    }
+  }
+
+  private handleReferenceFeatureSelected(graphic: Graphic): void {
+    if (!this.mapTool?.placeBinding) {
+      return;
+    }
+
+    const placeCtrlName = this.mapTool.placeBinding.trim();
+    const locationForm = this.getLocationForm();
+    let placeControl = locationForm?.controls[placeCtrlName];
+    if (!placeControl && this.ctx?.formMap) {
+      for (const form of this.ctx.formMap.values()) {
+        if (form instanceof FormGroup && form.controls[placeCtrlName]) {
+          placeControl = form.controls[placeCtrlName];
+          break;
+        }
+      }
+    }
+
+    const attrs = graphic.attributes || {};
+    const placeName = attrs.name || attrs.NAME || attrs.Name || attrs.FACILITY_NAME || attrs.track_name || attrs.TITLE || (attrs.OBJECTID ? "Place #" + attrs.OBJECTID : "");
+    console.log('%c[MapTool] Selected Landmark Feature:', 'color: #198754; font-weight: bold;', {
+      placeName,
+      placeBinding: this.mapTool.placeBinding,
+      id: attrs.gis_geometry_id || attrs.OBJECTID,
+      attributes: attrs
+    });
+
+    if (placeControl) {
+      if (typeof placeControl.value === 'object' && placeControl.value !== null) {
+        placeControl.patchValue({
+          ...placeControl.value,
+          id: attrs.gis_geometry_id || attrs.OBJECTID,
+          name: placeName
+        });
+      } else {
+        placeControl.patchValue(placeName);
+      }
+      placeControl.markAsDirty();
+      placeControl.updateValueAndValidity();
+      this.cdr.markForCheck();
+    }
+  }
+
+  renderMultipleGeometries(items: any[]): void {
+    if (!this.graphicsLayer || !items || items.length === 0) {
+      return;
+    }
+    const geomAttr = this.mapTool?.geometry || 'geometry';
+    for (const item of items) {
+      let geo = item[geomAttr];
+      if (typeof geo === 'string') {
+        try {
+          geo = JSON.parse(geo);
+        } catch (e) {
+          geo = null;
+        }
+      }
+      if (!geo || !geo.type || !geo.coordinates) {
+        continue;
+      }
+
+      try {
+        if (geo.type === 'Point') {
+          const [lng, lat] = geo.coordinates;
+          const nztm = this.mapService.toNZTM({ lat, lng });
+          const pt = new Point({ x: nztm.easting, y: nztm.northing, spatialReference: { wkid: 2193 } });
+          const symbol = new SimpleMarkerSymbol({
+            style: 'circle',
+            color: '#0d6efd',
+            size: 10,
+            outline: { color: '#ffffff', width: 1.5 }
+          });
+          this.graphicsLayer.add(new Graphic({ geometry: pt, symbol, attributes: item }));
+        } else if (geo.type === 'LineString') {
+          const paths = [
+            geo.coordinates.map((c: [number, number]) => {
+              const n = this.mapService.toNZTM({ lat: c[1], lng: c[0] });
+              return [n.easting, n.northing];
+            })
+          ];
+          const polyline = new Polyline({ paths, spatialReference: { wkid: 2193 } });
+          const symbol = new SimpleLineSymbol({ color: '#6f42c1', width: 3 });
+          this.graphicsLayer.add(new Graphic({ geometry: polyline, symbol, attributes: item }));
+        } else if (geo.type === 'Polygon') {
+          const rings = geo.coordinates.map((ring: [number, number][]) =>
+            ring.map(c => {
+              const n = this.mapService.toNZTM({ lat: c[1], lng: c[0] });
+              return [n.easting, n.northing];
+            })
+          );
+          const polygon = new Polygon({ rings, spatialReference: { wkid: 2193 } });
+          const symbol = new SimpleFillSymbol({
+            color: [253, 126, 20, 0.25],
+            outline: { color: '#fd7e14', width: 2 }
+          });
+          this.graphicsLayer.add(new Graphic({ geometry: polygon, symbol, attributes: item }));
+        }
+      } catch (e) {
+        console.warn('Error rendering item geometry in map:', e);
+      }
+    }
+  }
+
+  private initReferenceLayers(): void {
+    if (!this.map || !this.mapTool?.referenceLayers?.length) {
+      return;
+    }
+
+    this.referenceFeatureLayers = [];
+
+    for (const layerConfig of this.mapTool.referenceLayers) {
+      if (!layerConfig.url) continue;
+
+      const featureLayer = new FeatureLayer({
+        id: layerConfig.id,
+        title: layerConfig.title || layerConfig.id,
+        url: layerConfig.url,
+        minScale: layerConfig.minScale ?? 0,
+        maxScale: layerConfig.maxScale ?? 0,
+        visible: layerConfig.visible !== false,
+        outFields: ['*']
+      });
+
+      if (this.graphicsLayer) {
+        const idx = this.map.layers.indexOf(this.graphicsLayer);
+        if (idx >= 0) {
+          this.map.layers.add(featureLayer, idx);
+        } else {
+          this.map.add(featureLayer);
+        }
+      } else {
+        this.map.add(featureLayer);
+      }
+
+      this.referenceFeatureLayers.push({ layer: featureLayer, config: layerConfig });
+    }
+
+    this.initLayerToggleWidget();
+  }
+
+  private initLayerToggleWidget(): void {
+    if (!this.mapView || !this.referenceFeatureLayers.length) {
+      return;
+    }
+
+    const container = document.createElement('div');
+    container.className = 'esri-widget p-3 bg-white shadow-sm esri-layer-toggle-container';
+    container.setAttribute('data-testid', 'layer-toggle-container');
+    container.style.minWidth = '220px';
+    container.style.maxWidth = '300px';
+
+    const title = document.createElement('div');
+    title.className = 'fw-bold mb-2 small text-uppercase text-secondary border-bottom pb-1';
+    title.innerText = 'Reference Layers';
+    container.appendChild(title);
+
+    for (const { layer, config } of this.referenceFeatureLayers) {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'form-check form-switch mb-2';
+
+      const input = document.createElement('input');
+      input.className = 'form-check-input';
+      input.type = 'checkbox';
+      input.id = 'layer-toggle-' + config.id;
+      input.setAttribute('data-testid', 'layer-toggle-checkbox-' + config.id);
+      input.checked = layer.visible;
+
+      input.addEventListener('change', () => {
+        this.ngZone.run(() => {
+          layer.visible = input.checked;
+        });
+      });
+
+      const label = document.createElement('label');
+      label.className = 'form-check-label small user-select-none';
+      label.htmlFor = 'layer-toggle-' + config.id;
+      label.innerText = config.title || config.id;
+      label.setAttribute('data-testid', 'layer-toggle-label-' + config.id);
+
+      itemDiv.appendChild(input);
+      itemDiv.appendChild(label);
+      container.appendChild(itemDiv);
+    }
+
+    this.expandWidget = new Expand({
+      view: this.mapView,
+      content: container,
+      expandIcon: 'layers',
+      expandTooltip: 'Reference Layers'
+    });
+
+    if (this.expandWidget.container && typeof this.expandWidget.container === 'object') {
+      (this.expandWidget.container as HTMLElement).setAttribute('data-testid', 'layer-toggle-expand');
+    }
+
+    this.mapView.ui.add(this.expandWidget, 'top-left');
   }
 }

@@ -84,7 +84,27 @@
               "modes": "",
               "geometry": "geometry",
               "easting": "easting",
-              "northing": "northing"
+              "northing": "northing",
+              "referenceLayers": [
+                {
+                  "id": "doc-huts",
+                  "title": "DOC Huts & Shelters",
+                  "url": "https://services1.arcgis.com/3JjYDyG3oajxU6HO/arcgis/rest/services/DOC_Huts/FeatureServer/0",
+                  "minScale": 250000,
+                  "visible": true,
+                  "selectable": true,
+                  "placeType": "Hut"
+                },
+                {
+                  "id": "doc-tracks",
+                  "title": "DOC Walking Tracks",
+                  "url": "https://services1.arcgis.com/3JjYDyG3oajxU6HO/arcgis/rest/services/DOCTracks/FeatureServer/0",
+                  "minScale": 150000,
+                  "visible": true,
+                  "selectable": true,
+                  "placeType": "Track"
+                }
+              ]
             }
           }
         ],

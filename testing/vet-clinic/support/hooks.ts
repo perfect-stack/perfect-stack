@@ -40,10 +40,14 @@ BeforeAll({ timeout: 120 * 1000 }, async function () {
 });
 
 Before(async function (this: UIWorld, scenario) {
+  if (process.env.BASE_URL) {
+    this.baseUrl = process.env.BASE_URL;
+  }
   this.browser = globalBrowser;
   this.context = await globalBrowser.newContext({
     baseURL: this.baseUrl,
     viewport: { width: 1280, height: 720 },
+    ignoreHTTPSErrors: true,
   });
 
   this.consoleErrors = [];
@@ -143,13 +147,9 @@ After(async function (this: UIWorld, scenario) {
     }
     await this.context.close();
   }
-
-  if (this.page) {
-    await this.page.close();
-  }
 });
 
-AfterAll({ timeout: 60 * 1000 }, async function () {
+AfterAll(async function () {
   if (globalBrowser) {
     await globalBrowser.close();
   }

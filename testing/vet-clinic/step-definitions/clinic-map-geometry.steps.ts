@@ -217,3 +217,116 @@ When('I use the sketch tool to draw a polyline on the map', async function (this
   await this.page.mouse.dblclick(box.x + box.width / 2 + 30, box.y + box.height / 2 + 30);
   await this.page.waitForTimeout(1000);
 });
+
+
+Then('I should see the map layer toggle button', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const expandBtn = this.page
+    .getByRole('button', { name: /reference layers/i })
+    .or(this.page.locator('lib-map-tool [title*="Reference Layers" i]'))
+    .or(this.page.locator('lib-map-tool [data-testid="layer-toggle-expand"]'))
+    .or(this.page.locator('lib-map-tool .esri-expand__button'))
+    .first();
+  await expandBtn.waitFor({ state: 'visible', timeout: 30000 });
+  expect(await expandBtn.isVisible()).to.be.true;
+});
+
+When('I expand the map layer toggle panel', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const panel = this.page
+    .locator('lib-map-tool [data-testid="layer-toggle-container"], lib-map-tool .esri-layer-toggle-container')
+    .first();
+
+  const isAlreadyVisible = (await panel.count()) > 0 && (await panel.isVisible());
+  if (!isAlreadyVisible) {
+    const expandBtn = this.page
+      .getByRole('button', { name: /reference layers/i })
+      .or(this.page.locator('lib-map-tool [title*="Reference Layers" i]'))
+      .or(this.page.locator('lib-map-tool [data-testid="layer-toggle-expand"]'))
+      .or(this.page.locator('lib-map-tool .esri-expand__button'))
+      .first();
+    await expandBtn.waitFor({ state: 'visible', timeout: 30000 });
+    await expandBtn.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  await panel.waitFor({ state: 'visible', timeout: 10000 });
+  expect(await panel.isVisible()).to.be.true;
+});
+
+Then(
+  'I should see reference layer checkboxes for {string} and {string}',
+  async function (this: UIWorld, layer1: string, layer2: string) {
+    if (!this.page) throw new Error('Playwright page is not initialized');
+
+    const panel = this.page
+      .locator('lib-map-tool [data-testid="layer-toggle-container"], lib-map-tool .esri-layer-toggle-container')
+      .first();
+    await panel.waitFor({ state: 'visible', timeout: 10000 });
+
+    const item1 = panel.locator(`text=${layer1}`).first();
+    const item2 = panel.locator(`text=${layer2}`).first();
+
+    await item1.waitFor({ state: 'visible', timeout: 10000 });
+    await item2.waitFor({ state: 'visible', timeout: 10000 });
+
+    expect(await item1.isVisible()).to.be.true;
+    expect(await item2.isVisible()).to.be.true;
+  },
+);
+
+When('I uncheck the {string} reference layer', async function (this: UIWorld, layerName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const panel = this.page
+    .locator('lib-map-tool [data-testid="layer-toggle-container"], lib-map-tool .esri-layer-toggle-container')
+    .first();
+  const checkbox = panel.locator(`.form-check:has-text("${layerName}") input[type="checkbox"]`).first();
+  await checkbox.waitFor({ state: 'visible', timeout: 10000 });
+
+  if (await checkbox.isChecked()) {
+    await checkbox.uncheck();
+    await this.page.waitForTimeout(300);
+  }
+});
+
+When('I check the {string} reference layer', async function (this: UIWorld, layerName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const panel = this.page
+    .locator('lib-map-tool [data-testid="layer-toggle-container"], lib-map-tool .esri-layer-toggle-container')
+    .first();
+  const checkbox = panel.locator(`.form-check:has-text("${layerName}") input[type="checkbox"]`).first();
+  await checkbox.waitFor({ state: 'visible', timeout: 10000 });
+
+  if (!(await checkbox.isChecked())) {
+    await checkbox.check();
+    await this.page.waitForTimeout(300);
+  }
+});
+
+Then('the {string} reference layer checkbox should be unchecked', async function (this: UIWorld, layerName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const panel = this.page
+    .locator('lib-map-tool [data-testid="layer-toggle-container"], lib-map-tool .esri-layer-toggle-container')
+    .first();
+  const checkbox = panel.locator(`.form-check:has-text("${layerName}") input[type="checkbox"]`).first();
+  await checkbox.waitFor({ state: 'visible', timeout: 10000 });
+
+  expect(await checkbox.isChecked()).to.be.false;
+});
+
+Then('the {string} reference layer checkbox should be checked', async function (this: UIWorld, layerName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+
+  const panel = this.page
+    .locator('lib-map-tool [data-testid="layer-toggle-container"], lib-map-tool .esri-layer-toggle-container')
+    .first();
+  const checkbox = panel.locator(`.form-check:has-text("${layerName}") input[type="checkbox"]`).first();
+  await checkbox.waitFor({ state: 'visible', timeout: 10000 });
+
+  expect(await checkbox.isChecked()).to.be.true;
+});

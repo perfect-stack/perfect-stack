@@ -107,10 +107,23 @@ export class LinkTool extends Tool {
   text: string; // This does not support full html, just put <a>markers around the link text</a>
 }
 
+export interface MapReferenceLayer {
+  id: string;
+  title: string;
+  url: string;
+  minScale?: number;
+  maxScale?: number;
+  visible?: boolean;
+  selectable?: boolean;
+  placeType?: string;
+}
+
 export class MapTool extends Tool {
   geometry?: string;
   easting: string;
   northing: string;
+  placeBinding?: string;
+  referenceLayers?: MapReferenceLayer[];
 }
 
 export class TextTool extends Tool {

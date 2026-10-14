@@ -145,6 +145,7 @@ export const MapPropertyList = [
   { name: 'geometry', type: PropertyType.string},
   { name: 'easting', type: PropertyType.string},
   { name: 'northing', type: PropertyType.string},
+  { name: 'placeBinding', type: PropertyType.string},
 ];
 
 export const PageTitlePropertyList = [
