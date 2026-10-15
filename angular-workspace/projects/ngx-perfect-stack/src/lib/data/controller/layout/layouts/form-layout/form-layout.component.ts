@@ -26,7 +26,17 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   template: Template;
 
   @Input()
-  formGroup: UntypedFormGroup;
+  set formGroup(value: UntypedFormGroup) {
+    this._formGroup = value;
+  }
+  get formGroup(): UntypedFormGroup {
+    if (this._formGroup && typeof this._formGroup.get === 'function') {
+      return this._formGroup;
+    }
+    return this._resolvedFormGroup;
+  }
+  private _formGroup: UntypedFormGroup;
+  private _resolvedFormGroup: UntypedFormGroup;
 
   @Input()
   metaEntity: MetaEntity;
@@ -34,7 +44,8 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   cells$: Observable<CellAttribute[][]>;
 
   get hasFormGroup(): boolean {
-    return !!(this.formGroup && typeof this.formGroup.get === 'function');
+    const fg = this.formGroup;
+    return !!(fg && typeof fg.get === 'function');
   }
 
   constructor(public readonly debugService: DebugService,
@@ -42,61 +53,49 @@ export class FormLayoutComponent implements OnInit, OnChanges {
               private formService: FormService) { }
 
   ngOnInit(): void {
-    if(this.ctx && this.ctx.formMap) {
-      console.log('FormLayoutComponent: initialising things the new way');
-      console.log(' - formGroup:', this.formGroup);
-      if(!this.template) {
-        throw new Error('No template defined, cannot proceed sensibly');
-      }
+    this.updateResolvedFormGroup();
+    this.updateCells$();
+  }
 
-      this.mode = this.mode ? this.mode : this.ctx.mode;
-      if(this.hasFormGroup) {
-        console.log(' - formGroup is supplied return early');
-        return;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['formGroup']) {
+      if (this._formGroup && typeof this._formGroup.get !== 'function') {
+        this._formGroup = undefined as any;
       }
+    }
+    this.updateResolvedFormGroup();
+    if (changes['template'] || !this.cells$) {
+      this.updateCells$();
+    }
+  }
+
+  updateResolvedFormGroup(): void {
+    if (this.ctx && this.ctx.formMap) {
+      this.mode = this.mode ? this.mode : this.ctx.mode;
 
       let formLookupKey;
       let form;
-      const binding = this.template.binding;
-      if(binding) {
-        if(binding.indexOf('.') >= 0) {
+      const binding = this.template?.binding;
+      if (binding) {
+        if (binding.indexOf('.') >= 0) {
           formLookupKey = binding.substring(0, binding.indexOf('.'));
           const childFormGroup = binding.substring(binding.indexOf('.') + 1);
-          console.log(`Binding NESTED for: ${binding}, formLookupKey = "${formLookupKey}", childFormGroup = "${childFormGroup}"`);
           form = this.ctx.formMap.get(formLookupKey) as UntypedFormGroup;
           if (form && form.controls) {
             form = form.controls[childFormGroup] as UntypedFormGroup;
           }
-        }
-        else {
+        } else {
           formLookupKey = binding;
           form = this.ctx.formMap.get(formLookupKey) as UntypedFormGroup;
-          console.log(`Binding ROOT - ${binding}`);
-          console.log(' - form:', form);
         }
 
         if (form && typeof form.get === 'function') {
-          this.formGroup = form;
+          this._resolvedFormGroup = form;
         } else {
-          this.formGroup = undefined as any;
+          this._resolvedFormGroup = undefined as any;
         }
-      }
-      else {
-        this.formGroup = undefined as any;
-      }
-    }
-    else {
-      console.warn('UNABLE to initialise FormLayoutComponent sensibly');
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if(changes['template']) {
-      this.updateCells$();
-    }
-    if(changes['formGroup']) {
-      if (this.formGroup && typeof this.formGroup.get !== 'function') {
-        this.formGroup = undefined as any;
+      } else {
+        this._resolvedFormGroup = undefined as any;
       }
     }
   }

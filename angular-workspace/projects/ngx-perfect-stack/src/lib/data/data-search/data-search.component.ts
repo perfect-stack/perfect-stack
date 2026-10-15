@@ -37,7 +37,7 @@ export class DataSearchComponent implements OnInit {
   resultTemplate: Template;
   resultTableTemplate: Template;
   resultTableMetaEntity: MetaEntity;
-  searchResultsFormGroup: UntypedFormGroup = new UntypedFormGroup({});
+  searchResultsFormGroup: UntypedFormGroup | null = null;
 
   resultsMessage = '';
 
@@ -58,6 +58,12 @@ export class DataSearchComponent implements OnInit {
       switchMap(([paramMap, queryParamMap]) => {
         this.metaName = paramMap.get('metaName');
         if (this.metaName) {
+          this.searchResultsFormGroup = null;
+          this.resultsMessage = '';
+          this.collectionSize = 0;
+          this.showPagination = false;
+          this.cdr.markForCheck();
+
           return this.formService.loadFormContext(this.metaName, this.mode, null, paramMap, queryParamMap).pipe(
             switchMap((ctx) => {
               this.searchCriteriaTemplate = ctx.metaPage.templates[0];
@@ -156,9 +162,6 @@ export class DataSearchComponent implements OnInit {
 
   onSearch(ctx: FormContext, resetToFirstPage = true) {
     if(this.metaName) {
-      if (!this.searchResultsFormGroup) {
-        this.searchResultsFormGroup = new UntypedFormGroup({});
-      }
       this.cdr.markForCheck();
 
       if(resetToFirstPage) {

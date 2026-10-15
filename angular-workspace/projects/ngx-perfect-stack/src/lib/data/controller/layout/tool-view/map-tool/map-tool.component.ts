@@ -1,6 +1,8 @@
 import {
   AfterViewInit,
   ChangeDetectorRef,
+  Inject,
+  Optional,
   Component,
   DoCheck,
   ElementRef,
@@ -22,6 +24,10 @@ import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {MapService} from './map.service';
 import {distinctUntilChanged, map, Subject, takeUntil} from 'rxjs';
 import {Router} from '@angular/router';
+import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
+import {DateTimeFormatter, ZonedDateTime, ZoneId} from '@js-joda/core';
+import {Locale} from '@js-joda/locale_en';
+import '@js-joda/timezone';
 
 import Map from '@arcgis/core/Map';
 import MapView from '@arcgis/core/views/MapView';
@@ -174,7 +180,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     protected readonly ngZone: NgZone,
     protected readonly cdr: ChangeDetectorRef,
     protected readonly attributionService: MapAttributionService,
-    protected readonly router: Router
+    protected readonly router: Router,
+    @Optional() @Inject(STACK_CONFIG) protected readonly stackConfig?: NgxPerfectStackConfig
   ) {}
 
   ngOnInit(): void {
@@ -1357,6 +1364,33 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       || 'CaptureEvent';
   }
 
+    formatDate(dateValue: any): string {
+    if (!dateValue) return '';
+    try {
+      const pattern = this.stackConfig?.dateFormat || 'dd-MMM-yyyy';
+      const formatter = DateTimeFormatter.ofPattern(pattern).withLocale(Locale.US);
+      const zoneId = ZoneId.of('Pacific/Auckland');
+
+      let zdt: ZonedDateTime;
+      if (typeof dateValue === 'string') {
+        if (dateValue.includes('+') || dateValue.endsWith('Z') || (dateValue.includes('-') && dateValue.lastIndexOf('-') > 10)) {
+          zdt = ZonedDateTime.parse(dateValue).withZoneSameInstant(zoneId);
+        } else {
+          const normalized = dateValue.replace(' ', 'T') + 'Z';
+          zdt = ZonedDateTime.parse(normalized).withZoneSameInstant(zoneId);
+        }
+      } else if (dateValue instanceof Date) {
+        zdt = ZonedDateTime.parse(dateValue.toISOString()).withZoneSameInstant(zoneId);
+      } else {
+        return String(dateValue);
+      }
+      return formatter.format(zdt);
+    } catch (e) {
+      console.warn('Error formatting date in MapToolComponent:', e);
+      return String(dateValue);
+    }
+  }
+
   private createPopupTemplate(item: any): any {
     const title = item.field_number || item.name || item.title || (item.id ? 'Item ' + String(item.id).substring(0, 8) : 'Result');
     const metaEntity = this.getMetaEntityName();
@@ -1380,7 +1414,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
         }
         if (item.event_begin_date) {
           const dateDiv = document.createElement('div');
-          dateDiv.innerHTML = `<strong>Date:</strong> ${item.event_begin_date}`;
+          dateDiv.innerHTML = `<strong>Date:</strong> ${this.formatDate(item.event_begin_date)}`;
           div.appendChild(dateDiv);
         }
         if (entityId) {

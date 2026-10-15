@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { UntypedFormGroup } from '@angular/forms';
 import { MetaPage, TabTool, Template } from '../../../../../domain/meta.page';
@@ -16,7 +16,9 @@ export class TabToolContext {
   styleUrls: ['./tab-tool.component.scss'],
   standalone: false
 })
-export class TabToolComponent implements OnInit {
+export class TabToolComponent implements OnInit, OnChanges {
+
+  private static tabStateMap = new Map<string, string>();
 
   @Input()
   tabTool: TabTool;
@@ -42,6 +44,25 @@ export class TabToolComponent implements OnInit {
               protected readonly metaPageService: MetaPageService) { }
 
   ngOnInit(): void {
+    this.initTabContext();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['tabTool'] || changes['ctx']) {
+      this.initTabContext();
+    }
+  }
+
+  private getTabKey(): string {
+    const pageName = this.ctx?.metaPage?.name || this.ctx?.metaName || '';
+    const toolId = this.tabTool?.template1 || '';
+    return `${pageName}:${toolId}`;
+  }
+
+  private initTabContext(): void {
+    if (!this.tabTool) {
+      return;
+    }
     this.tabContext$ = this.metaPageService.metaPageMap$.pipe(switchMap((metaPageMap) => {
 
       const tabContext = new TabToolContext();
@@ -68,11 +89,27 @@ export class TabToolComponent implements OnInit {
         }
       }
 
-      // set the initial tab
+      // set the initial or preserved tab
       if(tabContext.tabList.length > 0) {
-        const initialTab = tabContext.tabList[0];
-        this.onTabMetaPageSelected(initialTab, 0);
-        console.log(`Set initial tab = ${initialTab.name}`);
+        const key = this.getTabKey();
+        const savedTabName = key ? TabToolComponent.tabStateMap.get(key) : null;
+        let targetIdx = 0;
+
+        if (this.selectedMetaPage) {
+          const foundIdx = tabContext.tabList.findIndex(p => p.name === this.selectedMetaPage.name);
+          if (foundIdx >= 0) {
+            targetIdx = foundIdx;
+          }
+        } else if (savedTabName) {
+          const foundIdx = tabContext.tabList.findIndex(p => p.name === savedTabName);
+          if (foundIdx >= 0) {
+            targetIdx = foundIdx;
+          }
+        }
+
+        const activeTab = tabContext.tabList[targetIdx];
+        this.onTabMetaPageSelected(activeTab, targetIdx);
+        console.log(`Set active tab = ${activeTab.name} (index ${targetIdx})`);
       }
 
       return of(tabContext);
@@ -101,6 +138,10 @@ export class TabToolComponent implements OnInit {
     if(tabMetaPage.templates && tabMetaPage.templates.length > 0) {
       this.selectedTemplate = tabMetaPage.templates[0];
       console.log(`Template Selected: ${this.selectedTemplate.binding}`);
+    }
+    const key = this.getTabKey();
+    if (key && tabMetaPage?.name) {
+      TabToolComponent.tabStateMap.set(key, tabMetaPage.name);
     }
   }
 }

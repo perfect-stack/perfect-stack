@@ -35,7 +35,7 @@
         }
       </thead>
       <tbody>
-        @for (group of attributes.controls; track group; let i = $index) {
+        @for (group of attributes.controls; track trackByRow($index, group); let i = $index) {
           <tr class="align-middle" (click)="onRowClicked(i)" [attr.data-testid]="'table-row-' + i">
             @for (nextCell of cells[0]; track nextCell) {
               <td [ngStyle]="{'width': getCellWidth(nextCell) }">

@@ -1,6 +1,6 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {UntypedFormGroup} from '@angular/forms';
-import {DateTimeFormatter, LocalDate, ZonedDateTime, ZoneId} from '@js-joda/core';
+import {DateTimeFormatter, ZonedDateTime, ZoneId} from '@js-joda/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
 // This next import may appear to be grey and unused, but it is important because it imports the right language/words for
@@ -15,7 +15,7 @@ import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-pag
     styleUrls: ['./date-time-control.component.css'],
     standalone: false
 })
-export class DateTimeControlComponent implements OnInit {
+export class DateTimeControlComponent implements OnInit, OnChanges {
 
   @Input()
   mode: string | null;
@@ -36,18 +36,41 @@ export class DateTimeControlComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.mode !== 'edit') {
-      const formControl = this.formGroup.controls[this.name];
-      const databaseValue = formControl.value;
-      if(databaseValue) {
-        const dateTimeFormat = this.stackConfig.dateTimeFormat;
-        const dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormat).withLocale(Locale.US);
+    this.updateValue();
+  }
 
-        let zonedDateTime = ZonedDateTime.parse(databaseValue);
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateValue();
+  }
+
+  updateValue(): void {
+    if(this.mode !== 'edit' && this.formGroup && this.name) {
+      const formControl = this.formGroup.controls[this.name];
+      const databaseValue = formControl?.value;
+      if(databaseValue) {
+        const isDateOnly = ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.component || '') ||
+                           ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.options || '');
+        const formatPattern = isDateOnly ? this.stackConfig.dateFormat : this.stackConfig.dateTimeFormat;
+        const dateTimeFormatter = DateTimeFormatter.ofPattern(formatPattern).withLocale(Locale.US);
+
         const zoneId = ZoneId.of('Pacific/Auckland');
-        zonedDateTime = zonedDateTime.withZoneSameInstant(zoneId);
+        let zonedDateTime: ZonedDateTime;
+        if (typeof databaseValue === 'string') {
+          if (databaseValue.includes('+') || databaseValue.endsWith('Z') || (databaseValue.includes('-') && databaseValue.lastIndexOf('-') > 10)) {
+            zonedDateTime = ZonedDateTime.parse(databaseValue).withZoneSameInstant(zoneId);
+          } else {
+            const normalized = databaseValue.replace(' ', 'T') + 'Z';
+            zonedDateTime = ZonedDateTime.parse(normalized).withZoneSameInstant(zoneId);
+          }
+        } else if (databaseValue instanceof Date) {
+          zonedDateTime = ZonedDateTime.parse(databaseValue.toISOString()).withZoneSameInstant(zoneId);
+        } else {
+          zonedDateTime = ZonedDateTime.parse(databaseValue).withZoneSameInstant(zoneId);
+        }
 
         this.dateTimeValue = dateTimeFormatter.format(zonedDateTime);
+      } else {
+        this.dateTimeValue = '';
       }
     }
   }

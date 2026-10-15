@@ -5,12 +5,12 @@
   @if (tabContext.tabList.length > 0) {
     <div>
       <div class="d-flex border-bottom">
-        @for (metaPage of tabContext.tabList; track metaPage; let i = $index) {
+        @for (metaPage of tabContext.tabList; track metaPage.name; let i = $index) {
           <div class="tab-heading"
            [ngClass]="{
-           'border-bottom': metaPage.name === selectedMetaPage.name,
-           'border-primary': metaPage.name === selectedMetaPage.name,
-           'border-4': metaPage.name === selectedMetaPage.name
+           'border-bottom': metaPage.name === selectedMetaPage?.name,
+           'border-primary': metaPage.name === selectedMetaPage?.name,
+           'border-4': metaPage.name === selectedMetaPage?.name
            }"
             >
             <div (click)="onTabMetaPageSelected(metaPage, i)">
@@ -23,7 +23,7 @@
   }
   @if (tabContext.tabList.length) {
     <div class="row">
-      @for (metaPage of tabContext.tabList; track metaPage; let i = $index) {
+      @for (metaPage of tabContext.tabList; track metaPage.name; let i = $index) {
         @if (selectedTabIdx === i) {
           <div class="col-12">
             <lib-layout-outlet

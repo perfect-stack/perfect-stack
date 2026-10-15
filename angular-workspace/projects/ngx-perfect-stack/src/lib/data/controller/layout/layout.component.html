@@ -27,7 +27,7 @@
           [metaEntity]="metaEntity"
           [template]="template"
           [mode]="mode"
-          [formGroup]="formGroup">
+          [formGroup]="effectiveFormGroup!">
         </lib-form-layout>
       }
       @case ('table') {
@@ -35,7 +35,7 @@
           [ctx]="ctx"
           [template]="template"
           [mode]="mode"
-          [formGroup]="formGroup"
+          [formGroup]="effectiveFormGroup!"
           [relationshipProperty]="relationshipProperty">
         </lib-table-layout>
       }
@@ -43,7 +43,7 @@
         <lib-card-layout
           [ctx]="ctx"
           [mode]="mode"
-          [formGroup]="formGroup"
+          [formGroup]="effectiveFormGroup!"
           [relationshipProperty]="relationshipProperty">
         </lib-card-layout>
       }
@@ -52,7 +52,7 @@
           [ctx]="ctx"
           [template]="template"
           [mode]="mode"
-          [formGroup]="formGroup"
+          [formGroup]="effectiveFormGroup!"
           [relationshipProperty]="relationshipProperty">
         </lib-form-list-layout>
       }

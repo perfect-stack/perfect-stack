@@ -1,6 +1,6 @@
 @if (ctx$ | async; as ctx) {
   <div class="container-fluid container-page">
-    @if (searchCriteriaTemplate) {
+    @if (searchCriteriaTemplate && ctx.formMap?.get('criteria')) {
       <div class="d-flex justify-content-between">
         <div>
           <lib-page-title-tool [ctx]="ctx"></lib-page-title-tool>

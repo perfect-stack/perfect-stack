@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,7 +16,7 @@ import { DebugService } from '../../../../../utils/debug/debug.service';
   styleUrls: ['./table-layout.component.css'],
   standalone: false
 })
-export class TableLayoutComponent implements OnInit {
+export class TableLayoutComponent implements OnInit, OnChanges {
 
   @Input()
   mode: string | null;
@@ -45,37 +45,49 @@ export class TableLayoutComponent implements OnInit {
               protected readonly formGroupService: FormGroupService) { }
 
   ngOnInit(): void {
-    this.mode = this.mode ? this.mode : this.ctx.mode;
-    if(!this.formGroup && this.ctx.formMap && this.template.binding) {
-      console.log(`TableLayoutComponent: template.binding = ${this.template.binding} formMap contains:`, this.ctx.formMap);
-      this.formGroup = this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;
-      this.relationshipProperty = this.template.binding;
+    this.updateTable();
+    this.updateCells$();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateTable();
+    if (changes['template'] || !this.cells$) {
+      this.updateCells$();
     }
-    else {
-      `TableLayoutComponent: template.binding = ${this.template.binding} did not get formGroup from formMap`
-    }
+  }
+
+  private updateTable(): void {
+    this.mode = this.mode ? this.mode : this.ctx?.mode;
 
     if (!this.relationshipProperty && this.template?.binding) {
       this.relationshipProperty = this.template.binding;
     }
 
-    console.log(`TableLayoutComponent: template.binding = ${this.template.binding} found formGroup:`, this.formGroup);
-
-    if(!this.template.metaEntityName) {
-      throw new Error(`The template; ${JSON.stringify(this.template)} has no metaEntityName`);
+    if (!this.formGroup && this.ctx?.formMap && this.template?.binding) {
+      console.log(`TableLayoutComponent: template.binding = ${this.template.binding} formMap contains:`, this.ctx.formMap);
+      this.formGroup = this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;
+      this.relationshipProperty = this.template.binding;
     }
+  }
 
-    this.cells$ = this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
-      this.metaEntityMap = metaEntityMap;
-      const metaEntity = this.metaEntityMap.get(this.template.metaEntityName);
-      if(metaEntity) {
-        const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
-        return of(cells);
-      }
-      else {
-        throw new Error(`Unable to find metaEntity for; ${this.template.metaEntityName}`);
-      }
-    }));
+  private updateCells$(): void {
+    if (this.template?.metaEntityName) {
+      this.cells$ = this.metaEntityService.metaEntityMap$.pipe(switchMap((metaEntityMap) => {
+        this.metaEntityMap = metaEntityMap;
+        const metaEntity = this.metaEntityMap.get(this.template.metaEntityName);
+        if(metaEntity) {
+          const cells: CellAttribute[][] = this.formService.toCellAttributeArray(this.template, metaEntity);
+          return of(cells);
+        }
+        else {
+          throw new Error(`Unable to find metaEntity for; ${this.template.metaEntityName}`);
+        }
+      }));
+    }
+  }
+
+  trackByRow(index: number, group: any): any {
+    return group?.controls?.['id']?.value ?? index;
   }
 
   get attributes(): UntypedFormArray | null {
@@ -154,7 +166,7 @@ export class TableLayoutComponent implements OnInit {
   }
 
   hasResultsSummary() {
-    return this.formGroup.get('resultsSummary') !== null && this.formGroup.get('resultsSummary')?.value.length > 0;
+    return !!(this.formGroup?.get('resultsSummary') && this.formGroup.get('resultsSummary')?.value?.length > 0);
   }
 
   getCellWidth(nextCell: CellAttribute) {

@@ -130,7 +130,7 @@ export class DataService {
       }
   }
 
-  getTreeParentAttribute(metaEntity: MetaEntity): MetaAttribute | undefined {
+  getSelfReferencingParentAttribute(metaEntity: MetaEntity): MetaAttribute | undefined {
     return metaEntity?.attributes?.find(
       (a) =>
         a.type === AttributeType.ManyToOne &&
@@ -138,7 +138,17 @@ export class DataService {
     );
   }
 
+  getTreeParentAttribute(metaEntity: MetaEntity): MetaAttribute | undefined {
+    if (!metaEntity?.treeNode) {
+      return undefined;
+    }
+    return this.getSelfReferencingParentAttribute(metaEntity);
+  }
+
   getTreeChildrenAttribute(metaEntity: MetaEntity): MetaAttribute | undefined {
+    if (!metaEntity?.treeNode) {
+      return undefined;
+    }
     return metaEntity?.attributes?.find(
       (a) =>
         a.type === AttributeType.OneToMany &&
@@ -151,7 +161,7 @@ export class DataService {
     metaEntity: MetaEntity,
     txn?: Transaction,
   ): Promise<void> {
-    const parentAttr = this.getTreeParentAttribute(metaEntity);
+    const parentAttr = this.getSelfReferencingParentAttribute(metaEntity);
     if (!parentAttr) {
       return;
     }
@@ -169,6 +179,17 @@ export class DataService {
       parentId = null;
     }
     entity[parentFkName] = parentId;
+
+    if (parentId) {
+      if (entity.id && entity.id === parentId) {
+        throw new BadRequestException(`An entity cannot be its own parent.`);
+      }
+    }
+
+    // Singular root and mandatory parent validation strictly apply to treeNode entities
+    if (!metaEntity?.treeNode) {
+      return;
+    }
 
     const model = this.ormService.sequelize.model(metaEntity.name);
 
@@ -189,10 +210,6 @@ export class DataService {
       }
     } else {
       // Non-root node must specify an existing parent
-      if (entity.id && entity.id === parentId) {
-        throw new BadRequestException(`An entity cannot be its own parent.`);
-      }
-
       const parentRecord = await model.findByPk(parentId, { transaction: txn });
       if (!parentRecord) {
         throw new BadRequestException(
@@ -321,7 +338,10 @@ export class DataService {
     for (const attribute of parentMetaEntity.attributes) {
       switch (attribute.type) {
         case AttributeType.OneToMany:
-          if (attribute.relationshipTarget === parentMetaEntity.name) {
+          if (
+            attribute.relationshipTarget === parentMetaEntity.name &&
+            parentMetaEntity.treeNode
+          ) {
             continue;
           }
           await this.saveListOfChildren(

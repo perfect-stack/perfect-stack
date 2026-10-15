@@ -5,9 +5,9 @@
   <!-- If template has a formGroup -->
   @if (hasFormGroup) {
     <div [formGroup]="formGroup">
-      @for (row of cells; track row) {
+      @for (row of cells; track $index) {
         <div class="row" [ngClass]="{'form-row': isFormRow(row)}">
-          @for (cell of row; track cell) {
+          @for (cell of row; track (cell?.attribute?.name || cell?.tool?.type || $index)) {
             <div [class]="getCSS(cell)">
               @if (cell && isShowLabel(cell)) {
                 @if (isShowLabelTop(cell)) {
@@ -54,9 +54,9 @@
     </div>
   } @else {
     <div>
-      @for (row of cells; track row) {
+      @for (row of cells; track $index) {
         <div class="row" [ngClass]="{'form-row': isFormRow(row)}">
-          @for (cell of row; track cell) {
+          @for (cell of row; track (cell?.attribute?.name || cell?.tool?.type || $index)) {
             <div [class]="getCSS(cell)">
               @if (cell && isShowLabel(cell)) {
                 @if (isShowLabelTop(cell)) {

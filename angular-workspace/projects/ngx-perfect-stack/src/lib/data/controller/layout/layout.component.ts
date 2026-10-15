@@ -16,7 +16,7 @@
  * See `README.md` in this directory for architectural diagrams and design rules.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { Template, TemplateLocationType } from '../../../domain/meta.page';
 import { MetaEntity } from '../../../domain/meta.entity';
@@ -56,7 +56,7 @@ export * from './tool-view/tab-tool/tab-tool.component';
   styleUrls: ['./layout.component.css'],
   standalone: false
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent implements OnInit, OnChanges {
 
   @Input()
   mode: string | null;
@@ -81,20 +81,39 @@ export class LayoutComponent implements OnInit {
 
   hasBottomLocations = false;
 
+  get effectiveFormGroup(): UntypedFormGroup | null {
+    if (this.ctx && this.ctx.formMap && this.template?.binding && this.ctx.formMap.has(this.template.binding)) {
+      return this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;
+    }
+    return this.formGroup;
+  }
+
   constructor(public readonly debugService: DebugService) { }
 
   ngOnInit(): void {
+    this.updateLayout();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateLayout();
+  }
+
+  private updateLayout(): void {
     if(this.template && this.template.locations) {
       this.hasBottomLocations =
         this.template.locations[TemplateLocationType.BottomLeft] !== undefined
         || this.template.locations[TemplateLocationType.BottomMiddle] !== undefined
         || this.template.locations[TemplateLocationType.BottomRight] !== undefined;
+    } else {
+      this.hasBottomLocations = false;
     }
 
     if(this.ctx) {
       this.mode = this.mode ? this.mode : this.ctx.mode;
-      this.metaEntity = this.ctx.metaEntityMap.get(this.template.metaEntityName) as MetaEntity;
-      if(!this.formGroup && this.ctx.formMap && this.template.binding) {
+      if (this.template?.metaEntityName) {
+        this.metaEntity = this.ctx.metaEntityMap?.get(this.template.metaEntityName) as MetaEntity;
+      }
+      if(this.ctx.formMap && this.template?.binding && this.ctx.formMap.has(this.template.binding)) {
         this.formGroup = this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;
         this.relationshipProperty = this.template.binding;
       }
@@ -106,16 +125,16 @@ export class LayoutComponent implements OnInit {
       return this.ctx.formMap.get(template.binding) as unknown as UntypedFormGroup;
     }
     else if(template.binding) {
-      const fg = this.formGroup.get(template.binding);
+      const fg = this.effectiveFormGroup?.get(template.binding);
       if(fg) {
         return fg as UntypedFormGroup;
       }
       else {
-        throw new Error(`Unable to find formGroup for binding ${template.binding} in controls ${Object.keys(this.formGroup.controls)}`);
+        throw new Error(`Unable to find formGroup for binding ${template.binding} in controls ${Object.keys(this.effectiveFormGroup?.controls || {})}`);
       }
     }
     else {
-      return this.formGroup;
+      return this.effectiveFormGroup as UntypedFormGroup;
     }
   }
 
