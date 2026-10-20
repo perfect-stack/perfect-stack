@@ -13,8 +13,11 @@ export class DuplicatePlaceCheck implements CheckForDuplicates {
 
     async checkForDuplicates(headers: string[], entity: Entity, duplicateCheckList: string[]): Promise<DuplicateCheckResult> {
 
-        const place_name = entity['place_title'];
+        const place_name = entity['place_name'] || entity['place_title'];
         let cellNumber = headers.indexOf('Line Name');
+        if (cellNumber < 0) {
+            cellNumber = headers.indexOf('place_name');
+        }
         if (cellNumber < 0) {
             cellNumber = headers.indexOf('place_title');
         }
@@ -49,7 +52,7 @@ export class DuplicatePlaceCheck implements CheckForDuplicates {
         queryRequest.criteria.push({
             attributeType: AttributeType.Text,
             operator: ComparisonOperator.Equals,
-            name: 'place_title',
+            name: 'place_name',
             value: place_name
         });
 

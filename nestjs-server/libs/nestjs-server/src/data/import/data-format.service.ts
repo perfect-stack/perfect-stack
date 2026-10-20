@@ -78,7 +78,7 @@ export class DataFormatService {
       attributeMappings: [
         {
           columnName: 'Line Name',
-          attributeName: 'place_title',
+          attributeName: 'place_name',
           indicatesBlankRow: true,
           converter: new TextConverter(),
           defaultValue: [],

@@ -12,7 +12,7 @@ export class DistrictCodeConverter implements DataListImportConverter, DataImpor
         return {
             attributeType: AttributeType.Text,
             operator: ComparisonOperator.Equals,
-            name: 'place_title',
+            name: 'place_name',
             value: line
         };
     }

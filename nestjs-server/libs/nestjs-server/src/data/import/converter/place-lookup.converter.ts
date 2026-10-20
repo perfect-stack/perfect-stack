@@ -12,7 +12,7 @@ export class PlaceLookupConverter implements DataImportConverter {
         return {
             attributeType: AttributeType.Text,
             operator: ComparisonOperator.Equals,
-            name: 'place_title',
+            name: 'place_name',
             value: placeTitle
         };
     }
