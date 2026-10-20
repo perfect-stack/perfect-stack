@@ -19,6 +19,9 @@ export class EnumerationEditControlComponent implements OnInit, OnChanges, Contr
   @Input()
   options?: string | string[];
 
+  @Input()
+  emitArray = false;
+
   predefinedOptions: string[] = [];
   selectedValues: string[] = [];
   disabled = false;
@@ -109,8 +112,12 @@ export class EnumerationEditControlComponent implements OnInit, OnChanges, Contr
   }
 
   emitValue(): void {
-    const outputString = this.selectedValues.join(' | ');
-    this.onChange(outputString);
+    if (this.emitArray) {
+      this.onChange([...this.selectedValues]);
+    } else {
+      const outputString = this.selectedValues.join(' | ');
+      this.onChange(outputString);
+    }
     this.onTouch();
   }
 

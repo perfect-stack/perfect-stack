@@ -12,12 +12,13 @@ export interface NgxPerfectStackConfig {
   dateTimeFormat: string;
   timeFormat: string;
   debug: boolean;
-  metaRoleList: MetaRole[],
+  metaRoleList: MetaRole[];
   supportEmail: string;
   showMenuLoginBtn: boolean;
   copyrightFooter: string;
   dataSourceEditable: boolean;
   environmentBannerText: string;
+  environment?: string;
   supplementaryGroupRoles: string;
   msalClientId: string;
   msalAuthority: string;

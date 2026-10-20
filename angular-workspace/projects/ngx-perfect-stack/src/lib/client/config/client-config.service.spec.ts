@@ -15,6 +15,7 @@ describe('ClientConfigService', () => {
 
   const mockStackConfig: Partial<NgxPerfectStackConfig> = {
     apiUrl: 'http://localhost:3080',
+    environment: 'dev',
   };
 
   beforeEach(() => {
@@ -91,5 +92,25 @@ describe('ClientConfigService', () => {
 
     const req = httpMock.expectOne('http://localhost:3080/client/config');
     req.flush({ META_EDIT_ENABLED: 'Entity, Menu' });
+  });
+
+  it('should return environment from server ENV_NAME', (done) => {
+    service.getEnvironment().subscribe((env) => {
+      expect(env).toBe('test');
+      done();
+    });
+
+    const req = httpMock.expectOne('http://localhost:3080/client/config');
+    req.flush({ ENV_NAME: 'TEST' });
+  });
+
+  it('should fall back to stackConfig.environment if ENV_NAME is missing', (done) => {
+    service.getEnvironment().subscribe((env) => {
+      expect(env).toBe('dev');
+      done();
+    });
+
+    const req = httpMock.expectOne('http://localhost:3080/client/config');
+    req.flush({});
   });
 });

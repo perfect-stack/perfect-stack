@@ -10,10 +10,11 @@ describe('ClientConfigService', () => {
     service = new ClientConfigService(configService);
   });
 
-  it('should export META_EDIT_ENABLED and AUTH_DISABLE_FOR_DEV when defined', () => {
+  it('should export META_EDIT_ENABLED, AUTH_DISABLE_FOR_DEV, and ENV_NAME when defined', () => {
     jest.spyOn(configService, 'get').mockImplementation((key: string) => {
       if (key === 'AUTH_DISABLE_FOR_DEV') return 'false';
       if (key === 'META_EDIT_ENABLED') return 'Entity, Menu, Page, Role';
+      if (key === 'ENV_NAME') return 'dev';
       return undefined;
     });
 
@@ -21,6 +22,7 @@ describe('ClientConfigService', () => {
     expect(config).toEqual({
       AUTH_DISABLE_FOR_DEV: 'false',
       META_EDIT_ENABLED: 'Entity, Menu, Page, Role',
+      ENV_NAME: 'dev',
     });
   });
 
@@ -28,6 +30,7 @@ describe('ClientConfigService', () => {
     jest.spyOn(configService, 'get').mockImplementation((key: string) => {
       if (key === 'AUTH_DISABLE_FOR_DEV') return 'false';
       if (key === 'META_EDIT_ENABLED') return '';
+      if (key === 'ENV_NAME') return 'prod';
       return undefined;
     });
 
@@ -35,6 +38,7 @@ describe('ClientConfigService', () => {
     expect(config).toEqual({
       AUTH_DISABLE_FOR_DEV: 'false',
       META_EDIT_ENABLED: '',
+      ENV_NAME: 'prod',
     });
   });
 

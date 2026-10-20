@@ -21,14 +21,15 @@
 
   <div class="d-flex justify-content-between w-50">
     @for (nextMenu of (metaMenuService.menu ? metaMenuService.menu.menuList : []); track nextMenu.label) {
+      @let visibleItems = getVisibleMenuItems(nextMenu);
       <div class="" ngbDropdown>
-        @if (menuEnabled[nextMenu.label]) {
-          @if (nextMenu.items && nextMenu.items.length > 1) {
+        @if (menuEnabled[nextMenu.label] && visibleItems.length > 0) {
+          @if (visibleItems.length > 1) {
             <a class="menu-title" tabindex="0" ngbDropdownToggle id="{{nextMenu.label}}Menu" [attr.data-testid]="'menu-' + nextMenu.label" role="button">
               {{nextMenu.label}}
             </a>
             <div class="dropdown-menu" ngbDropdownMenu>
-              @for(menuItem of nextMenu.items; track menuItem.label) {
+              @for(menuItem of visibleItems; track menuItem.label) {
                 <a ngbDropdownItem
                   [routerLink]="isInternalRoute(menuItem) ? menuItem.route : null"
                   [href]="menuItem.route"
@@ -40,15 +41,15 @@
               }
             </div>
           }
-          @if (nextMenu.items && nextMenu.items.length === 1) {
+          @if (visibleItems.length === 1) {
             <a class="menu-title"
               routerLinkActive="active-link"
               id="{{nextMenu.label}}Menu"
               [attr.data-testid]="'menu-' + nextMenu.label"
-              [routerLink]="isInternalRoute(nextMenu.items[0]) ? nextMenu.items[0].route : null"
-              [href]="nextMenu.items[0].route"
-              (click)="onMenuItemClick(nextMenu.items[0], $event)">
-              {{nextMenu.items[0].label}}
+              [routerLink]="isInternalRoute(visibleItems[0]) ? visibleItems[0].route : null"
+              [href]="visibleItems[0].route"
+              (click)="onMenuItemClick(visibleItems[0], $event)">
+              {{visibleItems[0].label}}
             </a>
           }
         }

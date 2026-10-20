@@ -10,6 +10,7 @@ export class MenuItem {
   editable = true;
   roles: string[] = [];
   openIn?: OpenIn = OpenIn.Current;
+  environments?: string[] = [];
 }
 
 export class Menu {

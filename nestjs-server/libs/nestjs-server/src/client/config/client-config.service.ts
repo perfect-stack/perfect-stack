@@ -6,6 +6,7 @@ export class ClientConfigService {
   static readonly CLIENT_PROPERTIES_EXPORTED = [
     'AUTH_DISABLE_FOR_DEV',
     'META_EDIT_ENABLED',
+    'ENV_NAME',
   ];
 
   constructor(protected readonly configService: ConfigService) {}

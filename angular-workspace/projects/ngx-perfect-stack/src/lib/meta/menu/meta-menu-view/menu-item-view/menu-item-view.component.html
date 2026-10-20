@@ -12,6 +12,13 @@
           </span>
         }
       </div>
+      @if (menuItem.environments && menuItem.environments.length > 0) {
+        <div class="d-flex flex-wrap gap-1 mt-1">
+          @for (env of menuItem.environments; track env) {
+            <span class="badge bg-secondary-subtle text-secondary border py-0 px-1 font-monospace" style="font-size: 10px;">{{env}}</span>
+          }
+        </div>
+      }
     </div>
     @if (mouseActive && !disabled) {
       <div class="item-actions-row">
@@ -48,13 +55,24 @@
         <label class="form-label" for="route">Route</label>
         <input id="route" class="form-control" [formControlName]="'route'">
       </div>
-      <div class="form-group">
+      <div class="form-group mb-3">
         <label class="form-label" for="openIn">Open In</label>
         <select id="openIn" class="form-select" [formControlName]="'openIn'">
           @for (option of openInOptions; track option) {
             <option [value]="option">{{option}}</option>
           }
         </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Environments (Feature Flag)</label>
+        <lib-enumeration-edit-control
+          [options]="environmentOptions"
+          [emitArray]="true"
+          [formControlName]="'environments'">
+        </lib-enumeration-edit-control>
+        <div class="form-text text-muted small">
+          Select target environments (dev, test, prod). Leave empty for all environments.
+        </div>
       </div>
     </form>
   </div>

@@ -4,8 +4,9 @@ import {AuthenticationService} from '../authentication/authentication.service';
 import {MetaMenuService} from '../meta/menu/meta-menu-service/meta-menu.service';
 import {AuthorizationService} from '../authentication/authorization.service';
 import {ActionType} from '../domain/meta.role';
-import {MenuItem, OpenIn} from '../domain/meta.menu';
+import {Menu, MenuItem, OpenIn} from '../domain/meta.menu';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
+import {ClientConfigService} from '../client/config/client-config.service';
 
 @Component({
     selector: 'lib-menu-bar',
@@ -33,15 +34,16 @@ export class MenuBarComponent implements OnInit {
   @Input()
   menuBarBackgroundColor: string;
 
-
   menuEnabled: any = {};
   menuOptionEnabled: any = {};
+  currentEnvironment = (this.stackConfig.environment || 'dev').toLowerCase();
 
   constructor(@Inject(STACK_CONFIG)
               public readonly stackConfig: NgxPerfectStackConfig,
               public readonly authenticationService: AuthenticationService,
               public readonly authorizationService: AuthorizationService,
               public readonly metaMenuService: MetaMenuService,
+              public readonly clientConfigService: ClientConfigService,
               public readonly router: Router) {
   }
 
@@ -51,35 +53,50 @@ export class MenuBarComponent implements OnInit {
       console.log('MenuBarComponent User updated: ', user);
       this.updateMenuEnabled();
     });
+
+    this.clientConfigService.getEnvironment().subscribe((env) => {
+      if (env) {
+        this.currentEnvironment = env;
+        this.updateMenuEnabled();
+      }
+    });
+  }
+
+  isMenuItemVisible(menuItem: MenuItem): boolean {
+    if (!menuItem) {
+      return false;
+    }
+
+    // Environment feature flag filter:
+    // If no environments specified -> visible in all environments
+    // If environments specified -> visible only in matching environment
+    if (menuItem.environments && menuItem.environments.length > 0) {
+      const activeEnv = (this.currentEnvironment || '').trim().toLowerCase();
+      const match = menuItem.environments.some((env) => (env || '').trim().toLowerCase() === activeEnv);
+      if (!match) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  getVisibleMenuItems(menu: Menu): MenuItem[] {
+    if (!menu || !menu.items) {
+      return [];
+    }
+    return menu.items.filter((item) => this.isMenuItemVisible(item));
   }
 
   updateMenuEnabled() {
     // sweep through the menus and check permissions for each. store this in a variable and only update it when the
-    // user changes
+    // user changes or environment changes
     const nextMenuEnabled: any = {};
     if (this.metaMenuService.menu && this.metaMenuService.menu.menuList) {
       for(const nextMenu of this.metaMenuService.menu.menuList) {
-        nextMenuEnabled[nextMenu.label] = this.authorizationService.checkPermission(ActionType.Menu, nextMenu.label);
-
-        if(nextMenu.items && nextMenu.items.length > 0) {
-
-          for(const nextMenuItem of nextMenu.items) {
-            if(nextMenuItem.roles && nextMenuItem.roles.length > 0) {
-              let inRole = false;
-              for (const nextRole of nextMenuItem.roles) {
-                inRole = this.authorizationService.userInRole(nextRole);
-                if (inRole) {
-                  break;
-                }
-              }
-
-              if(inRole) {
-                this.menuOptionEnabled[nextMenuItem.label] = inRole;
-                break;
-              }
-            }
-          }
-        }
+        const hasMenuPermission = this.authorizationService.checkPermission(ActionType.Menu, nextMenu.label);
+        const visibleItems = this.getVisibleMenuItems(nextMenu);
+        nextMenuEnabled[nextMenu.label] = hasMenuPermission && visibleItems.length > 0;
       }
     }
 

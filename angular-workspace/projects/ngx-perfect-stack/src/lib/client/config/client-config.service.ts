@@ -28,6 +28,15 @@ export class ClientConfigService {
     return this.config$;
   }
 
+  getEnvironment(): Observable<string> {
+    return this.getConfig().pipe(
+      map((config) => {
+        const env = config?.ENV_NAME || this.stackConfig.environment || 'dev';
+        return String(env).trim().toLowerCase();
+      }),
+    );
+  }
+
   isMetaEditEnabled(
     controlValue: MetaEditControlValue | string,
   ): Observable<boolean> {

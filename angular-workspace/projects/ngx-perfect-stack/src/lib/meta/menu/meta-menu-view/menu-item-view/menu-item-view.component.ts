@@ -38,11 +38,13 @@ export class MenuItemViewComponent implements OnInit {
   mouseActive = false;
 
   openInOptions = Object.values(OpenIn);
+  environmentOptions = ['dev', 'test', 'prod'];
 
   menuItemForm = this.fb.group({
     label: [''],
     route: [''],
     openIn: [OpenIn.Current],
+    environments: [[]],
   });
 
   constructor(
@@ -94,6 +96,7 @@ export class MenuItemViewComponent implements OnInit {
         label: this.menuItem.label,
         route: this.menuItem.route,
         openIn: this.menuItem.openIn || OpenIn.Current,
+        environments: this.menuItem.environments || [],
       });
       this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
         console.log(`closed: ${result}`);
@@ -109,6 +112,7 @@ export class MenuItemViewComponent implements OnInit {
       menuItem.label = 'Label';
       menuItem.route = '/route/here';
       menuItem.openIn = OpenIn.Current;
+      menuItem.environments = [];
       this.menuItemAdded.next(menuItem);
     }
   }
@@ -136,6 +140,14 @@ export class MenuItemViewComponent implements OnInit {
       Object.assign(menuItem, editedItem);
       if (!menuItem.openIn) {
         menuItem.openIn = OpenIn.Current;
+      }
+      if (!menuItem.environments) {
+        menuItem.environments = [];
+      } else if (typeof menuItem.environments === 'string') {
+        menuItem.environments = (menuItem.environments as string)
+          .split('|')
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0);
       }
       this.menuItemEdited.emit(menuItem);
     }
