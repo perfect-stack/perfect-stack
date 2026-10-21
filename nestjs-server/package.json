@@ -6,8 +6,12 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
+    "prebuild:lib": "rimraf dist",
     "build:lib": "nest build nestjs-server",
+    "prebuild:lib:yalc": "rimraf dist",
     "build:lib:yalc": "nodemon --watch libs/nestjs-server --ext ts --exec \"nest build nestjs-server && yalc push\"",
+    "prestart": "rimraf dist",
+    "prestart:dev": "rimraf dist",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
