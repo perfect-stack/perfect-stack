@@ -9,6 +9,7 @@ export enum ComponentType {
   SelectTwo = 'SelectTwo',
   Spy = 'Spy',
   EnumerationEdit = 'EnumerationEdit',
+  Url = 'Url',
 }
 
 export class Cell {

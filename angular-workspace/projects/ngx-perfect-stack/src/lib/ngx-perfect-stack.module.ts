@@ -83,6 +83,7 @@ import {
   LayoutOutletComponent
 } from './data/controller/layout/layout-outlet/layout-outlet.component';
 import { TextFieldControlComponent } from './data/controller/layout/controls/text-field-control/text-field-control.component';
+import { UrlFieldControlComponent } from './data/controller/layout/controls/url-field-control/url-field-control.component';
 import { LabelComponent } from './data/controller/layout/controls/label/label.component';
 import {CacheInterceptor} from './utils/cache-interceptor';
 import { OneToPolyEditComponent } from './meta/entity/meta-entity-edit/one-to-poly-edit/one-to-poly-edit.component';
@@ -255,6 +256,7 @@ export function layoutComponentFactory() {
     LayoutOutletComponent,
     CellComponent,
     TextFieldControlComponent,
+    UrlFieldControlComponent,
     OneToOneControlComponent,
     FormLayoutComponent,
     TableLayoutComponent,

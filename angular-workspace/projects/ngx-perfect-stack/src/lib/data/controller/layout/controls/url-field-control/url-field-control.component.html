@@ -1,0 +1,35 @@
+@if (mode !== 'view' && !cell.displayOnly) {
+  <div class="input-group flex-nowrap" [attr.data-testid]="'field-' + name">
+    <input class="form-control" [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}" [readonly]="isReadOnly()" [id]="name"
+      [attr.name]="name"
+      [attr.data-testid]="'input-' + name"
+      type="url"
+      [ngModel]="internalValue" (ngModelChange)="onModelChange($event)" [ngModelOptions]="{standalone: true}">
+    @if (cell && cell.attribute && cell.attribute.unitOfMeasure) {
+      <span class="input-group-text" [id]="name + '_uom'" [attr.data-testid]="'uom-' + name">
+        {{cell.attribute.unitOfMeasure}}
+      </span>
+    }
+  </div>
+  @if (hasErrors() && cell.attribute) {
+    <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+  }
+}
+
+@if (mode === 'view' || cell.displayOnly) {
+  @if (internalValue) {
+    <div class="input-group" [attr.data-testid]="'field-' + name">
+      <span class="form-control" readonly="true" [id]="name" [attr.data-testid]="'view-' + name">
+        <a [href]="internalValue" target="_blank" rel="noopener noreferrer" class="text-truncate">{{internalValue}}</a>
+        @if (cell.attribute?.unitOfMeasure) {
+          <span [id]="name + '_uom'" [attr.data-testid]="'uom-' + name">{{cell.attribute?.unitOfMeasure}}</span>
+        }
+      </span>
+    </div>
+  }
+  @if (!internalValue) {
+    <div class="input-group" [attr.data-testid]="'field-' + name">
+      <span class="form-control empty-value" readonly [id]="name" [attr.data-testid]="'view-' + name">&mdash;</span>
+    </div>
+  }
+}

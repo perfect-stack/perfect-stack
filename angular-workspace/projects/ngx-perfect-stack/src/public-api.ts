@@ -35,3 +35,4 @@ export * from './lib/data/controller/layout/controls/media-gallery-control/media
 export * from './lib/data/controller/layout/controls/geometry-control/geometry-control.component';
 export * from './lib/data/controller/layout/controls/media-data-provider';
 export * from './lib/data/controller/layout/controls/default-media-data-provider.service';
+export * from './lib/data/controller/layout/controls/url-field-control/url-field-control.component';

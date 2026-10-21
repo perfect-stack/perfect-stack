@@ -59,6 +59,11 @@
             <lib-enumeration-edit-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-edit-control>
           </ng-container>
         }
+        @case ('Url') {
+          <ng-container [formGroup]="formGroup">
+            <lib-url-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-url-field-control>
+          </ng-container>
+        }
         @default {
           <ng-container [formGroup]="formGroup">
             <lib-text-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-text-field-control>

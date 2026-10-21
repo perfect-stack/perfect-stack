@@ -18,6 +18,7 @@ export enum ComponentType {
   SelectMultiple = 'SelectMultiple',
   EnumerationEdit = 'EnumerationEdit',
   Spy = 'Spy',
+  Url = 'Url',
 }
 
 export enum LabelLayoutType {
