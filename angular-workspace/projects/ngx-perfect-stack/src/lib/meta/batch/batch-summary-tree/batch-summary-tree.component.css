@@ -1,0 +1,96 @@
+:host {
+  display: block;
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+.batch-summary-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.batch-summary-controls {
+  font-size: 0.75rem;
+}
+
+.btn-xs {
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.batch-summary-scalars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.batch-summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.batch-summary-key {
+  font-weight: 500;
+  color: #495057;
+  white-space: nowrap;
+}
+
+.batch-summary-value {
+  color: #212529;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.batch-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.batch-toggle-btn:hover .batch-summary-key {
+  color: #0d6efd;
+}
+
+.batch-toggle-icon {
+  display: inline-block;
+  width: 12px;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: #6c757d;
+}
+
+.count-badge {
+  font-size: 0.7rem;
+  font-weight: normal;
+}
+
+.batch-summary-children {
+  border-left: 2px solid #dee2e6;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.batch-summary-raw {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.batch-summary-array {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.batch-summary-array-item {
+  margin-bottom: 2px;
+}
+
+.batch-summary-empty-node {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

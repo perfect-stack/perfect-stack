@@ -6,6 +6,7 @@ import {ToastService} from "../../utils/toasts/toast.service";
 import {JobService} from "../../job/job.service";
 import {JobProgressMonitorComponent} from "../../job/job-progress-monitor/job-progress-monitor.component";
 import {Job} from "../../job/job.model";
+import {BatchSummaryTreeComponent} from "./batch-summary-tree/batch-summary-tree.component";
 
 interface BatchJobSummary {
   name: string;
@@ -20,8 +21,9 @@ interface BatchJobSummary {
   selector: 'lib-batch',
   imports: [
     CommonModule,
-    JobProgressMonitorComponent
-],
+    JobProgressMonitorComponent,
+    BatchSummaryTreeComponent
+  ],
   templateUrl: './batch.component.html',
   styleUrl: './batch.component.css'
 })

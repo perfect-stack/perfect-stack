@@ -1,0 +1,95 @@
+@if (isRawString) {
+  <span class="batch-summary-raw">{{ rawStringValue }}</span>
+}
+
+@if (parsedData) {
+  <div class="batch-summary-tree">
+
+    @if (depth === 0 && complexEntries.length > 1) {
+      <div class="batch-summary-controls mb-1">
+        <button type="button" class="btn btn-link btn-xs p-0 me-2 text-decoration-none text-muted" (click)="expandAll()">Expand all</button>
+        <button type="button" class="btn btn-link btn-xs p-0 text-decoration-none text-muted" (click)="collapseAll()">Collapse all</button>
+      </div>
+    }
+
+    @if (scalarEntries.length > 0) {
+      <div class="batch-summary-scalars">
+        @for (entry of scalarEntries; track entry.key) {
+          <div class="batch-summary-row">
+            <span class="batch-summary-key">{{ entry.label }}:</span>
+            <span class="batch-summary-value">{{ formatValue(entry.value, entry.key) }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    @if (complexEntries.length > 0) {
+      <div class="batch-summary-complexes" [class.mt-1]="scalarEntries.length > 0">
+        @for (entry of complexEntries; track entry.key) {
+          <div class="batch-summary-node">
+            @if (entry.itemCount === 0) {
+              <div class="batch-summary-empty-node">
+                <span class="batch-summary-key">{{ entry.label }}:</span>
+                <span class="text-muted fst-italic small ms-1">(empty)</span>
+              </div>
+            } @else {
+              <div class="batch-summary-node-header">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-link p-0 text-decoration-none batch-toggle-btn"
+                  (click)="toggle(entry.key)"
+                  [attr.aria-expanded]="isExpanded(entry.key)">
+                  <span class="batch-toggle-icon">{{ isExpanded(entry.key) ? '▾' : '▸' }}</span>
+                  <span class="batch-summary-key ms-1">{{ entry.label }}</span>
+                  <span class="badge rounded-pill bg-light text-secondary border ms-1 count-badge">
+                    {{ entry.itemCount }} {{ entry.isArray ? (entry.itemCount === 1 ? 'item' : 'items') : (entry.itemCount === 1 ? 'field' : 'fields') }}
+                  </span>
+                </button>
+              </div>
+
+              @if (isExpanded(entry.key)) {
+                <div class="batch-summary-children ps-2 ms-2 border-start">
+                  <lib-batch-summary-tree [summary]="entry.value" [depth]="depth + 1"></lib-batch-summary-tree>
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (arrayItems.length > 0) {
+      <div class="batch-summary-array">
+        @for (item of arrayItems; track $index) {
+          <div class="batch-summary-array-item">
+            @if (isPrimitive(item)) {
+              <span class="batch-summary-value">{{ formatValue(item) }}</span>
+            } @else {
+              <div class="batch-summary-node-header">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-link p-0 text-decoration-none batch-toggle-btn"
+                  (click)="toggle('item_' + $index)"
+                  [attr.aria-expanded]="isExpanded('item_' + $index)">
+                  <span class="batch-toggle-icon">{{ isExpanded('item_' + $index) ? '▾' : '▸' }}</span>
+                  <span class="batch-summary-key ms-1">Item {{ $index + 1 }}</span>
+                </button>
+              </div>
+
+              @if (isExpanded('item_' + $index)) {
+                <div class="batch-summary-children ps-2 ms-2 border-start">
+                  <lib-batch-summary-tree [summary]="item" [depth]="depth + 1"></lib-batch-summary-tree>
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (scalarEntries.length === 0 && complexEntries.length === 0 && arrayItems.length === 0) {
+      <span class="text-muted small fst-italic">—</span>
+    }
+
+  </div>
+}

@@ -1,0 +1,11 @@
+.batch-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.batch-summary-cell {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-height: 320px;
+  overflow-y: auto;
+}

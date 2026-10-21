@@ -5,14 +5,14 @@
 
       <h1>Batch Jobs</h1>
 
-      <table class="table mt-4 align-middle">
+      <table class="table mt-4 align-middle batch-table">
         <thead>
           <th style="width: 14%;">Job Name</th>
-          <th style="width: 12%;">Last Run</th>
+          <th style="width: 13%;">Last Run</th>
           <th style="width: 8%;">Duration</th>
-          <th style="width: 24%;">Summary</th>
-          <th style="width: 22%;">Progress</th>
-          <th style="width: 20%;">Execute</th>
+          <th style="width: 32%;">Last Result Summary</th>
+          <th style="width: 18%;">Progress</th>
+          <th style="width: 15%;">Execute</th>
         </thead>
         <tbody>
           @for (job of batchJobs; track job) {
@@ -55,7 +55,7 @@
                   <span class="text-muted small">-</span>
                 }
               </td>
-              <td>
+              <td class="batch-summary-cell">
                 @if (job.name === 'db_snapshot' && job.summary) {
                   <div>
                     <table class="small">
@@ -84,17 +84,15 @@
                 @if (job.name !== 'db_snapshot') {
                   <div>
                     @if (job.lastJob?.result_summary) {
-                      <div>
-                        <span class="fw-semibold">Last Result:</span> {{formatResultSummary(job.lastJob?.result_summary)}}
-                      </div>
+                      <lib-batch-summary-tree [summary]="job.lastJob?.result_summary"></lib-batch-summary-tree>
                     }
                     @if (job.summary?.rowCount !== undefined) {
-                      <div class="text-muted small">
+                      <div class="text-muted small" [class.mt-1]="job.lastJob?.result_summary">
                         Pending: {{job.summary.rowCount}}
                       </div>
                     }
                     @if (job.summary?.remainingCount !== undefined) {
-                      <div class="text-muted small">
+                      <div class="text-muted small" [class.mt-1]="job.lastJob?.result_summary || job.summary?.rowCount !== undefined">
                         Remaining: {{job.summary.remainingCount}}
                       </div>
                     }
