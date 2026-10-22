@@ -1,0 +1,52 @@
+.enumeration-options-control {
+  min-height: 2.25rem;
+}
+
+.options-container {
+  min-height: 1.75rem;
+}
+
+.option-badge {
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.2;
+  max-width: 100%;
+}
+
+.option-label {
+  display: inline-block;
+  max-width: 250px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 1;
+  color: #6c757d;
+  transition: color 0.15s ease-in-out, opacity 0.15s ease-in-out;
+}
+
+.btn-icon:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-icon:not(:disabled):hover {
+  color: #0d6efd;
+}
+
+.remove-btn:not(:disabled):hover .icon-btn {
+  color: #dc3545 !important;
+  opacity: 0.85;
+}
+
+.icon-btn {
+  font-size: 0.95rem !important;
+  line-height: 1;
+}

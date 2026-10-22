@@ -1,0 +1,85 @@
+<div class="enumeration-options-control" [attr.data-testid]="'enum-options-' + name">
+  @if (mode !== 'view') {
+    <!-- Options List with Reorder and Delete -->
+    <div class="options-container d-flex flex-wrap align-items-center gap-1 mb-2">
+      @for (opt of optionsList; track opt; let i = $index) {
+        <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2 option-badge" [attr.data-testid]="'option-item-' + i">
+          @if (!disabled) {
+            <button
+              type="button"
+              class="btn-icon reorder-btn"
+              [disabled]="i === 0"
+              (click)="moveOption(i, -1)"
+              title="Move earlier"
+              [attr.data-testid]="'btn-move-left-' + i">
+              <span class="material-symbols-outlined icon-btn">chevron_left</span>
+            </button>
+          }
+
+          <span class="option-label text-truncate" [title]="opt">{{ opt }}</span>
+
+          @if (!disabled) {
+            <button
+              type="button"
+              class="btn-icon reorder-btn"
+              [disabled]="i === optionsList.length - 1"
+              (click)="moveOption(i, 1)"
+              title="Move later"
+              [attr.data-testid]="'btn-move-right-' + i">
+              <span class="material-symbols-outlined icon-btn">chevron_right</span>
+            </button>
+            <button
+              type="button"
+              class="btn-icon remove-btn ms-1"
+              (click)="removeOption(i)"
+              title="Remove {{ opt }}"
+              [attr.data-testid]="'btn-remove-' + i">
+              <span class="material-symbols-outlined icon-btn text-danger">close</span>
+            </button>
+          }
+        </span>
+      }
+
+      @if (optionsList.length === 0) {
+        <span class="text-muted small fst-italic">No options defined</span>
+      }
+    </div>
+
+    <!-- Add Option Input Group -->
+    @if (!disabled) {
+      <div class="input-group input-group-sm">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Add option (or paste 'A | B | C')..."
+          [(ngModel)]="newOptionText"
+          (keydown.enter)="$event.preventDefault(); addOption()"
+          [attr.data-testid]="'input-add-option'"
+        />
+        <button
+          type="button"
+          class="btn btn-outline-primary d-inline-flex align-items-center gap-1"
+          [disabled]="!newOptionText || !newOptionText.trim()"
+          (click)="addOption()"
+          [attr.data-testid]="'btn-add-option'">
+          <span class="material-symbols-outlined fs-6">add</span>
+          <span>Add</span>
+        </button>
+      </div>
+    }
+
+    @if (hasErrors() && cell?.attribute) {
+      <lib-validation-result-label [attribute]="cell!.attribute" [validationResult]="validationResult"></lib-validation-result-label>
+    }
+  } @else {
+    <!-- Read-only View Mode -->
+    <div class="d-flex flex-wrap align-items-center gap-1" [attr.data-testid]="'view-' + name">
+      @for (opt of optionsList; track opt) {
+        <span class="badge bg-light text-dark border py-1 px-2">{{ opt }}</span>
+      }
+      @if (optionsList.length === 0) {
+        <span class="text-muted small">&mdash;</span>
+      }
+    </div>
+  }
+</div>

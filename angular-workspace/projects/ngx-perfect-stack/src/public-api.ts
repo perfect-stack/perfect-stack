@@ -36,4 +36,5 @@ export * from './lib/data/controller/layout/controls/geometry-control/geometry-c
 export * from './lib/data/controller/layout/controls/media-data-provider';
 export * from './lib/data/controller/layout/controls/default-media-data-provider.service';
 export * from './lib/data/controller/layout/controls/url-field-control/url-field-control.component';
+export * from './lib/data/controller/layout/controls/enumeration-options-control/enumeration-options-control.component';
 export * from './lib/meta/batch/batch-summary-tree/batch-summary-tree.component';

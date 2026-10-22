@@ -59,6 +59,11 @@
             <lib-enumeration-edit-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-edit-control>
           </ng-container>
         }
+        @case ('EnumerationOptions') {
+          <ng-container [formGroup]="formGroup">
+            <lib-enumeration-options-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-options-control>
+          </ng-container>
+        }
         @case ('Url') {
           <ng-container [formGroup]="formGroup">
             <lib-url-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-url-field-control>
@@ -79,6 +84,9 @@
         @switch (cell.component) {
           @case ('EnumerationEdit') {
             <lib-enumeration-edit-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-edit-control>
+          }
+          @case ('EnumerationOptions') {
+            <lib-enumeration-options-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-options-control>
           }
           @default {
             <lib-enumeration-control [mode]="mode" [cell]="cell" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>

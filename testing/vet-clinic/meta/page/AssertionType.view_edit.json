@@ -62,7 +62,8 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "assertion_value_enum_options"
+            "attributeName": "assertion_value_enum_options",
+            "component": "EnumerationOptions"
           }
         ],
         [
