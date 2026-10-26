@@ -447,31 +447,38 @@ export class QueryService {
 
     let label =
       entity.label ||
-      entity.method_name ||
-      entity.protocol_name ||
-      entity.activity_template_name ||
-      entity.assertion_type_name ||
-      entity.scientific_name ||
       entity.name ||
       entity.title;
 
     if (!label && metaEntity) {
-      const textAttr = metaEntity.attributes.find(
-        (a) =>
-          a.type === AttributeType.Text ||
-          a.type === AttributeType.Identifier,
+      // Find the primary search/display attribute configured with typeaheadSearch, or the first Text attribute
+      const typeaheadAttr = metaEntity.attributes.find(
+        (a) => a.typeaheadSearch && a.typeaheadSearch.length > 0,
       );
-      if (textAttr && entity[textAttr.name]) {
-        label = entity[textAttr.name];
+      if (typeaheadAttr && entity[typeaheadAttr.name]) {
+        label = entity[typeaheadAttr.name];
+      } else {
+        const textAttr = metaEntity.attributes.find(
+          (a) => a.type === AttributeType.Text,
+        );
+        if (textAttr && entity[textAttr.name]) {
+          label = entity[textAttr.name];
+        }
       }
     }
+
     if (!label) {
-      label = entity.id || 'Unnamed Node';
+      throw new Error(
+        'Undefined Node Label definition: Unable to determine node label for entity "' +
+          entityName +
+          '" (id: ' +
+          (entity.id || 'unknown') +
+          '). Please define a text display attribute in its MetaEntity definition.',
+      );
     }
 
     const secondaryLabel =
       entity.secondaryLabel ||
-      entity.common_name ||
       entity.code ||
       null;
 

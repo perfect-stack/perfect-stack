@@ -503,21 +503,14 @@ export class TreeToolComponent implements OnInit {
   getNodeLabel(node: any): string {
     if (!node) return '';
     const config = this.getNodeConfig(node);
-    if (config?.displayAttribute && node[config.displayAttribute]) {
-      return node[config.displayAttribute];
-    }
-    if (this.treeTool?.displayAttribute && node[this.treeTool.displayAttribute]) {
-      return node[this.treeTool.displayAttribute];
+    const displayAttr = config?.displayAttribute || this.treeTool?.displayAttribute;
+    if (displayAttr && node[displayAttr] !== undefined && node[displayAttr] !== null) {
+      return String(node[displayAttr]);
     }
     if (node['label']) return node['label'];
-    if (node['method_name']) return node['method_name'];
-    if (node['protocol_name']) return node['protocol_name'];
-    if (node['activity_template_name']) return node['activity_template_name'];
-    if (node['assertion_type_name']) return node['assertion_type_name'];
-    if (node['scientific_name']) return node['scientific_name'];
     if (node['name']) return node['name'];
     if (node['title']) return node['title'];
-    return node['id'] || 'Unnamed Node';
+    return 'Undefined Node Label definition';
   }
 
   getSecondaryLabel(node: any): string | null {
