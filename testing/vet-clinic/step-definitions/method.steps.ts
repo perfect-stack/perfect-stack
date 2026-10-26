@@ -2,13 +2,13 @@ import { When, Then } from '@cucumber/cucumber';
 import { expect } from 'chai';
 import { UIWorld } from '../support/world';
 
-When('I click on the protocol row for {string}', async function (this: UIWorld, name: string) {
+When('I click on the method row for {string}', async function (this: UIWorld, name: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
 
   const row = this.page.locator(`table tbody tr:has-text("${name}")`).first();
   await row.waitFor({ state: 'visible', timeout: 30000 });
   await row.click();
-  await this.page.waitForURL(/\/data\/Protocol\/view/, { timeout: 15000 });
+  await this.page.waitForURL(/\/data\/Method\/view/, { timeout: 15000 });
 });
 
 When('I click on the activity template row for {string}', async function (this: UIWorld, name: string) {

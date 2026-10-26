@@ -1,14 +1,14 @@
 {
-  "name": "Protocol.view_edit",
-  "title": "Protocol Details",
+  "name": "Method.view_edit",
+  "title": "Method Details",
   "type": "view_edit",
   "layoutStyle": "Stockholm",
   "dataQueryList": [
     {
-      "dataName": "protocol",
+      "dataName": "method",
       "resultCardinality": "QueryOne",
       "queryType": "Entity",
-      "queryName": "Protocol",
+      "queryName": "Method",
       "fieldName": "id",
       "parameter": "id"
     }
@@ -16,7 +16,7 @@
   "controllers": [],
   "templates": [
     {
-      "metaEntityName": "Protocol",
+      "metaEntityName": "Method",
       "type": "header",
       "cells": [
         [
@@ -29,34 +29,34 @@
               "styles": "",
               "label": "",
               "modes": "",
-              "nameAttributes": "protocol_name"
+              "nameAttributes": "method_name"
             }
           }
         ]
       ],
-      "templateHeading": "Protocol Header",
-      "binding": "protocol"
+      "templateHeading": "Method Header",
+      "binding": "method"
     },
     {
-      "metaEntityName": "Protocol",
+      "metaEntityName": "Method",
       "type": "form",
       "cells": [
         [
           {
             "width": "12",
             "height": "1",
-            "attributeName": "protocol_name",
+            "attributeName": "method_name",
             "attribute": {
-              "name": "protocol_name",
-              "label": "Protocol name",
-              "description": "Name of the protocol",
+              "name": "method_name",
+              "label": "Method name",
+              "description": "Name of the method",
               "type": "Text",
               "visibility": "Required",
               "comparisonField": "",
               "comparisonOperator": "InsensitiveLike",
               "relationshipTarget": "",
               "typeaheadSearch": [
-                "protocol_name"
+                "method_name"
               ],
               "unitOfMeasure": "",
               "scale": "",
@@ -132,10 +132,10 @@
           {
             "width": "8",
             "height": "5",
-            "attributeName": "protocol_notes",
+            "attributeName": "method_notes",
             "attribute": {
-              "name": "protocol_notes",
-              "label": "Protocol notes",
+              "name": "method_notes",
+              "label": "Method notes",
               "description": "",
               "type": "Html",
               "visibility": "Visible",
@@ -151,8 +151,8 @@
           }
         ]
       ],
-      "templateHeading": "Protocol Details",
-      "binding": "protocol",
+      "templateHeading": "Method Details",
+      "binding": "method",
       "showSideHeadings": "Disabled"
     },
     {
@@ -209,15 +209,15 @@
           }
         ]
       ],
-      "metaEntityName": "Protocol",
+      "metaEntityName": "Method",
       "type": "form",
       "locations": {},
       "templateHeading": "Tree structure",
-      "binding": "protocol",
+      "binding": "method",
       "showSideHeadings": "Disabled"
     },
     {
-      "metaEntityName": "Protocol",
+      "metaEntityName": "Method",
       "type": "form",
       "showSideHeadings": "Disabled",
       "cells": [
@@ -249,7 +249,7 @@
             "attribute": {
               "name": "activity_templates",
               "label": "Activity templates",
-              "description": "Activity templates associated with this protocol",
+              "description": "Activity templates associated with this method",
               "type": "OneToMany",
               "visibility": "Visible",
               "comparisonField": "",
@@ -264,7 +264,7 @@
         ]
       ],
       "templateHeading": "Activity Templates",
-      "binding": "protocol"
+      "binding": "method"
     }
   ]
 }

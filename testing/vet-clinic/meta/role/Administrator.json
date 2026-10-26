@@ -2,7 +2,7 @@
   "name": "Administrator",
   "group": "Administrator,admin",
   "inherits": "",
-  "description": "<p>Full access to Vet Clinic administration, Pet, Owner, Clinic, Species, Protocol, ActivityTemplate, and AssertionType records</p>",
+  "description": "<p>Full access to Vet Clinic administration, Pet, Owner, Clinic, Species, Method, ActivityTemplate, and AssertionType records</p>",
   "permissions": [
     {
       "action": "Read",
@@ -30,7 +30,7 @@
     },
     {
       "action": "Edit",
-      "subject": "Protocol"
+      "subject": "Method"
     },
     {
       "action": "Edit",
@@ -62,7 +62,7 @@
     },
     {
       "action": "Delete",
-      "subject": "Protocol"
+      "subject": "Method"
     },
     {
       "action": "Delete",

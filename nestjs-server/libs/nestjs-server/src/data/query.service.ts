@@ -103,7 +103,7 @@ export class QueryService {
     const includes: any[] = [];
 
     for (const attr of metaEntity.attributes) {
-      // Rule 1: ManyToOne and OneToOne references (e.g. parent_event, location, protocol)
+      // Rule 1: ManyToOne and OneToOne references (e.g. parent_event, location, method, protocol)
       // Only fetch 1 level so display label is available. Never recurse into children.
       if (
         attr.type === AttributeType.ManyToOne ||
@@ -447,6 +447,7 @@ export class QueryService {
 
     let label =
       entity.label ||
+      entity.method_name ||
       entity.protocol_name ||
       entity.activity_template_name ||
       entity.assertion_type_name ||

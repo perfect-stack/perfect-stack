@@ -510,6 +510,7 @@ export class TreeToolComponent implements OnInit {
       return node[this.treeTool.displayAttribute];
     }
     if (node['label']) return node['label'];
+    if (node['method_name']) return node['method_name'];
     if (node['protocol_name']) return node['protocol_name'];
     if (node['activity_template_name']) return node['activity_template_name'];
     if (node['assertion_type_name']) return node['assertion_type_name'];

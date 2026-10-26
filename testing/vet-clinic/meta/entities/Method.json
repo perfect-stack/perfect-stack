@@ -1,6 +1,6 @@
 {
-  "name": "Protocol",
-  "pluralName": "Protocols",
+  "name": "Method",
+  "pluralName": "Methods",
   "icon": "",
   "type": "Database",
   "rootNode": true,
@@ -11,7 +11,7 @@
     {
       "name": "id",
       "label": "Id",
-      "description": "Primary key identifier for the protocol",
+      "description": "Primary key identifier for the method",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Identifier",
@@ -23,9 +23,9 @@
       "rules": []
     },
     {
-      "name": "protocol_name",
-      "label": "Protocol name",
-      "description": "Name of the protocol",
+      "name": "method_name",
+      "label": "Method name",
+      "description": "Name of the method",
       "unitOfMeasure": "",
       "scale": "",
       "type": "Text",
@@ -34,7 +34,7 @@
       "comparisonOperator": "InsensitiveLike",
       "relationshipTarget": "",
       "typeaheadSearch": [
-        "protocol_name"
+        "method_name"
       ],
       "rules": [
         {
@@ -46,7 +46,7 @@
     {
       "name": "activity_templates",
       "label": "Activity templates",
-      "description": "Activity templates associated with this protocol",
+      "description": "Activity templates associated with this method",
       "unitOfMeasure": "",
       "scale": "",
       "type": "OneToMany",
@@ -100,8 +100,8 @@
       "rules": []
     },
     {
-      "name": "protocol_notes",
-      "label": "Protocol notes",
+      "name": "method_notes",
+      "label": "Method notes",
       "description": "",
       "unitOfMeasure": "",
       "scale": "",

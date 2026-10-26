@@ -105,7 +105,7 @@ Defines the schema, attributes, constraints, and relationships of a domain objec
 Defines how data is presented and edited on screen. Common page types include:
 - `.search.json`: Search criteria form and paginated results table (e.g. [`Pet.search.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.search.json)).
 - `.view_edit.json`: View/edit form layout with header, sections, and child panels (e.g. [`Pet.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.view_edit.json), [`Clinic.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Clinic.view_edit.json)).
-- `.tree.json`: Recursive tree hierarchy view (e.g. [`Protocol.tree.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Protocol.tree.json)).
+- `.tree.json`: Recursive tree hierarchy view (e.g. [`Method.tree.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Method.tree.json)).
 
 A Meta Page is organized into:
 - **`dataQueryList`**: Defines what queries fetch the page's data (e.g. query `Pet` by `id` from route parameter).
@@ -115,7 +115,7 @@ A Meta Page is organized into:
 
 #### 3. Meta Menu (`meta/menu/MetaMenu.json`)
 Defines the top application navigation bar, dropdown menus, and links.
-- Items configure labels and route paths (e.g. `/data/Pet/search`, `/data/Protocol/tree`, `/meta/entity/search`).
+- Items configure labels and route paths (e.g. `/data/Pet/search`, `/data/Method/tree`, `/meta/entity/search`).
 - Items can be restricted by role permissions.
 
 *Example: Inspect [`MetaMenu.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/menu/MetaMenu.json).*
@@ -731,7 +731,7 @@ Whenever you are unsure of the correct syntax for a layout, relationship, or rul
 > It serves as the official, canonical testbed demonstrating:
 > - Complex entity relationships: [`Pet.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/entities/Pet.json), [`Owner.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/entities/Owner.json).
 > - Rich page layouts & controls: [`Pet.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.view_edit.json), [`Pet.search.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Pet.search.json), [`Clinic.view_edit.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Clinic.view_edit.json).
-> - Recursive hierarchy trees: [`Protocol.tree.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Protocol.tree.json).
+> - Recursive hierarchy trees: [`Method.tree.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/page/Method.tree.json).
 > - Navigation menus: [`MetaMenu.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/menu/MetaMenu.json).
 > - Security role definitions: [`Administrator.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/role/Administrator.json).
 

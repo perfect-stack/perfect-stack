@@ -71,19 +71,19 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "protocol",
+            "attributeName": "method",
             "component": "Select",
             "attribute": {
-              "name": "protocol",
-              "label": "Protocol",
-              "description": "Protocol this activity template belongs to",
+              "name": "method",
+              "label": "Method",
+              "description": "Method this activity template belongs to",
               "type": "ManyToOne",
               "visibility": "Visible",
               "comparisonField": "",
               "comparisonOperator": "Equals",
-              "relationshipTarget": "Protocol",
+              "relationshipTarget": "Method",
               "typeaheadSearch": [
-                "protocol_name"
+                "method_name"
               ],
               "unitOfMeasure": "",
               "scale": "",

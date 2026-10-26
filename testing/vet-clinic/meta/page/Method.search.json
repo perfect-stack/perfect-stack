@@ -1,6 +1,6 @@
 {
-  "name": "Protocol.search",
-  "title": "Protocol Search",
+  "name": "Method.search",
+  "title": "Method Search",
   "type": "search",
   "layoutStyle": "",
   "dataQueryList": [],
@@ -12,11 +12,11 @@
           {
             "width": "12",
             "height": "1",
-            "attributeName": "protocol_name"
+            "attributeName": "method_name"
           }
         ]
       ],
-      "metaEntityName": "Protocol",
+      "metaEntityName": "Method",
       "type": "form"
     },
     {
@@ -25,7 +25,7 @@
           {
             "width": "12",
             "height": "1",
-            "attributeName": "protocol_name"
+            "attributeName": "method_name"
           }
         ],
         [
@@ -39,9 +39,9 @@
           }
         ]
       ],
-      "metaEntityName": "Protocol",
+      "metaEntityName": "Method",
       "type": "table",
-      "orderByName": "protocol_name",
+      "orderByName": "method_name",
       "orderByDir": "ASC"
     }
   ]

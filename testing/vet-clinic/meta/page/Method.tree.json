@@ -1,13 +1,13 @@
 {
-  "name": "Protocol.tree",
-  "title": "Protocol Tree",
+  "name": "Method.tree",
+  "title": "Method Tree",
   "type": "view_edit",
   "layoutStyle": "Venice",
   "dataQueryList": [],
   "controllers": [],
   "templates": [
     {
-      "metaEntityName": "Protocol",
+      "metaEntityName": "Method",
       "type": "header",
       "locations": {},
       "cells": [
@@ -19,18 +19,18 @@
               "type": "PageTitle",
               "containerStyles": "",
               "styles": "",
-              "label": "Protocol Tree",
+              "label": "Method Tree",
               "modes": "",
               "nameAttributes": ""
             }
           }
         ]
       ],
-      "templateHeading": "Protocol Tree Header",
+      "templateHeading": "Method Tree Header",
       "binding": ""
     },
     {
-      "metaEntityName": "Protocol",
+      "metaEntityName": "Method",
       "type": "form",
       "locations": {},
       "cells": [
@@ -41,21 +41,21 @@
             "tool": {
               "type": "Tree",
               "containerStyles": "",
-              "metaEntityName": "Protocol",
+              "metaEntityName": "Method",
               "treeType": "EntityChain",
               "masterDetail": true,
               "splitRatio": 4,
               "initialDepth": 3,
               "initialExpandDepth": 1,
               "nodeTypes": {
-                "Protocol": {
-                  "metaEntityName": "Protocol",
-                  "displayAttribute": "protocol_name",
-                  "badge": "Protocol",
+                "Method": {
+                  "metaEntityName": "Method",
+                  "displayAttribute": "method_name",
+                  "badge": "Method",
                   "badgeColor": "primary",
                   "icon": "folder",
-                  "route": "/data/Protocol/view_edit/${id}",
-                  "pageView": "Protocol.view_edit",
+                  "route": "/data/Method/view_edit/",
+                  "pageView": "Method.view_edit",
                   "childRelationships": [
                     "activity_templates"
                   ]
@@ -87,7 +87,7 @@
           }
         ]
       ],
-      "templateHeading": "Protocol Hierarchy",
+      "templateHeading": "Method Hierarchy",
       "binding": ""
     }
   ]

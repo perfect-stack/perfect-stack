@@ -44,18 +44,18 @@
       ]
     },
     {
-      "name": "protocol",
-      "label": "Protocol",
-      "description": "Protocol this activity template belongs to",
+      "name": "method",
+      "label": "Method",
+      "description": "Method this activity template belongs to",
       "unitOfMeasure": "",
       "scale": "",
       "type": "ManyToOne",
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "Equals",
-      "relationshipTarget": "Protocol",
+      "relationshipTarget": "Method",
       "typeaheadSearch": [
-        "protocol_name"
+        "method_name"
       ],
       "rules": []
     },

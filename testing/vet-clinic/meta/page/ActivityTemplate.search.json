@@ -17,7 +17,7 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "protocol",
+            "attributeName": "method",
             "component": "Select"
           }
         ]
@@ -36,7 +36,7 @@
           {
             "width": "6",
             "height": "1",
-            "attributeName": "protocol"
+            "attributeName": "method"
           }
         ],
         [

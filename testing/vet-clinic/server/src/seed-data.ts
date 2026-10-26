@@ -7,8 +7,8 @@ import { DataService, MapService, OrmService } from '@perfect-stack/nestjs-serve
 import {
   SeedAssertionType,
   SEED_ASSERTION_TYPES,
-  seedProtocolsAndAssertions,
-} from './protocol-seed-data';
+  seedMethodsAndAssertions,
+} from './method-seed-data';
 
 export { SeedAssertionType, SEED_ASSERTION_TYPES };
 
@@ -546,8 +546,8 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
     }
   }
 
-  // 6. Seed Protocols, ActivityTemplates, and AssertionTypes
-  await seedProtocolsAndAssertions(app);
+  // 6. Seed Methods, ActivityTemplates, and AssertionTypes
+  await seedMethodsAndAssertions(app);
 
   logger.log('Initial seed data verified successfully.');
 }

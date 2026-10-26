@@ -1,14 +1,14 @@
-Feature: Protocol, Activity Template, and Assertion Type Hierarchy
+Feature: Method, Activity Template, and Assertion Type Hierarchy
   As a field researcher or clinic administrator
-  I want to view protocols, activity templates, and assertion types
+  I want to view methods, activity templates, and assertion types
   So that I can verify the nested hierarchical relationships and navigation
 
-  @protocol @regression
-  Scenario: Search Protocols and view nested Activity Templates in view and edit mode
-    When I navigate to "/data/Protocol/search"
+  @method @regression
+  Scenario: Search Methods and view nested Activity Templates in view and edit mode
+    When I navigate to "/data/Method/search"
     Then I should see "Bird Capture" in the search results table
-    When I click on the protocol row for "Bird Capture"
-    Then I should see "Bird Capture" in the "protocol_name" field
+    When I click on the method row for "Bird Capture"
+    Then I should see "Bird Capture" in the "method_name" field
     And I should see the nested one-to-many "activity_templates" table
     And the nested one-to-many "activity_templates" table should have exactly 1 instance
     And the nested one-to-many "activity_templates" table should have 6 rows
@@ -35,16 +35,16 @@ Feature: Protocol, Activity Template, and Assertion Type Hierarchy
     When I navigate to "/data/AssertionType/search"
     Then I should see "Capture technique" in the search results table
 
-  @protocol-tree @regression
-  Scenario: View Protocol Hierarchy Tree and inspect Master-Detail Views
-    When I navigate to "/data/Protocol/tree"
+  @method-tree @regression
+  Scenario: View Method Hierarchy Tree and inspect Master-Detail Views
+    When I navigate to "/data/Method/tree"
     Then I should see the tree node "Bird Capture"
-    And I should see the tree badge "Protocol" on node "Bird Capture" with color class "text-bg-primary"
+    And I should see the tree badge "Method" on node "Bird Capture" with color class "text-bg-primary"
     And I should see the tree node "Capture detail"
     And I should see the tree badge "Activity" on node "Capture detail" with color class "text-bg-success"
     And I should not see the tree node "Capture technique"
     And I should see the detail panel header "Bird Capture"
-    And I should see the edit node button for "Protocol"
+    And I should see the edit node button for "Method"
     And I should see the nested one-to-many "activity_templates" table
     And I should see "Capture detail" in the "activity_templates" table
     When I click the tree node "Capture detail"
@@ -58,9 +58,9 @@ Feature: Protocol, Activity Template, and Assertion Type Hierarchy
     And I should see the detail panel header "Capture technique"
     And I should see the edit node button for "AssertionType"
 
-  @protocol-tree-edit @regression
+  @method-tree-edit @regression
   Scenario: Edit tree node in place and prompt on unsaved changes
-    When I navigate to "/data/Protocol/tree"
+    When I navigate to "/data/Method/tree"
     Then I should see the tree node "Bird Capture"
     When I expand the tree node "Capture detail"
     And I click the tree node "Capture technique"

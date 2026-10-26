@@ -72,14 +72,14 @@
           "roles": []
         },
         {
-          "label": "Protocols",
-          "route": "/data/Protocol/search",
+          "label": "Methods",
+          "route": "/data/Method/search",
           "editable": true,
           "roles": []
         },
         {
-          "label": "Protocol Tree",
-          "route": "/data/Protocol/tree",
+          "label": "Method Tree",
+          "route": "/data/Method/tree",
           "editable": true,
           "roles": []
         },

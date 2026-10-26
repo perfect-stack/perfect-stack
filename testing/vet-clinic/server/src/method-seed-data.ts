@@ -22,8 +22,8 @@ export interface SeedActivityTemplate {
   assertion_types: SeedAssertionType[];
 }
 
-export interface SeedProtocol {
-  protocol_name: string;
+export interface SeedMethod {
+  method_name: string;
   activity_templates: SeedActivityTemplate[];
 }
 
@@ -124,9 +124,9 @@ export const GENERAL_SEED_ASSERTION_TYPES: SeedAssertionType[] = [
   },
 ];
 
-export const SEED_PROTOCOLS: SeedProtocol[] = [
+export const SEED_METHODS: SeedMethod[] = [
   {
-    protocol_name: "Bird Capture",
+    method_name: "Bird Capture",
     activity_templates: [
       {
         activity_template_name: "Capture detail",
@@ -258,7 +258,7 @@ export const SEED_PROTOCOLS: SeedProtocol[] = [
     ],
   },
   {
-    protocol_name: "Bird Sighting",
+    method_name: "Bird Sighting",
     activity_templates: [
       {
         activity_template_name: "Bird Sighting detail",
@@ -290,7 +290,7 @@ export const SEED_PROTOCOLS: SeedProtocol[] = [
     ],
   },
   {
-    protocol_name: "Bird Nest Monitoring",
+    method_name: "Bird Nest Monitoring",
     activity_templates: [
       {
         activity_template_name: "Nest Visit",
@@ -368,7 +368,7 @@ export const SEED_PROTOCOLS: SeedProtocol[] = [
     ],
   },
   {
-    protocol_name: "Five Minute Bird Count (5MBC)",
+    method_name: "Five Minute Bird Count (5MBC)",
     activity_templates: [
       {
         activity_template_name: "Count Detection Detail",
@@ -501,7 +501,7 @@ export const SEED_PROTOCOLS: SeedProtocol[] = [
     ],
   },
   {
-    protocol_name: "Bird Mist Netting",
+    method_name: "Bird Mist Netting",
     activity_templates: [
       {
         activity_template_name: "Net Deployment & Extraction",
@@ -709,13 +709,13 @@ export const SEED_PROTOCOLS: SeedProtocol[] = [
 // Helper to gather all seed assertion types
 export const SEED_ASSERTION_TYPES: SeedAssertionType[] = [
   ...GENERAL_SEED_ASSERTION_TYPES,
-  ...SEED_PROTOCOLS.flatMap((p) =>
-    p.activity_templates.flatMap((a) => a.assertion_types),
+  ...SEED_METHODS.flatMap((m) =>
+    m.activity_templates.flatMap((a) => a.assertion_types),
   ),
 ];
 
-export async function seedProtocolsAndAssertions(app: INestApplicationContext): Promise<void> {
-  const logger = new Logger('ProtocolAssertionSeed');
+export async function seedMethodsAndAssertions(app: INestApplicationContext): Promise<void> {
+  const logger = new Logger('MethodAssertionSeed');
   const ormService = app.get(OrmService);
   const dataService = app.get(DataService);
 
@@ -745,11 +745,11 @@ export async function seedProtocolsAndAssertions(app: INestApplicationContext): 
   try {
     const [actCols]: any = await ormService.sequelize.query('PRAGMA table_info(ActivityTemplate)');
     const actColNames = Array.isArray(actCols) ? actCols.map((c: any) => c.name) : [];
-    if (!actColNames.includes('protocol_id')) {
-      await ormService.sequelize.query('ALTER TABLE ActivityTemplate ADD COLUMN protocol_id VARCHAR(255)');
+    if (!actColNames.includes('method_id')) {
+      await ormService.sequelize.query('ALTER TABLE ActivityTemplate ADD COLUMN method_id VARCHAR(255)');
     }
-    if (!actColNames.includes('ProtocolId')) {
-      await ormService.sequelize.query('ALTER TABLE ActivityTemplate ADD COLUMN ProtocolId VARCHAR(255)');
+    if (!actColNames.includes('MethodId')) {
+      await ormService.sequelize.query('ALTER TABLE ActivityTemplate ADD COLUMN MethodId VARCHAR(255)');
     }
     if (!actColNames.includes('layout_style')) {
       await ormService.sequelize.query('ALTER TABLE ActivityTemplate ADD COLUMN layout_style VARCHAR(255)');
@@ -768,31 +768,31 @@ export async function seedProtocolsAndAssertions(app: INestApplicationContext): 
     logger.warn(`Could not verify Occurrence columns: ${err.message}`);
   }
 
-  const protocolModel = ormService.sequelize.model('Protocol');
+  const methodModel = ormService.sequelize.model('Method');
   const activityTemplateModel = ormService.sequelize.model('ActivityTemplate');
   const assertionTypeModel = ormService.sequelize.model('AssertionType');
 
-  // 2. Seed Protocols, ActivityTemplates, and their AssertionTypes
-  for (const protoDef of SEED_PROTOCOLS) {
-    let protocolRecord: any = await protocolModel.findOne({
-      where: { protocol_name: protoDef.protocol_name },
+  // 2. Seed Methods, ActivityTemplates, and their AssertionTypes
+  for (const methodDef of SEED_METHODS) {
+    let methodRecord: any = await methodModel.findOne({
+      where: { method_name: methodDef.method_name },
     });
 
-    if (!protocolRecord) {
-      const saveRes = await dataService.save('Protocol', {
-        protocol_name: protoDef.protocol_name,
+    if (!methodRecord) {
+      const saveRes = await dataService.save('Method', {
+        method_name: methodDef.method_name,
       } as any);
-      protocolRecord = saveRes.entity;
-      logger.log(`Created Protocol: ${protoDef.protocol_name}`);
+      methodRecord = saveRes.entity;
+      logger.log(`Created Method: ${methodDef.method_name}`);
     } else {
-      protocolRecord = protocolRecord.get ? protocolRecord.get({ plain: true }) : protocolRecord;
+      methodRecord = methodRecord.get ? methodRecord.get({ plain: true }) : methodRecord;
     }
 
-    for (const actDef of protoDef.activity_templates) {
+    for (const actDef of methodDef.activity_templates) {
       let actRecord: any = await activityTemplateModel.findOne({
         where: {
           activity_template_name: actDef.activity_template_name,
-          protocol_id: protocolRecord.id,
+          method_id: methodRecord.id,
         },
       });
 
@@ -804,15 +804,15 @@ export async function seedProtocolsAndAssertions(app: INestApplicationContext): 
 
       const actPayload: any = {
         activity_template_name: actDef.activity_template_name,
-        protocol_id: protocolRecord.id,
-        ProtocolId: protocolRecord.id,
+        method_id: methodRecord.id,
+        MethodId: methodRecord.id,
         layout_style: actDef.layout_style ?? 'Card',
       };
 
       if (!actRecord) {
         const saveRes = await dataService.save('ActivityTemplate', actPayload);
         actRecord = saveRes.entity;
-        logger.log(`Created ActivityTemplate: ${actDef.activity_template_name} (${actPayload.layout_style}) in Protocol: ${protoDef.protocol_name}`);
+        logger.log(`Created ActivityTemplate: ${actDef.activity_template_name} (${actPayload.layout_style}) in Method: ${methodDef.method_name}`);
       } else {
         const act = actRecord.get ? actRecord.get({ plain: true }) : actRecord;
         await activityTemplateModel.update(actPayload, { where: { id: act.id } });
@@ -884,5 +884,5 @@ export async function seedProtocolsAndAssertions(app: INestApplicationContext): 
     }
   }
 
-  logger.log('Protocols, ActivityTemplates, and AssertionTypes seeded successfully.');
+  logger.log('Methods, ActivityTemplates, and AssertionTypes seeded successfully.');
 }
