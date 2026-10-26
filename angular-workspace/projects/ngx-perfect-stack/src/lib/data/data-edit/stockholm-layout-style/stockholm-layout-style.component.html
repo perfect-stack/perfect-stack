@@ -29,7 +29,7 @@
       }
       <!-- This row doesn't get the "template" class that the row above does so that it stretches full width -->
       @if (template.showSideHeadings === 'Disabled') {
-        <div>
+        <div class="template-full-width px-4 pt-4 pb-2">
           <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
         </div>
       }
