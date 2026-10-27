@@ -54,6 +54,11 @@
             <lib-enumeration-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
           </ng-container>
         }
+        @case ('PipeList') {
+          <ng-container [formGroup]="formGroup">
+            <lib-pipe-list-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-pipe-list-control>
+          </ng-container>
+        }
         @case ('EnumerationEdit') {
           <ng-container [formGroup]="formGroup">
             <lib-enumeration-edit-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-edit-control>
@@ -82,6 +87,9 @@
     @case ('Enumeration') {
       <ng-container [formGroup]="formGroup">
         @switch (cell.component) {
+          @case ('PipeList') {
+            <lib-pipe-list-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-pipe-list-control>
+          }
           @case ('EnumerationEdit') {
             <lib-enumeration-edit-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-edit-control>
           }
@@ -157,3 +165,4 @@
     }
   }
 }
+
