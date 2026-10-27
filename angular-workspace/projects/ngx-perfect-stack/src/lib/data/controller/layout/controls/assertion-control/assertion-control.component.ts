@@ -353,12 +353,22 @@ export class AssertionControlComponent implements OnInit, OnChanges {
     return Boolean((method && method.trim()) || (accuracy && accuracy.trim()) || (notes && notes.trim()));
   }
 
+  get isDeletable(): boolean {
+    if (this.mode !== "edit") {
+      return false;
+    }
+    // Card = deletable, Field = Not deletable
+    return this.resolvedLayoutStyle !== "Field";
+  }
+
   toggleDetails(): void {
     this.expanded = !this.expanded;
   }
 
   onDelete(): void {
-    this.delete.emit(this.index);
+    if (this.isDeletable) {
+      this.delete.emit(this.index);
+    }
   }
 
   parseEnumOptions(rawOptions?: string | null): string[] {

@@ -279,4 +279,57 @@ describe('AssertionControlComponent', () => {
     const inputEl = inputGroupEl?.querySelector('input[type="number"]');
     expect(inputEl).toBeTruthy();
   });
+
+  describe('isDeletable and delete button rules', () => {
+    it('should return isDeletable = false when layoutStyle is Field in edit mode', () => {
+      component.layoutStyle = 'Field';
+      component.mode = 'edit';
+      fixture.detectChanges();
+      expect(component.isDeletable).toBeFalse();
+
+      const rootEl: HTMLElement = fixture.nativeElement;
+      const deleteBtn = rootEl.querySelector('[data-testid="btn-delete-assertion"]');
+      expect(deleteBtn).toBeNull();
+    });
+
+    it('should not emit delete event if onDelete is called when layoutStyle is Field', () => {
+      component.layoutStyle = 'Field';
+      component.mode = 'edit';
+      fixture.detectChanges();
+      spyOn(component.delete, 'emit');
+      component.onDelete();
+      expect(component.delete.emit).not.toHaveBeenCalled();
+    });
+
+    it('should return isDeletable = true when layoutStyle is Card in edit mode', () => {
+      component.layoutStyle = 'Card';
+      component.mode = 'edit';
+      fixture.detectChanges();
+      expect(component.isDeletable).toBeTrue();
+
+      const rootEl: HTMLElement = fixture.nativeElement;
+      const deleteBtn = rootEl.querySelector('[data-testid="btn-delete-assertion"]');
+      expect(deleteBtn).not.toBeNull();
+    });
+
+    it('should emit delete event if onDelete is called when layoutStyle is Card in edit mode', () => {
+      component.layoutStyle = 'Card';
+      component.mode = 'edit';
+      fixture.detectChanges();
+      spyOn(component.delete, 'emit');
+      component.onDelete();
+      expect(component.delete.emit).toHaveBeenCalledWith(0);
+    });
+
+    it('should return isDeletable = false when mode is view even if layoutStyle is Card', () => {
+      component.layoutStyle = 'Card';
+      component.mode = 'view';
+      fixture.detectChanges();
+      expect(component.isDeletable).toBeFalse();
+
+      const rootEl: HTMLElement = fixture.nativeElement;
+      const deleteBtn = rootEl.querySelector('[data-testid="btn-delete-assertion"]');
+      expect(deleteBtn).toBeNull();
+    });
+  });
 });

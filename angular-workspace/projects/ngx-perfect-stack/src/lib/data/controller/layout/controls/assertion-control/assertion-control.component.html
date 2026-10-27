@@ -123,7 +123,7 @@
               </button>
             }
 
-            @if (mode === 'edit') {
+            @if (isDeletable) {
               <button
                 type="button"
                 class="btn btn-outline-danger d-flex align-items-center"
@@ -240,7 +240,7 @@
           </button>
         }
 
-        @if (mode === 'edit') {
+        @if (isDeletable) {
           <button
             type="button"
             class="btn btn-sm btn-link p-0 text-danger d-flex align-items-center"
@@ -350,7 +350,7 @@
                   <span class="material-symbols-outlined fs-6">tune</span>
                 </button>
               }
-              @if (mode === 'edit') {
+              @if (isDeletable) {
                 <button
                   type="button"
                   class="btn btn-sm btn-outline-danger d-flex align-items-center"

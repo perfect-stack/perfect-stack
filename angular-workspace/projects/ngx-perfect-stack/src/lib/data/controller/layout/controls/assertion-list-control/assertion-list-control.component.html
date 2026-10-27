@@ -4,16 +4,6 @@
       <strong>Configuration Error:</strong> <code>layoutStyle</code> must be supplied to <code>AssertionListControl</code> ('Card' | 'Field' | 'Table').
     </div>
   } @else {
-    <!-- Selector input (edit mode only) -->
-    @if (mode === 'edit' && attributes) {
-      <lib-assertion-selector
-        [mode]="mode"
-        [formArray]="attributes"
-        [activityTemplate]="activityTemplate"
-        (assertionTypeSelected)="onAddAssertion($event)">
-      </lib-assertion-selector>
-    }
-
     <!-- Assertions List -->
     @if (attributes && attributes.length > 0) {
       @if (resolvedLayoutStyle === 'Field') {
@@ -50,9 +40,6 @@
     } @else {
       <div class="text-muted small py-3 fst-italic text-center border rounded bg-light" data-testid="no-assertions-message">
         No facts or assertions recorded.
-        @if (mode === 'edit') {
-          <span> Use the search box above to add facts to this observation.</span>
-        }
       </div>
     }
   }

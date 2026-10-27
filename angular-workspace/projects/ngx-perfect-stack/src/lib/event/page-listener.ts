@@ -7,7 +7,7 @@ import {SaveResponse} from '../data/data-service/save.response';
 
 export interface PageListener extends PerfectStackEventListener {
   onPageLoad(ctx: FormContext, params: ParamMap, queryParams: ParamMap): void;
-  onAction(ctx: FormContext, channel: string, action: string): void;
+  onAction(ctx: FormContext, channel: string, action: string, data?: any): void;
   onManyToOneItemSelected(formGroup: UntypedFormGroup, attribute: MetaAttribute, itemSelected: any): void;
   onBeforeSave(ctx: FormContext): void;
   onAfterSave(ctx: FormContext): void;

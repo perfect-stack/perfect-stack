@@ -263,6 +263,7 @@ export class Template {
   locations: TemplateLocationMap;
 
   styles: string; // CSS style classes
+  action?: string; // Optional custom action trigger (e.g. for formList)
 
   // for table templates
   customQuery?: string; // for when we need to call for complex custom queries
