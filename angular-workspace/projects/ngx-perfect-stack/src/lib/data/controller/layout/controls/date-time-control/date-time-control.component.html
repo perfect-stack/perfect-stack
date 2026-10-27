@@ -3,12 +3,12 @@
     <div class="row">
       @if (cell && cell.attribute && cell.attribute.name) {
         <div class="col-6">
-          <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="true"></app-date-picker-control>
+          <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="true" [idSuffix]="idSuffix"></app-date-picker-control>
         </div>
       }
       @if (cell && cell.attribute && cell.attribute.name) {
         <div class="col-6">
-          <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="true"></lib-time-control>
+          <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="true" [idSuffix]="idSuffix"></lib-time-control>
         </div>
       }
     </div>
@@ -18,12 +18,12 @@
     <div class="row">
       <div class="col-12">
         @if (dateTimeValue) {
-          <div class="form-control" readonly [id]="cell?.attribute?.name || name" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">
+          <div class="form-control" readonly [id]="componentId" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">
             {{dateTimeValue}}
           </div>
         }
         @if (!dateTimeValue) {
-          <div class="form-control empty-value" readonly [id]="cell?.attribute?.name || name" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">&mdash;</div>
+          <div class="form-control empty-value" readonly [id]="componentId" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">&mdash;</div>
         }
       </div>
     </div>

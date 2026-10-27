@@ -79,6 +79,9 @@ export class LayoutComponent implements OnInit, OnChanges {
   @Input()
   showTemplateHeadings = true;
 
+  @Input()
+  idSuffix?: string | null = null;
+
   hasBottomLocations = false;
 
   get effectiveFormGroup(): UntypedFormGroup | null {

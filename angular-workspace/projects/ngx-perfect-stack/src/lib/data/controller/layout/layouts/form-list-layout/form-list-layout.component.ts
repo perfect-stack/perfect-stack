@@ -32,6 +32,9 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
   @Input()
   relationshipProperty: string;
 
+  @Input()
+  idSuffix?: string | null;
+
   metaEntity: MetaEntity;
   metaEntityMap: Map<string, MetaEntity>;
   metaPageMap: Map<string, MetaPage>;
@@ -106,6 +109,12 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
 
   getFormGroupForRow(idx: number): UntypedFormGroup | null {
     return this.attributes ? (this.attributes.at(idx) as UntypedFormGroup) : null;
+  }
+
+  getRowIdSuffix(rowIdx: number): string {
+    const prefix = this.idSuffix ? `${this.idSuffix}_` : '';
+    const binding = this.relationshipProperty || this.template?.binding || 'item';
+    return `${prefix}${binding}_${rowIdx}`;
   }
 
   getItemTitle(idx: number): string | null {

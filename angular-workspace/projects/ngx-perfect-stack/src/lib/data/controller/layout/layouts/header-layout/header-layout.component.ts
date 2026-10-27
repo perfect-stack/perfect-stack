@@ -31,6 +31,9 @@ export class HeaderLayoutComponent implements OnInit, OnChanges {
   @Input()
   metaEntity: MetaEntity;
 
+  @Input()
+  idSuffix?: string | null;
+
   cells$: Observable<CellAttribute[][]>;
 
   constructor(public readonly debugService: DebugService,

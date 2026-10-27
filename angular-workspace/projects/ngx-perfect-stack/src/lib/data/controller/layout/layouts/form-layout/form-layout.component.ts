@@ -26,6 +26,9 @@ export class FormLayoutComponent implements OnInit, OnChanges {
   template: Template;
 
   @Input()
+  idSuffix?: string | null;
+
+  @Input()
   set formGroup(value: UntypedFormGroup) {
     this._formGroup = value;
   }

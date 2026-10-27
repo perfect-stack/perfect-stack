@@ -23,6 +23,9 @@ export class CellComponent implements OnInit {
   @Input()
   ctx: FormContext;
 
+  @Input()
+  idSuffix?: string | null;
+
   constructor() { }
 
   ngOnInit(): void {

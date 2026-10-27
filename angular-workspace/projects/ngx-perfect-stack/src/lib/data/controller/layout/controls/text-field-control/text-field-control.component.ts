@@ -25,6 +25,9 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
   @Input()
   cell: CellAttribute;
 
+  @Input()
+  idSuffix?: string | null;
+
   internalValue: any;
 
   disabled = false;
@@ -53,6 +56,10 @@ export class TextFieldControlComponent implements OnInit, OnDestroy, ControlValu
 
   get name() {
     return this.cell.attribute?.name;
+  }
+
+  get componentId(): string {
+    return this.name ? (this.idSuffix ? `${this.name}-${this.idSuffix}` : this.name) : '';
   }
 
   get inputType() {

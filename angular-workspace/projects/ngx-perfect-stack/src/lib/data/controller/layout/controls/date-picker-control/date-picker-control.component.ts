@@ -35,6 +35,9 @@ export class DatePickerControlComponent implements OnInit, OnDestroy, ControlVal
   attribute: MetaAttribute;
 
   @Input()
+  idSuffix?: string | null;
+
+  @Input()
   includesTimeValue = false;
 
   @Input()
@@ -68,6 +71,10 @@ export class DatePickerControlComponent implements OnInit, OnDestroy, ControlVal
 
   get isReadOnly() {
     return this.mode === 'view' ? true : null;
+  }
+
+  get componentId(): string {
+    return this.attribute?.name ? (this.idSuffix ? `${this.attribute.name}-${this.idSuffix}` : this.attribute.name) : '';
   }
 
   get placeholder() {

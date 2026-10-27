@@ -34,6 +34,9 @@ export class SelectControlComponent implements OnInit, OnChanges, OnDestroy, Con
   @Input()
   cell: CellAttribute;
 
+  @Input()
+  idSuffix?: string | null;
+
   @Output()
   selectedEntityEvent = new EventEmitter();
 
@@ -110,6 +113,11 @@ export class SelectControlComponent implements OnInit, OnChanges, OnDestroy, Con
 
   get attribute_name_id() {
     return (this.attribute.name + '_id').toLowerCase();
+  }
+
+  get componentId(): string {
+    const base = this.attribute?.name || this.ngControl?.name || '';
+    return base ? (this.idSuffix ? `${base}-${this.idSuffix}` : String(base)) : '';
   }
 
   isReadOnly() {

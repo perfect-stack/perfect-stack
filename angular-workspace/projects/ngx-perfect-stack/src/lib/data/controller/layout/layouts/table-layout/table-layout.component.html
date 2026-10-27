@@ -40,7 +40,7 @@
             @for (nextCell of cells[0]; track nextCell) {
               <td [ngStyle]="{'width': getCellWidth(nextCell) }">
                 @if (nextCell.attribute || nextCell.tool) {
-                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!"></lib-cell>
+                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!" [idSuffix]="getRowIdSuffix(i)"></lib-cell>
                 }
               </td>
             }

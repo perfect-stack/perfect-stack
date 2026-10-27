@@ -1,6 +1,6 @@
 @if (mode !== 'view' && !cell?.displayOnly) {
   <div class="input-group" [attr.data-testid]="'field-' + (attribute?.name || ngControl.name)">
-    <select [id]="ngControl.name || attribute?.name" [attr.name]="attribute?.name || ngControl.name"
+    <select [id]="componentId" [attr.name]="attribute?.name || ngControl.name"
       [attr.data-testid]="'select-' + (attribute?.name || ngControl.name)"
       [disabled]="isReadOnly() || disabled"
       [ngModel]="selectedEntity" (ngModelChange)="onModelChange($event)" [compareWith]="byEntityOrId"
@@ -31,12 +31,12 @@
 @if (mode === 'view' || cell?.displayOnly) {
   @if (selectedEntityId && selectedEntity) {
     <div class="input-group" [attr.data-testid]="'field-' + attribute?.name">
-      <input class="form-control" readonly [id]="attribute?.name" [attr.data-testid]="'view-' + attribute?.name" value="{{getDisplayText(selectedEntity)}}">
+      <input class="form-control" readonly [id]="componentId" [attr.data-testid]="'view-' + attribute?.name" value="{{getDisplayText(selectedEntity)}}">
     </div>
   }
   @if (!selectedEntityId) {
     <div class="input-group" [attr.data-testid]="'field-' + attribute?.name">
-      <input class="form-control empty-value" readonly [id]="attribute?.name" [attr.data-testid]="'view-' + attribute?.name" value="&mdash;">
+      <input class="form-control empty-value" readonly [id]="componentId" [attr.data-testid]="'view-' + attribute?.name" value="&mdash;">
     </div>
   }
 }

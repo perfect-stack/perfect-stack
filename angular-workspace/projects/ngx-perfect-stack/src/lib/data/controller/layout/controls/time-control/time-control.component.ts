@@ -34,6 +34,9 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
   cell: CellAttribute;
 
   @Input()
+  idSuffix?: string | null;
+
+  @Input()
   parentDisplaysError = false;
 
   @Input()
@@ -75,6 +78,10 @@ export class TimeControlComponent implements OnInit, OnDestroy, ControlValueAcce
 
   get isReadOnly() {
     return this.mode === 'view' || this.disabled ? true : null;
+  }
+
+  get componentId(): string {
+    return this.cell?.attribute?.name ? (this.idSuffix ? `${this.cell.attribute.name}-${this.idSuffix}` : this.cell.attribute.name) : '';
   }
 
   /**

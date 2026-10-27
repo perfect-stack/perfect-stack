@@ -2,12 +2,12 @@
   <div class="input-group" [formGroup]="formGroup" [attr.data-testid]="'field-' + cell.attribute.name">
     @if (isReadOnly()) {
       @if (formGroup.controls[cell.attribute.name].value) {
-        <div class="overflow-auto form-control" readonly [id]="cell.attribute.name" [attr.data-testid]="'view-' + cell.attribute.name">
+        <div class="overflow-auto form-control" readonly [id]="componentId" [attr.data-testid]="'view-' + cell.attribute.name">
           <div [innerHtml]="formGroup.controls[cell.attribute.name].value"></div>
         </div>
       }
       @if (!formGroup.controls[cell.attribute.name].value) {
-        <div class="overflow-auto form-control" readonly [id]="cell.attribute.name" [attr.data-testid]="'view-' + cell.attribute.name">
+        <div class="overflow-auto form-control" readonly [id]="componentId" [attr.data-testid]="'view-' + cell.attribute.name">
           <div>&mdash;</div>
         </div>
       }

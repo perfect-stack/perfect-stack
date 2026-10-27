@@ -6,9 +6,9 @@
           @for (cell of row; track cell) {
             <div class="header-cell min-cell-width">
               @if (cell && cell.attribute && isShowLabel(cell)) {
-                <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute" [idSuffix]="idSuffix"></lib-label>
               }
-              <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+              <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup" [idSuffix]="idSuffix"></lib-cell>
             </div>
           }
         </div>
@@ -21,9 +21,9 @@
           @for (cell of row; track cell) {
             <div class="header-cell min-cell-width">
               @if (cell && cell.attribute && isShowLabel(cell)) {
-                <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute" [idSuffix]="idSuffix"></lib-label>
               }
-              <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell"></lib-cell>
+              <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [idSuffix]="idSuffix"></lib-cell>
             </div>
           }
         </div>

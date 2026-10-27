@@ -14,6 +14,9 @@ import {FormControlWithAttribute} from "../../../../data-edit/form-service/form.
 })
 export class TextAreaControlComponent implements OnInit, ControlValueAccessor {
 
+  private static nextInstanceId = 0;
+  private readonly fallbackId = `ta_${++TextAreaControlComponent.nextInstanceId}`;
+
   @Input()
   mode: string | null;
 
@@ -24,7 +27,7 @@ export class TextAreaControlComponent implements OnInit, ControlValueAccessor {
   cell: CellAttribute;
 
   @Input()
-  idSuffix: string;
+  idSuffix?: string | null;
 
   internalValue: any;
   disabled = false;
@@ -91,10 +94,10 @@ export class TextAreaControlComponent implements OnInit, ControlValueAccessor {
 
   get componentId() : string {
     if(this.idSuffix) {
-      return this.cell && this.cell.attribute ? `${this.cell.attribute.name}-${this.idSuffix}` : `UNKNOWN-TODO`;
+      return this.cell && this.cell.attribute ? `${this.cell.attribute.name}-${this.idSuffix}` : `UNKNOWN-${this.fallbackId}`;
     }
     else {
-      return this.cell && this.cell.attribute ? `${this.cell.attribute.name}` : `UNKNOWN-TODO`;
+      return this.cell && this.cell.attribute ? `${this.cell.attribute.name}` : `UNKNOWN-${this.fallbackId}`;
     }
   }
 

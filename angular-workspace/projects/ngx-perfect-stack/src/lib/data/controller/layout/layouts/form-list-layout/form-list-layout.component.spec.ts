@@ -161,4 +161,17 @@ describe('FormListLayoutComponent', () => {
     expect(component.getItemTitle(0)).toBe('Five Minute Bird Count');
     expect(component.getItemTitle(1)).toBe('Acoustic Monitoring');
   });
+
+  it('should generate unique row id suffixes for repeated child items', () => {
+    component.relationshipProperty = 'occurrences';
+    expect(component.getRowIdSuffix(0)).toBe('occurrences_0');
+    expect(component.getRowIdSuffix(1)).toBe('occurrences_1');
+  });
+
+  it('should combine parent idSuffix with child relationshipProperty and index for nested child items', () => {
+    component.idSuffix = 'occurrences_0';
+    component.relationshipProperty = 'activities';
+    expect(component.getRowIdSuffix(0)).toBe('occurrences_0_activities_0');
+    expect(component.getRowIdSuffix(1)).toBe('occurrences_0_activities_1');
+  });
 });

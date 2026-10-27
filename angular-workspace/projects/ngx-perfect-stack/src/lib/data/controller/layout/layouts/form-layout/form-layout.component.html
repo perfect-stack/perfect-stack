@@ -12,19 +12,19 @@
               @if (cell && isShowLabel(cell)) {
                 @if (isShowLabelTop(cell)) {
                   @if (cell.attribute) {
-                    <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                    <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute" [idSuffix]="idSuffix"></lib-label>
                   }
-                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup" [idSuffix]="idSuffix"></lib-cell>
                 }
                 @if (isShowLabelLeft(cell)) {
                   <div class="row">
                     <div class="col-4">
                       @if (cell.attribute) {
-                        <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                        <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute" [idSuffix]="idSuffix"></lib-label>
                       }
                     </div>
                     <div class="col-8">
-                      <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+                      <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup" [idSuffix]="idSuffix"></lib-cell>
                     </div>
                   </div>
                 }
@@ -33,7 +33,7 @@
                 }
               }
               @if (cell && !isShowLabel(cell)) {
-                <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-cell>
+                <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup" [idSuffix]="idSuffix"></lib-cell>
               }
               @if (mode !== 'view' && cell.footerHtml) {
                 <div [innerHtml]="cell.footerHtml">WOOF</div>
@@ -45,7 +45,7 @@
                 @if (debugService.ON) {
                   [NESTED]
                 }
-                <lib-layout-outlet [mode]="mode" [ctx]="ctx" [template]="cell.template" [formGroup]="formGroup" [relationshipProperty]="cell.template.binding"></lib-layout-outlet>
+                <lib-layout-outlet [mode]="mode" [ctx]="ctx" [template]="cell.template" [formGroup]="formGroup" [relationshipProperty]="cell.template.binding" [idSuffix]="idSuffix"></lib-layout-outlet>
               }
             </div>
           }
@@ -61,19 +61,19 @@
               @if (cell && isShowLabel(cell)) {
                 @if (isShowLabelTop(cell)) {
                   @if (cell.attribute) {
-                    <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                    <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute" [idSuffix]="idSuffix"></lib-label>
                   }
-                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell"></lib-cell>
+                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [idSuffix]="idSuffix"></lib-cell>
                 }
                 @if (isShowLabelLeft(cell)) {
                   <div class="row">
                     <div class="col-4">
                       @if (cell.attribute) {
-                        <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute"></lib-label>
+                        <lib-label [mode]="mode" [cell]="cell" [metaEntity]="metaEntity" [attribute]="cell.attribute" [idSuffix]="idSuffix"></lib-label>
                       }
                     </div>
                     <div class="col-8">
-                      <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell"></lib-cell>
+                      <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [idSuffix]="idSuffix"></lib-cell>
                     </div>
                   </div>
                 }
@@ -82,7 +82,7 @@
                 }
               }
               @if (cell && !isShowLabel(cell)) {
-                <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell"></lib-cell>
+                <lib-cell [mode]="mode" [ctx]="ctx" [cell]="cell" [idSuffix]="idSuffix"></lib-cell>
               }
               @if (mode !== 'view' && cell.footerHtml) {
                 <div [innerHtml]="cell.footerHtml">WOOF</div>
@@ -91,7 +91,7 @@
                 @if (debugService.ON) {
                   [OTHER-FORM]
                 }
-                <lib-layout-outlet [ctx]="ctx" [template]="cell.template"></lib-layout-outlet>
+                <lib-layout-outlet [ctx]="ctx" [template]="cell.template" [idSuffix]="idSuffix"></lib-layout-outlet>
               }
             </div>
           }

@@ -18,6 +18,9 @@ export class UrlFieldControlComponent implements OnInit, OnDestroy, ControlValue
   @Input()
   cell: CellAttribute;
 
+  @Input()
+  idSuffix?: string | null;
+
   internalValue: any;
 
   disabled = false;
@@ -46,6 +49,10 @@ export class UrlFieldControlComponent implements OnInit, OnDestroy, ControlValue
 
   get name() {
     return this.cell.attribute?.name;
+  }
+
+  get componentId(): string {
+    return this.name ? (this.idSuffix ? `${this.name}-${this.idSuffix}` : this.name) : '';
   }
 
   set value(val: string) {

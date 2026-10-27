@@ -20,6 +20,9 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
   @Input()
   cell: CellAttribute;
 
+  @Input()
+  idSuffix?: string | null;
+
   disabled = false;
 
 
@@ -51,6 +54,10 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
 
   get name() {
     return this.cell.attribute ? this.cell.attribute.name : '';
+  }
+
+  get componentId(): string {
+    return this.name ? (this.idSuffix ? `${this.name}-${this.idSuffix}` : this.name) : '';
   }
 
   onChange: any = () => {}

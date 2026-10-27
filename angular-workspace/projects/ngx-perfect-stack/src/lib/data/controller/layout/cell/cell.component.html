@@ -15,29 +15,29 @@
   @switch (cell.attribute.type) {
     @case ('Date') {
       <ng-container [formGroup]="formGroup">
-        <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></app-date-picker-control>
+        <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [idSuffix]="idSuffix"></app-date-picker-control>
       </ng-container>
     }
     @case ('DateTime') {
       @switch (cell.component) {
         @case ('FlexibleDateTime') {
-          <lib-flexible-date-time-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [name]="cell.attribute.name"></lib-flexible-date-time-control>
+          <lib-flexible-date-time-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [name]="cell.attribute.name" [idSuffix]="idSuffix"></lib-flexible-date-time-control>
         }
         @default {
-          <lib-date-time-control [mode]="mode" [formGroup]="formGroup" [cell]="cell" [name]="cell.attribute.name"></lib-date-time-control>
+          <lib-date-time-control [mode]="mode" [formGroup]="formGroup" [cell]="cell" [name]="cell.attribute.name" [idSuffix]="idSuffix"></lib-date-time-control>
         }
       }
     }
     @case ('Time') {
       <ng-container [formGroup]="formGroup">
-        <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="false"></lib-time-control>
+        <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="false" [idSuffix]="idSuffix"></lib-time-control>
       </ng-container>
     }
     @case (['Text', 'Html', 'Double', 'Integer'].includes(cell.attribute.type) ? cell.attribute.type : '') {
       @switch (cell.component) {
         @case ('TextArea') {
           <ng-container [formGroup]="formGroup">
-            <lib-text-area-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [formControlName]="cell.attribute.name"></lib-text-area-control>
+            <lib-text-area-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [formControlName]="cell.attribute.name" [idSuffix]="idSuffix"></lib-text-area-control>
           </ng-container>
         }
         @case ('BadgeList') {
@@ -71,12 +71,12 @@
         }
         @case ('Url') {
           <ng-container [formGroup]="formGroup">
-            <lib-url-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-url-field-control>
+            <lib-url-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [idSuffix]="idSuffix"></lib-url-field-control>
           </ng-container>
         }
         @default {
           <ng-container [formGroup]="formGroup">
-            <lib-text-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-text-field-control>
+            <lib-text-field-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [idSuffix]="idSuffix"></lib-text-field-control>
           </ng-container>
         }
       }
@@ -117,7 +117,7 @@
           <lib-assertion-list-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup" [layoutStyle]="cell.options"></lib-assertion-list-control>
         }
         @default {
-          <lib-one-to-many-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-many-control>
+          <lib-one-to-many-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup" [idSuffix]="idSuffix"></lib-one-to-many-control>
         }
       }
     }
@@ -128,7 +128,7 @@
       <ng-container [formGroup]="formGroup">
         @switch (cell.component) {
           @case ('Select') {
-            <lib-select-control [mode]="mode"  [cell]="cell" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
+            <lib-select-control [mode]="mode"  [cell]="cell" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute" [idSuffix]="idSuffix"></lib-select-control>
           }
           @case ('SelectTwo') {
             <lib-select-two-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-select-two-control>
@@ -137,7 +137,7 @@
             <lib-spy-control [mode]="mode" [formControlName]="cell.attribute.name + '_id'" [formGroup]="formGroup" [cell]="cell" [attribute]="cell.attribute"></lib-spy-control>
           }
           @case ('ManyToOnePlain') {
-            <lib-select-control [mode]="mode"  [cell]="cell" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute"></lib-select-control>
+            <lib-select-control [mode]="mode"  [cell]="cell" [formControlName]="cell.attribute.name + '_id'" [attribute]="cell.attribute" [idSuffix]="idSuffix"></lib-select-control>
           }
           @default {
             @if (cell.metaEntity) {
@@ -152,7 +152,7 @@
     }
     @case ('SelectMultiple') {
       <ng-container [formGroup]="formGroup">
-        <lib-select-multiple-control [mode]="mode" [formControlName]="cell.attribute.name" [cell]="cell" ></lib-select-multiple-control>
+        <lib-select-multiple-control [mode]="mode" [formControlName]="cell.attribute.name" [cell]="cell" [idSuffix]="idSuffix"></lib-select-multiple-control>
       </ng-container>
     }
     @case ('Geometry') {
@@ -165,4 +165,3 @@
     }
   }
 }
-

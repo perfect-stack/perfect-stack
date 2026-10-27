@@ -23,6 +23,9 @@ export class LabelComponent implements OnInit {
   @Input()
   cell: Cell;
 
+  @Input()
+  idSuffix?: string | null;
+
   labelHidden = false;
   secondaryAttribute: MetaAttribute | undefined;
 
@@ -41,6 +44,14 @@ export class LabelComponent implements OnInit {
         }
       }
     }
+  }
+
+  get labelForId(): string {
+    return this.attribute?.name ? (this.idSuffix ? `${this.attribute.name}-${this.idSuffix}` : this.attribute.name) : '';
+  }
+
+  get secondaryLabelForId(): string {
+    return this.secondaryAttribute?.name ? (this.idSuffix ? `${this.secondaryAttribute.name}-${this.idSuffix}` : this.secondaryAttribute.name) : '';
   }
 
   isShowLabelTop(cell: CellAttribute): boolean {

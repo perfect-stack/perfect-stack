@@ -47,6 +47,9 @@ export class LayoutOutletComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
   showTemplateHeadings = true;
 
+  @Input()
+  idSuffix?: string | null = null;
+
   private componentRef: ComponentRef<any> | null = null;
 
   constructor(
@@ -98,6 +101,7 @@ export class LayoutOutletComponent implements OnInit, OnChanges, OnDestroy {
     this.componentRef.setInput('metaEntity', this.metaEntity);
     this.componentRef.setInput('ctx', this.ctx);
     this.componentRef.setInput('showTemplateHeadings', this.showTemplateHeadings);
+    this.componentRef.setInput('idSuffix', this.idSuffix ?? null);
     this.componentRef.changeDetectorRef.markForCheck();
   }
 }

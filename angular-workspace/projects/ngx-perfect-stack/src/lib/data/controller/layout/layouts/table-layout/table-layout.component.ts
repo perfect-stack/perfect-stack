@@ -33,6 +33,9 @@ export class TableLayoutComponent implements OnInit, OnChanges {
   @Input()
   relationshipProperty: string;
 
+  @Input()
+  idSuffix?: string | null;
+
   cells$: Observable<CellAttribute[][]>;
 
   metaEntityMap: Map<string, MetaEntity>;
@@ -96,6 +99,12 @@ export class TableLayoutComponent implements OnInit, OnChanges {
 
   getFormGroupForRow(rowIdx: number): UntypedFormGroup | null {
     return this.attributes ? this.attributes.at(rowIdx) as UntypedFormGroup : null;
+  }
+
+  getRowIdSuffix(rowIdx: number): string {
+    const prefix = this.idSuffix ? `${this.idSuffix}_` : '';
+    const binding = this.template?.binding || this.relationshipProperty || 'item';
+    return `${prefix}${binding}_${rowIdx}`;
   }
 
   onAddRow() {

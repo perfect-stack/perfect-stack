@@ -18,7 +18,8 @@
         <lib-header-layout
           [ctx]="ctx"
           [metaEntity]="metaEntity"
-          [template]="template">
+          [template]="template"
+          [idSuffix]="idSuffix ?? undefined">
         </lib-header-layout>
       }
       @case ('form') {
@@ -27,7 +28,8 @@
           [metaEntity]="metaEntity"
           [template]="template"
           [mode]="mode"
-          [formGroup]="effectiveFormGroup!">
+          [formGroup]="effectiveFormGroup!"
+          [idSuffix]="idSuffix ?? undefined">
         </lib-form-layout>
       }
       @case ('table') {
@@ -36,7 +38,8 @@
           [template]="template"
           [mode]="mode"
           [formGroup]="effectiveFormGroup!"
-          [relationshipProperty]="relationshipProperty">
+          [relationshipProperty]="relationshipProperty"
+          [idSuffix]="idSuffix ?? undefined">
         </lib-table-layout>
       }
       @case ('card') {
@@ -53,7 +56,8 @@
           [template]="template"
           [mode]="mode"
           [formGroup]="effectiveFormGroup!"
-          [relationshipProperty]="relationshipProperty">
+          [relationshipProperty]="relationshipProperty"
+          [idSuffix]="idSuffix ?? undefined">
         </lib-form-list-layout>
       }
     }

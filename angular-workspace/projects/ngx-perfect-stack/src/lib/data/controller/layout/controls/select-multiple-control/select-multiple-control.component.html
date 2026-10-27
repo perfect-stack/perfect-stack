@@ -9,7 +9,7 @@
     }
     @if (selectedOptions.length === 0) {
       <div class="input-group">
-        <span class="form-control empty-value" readonly [id]="name" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">&mdash;</span>
+        <span class="form-control empty-value" readonly [id]="componentId" [attr.data-testid]="'view-' + (cell?.attribute?.name || name)">&mdash;</span>
       </div>
     }
   </div>
@@ -17,7 +17,7 @@
 
 @if (mode !== 'view') {
   <div ngbDropdown [attr.data-testid]="'field-' + (cell?.attribute?.name || name)">
-    <div class="form-select w-100" [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}" style="white-space: normal;" [id]="name || 'dropdownBasic1'" [attr.data-testid]="'select-multiple-' + (cell?.attribute?.name || name)" ngbDropdownToggle>
+    <div class="form-select w-100" [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}" style="white-space: normal;" [id]="componentId || 'dropdownBasic1'" [attr.data-testid]="'select-multiple-' + (cell?.attribute?.name || name)" ngbDropdownToggle>
       @if (selectedOptions.length === 0) {
         <span>&nbsp;</span>
       }
@@ -28,7 +28,7 @@
         </span>
       }
     </div>
-    <div ngbDropdownMenu [attr.aria-labelledby]="name || 'dropdownBasic1'">
+    <div ngbDropdownMenu [attr.aria-labelledby]="componentId || 'dropdownBasic1'">
       @for (option of optionList; track option) {
         <button ngbDropdownItem [attr.data-testid]="'option-' + (cell?.attribute?.name || name) + '-' + getDisplayLabel(option)" (click)="onItemSelected(option)">{{getDisplayLabel(option)}}</button>
       }

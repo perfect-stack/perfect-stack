@@ -23,6 +23,9 @@ export class OneToManyControlComponent implements OnInit {
   @Input()
   formGroup: UntypedFormGroup;
 
+  @Input()
+  idSuffix?: string | null;
+
   constructor() { }
 
   ngOnInit(): void {

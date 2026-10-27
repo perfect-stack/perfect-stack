@@ -28,6 +28,9 @@ export class FlexibleDateTimeControlComponent implements OnInit {
   @Input()
   name: string;
 
+  @Input()
+  idSuffix?: string | null;
+
   dateTimeValue: string;
 
   timeOptionSelected = '';
@@ -83,6 +86,11 @@ export class FlexibleDateTimeControlComponent implements OnInit {
         }
       }
     }
+  }
+
+  get componentId(): string {
+    const base = this.cell?.attribute?.name || this.name || '';
+    return base ? (this.idSuffix ? `${base}-${this.idSuffix}` : base) : '';
   }
 
   onClick(option: TimeOption) {

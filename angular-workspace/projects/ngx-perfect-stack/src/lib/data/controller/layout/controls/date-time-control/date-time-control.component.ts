@@ -29,6 +29,9 @@ export class DateTimeControlComponent implements OnInit, OnChanges {
   @Input()
   name: string;
 
+  @Input()
+  idSuffix?: string | null;
+
   dateTimeValue: string;
 
   constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) {
@@ -41,6 +44,11 @@ export class DateTimeControlComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateValue();
+  }
+
+  get componentId(): string {
+    const base = this.cell?.attribute?.name || this.name || '';
+    return base ? (this.idSuffix ? `${base}-${this.idSuffix}` : base) : '';
   }
 
   updateValue(): void {
