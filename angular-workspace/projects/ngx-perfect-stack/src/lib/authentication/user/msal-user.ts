@@ -8,9 +8,14 @@ export class MsalUser implements User {
   groups: string[] = [];
 
   constructor(
-    protected readonly account: AccountInfo,
+    public account: AccountInfo,
     protected readonly stackConfig: NgxPerfectStackConfig
   ) {
+    this.initFromAccount(account);
+  }
+
+  initFromAccount(account: AccountInfo): void {
+    this.account = account;
     this.name = account.name;
     this.username = account.username;
 
@@ -18,10 +23,11 @@ export class MsalUser implements User {
       // In Azure AD, App Roles are exposed in the 'roles' claim.
       // Security groups can be exposed in the 'groups' claim, but requires specific configuration.
       const roles = (account.idTokenClaims['roles'] as string[]) || [];
-      const groupsClaim = (account.idTokenClaims['groups'] as string[]) || [];
 
       // For MSAL we map across the "roles" as "groups"
       this.groups = [...roles];
+    } else {
+      this.groups = [];
     }
 
     // Add supplementary roles for local dev purposes, similar to CognitoUser.
@@ -33,8 +39,6 @@ export class MsalUser implements User {
 
   /**
    * Returns the ID token from the MSAL account.
-   * NOTE: For authorizing API calls, you should acquire an ACCESS token silently, not use the ID token.
-   * This is implemented to mirror the existing CognitoUser behavior.
    */
   getBearerToken(): string | null {
     return this.account.idToken ?? null;
@@ -44,12 +48,7 @@ export class MsalUser implements User {
     return this.groups;
   }
 
-  /**
-   * The MsalService handles the actual logout process, including clearing cached tokens.
-   * This method is implemented to satisfy the User interface contract.
-   */
   logout(): void {
-    // Logout is handled by MsalService.logoutRedirect() or logoutPopup().
-    // No action is required here.
+    // Logout is handled by MsalService
   }
 }

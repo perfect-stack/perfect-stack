@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from './user/user';
 import { ZonedDateTime } from '@js-joda/core';
 
@@ -15,4 +15,5 @@ export interface AuthenticationServiceProvider {
   createUser(idToken: string | null, accessToken: string | null, sendNotification: boolean): void;
   createUserFromLocalStorage(): void;
   navigateToFirstPage(): void;
+  getBearerToken?(): Observable<string | null>;
 }

@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
 import {User} from './user/user';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {MsalAuthenticationService} from "./msal-authentication.service";
 import {CognitoAuthenticationService} from "./cognito-authentication.service";
 import {NoAuthAuthenticationService} from "./no-auth-authentication.service";
@@ -79,5 +79,12 @@ export class AuthenticationService {
 
   navigateToFirstPage() {
     this.provider.navigateToFirstPage();
+  }
+
+  getBearerToken(): Observable<string | null> {
+    if (this.provider.getBearerToken) {
+      return this.provider.getBearerToken();
+    }
+    return of(this.user$.getValue()?.getBearerToken() ?? null);
   }
 }
