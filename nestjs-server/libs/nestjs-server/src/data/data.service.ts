@@ -17,7 +17,7 @@ import { UpdateSortIndexRequest } from './update-sort-index.request';
 import { AuditAction } from '../domain/audit';
 import { QueryService } from './query.service';
 import { EventService } from '../event/event.service';
-import { QueryTypes, Transaction } from 'sequelize';
+import { QueryTypes, Transaction, Utils } from 'sequelize';
 import {MediaRepositoryService} from "../media/media-repository.service";
 import {DiscriminatorService} from "./discriminator.service";
 import {ValidationService} from "./validation.service";
@@ -563,12 +563,42 @@ export class DataService {
     parentMetaEntity: MetaEntity,
     relationshipAttribute: MetaAttribute,
   ): Promise<Map<string, any>> {
+    const parentModel = this.ormService.sequelize.model(parentMetaEntity.name);
+    const association = parentModel?.associations?.[relationshipAttribute.name];
+
+    let foreignKeyName =
+      association?.foreignKey || (association as any)?.foreignKeyField;
+
+    if (!foreignKeyName && this.ormService.sequelize.isDefined(relationshipAttribute.relationshipTarget)) {
+      const childModel = this.ormService.sequelize.model(
+        relationshipAttribute.relationshipTarget,
+      );
+      const candidateFkNames = [
+        Utils.underscoredIf(parentMetaEntity.name, true) + '_id',
+        parentMetaEntity.name.toLowerCase() + '_id',
+        parentMetaEntity.name + 'Id',
+        parentMetaEntity.name.charAt(0).toLowerCase() + parentMetaEntity.name.slice(1) + 'Id',
+      ];
+      if (childModel && (childModel as any).rawAttributes) {
+        for (const cand of candidateFkNames) {
+          if ((childModel as any).rawAttributes[cand]) {
+            foreignKeyName = cand;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!foreignKeyName) {
+      foreignKeyName = Utils.underscoredIf(parentMetaEntity.name, true) + '_id';
+    }
+
     // create a criteria search that will look for the children of this entity
     const queryRequest = new QueryRequest();
     queryRequest.metaEntityName = relationshipAttribute.relationshipTarget;
     queryRequest.criteria = [
       {
-        name: parentMetaEntity.name + 'Id',
+        name: foreignKeyName,
         attributeType: AttributeType.Identifier,
         operator: ComparisonOperator.Equals,
         value: parentEntity.id,

@@ -7,7 +7,7 @@ import {
   MetaEntity,
 } from '../../domain/meta.entity';
 import { EntityResponse } from '../../domain/response/entity.response';
-import { DataTypes } from 'sequelize';
+import { DataTypes, Utils } from 'sequelize';
 import { FileRepositoryService } from '../../file/file-repository.service';
 import { ModelCtor } from 'sequelize-typescript';
 import { DeleteAttributeRequest } from './delete-attribute.request';
@@ -348,11 +348,17 @@ export class MetaEntityService {
     }
 
     // second pass create the relationships
+    const metaEntityMap = new Map<string, MetaEntity>();
+    for (const nextMetaEntity of databaseEntities) {
+      metaEntityMap.set(nextMetaEntity.name, nextMetaEntity);
+    }
+
     for (const nextMetaEntity of databaseEntities) {
       for (const nextMetaAttribute of nextMetaEntity.attributes) {
         if (this.isSimpleRelationship(nextMetaAttribute)) {
           await this.createSimpleRelationship(
             entityModelMap,
+            metaEntityMap,
             nextMetaEntity,
             nextMetaAttribute,
           );
@@ -380,7 +386,39 @@ export class MetaEntityService {
           await this.ormService.sequelize.query("DROP TABLE IF EXISTS Assertion_backup;");
           await this.ormService.sequelize.query("PRAGMA foreign_keys = OFF;");
         }
-        await this.ormService.sequelize.sync({alter: true});
+
+        try {
+          await this.ormService.sequelize.sync({alter: true});
+        } catch (syncErr: any) {
+          // If standard bulk sync fails (e.g. on PostgreSQL due to already existing columns/constraints),
+          // sync model-by-model tolerating duplicate column/table/constraint errors for idempotency
+          if (!isSqlite) {
+            this.logger.warn(`Initial sequelize.sync failed (${syncErr.message}), retrying model-by-model...`);
+            const sortedModels = this.ormService.sequelize.modelManager.getModelsTopoSortedByForeignKey() || this.ormService.sequelize.modelManager.models;
+            const modelsToSync = [...sortedModels].reverse();
+            for (const model of modelsToSync) {
+              try {
+                await (model as any).sync({alter: true});
+              } catch (modelErr: any) {
+                const pgCode = modelErr.original?.code;
+                // 42701: duplicate_column, 42P07: duplicate_table, 42710: duplicate_object
+                if (
+                  pgCode === '42701' ||
+                  pgCode === '42P07' ||
+                  pgCode === '42710' ||
+                  modelErr.message?.includes('already exists')
+                ) {
+                  this.logger.warn(`Model ${(model as any).name} sync note: ${modelErr.message} (ignored for idempotency)`);
+                } else {
+                  throw modelErr;
+                }
+              }
+            }
+          } else {
+            throw syncErr;
+          }
+        }
+
         if (isSqlite) {
           await this.ormService.sequelize.query("PRAGMA foreign_keys = ON;");
         }
@@ -406,6 +444,7 @@ export class MetaEntityService {
 
   async createSimpleRelationship(
     entityModelMap: Map<string, any>,
+    metaEntityMap: Map<string, MetaEntity>,
     metaEntity: MetaEntity,
     metaAttribute: MetaAttribute,
   ) {
@@ -431,12 +470,32 @@ export class MetaEntityService {
             onUpdate: 'CASCADE',
           });
         } else {
-          sourceModel.hasMany(targetModel, {
-            as: metaAttribute.name,
-            onDelete: 'CASCADE',
-            onUpdate: 'CASCADE',
-          });
-          targetModel.belongsTo(sourceModel);
+          const targetMetaEntity = metaEntityMap.get(metaAttribute.relationshipTarget);
+          const backAttr = targetMetaEntity?.attributes?.find(
+            (a) => a.type === AttributeType.ManyToOne && a.relationshipTarget === metaEntity.name,
+          );
+
+          if (backAttr) {
+            const foreignKeyName = backAttr.name + '_id';
+            sourceModel.hasMany(targetModel, {
+              as: metaAttribute.name,
+              foreignKey: { name: foreignKeyName },
+              onDelete: 'CASCADE',
+              onUpdate: 'CASCADE',
+            });
+            // targetModel.belongsTo(sourceModel) is already defined by targetModel's ManyToOne attribute
+          } else {
+            const defaultForeignKey = Utils.underscoredIf(metaEntity.name, true) + '_id';
+            sourceModel.hasMany(targetModel, {
+              as: metaAttribute.name,
+              foreignKey: { name: defaultForeignKey },
+              onDelete: 'CASCADE',
+              onUpdate: 'CASCADE',
+            });
+            targetModel.belongsTo(sourceModel, {
+              foreignKey: { name: defaultForeignKey },
+            });
+          }
         }
         break;
       case AttributeType.OneToOne:

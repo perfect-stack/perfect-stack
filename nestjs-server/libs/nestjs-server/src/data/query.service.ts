@@ -10,7 +10,7 @@ import { QueryRequest } from './query.request';
 import { OrmService } from '../orm/orm.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { MetaEntityService } from '../meta/meta-entity/meta-entity.service';
-import { Op, QueryTypes } from 'sequelize';
+import { Op, QueryTypes, Utils } from 'sequelize';
 import { QueryResponse } from './query.response';
 import { getCriteriaValue } from './query-utils';
 import { DataNotFound } from './data.exception';
@@ -621,8 +621,24 @@ export class QueryService {
         if (nextCriteria.operator) {
           const op = operatorMap.get(nextCriteria.operator);
           if (op) {
+            let attributeName = nextCriteria.name;
+            if (model && (model as any).rawAttributes && !(model as any).rawAttributes[attributeName]) {
+              const underscored = Utils.underscoredIf(attributeName, true);
+              if ((model as any).rawAttributes[underscored]) {
+                attributeName = underscored;
+              } else {
+                const found = Object.keys((model as any).rawAttributes).find(
+                  (k) =>
+                    k.toLowerCase() === attributeName.toLowerCase() ||
+                    (model as any).rawAttributes[k].field === attributeName,
+                );
+                if (found) {
+                  attributeName = found;
+                }
+              }
+            }
             criteriaList.push({
-              [nextCriteria.name]: {
+              [attributeName]: {
                 [op]: value,
               },
             });
