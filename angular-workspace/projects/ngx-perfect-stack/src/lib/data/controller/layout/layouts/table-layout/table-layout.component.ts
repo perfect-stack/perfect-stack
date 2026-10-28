@@ -1,5 +1,5 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { Observable, of, switchMap } from 'rxjs';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Observable, of, Subscription, switchMap } from 'rxjs';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MetaPage, Template } from '../../../../../domain/meta.page';
@@ -16,7 +16,7 @@ import { DebugService } from '../../../../../utils/debug/debug.service';
   styleUrls: ['./table-layout.component.css'],
   standalone: false
 })
-export class TableLayoutComponent implements OnInit, OnChanges {
+export class TableLayoutComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input()
   mode: string | null;
@@ -41,21 +41,53 @@ export class TableLayoutComponent implements OnInit, OnChanges {
   metaEntityMap: Map<string, MetaEntity>;
   metaPageMap: Map<string, MetaPage>;
 
+  private formArraySub: Subscription | null = null;
+  private formGroupSub: Subscription | null = null;
+
   constructor(protected readonly metaEntityService: MetaEntityService,
               protected readonly debugService: DebugService,
               protected readonly router: Router,
               protected readonly formService: FormService,
-              protected readonly formGroupService: FormGroupService) { }
+              protected readonly formGroupService: FormGroupService,
+              protected readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.updateTable();
     this.updateCells$();
+    this.subscribeToFormChanges();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateTable();
     if (changes['template'] || !this.cells$) {
       this.updateCells$();
+    }
+    this.subscribeToFormChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.formArraySub?.unsubscribe();
+    this.formGroupSub?.unsubscribe();
+  }
+
+  private subscribeToFormChanges(): void {
+    this.formArraySub?.unsubscribe();
+    this.formGroupSub?.unsubscribe();
+
+    if (this.attributes) {
+      this.formArraySub = this.attributes.valueChanges.subscribe(() => {
+        this.sortAttributesIfConfigured();
+        this.cdr.markForCheck();
+        this.cdr.detectChanges();
+      });
+    }
+
+    if (this.formGroup) {
+      this.formGroupSub = this.formGroup.valueChanges.subscribe(() => {
+        this.sortAttributesIfConfigured();
+        this.cdr.markForCheck();
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -135,6 +167,8 @@ export class TableLayoutComponent implements OnInit, OnChanges {
       if(this.attributes) {
         console.log('onAddRow()');
         this.attributes.push(formGroup);
+        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
       else {
         console.warn('Unable to find the attributes for this relationship. Is the binding name correct? For example media_files instead of mediaFiles');
@@ -181,6 +215,8 @@ export class TableLayoutComponent implements OnInit, OnChanges {
     console.log(`delete row: ${i}`);
     if(this.attributes) {
       this.attributes.removeAt(i);
+      this.cdr.markForCheck();
+      this.cdr.detectChanges();
     }
   }
 
@@ -204,3 +240,4 @@ export class TableLayoutComponent implements OnInit, OnChanges {
     return nextCell.width === '0' ? '0%' : 'auto';
   }
 }
+

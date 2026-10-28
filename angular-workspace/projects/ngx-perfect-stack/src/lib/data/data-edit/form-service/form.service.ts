@@ -331,6 +331,8 @@ export class FormService {
     const form = new UntypedFormGroup({});
     form.addControl(template.binding, formArray);
     formArray.patchValue(arrayOfObjects);
+      formArray.updateValueAndValidity();
+      form.updateValueAndValidity();
     return form;
   }
 
@@ -355,6 +357,8 @@ export class FormService {
       }
 
       formArray.patchValue(arrayOfObjects);
+      formArray.updateValueAndValidity();
+      form.updateValueAndValidity();
     }
     else {
       throw new Error(`Unexpected situation; did not expect the Form to have more than one Control in it. May need to rethink the design here a little`);

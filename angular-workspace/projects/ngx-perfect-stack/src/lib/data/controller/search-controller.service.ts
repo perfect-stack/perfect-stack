@@ -79,6 +79,8 @@ export class SearchControllerService implements ActionListener, PropertyListProv
       if(resultTableMetaEntity) {
         this.updateResultsSummary(ctx, queryRequest, response, resultTableMetaEntity);
       }
+
+      resultsForm?.updateValueAndValidity();
     });
   }
 
