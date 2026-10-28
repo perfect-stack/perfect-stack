@@ -54,3 +54,54 @@ select.ng-invalid.ng-touched {
   margin-bottom: 24px;
 }
 
+/************************************************
+    Edge-to-Edge Component Layout Overrides
+*************************************************/
+
+// 1. When an edge-to-edge element is in the first row, remove top padding from full-width templates
+.template-full-width:has(.row:first-child .edge-to-edge) {
+  padding-top: 0 !important;
+}
+
+// 2. When an edge-to-edge element is in the last row, remove bottom padding
+.template-full-width:has(.row:last-child .edge-to-edge) {
+  padding-bottom: 0 !important;
+}
+
+// 3. Expand row containing an edge-to-edge component flush to card boundaries (cancels px-4: 1.5rem)
+.template-full-width .row:has(.edge-to-edge) {
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+}
+
+// 4. Strip column gutters for edge-to-edge elements
+.template-full-width .row:has(.edge-to-edge) > [class*="col-"]:has(.edge-to-edge) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+// 5. Spacing between the edge-to-edge element and subsequent form rows below it
+.template-full-width .row:has(.edge-to-edge):not(:last-child) {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #EAECF0;
+}
+
+// 6. Conform to the outer card's 8px rounded corners when at the top or bottom of the container
+.container-border-radius > .template-full-width:first-child .row:first-child:has(.edge-to-edge) .edge-to-edge,
+.container-border-radius > .template-full-width:first-child .row:first-child:has(.edge-to-edge) .edge-to-edge .map-wrapper {
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  overflow: hidden;
+}
+
+.container-border-radius > .template-full-width:last-child .row:last-child:has(.edge-to-edge) .edge-to-edge,
+.container-border-radius > .template-full-width:last-child .row:last-child:has(.edge-to-edge) .edge-to-edge .map-wrapper {
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  overflow: hidden;
+}
+
+// 7. Support template-level flush style if an entire template is marked edge-to-edge
+.template-full-width:has(> lib-controller > lib-layout > .edge-to-edge) {
+  padding: 0 !important;
+}
