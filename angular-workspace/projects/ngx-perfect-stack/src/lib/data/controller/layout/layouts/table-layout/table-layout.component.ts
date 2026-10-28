@@ -71,6 +71,28 @@ export class TableLayoutComponent implements OnInit, OnChanges {
       this.formGroup = this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;
       this.relationshipProperty = this.template.binding;
     }
+
+    this.sortAttributesIfConfigured();
+  }
+
+  private sortAttributesIfConfigured(): void {
+    if (this.template?.orderByName && this.attributes && this.attributes.length > 1) {
+      const orderByName = this.template.orderByName;
+      const isDesc = (this.template.orderByDir || 'ASC').toUpperCase() === 'DESC';
+      this.attributes.controls.sort((a, b) => {
+        const valA = a.get(orderByName)?.value;
+        const valB = b.get(orderByName)?.value;
+        if (valA == null && valB == null) return 0;
+        if (valA == null) return isDesc ? -1 : 1;
+        if (valB == null) return isDesc ? 1 : -1;
+        if (typeof valA === 'number' && typeof valB === 'number') {
+          return isDesc ? valB - valA : valA - valB;
+        }
+        const strA = String(valA);
+        const strB = String(valB);
+        return isDesc ? strB.localeCompare(strA) : strA.localeCompare(strB);
+      });
+    }
   }
 
   private updateCells$(): void {

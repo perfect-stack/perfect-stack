@@ -476,6 +476,13 @@ export class DataService {
         existingChildren,
       );
 
+      const parentModel = this.ormService.sequelize.model(parentMetaEntity.name);
+      const association = parentModel?.associations?.[relationshipAttribute.name];
+      const parentFkName =
+        association?.foreignKey ||
+        (association as any)?.foreignKeyField ||
+        Utils.underscoredIf(parentMetaEntity.name, true) + "_id";
+
       for (const nextChild of childList) {
         const childEntity = nextChild as Entity;
 
@@ -489,6 +496,15 @@ export class DataService {
 
         // Extract plain data in case 'childEntity' is a Sequelize Model instance
         const childEntityData = typeof (childEntity as any).toJSON === 'function' ? (childEntity as any).toJSON() : childEntity;
+
+        if (parentEntity.id && parentFkName) {
+          if (!childEntityData[parentFkName]) {
+            childEntityData[parentFkName] = parentEntity.id;
+          }
+          if (!childEntity[parentFkName]) {
+            childEntity[parentFkName] = parentEntity.id;
+          }
+        }
 
         if (isChildMediaFile && childEntityData['path']) {
           const rawPath = childEntityData['path'];

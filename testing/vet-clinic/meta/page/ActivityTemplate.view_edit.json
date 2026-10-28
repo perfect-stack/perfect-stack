@@ -43,23 +43,23 @@
       "cells": [
         [
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "activity_template_name",
             "attribute": {
+              "type": "Text",
+              "visibility": "Required",
               "name": "activity_template_name",
               "label": "Activity template name",
               "description": "Name of the activity template",
-              "type": "Text",
-              "visibility": "Required",
+              "unitOfMeasure": "",
+              "scale": "",
               "comparisonField": "",
               "comparisonOperator": "InsensitiveLike",
               "relationshipTarget": "",
               "typeaheadSearch": [
                 "activity_template_name"
               ],
-              "unitOfMeasure": "",
-              "scale": "",
               "rules": [
                 {
                   "type": "Required",
@@ -69,24 +69,24 @@
             }
           },
           {
-            "width": "6",
+            "width": "4",
             "height": "1",
             "attributeName": "method",
             "component": "Select",
             "attribute": {
+              "type": "ManyToOne",
+              "visibility": "Visible",
               "name": "method",
               "label": "Method",
               "description": "Method this activity template belongs to",
-              "type": "ManyToOne",
-              "visibility": "Visible",
+              "unitOfMeasure": "",
+              "scale": "",
               "comparisonField": "",
               "comparisonOperator": "Equals",
               "relationshipTarget": "Method",
               "typeaheadSearch": [
                 "method_name"
               ],
-              "unitOfMeasure": "",
-              "scale": "",
               "rules": []
             }
           }
@@ -97,29 +97,29 @@
             "height": "1",
             "attributeName": "layout_style",
             "attribute": {
+              "type": "Enumeration",
+              "visibility": "Visible",
               "name": "layout_style",
               "label": "Layout style",
               "description": "",
-              "type": "Enumeration",
-              "visibility": "Visible",
+              "unitOfMeasure": "",
+              "scale": "",
               "comparisonField": "",
               "comparisonOperator": "",
               "relationshipTarget": "",
               "typeaheadSearch": [],
+              "rules": [],
               "enumeration": [
                 "Card",
                 "Field",
                 "Table"
-              ],
-              "unitOfMeasure": "",
-              "scale": "",
-              "rules": []
+              ]
             },
             "component": "Select"
           }
         ]
       ],
-      "templateHeading": "Activity Template Information",
+      "templateHeading": "Activity Template Details",
       "binding": "activityTemplate",
       "showSideHeadings": "Disabled"
     },
@@ -131,53 +131,48 @@
           {
             "width": "12",
             "height": "1",
-            "attributeName": "assertion_types",
+            "attributeName": "activity_template_assertion_types",
             "template": {
-              "binding": "assertion_types",
+              "binding": "activity_template_assertion_types",
               "templateHeading": "",
               "type": "table",
-              "metaEntityName": "AssertionType",
+              "metaEntityName": "ActivityTemplateAssertionType",
               "cells": [
                 [
                   {
-                    "width": "4",
-                    "height": "1",
-                    "attributeName": "assertion_type_name"
-                  },
-                  {
-                    "width": "3",
-                    "height": "1",
-                    "attributeName": "assertion_value_class"
-                  },
-                  {
                     "width": "2",
                     "height": "1",
-                    "attributeName": "assertion_unit"
+                    "attributeName": "order_index"
+                  },
+                  {
+                    "width": "7",
+                    "height": "1",
+                    "attributeName": "assertion_type"
                   },
                   {
                     "width": "3",
                     "height": "1",
-                    "attributeName": "assertion_method"
+                    "attributeName": "is_mandatory"
                   }
                 ]
               ],
-              "orderByName": "assertion_type_name",
+              "orderByName": "order_index",
               "orderByDir": "ASC",
               "navigation": "Enabled",
-              "route": "/data/AssertionType/view/${id}"
+              "route": "/data/ActivityTemplateAssertionType/view_edit/${id}"
             },
             "attribute": {
-              "name": "assertion_types",
-              "label": "Assertion types",
-              "description": "Assertion types associated with this activity template",
               "type": "OneToMany",
               "visibility": "Visible",
-              "comparisonField": "",
-              "comparisonOperator": "",
-              "relationshipTarget": "AssertionType",
-              "typeaheadSearch": [],
+              "name": "activity_template_assertion_types",
+              "label": "Assertion types",
+              "description": "Assertion types associated with this activity template",
               "unitOfMeasure": "",
               "scale": "",
+              "comparisonField": "",
+              "comparisonOperator": "",
+              "relationshipTarget": "ActivityTemplateAssertionType",
+              "typeaheadSearch": [],
               "rules": []
             }
           }

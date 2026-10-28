@@ -175,6 +175,7 @@ export const newSequelize = async (
         database: databaseSettings.databaseName,
         logging: logging,
         logQueryParameters: true,
+        minifyAliases: true,
         ssl: useSsl,
         ...(useSsl
             ? {
@@ -262,6 +263,7 @@ const createSqliteSequelize = async (configService: ConfigService): Promise<Sequ
         storage: storage,
         logging: logging ? (msg) => logger.log(msg) : false,
         logQueryParameters: true,
+        minifyAliases: true,
     });
     await sequelize.authenticate();
     return sequelize;

@@ -15,7 +15,18 @@ export class RequiredRuleValidator extends RuleValidator {
       attribute.type === AttributeType.ManyToOne
         ? attribute.name + '_id'
         : attribute.name;
-    const value = entity[name];
+    let value = entity[name];
+
+    if (
+      (value === null || value === undefined || value === '') &&
+      attribute.type === AttributeType.ManyToOne &&
+      entity[attribute.name]
+    ) {
+      const relObj = entity[attribute.name];
+      if (typeof relObj === 'object' && relObj.id) {
+        value = relObj.id;
+      }
+    }
 
     let valid = undefined;
     if (attribute.type === AttributeType.Boolean) {

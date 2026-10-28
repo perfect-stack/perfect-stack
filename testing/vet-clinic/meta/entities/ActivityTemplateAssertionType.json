@@ -1,0 +1,75 @@
+{
+  "name": "ActivityTemplateAssertionType",
+  "pluralName": "ActivityTemplateAssertionTypes",
+  "icon": "",
+  "type": "Database",
+  "rootNode": false,
+  "timestamps": true,
+  "cacheExpiryInSecs": "",
+  "permanentDelete": true,
+  "attributes": [
+    {
+      "name": "id",
+      "label": "Id",
+      "description": "Primary key identifier for the activity template assertion type association",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Identifier",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "assertion_type",
+      "label": "Assertion type",
+      "description": "Assertion type associated with this activity template",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "ManyToOne",
+      "visibility": "Required",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "AssertionType",
+      "typeaheadSearch": [
+        "assertion_type_name"
+      ],
+      "rules": [
+        {
+          "type": "Required",
+          "config": ""
+        }
+      ]
+    },
+    {
+      "name": "is_mandatory",
+      "label": "Mandatory",
+      "description": "Whether this assertion is mandatory for this activity template",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Boolean",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    },
+    {
+      "name": "order_index",
+      "label": "Order index",
+      "description": "Display order / sequence for this assertion within the activity template",
+      "unitOfMeasure": "",
+      "scale": "",
+      "type": "Integer",
+      "visibility": "Visible",
+      "comparisonField": "",
+      "comparisonOperator": "Equals",
+      "relationshipTarget": "",
+      "typeaheadSearch": [],
+      "rules": []
+    }
+  ]
+}

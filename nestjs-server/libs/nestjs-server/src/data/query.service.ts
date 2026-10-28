@@ -90,6 +90,7 @@ export class QueryService {
     entityName: string,
     currentDepth: number = 1,
     maxDepth: number = 4,
+    parentEntityName?: string,
   ): Promise<any[]> {
     if (currentDepth >= maxDepth) {
       return [];
@@ -109,7 +110,10 @@ export class QueryService {
         attr.type === AttributeType.ManyToOne ||
         attr.type === AttributeType.OneToOne
       ) {
-        if (this.ormService.sequelize.isDefined(attr.relationshipTarget)) {
+        if (
+          attr.relationshipTarget !== parentEntityName &&
+          this.ormService.sequelize.isDefined(attr.relationshipTarget)
+        ) {
           const targetModel = this.ormService.sequelize.model(
             attr.relationshipTarget,
           );
@@ -144,6 +148,7 @@ export class QueryService {
                 attr.relationshipTarget,
                 currentDepth + 1,
                 maxDepth,
+                entityName,
               );
               const includeItem: any = {
                 model: targetModel,
@@ -306,6 +311,7 @@ export class QueryService {
           childAttr.relationshipTarget,
           1,
           3,
+          entityName,
         );
 
         const children = await childModel.findAll({
