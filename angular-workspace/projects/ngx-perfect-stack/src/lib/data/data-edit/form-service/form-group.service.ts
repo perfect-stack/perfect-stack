@@ -115,8 +115,8 @@ export class FormGroupService {
     if (itemArray) {
       let itemCount = itemArray.length;
       if(itemCount > 0) {
-        if (itemCount > 1 && (itemArray as any[]).some((x: any) => x && x.order_index !== undefined && x.order_index !== null)) {
-          (itemArray as any[]).sort((a: any, b: any) => (a?.order_index ?? 0) - (b?.order_index ?? 0));
+        if (itemCount > 1 && (itemArray as any[]).some((x: any) => x && (x.sort_index != null || x.order_index != null))) {
+          (itemArray as any[]).sort((a: any, b: any) => ((a?.sort_index ?? a?.order_index) ?? 0) - ((b?.sort_index ?? b?.order_index) ?? 0));
         }
         const childEntityName = attribute.relationshipTarget;
         for (let i = 0; i < itemCount; i++) {

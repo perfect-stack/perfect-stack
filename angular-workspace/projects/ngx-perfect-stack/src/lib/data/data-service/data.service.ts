@@ -106,6 +106,10 @@ export class DataService {
     return this.http.post(`${this.stackConfig.apiUrl}/data/${updateSortIndexRequest.metaName}/${updateSortIndexRequest.id}/sort_index`, updateSortIndexRequest);
   }
 
+  reorder(entityName: string, orderedIds: string[]): Observable<void> {
+    return this.http.post<void>(`${this.stackConfig.apiUrl}/data/${entityName}/reorder`, { orderedIds });
+  }
+
   destroy(entityName: string, id: string) {
     return this.http.delete(`${this.stackConfig.apiUrl}/data/${entityName}/${id}`);
   }

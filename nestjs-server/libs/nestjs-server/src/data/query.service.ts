@@ -76,6 +76,21 @@ export class QueryService {
       const entity = entityModel.toJSON();
       const metaEntity = await this.metaEntityService.findOne(entityName);
       for (const attribute of metaEntity.attributes) {
+        if (attribute.type === AttributeType.OneToMany) {
+          const childList = entity[attribute.name];
+          if (Array.isArray(childList) && childList.length > 1) {
+            childList.sort((a, b) => {
+              const aIndex = a.sort_index ?? a.order_index;
+              const bIndex = b.sort_index ?? b.order_index;
+              if (aIndex != null && bIndex != null) {
+                return aIndex - bIndex;
+              }
+              if (aIndex != null) return -1;
+              if (bIndex != null) return 1;
+              return 0;
+            });
+          }
+        }
         if (attribute.type === AttributeType.OneToPoly) {
           await this.loadOneToPoly(metaEntity, entity, attribute);
         }
@@ -562,8 +577,9 @@ export class QueryService {
       }
     }
 
-    if (!label && entity.order_index !== undefined && entity.order_index !== null) {
-      label = `Order #${entity.order_index}`;
+    const sortVal = entity.sort_index ?? entity.order_index;
+    if (!label && sortVal !== undefined && sortVal !== null) {
+      label = `Order #${sortVal}`;
     }
 
     if (!label) {
@@ -583,8 +599,10 @@ export class QueryService {
       const childList = entity[attr.name];
       if (Array.isArray(childList) && childList.length > 0) {
         const sortedList = [...childList].sort((a, b) => {
-          if (a.order_index != null && b.order_index != null) {
-            return a.order_index - b.order_index;
+          const aIndex = a.sort_index ?? a.order_index;
+          const bIndex = b.sort_index ?? b.order_index;
+          if (aIndex != null && bIndex != null) {
+            return aIndex - bIndex;
           }
           return 0;
         });

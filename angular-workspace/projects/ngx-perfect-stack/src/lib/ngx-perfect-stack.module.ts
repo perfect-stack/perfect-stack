@@ -9,6 +9,7 @@ import {MenuHeaderViewComponent} from './meta/menu/meta-menu-view/menu-header-vi
 import {MetaMenuService} from './meta/menu/meta-menu-service/meta-menu.service';
 import {NgbDateAdapter, NgbDateParserFormatter, NgbDropdown, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {AuthenticationService} from './authentication/authentication.service';
@@ -68,6 +69,7 @@ import {
   OneToManyControlComponent,
   OneToOneControlComponent,
   TableLayoutComponent,
+  OrderedTableLayoutComponent,
   CardLayoutComponent,
   FormListLayoutComponent,
   OneToPolyControlComponent,
@@ -256,12 +258,14 @@ export function layoutComponentFactory() {
     ControllerComponent,
     LayoutComponent,
     LayoutOutletComponent,
+    OrderedTableLayoutComponent,
     CellComponent,
     TextFieldControlComponent,
     UrlFieldControlComponent,
     OneToOneControlComponent,
     FormLayoutComponent,
     TableLayoutComponent,
+    OrderedTableLayoutComponent,
     LabelComponent,
     OneToManyControlComponent,
     CardLayoutComponent,
@@ -354,6 +358,7 @@ export function layoutComponentFactory() {
   ],
   imports: [
     CommonModule,
+    DragDropModule,
     FormsModule,
     ReactiveFormsModule,
     NgbModule,

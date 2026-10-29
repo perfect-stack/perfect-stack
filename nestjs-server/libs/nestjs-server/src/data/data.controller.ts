@@ -234,6 +234,32 @@ export class DataController {
     return response;
   }
 
+  @ActionPermit(ActionType.Edit)
+  @SubjectKey('entityName')
+  @ApiOperation({
+    summary: 'Atomically reorders the entities of entityName based on the provided ordered IDs',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Entities successfully reordered',
+  })
+  @Post('/:entityName/reorder')
+  async reorder(
+    @Req() request: Request,
+    @Param('entityName') entityName: string,
+    @Body() body: { orderedIds: string[] },
+  ): Promise<void> {
+    const startTime = Date.now();
+    await this.dataService.reorder(entityName, body.orderedIds);
+    await this.auditService.audit(
+      request,
+      entityName,
+      'reorder',
+      AuditAction.Update,
+      Date.now() - startTime,
+    );
+  }
+
   @ActionPermit(ActionType.Delete)
   @SubjectKey('entityName')
   @ApiOperation({

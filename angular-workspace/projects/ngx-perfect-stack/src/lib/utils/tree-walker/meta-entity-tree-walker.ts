@@ -154,8 +154,8 @@ export class DoubleVisitor implements Visitor {
   /**
    * For each AttributeType.Double, look at the value and if it is a string convert it to a number, "1" => 1
    */
-  visit(node: any, value: number, metaEntity: MetaEntity, attribute: MetaAttribute): void {
-    node[attribute.name] = value ? Number(value) : null;
+  visit(node: any, value: any, metaEntity: MetaEntity, attribute: MetaAttribute): void {
+    node[attribute.name] = value !== null && value !== undefined && value !== '' && !isNaN(Number(value)) ? Number(value) : null;
   }
 }
 
@@ -163,8 +163,8 @@ export class IntegerVisitor implements Visitor {
   /**
    * For each AttributeType.Integer, look at the value and if it is a string convert it to a number, "1" => 1
    */
-  visit(node: any, value: number, metaEntity: MetaEntity, attribute: MetaAttribute): void {
-    node[attribute.name] = value ? Number(value) : null;
+  visit(node: any, value: any, metaEntity: MetaEntity, attribute: MetaAttribute): void {
+    node[attribute.name] = value !== null && value !== undefined && value !== '' && !isNaN(Number(value)) ? Number(value) : null;
   }
 }
 

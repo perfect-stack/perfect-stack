@@ -26,6 +26,7 @@ import { DebugService } from '../../../utils/debug/debug.service';
 export * from './layout-outlet/layout.token';
 export * from './layout-outlet/layout-outlet.component';
 export * from './layouts/table-layout/table-layout.component';
+export * from './layouts/ordered-table-layout/ordered-table-layout.component';
 export * from './layouts/card-layout/card-layout.component';
 export * from './layouts/form-layout/form-layout.component';
 export * from './layouts/header-layout/header-layout.component';

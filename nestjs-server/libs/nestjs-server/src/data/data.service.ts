@@ -802,6 +802,48 @@ export class DataService {
     }
   }
 
+  /**
+   * Atomically reorder a list of entities by their IDs, updating their sort_index in sequential order (0, 1, 2...)
+   * inside a single database transaction.
+   */
+  async reorder(entityName: string, orderedIds: string[]): Promise<void> {
+    if (!orderedIds || orderedIds.length === 0) {
+      return;
+    }
+    const metaEntity = await this.metaEntityService.findOne(entityName);
+    if (!metaEntity) {
+      throw new BadRequestException(`Unknown entity type: ${entityName}`);
+    }
+    const model = this.ormService.sequelize.model(entityName);
+    if (!model) {
+      throw new BadRequestException(`Unknown entity model: ${entityName}`);
+    }
+
+    const sortAttr = metaEntity.attributes.find(
+      (a) => a.name === 'sort_index' || a.name === 'order_index',
+    );
+    const sortField = sortAttr ? sortAttr.name : 'sort_index';
+
+    const txn = await this.startTxn();
+    try {
+      for (let i = 0; i < orderedIds.length; i++) {
+        const id = orderedIds[i];
+        await model.update(
+          { [sortField]: i },
+          {
+            where: { id },
+            transaction: txn,
+          },
+        );
+      }
+      await this.endTxn(txn);
+    } catch (err) {
+      await this.rollbackTxn(txn);
+      this.logger.error(`Failed to reorder ${entityName}`, err);
+      throw err;
+    }
+  }
+
   async destroy(entityName: string, id: string) {
     const destroyCheckOk = await this.destroyCheck(entityName, id);
     if (destroyCheckOk) {

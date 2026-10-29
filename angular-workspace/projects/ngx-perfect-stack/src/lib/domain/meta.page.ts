@@ -64,6 +64,7 @@ export enum TemplateType {
   map = 'map',
   chart = 'chart',
   formList = 'formList',
+  orderedTable = 'orderedTable',
 }
 
 export enum TemplateLocationType {

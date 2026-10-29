@@ -1,0 +1,85 @@
+@if (debugService.ON) {
+  [ORDERED_TABLE_LAYOUT - {{template.templateHeading}} - {{template.binding}}]
+}
+
+@if (cells$ | async; as cells) {
+  @if (cells && attributes && (attributes.length > 0 || mode === 'edit')) {
+    @if (hasResultsSummary()) {
+      <div class="results-summary" [attr.data-testid]="'results-summary'">
+        {{formGroup.controls['resultsSummary'].value}}
+      </div>
+    }
+    <table class="table" [ngClass]="getStyleClasses()" [attr.data-testid]="'table-' + (template?.binding || 'data')">
+      <thead>
+        @if (cells) {
+          <tr>
+            @if (mode === 'edit') {
+              <th style="width: 48px;">
+                <!-- Drag handle column header -->
+              </th>
+            }
+            @for (nextCell of cells[0]; track nextCell) {
+              <th>
+                @if (nextCell.attribute) {
+                  {{nextCell.attribute.label}}
+                  @if (mode === 'edit' && nextCell.attribute.visibility === 'Required' && attributes.length > 0) {
+                    <span class="text-danger">*</span>
+                  }
+                }
+                @if (nextCell.tool) {
+                  {{nextCell.tool.label}}
+                }
+              </th>
+            }
+            @if (mode === 'edit') {
+              <th style="width: 48px;">
+                <!-- Delete action column header -->
+              </th>
+            }
+          </tr>
+        }
+      </thead>
+      <tbody cdkDropList (cdkDropListDropped)="onDrop($event)" [cdkDropListDisabled]="mode !== 'edit'">
+        @for (group of attributes.controls; track trackByRow($index, group); let i = $index) {
+          <tr cdkDrag class="align-middle" [cdkDragDisabled]="mode !== 'edit'" (click)="onRowClicked(i)" [attr.data-testid]="'table-row-' + i">
+            @if (mode === 'edit') {
+              <td class="drag-handle-cell" cdkDragHandle [attr.data-testid]="'drag-handle-' + i">
+                <span class="material-symbols-outlined drag-handle-icon">drag_indicator</span>
+              </td>
+            }
+            @for (nextCell of cells[0]; track nextCell) {
+              <td [ngStyle]="{'width': getCellWidth(nextCell) }">
+                @if (nextCell.attribute || nextCell.tool) {
+                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!" [idSuffix]="getRowIdSuffix(i)"></lib-cell>
+                }
+              </td>
+            }
+            @if (mode === 'edit') {
+              <td>
+                <span class="btn-icon text-primary material-symbols-outlined" (click)="onDeleteRow(i); $event.stopPropagation()" [attr.data-testid]="'btn-delete-row-' + i">delete</span>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+  @if (mode !== 'edit' && cells && attributes && attributes.length == 0) {
+    <div class="no-items-container" [attr.data-testid]="'no-items-container'">
+      <div class="d-flex justify-content-center no-items-icon">
+        <span class="material-symbols-outlined no-items-icon">manage_search</span>
+      </div>
+      <div class="d-flex justify-content-center no-items-title">
+        <div [innerHtml]="getNoItemsHtml()"></div>
+      </div>
+    </div>
+  }
+  @if (mode === 'edit' && attributes) {
+    <div class="d-flex">
+      <a class="text-primary" (click)="onAddRow()" id="addRowBtn" [attr.data-testid]="'btn-add-row'" role="button">
+        <span class="material-symbols-outlined icon-filled align-middle">add_circle</span>
+        Add another
+      </a>
+    </div>
+  }
+}

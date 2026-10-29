@@ -1,0 +1,67 @@
+.table thead {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background: #F2F4F7;
+}
+
+.table > :not(:first-child) {
+  border-top: unset;
+}
+
+.results-summary {
+  padding: 24px;
+  font-size: 18px;
+}
+
+.no-items-container {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.no-items-icon {
+  color: #D0D5DD;
+  font-size: 72px;
+}
+
+.no-items-title {
+  color: #101828;
+}
+
+.drag-handle-cell {
+  width: 48px;
+  cursor: grab;
+  text-align: center;
+  user-select: none;
+}
+
+.drag-handle-cell:active {
+  cursor: grabbing;
+}
+
+.drag-handle-icon {
+  color: #98A2B3;
+  vertical-align: middle;
+}
+
+.drag-handle-cell:hover .drag-handle-icon {
+  color: #344054;
+}
+
+::ng-deep .cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+  display: table;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  background: #e0e0e0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
