@@ -366,12 +366,17 @@ export class FormService {
   }
 
   public toCellAttributeArray(template: Template, metaEntity: MetaEntity) {
+    const isTable = template && (template.type === 'table' || template.type === 'orderedTable');
     const cells: CellAttribute[][] = [];
     if (template && template.cells) {
       for (const nextRow of template.cells) {
         const row = []
         for (const nextCell of nextRow) {
-          row.push(this.toCellAttribute(nextCell, metaEntity));
+          const cellAttr = this.toCellAttribute(nextCell, metaEntity);
+          if (isTable && cellAttr.hideLabel === undefined) {
+            cellAttr.hideLabel = true;
+          }
+          row.push(cellAttr);
         }
         cells.push(row);
       }

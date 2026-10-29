@@ -82,7 +82,7 @@
       }
     }
     @case ('Boolean') {
-      <lib-boolean-check-box-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute"></lib-boolean-check-box-control>
+      <lib-boolean-check-box-control [mode]="mode" [formGroup]="formGroup" [attribute]="cell.attribute" [cell]="cell"></lib-boolean-check-box-control>
     }
     @case ('Enumeration') {
       <ng-container [formGroup]="formGroup">

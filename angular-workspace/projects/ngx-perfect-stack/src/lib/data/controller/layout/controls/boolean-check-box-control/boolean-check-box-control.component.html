@@ -2,16 +2,20 @@
   @if (attribute) {
     <div class="form-check" [formGroup]="formGroup" [attr.data-testid]="'field-' + attribute.name">
       <input class="form-check-input" type="checkbox" [id]="attribute.name" [formControlName]="attribute.name" [attr.name]="attribute.name" [attr.data-testid]="'checkbox-' + attribute.name">
-      <label class="form-check-label" [for]="attribute.name" [attr.data-testid]="'label-' + attribute.name">
-        {{attribute.label}}
-      </label>
+      @if (isShowLabel) {
+        <label class="form-check-label" [for]="attribute.name" [attr.data-testid]="'label-' + attribute.name">
+          {{attribute.label}}
+        </label>
+      }
     </div>
   }
 }
 
 @if (mode === 'view') {
   <div [attr.data-testid]="'field-' + attribute.name">
-    <label [for]="attribute.name" [attr.data-testid]="'label-' + attribute.name">{{attribute.label}}</label>
+    @if (isShowLabel) {
+      <label [for]="attribute.name" [attr.data-testid]="'label-' + attribute.name">{{attribute.label}}</label>
+    }
     <div [id]="attribute.name" [attr.data-testid]="'view-' + attribute.name">{{getDisplayValue()}}</div>
   </div>
 }
