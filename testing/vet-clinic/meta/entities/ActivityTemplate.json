@@ -60,7 +60,7 @@
       "rules": []
     },
     {
-      "name": "activity_template_assertion_types",
+      "name": "assertion_types",
       "label": "Assertion types",
       "description": "Assertion types associated with this activity template",
       "unitOfMeasure": "",
@@ -69,7 +69,7 @@
       "visibility": "Visible",
       "comparisonField": "",
       "comparisonOperator": "",
-      "relationshipTarget": "ActivityTemplateAssertionType",
+      "relationshipTarget": "AssertionType",
       "typeaheadSearch": [],
       "rules": []
     },
