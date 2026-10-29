@@ -396,42 +396,73 @@ export class QueryService {
     entityName: string,
     currentDepth: number,
     maxDepth: number,
+    parentEntityName?: string,
   ): Promise<any[]> {
-    if (currentDepth >= maxDepth) {
-      return [];
-    }
-
     const metaEntity = await this.metaEntityService.findOne(entityName);
     if (!metaEntity) {
       return [];
     }
 
     const includes: any[] = [];
-    const oneToManyAttrs = metaEntity.attributes.filter(
+
+    // Forward ManyToOne attributes (e.g. ActivityTemplateAssertionType -> AssertionType).
+    // Always include these 1 level so that display labels and relational attributes are available.
+    // They are lookup associations of the node, NOT child tree levels.
+    const manyToOneAttrs = metaEntity.attributes.filter(
       (a) =>
-        a.type === AttributeType.OneToMany &&
-        a.relationshipTarget !== entityName,
+        a.type === AttributeType.ManyToOne &&
+        a.relationshipTarget !== entityName &&
+        a.relationshipTarget !== parentEntityName,
     );
 
-    for (const attr of oneToManyAttrs) {
-      const targetModel = this.ormService.sequelize.model(
-        attr.relationshipTarget,
-      );
-      if (targetModel) {
-        const nestedIncludes = await this.buildIncludeTree(
+    for (const attr of manyToOneAttrs) {
+      if (this.ormService.sequelize.isDefined(attr.relationshipTarget)) {
+        const targetModel = this.ormService.sequelize.model(
           attr.relationshipTarget,
-          currentDepth + 1,
-          maxDepth,
         );
-        const includeItem: any = {
-          model: targetModel,
-          as: attr.name,
-          required: false,
-        };
-        if (nestedIncludes.length > 0) {
-          includeItem.include = nestedIncludes;
+        if (targetModel) {
+          includes.push({
+            model: targetModel,
+            as: attr.name,
+            required: false,
+          });
         }
-        includes.push(includeItem);
+      }
+    }
+
+    // OneToMany child relationships define the hierarchical tree depth progression.
+    // Only recurse down children if currentDepth < maxDepth.
+    if (currentDepth < maxDepth) {
+      const oneToManyAttrs = metaEntity.attributes.filter(
+        (a) =>
+          a.type === AttributeType.OneToMany &&
+          a.relationshipTarget !== entityName &&
+          a.relationshipTarget !== parentEntityName,
+      );
+
+      for (const attr of oneToManyAttrs) {
+        if (this.ormService.sequelize.isDefined(attr.relationshipTarget)) {
+          const targetModel = this.ormService.sequelize.model(
+            attr.relationshipTarget,
+          );
+          if (targetModel) {
+            const nestedIncludes = await this.buildIncludeTree(
+              attr.relationshipTarget,
+              currentDepth + 1,
+              maxDepth,
+              entityName,
+            );
+            const includeItem: any = {
+              model: targetModel,
+              as: attr.name,
+              required: false,
+            };
+            if (nestedIncludes.length > 0) {
+              includeItem.include = nestedIncludes;
+            }
+            includes.push(includeItem);
+          }
+        }
       }
     }
 
@@ -441,13 +472,24 @@ export class QueryService {
   private async mapEntityToTreeNode(
     entityName: string,
     entity: any,
+    parentEntityName?: string,
   ): Promise<any> {
     const metaEntity = await this.metaEntityService.findOne(entityName);
     const oneToManyAttrs = metaEntity
       ? metaEntity.attributes.filter(
           (a) =>
             a.type === AttributeType.OneToMany &&
-            a.relationshipTarget !== entityName,
+            a.relationshipTarget !== entityName &&
+            a.relationshipTarget !== parentEntityName,
+        )
+      : [];
+
+    const manyToOneAttrs = metaEntity
+      ? metaEntity.attributes.filter(
+          (a) =>
+            a.type === AttributeType.ManyToOne &&
+            a.relationshipTarget !== entityName &&
+            a.relationshipTarget !== parentEntityName,
         )
       : [];
 
@@ -462,8 +504,14 @@ export class QueryService {
         (a) => a.typeaheadSearch && a.typeaheadSearch.length > 0,
       );
       if (typeaheadAttr && entity[typeaheadAttr.name]) {
-        label = entity[typeaheadAttr.name];
-      } else {
+        if (typeof entity[typeaheadAttr.name] === "object") {
+          const searchField = typeaheadAttr.typeaheadSearch[0];
+          label = entity[typeaheadAttr.name][searchField] || null;
+        } else {
+          label = entity[typeaheadAttr.name];
+        }
+      }
+      if (!label) {
         const textAttr = metaEntity.attributes.find(
           (a) => a.type === AttributeType.Text,
         );
@@ -473,38 +521,85 @@ export class QueryService {
       }
     }
 
+    // Generic fallback for entities without direct text attributes:
+    // Check populated ManyToOne relations and use their typeahead/text display name
     if (!label) {
-      throw new Error(
-        'Undefined Node Label definition: Unable to determine node label for entity "' +
-          entityName +
-          '" (id: ' +
-          (entity.id || 'unknown') +
-          '). Please define a text display attribute in its MetaEntity definition.',
-      );
+      for (const attr of manyToOneAttrs) {
+        const relObj = entity[attr.name];
+        if (relObj && typeof relObj === "object") {
+          if (
+            attr.typeaheadSearch &&
+            attr.typeaheadSearch.length > 0 &&
+            relObj[attr.typeaheadSearch[0]]
+          ) {
+            label = relObj[attr.typeaheadSearch[0]];
+            break;
+          }
+          const relMeta = await this.metaEntityService.findOne(
+            attr.relationshipTarget,
+          );
+          if (relMeta) {
+            const relTypeahead = relMeta.attributes.find(
+              (a) => a.typeaheadSearch && a.typeaheadSearch.length > 0,
+            );
+            if (relTypeahead && relObj[relTypeahead.name]) {
+              label = relObj[relTypeahead.name];
+              break;
+            }
+            const relText = relMeta.attributes.find(
+              (a) => a.type === AttributeType.Text,
+            );
+            if (relText && relObj[relText.name]) {
+              label = relObj[relText.name];
+              break;
+            }
+          }
+          if (relObj.name || relObj.label || relObj.title) {
+            label = relObj.name || relObj.label || relObj.title;
+            break;
+          }
+        }
+      }
     }
 
-    const secondaryLabel =
+    if (!label && entity.order_index !== undefined && entity.order_index !== null) {
+      label = `Order #${entity.order_index}`;
+    }
+
+    if (!label) {
+      label = entity.id || "Node";
+    }
+
+    let secondaryLabel =
       entity.secondaryLabel ||
       entity.code ||
       null;
 
     const badge = entityName;
 
+    // Children are strictly defined by hierarchical OneToMany relationships
     const children: any[] = [];
     for (const attr of oneToManyAttrs) {
       const childList = entity[attr.name];
       if (Array.isArray(childList) && childList.length > 0) {
-        for (const childItem of childList) {
+        const sortedList = [...childList].sort((a, b) => {
+          if (a.order_index != null && b.order_index != null) {
+            return a.order_index - b.order_index;
+          }
+          return 0;
+        });
+        for (const childItem of sortedList) {
           const childNode = await this.mapEntityToTreeNode(
             attr.relationshipTarget,
             childItem,
+            entityName,
           );
           children.push(childNode);
         }
       }
     }
 
-    const isLeaf = oneToManyAttrs.length === 0 || children.length === 0;
+    const isLeaf = children.length === 0;
 
     return {
       ...entity,

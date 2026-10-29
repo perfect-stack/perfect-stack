@@ -250,7 +250,7 @@ const createPostgresSequelize = async (configService: ConfigService): Promise<Se
     const max = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_MAX', '10'), 10);
     const acquire = parseInt(configService.get('DATABASE_POOL_SEQUELIZE_ACQUIRE', '60000'), 10);
     const logging = configService.get<string>('DATABASE_LOGGING', 'false') === 'true';
-    const minifyAliases = configService.get<string>('DATABASE_MINIFY_ALIASES', 'false') === 'true';
+    const minifyAliases = configService.get<string>('DATABASE_MINIFY_ALIASES', 'true') !== 'false';
     logger.log(`Sequelize pool settings; min: ${min}, max: ${max}, acquire: ${acquire}, logging: ${logging}, minifyAliases: ${minifyAliases}`);
 
     return await loadOrm(databaseSettings, min, max, acquire, logging ? (msg) => logger.log(msg) : false, minifyAliases);

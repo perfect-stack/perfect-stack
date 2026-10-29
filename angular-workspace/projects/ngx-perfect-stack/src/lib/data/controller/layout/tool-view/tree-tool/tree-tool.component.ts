@@ -155,6 +155,8 @@ export class TreeToolComponent implements OnInit {
       for (const relName of config.childRelationships) {
         if (Array.isArray(node[relName])) {
           allChildren.push(...node[relName]);
+        } else if (node[relName] && typeof node[relName] === "object") {
+          allChildren.push(node[relName]);
         }
       }
       return allChildren;
@@ -291,6 +293,14 @@ export class TreeToolComponent implements OnInit {
         this.detailCtx = ctx;
         this.detailMode = mode;
         this.originalDetailValueJson = JSON.stringify(this.getFormDataValue());
+        if (this.selectedNode && ctx.dataMap) {
+          for (const val of ctx.dataMap.values()) {
+            if (val && typeof val === "object") {
+              Object.assign(this.selectedNode, val);
+              break;
+            }
+          }
+        }
         this.loadingDetail = false;
         this.cdr.markForCheck();
       },
@@ -397,12 +407,11 @@ export class TreeToolComponent implements OnInit {
   }
 
   private saveCompleted(response: SaveResponse): void {
-    this.toastService.showSuccess('Save is successful');
-    const nodeConfig = this.getNodeConfig(this.selectedNode);
-    if (nodeConfig?.displayAttribute && response.entity?.[nodeConfig.displayAttribute]) {
-      this.selectedNode[nodeConfig.displayAttribute] = response.entity[nodeConfig.displayAttribute];
+    this.toastService.showSuccess("Save is successful");
+    if (this.selectedNode && response.entity) {
+      Object.assign(this.selectedNode, response.entity);
     }
-    this.loadDetail(this.selectedNode, 'view');
+    this.loadDetail(this.selectedNode, "view");
   }
 
   confirmDiscardUnsavedChanges(): Observable<boolean> {
@@ -500,27 +509,39 @@ export class TreeToolComponent implements OnInit {
     return undefined;
   }
 
+  getNestedValue(obj: any, path?: string): any {
+    if (!obj || !path) return undefined;
+    return path.split(".").reduce((acc, part) => (acc != null ? acc[part] : undefined), obj);
+  }
+
   getNodeLabel(node: any): string {
-    if (!node) return '';
+    if (!node) return "";
     const config = this.getNodeConfig(node);
     const displayAttr = config?.displayAttribute || this.treeTool?.displayAttribute;
-    if (displayAttr && node[displayAttr] !== undefined && node[displayAttr] !== null) {
-      return String(node[displayAttr]);
+    if (displayAttr) {
+      const val = this.getNestedValue(node, displayAttr);
+      if (val !== undefined && val !== null) {
+        return String(val);
+      }
     }
-    if (node['label']) return node['label'];
-    if (node['name']) return node['name'];
-    if (node['title']) return node['title'];
-    return 'Undefined Node Label definition';
+    if (node["label"]) return node["label"];
+    if (node["name"]) return node["name"];
+    if (node["title"]) return node["title"];
+    return "Undefined Node Label definition";
   }
 
   getSecondaryLabel(node: any): string | null {
     if (!node) return null;
     const config = this.getNodeConfig(node);
-    if (config?.secondaryAttribute && node[config.secondaryAttribute]) {
-      return node[config.secondaryAttribute];
-    }
-    if (this.treeTool?.secondaryAttribute && node[this.treeTool.secondaryAttribute]) {
-      return node[this.treeTool.secondaryAttribute];
+    const secAttr = config?.secondaryAttribute || this.treeTool?.secondaryAttribute;
+    if (secAttr) {
+      const val = this.getNestedValue(node, secAttr);
+      if (val !== undefined && val !== null) {
+        if (typeof val === "number") {
+          return `#${val}`;
+        }
+        return String(val);
+      }
     }
     return null;
   }
