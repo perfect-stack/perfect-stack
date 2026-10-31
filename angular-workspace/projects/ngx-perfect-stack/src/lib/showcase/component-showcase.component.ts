@@ -165,7 +165,8 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
 
     const secondaryName = (this.activeItem.cell?.componentData as any)?.secondaryAttributeName;
     if (secondaryName) {
-      const secondaryVal = this.activeItem.id === 'flexible-date-time' ? 'Exact' : 'Standard';
+      const secondaryVal = this.activeItem.initialSecondaryValue ??
+        (this.activeItem.id === 'flexible-date-time' ? 'Exact' : 'Standard');
       controls[secondaryName] = new FormControlWithAttribute(secondaryVal);
     }
 
@@ -181,7 +182,7 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
       this.featureSub = undefined;
     }
 
-    // 2. Check if we already have it cached in-memory
+    // 2. Check in-memory cache for instantaneous switch
     if (this.featureCache.has(featurePath)) {
       this.featureContent = this.featureCache.get(featurePath)!;
       this.isLiveSourceLinked = true;
@@ -189,23 +190,21 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // 3. Immediately set to the known fallback so there is zero flicker from the previous component
+    // 3. Immediately set the fallback specification so stale text never lingers
     this.featureContent = fallback;
     this.isLiveSourceLinked = false;
     this.cdr.markForCheck();
 
-    // 4. Request the live source from the assets endpoint
+    // 4. Fetch the live .feature source file from assets
     this.featureSub = this.http.get(featurePath, { responseType: 'text' }).subscribe({
-      next: (content) => {
-        // Discard response if user navigated to another component in the meantime
+      next: (content: string) => {
+        // Discard response if user already switched to another component
         if (this.activeItem?.id !== componentId) {
           return;
         }
 
-        // Validate that response is genuine Gherkin and NOT an HTML fallback (e.g. index.html from SPA dev server)
-        const trimmed = (content || '').trim();
-        const isHtml = trimmed.startsWith('<!doctype') || trimmed.startsWith('<html') || trimmed.includes('<app-root>');
-        const isGherkin = trimmed.includes('Feature:');
+        const isHtml = content.trim().toLowerCase().startsWith('<!doctype html') || content.trim().toLowerCase().startsWith('<html');
+        const isGherkin = content.includes('Feature:');
 
         if (!isHtml && isGherkin) {
           this.featureContent = content;

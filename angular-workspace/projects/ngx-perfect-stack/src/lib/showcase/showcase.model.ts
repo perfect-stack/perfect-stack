@@ -20,6 +20,7 @@ export interface ShowcaseItem {
   attribute: MetaAttribute;
   cell: CellAttribute;
   initialValue: any;
+  initialSecondaryValue?: any;
   samplePresets: ShowcasePreset[];
   docProperties: ShowcaseDocProperty[];
   metaPageJson: any;

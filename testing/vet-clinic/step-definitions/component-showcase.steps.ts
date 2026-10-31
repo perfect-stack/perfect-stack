@@ -321,6 +321,62 @@ Then('the select two view should display formatted text', async function (this: 
   expect(text.trim()).to.not.be.empty;
 });
 
+Then('the select two secondary dropdown should contain option {string}', async function (this: UIWorld, expectedOption: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const secondarySelect = this.page.locator('lib-select-two-control lib-enumeration-control select').first();
+  await secondarySelect.waitFor({ state: 'visible', timeout: 15000 });
+  await this.page.waitForFunction(
+    ([sel, opt]) => {
+      const el = document.querySelector(sel);
+      if (!el) return false;
+      const options = Array.from(el.querySelectorAll('option')).map(o => o.textContent?.trim());
+      return options.includes(opt);
+    },
+    ['lib-select-two-control lib-enumeration-control select', expectedOption],
+    { timeout: 10000 }
+  );
+  const options = await secondarySelect.locator('option').allTextContents();
+  const trimmed = options.map(o => o.trim());
+  expect(trimmed).to.include(expectedOption);
+});
+
+Then('the select two secondary dropdown should not contain option {string}', async function (this: UIWorld, excludedOption: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const secondarySelect = this.page.locator('lib-select-two-control lib-enumeration-control select').first();
+  await secondarySelect.waitFor({ state: 'visible', timeout: 15000 });
+  await this.page.waitForFunction(
+    ([sel, opt]) => {
+      const el = document.querySelector(sel);
+      if (!el) return false;
+      const options = Array.from(el.querySelectorAll('option')).map(o => o.textContent?.trim());
+      return !options.includes(opt);
+    },
+    ['lib-select-two-control lib-enumeration-control select', excludedOption],
+    { timeout: 10000 }
+  );
+  const options = await secondarySelect.locator('option').allTextContents();
+  const trimmed = options.map(o => o.trim());
+  expect(trimmed).to.not.include(excludedOption);
+});
+
+When('I select clinic {string} in the select two primary dropdown', async function (this: UIWorld, clinicName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const primarySelect = this.page.locator('lib-select-two-control lib-select-control select').first();
+  await primarySelect.waitFor({ state: 'visible', timeout: 15000 });
+  await this.page.waitForFunction(
+    ([sel, opt]) => {
+      const el = document.querySelector(sel);
+      if (!el) return false;
+      const options = Array.from(el.querySelectorAll('option')).map(o => o.textContent?.trim());
+      return options.includes(opt);
+    },
+    ['lib-select-two-control lib-select-control select', clinicName],
+    { timeout: 10000 }
+  );
+  await primarySelect.selectOption({ label: clinicName });
+  await this.page.waitForTimeout(500);
+});
+
 // -----------------------------------------------------------------------------
 // Menu Bar & Showcase Accordion Steps
 // -----------------------------------------------------------------------------

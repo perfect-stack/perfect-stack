@@ -54,6 +54,7 @@ export class ComponentData {}
 
 export class SelectTwoComponentData implements ComponentData {
   secondaryAttributeName: string;
+  optionsMap?: Record<string, string | string[]>;
 }
 
 export enum TemplateType {
