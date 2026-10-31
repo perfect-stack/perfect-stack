@@ -40,3 +40,5 @@ export * from './lib/data/controller/layout/controls/enumeration-options-control
 export * from './lib/data/controller/layout/controls/pipe-list-control/pipe-list-control.component';
 export * from './lib/meta/batch/batch-summary-tree/batch-summary-tree.component';
 export * from './lib/showcase/component-showcase.component';
+export * from './lib/showcase/showcase.model';
+export * from './lib/showcase/showcase-registry.service';

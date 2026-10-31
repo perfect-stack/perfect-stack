@@ -1,18 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntypedFormGroup, Validators } from '@angular/forms';
-import { AttributeType, ComparisonOperator, MetaAttribute, VisibilityType } from '../domain/meta.entity';
-import { CellAttribute } from '../meta/page/meta-page-service/meta-page.service';
+import { UntypedFormGroup } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { ShowcaseRegistryService } from './showcase-registry.service';
+import { ShowcaseItem } from './showcase.model';
 import { FormControlWithAttribute } from '../data/data-edit/form-service/form.service';
 import { ResultType, ValidationResult } from '../domain/meta.rule';
-
-export interface ShowcaseItem {
-  id: string;
-  name: string;
-  selector: string;
-  category: string;
-  description: string;
-}
+import { AttributeType } from '../domain/meta.entity';
 
 @Component({
   selector: 'lib-component-showcase',
@@ -22,107 +16,85 @@ export interface ShowcaseItem {
 })
 export class ComponentShowcaseComponent implements OnInit {
 
-  components: ShowcaseItem[] = [
-    {
-      id: 'text-field',
-      name: 'TextFieldControlComponent',
-      selector: '<lib-text-field-control>',
-      category: 'Inputs & Primitives',
-      description: 'Universal text and numerical input widget. Renders an editable input with scale/UoM formatting and validation indicators in "edit" mode, or a formatted read-only span in "view" mode.'
-    },
-    {
-      id: 'text-area',
-      name: 'TextAreaControlComponent',
-      selector: '<lib-text-area-control>',
-      category: 'Inputs & Primitives',
-      description: 'Multi-line text area input with custom height and line wrap support.'
-    },
-    {
-      id: 'date-picker',
-      name: 'DatePickerControlComponent',
-      selector: '<app-date-picker-control>',
-      category: 'Pickers & Calendars',
-      description: 'Integrated NgbDatePicker input handling ISO-8601 string dates with calendar dropdown.'
-    },
-    {
-      id: 'boolean-checkbox',
-      name: 'BooleanCheckBoxControlComponent',
-      selector: '<lib-boolean-check-box-control>',
-      category: 'Inputs & Primitives',
-      description: 'Accessible boolean toggle checkbox with configurable label positioning.'
-    }
-  ];
-
-  selectedComponentId = 'text-field';
   activeTab: 'playground' | 'docs' | 'gherkin' = 'playground';
+  activeItem: ShowcaseItem;
 
-  // Component Workbench State
   mode: 'edit' | 'view' = 'edit';
   idSuffix: string | null = null;
   isDisabled = false;
 
-  attribute: MetaAttribute = {
-    name: 'sample_text',
-    label: 'Sample Field',
-    description: 'A demonstration attribute for TextFieldControl',
-    type: AttributeType.Text,
-    visibility: VisibilityType.Required,
-    comparisonField: '',
-    comparisonOperator: ComparisonOperator.Equals,
-    relationshipTarget: '',
-    typeaheadSearch: [],
-    discriminator: {
-      entityMappingList: [],
-      discriminatorName: '',
-      discriminatorType: ''
-    },
-    rules: [],
-    enumeration: [],
-    unitOfMeasure: '',
-    scale: '',
-  };
-
-  cell: CellAttribute = {
-    width: '6',
-    height: '1',
-    attributeName: 'sample_text',
-    component: 'TextField',
-    attribute: this.attribute,
-  };
-
   formGroup: UntypedFormGroup;
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  // Live Gherkin source state
+  featureContent = '';
+  isLiveSourceLinked = false;
+
+  constructor(
+    public registry: ShowcaseRegistryService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
-    this.initForm('Fido');
-
     this.route.params.subscribe(params => {
-      if (params['componentId'] && this.components.some(c => c.id === params['componentId'])) {
-        this.selectedComponentId = params['componentId'];
+      const id = params['componentId'];
+      const targetItem = (id && this.registry.getItem(id))
+        ? this.registry.getItem(id)!
+        : this.registry.getItems()[0];
+
+      if (!this.activeItem || this.activeItem.id !== targetItem.id) {
+        this.activateComponent(targetItem);
       }
     });
   }
 
-  get activeComponent(): ShowcaseItem {
-    return this.components.find(c => c.id === this.selectedComponentId) || this.components[0];
-  }
-
   get control(): FormControlWithAttribute {
-    return this.formGroup.controls[this.attribute.name] as FormControlWithAttribute;
+    return this.formGroup.controls[this.activeItem.attribute.name] as FormControlWithAttribute;
   }
 
-  initForm(initialValue: string): void {
-    const ctrl = new FormControlWithAttribute(initialValue);
-    ctrl.attribute = this.attribute;
-    this.formGroup = new UntypedFormGroup({
-      [this.attribute.name]: ctrl
-    });
+  get categories(): string[] {
+    return this.registry.getCategories();
   }
 
   selectComponent(id: string): void {
-    this.selectedComponentId = id;
-    this.router.navigate(['/showcase', id]);
+    if (this.route.snapshot.params['componentId'] !== id) {
+      this.router.navigate(['/showcase', id]);
+    } else {
+      const item = this.registry.getItem(id) || this.registry.getItems()[0];
+      this.activateComponent(item);
+    }
+  }
+
+  private activateComponent(item: ShowcaseItem): void {
+    this.activeItem = item;
+    this.activeItem.cell.attribute = this.activeItem.attribute;
+
+    this.initForm(item.initialValue);
+    this.loadFeatureFile(item.featurePath, item.fallbackFeature);
+  }
+
+  private initForm(initialValue: any): void {
+    const ctrl = new FormControlWithAttribute(initialValue);
+    ctrl.attribute = this.activeItem.attribute;
+    this.formGroup = new UntypedFormGroup({
+      [this.activeItem.attribute.name]: ctrl
+    });
+    this.mode = 'edit';
+    this.isDisabled = false;
+  }
+
+  private loadFeatureFile(featurePath: string, fallback: string): void {
+    this.http.get(featurePath, { responseType: 'text' }).subscribe({
+      next: (content) => {
+        this.featureContent = content;
+        this.isLiveSourceLinked = true;
+      },
+      error: () => {
+        this.featureContent = fallback;
+        this.isLiveSourceLinked = false;
+      }
+    });
   }
 
   setMode(mode: 'edit' | 'view'): void {
@@ -152,7 +124,7 @@ export class ComponentShowcaseComponent implements OnInit {
 
   triggerValidationError(): void {
     const validationResult: ValidationResult = {
-      name: this.attribute.name,
+      name: this.activeItem.attribute.name,
       resultType: ResultType.Error,
       message: 'Attribute required'
     };
@@ -164,22 +136,22 @@ export class ComponentShowcaseComponent implements OnInit {
     this.control.setErrors(null);
   }
 
-  setSampleValue(val: string): void {
+  setSampleValue(val: any): void {
     this.control.setValue(val);
   }
 
   updateUom(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.attribute.unitOfMeasure = input.value;
+    this.activeItem.attribute.unitOfMeasure = input.value;
   }
 
   updateScale(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.attribute.scale = input.value;
+    this.activeItem.attribute.scale = input.value;
     if (input.value && Number(input.value) > 0) {
-      this.attribute.type = AttributeType.Double;
+      this.activeItem.attribute.type = AttributeType.Double;
     } else {
-      this.attribute.type = AttributeType.Text;
+      this.activeItem.attribute.type = AttributeType.Text;
     }
   }
 

@@ -1,6 +1,6 @@
 <div class="container-fluid py-4">
   <div class="row">
-    <!-- Sidebar: Component Directory -->
+    <!-- Sidebar: Component Directory by Category -->
     <div class="col-md-3 col-lg-2">
       <div class="card shadow-sm border-0 mb-4">
         <div class="card-header bg-dark text-white py-3">
@@ -8,18 +8,23 @@
           <small class="text-white-50">ngx-perfect-stack</small>
         </div>
         <div class="list-group list-group-flush">
-          @for (item of components; track item.id) {
-            <button
-              type="button"
-              class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2"
-              [class.active]="selectedComponentId === item.id"
-              [attr.data-testid]="'nav-' + item.id"
-              (click)="selectComponent(item.id)">
-              <div>
-                <div class="fw-semibold">{{ item.name }}</div>
-                <small class="text-muted d-block" [class.text-white-50]="selectedComponentId === item.id">{{ item.category }}</small>
-              </div>
-            </button>
+          @for (category of categories; track category) {
+            <div class="px-3 py-2 bg-light text-uppercase fw-bold text-muted small border-bottom border-top">
+              {{ category }}
+            </div>
+            @for (item of registry.getItemsByCategory(category); track item.id) {
+              <button
+                type="button"
+                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2"
+                [class.active]="activeItem.id === item.id"
+                [attr.data-testid]="'nav-' + item.id"
+                (click)="selectComponent(item.id)">
+                <div>
+                  <div class="fw-semibold small">{{ item.name }}</div>
+                  <code class="text-muted d-block small" [class.text-white-50]="activeItem.id === item.id">{{ item.selector }}</code>
+                </div>
+              </button>
+            }
           }
         </div>
       </div>
@@ -31,11 +36,11 @@
       <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-3">
         <div>
           <div class="d-flex align-items-center gap-2 mb-1">
-            <h2 class="mb-0 fw-bold" data-testid="showcase-heading">{{ activeComponent.name }}</h2>
-            <span class="badge bg-secondary">{{ activeComponent.selector }}</span>
-            <span class="badge bg-info text-dark">{{ activeComponent.category }}</span>
+            <h2 class="mb-0 fw-bold" data-testid="showcase-heading">{{ activeItem.name }}</h2>
+            <span class="badge bg-secondary font-monospace">{{ activeItem.selector }}</span>
+            <span class="badge bg-info text-dark">{{ activeItem.category }}</span>
           </div>
-          <p class="text-muted mb-0">{{ activeComponent.description }}</p>
+          <p class="text-muted mb-0">{{ activeItem.description }}</p>
         </div>
       </div>
 
@@ -45,7 +50,7 @@
           <button
             class="nav-link"
             [class.active]="activeTab === 'playground'"
-            [attr.data-testid]="'tab-playground'"
+            data-testid="tab-playground"
             (click)="activeTab = 'playground'">
             🎮 Interactive Playground
           </button>
@@ -54,7 +59,7 @@
           <button
             class="nav-link"
             [class.active]="activeTab === 'docs'"
-            [attr.data-testid]="'tab-docs'"
+            data-testid="tab-docs"
             (click)="activeTab = 'docs'">
             📖 Documentation &amp; Schema
           </button>
@@ -63,9 +68,12 @@
           <button
             class="nav-link"
             [class.active]="activeTab === 'gherkin'"
-            [attr.data-testid]="'tab-gherkin'"
+            data-testid="tab-gherkin"
             (click)="activeTab = 'gherkin'">
             🥒 Gherkin BDD Specification
+            @if (isLiveSourceLinked) {
+              <span class="badge bg-success ms-1">Live</span>
+            }
           </button>
         </li>
       </ul>
@@ -85,27 +93,21 @@
               </div>
               <div class="card-body p-4" data-testid="showcase-stage">
                 <label class="form-label fw-semibold" [for]="control.attribute.name">
-                  {{ attribute.label }}
-                  @if (attribute.visibility === 'Required') {
+                  {{ activeItem.attribute.label }}
+                  @if (activeItem.attribute.visibility === 'Required') {
                     <span class="text-danger">*</span>
                   }
                 </label>
 
-                <!-- Actual Angular Library Control -->
-                @if (selectedComponentId === 'text-field') {
-                  <ng-container [formGroup]="formGroup">
-                    <lib-text-field-control
-                      [mode]="mode"
-                      [cell]="cell"
-                      [formControlName]="attribute.name"
-                      [idSuffix]="idSuffix">
-                    </lib-text-field-control>
-                  </ng-container>
-                } @else {
-                  <div class="alert alert-info mb-0">
-                    Showcase workbench for <strong>{{ activeComponent.name }}</strong> will be added in upcoming steps.
-                  </div>
-                }
+                <!-- Dynamic Renderer through Perfect-Stack's Native CellComponent -->
+                <div class="p-3 bg-light border rounded">
+                  <lib-cell
+                    [mode]="mode"
+                    [cell]="activeItem.cell"
+                    [formGroup]="formGroup"
+                    [idSuffix]="idSuffix">
+                  </lib-cell>
+                </div>
               </div>
             </div>
 
@@ -197,20 +199,24 @@
                   </div>
                 </div>
 
-                <!-- Quick Value Presets -->
+                <!-- Dynamic Value Presets -->
                 <div class="mb-3">
-                  <label class="form-label small fw-bold text-muted text-uppercase">Sample Values</label>
-                  <div class="btn-group w-100" role="group">
-                    <button type="button" class="btn btn-sm btn-light border" (click)="setSampleValue('Max')">"Max"</button>
-                    <button type="button" class="btn btn-sm btn-light border" (click)="setSampleValue('Golden Retriever')">"Golden Retriever"</button>
-                    <button type="button" class="btn btn-sm btn-light border" (click)="setSampleValue('125.50')">"125.50"</button>
-                    <button type="button" class="btn btn-sm btn-light border text-danger" (click)="setSampleValue('')">Clear</button>
+                  <label class="form-label small fw-bold text-muted text-uppercase">Sample Presets</label>
+                  <div class="d-flex flex-wrap gap-1">
+                    @for (preset of activeItem.samplePresets; track preset.label) {
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-light border"
+                        (click)="setSampleValue(preset.value)">
+                        {{ preset.label }}
+                      </button>
+                    }
                   </div>
                 </div>
 
                 <hr class="my-3">
 
-                <!-- Dynamic Attribute Modifiers -->
+                <!-- Attribute Modifiers -->
                 <div>
                   <label class="form-label small fw-bold text-muted text-uppercase">Attribute &amp; Cell Config</label>
                   <div class="mb-2">
@@ -219,7 +225,7 @@
                       type="text"
                       class="form-control form-control-sm"
                       placeholder="e.g. kg, cm, $"
-                      [value]="attribute.unitOfMeasure"
+                      [value]="activeItem.attribute.unitOfMeasure"
                       (input)="updateUom($event)">
                   </div>
                   <div class="mb-2">
@@ -227,8 +233,8 @@
                     <input
                       type="number"
                       class="form-control form-control-sm"
-                      placeholder="e.g. 2 for currency / decimals"
-                      [value]="attribute.scale"
+                      placeholder="e.g. 2"
+                      [value]="activeItem.attribute.scale"
                       (input)="updateScale($event)">
                   </div>
                   <div>
@@ -262,74 +268,44 @@
               <tbody>
                 <tr>
                   <td class="fw-semibold">Selector</td>
-                  <td><code>{{ activeComponent.selector }}</code></td>
+                  <td><code>{{ activeItem.selector }}</code></td>
                 </tr>
                 <tr>
-                  <td class="fw-semibold">Supported AttributeTypes</td>
-                  <td><code>Text</code>, <code>Integer</code>, <code>Double</code>, <code>Html</code></td>
+                  <td class="fw-semibold">Category</td>
+                  <td><span class="badge bg-info text-dark">{{ activeItem.category }}</span></td>
                 </tr>
-                <tr>
-                  <td class="fw-semibold">Control Value Accessor</td>
-                  <td>Implements standard Angular <code>ControlValueAccessor</code>, syncs with <code>NgControl</code> / <code>FormControlWithAttribute</code>.</td>
-                </tr>
-                <tr>
-                  <td class="fw-semibold">View Mode Behavior</td>
-                  <td>Renders read-only <code>&lt;span class="form-control"&gt;</code> with UOM suffix or <code>&mdash;</code> when empty.</td>
-                </tr>
-                <tr>
-                  <td class="fw-semibold">Edit Mode Behavior</td>
-                  <td>Renders interactive <code>&lt;input class="form-control"&gt;</code> with real-time numeric scale rounding and invalid border styling.</td>
-                </tr>
+                @for (doc of activeItem.docProperties; track doc.property) {
+                  <tr>
+                    <td class="fw-semibold">{{ doc.property }}</td>
+                    <td>{{ doc.description }}</td>
+                  </tr>
+                }
               </tbody>
             </table>
 
             <h5 class="fw-bold mb-2">MetaPage Cell Configuration (JSON)</h5>
             <p class="text-muted small">Example declaration in a <code>meta/page/*.json</code> template:</p>
-            <pre class="bg-dark text-light p-3 rounded font-monospace small"><code>{{ '{' }}
-  "width": "6",
-  "height": "1",
-  "attributeName": "given_name",
-  "component": "TextField"
-{{ '}' }}</code></pre>
+            <pre class="bg-dark text-light p-3 rounded font-monospace small"><code>{{ activeItem.metaPageJson | json }}</code></pre>
           </div>
         </div>
       }
 
-      <!-- Tab 3: Gherkin BDD Specification -->
+      <!-- Tab 3: Gherkin BDD Specification (Directly Linked) -->
       @if (activeTab === 'gherkin') {
         <div class="card shadow-sm border-0">
           <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
-            <span class="fw-bold">Natural Language Feature Specification</span>
-            <span class="badge bg-success">Cucumber BDD</span>
+            <div class="d-flex align-items-center gap-2">
+              <span class="fw-bold">Gherkin BDD Feature Specification</span>
+              @if (isLiveSourceLinked) {
+                <span class="badge bg-success">🔗 Source: {{ activeItem.featurePath }}</span>
+              } @else {
+                <span class="badge bg-secondary">Embedded Specification</span>
+              }
+            </div>
+            <span class="badge bg-primary">Cucumber</span>
           </div>
           <div class="card-body p-4 bg-light">
-            <pre class="font-monospace text-dark p-3 bg-white border rounded"><code>Feature: TextFieldControlComponent
-  As a user filling out a metadata-driven form
-  I want a text field control that adapts to edit and view modes
-  So that I can enter data and view formatted values seamlessly
-
-  Scenario: Entering text in edit mode
-    Given the TextField is in "edit" mode
-    When I enter "Rex" into the input
-    Then the form control value should be "Rex"
-    And the input should reflect "Rex"
-
-  Scenario: Switching to view mode renders read-only display
-    Given the TextField has value "Rex"
-    When mode is changed to "view"
-    Then the input element is replaced by a read-only text span
-    And the text span should display "Rex"
-
-  Scenario: Validation error appearance
-    Given the TextField is marked as touched
-    And the control has a validation error
-    Then the input should have the CSS class "ng-invalid"
-    And a validation error label should display "Attribute required"
-
-  Scenario: Decimal scale formatting for Double attributes
-    Given the attribute scale is set to "2"
-    When I enter "123.456" into the input
-    Then the value should automatically format to "123.46"</code></pre>
+            <pre class="font-monospace text-dark p-3 bg-white border rounded"><code>{{ featureContent }}</code></pre>
           </div>
         </div>
       }
