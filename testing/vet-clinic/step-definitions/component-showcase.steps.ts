@@ -5,7 +5,7 @@ import { UIWorld } from '../support/world';
 Then('the showcase header should display {string}', async function (this: UIWorld, expectedText: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
   const heading = this.page.getByTestId('showcase-heading');
-  await heading.waitFor({ state: 'visible', timeout: 15000 });
+  await heading.filter({ hasText: expectedText }).waitFor({ state: 'visible', timeout: 15000 });
   const text = (await heading.textContent())?.trim();
   expect(text).to.equal(expectedText);
 });
@@ -190,6 +190,75 @@ Then('the color band interactive input should be visible', async function (this:
 });
 
 // -----------------------------------------------------------------------------
+// Selections & Badges Step Definitions
+// -----------------------------------------------------------------------------
+
+Then('the enumeration select should contain option {string}', async function (this: UIWorld, expectedOption: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const opt = this.page.locator(`lib-enumeration-control select option:has-text("${expectedOption}")`).first();
+  await opt.waitFor({ state: 'attached', timeout: 15000 });
+  expect(await opt.count()).to.be.greaterThan(0);
+});
+
+When('I select {string} in the enumeration dropdown', async function (this: UIWorld, optionToSelect: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const select = this.page.locator('lib-enumeration-control select').first();
+  await select.waitFor({ state: 'visible', timeout: 15000 });
+  await select.selectOption({ label: optionToSelect });
+});
+
+Then('the enumeration view should display {string}', async function (this: UIWorld, expectedValue: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const viewInput = this.page.locator('lib-enumeration-control input[readonly]').first();
+  await viewInput.waitFor({ state: 'visible', timeout: 15000 });
+  const val = await viewInput.inputValue();
+  expect(val).to.equal(expectedValue);
+});
+
+Then('the pipe list should contain selected tag {string}', async function (this: UIWorld, expectedTag: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const badge = this.page.locator(`lib-pipe-list-control [data-testid^="selected-item-"]:has-text("${expectedTag}")`).first();
+  await badge.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await badge.isVisible()).to.be.true;
+});
+
+When('I add tag {string} to the pipe list', async function (this: UIWorld, tagToAdd: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const addBtn = this.page.locator(`lib-pipe-list-control button.available-opt-btn:has-text("${tagToAdd}")`).first();
+  await addBtn.waitFor({ state: 'visible', timeout: 15000 });
+  await addBtn.click();
+});
+
+When('I remove tag {string} from the pipe list', async function (this: UIWorld, tagToRemove: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const badge = this.page.locator(`lib-pipe-list-control [data-testid^="selected-item-"]:has-text("${tagToRemove}")`).first();
+  await badge.waitFor({ state: 'visible', timeout: 15000 });
+  const removeBtn = badge.locator('.remove-icon').first();
+  await removeBtn.click();
+});
+
+Then('the pipe list view should contain tag {string}', async function (this: UIWorld, expectedTag: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const badge = this.page.locator(`lib-pipe-list-control .badge:has-text("${expectedTag}")`).first();
+  await badge.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await badge.isVisible()).to.be.true;
+});
+
+Then('the badge list should display badge {string}', async function (this: UIWorld, expectedBadge: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const badge = this.page.locator(`lib-badge-list .badge:has-text("${expectedBadge}")`).first();
+  await badge.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await badge.isVisible()).to.be.true;
+});
+
+Then('the badge list should have {int} badges', async function (this: UIWorld, count: number) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const badges = this.page.locator('lib-badge-list .badge');
+  await badges.first().waitFor({ state: 'visible', timeout: 15000 });
+  expect(await badges.count()).to.equal(count);
+});
+
+// -----------------------------------------------------------------------------
 // Menu Bar & Showcase Accordion Steps
 // -----------------------------------------------------------------------------
 
@@ -222,4 +291,38 @@ Then('the showcase category {string} should be {string}', async function (this: 
   const btn = this.page.locator(selector).first();
   await btn.waitFor({ state: 'visible', timeout: 15000 });
   expect(await btn.isVisible()).to.be.true;
+});
+
+// -----------------------------------------------------------------------------
+// Showcase Tabs & Gherkin Verification Steps
+// -----------------------------------------------------------------------------
+
+When('I click the showcase tab {string}', async function (this: UIWorld, tabName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const tab = this.page.getByTestId(`tab-${tabName}`);
+  await tab.waitFor({ state: 'visible', timeout: 15000 });
+  await tab.click();
+});
+
+When('I click the showcase nav item {string}', async function (this: UIWorld, componentId: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const navBtn = this.page.getByTestId(`nav-${componentId}`);
+  await navBtn.waitFor({ state: 'visible', timeout: 15000 });
+  await navBtn.click();
+});
+
+Then('the Gherkin feature specification should contain {string}', async function (this: UIWorld, expectedSubstring: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const pre = this.page.locator('pre code').first();
+  await pre.filter({ hasText: expectedSubstring }).waitFor({ state: 'visible', timeout: 15000 });
+  const text = await pre.textContent();
+  expect(text).to.include(expectedSubstring);
+});
+
+Then('the Gherkin feature specification should not contain {string}', async function (this: UIWorld, unexpectedSubstring: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const pre = this.page.locator('pre code').first();
+  await pre.waitFor({ state: 'visible', timeout: 15000 });
+  const text = await pre.textContent();
+  expect(text).to.not.include(unexpectedSubstring);
 });

@@ -6,17 +6,38 @@
 
 .accordion-button {
   font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  padding: 0.65rem 0.85rem;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 0.9rem;
+  background-color: #e2e8f0;
+  color: #1e293b;
+  font-weight: 700;
+  border-top: 1px solid #cbd5e1;
+  border-bottom: 1px solid #cbd5e1;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 
   &:focus {
     box-shadow: none;
     border-color: rgba(0, 0, 0, 0.125);
   }
 
+  &.collapsed {
+    background-color: #e2e8f0;
+    color: #334155;
+
+    &:hover {
+      background-color: #cbd5e1;
+      color: #0f172a;
+    }
+  }
+
   &:not(.collapsed) {
-    color: #212529;
-    background-color: #e9ecef;
+    color: #ffffff;
+    background-color: #212529;
+    box-shadow: none;
+
+    &::after {
+      filter: invert(1);
+    }
   }
 }
 

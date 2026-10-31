@@ -10,10 +10,10 @@
 
         <!-- ng-bootstrap Collapsible Accordion for Categories -->
         <div class="accordion accordion-flush" ngbAccordion [closeOthers]="false">
-          @for (category of categories; track category) {
-            <div ngbAccordionItem [collapsed]="false" [destroyOnHide]="false">
+          @for (category of categories; track category; let first = $first) {
+            <div ngbAccordionItem [collapsed]="!first" [destroyOnHide]="false">
               <h2 ngbAccordionHeader>
-                <button ngbAccordionButton class="py-2 px-3 fw-bold small text-uppercase bg-light">
+                <button ngbAccordionButton class="py-2 px-3 fw-bold small text-uppercase">
                   {{ category }}
                 </button>
               </h2>
@@ -65,7 +65,7 @@
             class="nav-link"
             [class.active]="activeTab === 'playground'"
             data-testid="tab-playground"
-            (click)="activeTab = 'playground'">
+            (click)="setActiveTab('playground')">
             🎮 Interactive Playground
           </button>
         </li>
@@ -74,7 +74,7 @@
             class="nav-link"
             [class.active]="activeTab === 'docs'"
             data-testid="tab-docs"
-            (click)="activeTab = 'docs'">
+            (click)="setActiveTab('docs')">
             📖 Documentation &amp; Schema
           </button>
         </li>
@@ -83,7 +83,7 @@
             class="nav-link"
             [class.active]="activeTab === 'gherkin'"
             data-testid="tab-gherkin"
-            (click)="activeTab = 'gherkin'">
+            (click)="setActiveTab('gherkin')">
             🥒 Gherkin BDD Specification
             @if (isLiveSourceLinked) {
               <span class="badge bg-success ms-1">Live</span>

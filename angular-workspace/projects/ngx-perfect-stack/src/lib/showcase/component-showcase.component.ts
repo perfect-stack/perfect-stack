@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 import { ShowcaseRegistryService } from './showcase-registry.service';
 import { ShowcaseItem } from './showcase.model';
 import { FormControlWithAttribute } from '../data/data-edit/form-service/form.service';
@@ -14,7 +15,7 @@ import { AttributeType } from '../domain/meta.entity';
   styleUrls: ['./component-showcase.component.scss'],
   standalone: false
 })
-export class ComponentShowcaseComponent implements OnInit {
+export class ComponentShowcaseComponent implements OnInit, OnDestroy {
 
   activeTab: 'playground' | 'docs' | 'gherkin' = 'playground';
   activeItem: ShowcaseItem;
@@ -29,15 +30,20 @@ export class ComponentShowcaseComponent implements OnInit {
   featureContent = '';
   isLiveSourceLinked = false;
 
+  private paramsSub?: Subscription;
+  private featureSub?: Subscription;
+  private readonly featureCache = new Map<string, string>();
+
   constructor(
     public registry: ShowcaseRegistryService,
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.paramsSub = this.route.params.subscribe(params => {
       const id = params['componentId'];
       const targetItem = (id && this.registry.getItem(id))
         ? this.registry.getItem(id)!
@@ -49,6 +55,15 @@ export class ComponentShowcaseComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.paramsSub) {
+      this.paramsSub.unsubscribe();
+    }
+    if (this.featureSub) {
+      this.featureSub.unsubscribe();
+    }
+  }
+
   get control(): FormControlWithAttribute {
     return this.formGroup.controls[this.activeItem.attribute.name] as FormControlWithAttribute;
   }
@@ -57,12 +72,16 @@ export class ComponentShowcaseComponent implements OnInit {
     return this.registry.getCategories();
   }
 
+  setActiveTab(tab: 'playground' | 'docs' | 'gherkin'): void {
+    this.activeTab = tab;
+    this.cdr.markForCheck();
+  }
+
   selectComponent(id: string): void {
+    const item = this.registry.getItem(id) || this.registry.getItems()[0];
+    this.activateComponent(item);
     if (this.route.snapshot.params['componentId'] !== id) {
       this.router.navigate(['/showcase', id]);
-    } else {
-      const item = this.registry.getItem(id) || this.registry.getItems()[0];
-      this.activateComponent(item);
     }
   }
 
@@ -71,7 +90,8 @@ export class ComponentShowcaseComponent implements OnInit {
     this.activeItem.cell.attribute = this.activeItem.attribute;
 
     this.initForm(item.initialValue);
-    this.loadFeatureFile(item.featurePath, item.fallbackFeature);
+    this.loadFeatureFile(item.id, item.featurePath, item.fallbackFeature);
+    this.cdr.markForCheck();
   }
 
   private initForm(initialValue: any): void {
@@ -84,21 +104,63 @@ export class ComponentShowcaseComponent implements OnInit {
     this.isDisabled = false;
   }
 
-  private loadFeatureFile(featurePath: string, fallback: string): void {
-    this.http.get(featurePath, { responseType: 'text' }).subscribe({
+  private loadFeatureFile(componentId: string, featurePath: string, fallback: string): void {
+    // 1. Cancel previous in-flight HTTP request
+    if (this.featureSub) {
+      this.featureSub.unsubscribe();
+      this.featureSub = undefined;
+    }
+
+    // 2. Check if we already have it cached in-memory
+    if (this.featureCache.has(featurePath)) {
+      this.featureContent = this.featureCache.get(featurePath)!;
+      this.isLiveSourceLinked = true;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    // 3. Immediately set to the known fallback so there is zero flicker from the previous component
+    this.featureContent = fallback;
+    this.isLiveSourceLinked = false;
+    this.cdr.markForCheck();
+
+    // 4. Request the live source from the assets endpoint
+    this.featureSub = this.http.get(featurePath, { responseType: 'text' }).subscribe({
       next: (content) => {
-        this.featureContent = content;
-        this.isLiveSourceLinked = true;
+        // Discard response if user navigated to another component in the meantime
+        if (this.activeItem?.id !== componentId) {
+          return;
+        }
+
+        // Validate that response is genuine Gherkin and NOT an HTML fallback (e.g. index.html from SPA dev server)
+        const trimmed = (content || '').trim();
+        const isHtml = trimmed.startsWith('<!doctype') || trimmed.startsWith('<html') || trimmed.includes('<app-root>');
+        const isGherkin = trimmed.includes('Feature:');
+
+        if (!isHtml && isGherkin) {
+          this.featureContent = content;
+          this.isLiveSourceLinked = true;
+          this.featureCache.set(featurePath, content);
+        } else {
+          // If server returned index.html or invalid content, keep the clean fallback specification
+          this.featureContent = fallback;
+          this.isLiveSourceLinked = false;
+        }
+        this.cdr.markForCheck();
       },
       error: () => {
-        this.featureContent = fallback;
-        this.isLiveSourceLinked = false;
+        if (this.activeItem?.id === componentId) {
+          this.featureContent = fallback;
+          this.isLiveSourceLinked = false;
+          this.cdr.markForCheck();
+        }
       }
     });
   }
 
   setMode(mode: 'edit' | 'view'): void {
     this.mode = mode;
+    this.cdr.markForCheck();
   }
 
   toggleDisabled(): void {
@@ -108,6 +170,7 @@ export class ComponentShowcaseComponent implements OnInit {
     } else {
       this.control.enable();
     }
+    this.cdr.markForCheck();
   }
 
   toggleTouched(): void {
@@ -120,6 +183,7 @@ export class ComponentShowcaseComponent implements OnInit {
     } else {
       this.control.markAsTouched();
     }
+    this.cdr.markForCheck();
   }
 
   triggerValidationError(): void {
@@ -130,19 +194,23 @@ export class ComponentShowcaseComponent implements OnInit {
     };
     this.control.setErrors(validationResult as any);
     this.control.markAsTouched();
+    this.cdr.markForCheck();
   }
 
   clearErrors(): void {
     this.control.setErrors(null);
+    this.cdr.markForCheck();
   }
 
   setSampleValue(val: any): void {
     this.control.setValue(val);
+    this.cdr.markForCheck();
   }
 
   updateUom(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.activeItem.attribute.unitOfMeasure = input.value;
+    this.cdr.markForCheck();
   }
 
   updateScale(event: Event): void {
@@ -153,10 +221,12 @@ export class ComponentShowcaseComponent implements OnInit {
     } else {
       this.activeItem.attribute.type = AttributeType.Text;
     }
+    this.cdr.markForCheck();
   }
 
   updateIdSuffix(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.idSuffix = input.value.trim() ? input.value.trim() : null;
+    this.cdr.markForCheck();
   }
 }
