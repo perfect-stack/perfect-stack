@@ -1,0 +1,338 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <!-- Sidebar: Component Directory -->
+    <div class="col-md-3 col-lg-2">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-dark text-white py-3">
+          <h5 class="mb-0 fw-bold">Component Showcase</h5>
+          <small class="text-white-50">ngx-perfect-stack</small>
+        </div>
+        <div class="list-group list-group-flush">
+          @for (item of components; track item.id) {
+            <button
+              type="button"
+              class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2"
+              [class.active]="selectedComponentId === item.id"
+              [attr.data-testid]="'nav-' + item.id"
+              (click)="selectComponent(item.id)">
+              <div>
+                <div class="fw-semibold">{{ item.name }}</div>
+                <small class="text-muted d-block" [class.text-white-50]="selectedComponentId === item.id">{{ item.category }}</small>
+              </div>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area: Workbench -->
+    <div class="col-md-9 col-lg-10">
+      <!-- Component Header -->
+      <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-3">
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h2 class="mb-0 fw-bold" data-testid="showcase-heading">{{ activeComponent.name }}</h2>
+            <span class="badge bg-secondary">{{ activeComponent.selector }}</span>
+            <span class="badge bg-info text-dark">{{ activeComponent.category }}</span>
+          </div>
+          <p class="text-muted mb-0">{{ activeComponent.description }}</p>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeTab === 'playground'"
+            [attr.data-testid]="'tab-playground'"
+            (click)="activeTab = 'playground'">
+            🎮 Interactive Playground
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeTab === 'docs'"
+            [attr.data-testid]="'tab-docs'"
+            (click)="activeTab = 'docs'">
+            📖 Documentation &amp; Schema
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeTab === 'gherkin'"
+            [attr.data-testid]="'tab-gherkin'"
+            (click)="activeTab = 'gherkin'">
+            🥒 Gherkin BDD Specification
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab 1: Interactive Playground -->
+      @if (activeTab === 'playground') {
+        <div class="row">
+          <!-- Left Column: Live Render Stage & State Inspector -->
+          <div class="col-lg-7">
+            <!-- Stage Card -->
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <span class="fw-bold">Live Stage</span>
+                <span class="badge" [class.bg-success]="mode === 'edit'" [class.bg-secondary]="mode === 'view'">
+                  Mode: {{ mode | uppercase }}
+                </span>
+              </div>
+              <div class="card-body p-4" data-testid="showcase-stage">
+                <label class="form-label fw-semibold" [for]="control.attribute.name">
+                  {{ attribute.label }}
+                  @if (attribute.visibility === 'Required') {
+                    <span class="text-danger">*</span>
+                  }
+                </label>
+
+                <!-- Actual Angular Library Control -->
+                @if (selectedComponentId === 'text-field') {
+                  <ng-container [formGroup]="formGroup">
+                    <lib-text-field-control
+                      [mode]="mode"
+                      [cell]="cell"
+                      [formControlName]="attribute.name"
+                      [idSuffix]="idSuffix">
+                    </lib-text-field-control>
+                  </ng-container>
+                } @else {
+                  <div class="alert alert-info mb-0">
+                    Showcase workbench for <strong>{{ activeComponent.name }}</strong> will be added in upcoming steps.
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Form State Inspector -->
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+                <span class="fw-semibold text-muted small">Reactive Form State Inspector</span>
+                <div>
+                  <span class="badge me-1" [class.bg-success]="control.status === 'VALID'" [class.bg-danger]="control.status === 'INVALID'">
+                    {{ control.status }}
+                  </span>
+                  <span class="badge bg-secondary">
+                    Touched: {{ control.touched }}
+                  </span>
+                </div>
+              </div>
+              <div class="card-body p-3 font-monospace small bg-dark text-light rounded-bottom">
+                <div class="mb-1" data-testid="inspector-value"><span class="text-info">value:</span> {{ control.value | json }}</div>
+                <div class="mb-1" data-testid="inspector-status"><span class="text-info">status:</span> {{ control.status }}</div>
+                <div class="mb-1"><span class="text-info">touched:</span> {{ control.touched }}</div>
+                <div class="mb-1"><span class="text-info">dirty:</span> {{ control.dirty }}</div>
+                <div><span class="text-info">errors:</span> {{ control.errors | json }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Controls Toolbar -->
+          <div class="col-lg-5">
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white py-3">
+                <span class="fw-bold">Playground Controls</span>
+              </div>
+              <div class="card-body p-3">
+                <!-- Mode Switch -->
+                <div class="mb-3">
+                  <label class="form-label small fw-bold text-muted text-uppercase">Display Mode</label>
+                  <div class="btn-group w-100" role="group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary"
+                      [class.active]="mode === 'edit'"
+                      data-testid="btn-mode-edit"
+                      (click)="setMode('edit')">
+                      ✏️ Edit
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary"
+                      [class.active]="mode === 'view'"
+                      data-testid="btn-mode-view"
+                      (click)="setMode('view')">
+                      👁️ View (Read Only)
+                    </button>
+                  </div>
+                </div>
+
+                <!-- State Toggles -->
+                <div class="mb-3">
+                  <label class="form-label small fw-bold text-muted text-uppercase">State Simulators</label>
+                  <div class="d-flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-secondary"
+                      data-testid="btn-toggle-disabled"
+                      (click)="toggleDisabled()">
+                      {{ isDisabled ? '🔓 Enable' : '🔒 Disable' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-secondary"
+                      data-testid="btn-toggle-touched"
+                      (click)="toggleTouched()">
+                      {{ control.touched ? 'Pristine' : 'Mark Touched' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      data-testid="btn-trigger-error"
+                      (click)="triggerValidationError()">
+                      ⚠️ Trigger Error
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-success"
+                      data-testid="btn-clear-error"
+                      (click)="clearErrors()">
+                      ✅ Clear Error
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Quick Value Presets -->
+                <div class="mb-3">
+                  <label class="form-label small fw-bold text-muted text-uppercase">Sample Values</label>
+                  <div class="btn-group w-100" role="group">
+                    <button type="button" class="btn btn-sm btn-light border" (click)="setSampleValue('Max')">"Max"</button>
+                    <button type="button" class="btn btn-sm btn-light border" (click)="setSampleValue('Golden Retriever')">"Golden Retriever"</button>
+                    <button type="button" class="btn btn-sm btn-light border" (click)="setSampleValue('125.50')">"125.50"</button>
+                    <button type="button" class="btn btn-sm btn-light border text-danger" (click)="setSampleValue('')">Clear</button>
+                  </div>
+                </div>
+
+                <hr class="my-3">
+
+                <!-- Dynamic Attribute Modifiers -->
+                <div>
+                  <label class="form-label small fw-bold text-muted text-uppercase">Attribute &amp; Cell Config</label>
+                  <div class="mb-2">
+                    <label class="form-label small mb-1">Unit of Measure (UOM)</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      placeholder="e.g. kg, cm, $"
+                      [value]="attribute.unitOfMeasure"
+                      (input)="updateUom($event)">
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small mb-1">Decimal Scale (Double)</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      placeholder="e.g. 2 for currency / decimals"
+                      [value]="attribute.scale"
+                      (input)="updateScale($event)">
+                  </div>
+                  <div>
+                    <label class="form-label small mb-1">Row idSuffix (for table rows)</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      placeholder="e.g. row_1"
+                      [value]="idSuffix || ''"
+                      (input)="updateIdSuffix($event)">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Tab 2: Documentation & Schema -->
+      @if (activeTab === 'docs') {
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4">
+            <h4 class="fw-bold mb-3">Component Technical Specification</h4>
+            <table class="table table-bordered mb-4">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 25%">Property</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="fw-semibold">Selector</td>
+                  <td><code>{{ activeComponent.selector }}</code></td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold">Supported AttributeTypes</td>
+                  <td><code>Text</code>, <code>Integer</code>, <code>Double</code>, <code>Html</code></td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold">Control Value Accessor</td>
+                  <td>Implements standard Angular <code>ControlValueAccessor</code>, syncs with <code>NgControl</code> / <code>FormControlWithAttribute</code>.</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold">View Mode Behavior</td>
+                  <td>Renders read-only <code>&lt;span class="form-control"&gt;</code> with UOM suffix or <code>&mdash;</code> when empty.</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold">Edit Mode Behavior</td>
+                  <td>Renders interactive <code>&lt;input class="form-control"&gt;</code> with real-time numeric scale rounding and invalid border styling.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h5 class="fw-bold mb-2">MetaPage Cell Configuration (JSON)</h5>
+            <p class="text-muted small">Example declaration in a <code>meta/page/*.json</code> template:</p>
+            <pre class="bg-dark text-light p-3 rounded font-monospace small"><code>{{ '{' }}
+  "width": "6",
+  "height": "1",
+  "attributeName": "given_name",
+  "component": "TextField"
+{{ '}' }}</code></pre>
+          </div>
+        </div>
+      }
+
+      <!-- Tab 3: Gherkin BDD Specification -->
+      @if (activeTab === 'gherkin') {
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+            <span class="fw-bold">Natural Language Feature Specification</span>
+            <span class="badge bg-success">Cucumber BDD</span>
+          </div>
+          <div class="card-body p-4 bg-light">
+            <pre class="font-monospace text-dark p-3 bg-white border rounded"><code>Feature: TextFieldControlComponent
+  As a user filling out a metadata-driven form
+  I want a text field control that adapts to edit and view modes
+  So that I can enter data and view formatted values seamlessly
+
+  Scenario: Entering text in edit mode
+    Given the TextField is in "edit" mode
+    When I enter "Rex" into the input
+    Then the form control value should be "Rex"
+    And the input should reflect "Rex"
+
+  Scenario: Switching to view mode renders read-only display
+    Given the TextField has value "Rex"
+    When mode is changed to "view"
+    Then the input element is replaced by a read-only text span
+    And the text span should display "Rex"
+
+  Scenario: Validation error appearance
+    Given the TextField is marked as touched
+    And the control has a validation error
+    Then the input should have the CSS class "ng-invalid"
+    And a validation error label should display "Attribute required"
+
+  Scenario: Decimal scale formatting for Double attributes
+    Given the attribute scale is set to "2"
+    When I enter "123.456" into the input
+    Then the value should automatically format to "123.46"</code></pre>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

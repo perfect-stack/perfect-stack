@@ -39,3 +39,4 @@ export * from './lib/data/controller/layout/controls/url-field-control/url-field
 export * from './lib/data/controller/layout/controls/enumeration-options-control/enumeration-options-control.component';
 export * from './lib/data/controller/layout/controls/pipe-list-control/pipe-list-control.component';
 export * from './lib/meta/batch/batch-summary-tree/batch-summary-tree.component';
+export * from './lib/showcase/component-showcase.component';

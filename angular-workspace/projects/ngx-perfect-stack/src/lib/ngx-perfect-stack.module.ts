@@ -130,6 +130,7 @@ import { TileButtonPanelComponent } from './utils/tile-button-panel/tile-button-
 import { BooleanCheckBoxControlComponent } from './data/controller/layout/controls/boolean-check-box-control/boolean-check-box-control.component';
 import { DecimalNumberDirective } from './utils/decimal-number.directive';
 import { SelectTestPageComponent } from './select-test-page/select-test-page.component';
+import { ComponentShowcaseComponent } from './showcase/component-showcase.component';
 import { BadgeListComponent } from './data/controller/layout/controls/badge-list/badge-list.component';
 import { ButtonGroupToolComponent } from './data/controller/layout/tool-view/button-group-tool/button-group-tool.component';
 import { MapTestPageComponent } from './map-test-page/map-test-page.component';
@@ -200,6 +201,8 @@ export const STACK_ROUTES: Routes = [
   // Just for Testing Components
   { path: 'select-test', component: SelectTestPageComponent},
   { path: 'map-test', component: MapTestPageComponent},
+  { path: 'showcase', component: ComponentShowcaseComponent},
+  { path: 'showcase/:componentId', component: ComponentShowcaseComponent},
 ];
 
 export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClientApplication {
@@ -309,6 +312,7 @@ export function layoutComponentFactory() {
     BooleanCheckBoxControlComponent,
     DecimalNumberDirective,
     SelectTestPageComponent,
+    ComponentShowcaseComponent,
     BadgeListComponent,
     ButtonGroupToolComponent,
     ButtonTabsToolComponent,
@@ -355,6 +359,7 @@ export function layoutComponentFactory() {
     AssertionListControlComponent,
     EnumerationOptionsControlComponent,
     PipeListControlComponent,
+    ComponentShowcaseComponent,
   ],
   imports: [
     CommonModule,
