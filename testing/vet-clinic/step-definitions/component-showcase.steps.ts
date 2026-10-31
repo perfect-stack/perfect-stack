@@ -188,3 +188,38 @@ Then('the color band interactive input should be visible', async function (this:
   await control.waitFor({ state: 'visible', timeout: 15000 });
   expect(await control.isVisible()).to.be.true;
 });
+
+// -----------------------------------------------------------------------------
+// Menu Bar & Showcase Accordion Steps
+// -----------------------------------------------------------------------------
+
+When('I click the menu dropdown {string}', async function (this: UIWorld, menuLabel: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const menuToggle = this.page.locator(`[data-testid="menu-${menuLabel}"], #${menuLabel}Menu`).first();
+  await menuToggle.waitFor({ state: 'visible', timeout: 15000 });
+  await menuToggle.click();
+});
+
+When('I click the menu item {string}', async function (this: UIWorld, itemLabel: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const menuItem = this.page.locator(`[data-testid="menu-item-${itemLabel}"], #${itemLabel}MenuItem`).first();
+  await menuItem.waitFor({ state: 'visible', timeout: 15000 });
+  await menuItem.click();
+});
+
+When('I toggle the showcase category {string}', async function (this: UIWorld, categoryName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const accordionBtn = this.page.locator(`button.accordion-button:has-text("${categoryName}")`).first();
+  await accordionBtn.waitFor({ state: 'visible', timeout: 15000 });
+  await accordionBtn.click();
+});
+
+Then('the showcase category {string} should be {string}', async function (this: UIWorld, categoryName: string, state: 'collapsed' | 'expanded') {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const selector = state === 'collapsed'
+    ? `button.accordion-button.collapsed:has-text("${categoryName}")`
+    : `button.accordion-button:not(.collapsed):has-text("${categoryName}")`;
+  const btn = this.page.locator(selector).first();
+  await btn.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await btn.isVisible()).to.be.true;
+});

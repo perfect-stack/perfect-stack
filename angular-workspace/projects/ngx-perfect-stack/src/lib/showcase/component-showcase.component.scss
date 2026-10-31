@@ -4,6 +4,22 @@
   min-height: 100vh;
 }
 
+.accordion-button {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  padding: 0.65rem 0.85rem;
+
+  &:focus {
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, 0.125);
+  }
+
+  &:not(.collapsed) {
+    color: #212529;
+    background-color: #e9ecef;
+  }
+}
+
 .list-group-item.active {
   background-color: #0d6efd;
   border-color: #0d6efd;
