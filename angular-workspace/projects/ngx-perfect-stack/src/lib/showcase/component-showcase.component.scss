@@ -61,6 +61,19 @@
   }
 }
 
+.layout-toolbar {
+  font-size: 0.8rem;
+
+  .btn {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+.panoramic-col {
+  min-width: 0; // prevents overflow in flex/grid columns
+}
+
 pre code {
   white-space: pre-wrap;
   word-break: break-word;

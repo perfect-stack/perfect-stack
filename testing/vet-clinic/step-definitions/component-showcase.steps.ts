@@ -299,7 +299,7 @@ Then('the showcase category {string} should be {string}', async function (this: 
 
 When('I click the showcase tab {string}', async function (this: UIWorld, tabName: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
-  const tab = this.page.getByTestId(`tab-${tabName}`);
+  const tab = this.page.getByTestId(`tab-${tabName}`).first();
   await tab.waitFor({ state: 'visible', timeout: 15000 });
   await tab.click();
 });
@@ -313,16 +313,30 @@ When('I click the showcase nav item {string}', async function (this: UIWorld, co
 
 Then('the Gherkin feature specification should contain {string}', async function (this: UIWorld, expectedSubstring: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
-  const pre = this.page.locator('pre code').first();
-  await pre.filter({ hasText: expectedSubstring }).waitFor({ state: 'visible', timeout: 15000 });
+  const pre = this.page.locator('[data-testid="gherkin-spec-code"], pre code').filter({ hasText: expectedSubstring }).first();
+  await pre.waitFor({ state: 'visible', timeout: 15000 });
   const text = await pre.textContent();
   expect(text).to.include(expectedSubstring);
 });
 
 Then('the Gherkin feature specification should not contain {string}', async function (this: UIWorld, unexpectedSubstring: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
-  const pre = this.page.locator('pre code').first();
+  const pre = this.page.locator('[data-testid="gherkin-spec-code"], pre code').last();
   await pre.waitFor({ state: 'visible', timeout: 15000 });
   const text = await pre.textContent();
   expect(text).to.not.include(unexpectedSubstring);
+});
+
+Then('the showcase live stage should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const stage = this.page.getByTestId('showcase-stage').first();
+  await stage.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await stage.isVisible()).to.be.true;
+});
+
+Then('the showcase tab {string} should be visible', async function (this: UIWorld, tabName: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const tab = this.page.getByTestId(`tab-${tabName}`).first();
+  await tab.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await tab.isVisible()).to.be.true;
 });

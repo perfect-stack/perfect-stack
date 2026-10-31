@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -18,6 +18,10 @@ import { AttributeType } from '../domain/meta.entity';
 export class ComponentShowcaseComponent implements OnInit, OnDestroy {
 
   activeTab: 'playground' | 'docs' | 'gherkin' = 'playground';
+  secondaryTab: 'docs' | 'gherkin' = 'docs';
+  layoutMode: 'auto' | 'tabs' | 'split' | 'panoramic' = 'auto';
+  windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1280;
+
   activeItem: ShowcaseItem;
 
   mode: 'edit' | 'view' = 'edit';
@@ -43,6 +47,17 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    if (typeof localStorage !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('showcase_layout_mode') as any;
+        if (saved && ['auto', 'tabs', 'split', 'panoramic'].includes(saved)) {
+          this.layoutMode = saved;
+        }
+      } catch (e) {
+        // ignore storage errors
+      }
+    }
+
     this.paramsSub = this.route.params.subscribe(params => {
       const id = params['componentId'];
       const targetItem = (id && this.registry.getItem(id))
@@ -72,8 +87,46 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
     return this.registry.getCategories();
   }
 
+  get effectiveLayout(): 'tabs' | 'split' | 'panoramic' {
+    if (this.layoutMode !== 'auto') {
+      return this.layoutMode;
+    }
+    if (this.windowWidth >= 2200) {
+      return 'panoramic';
+    } else if (this.windowWidth >= 1500) {
+      return 'split';
+    } else {
+      return 'tabs';
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (typeof window !== 'undefined') {
+      this.windowWidth = window.innerWidth;
+      this.cdr.markForCheck();
+    }
+  }
+
+  setLayoutMode(mode: 'auto' | 'tabs' | 'split' | 'panoramic'): void {
+    this.layoutMode = mode;
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('showcase_layout_mode', mode);
+      } catch (e) {
+        // ignore
+      }
+    }
+    this.cdr.markForCheck();
+  }
+
   setActiveTab(tab: 'playground' | 'docs' | 'gherkin'): void {
     this.activeTab = tab;
+    this.cdr.markForCheck();
+  }
+
+  setSecondaryTab(tab: 'docs' | 'gherkin'): void {
+    this.secondaryTab = tab;
     this.cdr.markForCheck();
   }
 
