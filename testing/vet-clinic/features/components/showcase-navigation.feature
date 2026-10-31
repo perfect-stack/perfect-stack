@@ -38,13 +38,16 @@ Feature: Component Showcase Navigation & Collapsible Categories
     And the Gherkin feature specification should not contain "<!doctype html>"
 
   @showcase @responsive-layout
-  Scenario: Switch between single-tab, split 2-col, and panoramic 3-col layouts
+  Scenario: Switch between single-tab, split 2-col, and panoramic 3-col layouts via layout cog menu
     When I navigate to "/showcase/text-field"
+    When I click the showcase button "btn-layout-cog"
     When I click the showcase button "btn-layout-split"
     Then the showcase live stage should be visible
     And the showcase tab "gherkin" should be visible
+    When I click the showcase button "btn-layout-cog"
     When I click the showcase button "btn-layout-panoramic"
     Then the showcase live stage should be visible
     And the Gherkin feature specification should contain "Feature: Text Field Control Component"
+    When I click the showcase button "btn-layout-cog"
     When I click the showcase button "btn-layout-tabs"
     Then the showcase live stage should be visible

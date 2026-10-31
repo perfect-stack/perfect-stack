@@ -61,12 +61,28 @@
   }
 }
 
-.layout-toolbar {
-  font-size: 0.8rem;
+.layout-cog-btn {
+  font-size: 0.82rem;
+  padding: 0.35rem 0.65rem;
 
-  .btn {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.5rem;
+  svg {
+    transition: transform 0.25s ease-in-out;
+  }
+
+  &:hover svg {
+    transform: rotate(45deg);
+  }
+}
+
+.dropdown-menu {
+  .dropdown-item {
+    font-size: 0.82rem;
+    cursor: pointer;
+
+    &.active {
+      background-color: #0d6efd;
+      color: #ffffff;
+    }
   }
 }
 
