@@ -80,7 +80,9 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
   }
 
   get control(): FormControlWithAttribute {
-    return this.formGroup.controls[this.activeItem.attribute.name] as FormControlWithAttribute;
+    const attrName = this.activeItem.attribute.name;
+    return (this.formGroup.controls[attrName + '_id'] ||
+            this.formGroup.controls[attrName]) as FormControlWithAttribute;
   }
 
   get categories(): string[] {
@@ -148,11 +150,26 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
   }
 
   private initForm(initialValue: any): void {
+    const attrName = this.activeItem.attribute.name;
     const ctrl = new FormControlWithAttribute(initialValue);
     ctrl.attribute = this.activeItem.attribute;
-    this.formGroup = new UntypedFormGroup({
-      [this.activeItem.attribute.name]: ctrl
-    });
+    const controls: Record<string, FormControlWithAttribute> = {
+      [attrName]: ctrl
+    };
+
+    if (this.activeItem.attribute.type === AttributeType.ManyToOne || attrName.endsWith('_id')) {
+      const idCtrl = new FormControlWithAttribute(initialValue?.id || initialValue);
+      idCtrl.attribute = this.activeItem.attribute;
+      controls[attrName + '_id'] = idCtrl;
+    }
+
+    const secondaryName = (this.activeItem.cell?.componentData as any)?.secondaryAttributeName;
+    if (secondaryName) {
+      const secondaryVal = this.activeItem.id === 'flexible-date-time' ? 'Exact' : 'Standard';
+      controls[secondaryName] = new FormControlWithAttribute(secondaryVal);
+    }
+
+    this.formGroup = new UntypedFormGroup(controls);
     this.mode = 'edit';
     this.isDisabled = false;
   }
@@ -247,16 +264,30 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
     };
     this.control.setErrors(validationResult as any);
     this.control.markAsTouched();
+    const idCtrl = this.formGroup.controls[this.activeItem.attribute.name + '_id'];
+    if (idCtrl) {
+      idCtrl.setErrors(validationResult as any);
+      idCtrl.markAsTouched();
+    }
     this.cdr.markForCheck();
   }
 
   clearErrors(): void {
     this.control.setErrors(null);
+    const idCtrl = this.formGroup.controls[this.activeItem.attribute.name + '_id'];
+    if (idCtrl) {
+      idCtrl.setErrors(null);
+    }
     this.cdr.markForCheck();
   }
 
   setSampleValue(val: any): void {
     this.control.setValue(val);
+    const attrName = this.activeItem.attribute.name;
+    const idCtrl = this.formGroup.controls[attrName + '_id'];
+    if (idCtrl) {
+      idCtrl.setValue(val?.id || val);
+    }
     this.cdr.markForCheck();
   }
 

@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ControlValueAccessor, NgControl} from '@angular/forms';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 import {Subscription} from 'rxjs';
@@ -32,7 +32,8 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
   selectedOptions: string[] = [];
 
   constructor(public ngControl: NgControl,
-              protected dataService: DataService) {
+              protected dataService: DataService,
+              protected cdr: ChangeDetectorRef) {
     ngControl.valueAccessor = this;
   }
 
@@ -44,6 +45,7 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
       .subscribe((response) => {
         this.optionList = response.resultList;
         this.updateSelectedOptions();
+        this.cdr.markForCheck();
       });
     }
   }
@@ -77,6 +79,7 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
 
   writeValue(entityValue: any): void {
     this.selectedOptions = this.convertToOptionList(entityValue);
+    this.cdr.markForCheck();
   }
 
   get formControl(): FormControlWithAttribute | null {
@@ -116,6 +119,7 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
     if(!alreadySelected) {
       this.selectedOptions.push(item);
       this.updateEntityValue();
+      this.cdr.markForCheck();
     }
   }
 
@@ -124,6 +128,7 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
     console.log('onItemDeleted', $event);
     this.selectedOptions = this.selectedOptions.filter( s => s !== option);
     this.updateEntityValue();
+    this.cdr.markForCheck();
   }
 
   updateEntityValue() {
@@ -141,7 +146,9 @@ export class SelectMultipleControlComponent implements OnInit, OnDestroy, Contro
 
     for(const nextName of nameList) {
       const option = this.optionList.find(s => s.name === nextName);
-      nextOptionList.push(option);
+      if(option) {
+        nextOptionList.push(option);
+      }
     }
 
     return nextOptionList;

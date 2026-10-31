@@ -474,6 +474,75 @@ export class ShowcaseRegistryService {
     When I click the showcase button "btn-mode-edit"
     Then the color band interactive input should be visible`
     },
+    {
+      id: 'flexible-date-time',
+      name: 'FlexibleDateTimeControlComponent',
+      selector: '<lib-flexible-date-time-control>',
+      category: 'Pickers & Calendars',
+      description: 'Dual date and time selector with fuzzy approximate time buttons ("Day", "Night", "Unknown") that sets both an ISO timestamp and a secondary precision attribute.',
+      attribute: {
+        name: 'occurred_at',
+        label: 'Observation Date & Time',
+        description: 'Timestamp for observation or occurrence',
+        type: AttributeType.DateTime,
+        visibility: VisibilityType.Required,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: '',
+        typeaheadSearch: [],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '12',
+        height: '1',
+        attributeName: 'occurred_at',
+        component: 'FlexibleDateTime',
+        componentData: {
+          secondaryAttributeName: 'time_precision'
+        }
+      },
+      initialValue: '2026-05-18T10:30:00.000Z',
+      samplePresets: [
+        { label: 'Morning (10:30)', value: '2026-05-18T10:30:00.000Z' },
+        { label: 'Afternoon (15:00)', value: '2026-05-18T15:00:00.000Z' },
+        { label: 'Evening (20:00)', value: '2026-05-18T20:00:00.000Z' },
+        { label: 'Clear', value: '' }
+      ],
+      docProperties: [
+        { property: 'Supported Types', description: 'DateTime (with optional secondary string precision field)' },
+        { property: 'Fuzzy Presets', description: 'Quick-select buttons for "Day" (12:00), "Night" (23:59), "Unknown" (00:00).' },
+        { property: 'Secondary Attribute', description: 'Tracks precision mode (e.g. Exact, Day, Night, Unknown) via cell.componentData.secondaryAttributeName.' },
+        { property: 'View Mode', description: 'Renders formatted datetime string along with precision badge.' }
+      ],
+      metaPageJson: {
+        width: '12',
+        height: '1',
+        attributeName: 'occurred_at',
+        component: 'FlexibleDateTime',
+        componentData: { secondaryAttributeName: 'time_precision' }
+      },
+      featurePath: '/assets/features/components/flexible-date-time.feature',
+      fallbackFeature: `Feature: Flexible Date Time Control Component
+  As a clinician recording observations with uncertain or approximate times
+  I want a flexible datetime picker with fuzzy quick-select buttons like Day, Night, and Unknown
+  So that timestamps can be recorded accurately or approximately without failing validation
+
+  @showcase @flexible-date-time
+  Scenario: Display flexible date time and toggle approximate time presets
+    When I navigate to "/showcase/flexible-date-time"
+    Then the showcase header should display "FlexibleDateTimeControlComponent"
+    And the flexible date time picker inputs should be visible
+    When I click the showcase button "btn-time-day"
+    Then the form state inspector should show value "2026-05-18"
+    When I click the showcase button "btn-mode-view"
+    Then the flexible date time view should display formatted value
+    When I click the showcase button "btn-mode-edit"
+    Then the flexible date time picker inputs should be visible`
+    },
 
     // -------------------------------------------------------------------------
     // CATEGORY: Selections & Badges
@@ -658,6 +727,191 @@ export class ShowcaseRegistryService {
     And the badge list should have 3 badges
     When I click the showcase button "btn-mode-view"
     Then the badge list should display badge "Vaccinated"`
+    },
+    {
+      id: 'select-control',
+      name: 'SelectControlComponent',
+      selector: '<lib-select-control>',
+      category: 'Selections & Badges',
+      description: 'Single-select relational dropdown that queries an entity dataset via DataService.findAll() and binds the selected record foreign key (e.g. species_id) with searchable display text.',
+      attribute: {
+        name: 'species',
+        label: 'Species',
+        description: 'Taxonomic classification of the patient',
+        type: AttributeType.ManyToOne,
+        visibility: VisibilityType.Required,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: 'Species',
+        typeaheadSearch: ['scientific_name', 'common_name'],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '6',
+        height: '1',
+        attributeName: 'species',
+        component: 'Select',
+      },
+      initialValue: '85d08cf5-aa6d-4b36-8701-44121892aa48',
+      samplePresets: [
+        { label: 'Mammalia (Mammals)', value: '85d08cf5-aa6d-4b36-8701-44121892aa48' },
+        { label: 'Aves (Birds)', value: '66bc9d74-0092-4b3e-a5ae-7b7f52b0837b' },
+        { label: 'Animalia (Animals)', value: '56f05f10-5334-4904-adef-72ac2031a995' },
+        { label: 'Clear', value: '' }
+      ],
+      docProperties: [
+        { property: 'Supported Types', description: 'ManyToOne relational foreign key identifier' },
+        { property: 'Dynamic Data Loading', description: 'Fetches option list via DataService.findAll(relationshipTarget).' },
+        { property: 'Search & Formatting', description: 'Formats options using typeaheadSearch fields or default name.' },
+        { property: 'View Mode', description: 'Resolves entity via cache/findById and displays formatted label in a read-only input.' }
+      ],
+      metaPageJson: { width: '6', height: '1', attributeName: 'species', component: 'Select' },
+      featurePath: '/assets/features/components/select-control.feature',
+      fallbackFeature: `Feature: Select Control Component
+  As a veterinary staff member
+  I want a relational dropdown selector that dynamically loads entity records
+  So that I can select a related entity accurately
+
+  @showcase @select-control
+  Scenario: Select related entity and switch between edit and view modes
+    When I navigate to "/showcase/select-control"
+    Then the showcase header should display "SelectControlComponent"
+    And the select control dropdown should be visible
+    When I click the showcase button "btn-mode-view"
+    Then the select control view should display formatted text
+    When I click the showcase button "btn-mode-edit"
+    Then the select control dropdown should be visible`
+    },
+    {
+      id: 'select-multiple',
+      name: 'SelectMultipleControlComponent',
+      selector: '<lib-select-multiple-control>',
+      category: 'Selections & Badges',
+      description: 'Multi-selection dropdown widget with interactive tag badges. Users can select multiple items from a relational entity dataset, remove tags with one click, and serialize values as comma-delimited strings.',
+      attribute: {
+        name: 'clinic_affiliations',
+        label: 'Clinic Affiliations',
+        description: 'Associated clinic branches',
+        type: AttributeType.SelectMultiple,
+        visibility: VisibilityType.Visible,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: 'Clinic',
+        typeaheadSearch: ['name'],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '8',
+        height: '1',
+        attributeName: 'clinic_affiliations',
+        component: 'SelectMultiple',
+      },
+      initialValue: 'Central Hutt Vets,Animal Health Centre',
+      samplePresets: [
+        { label: 'Central Hutt & Animal Health', value: 'Central Hutt Vets,Animal Health Centre' },
+        { label: 'PETVET Lower Hutt', value: 'PETVET Lower Hutt' },
+        { label: 'Animates Vetcare Clinic', value: 'Animates Vetcare Clinic' },
+        { label: 'Clear', value: '' }
+      ],
+      docProperties: [
+        { property: 'Supported Types', description: 'SelectMultiple (persisted as comma-separated entity name string)' },
+        { property: 'Interactive Tags', description: 'Selected options appear as blue pill badges with close (X) remove buttons.' },
+        { property: 'Dropdown Menu', description: 'ngbDropdown popup containing available choices from DataService.findAll().' },
+        { property: 'View Mode', description: 'Renders selected tags as read-only badges or em-dash if empty.' }
+      ],
+      metaPageJson: { width: '8', height: '1', attributeName: 'clinic_affiliations', component: 'SelectMultiple' },
+      featurePath: '/assets/features/components/select-multiple.feature',
+      fallbackFeature: `Feature: Select Multiple Control Component
+  As a veterinary nurse or receptionist
+  I want a multi-select control that displays choices as removable badges
+  So that multiple affiliations or options can be selected and managed cleanly
+
+  @showcase @select-multiple
+  Scenario: Manage multiple selected options with interactive tag badges
+    When I navigate to "/showcase/select-multiple"
+    Then the showcase header should display "SelectMultipleControlComponent"
+    And the select multiple control should display selected tag "Central Hutt Vets"
+    And the select multiple control should display selected tag "Animal Health Centre"
+    When I click the showcase button "btn-mode-view"
+    Then the select multiple view should display badge "Central Hutt Vets"
+    And the select multiple view should display badge "Animal Health Centre"
+    When I click the showcase button "btn-mode-edit"
+    Then the select multiple control should display selected tag "Central Hutt Vets"`
+    },
+    {
+      id: 'select-two',
+      name: 'SelectTwoControlComponent',
+      selector: '<lib-select-two-control>',
+      category: 'Selections & Badges',
+      description: 'Compound two-level selector combining a primary ManyToOne entity dropdown and a secondary dependent enumeration dropdown.',
+      attribute: {
+        name: 'clinic',
+        label: 'Clinic & Department',
+        description: 'Primary clinic with optional department categorization',
+        type: AttributeType.ManyToOne,
+        visibility: VisibilityType.Visible,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: 'Clinic',
+        typeaheadSearch: ['name'],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '12',
+        height: '1',
+        attributeName: 'clinic',
+        component: 'SelectTwo',
+        componentData: {
+          secondaryAttributeName: 'department'
+        }
+      },
+      initialValue: 'cf756f73-7a1a-4b86-9cd5-367649f19874',
+      samplePresets: [
+        { label: 'PETVET Lower Hutt', value: 'cf756f73-7a1a-4b86-9cd5-367649f19874' },
+        { label: 'Central Hutt Vets', value: '7efa6559-4cc2-4ecb-85f6-3c6d3be069dc' },
+        { label: 'Animal Health Centre', value: '0efa743d-1115-46ad-8055-9b7968d08a52' },
+        { label: 'Clear', value: '' }
+      ],
+      docProperties: [
+        { property: 'Supported Types', description: 'ManyToOne compound binding with secondary dependent attribute' },
+        { property: 'Two-Column Layout', description: 'Renders primary <lib-select-control> and secondary <lib-enumeration-control> side by side.' },
+        { property: 'Dependent Cascading', description: 'When primary entity is selected, parses secondaryOptions from entity field.' },
+        { property: 'View Mode', description: 'Renders read-only controls or combined text depending on labelLayout.' }
+      ],
+      metaPageJson: {
+        width: '12',
+        height: '1',
+        attributeName: 'clinic',
+        component: 'SelectTwo',
+        componentData: { secondaryAttributeName: 'department' }
+      },
+      featurePath: '/assets/features/components/select-two.feature',
+      fallbackFeature: `Feature: Select Two Control Component
+  As a veterinary user recording multi-level categorizations
+  I want a compound selector with primary and secondary controls
+  So that hierarchical choices can be made together in a clean row
+
+  @showcase @select-two
+  Scenario: Display compound primary and secondary dropdowns in edit and view modes
+    When I navigate to "/showcase/select-two"
+    Then the showcase header should display "SelectTwoControlComponent"
+    And the select two primary dropdown should be visible
+    When I click the showcase button "btn-mode-view"
+    Then the select two view should display formatted text
+    When I click the showcase button "btn-mode-edit"
+    Then the select two primary dropdown should be visible`
     }
   ];
 

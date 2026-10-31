@@ -162,7 +162,7 @@ Then('the date time input should be visible', async function (this: UIWorld) {
 
 Then('the time control view should display formatted time', async function (this: UIWorld) {
   if (!this.page) throw new Error('Playwright page is not initialized');
-  const viewEl = this.page.locator('lib-time-control [data-testid^="time-"], lib-time-control input').first();
+  const viewEl = this.page.locator('lib-time-control [data-testid^="time-\"], lib-time-control input').first();
   await viewEl.waitFor({ state: 'visible', timeout: 15000 });
   const text = (await viewEl.inputValue?.().catch(() => '')) || (await viewEl.textContent())?.trim() || '';
   expect(text).to.not.be.empty;
@@ -187,6 +187,22 @@ Then('the color band interactive input should be visible', async function (this:
   const control = this.page.locator('lib-colour-band-component input, lib-colour-band-component button').first();
   await control.waitFor({ state: 'visible', timeout: 15000 });
   expect(await control.isVisible()).to.be.true;
+});
+
+// FlexibleDateTimeControl Steps
+Then('the flexible date time picker inputs should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const input = this.page.locator('lib-flexible-date-time-control input, lib-flexible-date-time-control .flexible-time-input-field').first();
+  await input.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await input.isVisible()).to.be.true;
+});
+
+Then('the flexible date time view should display formatted value', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const viewEl = this.page.locator('lib-flexible-date-time-control [data-testid^="view-"]').first();
+  await viewEl.waitFor({ state: 'visible', timeout: 15000 });
+  const text = (await viewEl.textContent())?.trim();
+  expect(text).to.not.be.empty;
 });
 
 // -----------------------------------------------------------------------------
@@ -256,6 +272,53 @@ Then('the badge list should have {int} badges', async function (this: UIWorld, c
   const badges = this.page.locator('lib-badge-list .badge');
   await badges.first().waitFor({ state: 'visible', timeout: 15000 });
   expect(await badges.count()).to.equal(count);
+});
+
+// SelectControlComponent Steps
+Then('the select control dropdown should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const select = this.page.locator('lib-select-control select').first();
+  await select.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await select.isVisible()).to.be.true;
+});
+
+Then('the select control view should display formatted text', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const viewEl = this.page.locator('lib-select-control [data-testid^="view-"]').first();
+  await viewEl.waitFor({ state: 'visible', timeout: 15000 });
+  const text = (await viewEl.inputValue?.().catch(() => '')) || (await viewEl.textContent())?.trim() || '';
+  expect(text.trim()).to.not.be.empty;
+});
+
+// SelectMultipleControlComponent Steps
+Then('the select multiple control should display selected tag {string}', async function (this: UIWorld, expectedTag: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const badge = this.page.locator('lib-select-multiple-control .badge').filter({ hasText: expectedTag }).first();
+  await badge.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await badge.isVisible()).to.be.true;
+});
+
+Then('the select multiple view should display badge {string}', async function (this: UIWorld, expectedTag: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const badge = this.page.locator('lib-select-multiple-control [data-testid^="view-badge-"], lib-select-multiple-control .badge').filter({ hasText: expectedTag }).first();
+  await badge.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await badge.isVisible()).to.be.true;
+});
+
+// SelectTwoControlComponent Steps
+Then('the select two primary dropdown should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const select = this.page.locator('lib-select-two-control lib-select-control select').first();
+  await select.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await select.isVisible()).to.be.true;
+});
+
+Then('the select two view should display formatted text', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const viewEl = this.page.locator('lib-select-two-control [data-testid^="view-"], lib-select-two-control .form-control[readonly]').first();
+  await viewEl.waitFor({ state: 'visible', timeout: 15000 });
+  const text = (await viewEl.inputValue?.().catch(() => '')) || (await viewEl.textContent())?.trim() || '';
+  expect(text.trim()).to.not.be.empty;
 });
 
 // -----------------------------------------------------------------------------
