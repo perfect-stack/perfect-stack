@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AttributeType, ComparisonOperator, VisibilityType } from '../domain/meta.entity';
 import { ShowcaseItem } from './showcase.model';
+import { ActionType } from '../domain/meta.role';
+import { ToolType } from '../domain/meta.page';
 
 @Injectable({
   providedIn: 'root'
@@ -972,6 +974,518 @@ export class ShowcaseRegistryService {
     When I select clinic "Animal Health Centre" in the select two primary dropdown
     Then the select two secondary dropdown should contain option "Dr. Bruce Banner (Specialist)"
     And the select two secondary dropdown should not contain option "Dr. Emily Brown (Senior Surgeon)"`
+    },
+
+    // -------------------------------------------------------------------------
+    // CATEGORY: Action & Navigation Tools
+    // -------------------------------------------------------------------------
+    {
+      id: 'button-tool',
+      name: 'ButtonToolComponent',
+      selector: '<lib-button-tool>',
+      category: 'Action & Navigation Tools',
+      description: 'Action trigger button rendered in layout cells or toolbars. Supports customizable styles, Material icons, channel event dispatching, and route navigation.',
+      attribute: {
+        name: 'button_action',
+        label: 'Action Trigger',
+        description: 'Action trigger tool attribute',
+        type: AttributeType.Text,
+        visibility: VisibilityType.Optional,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: '',
+        typeaheadSearch: [],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '4',
+        height: '1',
+        attributeName: 'button_action',
+        tool: {
+          type: ToolType.Button,
+          channel: 'default',
+          containerStyles: '',
+          styles: 'btn btn-primary',
+          label: 'Save Patient Record',
+          modes: '',
+          action: 'save',
+          route: '',
+          icon: 'save',
+          actionPermit: ActionType.Edit,
+          subjectPermit: 'Pet'
+        } as any
+      },
+      initialValue: 'save',
+      samplePresets: [
+        { label: 'Save Record', value: 'save' },
+        { label: 'Submit Consultation', value: 'submit' },
+        { label: 'Cancel', value: 'cancel' }
+      ],
+      docProperties: [
+        { property: 'Tool Type', description: 'ToolType.Button' },
+        { property: 'Event Dispatching', description: 'Dispatches onAction events to EventService via channel.' },
+        { property: 'Route Navigation', description: 'Supports route expressions evaluated against ctx.dataMap.' },
+        { property: 'Styling & Icons', description: 'Custom CSS classes and Material Symbols icon integration.' }
+      ],
+      metaPageJson: {
+        width: '4',
+        height: '1',
+        tool: {
+          type: 'Button',
+          channel: 'default',
+          styles: 'btn btn-primary',
+          label: 'Save Patient Record',
+          action: 'save',
+          icon: 'save'
+        }
+      },
+      featurePath: '/assets/features/components/button-tool.feature',
+      fallbackFeature: `Feature: Button Tool Component
+  As an application user or clinician
+  I want interactive action buttons in page layouts and toolbars
+  So that I can trigger actions, save records, and navigate routes
+
+  @showcase @button-tool
+  Scenario: Display and inspect button tool in edit and view modes
+    When I navigate to "/showcase/button-tool"
+    Then the showcase header should display "ButtonToolComponent"
+    And the button tool should be visible with label "Save Patient Record"
+    When I click the showcase button "btn-mode-view"
+    Then the button tool should be visible with label "Save Patient Record"
+    When I click the showcase button "btn-mode-edit"
+    Then the button tool should be visible with label "Save Patient Record"`
+    },
+    {
+      id: 'button-group-tool',
+      name: 'ButtonGroupToolComponent',
+      selector: '<lib-button-group-tool>',
+      category: 'Action & Navigation Tools',
+      description: 'Multi-button segmented radio toggle group. Splits comma-delimited labels and actions into an interactive button strip with active state tracking.',
+      attribute: {
+        name: 'button_group_selection',
+        label: 'Segmented Action Group',
+        description: 'Segmented radio button group attribute',
+        type: AttributeType.Text,
+        visibility: VisibilityType.Optional,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: '',
+        typeaheadSearch: [],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '6',
+        height: '1',
+        attributeName: 'button_group_selection',
+        tool: {
+          type: ToolType.ButtonGroup,
+          channel: 'timeframe',
+          containerStyles: '',
+          styles: 'btn btn-outline-secondary',
+          label: 'Day,Week,Month,Year',
+          modes: '',
+          action: 'day,week,month,year',
+          route: ''
+        } as any
+      },
+      initialValue: 'Day',
+      samplePresets: [
+        { label: 'Day / Week / Month', value: 'Day,Week,Month' },
+        { label: 'Morning / Afternoon / Evening', value: 'Morning,Afternoon,Evening' }
+      ],
+      docProperties: [
+        { property: 'Tool Type', description: 'ToolType.ButtonGroup' },
+        { property: 'Delimited Parsing', description: 'Splits comma-separated label and action strings into buttons.' },
+        { property: 'Radio Group', description: 'Renders Bootstrap .btn-group with active selection styling.' },
+        { property: 'Event Emission', description: 'Emits action event and dispatches to EventService on selection.' }
+      ],
+      metaPageJson: {
+        width: '6',
+        height: '1',
+        tool: {
+          type: 'ButtonGroup',
+          channel: 'timeframe',
+          styles: 'btn btn-outline-secondary',
+          label: 'Day,Week,Month,Year',
+          action: 'day,week,month,year'
+        }
+      },
+      featurePath: '/assets/features/components/button-group-tool.feature',
+      fallbackFeature: `Feature: Button Group Tool Component
+  As a clinician reviewing timeline data
+  I want segmented radio buttons to switch between timeframes or action modes
+  So that I can quickly filter and toggle views
+
+  @showcase @button-group-tool
+  Scenario: Display and toggle options in button group tool
+    When I navigate to "/showcase/button-group-tool"
+    Then the showcase header should display "ButtonGroupToolComponent"
+    And the button group tool should display button "Day"
+    And the button group tool should display button "Week"
+    And the button group tool should display button "Month"
+    When I click button group button "Week"
+    Then button group button "Week" should be active`
+    },
+    {
+      id: 'button-tabs-tool',
+      name: 'ButtonTabsToolComponent',
+      selector: '<lib-button-tabs-tool>',
+      category: 'Action & Navigation Tools',
+      description: 'Template and sub-page switcher driving layout outlets through segmented tab buttons. Integrates with MetaPageService to switch active templates dynamically.',
+      attribute: {
+        name: 'active_tab_template',
+        label: 'Template Tab Switcher',
+        description: 'Template tab selector attribute',
+        type: AttributeType.Text,
+        visibility: VisibilityType.Optional,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: '',
+        typeaheadSearch: [],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '12',
+        height: '2',
+        attributeName: 'active_tab_template',
+        tool: {
+          type: ToolType.ButtonTabs,
+          channel: 'tabs',
+          containerStyles: '',
+          styles: 'btn btn-outline-primary',
+          label: 'Clinical Media Views',
+          modes: '',
+          templateIndex: 0,
+          template1: 'PetMediaSingle.tab',
+          template2: 'PetMediaMultiple.tab'
+        } as any
+      },
+      initialValue: 'PetMediaSingle.tab',
+      samplePresets: [
+        { label: 'Single Media View', value: 'PetMediaSingle.tab' },
+        { label: 'Multiple Media Gallery', value: 'PetMediaMultiple.tab' }
+      ],
+      docProperties: [
+        { property: 'Tool Type', description: 'ToolType.ButtonTabs' },
+        { property: 'Template Routing', description: 'Resolves page templates via MetaPageService.metaPageMap$.' },
+        { property: 'Embedded Outlet', description: 'Switches template rendered in <lib-layout-outlet>.' },
+        { property: 'Data Inspection', description: 'Auto-selects active tab based on presence of event data.' }
+      ],
+      metaPageJson: {
+        width: '12',
+        height: '2',
+        tool: {
+          type: 'ButtonTabs',
+          channel: 'tabs',
+          label: 'Clinical Media Views',
+          template1: 'PetMediaSingle.tab',
+          template2: 'PetMediaMultiple.tab'
+        }
+      },
+      featurePath: '/assets/features/components/button-tabs-tool.feature',
+      fallbackFeature: `Feature: Button Tabs Tool Component
+  As a clinician reviewing multi-view patient records
+  I want segmented button tabs to switch between sub-templates
+  So that layout outlets dynamically load and display template views
+
+  @showcase @button-tabs-tool
+  Scenario: Display button tabs tool
+    When I navigate to "/showcase/button-tabs-tool"
+    Then the showcase header should display "ButtonTabsToolComponent"
+    And the button tabs tool should be visible`
+    },
+    {
+      id: 'link-tool',
+      name: 'LinkToolComponent',
+      selector: '<lib-link-tool>',
+      category: 'Action & Navigation Tools',
+      description: 'Inline text and hyperlink parser. Replaces <a> tags with clickable navigation or action anchors embedded smoothly within sentence text.',
+      attribute: {
+        name: 'link_navigation',
+        label: 'Inline Hyperlink Tool',
+        description: 'Inline link parser attribute',
+        type: AttributeType.Text,
+        visibility: VisibilityType.Optional,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: '',
+        typeaheadSearch: [],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '8',
+        height: '1',
+        attributeName: 'link_navigation',
+        tool: {
+          type: ToolType.Link,
+          channel: 'navigation',
+          containerStyles: '',
+          styles: '',
+          label: 'Patient Schedule',
+          modes: '',
+          text: 'Click <a>here to view clinic schedule</a> or return to search.',
+          action: 'view_schedule',
+          route: '/data/Pet/search'
+        } as any
+      },
+      initialValue: 'view_schedule',
+      samplePresets: [
+        { label: 'Schedule Link', value: 'Click <a>here to view clinic schedule</a> or return to search.' },
+        { label: 'Documentation Link', value: 'Need assistance? Read the <a>online documentation</a>.' }
+      ],
+      docProperties: [
+        { property: 'Tool Type', description: 'ToolType.Link' },
+        { property: 'Tag Parsing', description: 'Parses <a>...</a> tags into mixed text and clickable LinkFragment objects.' },
+        { property: 'Action or Route', description: 'Dispatches custom framework actions or routes via Router.' },
+        { property: 'Inline Flow', description: 'Blends seamlessly into surrounding paragraphs and layout labels.' }
+      ],
+      metaPageJson: {
+        width: '8',
+        height: '1',
+        tool: {
+          type: 'Link',
+          channel: 'navigation',
+          text: 'Click <a>here to view clinic schedule</a> or return to search.',
+          action: 'view_schedule'
+        }
+      },
+      featurePath: '/assets/features/components/link-tool.feature',
+      fallbackFeature: `Feature: Link Tool Component
+  As a user reading form instructions and navigation prompts
+  I want inline links embedded naturally inside text
+  So that I can trigger actions or navigate to related pages directly
+
+  @showcase @link-tool
+  Scenario: Display inline link tool with clickable anchor
+    When I navigate to "/showcase/link-tool"
+    Then the showcase header should display "LinkToolComponent"
+    And the link tool should display link text "here to view clinic schedule"`
+    },
+
+    // -------------------------------------------------------------------------
+    // CATEGORY: Presentation Tools
+    // -------------------------------------------------------------------------
+    {
+      id: 'page-title-tool',
+      name: 'PageTitleToolComponent',
+      selector: '<lib-page-title-tool>',
+      category: 'Presentation Tools',
+      description: 'Contextual page title header rendering dynamic titles based on page mode (search, add, view, update) or static titles from metaPage.title.',
+      attribute: {
+        name: 'page_title',
+        label: 'Page Heading',
+        description: 'Page title tool attribute',
+        type: AttributeType.Text,
+        visibility: VisibilityType.Optional,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: '',
+        typeaheadSearch: [],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '12',
+        height: '1',
+        attributeName: 'page_title',
+        tool: {
+          type: ToolType.PageTitle,
+          channel: '',
+          containerStyles: '',
+          styles: '',
+          label: 'Page Title',
+          modes: '',
+          nameAttributes: ''
+        } as any
+      },
+      initialValue: 'Patient Clinical Record',
+      samplePresets: [
+        { label: 'Static Title', value: '' },
+        { label: 'Dynamic Name (Pet)', value: 'name' }
+      ],
+      docProperties: [
+        { property: 'Tool Type', description: 'ToolType.PageTitle' },
+        { property: 'Mode Adaptation', description: 'Automatically prefixes titles: "Search [Entity]", "Add [Entity]", "Update [Entity]".' },
+        { property: 'Static Fallback', description: 'Renders ctx.metaPage.title when nameAttributes is not configured.' },
+        { property: 'Editor Support', description: 'Provides click-to-edit integration for PropertySheetService in editor mode.' }
+      ],
+      metaPageJson: {
+        width: '12',
+        height: '1',
+        tool: {
+          type: 'PageTitle',
+          nameAttributes: ''
+        }
+      },
+      featurePath: '/assets/features/components/page-title-tool.feature',
+      fallbackFeature: `Feature: Page Title Tool Component
+  As a user navigating application pages
+  I want contextual page titles that clearly reflect the active page and mode
+  So that I understand what entity and action I am working on
+
+  @showcase @page-title-tool
+  Scenario: Display contextual page title in edit and view modes
+    When I navigate to "/showcase/page-title-tool"
+    Then the showcase header should display "PageTitleToolComponent"
+    And the page title heading should display "Showcase Preview"`
+    },
+    {
+      id: 'text-tool',
+      name: 'TextToolComponent',
+      selector: '<lib-text-tool>',
+      category: 'Presentation Tools',
+      description: 'Evaluated presentation text banner that renders static text or dynamic expressions computed against formGroup and dataMap.',
+      attribute: {
+        name: 'presentation_text',
+        label: 'Banner Text',
+        description: 'Presentation banner text attribute',
+        type: AttributeType.Text,
+        visibility: VisibilityType.Optional,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: '',
+        typeaheadSearch: [],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '12',
+        height: '1',
+        attributeName: 'presentation_text',
+        tool: {
+          type: ToolType.TextTool,
+          channel: '',
+          containerStyles: '',
+          styles: 'alert alert-info py-2 px-3 fw-bold mb-0',
+          label: 'Status Banner',
+          modes: '',
+          text: 'Patient Status: Registered and Active in System'
+        } as any
+      },
+      initialValue: 'Patient Status: Registered and Active in System',
+      samplePresets: [
+        { label: 'Active Banner', value: 'Patient Status: Registered and Active in System' },
+        { label: 'Alert Banner', value: 'Alert: Scheduled for follow-up vaccination' },
+        { label: 'Clear', value: '' }
+      ],
+      docProperties: [
+        { property: 'Tool Type', description: 'ToolType.TextTool' },
+        { property: 'Expression Evaluation', description: 'Evaluates text template expressions against formGroup or dataMap.' },
+        { property: 'Dynamic Styling', description: 'Applies CSS classes dynamically via expressionService.' },
+        { property: 'Presentation Slot', description: 'Ideal for headings, contextual alerts, instructions, and dividers.' }
+      ],
+      metaPageJson: {
+        width: '12',
+        height: '1',
+        tool: {
+          type: 'TextTool',
+          styles: 'alert alert-info py-2 px-3 fw-bold mb-0',
+          text: 'Patient Status: Registered and Active in System'
+        }
+      },
+      featurePath: '/assets/features/components/text-tool.feature',
+      fallbackFeature: `Feature: Text Tool Component
+  As a form designer or clinician
+  I want contextual text banners and messages rendered inside form layouts
+  So that important instructions, statuses, and alerts are highlighted
+
+  @showcase @text-tool
+  Scenario: Display presentation text banner
+    When I navigate to "/showcase/text-tool"
+    Then the showcase header should display "TextToolComponent"
+    And the text tool banner should display "Patient Status: Registered and Active in System"`
+    },
+    {
+      id: 'icon-tool',
+      name: 'IconToolComponent',
+      selector: '<lib-icon-tool>',
+      category: 'Presentation Tools',
+      description: 'Visual glyph tool displaying Google Material Symbols icons with evaluated styling and expression-driven icon names.',
+      attribute: {
+        name: 'status_icon',
+        label: 'Visual Icon',
+        description: 'Icon tool attribute',
+        type: AttributeType.Text,
+        visibility: VisibilityType.Optional,
+        comparisonField: '',
+        comparisonOperator: ComparisonOperator.Equals,
+        relationshipTarget: '',
+        typeaheadSearch: [],
+        discriminator: { entityMappingList: [], discriminatorName: '', discriminatorType: '' },
+        rules: [],
+        enumeration: [],
+        unitOfMeasure: '',
+        scale: '',
+      },
+      cell: {
+        width: '4',
+        height: '1',
+        attributeName: 'status_icon',
+        tool: {
+          type: ToolType.Icon,
+          channel: '',
+          containerStyles: '',
+          styles: 'text-primary fs-2',
+          label: 'Clinic Icon',
+          modes: '',
+          iconName: 'pets'
+        } as any
+      },
+      initialValue: 'pets',
+      samplePresets: [
+        { label: 'Pets (Paw)', value: 'pets' },
+        { label: 'Medical (Cross)', value: 'medical_services' },
+        { label: 'Hospital', value: 'local_hospital' },
+        { label: 'Vaccine', value: 'vaccines' }
+      ],
+      docProperties: [
+        { property: 'Tool Type', description: 'ToolType.Icon' },
+        { property: 'Icon Font', description: 'Uses Google Material Symbols Outlined font.' },
+        { property: 'Dynamic Evaluation', description: 'Evaluates icon name and styles against form values.' },
+        { property: 'Editor Integration', description: 'Supports ToolPaletteComponent defaults and PropertySheet editing.' }
+      ],
+      metaPageJson: {
+        width: '4',
+        height: '1',
+        tool: {
+          type: 'Icon',
+          styles: 'text-primary fs-2',
+          iconName: 'pets'
+        }
+      },
+      featurePath: '/assets/features/components/icon-tool.feature',
+      fallbackFeature: `Feature: Icon Tool Component
+  As a user reviewing clinical dashboards and records
+  I want prominent visual icons to identify categories and statuses at a glance
+  So that visual cues reinforce important information
+
+  @showcase @icon-tool
+  Scenario: Display icon tool with Material Symbols
+    When I navigate to "/showcase/icon-tool"
+    Then the showcase header should display "IconToolComponent"
+    And the icon tool should display icon "pets"`
     }
   ];
 

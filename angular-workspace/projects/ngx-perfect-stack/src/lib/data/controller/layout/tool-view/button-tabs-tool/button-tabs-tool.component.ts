@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable, of, switchMap } from 'rxjs';
+import { UntypedFormGroup } from '@angular/forms';
 import { ButtonGroupTool, ButtonTabsTool, MetaPage, Template, ToolType } from '../../../../../domain/meta.page';
 import { FormContext } from '../../../../data-edit/form-service/form.service';
 import { PropertySheetService } from '../../../../../template/property-sheet/property-sheet.service';
@@ -27,6 +28,13 @@ export class ButtonTabsToolComponent implements OnInit {
 
   @Input()
   editorMode = false;
+
+  @Input()
+  formGroup?: UntypedFormGroup;
+
+  get rootFormGroup(): UntypedFormGroup | null {
+    return this.formGroup || (this.ctx?.formMap?.get('root') as UntypedFormGroup) || null;
+  }
 
   tabContext$: Observable<ButtonTabContext>;
   selectedTemplate: Template;
@@ -100,7 +108,7 @@ export class ButtonTabsToolComponent implements OnInit {
   }
 
   extractNames(...names: string[]) {
-    return names.filter(s => s !== null && s.length > 0);
+    return names.filter(s => !!s && s.length > 0);
   }
 
   onClick(buttonName: string) {

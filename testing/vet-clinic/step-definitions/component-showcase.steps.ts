@@ -459,3 +459,72 @@ Then('the showcase tab {string} should be visible', async function (this: UIWorl
   await tab.waitFor({ state: 'visible', timeout: 15000 });
   expect(await tab.isVisible()).to.be.true;
 });
+
+// -----------------------------------------------------------------------------
+// Phase 2: Action & Navigation Tools and Presentation Tools Steps
+// -----------------------------------------------------------------------------
+
+Then('the button tool should be visible with label {string}', async function (this: UIWorld, expectedLabel: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const btn = this.page.locator('lib-button-tool button').filter({ hasText: expectedLabel }).first();
+  await btn.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await btn.isVisible()).to.be.true;
+});
+
+Then('the button group tool should display button {string}', async function (this: UIWorld, buttonLabel: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const btn = this.page.locator(`lib-button-group-tool label[data-testid="btn-group-${buttonLabel}"]`).first();
+  await btn.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await btn.isVisible()).to.be.true;
+});
+
+When('I click button group button {string}', async function (this: UIWorld, buttonLabel: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const btn = this.page.locator(`lib-button-group-tool label[data-testid="btn-group-${buttonLabel}"]`).first();
+  await btn.waitFor({ state: 'visible', timeout: 15000 });
+  await btn.click();
+});
+
+Then('button group button {string} should be active', async function (this: UIWorld, buttonLabel: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const input = this.page.locator(`lib-button-group-tool input[data-testid="btn-group-input-${buttonLabel}"]`).first();
+  await input.waitFor({ state: 'attached', timeout: 15000 });
+  expect(await input.isChecked()).to.be.true;
+});
+
+Then('the button tabs tool should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const tool = this.page.locator('lib-button-tabs-tool').first();
+  await tool.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await tool.isVisible()).to.be.true;
+});
+
+Then('the link tool should display link text {string}', async function (this: UIWorld, expectedText: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const link = this.page.locator('lib-link-tool a').filter({ hasText: expectedText }).first();
+  await link.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await link.isVisible()).to.be.true;
+});
+
+Then('the page title heading should display {string}', async function (this: UIWorld, expectedTitle: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const heading = this.page.locator('lib-page-title-tool [data-testid="page-title"]').first();
+  await heading.waitFor({ state: 'visible', timeout: 15000 });
+  const text = (await heading.textContent())?.trim();
+  expect(text).to.equal(expectedTitle);
+});
+
+Then('the text tool banner should display {string}', async function (this: UIWorld, expectedBannerText: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const banner = this.page.locator('lib-text-tool div').filter({ hasText: expectedBannerText }).first();
+  await banner.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await banner.isVisible()).to.be.true;
+});
+
+Then('the icon tool should display icon {string}', async function (this: UIWorld, expectedIcon: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const icon = this.page.locator('lib-icon-tool span.material-symbols-outlined').filter({ hasText: expectedIcon }).first();
+  await icon.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await icon.isVisible()).to.be.true;
+});
+

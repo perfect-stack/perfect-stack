@@ -5,9 +5,10 @@ import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { ShowcaseRegistryService } from './showcase-registry.service';
 import { ShowcaseItem } from './showcase.model';
-import { FormControlWithAttribute } from '../data/data-edit/form-service/form.service';
+import { FormContext, FormControlWithAttribute } from '../data/data-edit/form-service/form.service';
 import { ResultType, ValidationResult } from '../domain/meta.rule';
 import { AttributeType } from '../domain/meta.entity';
+import { LayoutStyle, PageType, ToolType } from '../domain/meta.page';
 
 @Component({
   selector: 'lib-component-showcase',
@@ -29,6 +30,7 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
   isDisabled = false;
 
   formGroup: UntypedFormGroup;
+  ctx: FormContext;
 
   // Live Gherkin source state
   featureContent = '';
@@ -142,9 +144,46 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
 
   private activateComponent(item: ShowcaseItem): void {
     this.activeItem = item;
-    this.activeItem.cell.attribute = this.activeItem.attribute;
+    if (this.activeItem.attribute) {
+      this.activeItem.cell.attribute = this.activeItem.attribute;
+    }
 
     this.initForm(item.initialValue);
+
+    const dataMap = new Map<string, any>();
+    dataMap.set('event', { result: { easting: '175.0', northing: '-41.0', location: 'Lower Hutt' } });
+    dataMap.set('pet', { result: { id: 'a21fdd11-d6db-4155-ac59-d8ad80ddd31e', name: 'Fido', first_name: 'Fido' } });
+
+    const formMap = new Map<string, any>();
+    formMap.set('root', this.formGroup);
+
+    this.ctx = {
+      metaName: item.attribute?.name || 'Showcase',
+      mode: this.mode,
+      id: '1',
+      metaPage: {
+        name: 'Showcase.page',
+        title: 'Showcase Preview',
+        type: PageType.view_edit,
+        layoutStyle: LayoutStyle.NewYork,
+        dataQueryList: [],
+        controllers: [],
+        templates: []
+      } as any,
+      metaPageMap: new Map(),
+      metaEntityMap: new Map(),
+      metaEntity: {
+        name: 'ShowcaseEntity',
+        pluralName: 'ShowcaseEntities',
+        attributes: item.attribute ? [item.attribute] : []
+      } as any,
+      discriminatorMap: new Map(),
+      dataMap: dataMap,
+      formMap: formMap,
+      paramMap: null,
+      queryParamMap: null
+    };
+
     this.loadFeatureFile(item.id, item.featurePath, item.fallbackFeature);
     this.cdr.markForCheck();
   }
@@ -229,6 +268,9 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
 
   setMode(mode: 'edit' | 'view'): void {
     this.mode = mode;
+    if (this.ctx) {
+      this.ctx.mode = mode;
+    }
     this.cdr.markForCheck();
   }
 
@@ -281,11 +323,33 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
   }
 
   setSampleValue(val: any): void {
-    this.control.setValue(val);
-    const attrName = this.activeItem.attribute.name;
-    const idCtrl = this.formGroup.controls[attrName + '_id'];
-    if (idCtrl) {
-      idCtrl.setValue(val?.id || val);
+    if (this.control) {
+      this.control.setValue(val);
+      const attrName = this.activeItem.attribute?.name;
+      if (attrName) {
+        const idCtrl = this.formGroup.controls[attrName + '_id'];
+        if (idCtrl) {
+          idCtrl.setValue(val?.id || val);
+        }
+      }
+    }
+
+    if (this.activeItem.cell?.tool) {
+      const tool = this.activeItem.cell.tool as any;
+      if (tool.type === ToolType.Button && val) {
+        tool.action = val;
+      } else if (tool.type === ToolType.ButtonGroup && val) {
+        tool.label = val;
+        tool.action = val;
+      } else if (tool.type === ToolType.Link && val) {
+        tool.text = val;
+      } else if (tool.type === ToolType.PageTitle && val !== undefined) {
+        tool.nameAttributes = val;
+      } else if (tool.type === ToolType.TextTool && val) {
+        tool.text = val;
+      } else if (tool.type === ToolType.Icon && val) {
+        tool.iconName = val;
+      }
     }
     this.cdr.markForCheck();
   }
