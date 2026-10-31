@@ -394,11 +394,11 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
           await vaccinationModel.findOrCreate({
             where: {
               vaccine_name: v.vaccine_name,
-              PetId: pet.id,
+              pet_id: pet.id,
             },
             defaults: {
               ...v,
-              PetId: pet.id,
+              pet_id: pet.id,
             },
           });
         }
