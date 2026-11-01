@@ -9,6 +9,7 @@ import { FormContext, FormControlWithAttribute } from '../data/data-edit/form-se
 import { ResultType, ValidationResult } from '../domain/meta.rule';
 import { AttributeType, EntityType, MetaEntity, VisibilityType } from '../domain/meta.entity';
 import { LayoutStyle, PageType, ToolType } from '../domain/meta.page';
+import { DataService } from '../data/data-service/data.service';
 
 @Component({
   selector: 'lib-component-showcase',
@@ -45,7 +46,8 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dataService: DataService
   ) {}
 
   ngOnInit(): void {
@@ -229,6 +231,45 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
     };
 
     this.loadFeatureFile(item.id, item.featurePath, item.fallbackFeature);
+
+    if (item.attribute?.type === AttributeType.ManyToOne && item.attribute?.relationshipTarget) {
+      this.dataService.findAll(item.attribute.relationshipTarget, "", 1, 50).subscribe({
+        next: (res) => {
+          const list = res?.resultList || [];
+          if (list.length > 0) {
+            const attrName = item.attribute.name;
+            const currentVal = this.formGroup.get(attrName + "_id")?.value;
+            const found = list.find((e: any) => e.id === currentVal);
+            if (!found) {
+              const preferred = list.find((e: any) => e.name === "PETVET Lower Hutt" || e.scientific_name === "Mammalia") || list[0];
+              if (preferred) {
+                this.formGroup.get(attrName + "_id")?.setValue(preferred.id);
+                this.formGroup.get(attrName)?.setValue(preferred.id);
+              }
+            }
+
+            if (item.samplePresets && item.samplePresets.length > 0) {
+              item.samplePresets.forEach(preset => {
+                if (preset.label && preset.label !== "Clear") {
+                  const match = list.find((e: any) =>
+                    e.name === preset.label ||
+                    e.scientific_name === preset.label ||
+                    preset.label.startsWith(e.scientific_name || e.name) ||
+                    (e.common_name && preset.label.includes(e.common_name))
+                  );
+                  if (match) {
+                    preset.value = match.id;
+                  }
+                }
+              });
+            }
+            this.cdr.markForCheck();
+          }
+        },
+        error: () => {}
+      });
+    }
+
     this.cdr.markForCheck();
   }
 
