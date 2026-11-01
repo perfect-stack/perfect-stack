@@ -1,13 +1,13 @@
 import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntypedFormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { ShowcaseRegistryService } from './showcase-registry.service';
 import { ShowcaseItem } from './showcase.model';
 import { FormContext, FormControlWithAttribute } from '../data/data-edit/form-service/form.service';
 import { ResultType, ValidationResult } from '../domain/meta.rule';
-import { AttributeType } from '../domain/meta.entity';
+import { AttributeType, EntityType, MetaEntity, VisibilityType } from '../domain/meta.entity';
 import { LayoutStyle, PageType, ToolType } from '../domain/meta.page';
 
 @Component({
@@ -81,10 +81,14 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
     }
   }
 
-  get control(): FormControlWithAttribute {
-    const attrName = this.activeItem.attribute.name;
-    return (this.formGroup.controls[attrName + '_id'] ||
-            this.formGroup.controls[attrName]) as FormControlWithAttribute;
+  get control(): any {
+    const attrName = this.activeItem?.attribute?.name;
+    if (!attrName || !this.formGroup) {
+      return this.formGroup;
+    }
+    return this.formGroup.controls[attrName + '_id'] ||
+           this.formGroup.controls[attrName] ||
+           this.formGroup;
   }
 
   get categories(): string[] {
@@ -153,9 +157,42 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
     const dataMap = new Map<string, any>();
     dataMap.set('event', { result: { easting: '175.0', northing: '-41.0', location: 'Lower Hutt' } });
     dataMap.set('pet', { result: { id: 'a21fdd11-d6db-4155-ac59-d8ad80ddd31e', name: 'Fido', first_name: 'Fido' } });
+    dataMap.set('results', {
+      result: [
+        { id: '1', name: 'Lower Hutt Clinic', easting: '174.9', northing: '-41.2', location: 'Lower Hutt' },
+        { id: '2', name: 'Wellington Central Clinic', easting: '174.77', northing: '-41.28', location: 'Wellington Central' },
+        { id: '3', name: 'Auckland Clinic', easting: '174.76', northing: '-36.85', location: 'Auckland' }
+      ]
+    });
 
     const formMap = new Map<string, any>();
     formMap.set('root', this.formGroup);
+
+    const criteriaForm = new UntypedFormGroup({
+      pageNumber: new FormControlWithAttribute(1),
+      pageSize: new FormControlWithAttribute(10),
+      collectionSize: new FormControlWithAttribute(50),
+    });
+    formMap.set('criteria', criteriaForm);
+
+    const petMediaFileEntity: MetaEntity = {
+      name: 'PetMediaFile',
+      pluralName: 'PetMediaFiles',
+      type: EntityType.Database,
+      icon: 'photo',
+      rootNode: false,
+      treeNode: false,
+      timestamps: true,
+      cacheExpiryInSecs: 0,
+      permanentDelete: false,
+      attributes: [
+        { name: 'id', label: 'ID', type: AttributeType.Identifier, visibility: VisibilityType.Visible } as any,
+        { name: 'path', label: 'Path', type: AttributeType.Text, visibility: VisibilityType.Visible } as any,
+        { name: 'comments', label: 'Comments', type: AttributeType.Text, visibility: VisibilityType.Visible } as any,
+      ]
+    };
+    const metaEntityMap = new Map<string, MetaEntity>();
+    metaEntityMap.set('PetMediaFile', petMediaFileEntity);
 
     this.ctx = {
       metaName: item.attribute?.name || 'Showcase',
@@ -171,7 +208,7 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
         templates: []
       } as any,
       metaPageMap: new Map(),
-      metaEntityMap: new Map(),
+      metaEntityMap: metaEntityMap,
       metaEntity: {
         name: 'ShowcaseEntity',
         pluralName: 'ShowcaseEntities',
@@ -190,16 +227,37 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
 
   private initForm(initialValue: any): void {
     const attrName = this.activeItem.attribute.name;
-    const ctrl = new FormControlWithAttribute(initialValue);
-    ctrl.attribute = this.activeItem.attribute;
-    const controls: Record<string, FormControlWithAttribute> = {
-      [attrName]: ctrl
-    };
+    const controls: Record<string, any> = {};
+
+    if (this.activeItem.attribute.type === AttributeType.OneToMany && Array.isArray(initialValue)) {
+      const formArray = new UntypedFormArray(initialValue.map((item: any) => {
+        if (item && typeof item === 'object') {
+          const itemControls: Record<string, any> = {};
+          for (const k of Object.keys(item)) {
+            itemControls[k] = new FormControlWithAttribute(item[k]);
+          }
+          return new UntypedFormGroup(itemControls);
+        }
+        return new FormControlWithAttribute(item);
+      }));
+      (formArray as any).attribute = this.activeItem.attribute;
+      controls[attrName] = formArray;
+    } else {
+      const ctrl = new FormControlWithAttribute(initialValue);
+      ctrl.attribute = this.activeItem.attribute;
+      controls[attrName] = ctrl;
+    }
 
     if (this.activeItem.attribute.type === AttributeType.ManyToOne || attrName.endsWith('_id')) {
       const idCtrl = new FormControlWithAttribute(initialValue?.id || initialValue);
       idCtrl.attribute = this.activeItem.attribute;
       controls[attrName + '_id'] = idCtrl;
+    }
+
+    if (this.activeItem.id === 'map-tool') {
+      controls['geometry'] = new FormControlWithAttribute('{"type": "Point", "coordinates": [174.9, -41.2]}');
+      controls['easting'] = new FormControlWithAttribute('174.9');
+      controls['northing'] = new FormControlWithAttribute('-41.2');
     }
 
     const secondaryName = (this.activeItem.cell?.componentData as any)?.secondaryAttributeName;
@@ -276,23 +334,27 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
 
   toggleDisabled(): void {
     this.isDisabled = !this.isDisabled;
-    if (this.isDisabled) {
-      this.control.disable();
-    } else {
-      this.control.enable();
+    if (this.formGroup) {
+      if (this.isDisabled) {
+        this.formGroup.disable();
+      } else {
+        this.formGroup.enable();
+      }
     }
     this.cdr.markForCheck();
   }
 
   toggleTouched(): void {
-    if (this.control.touched) {
-      this.control.markAsPristine();
-      this.control.markAsUntouched();
-      if (this.control.touchedSignal) {
-        this.control.touchedSignal.set(false);
+    if (this.control) {
+      if (this.control.touched) {
+        this.control.markAsPristine();
+        this.control.markAsUntouched();
+        if ((this.control as any).touchedSignal) {
+          (this.control as any).touchedSignal.set(false);
+        }
+      } else {
+        this.control.markAsTouched();
       }
-    } else {
-      this.control.markAsTouched();
     }
     this.cdr.markForCheck();
   }
@@ -303,8 +365,10 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
       resultType: ResultType.Error,
       message: 'Attribute required'
     };
-    this.control.setErrors(validationResult as any);
-    this.control.markAsTouched();
+    if (this.control && typeof this.control.setErrors === 'function') {
+      this.control.setErrors(validationResult as any);
+      this.control.markAsTouched();
+    }
     const idCtrl = this.formGroup.controls[this.activeItem.attribute.name + '_id'];
     if (idCtrl) {
       idCtrl.setErrors(validationResult as any);
@@ -314,7 +378,9 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
   }
 
   clearErrors(): void {
-    this.control.setErrors(null);
+    if (this.control && typeof this.control.setErrors === 'function') {
+      this.control.setErrors(null);
+    }
     const idCtrl = this.formGroup.controls[this.activeItem.attribute.name + '_id'];
     if (idCtrl) {
       idCtrl.setErrors(null);
@@ -323,14 +389,48 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
   }
 
   setSampleValue(val: any): void {
-    if (this.control) {
+    const attrName = this.activeItem.attribute?.name;
+    if (this.activeItem.attribute.type === AttributeType.OneToMany && Array.isArray(val)) {
+      const formArray = this.formGroup.controls[attrName] as UntypedFormArray;
+      if (formArray) {
+        formArray.clear();
+        for (const item of val) {
+          if (item && typeof item === 'object') {
+            const itemControls: Record<string, any> = {};
+            for (const k of Object.keys(item)) {
+              itemControls[k] = new FormControlWithAttribute(item[k]);
+            }
+            formArray.push(new UntypedFormGroup(itemControls));
+          } else {
+            formArray.push(new FormControlWithAttribute(item));
+          }
+        }
+      }
+    } else if (this.control && typeof this.control.setValue === 'function') {
       this.control.setValue(val);
-      const attrName = this.activeItem.attribute?.name;
       if (attrName) {
         const idCtrl = this.formGroup.controls[attrName + '_id'];
         if (idCtrl) {
           idCtrl.setValue(val?.id || val);
         }
+      }
+    }
+
+    if (this.activeItem.id === 'paginate-tool') {
+      const criteriaForm = this.ctx?.formMap?.get('criteria');
+      if (criteriaForm) {
+        criteriaForm.get('pageNumber')?.setValue(val);
+      }
+    } else if (this.activeItem.id === 'map-tool' && typeof val === 'string') {
+      if (val.includes('Auckland')) {
+        this.formGroup.controls['easting']?.setValue('174.76');
+        this.formGroup.controls['northing']?.setValue('-36.85');
+      } else if (val.includes('Wellington')) {
+        this.formGroup.controls['easting']?.setValue('174.77');
+        this.formGroup.controls['northing']?.setValue('-41.28');
+      } else {
+        this.formGroup.controls['easting']?.setValue('174.9');
+        this.formGroup.controls['northing']?.setValue('-41.2');
       }
     }
 

@@ -528,3 +528,47 @@ Then('the icon tool should display icon {string}', async function (this: UIWorld
   expect(await icon.isVisible()).to.be.true;
 });
 
+
+// Phase 3: Media, Geospatial & Data Tools
+Then('the media control should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-media-control').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the media gallery control should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-media-gallery-control').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the geometry control textarea should contain {string}', async function (this: UIWorld, expectedText: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const textarea = this.page.locator('lib-geometry-control textarea').first();
+  await textarea.waitFor({ state: 'visible', timeout: 15000 });
+  const val = await textarea.inputValue();
+  expect(val).to.include(expectedText);
+});
+
+Then('the geometry control should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-geometry-control').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the map tool component should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-map-tool').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the pagination tool should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-paginate-tool ngb-pagination').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
