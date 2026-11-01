@@ -122,7 +122,7 @@
       }
     }
     @case ('OneToOne') {
-      <lib-one-to-one-control [mode]="mode" [cell]="cell" [formGroup]="formGroup"></lib-one-to-one-control>
+      <lib-one-to-one-control [mode]="mode" [ctx]="ctx" [cell]="cell" [formGroup]="formGroup"></lib-one-to-one-control>
     }
     @case ('ManyToOne') {
       <ng-container [formGroup]="formGroup">

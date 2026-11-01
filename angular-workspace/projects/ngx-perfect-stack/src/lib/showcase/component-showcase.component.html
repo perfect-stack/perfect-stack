@@ -11,7 +11,7 @@
         <!-- ng-bootstrap Collapsible Accordion for Categories -->
         <div class="accordion accordion-flush" ngbAccordion [closeOthers]="false">
           @for (category of categories; track category; let first = $first) {
-            <div ngbAccordionItem [collapsed]="!first" [destroyOnHide]="false">
+            <div ngbAccordionItem [collapsed]="true" [destroyOnHide]="false">
               <h2 ngbAccordionHeader>
                 <button ngbAccordionButton class="py-2 px-3 fw-bold small text-uppercase">
                   {{ category }}

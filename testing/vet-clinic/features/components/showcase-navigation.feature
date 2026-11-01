@@ -14,11 +14,13 @@ Feature: Component Showcase Navigation & Collapsible Categories
   @showcase @accordion
   Scenario: Collapse and expand showcase categories
     When I navigate to "/showcase/text-field"
-    Then the showcase category "Inputs & Primitives" should be "expanded"
+    Then the showcase category "Inputs & Primitives" should be "collapsed"
     And the showcase category "Pickers & Calendars" should be "collapsed"
     And the showcase category "Selections & Badges" should be "collapsed"
     When I toggle the showcase category "Pickers & Calendars"
     Then the showcase category "Pickers & Calendars" should be "expanded"
+    When I toggle the showcase category "Inputs & Primitives"
+    Then the showcase category "Inputs & Primitives" should be "expanded"
     When I toggle the showcase category "Inputs & Primitives"
     Then the showcase category "Inputs & Primitives" should be "collapsed"
 
@@ -28,6 +30,7 @@ Feature: Component Showcase Navigation & Collapsible Categories
     When I click the showcase tab "gherkin"
     Then the Gherkin feature specification should contain "Feature: Text Field Control Component"
     And the Gherkin feature specification should not contain "<!doctype html>"
+    When I toggle the showcase category "Inputs & Primitives"
     When I click the showcase nav item "text-area"
     Then the showcase header should display "TextAreaControlComponent"
     And the Gherkin feature specification should contain "Feature: Text Area Control Component"

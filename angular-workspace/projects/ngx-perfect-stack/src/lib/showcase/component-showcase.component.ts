@@ -151,6 +151,13 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
     if (this.activeItem.attribute) {
       this.activeItem.cell.attribute = this.activeItem.attribute;
     }
+    if (!this.activeItem.cell.metaEntity) {
+      this.activeItem.cell.metaEntity = {
+        name: 'ShowcaseEntity',
+        pluralName: 'ShowcaseEntities',
+        attributes: item.attribute ? [item.attribute] : []
+      } as any;
+    }
 
     this.initForm(item.initialValue);
 
@@ -229,8 +236,8 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
     const attrName = this.activeItem.attribute.name;
     const controls: Record<string, any> = {};
 
-    if (this.activeItem.attribute.type === AttributeType.OneToMany && Array.isArray(initialValue)) {
-      const formArray = new UntypedFormArray(initialValue.map((item: any) => {
+    if (this.activeItem.attribute.type === AttributeType.OneToMany) {
+      const formArray = new UntypedFormArray(Array.isArray(initialValue) ? initialValue.map((item: any) => {
         if (item && typeof item === 'object') {
           const itemControls: Record<string, any> = {};
           for (const k of Object.keys(item)) {
@@ -239,7 +246,21 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
           return new UntypedFormGroup(itemControls);
         }
         return new FormControlWithAttribute(item);
-      }));
+      }) : []);
+      (formArray as any).attribute = this.activeItem.attribute;
+      controls[attrName] = formArray;
+    } else if (this.activeItem.attribute.type === AttributeType.OneToOne) {
+      const childControls: Record<string, any> = {};
+      if (initialValue && typeof initialValue === 'object') {
+        for (const k of Object.keys(initialValue)) {
+          childControls[k] = new FormControlWithAttribute(initialValue[k]);
+        }
+      }
+      const childGroup = new UntypedFormGroup(childControls);
+      (childGroup as any).attribute = this.activeItem.attribute;
+      controls[attrName] = childGroup;
+    } else if (this.activeItem.attribute.type === AttributeType.OneToPoly) {
+      const formArray = new UntypedFormArray([]);
       (formArray as any).attribute = this.activeItem.attribute;
       controls[attrName] = formArray;
     } else {
@@ -258,6 +279,9 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
       controls['geometry'] = new FormControlWithAttribute('{"type": "Point", "coordinates": [174.9, -41.2]}');
       controls['easting'] = new FormControlWithAttribute('174.9');
       controls['northing'] = new FormControlWithAttribute('-41.2');
+    } else if (this.activeItem.id === 'duration-tool') {
+      controls['date_time'] = new FormControlWithAttribute('2026-11-01T09:00:00Z');
+      controls['end_date_time'] = new FormControlWithAttribute('2026-11-01T17:30:00Z');
     }
 
     const secondaryName = (this.activeItem.cell?.componentData as any)?.secondaryAttributeName;
@@ -406,6 +430,11 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
           }
         }
       }
+    } else if (this.activeItem.attribute.type === AttributeType.OneToOne && val && typeof val === 'object') {
+      const childGroup = this.formGroup.controls[attrName] as UntypedFormGroup;
+      if (childGroup) {
+        childGroup.patchValue(val);
+      }
     } else if (this.control && typeof this.control.setValue === 'function') {
       this.control.setValue(val);
       if (attrName) {
@@ -449,6 +478,14 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
         tool.text = val;
       } else if (tool.type === ToolType.Icon && val) {
         tool.iconName = val;
+      } else if (tool.type === ToolType.Duration && val) {
+        this.formGroup.controls['end_date_time']?.setValue(val);
+      } else if (tool.type === ToolType.Image && val) {
+        tool.imageUrl = val;
+      } else if (tool.type === ToolType.LastSignIn && val) {
+        tool.username = val;
+      } else if (tool.type === ToolType.Tree && val) {
+        tool.initialDepth = val;
       }
     }
     this.cdr.markForCheck();

@@ -39,6 +39,21 @@ import { mediaGalleryControlRegistration } from './media-gallery-control.registr
 import { geometryControlRegistration } from './geometry-control.registration';
 import { mapToolRegistration } from './map-tool.registration';
 
+// Relational Controls
+import { manyToOneControlRegistration } from './many-to-one-control.registration';
+import { oneToManyControlRegistration } from './one-to-many-control.registration';
+import { oneToOneControlRegistration } from './one-to-one-control.registration';
+import { oneToPolyControlRegistration } from './one-to-poly-control.registration';
+
+// Observations
+import { assertionListControlRegistration } from './assertion-list-control.registration';
+
+// Diagnostic Tools
+import { durationToolRegistration } from './duration-tool.registration';
+import { treeToolRegistration } from './tree-tool.registration';
+import { lastSignInToolRegistration } from './last-sign-in-tool.registration';
+import { imageToolRegistration } from './image-tool.registration';
+
 export * from './text-field.registration';
 export * from './text-area.registration';
 export * from './boolean-checkbox.registration';
@@ -66,6 +81,15 @@ export * from './media-control.registration';
 export * from './media-gallery-control.registration';
 export * from './geometry-control.registration';
 export * from './map-tool.registration';
+export * from './many-to-one-control.registration';
+export * from './one-to-many-control.registration';
+export * from './one-to-one-control.registration';
+export * from './one-to-poly-control.registration';
+export * from './assertion-list-control.registration';
+export * from './duration-tool.registration';
+export * from './tree-tool.registration';
+export * from './last-sign-in-tool.registration';
+export * from './image-tool.registration';
 
 export const SHOWCASE_REGISTRATIONS: ShowcaseItem[] = [
   // Inputs & Primitives
@@ -106,4 +130,19 @@ export const SHOWCASE_REGISTRATIONS: ShowcaseItem[] = [
   mediaGalleryControlRegistration,
   geometryControlRegistration,
   mapToolRegistration,
+
+  // Relational Controls
+  manyToOneControlRegistration,
+  oneToManyControlRegistration,
+  oneToOneControlRegistration,
+  oneToPolyControlRegistration,
+
+  // Observations
+  assertionListControlRegistration,
+
+  // Diagnostic Tools
+  durationToolRegistration,
+  treeToolRegistration,
+  lastSignInToolRegistration,
+  imageToolRegistration,
 ];

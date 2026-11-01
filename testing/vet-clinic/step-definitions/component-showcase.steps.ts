@@ -426,6 +426,14 @@ When('I click the showcase tab {string}', async function (this: UIWorld, tabName
 When('I click the showcase nav item {string}', async function (this: UIWorld, componentId: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
   const navBtn = this.page.getByTestId(`nav-${componentId}`);
+  const isVisible = await navBtn.isVisible().catch(() => false);
+  if (!isVisible) {
+    const accordionItem = navBtn.locator('xpath=ancestor::div[contains(@class, "accordion-item")]');
+    const collapseHeaderBtn = accordionItem.locator('button.accordion-button.collapsed');
+    if ((await collapseHeaderBtn.count()) > 0) {
+      await collapseHeaderBtn.first().click();
+    }
+  }
   await navBtn.waitFor({ state: 'visible', timeout: 15000 });
   await navBtn.click();
 });
@@ -569,6 +577,78 @@ Then('the map tool component should be visible', async function (this: UIWorld) 
 Then('the pagination tool should be visible', async function (this: UIWorld) {
   if (!this.page) throw new Error('Playwright page is not initialized');
   const el = this.page.locator('lib-paginate-tool ngb-pagination').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+// Phase 4: Relational Controls
+Then('the many to one input should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-many-to-one-control input[type="text"]').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the many to one view should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-many-to-one-control [data-testid^="field-"], lib-many-to-one-control [data-testid^="view-"]').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the one to many control should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-one-to-many-control').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the one to one control should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-one-to-one-control').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the one to poly control should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-one-to-poly-control').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+// Phase 5: Observations & Diagnostic Tools
+Then('the assertion list control should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-assertion-list-control').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the duration tool should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-duration-tool').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the tree tool should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-tree-tool').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the last sign in tool should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-last-sign-in-tool').first();
+  await el.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await el.isVisible()).to.be.true;
+});
+
+Then('the image tool should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const el = this.page.locator('lib-image-tool').first();
   await el.waitFor({ state: 'visible', timeout: 15000 });
   expect(await el.isVisible()).to.be.true;
 });
