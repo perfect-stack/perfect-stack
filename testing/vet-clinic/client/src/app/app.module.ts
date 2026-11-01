@@ -7,11 +7,13 @@ import { NgxPerfectStackModule } from '@perfect-stack/ngx-perfect-stack';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { ComponentShowcaseComponent } from './showcase/component-showcase.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LandingPageComponent
+    LandingPageComponent,
+    ComponentShowcaseComponent
   ],
   imports: [
     BrowserModule,

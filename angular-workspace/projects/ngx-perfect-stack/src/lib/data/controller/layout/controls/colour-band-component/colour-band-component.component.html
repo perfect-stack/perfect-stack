@@ -1,8 +1,9 @@
 @if (mode !== 'view') {
-  <div class="input-group flex-nowrap">
+  <div class="input-group flex-nowrap" [attr.data-testid]="'field-' + name">
     <input class="form-control"
       [id]="name"
       placeholder="Colour A1 on Colour"
+      [attr.data-testid]="'input-' + name"
       [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}" [readonly]="isReadOnly()"
       [ngModel]="internalValue"
       (ngModelChange)="onModelChange($event)" [ngModelOptions]="{standalone: true}">
@@ -15,4 +16,17 @@
   @if (hasErrors() && cell.attribute) {
     <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
   }
+}
+@if (mode === 'view') {
+  <div class="input-group" [attr.data-testid]="'field-' + name">
+    <span class="form-control d-flex align-items-center" readonly [id]="name" [attr.data-testid]="'view-' + name">
+      @if (internalValue) {
+        <span class="colour-band-preview me-2 badge" [style.background-color]="internalValue" style="width: 1.5rem; height: 1.2rem; display: inline-block;">&nbsp;</span>
+        <span>{{internalValue}}</span>
+      }
+      @if (!internalValue) {
+        <span class="empty-value">&mdash;</span>
+      }
+    </span>
+  </div>
 }

@@ -30,7 +30,7 @@ export class BadgeListComponent implements OnInit {
 
   getBadgeValues(): string[] {
     const value = this.formGroup.controls[this.attribute.name].value;
-    const split = value.split(',');
+    const split = value ? value.split(',') : [];
     const badgeValues = [];
     for(const nextSplitValue of split) {
       if(nextSplitValue) {

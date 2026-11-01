@@ -90,6 +90,8 @@ Located at [`angular-workspace/projects/ngx-perfect-stack/src/lib`](file:///User
   - TypeScript types and models for entities, pages, menus, roles, and schema versions.
 - **[`menu-bar/`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/menu-bar)** & **[`authentication/`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/authentication)**:
   - Dynamic navigation menu bar and JWT authentication guards/interceptors.
+- **[`showcase/`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/showcase)**:
+  - Built-in Component Showcase (`/showcase` & `/showcase/:componentId`) providing an interactive workbench, visual gallery, schema documentation, and embedded Cucumber BDD specifications for UI controls.
 
 ### 4.2. Core Backend Library: [`nestjs-server`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src)
 Located at [`nestjs-server/libs/nestjs-server/src`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src):
@@ -126,6 +128,7 @@ Testing is decoupled into two independent sub-projects:
    - Full-stack end-to-end browser automation suite using Playwright and Cucumber.
    - Runs a dedicated NestJS backend server and Angular frontend to test end-user workflows against the Vet Clinic application.
    - Run via: `cd testing/vet-clinic && npm test`.
+   - Includes component-level BDD regression tests (`features/components/`) verifying UI controls against the `/showcase` workbench.
 
 ---
 

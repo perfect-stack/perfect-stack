@@ -164,10 +164,18 @@ export class SelectControlComponent implements OnInit, OnChanges, OnDestroy, Con
       this.selectedEntityEvent.next(this.selectedEntity);
     } else {
       if (this.selectedEntityId && this.attribute?.relationshipTarget) {
-        this.dataService.findByIdUsingCache(this.attribute.relationshipTarget, this.selectedEntityId).subscribe((response) => {
-          this.selectedEntity = response;
-          this.selectedEntityEvent.next(this.selectedEntity);
-          this.cdr.markForCheck();
+        this.dataService.findByIdUsingCache(this.attribute.relationshipTarget, this.selectedEntityId).subscribe({
+          next: (response) => {
+            this.selectedEntity = response;
+            this.selectedEntityEvent.next(this.selectedEntity);
+            this.cdr.markForCheck();
+          },
+          error: (err) => {
+            console.warn(`[SelectControlComponent] Could not resolve entity for id ${this.selectedEntityId}:`, err);
+            this.selectedEntity = null;
+            this.selectedEntityEvent.next(null);
+            this.cdr.markForCheck();
+          }
         });
       } else {
         this.selectedEntity = null;

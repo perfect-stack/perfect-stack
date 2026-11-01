@@ -34,7 +34,7 @@
       <input class="form-control" readonly [id]="componentId" [attr.data-testid]="'view-' + attribute?.name" value="{{getDisplayText(selectedEntity)}}">
     </div>
   }
-  @if (!selectedEntityId) {
+  @if (!selectedEntityId || !selectedEntity) {
     <div class="input-group" [attr.data-testid]="'field-' + attribute?.name">
       <input class="form-control empty-value" readonly [id]="componentId" [attr.data-testid]="'view-' + attribute?.name" value="&mdash;">
     </div>

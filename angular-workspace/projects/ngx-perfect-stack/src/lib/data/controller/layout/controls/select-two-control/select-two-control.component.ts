@@ -1,9 +1,10 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {Cell, LabelLayoutType} from '../../../../../domain/meta.page';
 import {DataService} from '../../../../data-service/data.service';
 import {UntypedFormGroup} from '@angular/forms';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'lib-select-two-control',
@@ -11,7 +12,7 @@ import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-pag
     styleUrls: ['./select-two-control.component.css'],
     standalone: false
 })
-export class SelectTwoControlComponent implements OnInit {
+export class SelectTwoControlComponent implements OnInit, OnDestroy {
 
   // Important: This is needed because we are just a wrapper for the real components and so this component sets the
   // formControlName for those components and not the Cell/template above us.
@@ -31,28 +32,33 @@ export class SelectTwoControlComponent implements OnInit {
   secondaryOptions: string[] = [];
 
   combinedValue: string | null = null;
+  currentEntity: any = null;
+
+  private secondarySub?: Subscription;
 
   constructor(protected readonly dataService: DataService,
               protected readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.secondaryAttributeName = (this.cell.componentData as any).secondaryAttributeName;
+    this.secondaryAttributeName = (this.cell.componentData as any)?.secondaryAttributeName;
+
+    const secondaryAttributeControl = this.formGroup.get(this.secondaryAttributeName);
+    if (secondaryAttributeControl) {
+      this.secondarySub = secondaryAttributeControl.valueChanges.subscribe(() => {
+        this.updateCombinedValue();
+      });
+    }
+
     const id = this.formGroup.get(this.attribute.name + '_id')?.value;
     if(id) {
       this.dataService.findById(this.attribute.relationshipTarget, id).subscribe({
         next: (response: any) => {
+          this.currentEntity = response;
           // always run the onSelectedEntity() function so that secondaryOptions gets updated
           this.onSelectedEntity(response);
-
-          // calculate the combined value
-          this.combinedValue = response.name;
-          const secondaryAttributeControl = this.formGroup.get(this.secondaryAttributeName);
-          if(secondaryAttributeControl && secondaryAttributeControl.value) {
-            this.combinedValue += ' - ' + secondaryAttributeControl.value;
-          }
-          this.cdr.markForCheck();
         },
         error: () => {
+          this.currentEntity = null;
           this.combinedValue = '—';
           this.cdr.markForCheck();
         }
@@ -74,17 +80,47 @@ export class SelectTwoControlComponent implements OnInit {
 
   onSelectedEntity(entity: any) {
     console.log(`onSelectedEntity() entity: `, entity);
+    this.currentEntity = entity;
     if(entity && this.secondaryAttributeName) {
-      const secondaryValues: string = entity[this.secondaryAttributeName];
-      if(secondaryValues) {
-        this.secondaryOptions = secondaryValues.split(',').map(value => value.trim());
+      let secondaryValues: string | string[] | undefined = entity[this.secondaryAttributeName];
+      const componentData = this.cell?.componentData as any;
+      if (!secondaryValues && componentData?.optionsMap) {
+        secondaryValues = componentData.optionsMap[entity.id] || componentData.optionsMap[entity.name];
       }
-      else {
+
+      if (Array.isArray(secondaryValues)) {
+        this.secondaryOptions = [...secondaryValues];
+      } else if (typeof secondaryValues === 'string') {
+        this.secondaryOptions = secondaryValues.split(',').map(value => value.trim());
+      } else {
         this.secondaryOptions = [];
       }
+
+      const secondaryControl = this.formGroup.get(this.secondaryAttributeName);
+      if (secondaryControl && secondaryControl.value && !this.secondaryOptions.includes(secondaryControl.value)) {
+        secondaryControl.setValue(null);
+      }
+
+      this.updateCombinedValue();
     }
     else {
       this.secondaryOptions = [];
+      const secondaryControl = this.formGroup.get(this.secondaryAttributeName);
+      if (secondaryControl) {
+        secondaryControl.setValue(null);
+      }
+      this.combinedValue = '—';
+    }
+    this.cdr.markForCheck();
+  }
+
+  private updateCombinedValue(): void {
+    if (this.currentEntity && this.currentEntity.name) {
+      const secondaryControl = this.formGroup.get(this.secondaryAttributeName);
+      const secondaryVal = secondaryControl?.value;
+      this.combinedValue = secondaryVal ? `${this.currentEntity.name} - ${secondaryVal}` : this.currentEntity.name;
+    } else {
+      this.combinedValue = '—';
     }
     this.cdr.markForCheck();
   }
@@ -96,5 +132,11 @@ export class SelectTwoControlComponent implements OnInit {
 
   isShowLabelLeft(cell: CellAttribute): boolean {
     return cell.labelLayout === LabelLayoutType.Left;
+  }
+
+  ngOnDestroy(): void {
+    if (this.secondarySub) {
+      this.secondarySub.unsubscribe();
+    }
   }
 }

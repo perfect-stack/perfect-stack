@@ -355,6 +355,7 @@ export function layoutComponentFactory() {
     AssertionListControlComponent,
     EnumerationOptionsControlComponent,
     PipeListControlComponent,
+    CellComponent,
   ],
   imports: [
     CommonModule,

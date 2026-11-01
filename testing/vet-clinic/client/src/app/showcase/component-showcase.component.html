@@ -1,0 +1,529 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <!-- Sidebar: Component Directory by Category in Collapsible Accordion -->
+    <div class="col-md-3 col-lg-2 col-xl-2 col-xxl-2">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-dark text-white py-3">
+          <h5 class="mb-0 fw-bold">Component Showcase</h5>
+          <small class="text-white-50">ngx-perfect-stack</small>
+        </div>
+
+        <!-- ng-bootstrap Collapsible Accordion for Categories -->
+        <div class="accordion accordion-flush" ngbAccordion [closeOthers]="false">
+          @for (category of categories; track category; let first = $first) {
+            <div ngbAccordionItem [collapsed]="true" [destroyOnHide]="false">
+              <h2 ngbAccordionHeader>
+                <button ngbAccordionButton class="py-2 px-3 fw-bold small text-uppercase">
+                  {{ category }}
+                </button>
+              </h2>
+              <div ngbAccordionCollapse>
+                <div ngbAccordionBody class="p-0">
+                  <ng-template>
+                    <div class="list-group list-group-flush">
+                      @for (item of registry.getItemsByCategory(category); track item.id) {
+                        <button
+                          type="button"
+                          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2"
+                          [class.active]="activeItem.id === item.id"
+                          [attr.data-testid]="'nav-' + item.id"
+                          (click)="selectComponent(item.id)">
+                          <div>
+                            <div class="fw-semibold small">{{ item.name }}</div>
+                            <code class="text-muted d-block small" [class.text-white-50]="activeItem.id === item.id">{{ item.selector }}</code>
+                          </div>
+                        </button>
+                      }
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area: Responsive Multi-Tier Workbench -->
+    <div class="col-md-9 col-lg-10 col-xl-10 col-xxl-10">
+      <!-- Component Header with Layout Controls -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 border-bottom pb-3 gap-2">
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h2 class="mb-0 fw-bold" data-testid="showcase-heading">{{ activeItem.name }}</h2>
+            <span class="badge bg-secondary font-monospace">{{ activeItem.selector }}</span>
+            <span class="badge bg-info text-dark">{{ activeItem.category }}</span>
+          </div>
+          <p class="text-muted mb-0 small">{{ activeItem.description }}</p>
+        </div>
+
+        <!-- Layout Mode Cog Menu in Top Right Corner -->
+        <div class="d-flex align-items-center" data-testid="layout-controls">
+          <div ngbDropdown placement="bottom-end" class="d-inline-block">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2 layout-cog-btn"
+              id="layoutCogMenu"
+              ngbDropdownToggle
+              data-testid="btn-layout-cog"
+              aria-label="Layout Settings"
+              title="Showcase Layout Settings">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+              </svg>
+              <span class="d-none d-sm-inline fw-semibold">Layout</span>
+              <span class="badge bg-secondary text-uppercase" style="font-size: 0.65rem;">
+                {{ layoutMode === 'auto' ? ('Auto: ' + effectiveLayout) : layoutMode }}
+              </span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="layoutCogMenu" class="dropdown-menu-end shadow p-2" style="min-width: 260px;">
+              <h6 class="dropdown-header text-uppercase fw-bold px-2 py-1 mb-1 text-muted" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                Layout Modes
+              </h6>
+              <button
+                type="button"
+                ngbDropdownItem
+                class="d-flex align-items-center justify-content-between rounded px-2 py-2 mb-1"
+                [class.active]="layoutMode === 'auto'"
+                data-testid="btn-layout-auto"
+                (click)="setLayoutMode('auto')">
+                <div>
+                  <div class="fw-semibold small">Auto (Responsive)</div>
+                  <small class="text-muted d-block" [class.text-white-50]="layoutMode === 'auto'">
+                    Adapts to width (now: {{ effectiveLayout }})
+                  </small>
+                </div>
+                @if (layoutMode === 'auto') {
+                  <span class="badge bg-light text-dark ms-2">✓</span>
+                }
+              </button>
+              <button
+                type="button"
+                ngbDropdownItem
+                class="d-flex align-items-center justify-content-between rounded px-2 py-2 mb-1"
+                [class.active]="layoutMode === 'tabs'"
+                data-testid="btn-layout-tabs"
+                (click)="setLayoutMode('tabs')">
+                <div>
+                  <div class="fw-semibold small">Tabs (Single Column)</div>
+                  <small class="text-muted d-block" [class.text-white-50]="layoutMode === 'tabs'">
+                    Focused single-tab workbench
+                  </small>
+                </div>
+                @if (layoutMode === 'tabs') {
+                  <span class="badge bg-light text-dark ms-2">✓</span>
+                }
+              </button>
+              <button
+                type="button"
+                ngbDropdownItem
+                class="d-flex align-items-center justify-content-between rounded px-2 py-2 mb-1"
+                [class.active]="layoutMode === 'split'"
+                data-testid="btn-layout-split"
+                (click)="setLayoutMode('split')">
+                <div>
+                  <div class="fw-semibold small">Split (2-Column)</div>
+                  <small class="text-muted d-block" [class.text-white-50]="layoutMode === 'split'">
+                    Playground + side specs deck
+                  </small>
+                </div>
+                @if (layoutMode === 'split') {
+                  <span class="badge bg-light text-dark ms-2">✓</span>
+                }
+              </button>
+              <button
+                type="button"
+                ngbDropdownItem
+                class="d-flex align-items-center justify-content-between rounded px-2 py-2"
+                [class.active]="layoutMode === 'panoramic'"
+                data-testid="btn-layout-panoramic"
+                (click)="setLayoutMode('panoramic')">
+                <div>
+                  <div class="fw-semibold small">Panoramic (3-Column)</div>
+                  <small class="text-muted d-block" [class.text-white-50]="layoutMode === 'panoramic'">
+                    Ultrawide 3 panels side-by-side
+                  </small>
+                </div>
+                @if (layoutMode === 'panoramic') {
+                  <span class="badge bg-light text-dark ms-2">✓</span>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 1: Standard Single-Tab View (< 1500px or Forced 'tabs') -->
+      @if (effectiveLayout === 'tabs') {
+        <ul class="nav nav-tabs mb-4">
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              [class.active]="activeTab === 'playground'"
+              data-testid="tab-playground"
+              (click)="setActiveTab('playground')">
+              🎮 Interactive Playground
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              [class.active]="activeTab === 'docs'"
+              data-testid="tab-docs"
+              (click)="setActiveTab('docs')">
+              📖 Documentation &amp; Schema
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              [class.active]="activeTab === 'gherkin'"
+              data-testid="tab-gherkin"
+              (click)="setActiveTab('gherkin')">
+              🥒 Gherkin BDD Specification
+              @if (isLiveSourceLinked) {
+                <span class="badge bg-success ms-1">Live</span>
+              }
+            </button>
+          </li>
+        </ul>
+
+        @switch (activeTab) {
+          @case ('playground') {
+            <ng-container *ngTemplateOutlet="playgroundTpl"></ng-container>
+          }
+          @case ('docs') {
+            <ng-container *ngTemplateOutlet="docsTpl"></ng-container>
+          }
+          @case ('gherkin') {
+            <ng-container *ngTemplateOutlet="gherkinTpl"></ng-container>
+          }
+        }
+      }
+
+      <!-- TIER 2: Wide 2-Column Split (1500px - 2200px or Forced 'split') -->
+      @if (effectiveLayout === 'split') {
+        <div class="row">
+          <!-- Left Column: Interactive Playground Workbench -->
+          <div class="col-xl-7 col-xxl-7 mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+              <span class="fw-bold text-primary small text-uppercase">🎮 Interactive Workbench</span>
+              <span class="badge bg-secondary font-monospace">{{ activeItem.selector }}</span>
+            </div>
+            <ng-container *ngTemplateOutlet="playgroundTpl"></ng-container>
+          </div>
+
+          <!-- Right Column: Secondary Tab Deck (Docs & Gherkin Specs) -->
+          <div class="col-xl-5 col-xxl-5 mb-3">
+            <ul class="nav nav-tabs mb-3">
+              <li class="nav-item">
+                <button
+                  class="nav-link"
+                  [class.active]="secondaryTab === 'docs'"
+                  data-testid="tab-docs"
+                  (click)="setSecondaryTab('docs')">
+                  📖 Documentation &amp; Schema
+                </button>
+              </li>
+              <li class="nav-item">
+                <button
+                  class="nav-link"
+                  [class.active]="secondaryTab === 'gherkin'"
+                  data-testid="tab-gherkin"
+                  (click)="setSecondaryTab('gherkin')">
+                  🥒 Gherkin BDD Specification
+                  @if (isLiveSourceLinked) {
+                    <span class="badge bg-success ms-1">Live</span>
+                  }
+                </button>
+              </li>
+            </ul>
+
+            @switch (secondaryTab) {
+              @case ('docs') {
+                <ng-container *ngTemplateOutlet="docsTpl"></ng-container>
+              }
+              @case ('gherkin') {
+                <ng-container *ngTemplateOutlet="gherkinTpl"></ng-container>
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- TIER 3: Ultrawide 3-Column Panoramic View (>= 2200px or Forced 'panoramic') -->
+      @if (effectiveLayout === 'panoramic') {
+        <div class="row g-3">
+          <!-- Column 1: Interactive Playground -->
+          <div class="col-xxl-5 panoramic-col mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+              <span class="fw-bold text-primary small text-uppercase">🎮 Interactive Playground</span>
+              <span class="badge bg-secondary font-monospace">{{ activeItem.selector }}</span>
+            </div>
+            <ng-container *ngTemplateOutlet="playgroundTpl"></ng-container>
+          </div>
+
+          <!-- Column 2: Documentation & Schema -->
+          <div class="col-xxl-3 panoramic-col mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+              <span class="fw-bold text-dark small text-uppercase">📖 Documentation &amp; Schema</span>
+              <span class="badge bg-info text-dark">{{ activeItem.category }}</span>
+            </div>
+            <ng-container *ngTemplateOutlet="docsTpl"></ng-container>
+          </div>
+
+          <!-- Column 3: Gherkin BDD Specification -->
+          <div class="col-xxl-4 panoramic-col mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+              <span class="fw-bold text-dark small text-uppercase">🥒 Gherkin BDD Specification</span>
+              @if (isLiveSourceLinked) {
+                <span class="badge bg-success">🔗 Live</span>
+              }
+            </div>
+            <ng-container *ngTemplateOutlet="gherkinTpl"></ng-container>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- REUSABLE TEMPLATES FOR PLAYGROUND, DOCS & GHERKIN SPECIFICATIONS          -->
+<!-- ========================================================================= -->
+
+<!-- Reusable Template: Interactive Playground -->
+<ng-template #playgroundTpl>
+  <div class="row">
+    <!-- Left Column: Live Render Stage & State Inspector -->
+    <div [ngClass]="effectiveLayout === 'panoramic' ? 'col-12' : 'col-lg-7'">
+      <!-- Stage Card -->
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+          <span class="fw-bold small">Live Stage</span>
+          <span class="badge" [class.bg-success]="mode === 'edit'" [class.bg-secondary]="mode === 'view'">
+            Mode: {{ mode | uppercase }}
+          </span>
+        </div>
+        <div class="card-body p-3" data-testid="showcase-stage">
+          <label class="form-label fw-semibold" [for]="control.attribute.name">
+            {{ activeItem.attribute.label }}
+            @if (activeItem.attribute.visibility === 'Required') {
+              <span class="text-danger">*</span>
+            }
+          </label>
+
+          <!-- Dynamic Renderer through Perfect-Stack's Native CellComponent -->
+          <div class="p-3 bg-light border rounded">
+            <lib-cell
+              [mode]="mode"
+              [cell]="activeItem.cell"
+              [formGroup]="formGroup"
+              [ctx]="ctx"
+              [idSuffix]="idSuffix">
+            </lib-cell>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form State Inspector -->
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+          <span class="fw-semibold text-muted small">Reactive Form State Inspector</span>
+          <div>
+            <span class="badge me-1" [class.bg-success]="control.status === 'VALID'" [class.bg-danger]="control.status === 'INVALID'">
+              {{ control.status }}
+            </span>
+            <span class="badge bg-secondary">
+              Touched: {{ control.touched }}
+            </span>
+          </div>
+        </div>
+        <div class="card-body p-2 font-monospace small bg-dark text-light rounded-bottom">
+          <div class="mb-1" data-testid="inspector-value"><span class="text-info">value:</span> {{ control.value | json }}</div>
+          <div class="mb-1" data-testid="inspector-status"><span class="text-info">status:</span> {{ control.status }}</div>
+          <div class="mb-1"><span class="text-info">touched:</span> {{ control.touched }}</div>
+          <div class="mb-1"><span class="text-info">dirty:</span> {{ control.dirty }}</div>
+          <div><span class="text-info">errors:</span> {{ control.errors | json }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Controls Toolbar -->
+    <div [ngClass]="effectiveLayout === 'panoramic' ? 'col-12' : 'col-lg-5'">
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header bg-white py-2">
+          <span class="fw-bold small">Playground Controls</span>
+        </div>
+        <div class="card-body p-3">
+          <!-- Mode Switch -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted text-uppercase">Display Mode</label>
+            <div class="btn-group w-100" role="group">
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                [class.active]="mode === 'edit'"
+                data-testid="btn-mode-edit"
+                (click)="setMode('edit')">
+                ✏️ Edit
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                [class.active]="mode === 'view'"
+                data-testid="btn-mode-view"
+                (click)="setMode('view')">
+                👁️ View (Read Only)
+              </button>
+            </div>
+          </div>
+
+          <!-- State Toggles -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted text-uppercase">State Simulators</label>
+            <div class="d-flex flex-wrap gap-2">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                data-testid="btn-toggle-disabled"
+                (click)="toggleDisabled()">
+                {{ isDisabled ? '🔓 Enable' : '🔒 Disable' }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                data-testid="btn-toggle-touched"
+                (click)="toggleTouched()">
+                Mark Touched
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                data-testid="btn-trigger-error"
+                (click)="triggerValidationError()">
+                ⚠️ Trigger Error
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-success"
+                data-testid="btn-clear-error"
+                (click)="clearErrors()">
+                ✅ Clear Error
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample Presets -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted text-uppercase">Preset Values</label>
+            <div class="d-flex flex-wrap gap-2">
+              @for (preset of activeItem.samplePresets; track preset.label) {
+                <button
+                  type="button"
+                  class="btn btn-sm btn-light border"
+                  (click)="setSampleValue(preset.value)">
+                  "{{ preset.label }}"
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Attribute Overrides (Inputs category specific) -->
+          @if (activeItem.category === 'Inputs & Primitives') {
+            <div class="mb-2">
+              <label class="form-label small fw-bold text-muted text-uppercase">Attribute Properties</label>
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small text-muted">Unit of Measure (uom)</label>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    placeholder="e.g. kg, $, %"
+                    [value]="activeItem.attribute.unitOfMeasure || ''"
+                    (input)="updateUom($event)">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small text-muted">Scale (Decimals)</label>
+                  <input
+                    type="number"
+                    class="form-control form-control-sm"
+                    placeholder="e.g. 2"
+                    [value]="activeItem.attribute.scale || ''"
+                    (input)="updateScale($event)">
+                </div>
+              </div>
+              <div>
+                <label class="form-label small text-muted">Id Suffix</label>
+                <input
+                  type="text"
+                  class="form-control form-control-sm"
+                  placeholder="e.g. 0 (for tabular rows)"
+                  [value]="idSuffix || ''"
+                  (input)="updateIdSuffix($event)">
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Reusable Template: Documentation & Schema -->
+<ng-template #docsTpl>
+  <div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+      <span class="fw-bold small">📖 Documentation &amp; Technical Schema</span>
+      <span class="badge bg-info text-dark">{{ activeItem.category }}</span>
+    </div>
+    <div class="card-body p-3">
+      <h6 class="fw-bold mb-2">Technical Properties</h6>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm table-bordered mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 30%">Property</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-semibold">Selector</td>
+              <td><code>{{ activeItem.selector }}</code></td>
+            </tr>
+            @for (doc of activeItem.docProperties; track doc.property) {
+              <tr>
+                <td class="fw-semibold">{{ doc.property }}</td>
+                <td>{{ doc.description }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h6 class="fw-bold mb-1">MetaPage Cell Configuration (JSON)</h6>
+      <pre class="bg-dark text-light p-2 rounded font-monospace small mb-0"><code data-testid="doc-json-code">{{ activeItem.metaPageJson | json }}</code></pre>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Reusable Template: Gherkin BDD Specification -->
+<ng-template #gherkinTpl>
+  <div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-dark text-white py-2 d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <span class="fw-bold small">🥒 Gherkin BDD Feature Specification</span>
+        @if (isLiveSourceLinked) {
+          <span class="badge bg-success">🔗 Live</span>
+        } @else {
+          <span class="badge bg-secondary">Embedded</span>
+        }
+      </div>
+      <span class="badge bg-primary">Cucumber</span>
+    </div>
+    <div class="card-body p-3 bg-light">
+      <pre class="font-monospace text-dark p-3 bg-white border rounded mb-0"><code data-testid="gherkin-spec-code">{{ featureContent }}</code></pre>
+    </div>
+  </div>
+</ng-template>

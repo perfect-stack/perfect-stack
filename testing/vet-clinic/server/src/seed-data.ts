@@ -19,6 +19,70 @@ export interface TaxonNode {
   parent?: string; // parent scientific_name
 }
 
+export const SPECIES_ID_BY_NAME: Record<string, string> = {
+  'Animalia': '56f05f10-5334-4904-adef-72ac2031a995',
+  'Chordata': '44d575d2-c0c9-40b4-a509-412209849956',
+  'Mammalia': '85d08cf5-aa6d-4b36-8701-44121892aa48',
+  'Aves': '66bc9d74-0092-4b3e-a5ae-7b7f52b0837b',
+  'Actinopterygii': '0584d357-6b36-4e0d-9417-9cfd8dfbc02b',
+  'Carnivora': 'c92aa3d1-cbbc-4c25-ac84-e9c3f8086788',
+  'Canidae': '08696544-2830-498b-8409-7f370b394f73',
+  'Canis': '411721ad-0c65-4ee5-8993-9e412bc89e8d',
+  'Canis familiaris': 'a9c1dabc-7c8f-4042-b1b4-e801f034211d',
+  'Felidae': 'e7556def-ce50-49bc-b2e1-7e9192de5390',
+  'Felis': '4303c6df-1ab2-4a44-b7c8-5b21bf04bae8',
+  'Felis catus': '791091c8-4374-4530-aa43-64b063ef5c2e',
+  'Psittaciformes': '7cb80912-7624-4424-823a-cb0d4d9b0387',
+  'Psittaculidae': 'c968da30-2dc2-428d-89a2-be8eff018ece',
+  'Melopsittacus': '86730e2a-8901-4c37-bb67-0024625d0281',
+  'Melopsittacus undulatus': 'df0b1cb9-73f6-48b1-8f1a-b526d713cc5b',
+  'Cacatuidae': 'c010a82c-3c65-4008-a5c5-8d8751475605',
+  'Nymphicus': '389c90bb-7d1d-4842-85a9-83ae69418242',
+  'Nymphicus hollandicus': '743845af-d0b2-4339-b8a0-102c3a7d4d45',
+  'Strigopidae': '34264388-d630-4ec7-aebf-ffbecc55f744',
+  'Strigops': '4f3e8f90-000b-41d2-88b6-db52ab77c653',
+  'Strigops habroptilus': 'f396df0f-5948-421a-8052-ce5a37772695',
+  'Apterygiformes': 'dea329c3-3fcd-46b5-b79b-c996e15dfde9',
+  'Apterygidae': '953c5c15-30e5-4cef-b7de-838a3866b04a',
+  'Apteryx': '29e4d056-8290-44c1-804e-e02a30a0e97f',
+  'Apteryx mantelli': '37ab5f72-8cfa-4c50-b302-e5c2a6a8f526',
+  'Sphenisciformes': 'b3a3a6b4-21f9-4031-b749-b82d6cdb7ed9',
+  'Spheniscidae': '06e7697f-8c0f-4af4-85e8-af2fc5817402',
+  'Aptenodytes': '3a4f8af2-b5ce-4510-b0a0-38cc17f48e9e',
+  'Aptenodytes forsteri': 'f44f68e9-d256-4a88-b048-64410d0ba443',
+  'Passeriformes': '759b5053-6f5c-442a-be03-776ef2fec7e6',
+  'Fringillidae': '0540d113-ded4-4722-8fd5-1677e2fa61fd',
+  'Serinus': '0071deea-28bf-414c-91e4-c82dc021e335',
+  'Serinus canaria': 'b3b85444-0bbc-4ed1-978a-17bab5ed84dc',
+  'Cypriniformes': '2ece35c0-c975-4357-a49b-1021392a1b5e',
+  'Cyprinidae': 'ceaed4a7-a9af-4ee1-97bb-bebfb75d2341',
+  'Carassius': '8d9639d9-2f26-45c9-8731-1715f105d1d9',
+  'Anabantiformes': '4cd95275-ad31-4716-b25b-674e11136faa',
+  'Osphronemidae': 'aa33c411-3212-4708-8ff1-23b3e17880e7',
+  'Betta': 'f67da1d7-c42d-4007-b9d7-7053f8874423',
+  'Betta splendens': 'ebdb9d40-83a1-4ff6-916e-947176523082',
+  'Cyprinodontiformes': 'e1202791-5e8f-4830-9872-73fe05bcf512',
+  'Poeciliidae': '7e51f712-fa28-4674-a9c9-38dd38a7e776',
+  'Poecilia': '5eb0ef96-096b-46f6-b0a1-485ce9485af3',
+  'Poecilia reticulata': 'ace9015c-6218-4814-9eb0-35d7180dc383'
+};
+
+export const CLINIC_ID_BY_NAME: Record<string, string> = {
+  'PETVET Lower Hutt': 'cf756f73-7a1a-4b86-9cd5-367649f19874',
+  'Central Hutt Vets': '7efa6559-4cc2-4ecb-85f6-3c6d3be069dc',
+  'Animal Health Centre': '0efa743d-1115-46ad-8055-9b7968d08a52',
+  'Animates Vetcare Clinic': '9347b91d-29f6-4bf4-b204-4894a9935cce',
+};
+
+export const PET_ID_BY_NAME: Record<string, string> = {
+  'Jack': 'a21fdd11-d6db-4155-ac59-d8ad80ddd31e',
+  'Molly': '93d417ed-1f69-4f5f-ba94-06b38336b894',
+  'Thorin': 'd66bdb9c-618b-4f42-ac53-fcc906a64c36',
+  'Kevin': '98dbed46-c3f5-4ea4-935f-611321106bcb',
+  'Kelly': '50cd5903-e5a1-4ea0-ab34-3dec48266fae',
+  'Peter': 'b443ebe5-a385-40f5-a413-222d51f02a44',
+};
+
 export const TAXON_NODES: TaxonNode[] = [
   // Kingdom (Root)
   { scientific_name: 'Animalia', common_name: 'Animals', rank: 'Kingdom' },
@@ -96,6 +160,7 @@ export const TAXON_NODES: TaxonNode[] = [
 ];
 
 export const SEED_OWNER = {
+  id: 'f1804bfe-c488-4058-a6d8-e1735e41de44',
   given_name: 'Richard',
   family_name: 'Perfect',
   email_address: 'rperfect@gmail.com',
@@ -293,6 +358,7 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
 
     if (!existing) {
       const saveRes = await dataService.save('Species', {
+        id: SPECIES_ID_BY_NAME[node.scientific_name],
         scientific_name: node.scientific_name,
         common_name: node.common_name,
         rank: node.rank,
@@ -329,6 +395,7 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
   let owner: any;
   if (!ownerRecord) {
     const saveOwnerRes = await dataService.save('Owner', {
+      id: SEED_OWNER.id,
       given_name: SEED_OWNER.given_name,
       family_name: SEED_OWNER.family_name,
       email_address: SEED_OWNER.email_address,
@@ -365,6 +432,7 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
 
     if (!petRecord) {
       await dataService.save('Pet', {
+        id: PET_ID_BY_NAME[petDef.name],
         name: petDef.name,
         species_id: species.id,
         owner_id: owner.id,
@@ -520,6 +588,7 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
 
     if (!clinicRecord) {
       await dataService.save('Clinic', {
+        id: CLINIC_ID_BY_NAME[clinicDef.name],
         name: clinicDef.name,
         address: clinicDef.address,
         phone: clinicDef.phone,

@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
 import {LastSignInTool} from '../../../../../domain/meta.page';
 import {FormContext} from '../../../../data-edit/form-service/form.service';
 import {PropertySheetService} from '../../../../../template/property-sheet/property-sheet.service';
@@ -32,7 +32,8 @@ export class LastSignInToolComponent implements OnInit {
   constructor(protected readonly propertySheetService: PropertySheetService,
               @Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly expressionService: ExpressionService,
-              protected readonly authenticationClientService: AuthenticationClientService) {
+              protected readonly authenticationClientService: AuthenticationClientService,
+              protected readonly cdr: ChangeDetectorRef) {
     Locale.getAvailableLocales();
   }
 
@@ -53,9 +54,12 @@ export class LastSignInToolComponent implements OnInit {
         this.authenticationClientService.findLastSignIn(this.username).subscribe((authentication: any) => {
           this.authentication = authentication;
           if (authentication) {
-            const utc = Instant.parse(authentication.auth_time);
-            const zonedDateTime = ZonedDateTime.ofInstant(utc, ZoneId.of('Pacific/Auckland'));
-            this.updateLastSignInTime(zonedDateTime);
+            const authTime = authentication.auth_time || authentication.lastSignIn;
+            if (authTime) {
+              const utc = Instant.parse(authTime);
+              const zonedDateTime = ZonedDateTime.ofInstant(utc, ZoneId.of('Pacific/Auckland'));
+              this.updateLastSignInTime(zonedDateTime);
+            }
           }
         });
       }
@@ -74,6 +78,7 @@ export class LastSignInToolComponent implements OnInit {
     else {
       this.lastSignInTime = '';
     }
+    this.cdr.markForCheck();
   }
 
   onClick($event: MouseEvent) {

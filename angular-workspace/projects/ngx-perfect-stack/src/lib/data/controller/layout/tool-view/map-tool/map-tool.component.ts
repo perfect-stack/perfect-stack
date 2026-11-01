@@ -417,7 +417,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       });
     });
 
-    this.mapView?.popup?.on('trigger-action', (event: any) => {
+    if (this.mapView?.popup && typeof (this.mapView.popup as any).on === 'function') {
+      (this.mapView.popup as any).on('trigger-action', (event: any) => {
       if (event.action && event.action.id === 'view-details') {
         const item = this.mapView?.popup?.selectedFeature?.attributes;
         if (item) {
@@ -430,7 +431,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
           }
         }
       }
-    });
+      });
+    }
 
     this.globalClickListener = (event: MouseEvent) => {
       const target = event.target as HTMLElement;

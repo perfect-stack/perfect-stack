@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
 import { Template, TemplateType } from '../../../../../domain/meta.page';
-import { FormService } from '../../../../data-edit/form-service/form.service';
+import { FormContext, FormService } from '../../../../data-edit/form-service/form.service';
 import { MetaEntityService } from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
 
 @Component({
@@ -17,6 +17,9 @@ export class OneToOneControlComponent implements OnInit, OnChanges {
   mode: string | null;
 
   @Input()
+  ctx: FormContext;
+
+  @Input()
   cell: CellAttribute;
 
   @Input()
@@ -25,21 +28,14 @@ export class OneToOneControlComponent implements OnInit, OnChanges {
   childCells: CellAttribute[][];
   childFormGroup: UntypedFormGroup;
 
-  constructor(protected readonly formService: FormService, protected readonly metaEntityService: MetaEntityService) { }
+  constructor(
+    protected readonly formService: FormService,
+    protected readonly metaEntityService: MetaEntityService,
+    protected readonly cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
-    if(this.cell && this.cell.attribute) {
-      const attribute = this.cell.attribute;
-      const childMetaEntityName = attribute.relationshipTarget;
-      const childTemplate = this.cell.template;
-      this.metaEntityService.metaEntityMap$.subscribe((metaEntityMap) => {
-        const metaEntity = metaEntityMap.get(childMetaEntityName);
-        if(childTemplate && metaEntity) {
-          this.childCells = this.formService.toCellAttributeArray(childTemplate, metaEntity);
-          this.childFormGroup = this.formGroup.controls[attribute.name] as UntypedFormGroup;
-        }
-      });
-    }
+    this.updateChildForm();
   }
 
   isReadOnly() {
@@ -49,6 +45,23 @@ export class OneToOneControlComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['cell']) {
       this.onCellChange(changes['cell'].currentValue);
+    }
+    this.updateChildForm();
+  }
+
+  private updateChildForm(): void {
+    if(this.cell && this.cell.attribute) {
+      const attribute = this.cell.attribute;
+      const childMetaEntityName = attribute.relationshipTarget;
+      const childTemplate = this.cell.template;
+      this.metaEntityService.metaEntityMap$.subscribe((metaEntityMap) => {
+        const metaEntity = metaEntityMap.get(childMetaEntityName);
+        if(childTemplate && metaEntity) {
+          this.childCells = this.formService.toCellAttributeArray(childTemplate, metaEntity);
+          this.childFormGroup = this.formGroup?.controls?.[attribute.name] as UntypedFormGroup;
+          this.cdr.markForCheck();
+        }
+      });
     }
   }
 
