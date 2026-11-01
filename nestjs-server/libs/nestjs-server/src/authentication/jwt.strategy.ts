@@ -25,7 +25,13 @@ function getKeyProvider(configService: ConfigService) {
   return (req, rawJwtToken, done) => {
     const decodedToken = JSON.parse(Buffer.from(rawJwtToken.split('.')[1], 'base64').toString('utf8'));
     const issuer = decodedToken.iss;
-    const isMsalIssuer = issuer.startsWith('https://login.microsoftonline.com/') || issuer.startsWith('https://sts.windows.net/');
+    const configuredMsalIssuer = configService.get('MSAL_AUTHENTICATION_ISSUER');
+    const isMsalIssuer =
+      (configuredMsalIssuer && (issuer === configuredMsalIssuer || issuer.startsWith(configuredMsalIssuer))) ||
+      issuer.startsWith('https://login.microsoftonline.com/') ||
+      issuer.startsWith('https://sts.windows.net/') ||
+      issuer.includes('.ciamlogin.com') ||
+      issuer.includes('.b2clogin.com');
 
     if (issuer === configService.get('COGNITO_AUTHENTICATION_ISSUER')) {
       cognitoKeyProvider(req, rawJwtToken, done);
@@ -55,8 +61,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   getMsalGroups(payload: any): string[] {
-    // In MSAL we map across the "roles" into "groups" intentionally
-    return payload['roles'] || [];
+    // In MSAL we map across the "roles" into "groups" intentionally.
+    // Also support custom extension_Role claim if emitted by External ID user flows.
+    if (payload['roles']) {
+      return payload['roles'];
+    } else if (payload['extension_Role']) {
+      return Array.isArray(payload['extension_Role']) ? payload['extension_Role'] : [payload['extension_Role']];
+    }
+    return [];
   }
 
   getCustomGroups(payload: any): string[] {
@@ -74,7 +86,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     jwtLogger.log(`Validating token for issuer: ${payload.iss}`);
 
     let userDataStructure;
-    const isMsalIssuer = payload.iss.startsWith('https://login.microsoftonline.com/') || payload.iss.startsWith('https://sts.windows.net/');
+    const configuredMsalIssuer = this.configService.get('MSAL_AUTHENTICATION_ISSUER');
+    const isMsalIssuer =
+      (configuredMsalIssuer && (payload.iss === configuredMsalIssuer || payload.iss.startsWith(configuredMsalIssuer))) ||
+      payload.iss.startsWith('https://login.microsoftonline.com/') ||
+      payload.iss.startsWith('https://sts.windows.net/') ||
+      payload.iss.includes('.ciamlogin.com') ||
+      payload.iss.includes('.b2clogin.com');
 
     if (payload.iss === this.configService.get('COGNITO_AUTHENTICATION_ISSUER')) {
       userDataStructure = {
@@ -100,8 +118,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         family_name = nameParts.slice(1).join(' ');
       }
       
-      const username = payload['preferred_username'] || payload['upn'] || payload['unique_name'];
-      const email = payload['preferred_username'] || payload['email'] || payload['upn'];
+      const username =
+        payload['preferred_username'] ||
+        payload['upn'] ||
+        payload['unique_name'] ||
+        payload['email'] ||
+        (Array.isArray(payload['emails']) ? payload['emails'][0] : undefined);
+
+      const email =
+        payload['preferred_username'] ||
+        payload['email'] ||
+        (Array.isArray(payload['emails']) ? payload['emails'][0] : undefined) ||
+        payload['upn'];
 
       userDataStructure = {
         groups: [

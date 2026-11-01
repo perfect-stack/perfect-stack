@@ -7,6 +7,10 @@ export class UserNameService {
       return tokenAsUser['username'];
     } else if (tokenAsUser['cognito:username']) {
       return tokenAsUser['cognito:username'];
+    } else if (tokenAsUser['email']) {
+      return tokenAsUser['email'];
+    } else if (tokenAsUser['preferred_username']) {
+      return tokenAsUser['preferred_username'];
     } else {
       return 'Unknown';
     }

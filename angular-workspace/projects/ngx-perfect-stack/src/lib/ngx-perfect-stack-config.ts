@@ -23,4 +23,5 @@ export interface NgxPerfectStackConfig {
   msalClientId: string;
   msalAuthority: string;
   msalRedirectUri: string;
+  msalKnownAuthorities?: string[];
 }

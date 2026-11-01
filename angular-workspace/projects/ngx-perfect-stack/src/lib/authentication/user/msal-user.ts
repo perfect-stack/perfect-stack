@@ -17,15 +17,25 @@ export class MsalUser implements User {
   initFromAccount(account: AccountInfo): void {
     this.account = account;
     this.name = account.name;
-    this.username = account.username;
+
+    const idTokenClaims = account.idTokenClaims as any;
+    this.username =
+      account.username ||
+      idTokenClaims?.preferred_username ||
+      idTokenClaims?.email ||
+      (Array.isArray(idTokenClaims?.emails) ? idTokenClaims.emails[0] : '') ||
+      '';
 
     if (account.idTokenClaims) {
       // In Azure AD, App Roles are exposed in the 'roles' claim.
       // Security groups can be exposed in the 'groups' claim, but requires specific configuration.
       const roles = (account.idTokenClaims['roles'] as string[]) || [];
+      const extensionRole = account.idTokenClaims['extension_Role']
+        ? [account.idTokenClaims['extension_Role'] as string]
+        : [];
 
       // For MSAL we map across the "roles" as "groups"
-      this.groups = [...roles];
+      this.groups = [...roles, ...extensionRole];
     } else {
       this.groups = [];
     }

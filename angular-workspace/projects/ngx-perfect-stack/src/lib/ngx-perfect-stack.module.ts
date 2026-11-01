@@ -203,12 +203,18 @@ export const STACK_ROUTES: Routes = [
 ];
 
 export function MSALInstanceFactory(config: NgxPerfectStackConfig): IPublicClientApplication {
+  const authConfig: any = {
+    clientId: config.msalClientId,
+    authority: config.msalAuthority,
+    redirectUri: config.msalRedirectUri,
+  };
+
+  if (config.msalKnownAuthorities && config.msalKnownAuthorities.length > 0) {
+    authConfig.knownAuthorities = config.msalKnownAuthorities;
+  }
+
   return new PublicClientApplication({
-    auth: {
-      clientId: config.msalClientId,
-      authority: config.msalAuthority,
-      redirectUri: config.msalRedirectUri
-    }
+    auth: authConfig,
   });
 }
 

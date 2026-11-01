@@ -82,7 +82,12 @@ export class AuthenticationService {
     const kid = getKeyIdFromToken(token);
 
     let jwksClient;
-    const isMsalIssuer = issuer.startsWith('https://login.microsoftonline.com/') && issuer.endsWith('/v2.0');
+    const configuredMsalIssuer = this.configService.get('MSAL_AUTHENTICATION_ISSUER');
+    const isMsalIssuer =
+      (configuredMsalIssuer && (issuer === configuredMsalIssuer || issuer.startsWith(configuredMsalIssuer))) ||
+      (issuer.startsWith('https://login.microsoftonline.com/') && issuer.endsWith('/v2.0')) ||
+      issuer.includes('.ciamlogin.com') ||
+      issuer.includes('.b2clogin.com');
     if (issuer === this.configService.get('COGNITO_AUTHENTICATION_ISSUER')) {
       jwksClient = this.cognitoJwksClient;
     } else if (isMsalIssuer) {
@@ -90,7 +95,7 @@ export class AuthenticationService {
     } else {
       this.logger.error(`Unknown token issuer: ${issuer}`);
       this.logger.error(`Expected Cognito: ${this.configService.get('COGNITO_AUTHENTICATION_ISSUER')}`);
-      this.logger.error(`Or for MSAL to have a format like: https://login.microsoftonline.com/{tenantid}/v2.0`);
+      this.logger.error(`Or MSAL: ${configuredMsalIssuer || 'https://login.microsoftonline.com/{tenantid}/v2.0'}`);
       throw new Error('Unknown token issuer');
     }
 
