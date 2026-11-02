@@ -1,6 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { GeometryControlComponent, validateGeoJson, normalizeGeoJson } from './geometry-control.component';
+import {
+  GeometryControlComponent,
+  validateGeoJson,
+  normalizeGeoJson,
+  haversineDistance,
+  calculateLineDistance,
+  calculateRingArea,
+  calculatePolygonArea,
+  formatDistance,
+  formatArea,
+  getGeometrySummary,
+} from './geometry-control.component';
 import { ToastService } from '../../../../../utils/toasts/toast.service';
 import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
 
@@ -104,40 +115,202 @@ describe('validateGeoJson', () => {
   it('should validate Polygon GeoJSON correctly', () => {
     const validPoly = JSON.stringify({
       type: 'Polygon',
-      coordinates: [
-        [[174.77, -41.28], [174.78, -41.28], [174.78, -41.29], [174.77, -41.28]],
-      ],
+      coordinates: [[[0, 0], [1, 0], [1, 1], [0, 0]]],
     });
     expect(validateGeoJson(validPoly).valid).toBeTrue();
 
-    const invalidPoly = JSON.stringify({
+    const invalidRing = JSON.stringify({
       type: 'Polygon',
-      coordinates: [
-        [[174.77, -41.28], [174.78, -41.28]],
-      ],
+      coordinates: [[[0, 0], [1, 0], [0, 0]]],
     });
-    expect(validateGeoJson(invalidPoly).valid).toBeFalse();
+    expect(validateGeoJson(invalidRing).valid).toBeFalse();
   });
 
   it('should validate Feature and FeatureCollection', () => {
-    const validFeature = JSON.stringify({
+    const feature = JSON.stringify({
       type: 'Feature',
-      geometry: { type: 'Point', coordinates: [100.0, 0.0] },
-      properties: { prop0: 'value0' },
+      geometry: { type: 'Point', coordinates: [174.77, -41.28] },
     });
-    expect(validateGeoJson(validFeature).valid).toBeTrue();
+    expect(validateGeoJson(feature).valid).toBeTrue();
 
-    const validFeatureCollection = JSON.stringify({
+    const fc = JSON.stringify({
       type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          geometry: { type: 'Point', coordinates: [100.0, 0.0] },
-          properties: {},
-        },
-      ],
+      features: [],
     });
-    expect(validateGeoJson(validFeatureCollection).valid).toBeTrue();
+    expect(validateGeoJson(fc).valid).toBeTrue();
+  });
+});
+
+describe('Geometry Calculations and Summaries', () => {
+  describe('haversineDistance and calculateLineDistance', () => {
+    it('should calculate distance between two known points accurately', () => {
+      // Wellington to Auckland ~495 km
+      const wellington = [174.7762, -41.2865];
+      const auckland = [174.7633, -36.8485];
+      const dist = haversineDistance(wellington, auckland);
+      expect(dist).toBeGreaterThan(490000);
+      expect(dist).toBeLessThan(500000);
+    });
+
+    it('should calculate cumulative line distance', () => {
+      const line = [
+        [174.7762, -41.2865],
+        [174.7800, -41.2900],
+        [174.7900, -41.3000],
+      ];
+      const dist = calculateLineDistance(line);
+      expect(dist).toBeGreaterThan(1500);
+      expect(dist).toBeLessThan(2500);
+    });
+
+    it('should return 0 for empty or single-point lines', () => {
+      expect(calculateLineDistance([])).toBe(0);
+      expect(calculateLineDistance([[174.77, -41.28]])).toBe(0);
+    });
+  });
+
+  describe('calculateRingArea and calculatePolygonArea', () => {
+    it('should calculate area of a spherical polygon', () => {
+      // Small polygon in NZ ~ 1 km x 1 km (~ 1,000,000 m2)
+      const ring = [
+        [172.0, -44.0],
+        [172.0125, -44.0],
+        [172.0125, -44.009],
+        [172.0, -44.009],
+        [172.0, -44.0],
+      ];
+      const area = calculatePolygonArea([ring]);
+      expect(area).toBeGreaterThan(900000);
+      expect(area).toBeLessThan(1100000);
+    });
+
+    it('should return 0 for degenerate rings', () => {
+      expect(calculatePolygonArea([])).toBe(0);
+      expect(calculatePolygonArea([[[0, 0], [1, 1]]])).toBe(0);
+    });
+  });
+
+  describe('formatDistance', () => {
+    it('should format distances < 1 m with decimals', () => {
+      expect(formatDistance(0.5)).toBe('0.5 m');
+    });
+
+    it('should format distances < 1,000 m as integer meters', () => {
+      expect(formatDistance(450.4)).toBe('450 m');
+      expect(formatDistance(999)).toBe('999 m');
+    });
+
+    it('should format distances >= 1,000 m in km', () => {
+      expect(formatDistance(1000)).toBe('1.0 km');
+      expect(formatDistance(2345)).toBe('2.3 km');
+      expect(formatDistance(15600)).toBe('15.6 km');
+    });
+  });
+
+  describe('formatArea', () => {
+    it('should format areas < 1 m2 with decimal', () => {
+      expect(formatArea(0.7)).toBe('0.7 m2');
+    });
+
+    it('should format areas < 10,000 m2 as integer m2', () => {
+      expect(formatArea(680.2)).toBe('680 m2');
+      expect(formatArea(9500)).toBe('9500 m2');
+    });
+
+    it('should format areas between 10,000 m2 and 1,000,000 m2 in ha', () => {
+      expect(formatArea(10000)).toBe('1.0 ha');
+      expect(formatArea(45000)).toBe('4.5 ha');
+    });
+
+    it('should format areas >= 1,000,000 m2 in km2', () => {
+      expect(formatArea(1000000)).toBe('1.0 km2');
+      expect(formatArea(12500000)).toBe('12.5 km2');
+    });
+  });
+
+  describe('getGeometrySummary', () => {
+    it('should generate Point summary with ~10m precision (4 decimals) and Lat before Lng', () => {
+      const point = { type: 'Point', coordinates: [172.034567, -44.561234] };
+      const summary = getGeometrySummary(point);
+      expect(summary).toBeTruthy();
+      expect(summary?.type).toBe('Point');
+      expect(summary?.esriIcon).toBe('esri-icon-map-pin');
+      expect(summary?.materialIcon).toBe('location_on');
+      expect(summary?.textSummary).toBe('Lat: -44.5612, Lng: 172.0346');
+      expect(summary?.tooltip).toContain('~10m precision');
+    });
+
+    it('should generate LineString summary with node count and distance', () => {
+      const line = {
+        type: 'LineString',
+        coordinates: [
+          [174.77, -41.28],
+          [174.78, -41.29],
+          [174.79, -41.30],
+        ],
+      };
+      const summary = getGeometrySummary(line);
+      expect(summary?.type).toBe('Line');
+      expect(summary?.esriIcon).toBe('esri-icon-polyline');
+      expect(summary?.textSummary).toContain('3 Nodes, Dist:');
+      expect(summary?.tooltip).toContain('Great Circle distance');
+    });
+
+    it('should generate Polygon summary with node count and area', () => {
+      const poly = {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [172.0, -44.0],
+            [172.0125, -44.0],
+            [172.0125, -44.009],
+            [172.0, -44.009],
+            [172.0, -44.0],
+          ],
+        ],
+      };
+      const summary = getGeometrySummary(poly);
+      expect(summary?.type).toBe('Polygon');
+      expect(summary?.esriIcon).toBe('esri-icon-polygon');
+      expect(summary?.textSummary).toContain('5 Nodes, Area:');
+      expect(summary?.tooltip).toContain('Great Circle area');
+    });
+
+    it('should generate MultiLineString summary with line count, node count and total distance', () => {
+      const multiLine = {
+        type: 'MultiLineString',
+        coordinates: [
+          [[174.77, -41.28], [174.78, -41.29]],
+          [[174.79, -41.30], [174.80, -41.31]],
+        ],
+      };
+      const summary = getGeometrySummary(multiLine);
+      expect(summary?.type).toBe('MultiLine');
+      expect(summary?.textSummary).toContain('2 Lines, 4 Nodes, Dist:');
+    });
+
+    it('should generate MultiPolygon summary with polygon count, node count and total area', () => {
+      const multiPoly = {
+        type: 'MultiPolygon',
+        coordinates: [
+          [[[0, 0], [0.01, 0], [0.01, 0.01], [0, 0.01], [0, 0]]],
+          [[[1, 1], [1.01, 1], [1.01, 1.01], [1, 1.01], [1, 1]]],
+        ],
+      };
+      const summary = getGeometrySummary(multiPoly);
+      expect(summary?.type).toBe('MultiPolygon');
+      expect(summary?.textSummary).toContain('2 Polygons, 10 Nodes, Area:');
+    });
+
+    it('should unwrap Feature and summarize inner geometry', () => {
+      const feature = {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [172.03, -44.56] },
+      };
+      const summary = getGeometrySummary(feature);
+      expect(summary?.type).toBe('Point');
+      expect(summary?.textSummary).toBe('Lat: -44.5600, Lng: 172.0300');
+    });
   });
 });
 
@@ -185,17 +358,21 @@ describe('GeometryControlComponent', () => {
       expect(emptyEl).toBeTruthy();
     });
 
-    it('should display single-line truncated text when collapsed', () => {
+    it('should display user-readable summary when collapsed', () => {
       const geometry = { type: 'Point', coordinates: [174.77, -41.28] };
       component.writeValue(geometry);
       fixture.detectChanges();
 
       expect(component.isExpanded()).toBeFalse();
       const compiled = fixture.nativeElement as HTMLElement;
-      const singleEl = compiled.querySelector('.geometry-view-single');
-      expect(singleEl).toBeTruthy();
-      expect(singleEl?.classList.contains('text-truncate')).toBeTrue();
-      expect(singleEl?.textContent?.trim()).toBe(JSON.stringify(geometry));
+      const summaryEl = compiled.querySelector('.geometry-view-summary');
+      expect(summaryEl).toBeTruthy();
+
+      const badge = compiled.querySelector('[data-testid="badge-type-boundary"]');
+      expect(badge?.textContent?.trim()).toBe('Point');
+
+      const text = compiled.querySelector('[data-testid="summary-text-boundary"]');
+      expect(text?.textContent?.trim()).toBe('Lat: -41.2800, Lng: 174.7700');
     });
 
     it('should display multi-line preformatted text when expanded', () => {
@@ -254,7 +431,7 @@ describe('GeometryControlComponent', () => {
       fixture.detectChanges();
 
       const compiled = fixture.nativeElement as HTMLElement;
-      const expandBtn = compiled.querySelector('[data-testid=\"expand-view-boundary\"]');
+      const expandBtn = compiled.querySelector('[data-testid="expand-view-boundary"]');
       expect(expandBtn?.textContent?.trim()).toBe('unfold_more');
 
       component.toggleExpanded();

@@ -44,6 +44,7 @@
   @if (hasValue()) {
     <div class="geometry-view-container position-relative"
          [class.is-expanded]="isExpanded()"
+         [class.no-esri-font]="!hasEsriFont()"
          [attr.data-testid]="'field-' + attributeName()"
          (click)="onViewControlClick($event)">
 
@@ -51,32 +52,46 @@
         <button type="button"
                 class="btn btn-sm btn-light border geometry-action-btn"
                 (click)="toggleExpanded()"
-                [title]="isExpanded() ? 'Contract' : 'Expand'"
+                [title]="isExpanded() ? 'Show summary' : 'Show raw GeoJSON'"
                 [attr.data-testid]="'expand-view-' + attributeName()">
           <span class="material-symbols-outlined action-icon">{{ isExpanded() ? 'unfold_less' : 'unfold_more' }}</span>
         </button>
         <button type="button"
                 class="btn btn-sm btn-light border geometry-action-btn"
                 (click)="copyToClipboard()"
-                [title]="copied() ? 'Copied!' : 'Copy GeoJSON'"
+                [title]="copied() ? 'Copied!' : 'Copy raw GeoJSON'"
                 [attr.data-testid]="'copy-view-' + attributeName()">
           <span class="material-symbols-outlined action-icon">{{ copied() ? 'check' : 'content_copy' }}</span>
         </button>
       </div>
 
       @if (!isExpanded()) {
-        <div class="form-control font-monospace geometry-view-single text-truncate"
-             [id]="attributeName()"
-             [title]="'Click to expand'"
-             [attr.data-testid]="'view-' + attributeName()">
-          {{ singleLineText() }}
-        </div>
+        @if (geometrySummary(); as summary) {
+          <div class="form-control geometry-view-summary d-flex align-items-center"
+               [id]="attributeName()"
+               [title]="summary.tooltip + '. Click to view raw GeoJSON.'"
+               [attr.data-testid]="'view-' + attributeName()">
+            <span class="geometry-type-icon me-2" aria-hidden="true">
+              <span class="esri-geometry-icon" [ngClass]="summary.esriIcon"></span>
+              <span class="material-symbols-outlined material-geometry-icon">{{ summary.materialIcon }}</span>
+            </span>
+            <span class="badge geometry-badge me-2" [attr.data-testid]="'badge-type-' + attributeName()">{{ summary.type }}</span>
+            <span class="geometry-summary-text text-truncate" [attr.data-testid]="'summary-text-' + attributeName()">{{ summary.textSummary }}</span>
+          </div>
+        } @else {
+          <div class="form-control font-monospace geometry-view-single text-truncate"
+               [id]="attributeName()"
+               [title]="'Click to expand'"
+               [attr.data-testid]="'view-' + attributeName()">
+            {{ singleLineText() }}
+          </div>
+        }
       }
 
       @if (isExpanded()) {
         <div class="form-control font-monospace geometry-view-multi"
              [id]="attributeName()"
-             [title]="'Click to contract'"
+             [title]="'Click to contract to summary'"
              [attr.data-testid]="'view-' + attributeName()">
           <pre class="m-0 font-monospace geometry-pre"><code>{{ multiLineText() }}</code></pre>
         </div>

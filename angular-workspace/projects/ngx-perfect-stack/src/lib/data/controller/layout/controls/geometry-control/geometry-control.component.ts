@@ -12,6 +12,14 @@ export interface GeoJsonValidationResult {
   parsed?: any;
 }
 
+export interface GeometrySummary {
+  type: string;
+  esriIcon: string;
+  materialIcon: string;
+  textSummary: string;
+  tooltip: string;
+}
+
 const VALID_GEOMETRY_TYPES = [
   'Point',
   'MultiPoint',
@@ -27,6 +35,274 @@ const VALID_GEOJSON_TYPES = [
   'Feature',
   'FeatureCollection',
 ];
+
+export const EARTH_RADIUS_METERS = 6371008.8;
+
+/**
+ * Calculates Great Circle distance between two [lng, lat] coordinates in meters using the Haversine formula.
+ */
+export function haversineDistance(p1: number[], p2: number[]): number {
+  if (!p1 || !p2 || p1.length < 2 || p2.length < 2) {
+    return 0;
+  }
+  const [lng1, lat1] = p1;
+  const [lng2, lat2] = p2;
+  const rad = Math.PI / 180;
+  const dLat = (lat2 - lat1) * rad;
+  const dLng = (lng2 - lng1) * rad;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return EARTH_RADIUS_METERS * c;
+}
+
+/**
+ * Calculates the total Great Circle distance of a line in meters.
+ */
+export function calculateLineDistance(coordinates: number[][]): number {
+  if (!coordinates || coordinates.length < 2) {
+    return 0;
+  }
+  let total = 0;
+  for (let i = 0; i < coordinates.length - 1; i++) {
+    total += haversineDistance(coordinates[i], coordinates[i + 1]);
+  }
+  return total;
+}
+
+/**
+ * Calculates the geodesic area of a closed linear ring on a WGS 84 sphere in square meters.
+ */
+export function calculateRingArea(ring: number[][]): number {
+  if (!ring || ring.length < 3) {
+    return 0;
+  }
+  const rad = Math.PI / 180;
+  let total = 0;
+  for (let i = 0; i < ring.length - 1; i++) {
+    const p1 = ring[i];
+    const p2 = ring[i + 1];
+    total += (p2[0] - p1[0]) * rad * (2 + Math.sin(p1[1] * rad) + Math.sin(p2[1] * rad));
+  }
+  return Math.abs((total * EARTH_RADIUS_METERS * EARTH_RADIUS_METERS) / 2);
+}
+
+/**
+ * Calculates the geodesic area of a polygon (exterior ring minus interior rings / holes) in square meters.
+ */
+export function calculatePolygonArea(rings: number[][][]): number {
+  if (!rings || rings.length === 0) {
+    return 0;
+  }
+  let area = calculateRingArea(rings[0]);
+  for (let i = 1; i < rings.length; i++) {
+    area -= calculateRingArea(rings[i]);
+  }
+  return Math.max(0, area);
+}
+
+/**
+ * Formats distance in meters:
+ * - If < 1 m: decimal points of 1 m (e.g. 0.8 m)
+ * - If < 1,000 m: integer meters (e.g. 450 m)
+ * - If >= 1,000 m: kilometers with 1 decimal (e.g. 2.3 km)
+ */
+export function formatDistance(meters: number): string {
+  if (meters < 1) {
+    return `${meters.toFixed(1)} m`;
+  }
+  if (meters < 1000) {
+    return `${Math.round(meters)} m`;
+  }
+  const km = meters / 1000;
+  return `${km.toFixed(1)} km`;
+}
+
+/**
+ * Formats area in square meters:
+ * - If < 1 m2: decimal points of 1 m2
+ * - If < 10,000 m2: m2 (e.g. 680 m2)
+ * - If 10,000 m2 <= area < 1,000,000 m2: ha (e.g. 2.4 ha)
+ * - If >= 1,000,000 m2: km2 (e.g. 12.3 km2)
+ */
+export function formatArea(sqMeters: number): string {
+  if (sqMeters < 1) {
+    return `${sqMeters.toFixed(1)} m2`;
+  }
+  if (sqMeters < 10000) {
+    return `${Math.round(sqMeters)} m2`;
+  }
+  if (sqMeters < 1000000) {
+    const ha = sqMeters / 10000;
+    return `${ha.toFixed(1)} ha`;
+  }
+  const sqKm = sqMeters / 1000000;
+  return `${sqKm.toFixed(1)} km2`;
+}
+
+/**
+ * Generates a user-readable summary for a GeoJSON geometry or feature.
+ */
+export function getGeometrySummary(obj: any): GeometrySummary | null {
+  if (!obj || typeof obj !== 'object') {
+    return null;
+  }
+
+  const geom = obj.type === 'Feature' ? obj.geometry : obj;
+  if (!geom || typeof geom !== 'object' || !geom.type) {
+    return null;
+  }
+
+  const type = geom.type;
+  switch (type) {
+    case 'Point': {
+      const coords = geom.coordinates;
+      if (Array.isArray(coords) && coords.length >= 2) {
+        const lng = Number(coords[0]);
+        const lat = Number(coords[1]);
+        const textSummary = `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
+        return {
+          type: 'Point',
+          esriIcon: 'esri-icon-map-pin',
+          materialIcon: 'location_on',
+          textSummary,
+          tooltip: `Point: ${textSummary} (~10m precision)`,
+        };
+      }
+      return {
+        type: 'Point',
+        esriIcon: 'esri-icon-map-pin',
+        materialIcon: 'location_on',
+        textSummary: 'Empty Point',
+        tooltip: 'Point (no coordinates)',
+      };
+    }
+
+    case 'MultiPoint': {
+      const coords = Array.isArray(geom.coordinates) ? geom.coordinates : [];
+      const textSummary = `${coords.length} Point${coords.length === 1 ? '' : 's'}`;
+      return {
+        type: 'MultiPoint',
+        esriIcon: 'esri-icon-map-pin',
+        materialIcon: 'location_on',
+        textSummary,
+        tooltip: `MultiPoint: ${textSummary}`,
+      };
+    }
+
+    case 'LineString': {
+      const coords = Array.isArray(geom.coordinates) ? geom.coordinates : [];
+      const nodeCount = coords.length;
+      const dist = calculateLineDistance(coords);
+      const textSummary = `${nodeCount} Nodes, Dist: ${formatDistance(dist)}`;
+      return {
+        type: 'Line',
+        esriIcon: 'esri-icon-polyline',
+        materialIcon: 'timeline',
+        textSummary,
+        tooltip: `Line: ${textSummary} (Great Circle distance)`,
+      };
+    }
+
+    case 'MultiLineString': {
+      const lines = Array.isArray(geom.coordinates) ? geom.coordinates : [];
+      let totalNodes = 0;
+      let totalDist = 0;
+      for (const line of lines) {
+        if (Array.isArray(line)) {
+          totalNodes += line.length;
+          totalDist += calculateLineDistance(line);
+        }
+      }
+      const textSummary = `${lines.length} Line${lines.length === 1 ? '' : 's'}, ${totalNodes} Nodes, Dist: ${formatDistance(totalDist)}`;
+      return {
+        type: 'MultiLine',
+        esriIcon: 'esri-icon-polyline',
+        materialIcon: 'timeline',
+        textSummary,
+        tooltip: `MultiLine: ${textSummary} (Great Circle distance)`,
+      };
+    }
+
+    case 'Polygon': {
+      const rings = Array.isArray(geom.coordinates) ? geom.coordinates : [];
+      let totalNodes = 0;
+      for (const ring of rings) {
+        if (Array.isArray(ring)) {
+          totalNodes += ring.length;
+        }
+      }
+      const area = calculatePolygonArea(rings);
+      const textSummary = `${totalNodes} Nodes, Area: ${formatArea(area)}`;
+      return {
+        type: 'Polygon',
+        esriIcon: 'esri-icon-polygon',
+        materialIcon: 'pentagon',
+        textSummary,
+        tooltip: `Polygon: ${textSummary} (Great Circle area)`,
+      };
+    }
+
+    case 'MultiPolygon': {
+      const polys = Array.isArray(geom.coordinates) ? geom.coordinates : [];
+      let totalNodes = 0;
+      let totalArea = 0;
+      for (const poly of polys) {
+        if (Array.isArray(poly)) {
+          for (const ring of poly) {
+            if (Array.isArray(ring)) {
+              totalNodes += ring.length;
+            }
+          }
+          totalArea += calculatePolygonArea(poly);
+        }
+      }
+      const textSummary = `${polys.length} Polygon${polys.length === 1 ? '' : 's'}, ${totalNodes} Nodes, Area: ${formatArea(totalArea)}`;
+      return {
+        type: 'MultiPolygon',
+        esriIcon: 'esri-icon-polygon',
+        materialIcon: 'pentagon',
+        textSummary,
+        tooltip: `MultiPolygon: ${textSummary} (Great Circle area)`,
+      };
+    }
+
+    case 'GeometryCollection': {
+      const geoms = Array.isArray(geom.geometries) ? geom.geometries : [];
+      const textSummary = `${geoms.length} Geometrie${geoms.length === 1 ? 'y' : 's'}`;
+      return {
+        type: 'GeometryCollection',
+        esriIcon: 'esri-icon-layer',
+        materialIcon: 'category',
+        textSummary,
+        tooltip: `GeometryCollection: ${textSummary}`,
+      };
+    }
+
+    case 'FeatureCollection': {
+      const features = Array.isArray(geom.features) ? geom.features : [];
+      const textSummary = `${features.length} Feature${features.length === 1 ? '' : 's'}`;
+      return {
+        type: 'FeatureCollection',
+        esriIcon: 'esri-icon-layer',
+        materialIcon: 'category',
+        textSummary,
+        tooltip: `FeatureCollection: ${textSummary}`,
+      };
+    }
+
+    default: {
+      return {
+        type: String(type),
+        esriIcon: 'esri-icon-layer',
+        materialIcon: 'category',
+        textSummary: String(type),
+        tooltip: `Geometry: ${String(type)}`,
+      };
+    }
+  }
+}
 
 /**
  * Normalizes GeoJSON object:
@@ -221,6 +497,7 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
   readonly rawText: WritableSignal<string> = signal<string>('');
   readonly geometryValue: WritableSignal<any> = signal<any>(null);
   readonly validationError: WritableSignal<string | null> = signal<string | null>(null);
+  readonly hasEsriFont: WritableSignal<boolean> = signal<boolean>(true);
 
   readonly isReadOnly = computed(() => {
     return this._mode() === 'view' || (this._cell() && this._cell()?.displayOnly === true);
@@ -235,6 +512,23 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
     }
     const text = this.rawText();
     return text !== null && text !== undefined && text.trim().length > 0;
+  });
+
+  readonly geometrySummary = computed(() => {
+    const val = this.geometryValue();
+    if (val && typeof val === 'object') {
+      return getGeometrySummary(val);
+    }
+    const text = this.rawText();
+    if (text && text.trim().length > 0) {
+      try {
+        const parsed = JSON.parse(text);
+        return getGeometrySummary(parsed);
+      } catch {
+        return null;
+      }
+    }
+    return null;
   });
 
   readonly singleLineText = computed(() => {
@@ -287,6 +581,16 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
   }
 
   ngOnInit(): void {
+    if (typeof document !== 'undefined' && document.fonts && document.fonts.check) {
+      try {
+        this.hasEsriFont.set(document.fonts.check('16px CalciteWebCoreIcons'));
+        document.fonts.ready.then(() => {
+          this.hasEsriFont.set(document.fonts.check('16px CalciteWebCoreIcons'));
+        }).catch(() => {});
+      } catch (e) {
+        // Fallback default is true (assumes main.css loaded)
+      }
+    }
   }
 
   toggleExpanded(): void {
@@ -456,7 +760,7 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
 
   async copyToClipboard(): Promise<void> {
     const textToCopy = this.isReadOnly()
-      ? (this.isExpanded() ? this.multiLineText() : this.singleLineText() || '')
+      ? (this.isExpanded() ? this.multiLineText() : (this.singleLineText() || ""))
       : this.rawText();
 
     if (!textToCopy) {
