@@ -42,6 +42,31 @@ async function waitForServer(port: number, pathName = '/', maxWaitMs = 60000): P
   return false;
 }
 
+function hasNewerFile(dir: string, targetMtime: number): boolean {
+  if (!fs.existsSync(dir)) return false;
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === '.angular') continue;
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (hasNewerFile(fullPath, targetMtime)) return true;
+    } else {
+      if (fs.statSync(fullPath).mtimeMs > targetMtime) return true;
+    }
+  }
+  return false;
+}
+
+function isDistStale(distIndexPath: string, sourceDirs: string[]): boolean {
+  if (process.env.REBUILD_FRONTEND === 'true') return true;
+  if (!fs.existsSync(distIndexPath)) return true;
+  const distMtime = fs.statSync(distIndexPath).mtimeMs;
+  for (const dir of sourceDirs) {
+    if (hasNewerFile(dir, distMtime)) return true;
+  }
+  return false;
+}
+
 export async function ensureBackendRunning(): Promise<void> {
   const isRunning = await isPortOpen(3080, '/meta/entity');
   if (isRunning) {
@@ -106,8 +131,13 @@ export async function ensureFrontendRunning(): Promise<void> {
   }
 
   const indexPath = path.resolve(distDir, 'index.html');
-  if (!fs.existsSync(indexPath)) {
-    console.log('Static distribution not found. Building Vet Clinic Frontend in angular-workspace (npx ng build vet-clinic-client)...');
+  const sourceDirs = [
+    path.resolve(__dirname, '../client/src'),
+    path.resolve(workspaceDir, 'projects/ngx-perfect-stack/src')
+  ];
+
+  if (isDistStale(indexPath, sourceDirs)) {
+    console.log('Static distribution is missing or outdated compared to sources. Building Vet Clinic Frontend in angular-workspace (npm run build:lib && npx ng build vet-clinic-client)...');
     execSync('npm run build:lib && npx ng build vet-clinic-client', { cwd: workspaceDir, stdio: 'inherit' });
     if (!fs.existsSync(indexPath)) {
       if (fs.existsSync(path.resolve(workspaceDir, 'dist/vet-clinic-client/browser/index.html'))) {

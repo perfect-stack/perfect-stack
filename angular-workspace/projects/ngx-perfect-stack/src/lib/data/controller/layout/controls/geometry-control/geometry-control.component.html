@@ -67,7 +67,7 @@
 
       @if (!isExpanded()) {
         @if (geometrySummary(); as summary) {
-          <div class="form-control geometry-view-summary d-flex align-items-center"
+          <div class="form-control geometry-view-summary geometry-view-single d-flex align-items-center"
                [id]="attributeName()"
                [title]="summary.tooltip + '. Click to view raw GeoJSON.'"
                [attr.data-testid]="'view-' + attributeName()">
@@ -102,8 +102,8 @@
   @if (!hasValue()) {
     <div class="geometry-view-container" [attr.data-testid]="'field-' + attributeName()">
       <div class="form-control empty-value d-flex align-items-center"
-           [id]="attributeName()"
-           [attr.data-testid]="'view-' + attributeName()">
+            [id]="attributeName()"
+            [attr.data-testid]="'view-' + attributeName()">
         <span>&mdash;</span>
       </div>
     </div>

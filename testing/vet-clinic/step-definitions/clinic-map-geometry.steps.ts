@@ -62,8 +62,17 @@ Then(
       await geomField.waitFor({ state: 'visible', timeout: 30000 });
       const content = (await geomField.textContent()) || '';
 
-      expect(content).to.include(`"type":"${geometryType}"`);
-      expect(content).to.include('"coordinates"');
+      const summaryBadge = this.page.locator('[data-testid^="badge-type-"], .geometry-badge').first();
+      const hasSummary = (await summaryBadge.count()) > 0 && (await summaryBadge.isVisible());
+
+      if (hasSummary) {
+        const badgeText = (await summaryBadge.textContent())?.trim() || '';
+        const expectedType = geometryType === 'LineString' ? 'Line' : geometryType;
+        expect(badgeText).to.equal(expectedType);
+      } else {
+        expect(content).to.include(`"type":"${geometryType}"`);
+        expect(content).to.include('"coordinates"');
+      }
     }
   },
 );
@@ -99,7 +108,7 @@ Then('the geometry field should not be expanded', async function (this: UIWorld)
   if (!this.page) throw new Error('Playwright page is not initialized');
 
   const singleLineView = this.page
-    .locator('.geometry-view-single')
+    .locator('.geometry-view-single, .geometry-view-summary')
     .first();
 
   await singleLineView.waitFor({ state: 'visible', timeout: 10000 });

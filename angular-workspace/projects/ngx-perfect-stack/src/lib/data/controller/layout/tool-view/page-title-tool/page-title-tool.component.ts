@@ -5,6 +5,7 @@ import {PropertySheetService} from '../../../../../template/property-sheet/prope
 import {MetaPageService} from '../../../../../meta/page/meta-page-service/meta-page.service';
 import {FormGroup} from '@angular/forms';
 import {Subject, takeUntil} from 'rxjs';
+import {toTitleCase} from '../../../../../utils/string-utils';
 
 @Component({
     selector: 'lib-page-title-tool',
@@ -111,11 +112,11 @@ export class PageTitleToolComponent implements OnInit, OnDestroy {
   }
 
   get entityNameSingular() {
-    return this.ctx.metaEntity.name.toLowerCase();
+    return this.ctx?.metaEntity?.name ? toTitleCase(this.ctx.metaEntity.name) : '';
   }
 
   get entityNamePlural() {
-    return this.ctx.metaEntity.pluralName.toLowerCase();
+    return this.ctx?.metaEntity?.pluralName ? toTitleCase(this.ctx.metaEntity.pluralName) : '';
   }
 
   getNameValue(controlName: string) {
