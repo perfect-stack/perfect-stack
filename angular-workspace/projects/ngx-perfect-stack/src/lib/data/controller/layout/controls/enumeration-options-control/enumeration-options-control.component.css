@@ -28,8 +28,9 @@
   justify-content: center;
   cursor: pointer;
   line-height: 1;
-  color: #6c757d;
-  transition: color 0.15s ease-in-out, opacity 0.15s ease-in-out;
+  color: #ffffff;
+  opacity: 0.8;
+  transition: opacity 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
 .btn-icon:disabled {
@@ -38,15 +39,16 @@
 }
 
 .btn-icon:not(:disabled):hover {
-  color: #0d6efd;
+  opacity: 1;
+  color: #ffffff;
 }
 
 .remove-btn:not(:disabled):hover .icon-btn {
-  color: #dc3545 !important;
-  opacity: 0.85;
+  color: #ffffff !important;
+  opacity: 1;
 }
 
 .icon-btn {
-  font-size: 0.95rem !important;
+  font-size: 0.85rem !important;
   line-height: 1;
 }

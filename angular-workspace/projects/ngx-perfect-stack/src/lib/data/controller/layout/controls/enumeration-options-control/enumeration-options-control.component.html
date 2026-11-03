@@ -3,7 +3,7 @@
     <!-- Options List with Reorder and Delete -->
     <div class="options-container d-flex flex-wrap align-items-center gap-1 mb-2">
       @for (opt of optionsList; track opt; let i = $index) {
-        <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2 option-badge" [attr.data-testid]="'option-item-' + i">
+        <span class="badge bg-primary text-white d-inline-flex align-items-center gap-1 py-1 px-2 option-badge" [attr.data-testid]="'option-item-' + i">
           @if (!disabled) {
             <button
               type="button"
@@ -34,7 +34,7 @@
               (click)="removeOption(i)"
               title="Remove {{ opt }}"
               [attr.data-testid]="'btn-remove-' + i">
-              <span class="material-symbols-outlined icon-btn text-danger">close</span>
+              <span class="material-symbols-outlined icon-btn">close</span>
             </button>
           }
         </span>
@@ -75,7 +75,7 @@
     <!-- Read-only View Mode -->
     <div class="d-flex flex-wrap align-items-center gap-1" [attr.data-testid]="'view-' + name">
       @for (opt of optionsList; track opt) {
-        <span class="badge bg-light text-dark border py-1 px-2">{{ opt }}</span>
+        <span class="badge bg-primary text-white py-1 px-2">{{ opt }}</span>
       }
       @if (optionsList.length === 0) {
         <span class="text-muted small">&mdash;</span>

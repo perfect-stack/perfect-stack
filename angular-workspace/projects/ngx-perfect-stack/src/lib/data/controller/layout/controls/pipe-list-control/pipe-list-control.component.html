@@ -3,7 +3,7 @@
     <!-- Selected items (active badges with remove close icon) -->
     <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
       @for (val of selectedValues; track val; let i = $index) {
-        <span class="badge bg-primary d-inline-flex align-items-center gap-1 py-1 px-2" [attr.data-testid]="'selected-item-' + i">
+        <span class="badge bg-primary text-white d-inline-flex align-items-center gap-1 py-1 px-2" [attr.data-testid]="'selected-item-' + i">
           <span>{{ val }}</span>
           @if (!disabled) {
             <span class="material-symbols-outlined remove-icon" role="button" (click)="removeValue(i)" title="Remove {{ val }}">close</span>
@@ -21,7 +21,7 @@
         @for (opt of availableOptions; track opt) {
           <button
             type="button"
-            class="badge bg-light text-secondary border available-opt-btn d-inline-flex align-items-center gap-1 py-1 px-2"
+            class="badge available-opt-btn d-inline-flex align-items-center gap-1 py-1 px-2"
             (click)="addValue(opt)"
             title="Add {{ opt }}">
             <span class="material-symbols-outlined add-icon">add</span>
@@ -34,7 +34,7 @@
     <!-- Read-only view -->
     <div class="d-flex flex-wrap align-items-center gap-1">
       @for (val of selectedValues; track val) {
-        <span class="badge bg-primary d-inline-flex align-items-center py-1 px-2">{{ val }}</span>
+        <span class="badge bg-primary text-white d-inline-flex align-items-center py-1 px-2">{{ val }}</span>
       }
       @if (selectedValues.length === 0) {
         <span class="text-muted small">&mdash;</span>
