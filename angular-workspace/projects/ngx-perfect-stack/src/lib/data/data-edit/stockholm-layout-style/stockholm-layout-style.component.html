@@ -19,10 +19,10 @@
     @for (template of contentTemplates; track template; let i = $index) {
       @if (template.showSideHeadings !== 'Disabled') {
         <div class="row template">
-          <div class="col-4">
-            <h4 id="template[{{i}}].sectionHdg">{{template.templateHeading}}</h4>
+          <div class="col-12 col-md-3 col-xl-2">
+            <h4 id="template[{{i}}].sectionHdg" class="mb-3 mb-md-0">{{template.templateHeading}}</h4>
           </div>
-          <div class="col-8">
+          <div class="col-12 col-md-9 col-xl-10">
             <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
           </div>
         </div>

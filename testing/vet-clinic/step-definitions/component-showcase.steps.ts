@@ -160,6 +160,42 @@ Then('the date time input should be visible', async function (this: UIWorld) {
   expect(await input.isVisible()).to.be.true;
 });
 
+Then('the time input should not be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const timeInput = this.page.locator('lib-date-time-control lib-time-control');
+  expect(await timeInput.count()).to.equal(0);
+});
+
+Then('the date time view should display formatted date', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const viewEl = this.page.locator('lib-date-time-control [data-testid^="view-"]').first();
+  await viewEl.waitFor({ state: 'visible', timeout: 15000 });
+  const text = (await viewEl.textContent())?.trim() || '';
+  expect(text).to.not.be.empty;
+  expect(text).to.not.include(':');
+});
+
+When('I click the showcase sample preset {string}', async function (this: UIWorld, label: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const btn = this.page.locator(`button:has-text("${label}")`).first();
+  await btn.waitFor({ state: 'visible', timeout: 15000 });
+  await btn.click();
+});
+
+Then('the clock button should be visible', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const clockBtn = this.page.locator('lib-date-time-control [data-testid^="btn-add-time-"]').first();
+  await clockBtn.waitFor({ state: 'visible', timeout: 15000 });
+  expect(await clockBtn.isVisible()).to.be.true;
+});
+
+When('I click the clock button to add time', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const clockBtn = this.page.locator('lib-date-time-control [data-testid^="btn-add-time-"]').first();
+  await clockBtn.waitFor({ state: 'visible', timeout: 15000 });
+  await clockBtn.click();
+});
+
 Then('the time control view should display formatted time', async function (this: UIWorld) {
   if (!this.page) throw new Error('Playwright page is not initialized');
   const viewEl = this.page.locator('lib-time-control [data-testid^="time-\"], lib-time-control input').first();

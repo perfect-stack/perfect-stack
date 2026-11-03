@@ -1,17 +1,67 @@
 <div [formGroup]="formGroup" [attr.data-testid]="'field-' + (cell?.attribute?.name || name)">
   @if (mode !== 'view') {
-    <div class="row">
-      @if (cell && cell.attribute && cell.attribute.name) {
-        <div [ngClass]="isDateOnly ? 'col-12' : 'col-6'">
-          <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="!isDateOnly" [idSuffix]="idSuffix"></app-date-picker-control>
+    @if (cell && cell.attribute && cell.attribute.name) {
+      @if (isDateOnly) {
+        <div class="row">
+          <div class="col-12">
+            <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="false" [idSuffix]="idSuffix"></app-date-picker-control>
+          </div>
         </div>
       }
-      @if (!isDateOnly && cell && cell.attribute && cell.attribute.name) {
-        <div class="col-6">
-          <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="true" [idSuffix]="idSuffix"></lib-time-control>
+      @else if (isMandatoryTime) {
+        <div class="row">
+          <div class="col-6">
+            <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="true" [idSuffix]="idSuffix"></app-date-picker-control>
+          </div>
+          <div class="col-6">
+            <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="true" [idSuffix]="idSuffix"></lib-time-control>
+          </div>
         </div>
       }
-    </div>
+      @else {
+        @if (!isTimeActive) {
+          <div class="d-flex align-items-stretch gap-1">
+            <div class="flex-grow-1">
+              <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="false" [idSuffix]="idSuffix"></app-date-picker-control>
+            </div>
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-clock-toggle"
+              [id]="componentId + '-clock-btn'"
+              [attr.data-testid]="'btn-add-time-' + (cell?.attribute?.name || name)"
+              [disabled]="formGroup?.controls?.[name]?.disabled"
+              (click)="activateTime()"
+              title="Add time">
+              <span class="material-symbols-outlined align-middle" style="font-size: 20px;">schedule</span>
+            </button>
+          </div>
+        }
+        @else {
+          <div class="row g-2 align-items-start">
+            <div class="col-6">
+              <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="true" [idSuffix]="idSuffix"></app-date-picker-control>
+            </div>
+            <div class="col-6">
+              <div class="d-flex align-items-stretch gap-1">
+                <div class="flex-grow-1">
+                  <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="true" [idSuffix]="idSuffix"></lib-time-control>
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-time-clear"
+                  [id]="componentId + '-clear-time-btn'"
+                  [attr.data-testid]="'btn-remove-time-' + (cell?.attribute?.name || name)"
+                  [disabled]="formGroup?.controls?.[name]?.disabled"
+                  (click)="deactivateTime()"
+                  title="Remove time">
+                  <span class="material-symbols-outlined align-middle" style="font-size: 18px;">close</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      }
+    }
   }
 
   @if (mode === 'view') {

@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
-import {UntypedFormGroup} from '@angular/forms';
-import {DateTimeFormatter, ZonedDateTime, ZoneId} from '@js-joda/core';
+import {AbstractControl, UntypedFormGroup, ValidationErrors, ValidatorFn} from '@angular/forms';
+import {DateTimeFormatter, LocalDate, ZonedDateTime, ZoneId} from '@js-joda/core';
 import {Subscription} from 'rxjs';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
@@ -9,6 +9,10 @@ import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-st
 import {Locale} from '@js-joda/locale_en';
 import '@js-joda/timezone';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
+import {DateTimePrecision} from '../../../../../domain/meta.page';
+import {ResultType} from '../../../../../domain/meta.rule';
+
+export { DateTimePrecision };
 
 @Component({
     selector: 'lib-date-time-control',
@@ -34,8 +38,29 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
   idSuffix?: string | null;
 
   dateTimeValue: string;
+  isTimeActive: boolean = false;
+  private userActivatedTime: boolean = false;
 
   private valueSubscription?: Subscription;
+
+  private timeRequiredValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    if (this.precision !== DateTimePrecision.MandatoryTime) {
+      return null;
+    }
+    const val = control.value;
+    if (!val) {
+      return null;
+    }
+    const hasTime = typeof val === 'string' && (val.includes('T') || (val.length <= 8 && val.includes(':')));
+    if (!hasTime) {
+      return {
+        name: 'timeRequired',
+        resultType: ResultType.Error,
+        message: 'Time is required',
+      } as any;
+    }
+    return null;
+  };
 
   constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly cdr: ChangeDetectorRef) {
@@ -43,26 +68,97 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.syncTimeActiveFromValue();
     this.updateValue();
     this.setupValueSubscription();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.updateValue();
-    if (changes['formGroup'] || changes['name']) {
+    if (changes['formGroup'] || changes['name'] || changes['cell']) {
+      this.userActivatedTime = false;
+      this.syncTimeActiveFromValue();
       this.setupValueSubscription();
     }
+    this.updateValue();
+  }
+
+  get precision(): DateTimePrecision {
+    const p = (this.cell?.componentData as any)?.precision ||
+              (this.cell as any)?.precision ||
+              (this.cell?.componentData as any)?.dateMode;
+    if (p) {
+      if (p === 'DateOnly' || p === DateTimePrecision.DateOnly) return DateTimePrecision.DateOnly;
+      if (p === 'OptionalTime' || p === DateTimePrecision.OptionalTime) return DateTimePrecision.OptionalTime;
+      if (p === 'MandatoryTime' || p === DateTimePrecision.MandatoryTime) return DateTimePrecision.MandatoryTime;
+    }
+    if (this.isDateOnlyLegacy) {
+      return DateTimePrecision.DateOnly;
+    }
+    return DateTimePrecision.OptionalTime;
+  }
+
+  get isDateOnlyLegacy(): boolean {
+    return ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.component || '') ||
+           ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.options || '');
   }
 
   get isDateOnly(): boolean {
-    return ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.component || '') ||
-           ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.options || '') ||
-           (this.cell?.componentData as any)?.dateMode === 'DateOnly';
+    return this.precision === DateTimePrecision.DateOnly;
+  }
+
+  get isMandatoryTime(): boolean {
+    return this.precision === DateTimePrecision.MandatoryTime;
+  }
+
+  get isOptionalTime(): boolean {
+    return this.precision === DateTimePrecision.OptionalTime;
   }
 
   get componentId(): string {
     const base = this.cell?.attribute?.name || this.name || '';
     return base ? (this.idSuffix ? `${base}-${this.idSuffix}` : base) : '';
+  }
+
+  hasTimeValue(val: any): boolean {
+    return typeof val === 'string' && (val.includes('T') || (val.length <= 8 && val.includes(':')));
+  }
+
+  syncTimeActiveFromValue(): void {
+    if (this.isMandatoryTime) {
+      this.isTimeActive = true;
+      return;
+    }
+    if (this.isDateOnly) {
+      this.isTimeActive = false;
+      return;
+    }
+    const formControl = this.formGroup?.controls[this.name];
+    const val = formControl?.value;
+    this.isTimeActive = this.hasTimeValue(val);
+  }
+
+  activateTime(): void {
+    this.userActivatedTime = true;
+    this.isTimeActive = true;
+    this.cdr.markForCheck();
+  }
+
+  deactivateTime(): void {
+    this.userActivatedTime = false;
+    this.isTimeActive = false;
+    const formControl = this.formGroup?.controls[this.name];
+    if (formControl) {
+      const val = formControl.value;
+      if (val instanceof Date) {
+        formControl.setValue(val.toISOString().substring(0, 10));
+      } else if (typeof val === 'string' && val.length >= 10 && val.includes('-')) {
+        formControl.setValue(val.substring(0, 10));
+      } else {
+        formControl.setValue('');
+      }
+    }
+    this.updateValue();
+    this.cdr.markForCheck();
   }
 
   setupValueSubscription(): void {
@@ -72,7 +168,16 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
     }
     const formControl = this.formGroup?.controls[this.name];
     if (formControl) {
-      this.valueSubscription = formControl.valueChanges.subscribe(() => {
+      formControl.removeValidators(this.timeRequiredValidator);
+      formControl.addValidators(this.timeRequiredValidator);
+      formControl.updateValueAndValidity({ emitEvent: false });
+
+      this.valueSubscription = formControl.valueChanges.subscribe((val) => {
+        if (this.hasTimeValue(val)) {
+          this.isTimeActive = true;
+        } else if (!this.userActivatedTime && !this.isMandatoryTime) {
+          this.isTimeActive = false;
+        }
         this.updateValue();
       });
     }
@@ -83,25 +188,47 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
       const formControl = this.formGroup.controls[this.name];
       const databaseValue = formControl?.value;
       if(databaseValue) {
-        const formatPattern = this.isDateOnly ? this.stackConfig.dateFormat : this.stackConfig.dateTimeFormat;
-        const dateTimeFormatter = DateTimeFormatter.ofPattern(formatPattern).withLocale(Locale.US);
+        const hasTime = typeof databaseValue === 'string' && (databaseValue.includes('T') || databaseValue.includes(':'));
+        const formatAsDateOnly = this.isDateOnly || (!hasTime && typeof databaseValue === 'string' && databaseValue.length <= 10);
 
-        const zoneId = ZoneId.of('Pacific/Auckland');
-        let zonedDateTime: ZonedDateTime;
-        if (typeof databaseValue === 'string') {
-          if (databaseValue.includes('+') || databaseValue.endsWith('Z') || (databaseValue.includes('-') && databaseValue.lastIndexOf('-') > 10)) {
-            zonedDateTime = ZonedDateTime.parse(databaseValue).withZoneSameInstant(zoneId);
-          } else {
-            const normalized = databaseValue.replace(' ', 'T') + 'Z';
-            zonedDateTime = ZonedDateTime.parse(normalized).withZoneSameInstant(zoneId);
+        if (formatAsDateOnly) {
+          const dateFormatter = DateTimeFormatter.ofPattern(this.stackConfig.dateFormat).withLocale(Locale.US);
+          try {
+            const dateStr = typeof databaseValue === 'string' ? databaseValue.substring(0, 10) : databaseValue;
+            const localDate = LocalDate.parse(dateStr);
+            this.dateTimeValue = dateFormatter.format(localDate);
+          } catch (e) {
+            try {
+              const zoneId = ZoneId.of('Pacific/Auckland');
+              const zdt = ZonedDateTime.parse(databaseValue).withZoneSameInstant(zoneId);
+              this.dateTimeValue = dateFormatter.format(zdt);
+            } catch (e2) {
+              this.dateTimeValue = String(databaseValue);
+            }
           }
-        } else if (databaseValue instanceof Date) {
-          zonedDateTime = ZonedDateTime.parse(databaseValue.toISOString()).withZoneSameInstant(zoneId);
         } else {
-          zonedDateTime = ZonedDateTime.parse(databaseValue).withZoneSameInstant(zoneId);
-        }
+          const dateTimeFormatter = DateTimeFormatter.ofPattern(this.stackConfig.dateTimeFormat).withLocale(Locale.US);
+          const zoneId = ZoneId.of('Pacific/Auckland');
+          let zonedDateTime: ZonedDateTime;
+          try {
+            if (typeof databaseValue === 'string') {
+              if (databaseValue.includes('+') || databaseValue.endsWith('Z') || (databaseValue.includes('-') && databaseValue.lastIndexOf('-') > 10)) {
+                zonedDateTime = ZonedDateTime.parse(databaseValue).withZoneSameInstant(zoneId);
+              } else {
+                const normalized = databaseValue.replace(' ', 'T') + 'Z';
+                zonedDateTime = ZonedDateTime.parse(normalized).withZoneSameInstant(zoneId);
+              }
+            } else if (databaseValue instanceof Date) {
+              zonedDateTime = ZonedDateTime.parse(databaseValue.toISOString()).withZoneSameInstant(zoneId);
+            } else {
+              zonedDateTime = ZonedDateTime.parse(databaseValue).withZoneSameInstant(zoneId);
+            }
 
-        this.dateTimeValue = dateTimeFormatter.format(zonedDateTime);
+            this.dateTimeValue = dateTimeFormatter.format(zonedDateTime);
+          } catch (e) {
+            this.dateTimeValue = String(databaseValue);
+          }
+        }
       } else {
         this.dateTimeValue = '';
       }
@@ -113,6 +240,11 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
     if (this.valueSubscription) {
       this.valueSubscription.unsubscribe();
       this.valueSubscription = undefined;
+    }
+    const formControl = this.formGroup?.controls[this.name];
+    if (formControl) {
+      formControl.removeValidators(this.timeRequiredValidator);
+      formControl.updateValueAndValidity({ emitEvent: false });
     }
   }
 

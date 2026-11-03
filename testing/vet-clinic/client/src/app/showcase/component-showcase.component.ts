@@ -563,4 +563,21 @@ export class ComponentShowcaseComponent implements OnInit, OnDestroy {
     this.idSuffix = input.value.trim() ? input.value.trim() : null;
     this.cdr.markForCheck();
   }
+
+  get dateTimePrecision(): string {
+    return (this.activeItem?.cell?.componentData as any)?.precision || "OptionalTime";
+  }
+
+  setDateTimePrecision(precision: string): void {
+    if (this.activeItem?.cell) {
+      this.activeItem.cell = {
+        ...this.activeItem.cell,
+        componentData: {
+          ...(this.activeItem.cell.componentData || {}),
+          precision: precision,
+        },
+      };
+      this.cdr.markForCheck();
+    }
+  }
 }

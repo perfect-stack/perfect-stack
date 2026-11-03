@@ -1,0 +1,12 @@
+.btn-clock-toggle,
+.btn-time-clear {
+  width: 34px;
+  min-width: 34px;
+  flex: 0 0 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  line-height: 1;
+}

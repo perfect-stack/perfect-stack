@@ -5,6 +5,7 @@ import { DateTimeControlComponent } from './date-time-control.component';
 import { STACK_CONFIG } from '../../../../../ngx-perfect-stack-config';
 import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
 import { AttributeType } from '../../../../../domain/meta.entity';
+import { DateTimePrecision } from '../../../../../domain/meta.page';
 
 @Component({
   selector: 'app-date-picker-control',
@@ -94,6 +95,39 @@ describe('DateTimeControlComponent', () => {
     } as CellAttribute;
 
     expect(component.isDateOnly).toBeTrue();
+    expect(component.precision).toBe(DateTimePrecision.DateOnly);
+  });
+
+  it('should identify precision via componentData.precision', () => {
+    component.cell = {
+      attributeName: 'occurrence_date',
+      componentData: {
+        precision: DateTimePrecision.DateOnly,
+      },
+      attribute: {
+        type: AttributeType.DateTime,
+        name: 'occurrence_date',
+      },
+    } as any;
+
+    expect(component.precision).toBe(DateTimePrecision.DateOnly);
+    expect(component.isDateOnly).toBeTrue();
+    expect(component.isMandatoryTime).toBeFalse();
+
+    component.cell = {
+      attributeName: 'occurrence_date',
+      componentData: {
+        precision: DateTimePrecision.MandatoryTime,
+      },
+      attribute: {
+        type: AttributeType.DateTime,
+        name: 'occurrence_date',
+      },
+    } as any;
+
+    expect(component.precision).toBe(DateTimePrecision.MandatoryTime);
+    expect(component.isDateOnly).toBeFalse();
+    expect(component.isMandatoryTime).toBeTrue();
   });
 
   it('should identify isDateOnly as false when component is default DateTime', () => {
@@ -106,6 +140,7 @@ describe('DateTimeControlComponent', () => {
     } as CellAttribute;
 
     expect(component.isDateOnly).toBeFalse();
+    expect(component.precision).toBe(DateTimePrecision.OptionalTime);
   });
 
   it('should format view mode using dateFormat when isDateOnly is true', () => {
@@ -124,6 +159,31 @@ describe('DateTimeControlComponent', () => {
         name: 'event_begin_date',
       },
     } as CellAttribute;
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(component.dateTimeValue).toBe('03-Nov-2026');
+  });
+
+  it('should format date-only string in view mode without throwing', () => {
+    const formGroup = new FormGroup({
+      occurrence_date: new FormControl('2026-11-03'),
+    });
+
+    component.mode = 'view';
+    component.formGroup = formGroup;
+    component.name = 'occurrence_date';
+    component.cell = {
+      attributeName: 'occurrence_date',
+      componentData: {
+        precision: DateTimePrecision.OptionalTime,
+      },
+      attribute: {
+        type: AttributeType.DateTime,
+        name: 'occurrence_date',
+      },
+    } as any;
 
     component.ngOnInit();
     fixture.detectChanges();
@@ -179,5 +239,143 @@ describe('DateTimeControlComponent', () => {
 
     expect(datePickerContainer).toBeTruthy();
     expect(timeControl).toBeFalsy();
+  });
+
+  it('should validate time presence when precision is MandatoryTime', () => {
+    const control = new FormControl('2026-11-03');
+    const formGroup = new FormGroup({
+      occurrence_date: control,
+    });
+
+    component.mode = 'edit';
+    component.formGroup = formGroup;
+    component.name = 'occurrence_date';
+    component.cell = {
+      attributeName: 'occurrence_date',
+      componentData: {
+        precision: DateTimePrecision.MandatoryTime,
+      },
+      attribute: {
+        type: AttributeType.DateTime,
+        name: 'occurrence_date',
+      },
+    } as any;
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(control.errors).toBeTruthy();
+    expect(control.errors?.['name']).toBe('timeRequired');
+
+    // Update with time
+    control.setValue('2026-11-03T14:30:00Z');
+    expect(control.errors).toBeNull();
+  });
+
+  it('should show clock button and hide time control initially in OptionalTime mode when value has no time', () => {
+    const control = new FormControl('');
+    const formGroup = new FormGroup({
+      appointment_time: control,
+    });
+
+    component.mode = 'edit';
+    component.formGroup = formGroup;
+    component.name = 'appointment_time';
+    component.cell = {
+      attributeName: 'appointment_time',
+      componentData: {
+        precision: DateTimePrecision.OptionalTime,
+      },
+      attribute: {
+        type: AttributeType.DateTime,
+        name: 'appointment_time',
+      },
+    } as any;
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    const element: HTMLElement = fixture.nativeElement;
+    const clockBtn = element.querySelector('[data-testid="btn-add-time-appointment_time"]');
+    const timeControl = element.querySelector('lib-time-control');
+
+    expect(clockBtn).toBeTruthy();
+    expect(timeControl).toBeFalsy();
+  });
+
+  it('should reveal time control when clock button is clicked in OptionalTime mode', () => {
+    const control = new FormControl('2026-11-03');
+    const formGroup = new FormGroup({
+      appointment_time: control,
+    });
+
+    component.mode = 'edit';
+    component.formGroup = formGroup;
+    component.name = 'appointment_time';
+    component.cell = {
+      attributeName: 'appointment_time',
+      componentData: {
+        precision: DateTimePrecision.OptionalTime,
+      },
+      attribute: {
+        type: AttributeType.DateTime,
+        name: 'appointment_time',
+      },
+    } as any;
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    let element: HTMLElement = fixture.nativeElement;
+    const clockBtn = element.querySelector('[data-testid="btn-add-time-appointment_time"]') as HTMLButtonElement;
+    expect(clockBtn).toBeTruthy();
+
+    clockBtn.click();
+    fixture.detectChanges();
+
+    const timeControl = element.querySelector('lib-time-control');
+    const removeBtn = element.querySelector('[data-testid="btn-remove-time-appointment_time"]') as HTMLButtonElement;
+    expect(timeControl).toBeTruthy();
+    expect(removeBtn).toBeTruthy();
+
+    // Now clicking remove button should hide time control and strip time
+    control.setValue('2026-11-03T14:30:00Z');
+    removeBtn.click();
+    fixture.detectChanges();
+
+    expect(element.querySelector('lib-time-control')).toBeFalsy();
+    expect(element.querySelector('[data-testid="btn-add-time-appointment_time"]')).toBeTruthy();
+    expect(control.value).toBe('2026-11-03');
+  });
+
+  it('should show time control immediately in OptionalTime mode if initial value has time', () => {
+    const control = new FormControl('2026-11-03T14:30:00Z');
+    const formGroup = new FormGroup({
+      appointment_time: control,
+    });
+
+    component.mode = 'edit';
+    component.formGroup = formGroup;
+    component.name = 'appointment_time';
+    component.cell = {
+      attributeName: 'appointment_time',
+      componentData: {
+        precision: DateTimePrecision.OptionalTime,
+      },
+      attribute: {
+        type: AttributeType.DateTime,
+        name: 'appointment_time',
+      },
+    } as any;
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    const element: HTMLElement = fixture.nativeElement;
+    const clockBtn = element.querySelector('[data-testid="btn-add-time-appointment_time"]');
+    const timeControl = element.querySelector('lib-time-control');
+
+    expect(timeControl).toBeTruthy();
+    expect(clockBtn).toBeFalsy();
   });
 });

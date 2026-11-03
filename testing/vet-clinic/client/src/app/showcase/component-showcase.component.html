@@ -429,6 +429,38 @@
             </div>
           </div>
 
+          @if (activeItem.id === 'date-time') {
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted text-uppercase">Precision Mode</label>
+              <div class="btn-group w-100" role="group">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  [class.active]="dateTimePrecision === 'DateOnly'"
+                  data-testid="btn-precision-date-only"
+                  (click)="setDateTimePrecision('DateOnly')">
+                  Date Only
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  [class.active]="dateTimePrecision === 'OptionalTime'"
+                  data-testid="btn-precision-optional-time"
+                  (click)="setDateTimePrecision('OptionalTime')">
+                  Optional Time
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  [class.active]="dateTimePrecision === 'MandatoryTime'"
+                  data-testid="btn-precision-mandatory-time"
+                  (click)="setDateTimePrecision('MandatoryTime')">
+                  Mandatory Time
+                </button>
+              </div>
+            </div>
+          }
+
           <!-- Attribute Overrides (Inputs category specific) -->
           @if (activeItem.category === 'Inputs & Primitives') {
             <div class="mb-2">

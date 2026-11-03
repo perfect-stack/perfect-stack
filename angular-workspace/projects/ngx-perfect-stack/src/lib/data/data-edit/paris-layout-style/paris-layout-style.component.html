@@ -23,10 +23,10 @@
         <div class="row">
           @if (template.templateHeading && template.visible !== false) {
             <div class="row template">
-              <div class="col-3">
-                <div class="panel-heading" id="template[{{i}}].sectionHdg">{{template.templateHeading}}</div>
+              <div class="col-12 col-md-3 col-xl-2">
+                <div class="panel-heading mb-3 mb-md-0" id="template[{{i}}].sectionHdg">{{template.templateHeading}}</div>
               </div>
-              <div class="col-9">
+              <div class="col-12 col-md-9 col-xl-10">
                 <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
               </div>
             </div>

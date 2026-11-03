@@ -11,3 +11,21 @@ Feature: Date Time Control Component
     Then the date time view should display formatted date and time
     When I click the showcase button "btn-mode-edit"
     Then the date time input should be visible
+
+  @showcase @date-time
+  Scenario: Switch date time precision to DateOnly
+    When I navigate to "/showcase/date-time"
+    And I click the showcase button "btn-precision-date-only"
+    Then the time input should not be visible
+    When I click the showcase button "btn-mode-view"
+    Then the date time view should display formatted date
+
+  @showcase @date-time
+  Scenario: Optional time reveals time input on clock button click
+    When I navigate to "/showcase/date-time"
+    And I click the showcase button "btn-precision-optional-time"
+    And I click the showcase sample preset "Date only"
+    Then the time input should not be visible
+    And the clock button should be visible
+    When I click the clock button to add time
+    Then the time input should be visible

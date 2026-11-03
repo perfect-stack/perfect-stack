@@ -53,6 +53,16 @@ export class Cell {
 
 export class ComponentData {}
 
+export enum DateTimePrecision {
+  DateOnly = "DateOnly",
+  OptionalTime = "OptionalTime",
+  MandatoryTime = "MandatoryTime",
+}
+
+export class DateTimeComponentData implements ComponentData {
+  precision?: DateTimePrecision | string;
+}
+
 export class SelectTwoComponentData implements ComponentData {
   secondaryAttributeName: string;
   optionsMap?: Record<string, string | string[]>;
