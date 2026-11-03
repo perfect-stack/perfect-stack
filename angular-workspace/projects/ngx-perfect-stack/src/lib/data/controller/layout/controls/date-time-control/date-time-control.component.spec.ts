@@ -378,4 +378,39 @@ describe('DateTimeControlComponent', () => {
     expect(timeControl).toBeTruthy();
     expect(clockBtn).toBeFalsy();
   });
+
+  it('should hide time control in OptionalTime mode if value changes to date-only', () => {
+    const control = new FormControl('2026-11-03T14:30:00Z');
+    const formGroup = new FormGroup({
+      appointment_time: control,
+    });
+
+    component.mode = 'edit';
+    component.formGroup = formGroup;
+    component.name = 'appointment_time';
+    component.cell = {
+      attributeName: 'appointment_time',
+      componentData: {
+        precision: DateTimePrecision.OptionalTime,
+      },
+      attribute: {
+        type: AttributeType.DateTime,
+        name: 'appointment_time',
+      },
+    } as any;
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('lib-time-control')).toBeTruthy();
+    expect(element.querySelector('[data-testid="btn-add-time-appointment_time"]')).toBeFalsy();
+
+    // Now change value to date-only string
+    control.setValue('2026-11-03');
+    fixture.detectChanges();
+
+    expect(element.querySelector('lib-time-control')).toBeFalsy();
+    expect(element.querySelector('[data-testid="btn-add-time-appointment_time"]')).toBeTruthy();
+  });
 });

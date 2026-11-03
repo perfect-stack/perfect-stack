@@ -33,6 +33,7 @@ export const dateTimeRegistration: ShowcaseItem = {
       samplePresets: [
         { label: 'Afternoon (14:30)', value: '2026-11-01T14:30:00' },
         { label: 'Morning (09:00)', value: '2026-11-01T09:00:00' },
+        { label: 'Date only', value: '2026-11-01' },
         { label: 'Clear', value: '' }
       ],
       docProperties: [

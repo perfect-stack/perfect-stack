@@ -422,6 +422,7 @@
                 <button
                   type="button"
                   class="btn btn-sm btn-light border"
+                  [attr.data-testid]="'btn-preset-' + preset.label"
                   (click)="setSampleValue(preset.value)">
                   "{{ preset.label }}"
                 </button>

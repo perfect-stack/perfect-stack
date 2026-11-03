@@ -177,7 +177,10 @@ Then('the date time view should display formatted date', async function (this: U
 
 When('I click the showcase sample preset {string}', async function (this: UIWorld, label: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
-  const btn = this.page.locator(`button:has-text("${label}")`).first();
+  const presetBtn = this.page.locator(`[data-testid="btn-preset-${label}"]`);
+  const btn = (await presetBtn.count()) > 0
+    ? presetBtn.first()
+    : this.page.locator(`button:has-text('"${label}"'), button:has-text("${label}")`).first();
   await btn.waitFor({ state: 'visible', timeout: 15000 });
   await btn.click();
 });

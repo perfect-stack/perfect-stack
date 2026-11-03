@@ -80,6 +80,7 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
       this.setupValueSubscription();
     }
     this.updateValue();
+    this.cdr.markForCheck();
   }
 
   get precision(): DateTimePrecision {
@@ -134,7 +135,7 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
     }
     const formControl = this.formGroup?.controls[this.name];
     const val = formControl?.value;
-    this.isTimeActive = this.hasTimeValue(val);
+    this.isTimeActive = this.userActivatedTime || this.hasTimeValue(val);
   }
 
   activateTime(): void {
@@ -173,12 +174,16 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
       formControl.updateValueAndValidity({ emitEvent: false });
 
       this.valueSubscription = formControl.valueChanges.subscribe((val) => {
+        if (!val || (typeof val === 'string' && !val.includes('T') && !val.includes(':'))) {
+          this.userActivatedTime = false;
+        }
         if (this.hasTimeValue(val)) {
           this.isTimeActive = true;
         } else if (!this.userActivatedTime && !this.isMandatoryTime) {
           this.isTimeActive = false;
         }
         this.updateValue();
+        this.cdr.markForCheck();
       });
     }
   }
