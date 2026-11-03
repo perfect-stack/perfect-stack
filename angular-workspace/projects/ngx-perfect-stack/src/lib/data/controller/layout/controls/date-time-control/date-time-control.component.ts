@@ -1,6 +1,7 @@
-import {Component, Inject, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {UntypedFormGroup} from '@angular/forms';
 import {DateTimeFormatter, ZonedDateTime, ZoneId} from '@js-joda/core';
+import {Subscription} from 'rxjs';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 
 // This next import may appear to be grey and unused, but it is important because it imports the right language/words for
@@ -15,7 +16,7 @@ import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-pag
     styleUrls: ['./date-time-control.component.css'],
     standalone: false
 })
-export class DateTimeControlComponent implements OnInit, OnChanges {
+export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input()
   mode: string | null;
@@ -34,16 +35,29 @@ export class DateTimeControlComponent implements OnInit, OnChanges {
 
   dateTimeValue: string;
 
-  constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig) {
+  private valueSubscription?: Subscription;
+
+  constructor(@Inject(STACK_CONFIG) protected readonly stackConfig: NgxPerfectStackConfig,
+              protected readonly cdr: ChangeDetectorRef) {
     Locale.getAvailableLocales();
   }
 
   ngOnInit(): void {
     this.updateValue();
+    this.setupValueSubscription();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateValue();
+    if (changes['formGroup'] || changes['name']) {
+      this.setupValueSubscription();
+    }
+  }
+
+  get isDateOnly(): boolean {
+    return ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.component || '') ||
+           ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.options || '') ||
+           (this.cell?.componentData as any)?.dateMode === 'DateOnly';
   }
 
   get componentId(): string {
@@ -51,14 +65,25 @@ export class DateTimeControlComponent implements OnInit, OnChanges {
     return base ? (this.idSuffix ? `${base}-${this.idSuffix}` : base) : '';
   }
 
+  setupValueSubscription(): void {
+    if (this.valueSubscription) {
+      this.valueSubscription.unsubscribe();
+      this.valueSubscription = undefined;
+    }
+    const formControl = this.formGroup?.controls[this.name];
+    if (formControl) {
+      this.valueSubscription = formControl.valueChanges.subscribe(() => {
+        this.updateValue();
+      });
+    }
+  }
+
   updateValue(): void {
     if(this.mode !== 'edit' && this.formGroup && this.name) {
       const formControl = this.formGroup.controls[this.name];
       const databaseValue = formControl?.value;
       if(databaseValue) {
-        const isDateOnly = ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.component || '') ||
-                           ['Date', 'DatePicker', 'DateOnly'].includes(this.cell?.options || '');
-        const formatPattern = isDateOnly ? this.stackConfig.dateFormat : this.stackConfig.dateTimeFormat;
+        const formatPattern = this.isDateOnly ? this.stackConfig.dateFormat : this.stackConfig.dateTimeFormat;
         const dateTimeFormatter = DateTimeFormatter.ofPattern(formatPattern).withLocale(Locale.US);
 
         const zoneId = ZoneId.of('Pacific/Auckland');
@@ -80,6 +105,14 @@ export class DateTimeControlComponent implements OnInit, OnChanges {
       } else {
         this.dateTimeValue = '';
       }
+      this.cdr.markForCheck();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.valueSubscription) {
+      this.valueSubscription.unsubscribe();
+      this.valueSubscription = undefined;
     }
   }
 

@@ -2,11 +2,11 @@
   @if (mode !== 'view') {
     <div class="row">
       @if (cell && cell.attribute && cell.attribute.name) {
-        <div class="col-6">
-          <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="true" [idSuffix]="idSuffix"></app-date-picker-control>
+        <div [ngClass]="isDateOnly ? 'col-12' : 'col-6'">
+          <app-date-picker-control [mode]="mode" [attribute]="cell.attribute" [formControlName]="cell.attribute.name" [includesTimeValue]="!isDateOnly" [idSuffix]="idSuffix"></app-date-picker-control>
         </div>
       }
-      @if (cell && cell.attribute && cell.attribute.name) {
+      @if (!isDateOnly && cell && cell.attribute && cell.attribute.name) {
         <div class="col-6">
           <lib-time-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name" [includesDate]="true" [idSuffix]="idSuffix"></lib-time-control>
         </div>
