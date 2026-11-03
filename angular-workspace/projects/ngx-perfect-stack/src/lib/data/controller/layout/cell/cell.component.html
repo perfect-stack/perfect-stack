@@ -51,7 +51,7 @@
         <!-- There are two usage of this. Enumeration can be a text attribute or a relationship -->
         @case ('Enumeration') {
           <ng-container [formGroup]="formGroup">
-            <lib-enumeration-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
+            <lib-enumeration-control [mode]="mode" [cell]="cell" [ctx]="ctx" [formGroup]="formGroup" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
           </ng-container>
         }
         @case ('PipeList') {
@@ -97,7 +97,7 @@
             <lib-enumeration-options-control [mode]="mode" [cell]="cell" [formControlName]="cell.attribute.name"></lib-enumeration-options-control>
           }
           @default {
-            <lib-enumeration-control [mode]="mode" [cell]="cell" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
+            <lib-enumeration-control [mode]="mode" [cell]="cell" [ctx]="ctx" [formGroup]="formGroup" [attribute]="cell.attribute" [formControlName]="cell.attribute.name"></lib-enumeration-control>
           }
         }
       </ng-container>

@@ -14,6 +14,7 @@ export class CellAttribute {
   labelLayout?: LabelLayoutType;
   component?: string; // The "type" of component used to display stuff in this cell, e.g. "Page reference"
   dependsOn?: string; // Another attribute that the Component in this Cell will listen to value changes of
+  secondaryAttributeName?: string;
   showClear?: string;
   showModifiers?: string;
   tool?: Tool;
