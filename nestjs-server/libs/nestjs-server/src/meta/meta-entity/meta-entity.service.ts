@@ -376,13 +376,16 @@ export class MetaEntityService {
 
     // Now that the models are fully defined, ask Sequelize to sync the model schema with the database
     if (alterDatabase) {
-      const isSqlite = this.ormService.sequelize.getDialect() === "sqlite";
       this.logger.log("Starting syncMetaModelWithDatabase: synchronizing models with database (alter: true)...");
       try {
+        await this.eventService.dispatchOnBeforeSchemaUpdate();
+
+        const isSqlite = this.ormService.sequelize.getDialect() === "sqlite";
         if (isSqlite) {
           // Drop any leftover backup tables from previous failed sync attempts
           await this.ormService.sequelize.query("DROP TABLE IF EXISTS Species_backup;");
           await this.ormService.sequelize.query("DROP TABLE IF EXISTS AssertionType_backup;");
+          await this.ormService.sequelize.query("DROP TABLE IF EXISTS Protocol_backup;");
           await this.ormService.sequelize.query("DROP TABLE IF EXISTS Assertion_backup;");
           await this.ormService.sequelize.query("PRAGMA foreign_keys = OFF;");
         }
@@ -425,6 +428,7 @@ export class MetaEntityService {
         this.logger.log("Database schema synchronization completed successfully.");
         await this.eventService.dispatchOnSchemaUpdate();
       } catch (e: any) {
+        const isSqlite = this.ormService.sequelize.getDialect() === "sqlite";
         if (isSqlite) {
           try {
             await this.ormService.sequelize.query("PRAGMA foreign_keys = ON;");

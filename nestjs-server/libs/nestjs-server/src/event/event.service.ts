@@ -111,6 +111,14 @@ export class EventService {
         }
     }
 
+    async dispatchOnBeforeSchemaUpdate() {
+        for (const listener of this.schemaListenerList) {
+            if (listener.onBeforeSchemaUpdate) {
+                await listener.onBeforeSchemaUpdate();
+            }
+        }
+    }
+
     async dispatchOnSchemaUpdate() {
         for (const listener of this.schemaListenerList) {
             await listener.onSchemaUpdate();
@@ -141,5 +149,6 @@ export interface DataEventListener extends EventListener {
 }
 
 export interface SchemaListener extends EventListener {
+    onBeforeSchemaUpdate?(): Promise<void>;
     onSchemaUpdate(): Promise<void>;
 }

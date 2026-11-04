@@ -163,6 +163,7 @@ Then('the date time input should be visible', async function (this: UIWorld) {
 Then('the time input should not be visible', async function (this: UIWorld) {
   if (!this.page) throw new Error('Playwright page is not initialized');
   const timeInput = this.page.locator('lib-date-time-control lib-time-control');
+  await timeInput.waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
   expect(await timeInput.count()).to.equal(0);
 });
 
