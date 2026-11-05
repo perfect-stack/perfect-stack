@@ -1,6 +1,6 @@
-<div class="container-fluid mt-3">
+<div class="container-fluid my-3 pb-4">
   @if (metaRole$ | async; as metaRole) {
-    <div class="bg-light shadow-sm border py-3 px-2">
+    <div class="bg-light shadow-sm border py-3 px-3 rounded">
       <h2>Role Edit</h2>
       <form class="form mb-2" #form="ngForm" [formGroup]="metaRoleForm">
         <div class="row">
@@ -32,8 +32,9 @@
                   [init]="{
                      base_url: '/tinymce',
                      suffix: '.min',
-                     height: '100px;',
+                     height: 50,
                      menubar: false,
+                     statusbar: false,
                      plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
                      toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
                    }"
@@ -93,70 +94,76 @@
                 @if (entitySubjectOptions$|async; as entitySubjectOptions) {
                   <div class="col-4">
                     <h4>Entities</h4>
-                    @for (subject of entitySubjectOptions; track subject) {
-                      <div>
-                        <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
-                          @switch (subject.type) {
-                            @case (SubjectType.Special) {
-                              <span class="material-symbols-outlined align-middle">emergency</span>
+                    <div class="subjects-col-scroll">
+                      @for (subject of entitySubjectOptions; track subject) {
+                        <div>
+                          <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                            @switch (subject.type) {
+                              @case (SubjectType.Special) {
+                                <span class="material-symbols-outlined align-middle">emergency</span>
+                              }
+                              @case (SubjectType.Entity) {
+                                <span class="material-symbols-outlined align-middle">category</span>
+                              }
+                              @case (SubjectType.Menu) {
+                                <span class="material-symbols-outlined align-middle">menu</span>
+                              }
                             }
-                            @case (SubjectType.Entity) {
-                              <span class="material-symbols-outlined align-middle">category</span>
-                            }
-                            @case (SubjectType.Menu) {
-                              <span class="material-symbols-outlined align-middle">menu</span>
-                            }
-                          }
-                          {{subject.name}}
+                            {{toTitleCase(subject.name)}}
+                          </div>
                         </div>
-                      </div>
-                    }
+                      }
+                    </div>
                   </div>
                 }
                 @if (menuSubjectOptions$|async; as menuSubjectOptions) {
                   <div class="col-4">
                     <h4>Menus</h4>
-                    @for (subject of menuSubjectOptions; track subject) {
-                      <div>
-                        <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
-                          @switch (subject.type) {
-                            @case (SubjectType.Special) {
-                              <span class="material-symbols-outlined align-middle">emergency</span>
+                    <div class="subjects-col-scroll">
+                      @for (subject of menuSubjectOptions; track subject) {
+                        <div>
+                          <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                            @switch (subject.type) {
+                              @case (SubjectType.Special) {
+                                <span class="material-symbols-outlined align-middle">emergency</span>
+                              }
+                              @case (SubjectType.Entity) {
+                                <span class="material-symbols-outlined align-middle">category</span>
+                              }
+                              @case (SubjectType.Menu) {
+                                <span class="material-symbols-outlined align-middle">menu</span>
+                              }
                             }
-                            @case (SubjectType.Entity) {
-                              <span class="material-symbols-outlined align-middle">category</span>
-                            }
-                            @case (SubjectType.Menu) {
-                              <span class="material-symbols-outlined align-middle">menu</span>
-                            }
-                          }
-                          {{subject.name}}
+                            {{toTitleCase(subject.name)}}
+                          </div>
                         </div>
-                      </div>
-                    }
+                      }
+                    </div>
                   </div>
                 }
                 @if (specialSubjectOptions$|async; as specialSubjectOptions) {
                   <div class="col-4">
                     <h4>Specials</h4>
-                    @for (subject of specialSubjectOptions; track subject) {
-                      <div>
-                        <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
-                          @switch (subject.type) {
-                            @case (SubjectType.Special) {
-                              <span class="material-symbols-outlined align-middle">emergency</span>
+                    <div class="subjects-col-scroll">
+                      @for (subject of specialSubjectOptions; track subject) {
+                        <div>
+                          <div class="form-control tool drag-handle my-1" my-draggable [drag-data]="subject">
+                            @switch (subject.type) {
+                              @case (SubjectType.Special) {
+                                <span class="material-symbols-outlined align-middle">emergency</span>
+                              }
+                              @case (SubjectType.Entity) {
+                                <span class="material-symbols-outlined align-middle">category</span>
+                              }
+                              @case (SubjectType.Menu) {
+                                <span class="material-symbols-outlined align-middle">menu</span>
+                              }
                             }
-                            @case (SubjectType.Entity) {
-                              <span class="material-symbols-outlined align-middle">category</span>
-                            }
-                            @case (SubjectType.Menu) {
-                              <span class="material-symbols-outlined align-middle">menu</span>
-                            }
-                          }
-                          {{subject.name}}
+                            {{toTitleCase(subject.name)}}
+                          </div>
                         </div>
-                      </div>
-                    }
+                      }
+                    </div>
                   </div>
                 }
               </div>
@@ -164,7 +171,7 @@
           </div>
         </div>
       </form>
-      <div class="d-flex my-5">
+      <div class="d-flex mt-4 mb-2">
         <div class="flex-grow-1"></div>
         <button class="btn btn-danger me-2" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onDelete(metaRole)">Delete</button>
         <button class="btn btn-outline-primary me-2" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onCancel()">Cancel</button>

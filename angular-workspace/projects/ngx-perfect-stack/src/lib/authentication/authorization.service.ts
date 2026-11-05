@@ -5,6 +5,16 @@ import {Inject, Injectable} from '@angular/core';
 import {AuthenticationService} from './authentication.service';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
 
+export const SYSTEM_SPECIAL_SUBJECTS = new Set([
+  'meta',
+  'batch',
+  'migrate',
+  'import',
+  'audit',
+  'authentication',
+  'accountadministration',
+]);
+
 @Injectable({
   providedIn: 'root'
 })
@@ -172,8 +182,21 @@ export class AuthorizationService {
     const cleanPermitAction = permitAction ? permitAction.trim().toLowerCase() : '';
     const cleanPermitSubject = permitSubject ? permitSubject.trim().toLowerCase() : '';
 
-    const actionMatch = cleanAction === cleanPermitAction || cleanPermitAction === 'any';
-    const subjectMatch = cleanSubject === cleanPermitSubject || cleanPermitSubject === 'any';
+    // Action matching:
+    // If permitAction is 'any', it expands to all standard data CRUD actions (Read, Edit, Archive, Delete).
+    // It does NOT match 'menu', which requires an explicit 'menu' permitAction (e.g. Menu.Any or Menu.<MenuName>).
+    const actionMatch =
+      cleanAction === cleanPermitAction ||
+      (cleanPermitAction === 'any' && cleanAction !== 'menu');
+
+    // Subject matching:
+    // If permitSubject is 'any', it matches all domain entity subjects,
+    // but DOES NOT match system specials (Meta, Batch, Migrate, etc.) which require explicit grants.
+    const isSpecialSubject =
+      cleanAction !== 'menu' && SYSTEM_SPECIAL_SUBJECTS.has(cleanSubject);
+    const subjectMatch =
+      cleanSubject === cleanPermitSubject ||
+      (cleanPermitSubject === 'any' && !isSpecialSubject);
 
     return actionMatch && subjectMatch;
   }

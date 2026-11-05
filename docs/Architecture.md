@@ -132,6 +132,20 @@ Testing is decoupled into two independent sub-projects:
 
 ---
 
+### 4.5. Authorization Architecture & Wildcard Mechanics
+Security and access control in Perfect-Stack are declarative, enforced symmetrically across both the Angular frontend (`ngx-perfect-stack` route guards, menu rendering, component wrappers) and the NestJS backend (`nestjs-server` `@ActionPermit` route guards):
+- **Permission Model**: Permissions consist of an `{ action, subject }` pair compiled into `"<action>.<subject>"`.
+- **Role Inheritance**: Defined via `inherits: "<ParentRole>"`. Permissions of parent and ancestor roles are merged automatically.
+- **Wildcard Scaling with `"Any"`**:
+  - **`Subject: Any`**: Matches all business domain entities (e.g. `Pet`, `CaptureEvent`, `Person`). Allows administrative and editor roles to automatically cover newly created entities without updating role definitions.
+  - **`Action: Any`**: Expands to all CRUD data operations (`Read`, `Edit`, `Archive`, `Delete`).
+- **Safeguards**:
+  - **Special Subjects Protection**: `SYSTEM_SPECIAL_SUBJECTS` (`Meta`, `Batch`, `Migrate`, `Import`, `Audit`, `Authentication`, `AccountAdministration`) are strictly protected from `*.Any` wildcards and always require explicit grants (e.g. `Edit.Meta`).
+  - **Menu Isolation**: `ActionType.Menu` permissions are isolated from data wildcards (`Action: Any` will never inadvertently expose navigation menus); menu visibility requires explicit `Menu.<MenuName>` or `Menu.Any` permissions.
+- **Normalized Matching**: Input actions and subjects are trimmed and matched case-insensitively across both frontend and backend.
+
+---
+
 ## 5. End-to-End Execution Flow
 
 ```mermaid

@@ -2,6 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MetaRoleService } from '../meta/meta-role/meta-role.service';
 import { MetaRole } from '../domain/meta.role';
 
+export const SYSTEM_SPECIAL_SUBJECTS = new Set([
+  'meta',
+  'batch',
+  'migrate',
+  'import',
+  'audit',
+  'authentication',
+  'accountadministration',
+]);
+
 @Injectable()
 export class AuthorizationService {
   private readonly logger = new Logger(AuthorizationService.name);
@@ -111,10 +121,32 @@ export class AuthorizationService {
     permitAction: string,
     permitSubject: string,
   ) {
-    return (
-      action === permitAction &&
-      (subject === permitSubject || permitSubject === 'Any')
-    );
+    const cleanAction = action ? action.trim().toLowerCase() : '';
+    const cleanSubject = subject ? subject.trim().toLowerCase() : '';
+    const cleanPermitAction = permitAction
+      ? permitAction.trim().toLowerCase()
+      : '';
+    const cleanPermitSubject = permitSubject
+      ? permitSubject.trim().toLowerCase()
+      : '';
+
+    // Action matching:
+    // If permitAction is 'any', it expands to all standard data CRUD actions (Read, Edit, Archive, Delete).
+    // It does NOT match 'menu', which requires an explicit 'menu' permitAction (e.g. Menu.Any or Menu.<MenuName>).
+    const actionMatch =
+      cleanAction === cleanPermitAction ||
+      (cleanPermitAction === 'any' && cleanAction !== 'menu');
+
+    // Subject matching:
+    // If permitSubject is 'any', it matches all domain entity subjects,
+    // but DOES NOT match system specials (Meta, Batch, Migrate, etc.) which require explicit grants.
+    const isSpecialSubject =
+      cleanAction !== 'menu' && SYSTEM_SPECIAL_SUBJECTS.has(cleanSubject);
+    const subjectMatch =
+      cleanSubject === cleanPermitSubject ||
+      (cleanPermitSubject === 'any' && !isSpecialSubject);
+
+    return actionMatch && subjectMatch;
   }
 
   /**

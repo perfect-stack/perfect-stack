@@ -34,6 +34,7 @@ describe("AuthorizationService", () => {
       permissions: [
         { action: "Edit", subject: "Event" },
         { action: "Edit", subject: "MonitoringStation" },
+        { action: "Any", subject: "Observation" },
       ],
     } as any,
     {
@@ -44,6 +45,7 @@ describe("AuthorizationService", () => {
       permissions: [
         { action: "Edit", subject: "Species" },
         { action: "Menu", subject: "Admin" },
+        { action: "Edit", subject: "Meta" },
       ],
     } as any,
   ];
@@ -98,6 +100,53 @@ describe("AuthorizationService", () => {
     // MonitoringStation search requires Read.MonitoringStation
     const canReadStation = service.checkPermission("Read", "MonitoringStation");
     expect(canReadStation).toBeTrue();
+  });
+
+  it("should protect Special Subjects from Read.Any wildcards", () => {
+    const mockUser: User = {
+      getGroups: () => ["user"], // viewer has Read.Any
+    } as any;
+    userSubject.next(mockUser);
+
+    // Read.Any should NOT grant access to system special "Meta"
+    const canReadMeta = service.checkPermission("Read", "Meta");
+    expect(canReadMeta).toBeFalse();
+
+    // Read.Any should NOT grant access to "Batch"
+    const canReadBatch = service.checkPermission("Read", "Batch");
+    expect(canReadBatch).toBeFalse();
+  });
+
+  it("should allow explicit grants on Special Subjects", () => {
+    const mockUser: User = {
+      getGroups: () => ["admin"], // admin has explicit Edit.Meta
+    } as any;
+    userSubject.next(mockUser);
+
+    const canEditMeta = service.checkPermission("Edit", "Meta");
+    expect(canEditMeta).toBeTrue();
+  });
+
+  it("should expand Action: Any to all CRUD data operations", () => {
+    const mockUser: User = {
+      getGroups: () => ["user"], // editor has Any.Observation
+    } as any;
+    userSubject.next(mockUser);
+
+    expect(service.checkPermission("Read", "Observation")).toBeTrue();
+    expect(service.checkPermission("Edit", "Observation")).toBeTrue();
+    expect(service.checkPermission("Delete", "Observation")).toBeTrue();
+    expect(service.checkPermission("Archive", "Observation")).toBeTrue();
+  });
+
+  it("should safeguard Menu actions from Action: Any wildcards", () => {
+    const mockUser: User = {
+      getGroups: () => ["user"], // editor has Any.Observation
+    } as any;
+    userSubject.next(mockUser);
+
+    // Action: Any should NOT match ActionType.Menu
+    expect(service.checkPermission("Menu", "Observation")).toBeFalse();
   });
 
   it("should permit menu access for inherited Menu permissions", () => {

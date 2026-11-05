@@ -8,6 +8,7 @@ import {MetaEntityService} from '../../entity/meta-entity-service/meta-entity.se
 import {MetaEntity} from '../../../domain/meta.entity';
 import {MetaMenuService} from '../../menu/meta-menu-service/meta-menu.service';
 import {ClientConfigService} from '../../../client/config/client-config.service';
+import {toTitleCase} from '../../../utils/string-utils';
 
 @Component({
     selector: 'lib-meta-role-edit',
@@ -16,6 +17,8 @@ import {ClientConfigService} from '../../../client/config/client-config.service'
     standalone: false
 })
 export class MetaRoleEditComponent implements OnInit {
+
+  readonly toTitleCase = toTitleCase;
 
   metaRoleName: string | null;
   metaRole$: Observable<MetaRole>;
@@ -116,6 +119,10 @@ export class MetaRoleEditComponent implements OnInit {
       {
         type: SubjectType.Special,
         name: "Import"
+      },
+      {
+        type: SubjectType.Special,
+        name: "AccountAdministration"
       }
     ])
   }

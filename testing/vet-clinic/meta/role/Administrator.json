@@ -10,67 +10,15 @@
     },
     {
       "action": "Edit",
+      "subject": "Any"
+    },
+    {
+      "action": "Delete",
+      "subject": "Any"
+    },
+    {
+      "action": "Edit",
       "subject": "Meta"
-    },
-    {
-      "action": "Edit",
-      "subject": "Pet"
-    },
-    {
-      "action": "Edit",
-      "subject": "Owner"
-    },
-    {
-      "action": "Edit",
-      "subject": "Clinic"
-    },
-    {
-      "action": "Edit",
-      "subject": "Species"
-    },
-    {
-      "action": "Edit",
-      "subject": "Method"
-    },
-    {
-      "action": "Edit",
-      "subject": "ActivityTemplate"
-    },
-    {
-      "action": "Edit",
-      "subject": "AssertionType"
-    },
-    {
-      "action": "Edit",
-      "subject": "Occurrence"
-    },
-    {
-      "action": "Delete",
-      "subject": "Pet"
-    },
-    {
-      "action": "Delete",
-      "subject": "Owner"
-    },
-    {
-      "action": "Delete",
-      "subject": "Clinic"
-    },
-    {
-      "action": "Delete",
-      "subject": "Species"
-    },
-    {
-      "action": "Delete",
-      "subject": "Method"
-    },
-    {
-      "action": "Delete",
-      "subject": "ActivityTemplate"
-    },
-    {
-      "action": "Delete",
-      "subject": "AssertionType"
     },
     {
       "action": "Menu",

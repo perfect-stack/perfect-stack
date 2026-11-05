@@ -122,8 +122,13 @@ Defines the top application navigation bar, dropdown menus, and links.
 
 #### 4. Meta Role (`meta/role/<RoleName>.json`)
 Declares permissions mapped to user groups received from your identity provider (JWT claims):
-- Actions: `Read`, `Edit`, `Delete`, `Menu`.
-- Subjects: `Any`, `Meta`, or specific entity names (`Pet`, `Owner`, `Clinic`).
+- **Actions**: `Any`, `Read`, `Edit`, `Archive`, `Delete`, `Menu`.
+- **Subjects**: Specific entity names (`Pet`, `Owner`, `Clinic`), system specials (`Meta`, `Batch`, `Migrate`), or `Any` (wildcard).
+- **Wildcard Scaling with `Any`**:
+  - `Action: Any` expands to all CRUD data operations (`Read`, `Edit`, `Archive`, `Delete`), while isolating `Menu` actions (which require explicit `Menu` grants).
+  - `Subject: Any` matches all business domain entities automatically, avoiding the need to edit role JSON files when new entities are added to the project.
+  - **Special Subjects Protection**: `SYSTEM_SPECIAL_SUBJECTS` (`Meta`, `Batch`, `Migrate`, `Import`, `Audit`, `Authentication`, `AccountAdministration`) are shielded from `*.Any` wildcards and always require explicit grants.
+- **Role Inheritance**: `inherits: "<ParentRole>"` allows composing hierarchical roles (e.g. `Editor` inherits `Viewer`; `Administrator` inherits `Editor`).
 
 *Example: Inspect [`Administrator.json`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/testing/vet-clinic/meta/role/Administrator.json).*
 
