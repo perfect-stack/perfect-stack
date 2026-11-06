@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Injector, NgZone, OnInit} from '@angular/core';
 import {combineLatest, Observable, tap, switchMap} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from '../data-service/data.service';
@@ -55,7 +55,9 @@ export class DataEditComponent implements OnInit {
               protected readonly toastService: ToastService,
               protected readonly eventService: EventService,
               protected readonly modalService: NgbModal,
-              protected readonly injector: Injector) {}
+              protected readonly injector: Injector,
+              protected readonly cdr: ChangeDetectorRef,
+              protected readonly ngZone: NgZone) {}
 
   ngOnInit(): void {
     this.ctx$ = combineLatest([this.route.paramMap, this.route.queryParamMap]).pipe(
@@ -70,10 +72,25 @@ export class DataEditComponent implements OnInit {
           return this.formService.loadFormContext(this.metaName, this.mode, this.entityId, paramMap, queryParamMap).pipe(
             tap((ctx) => {
               this.deleteAvailable = ctx.metaEntity.permanentDelete;
-              if (this.deleteAvailable && this.mode !== 'view' && this.metaName && this.entityId) {
-                this.dataService.destroyCheck(this.metaName, this.entityId).subscribe((destroyEnabled) => {
-                  console.log('destroyCheck got response', destroyEnabled);
-                  this.deleteCheck = destroyEnabled ? DeleteCheckType.Yes : DeleteCheckType.No;
+              if (this.deleteAvailable && this.mode === 'edit' && this.metaName && this.entityId) {
+                this.deleteCheck = DeleteCheckType.Unknown;
+                this.dataService.destroyCheck(this.metaName, this.entityId).subscribe({
+                  next: (destroyEnabled) => {
+                    console.log('destroyCheck got response', destroyEnabled);
+                    this.ngZone.run(() => {
+                      this.deleteCheck = destroyEnabled ? DeleteCheckType.Yes : DeleteCheckType.No;
+                      this.cdr.markForCheck();
+                      this.cdr.detectChanges();
+                    });
+                  },
+                  error: (err) => {
+                    console.error('destroyCheck error', err);
+                    this.ngZone.run(() => {
+                      this.deleteCheck = DeleteCheckType.No;
+                      this.cdr.markForCheck();
+                      this.cdr.detectChanges();
+                    });
+                  }
                 });
               }
 

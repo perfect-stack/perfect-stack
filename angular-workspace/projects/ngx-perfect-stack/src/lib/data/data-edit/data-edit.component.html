@@ -28,8 +28,8 @@
               @if (mode === 'edit' && deleteAvailable) {
                 <div class="mt-2">
                   <lib-permission-check [action]="ActionType.Delete" [subject]="metaName" [ctx]="ctx">
-                    @if (deleteCheck === DeleteCheckType.No) {
-                      <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
+                    @if (deleteCheck === DeleteCheckType.No || deleteCheck === DeleteCheckType.Unknown) {
+                      <span placement="top" [ngbTooltip]="deleteCheck === DeleteCheckType.Unknown ? 'Checking dependencies...' : 'This entity cannot be deleted because there are other entities that depend on it'">
                         <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn" [attr.data-testid]="'btn-delete'">Delete</button>
                       </span>
                     }
@@ -68,8 +68,8 @@
               @if (mode === 'edit' && deleteAvailable) {
                 <div class="mt-2">
                   <lib-permission-check [action]="ActionType.Delete" [subject]="metaName" [ctx]="ctx">
-                    @if (deleteCheck === DeleteCheckType.No) {
-                      <span placement="top" ngbTooltip="This entity cannot be deleted because there are other entities that depend on it">
+                    @if (deleteCheck === DeleteCheckType.No || deleteCheck === DeleteCheckType.Unknown) {
+                      <span placement="top" [ngbTooltip]="deleteCheck === DeleteCheckType.Unknown ? 'Checking dependencies...' : 'This entity cannot be deleted because there are other entities that depend on it'">
                         <button type="button" class="btn btn-outline-danger me-2" disabled id="deleteBtn" [attr.data-testid]="'btn-delete'">Delete</button>
                       </span>
                     }
