@@ -25,6 +25,8 @@ export class DataImportRowResult {
 export class DataImportModel {
   status!: "loaded" | "validated" | "imported" | "error";
   dataFormat!: string;
+  filename?: string;
+  executedBy?: string;
   headers!: string[];
   dataRows!: string[][];
 

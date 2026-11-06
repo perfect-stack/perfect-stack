@@ -56,6 +56,11 @@ export class PermissionCheckComponent implements OnInit, OnChanges {
   }
 
   checkPermission() {
+    if (!this.action && !this.subject) {
+      this.displayEnabled = this.enabledIf;
+      return;
+    }
+
     if(this.enabledIf) {
       this.displayEnabled = this.authorizationService.checkPermission(this.action, this.subject, this.dataSource);
     }

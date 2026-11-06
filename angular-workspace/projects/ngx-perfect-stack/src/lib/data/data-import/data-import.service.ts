@@ -29,4 +29,35 @@ export class DataImportService {
   importData(dataImportModel: DataImportModel) {
     return this.http.post<Job>(`${this.stackConfig.apiUrl}/job/data-import/import`, dataImportModel);
   }
+
+  searchJobs(criteria: {
+    pageNumber?: number;
+    pageSize?: number;
+    status?: string[];
+    textSearch?: string;
+    jobNames?: string[];
+    startDate?: string;
+    endDate?: string;
+  }): Observable<{ totalCount: number; pageNumber: number; pageSize: number; resultList: Job[] }> {
+    let params: any = {};
+    if (criteria.pageNumber) params.pageNumber = criteria.pageNumber.toString();
+    if (criteria.pageSize) params.pageSize = criteria.pageSize.toString();
+    if (criteria.status && criteria.status.length > 0) params.status = criteria.status.join(',');
+    if (criteria.textSearch) params.textSearch = criteria.textSearch;
+    if (criteria.jobNames && criteria.jobNames.length > 0) params.jobNames = criteria.jobNames.join(',');
+    if (criteria.startDate) params.startDate = criteria.startDate;
+    if (criteria.endDate) params.endDate = criteria.endDate;
+
+    return this.http.get<{ totalCount: number; pageNumber: number; pageSize: number; resultList: Job[] }>(
+      `${this.stackConfig.apiUrl}/job/data-import/search`,
+      { params }
+    );
+  }
+
+  rollbackJob(jobId: string): Observable<{ success: boolean; deletedCount: number; message: string; jobId: string; status: string }> {
+    return this.http.post<{ success: boolean; deletedCount: number; message: string; jobId: string; status: string }>(
+      `${this.stackConfig.apiUrl}/job/data-import/rollback/${jobId}`,
+      {}
+    );
+  }
 }

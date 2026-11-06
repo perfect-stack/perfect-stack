@@ -68,13 +68,13 @@ function isDistStale(distIndexPath: string, sourceDirs: string[]): boolean {
 }
 
 export async function ensureBackendRunning(): Promise<void> {
-  const isRunning = await isPortOpen(3080, '/meta/entity');
+  const isRunning = await isPortOpen(3180, '/meta/entity');
   if (isRunning) {
-    console.log('Backend already running on http://127.0.0.1:3080');
+    console.log('Backend already running on http://127.0.0.1:3180');
     return;
   }
 
-  console.log('Starting Vet Clinic Backend server on port 3080...');
+  console.log('Starting Vet Clinic Backend server on port 3180...');
   const serverDir = path.resolve(__dirname, '../server');
   backendProcess = spawn('npx', ['ts-node', '-r', 'tsconfig-paths/register', 'src/main.ts'], {
     cwd: serverDir,
@@ -101,25 +101,25 @@ export async function ensureBackendRunning(): Promise<void> {
     }
   });
 
-  const ready = await waitForServer(3080, '/meta/entity', 45000);
+  const ready = await waitForServer(3180, '/meta/entity', 45000);
   if (!ready) {
-    throw new Error('Timed out waiting for Vet Clinic Backend server to start on port 3080');
+    throw new Error('Timed out waiting for Vet Clinic Backend server to start on port 3180');
   }
-  console.log('Backend server is ready on http://127.0.0.1:3080');
+  console.log('Backend server is ready on http://127.0.0.1:3180');
 }
 
 export async function ensureFrontendRunning(): Promise<void> {
-  const isHttps = await checkUrl('https', 4200, '/');
+  const isHttps = await checkUrl('https', 4280, '/');
   if (isHttps) {
-    process.env.BASE_URL = 'https://127.0.0.1:4200';
-    console.log('Frontend already running on https://127.0.0.1:4200');
+    process.env.BASE_URL = 'https://127.0.0.1:4280';
+    console.log('Frontend already running on https://127.0.0.1:4280');
     return;
   }
 
-  const isHttp = await checkUrl('http', 4200, '/');
+  const isHttp = await checkUrl('http', 4280, '/');
   if (isHttp) {
-    process.env.BASE_URL = 'http://127.0.0.1:4200';
-    console.log('Frontend already running on http://127.0.0.1:4200');
+    process.env.BASE_URL = 'http://127.0.0.1:4280';
+    console.log('Frontend already running on http://127.0.0.1:4280');
     return;
   }
 
@@ -150,16 +150,16 @@ export async function ensureFrontendRunning(): Promise<void> {
     }
   }
 
-  console.log(`Starting CloudFront-like SPA Static Server from ${distDir} on port 4200...`);
-  spaServer = new SpaStaticServer(distDir, 4200);
+  console.log(`Starting CloudFront-like SPA Static Server from ${distDir} on port 4280...`);
+  spaServer = new SpaStaticServer(distDir, 4280);
   await spaServer.start();
 
-  const ready = await waitForServer(4200, '/', 15000);
+  const ready = await waitForServer(4280, '/', 15000);
   if (!ready) {
-    throw new Error('Timed out waiting for Frontend SPA static server to start on port 4200');
+    throw new Error('Timed out waiting for Frontend SPA static server to start on port 4280');
   }
-  process.env.BASE_URL = 'http://127.0.0.1:4200';
-  console.log('Frontend SPA server is ready on http://127.0.0.1:4200');
+  process.env.BASE_URL = 'http://127.0.0.1:4280';
+  console.log('Frontend SPA server is ready on http://127.0.0.1:4280');
 }
 
 export async function stopServers(): Promise<void> {

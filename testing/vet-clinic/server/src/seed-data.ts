@@ -579,6 +579,30 @@ export async function seedDatabase(app: INestApplicationContext): Promise<void> 
     logger.warn(`Could not verify/add Clinic columns: ${colErr.message}`);
   }
 
+  // 5a. Verify Job table schema columns for SQLite
+  try {
+    const [jobCols]: any = await ormService.sequelize.query('PRAGMA table_info(Job)');
+    const jobColNames = Array.isArray(jobCols) ? jobCols.map((c: any) => c.name) : [];
+    const newJobCols: [string, string][] = [
+      ['filename', 'TEXT'],
+      ['executed_by', 'TEXT'],
+      ['data_format', 'TEXT'],
+      ['row_count', 'INTEGER'],
+      ['imported_count', 'INTEGER'],
+      ['error_count', 'INTEGER'],
+      ['valid_count', 'INTEGER'],
+      ['skipped_count', 'INTEGER'],
+    ];
+    for (const [col, colType] of newJobCols) {
+      if (!jobColNames.includes(col)) {
+        await ormService.sequelize.query(`ALTER TABLE Job ADD COLUMN ${col} ${colType}`);
+        logger.log(`Added column ${col} to Job table`);
+      }
+    }
+  } catch (jobColErr: any) {
+    logger.warn(`Could not verify/add Job columns: ${jobColErr.message}`);
+  }
+
   for (const clinicDef of SEED_CLINICS) {
     const clinicRecord: any = await clinicModel.findOne({
       where: {

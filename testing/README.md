@@ -58,7 +58,7 @@ npm test
 
 ### 2. UI & Playwright End-to-End Tests (`vet-clinic`)
 
-All test execution commands below automatically manage both the NestJS backend server (`http://localhost:3080`) and the Angular frontend dev server (`http://localhost:4200`) lifecycle:
+All test execution commands below automatically manage both the NestJS backend server (`http://localhost:3180`) and the Angular frontend dev server (`http://localhost:4280`) lifecycle:
 
 ```bash
 cd testing/vet-clinic

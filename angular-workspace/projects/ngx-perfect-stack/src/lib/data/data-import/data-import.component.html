@@ -1,5 +1,12 @@
 <div class="container-fluid container-page">
-  <h2>Data Import</h2>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Data Import</h2>
+    <div class="btn-group">
+      <a class="btn btn-outline-secondary" routerLink="/data/Job/search">
+        Import History
+      </a>
+    </div>
+  </div>
 
   <br>
 
@@ -73,6 +80,23 @@
 
       @if(job && job.status === 'Completed') {
       <p class="text-success">Import Successful</p>
+      @if (canRollback()) {
+      <button class="btn btn-outline-danger btn-sm mb-2" (click)="openRollbackModal()">
+        Delete All Imported Entities
+      </button>
+      }
+      }
+
+      @if (rollbackSuccess) {
+      <div class="alert alert-info py-2" role="alert">
+        {{rollbackSuccess}}
+      </div>
+      }
+
+      @if(job && job.status === 'RolledBack') {
+      <div class="alert alert-warning py-2" role="alert">
+        This import has been rolled back.
+      </div>
       }
 
       @if(job && job.status === 'Error') {
@@ -90,7 +114,26 @@
 
   @if (data) {
   <div class="row">
-    <h3>Imported Data</h3>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h3 class="mb-0">Imported Data</h3>
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn" [ngClass]="rowFilter === 'all' ? 'btn-primary' : 'btn-outline-secondary'" (click)="setRowFilter('all')">
+          All ({{totalRowCount}})
+        </button>
+        <button type="button" class="btn" [ngClass]="rowFilter === 'errors' ? 'btn-danger' : 'btn-outline-danger'" (click)="setRowFilter('errors')">
+          Errors ({{errorRowCount}})
+        </button>
+        <button type="button" class="btn" [ngClass]="rowFilter === 'imported' ? 'btn-success' : 'btn-outline-success'" (click)="setRowFilter('imported')">
+          Imported ({{importedRowCount}})
+        </button>
+        <button type="button" class="btn" [ngClass]="rowFilter === 'valid' ? 'btn-info' : 'btn-outline-info'" (click)="setRowFilter('valid')">
+          Valid ({{validRowCount}})
+        </button>
+        <button type="button" class="btn" [ngClass]="rowFilter === 'skipped' ? 'btn-secondary' : 'btn-outline-secondary'" (click)="setRowFilter('skipped')">
+          Skipped ({{skipRowCount}})
+        </button>
+      </div>
+    </div>
     <table class="table">
       <thead>
         <tr>
@@ -108,6 +151,7 @@
       </thead>
       <tbody>
         @for (group of formRows; track $index; let rowIdx = $index) {
+        @if (isRowVisible(rowIdx)) {
         <tr [formGroup]="group">
 
           <!-- Print the row number to make error correction in original spreadsheet easier -->
@@ -172,9 +216,42 @@
           }
         </tr>
         }
+        }
       </tbody>
     </table>
   </div>
   }
 
 </div>
+
+@if (showRollbackModal) {
+<div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">Confirm Rollback</h5>
+        <button type="button" class="btn-close" (click)="closeRollbackModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete all <strong>{{importedRowCount}}</strong> entities created by this import?</p>
+        <p class="text-muted small">This action checks for downstream relationships. If any created entities have dependent records, the rollback will be blocked.</p>
+        @if (rollbackError) {
+        <div class="alert alert-danger" role="alert">
+          {{rollbackError}}
+        </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" [disabled]="rollbackInProgress" (click)="closeRollbackModal()">Cancel</button>
+        <button type="button" class="btn btn-danger" [disabled]="rollbackInProgress" (click)="confirmRollback()">
+          @if (rollbackInProgress) {
+            Deleting...
+          } @else {
+            Delete All Entities
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}

@@ -24,8 +24,8 @@ async function bootstrap() {
 
   // OpenAPI documentation
   // Localhost:
-  //   - http://localhost:3080/api/api-docs
-  //   - http://localhost:3080/api/api-json
+  //   - http://localhost:3180/api/api-docs
+  //   - http://localhost:3180/api/api-json
   const config = new DocumentBuilder()
     .setTitle("Web API documentation")
     .setDescription("The API documentation for the web services interface")
@@ -53,7 +53,7 @@ async function bootstrap() {
     logger.error("Error during initial database seeding:", seedErr);
   }
 
-  const port = process.env.PORT || 3080;
+  const port = process.env.PORT || 3180;
   await app.listen(port, "0.0.0.0");
   logger.log(`Vet Clinic Server is running on http://127.0.0.1:${port}`);
   logger.log(`OpenAPI documentation is available at http://127.0.0.1:${port}/api/api-docs`);

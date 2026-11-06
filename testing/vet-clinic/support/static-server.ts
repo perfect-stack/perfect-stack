@@ -30,7 +30,7 @@ export class SpaStaticServer {
   private rootDir: string;
   private port: number;
 
-  constructor(rootDir: string, port = 4200) {
+  constructor(rootDir: string, port = 4280) {
     this.rootDir = path.resolve(rootDir);
     this.port = port;
   }
@@ -69,9 +69,9 @@ export class SpaStaticServer {
     const rawUrl = req.url || '/';
     const parsedPath = rawUrl.split('?')[0];
 
-    // Forward /api and /api/* requests to backend NestJS server on port 3080
+    // Forward /api and /api/* requests to backend NestJS server on port 3180
     if (parsedPath === '/api' || parsedPath.startsWith('/api/')) {
-      const backendPort = parseInt(process.env.BACKEND_PORT || '3080', 10);
+      const backendPort = parseInt(process.env.BACKEND_PORT || '3180', 10);
       const proxyReq = http.request({
         hostname: '127.0.0.1',
         port: backendPort,

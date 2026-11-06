@@ -1,0 +1,16 @@
+.container-page {
+  padding-top: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+.table th {
+  font-size: 0.825rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.badge {
+  font-weight: 500;
+}

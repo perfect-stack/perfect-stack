@@ -57,7 +57,7 @@
           "editable": true,
           "roles": [],
           "label": "Data Import",
-          "route": "/data/import"
+          "route": "/data/Job/search"
         },
         {
           "label": "Species",

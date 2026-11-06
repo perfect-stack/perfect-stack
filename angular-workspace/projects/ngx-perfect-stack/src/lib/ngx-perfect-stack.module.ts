@@ -161,6 +161,7 @@ import {DiscriminatorService} from "./data/data-service/discriminator.service";
 import { ColourBandComponentComponent } from './data/controller/layout/controls/colour-band-component/colour-band-component.component';
 import { ColourBandDialogComponent } from './data/controller/layout/controls/colour-band-component/colour-band-dialog/colour-band-dialog.component';
 import {DataImportComponent} from "./data/data-import/data-import.component";
+import {DataImportSearchComponent} from "./data/data-import/data-import-search/data-import-search.component";
 import {BatchComponent} from "./meta/batch/batch.component";
 import { MsalModule, MsalService, MSAL_INSTANCE, MsalBroadcastService } from '@azure/msal-angular';
 import { IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
@@ -168,6 +169,7 @@ import { NgxPerfectStackConfig, STACK_CONFIG } from './ngx-perfect-stack-config'
 
 export const STACK_ROUTES: Routes = [
   { path: 'data/import', component: DataImportComponent, canActivate: [AuthGuard] },
+  { path: 'data/import/jobs', redirectTo: 'data/Job/search', pathMatch: 'full' },
   { path: 'data/:metaName/search', component: DataSearchComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/search_edit', component: DataSearchEditComponent, canActivate: [AuthGuard] },
   { path: 'data/:metaName/:mode/:id', component: DataEditComponent, canActivate: [AuthGuard] },

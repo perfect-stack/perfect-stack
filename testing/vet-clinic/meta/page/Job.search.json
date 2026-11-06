@@ -1,0 +1,102 @@
+{
+  "name": "Job.search",
+  "title": "Data Import Jobs",
+  "type": "search",
+  "layoutStyle": "",
+  "dataQueryList": [],
+  "controllers": [],
+  "templates": [
+    {
+      "cells": [
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "filename"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "status",
+            "component": "Select"
+          },
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "executed_by"
+          }
+        ],
+        [
+          {
+            "width": "4",
+            "height": "1",
+            "attributeName": "data_format"
+          }
+        ]
+      ],
+      "metaEntityName": "Job",
+      "type": "form",
+      "locations": {
+        "TopRight": {
+          "type": "Button",
+          "styles": "btn btn-primary",
+          "label": "New Import",
+          "route": "/data/import"
+        }
+      }
+    },
+    {
+      "cells": [
+        [
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "created_at"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "filename"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "executed_by"
+          },
+          {
+            "width": "2",
+            "height": "1",
+            "attributeName": "data_format"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "status"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "row_count"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "imported_count"
+          },
+          {
+            "width": "1",
+            "height": "1",
+            "attributeName": "error_count"
+          }
+        ]
+      ],
+      "metaEntityName": "Job",
+      "type": "table",
+      "customQuery": "JobSearch",
+      "navigation": "Enabled",
+      "route": "/data/import?jobId=${id}&phase=importing",
+      "orderByName": "created_at",
+      "orderByDir": "DESC"
+    }
+  ]
+}

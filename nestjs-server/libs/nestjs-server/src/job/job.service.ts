@@ -31,7 +31,7 @@ export class JobService {
     }
 
     private get isPostgres(): boolean {
-        return this.ormService.sequelize.getDialect() === 'postgres';
+        return typeof this.ormService?.sequelize?.getDialect === 'function' && this.ormService.sequelize.getDialect() === 'postgres';
     }
 
     registerJob(name: string, handler: JobHandler) {
@@ -71,7 +71,9 @@ export class JobService {
 
     async getJobById(jobId: string): Promise<Job | null> {
         const rows: Job[] = await this.ormService.sequelize.query(
-            `SELECT id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at
+            `SELECT id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary,
+                    filename, executed_by, data_format, row_count, imported_count, error_count, valid_count, skipped_count,
+                    created_at, updated_at
              FROM "Job"
              WHERE id = :id;`,
             {
@@ -84,7 +86,9 @@ export class JobService {
 
     async getLatestJob(jobName: string): Promise<Job | null> {
         const rows: Job[] = await this.ormService.sequelize.query(
-            `SELECT id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary, created_at, updated_at
+            `SELECT id, name, status, status_message, data, step_index, step_count, chunk_size, duration, result_summary,
+                    filename, executed_by, data_format, row_count, imported_count, error_count, valid_count, skipped_count,
+                    created_at, updated_at
              FROM "Job"
              WHERE name = :name
              ORDER BY created_at DESC
@@ -175,7 +179,7 @@ export class JobService {
         return existingJob;
     }
 
-    async submitJob(name: string, stepCount: number, payload: any, chunkSize: number = 1): Promise<Job> {
+    async submitJob(name: string, stepCount: number, payload: any, chunkSize: number = 1, metadata?: Partial<Job>): Promise<Job> {
         // Use a database transaction to ensure that across multiple NestJS server instances,
         // only one instance of a Batch Job can be submitted/running at a given time.
         return await this.ormService.sequelize.transaction(async (txn: Transaction) => {
@@ -239,16 +243,24 @@ export class JobService {
                 step_index: 0,
                 step_count: stepCount,
                 chunk_size: chunkSize,
-                result_summary: null,
+                result_summary: metadata?.result_summary ?? null,
+                filename: metadata?.filename ?? null,
+                executed_by: metadata?.executed_by ?? null,
+                data_format: metadata?.data_format ?? null,
+                row_count: metadata?.row_count ?? stepCount,
+                imported_count: metadata?.imported_count ?? 0,
+                error_count: metadata?.error_count ?? 0,
+                valid_count: metadata?.valid_count ?? 0,
+                skipped_count: metadata?.skipped_count ?? 0,
                 created_at: new Date(),
                 updated_at: new Date(),
             };
 
             if (this.isPostgres) {
                 const insertRows: Job[] = await this.ormService.sequelize.query(
-                    `INSERT INTO "Job" (id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, created_at, updated_at)
-                     VALUES (:id, :name, :status, :status_message, :step_index, :step_count, :chunk_size, :duration, :data, :result_summary, :created_at, :updated_at)
-                     RETURNING id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, created_at, updated_at;`,
+                    `INSERT INTO "Job" (id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, filename, executed_by, data_format, row_count, imported_count, error_count, valid_count, skipped_count, created_at, updated_at)
+                     VALUES (:id, :name, :status, :status_message, :step_index, :step_count, :chunk_size, :duration, :data, :result_summary, :filename, :executed_by, :data_format, :row_count, :imported_count, :error_count, :valid_count, :skipped_count, :created_at, :updated_at)
+                     RETURNING id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, filename, executed_by, data_format, row_count, imported_count, error_count, valid_count, skipped_count, created_at, updated_at;`,
                     {
                         replacements: newJob as any,
                         type: QueryTypes.SELECT,
@@ -261,8 +273,8 @@ export class JobService {
                 return createdJob;
             } else {
                 await this.ormService.sequelize.query(
-                    `INSERT INTO "Job" (id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, created_at, updated_at)
-                     VALUES (:id, :name, :status, :status_message, :step_index, :step_count, :chunk_size, :duration, :data, :result_summary, :created_at, :updated_at);`,
+                    `INSERT INTO "Job" (id, name, status, status_message, step_index, step_count, chunk_size, duration, data, result_summary, filename, executed_by, data_format, row_count, imported_count, error_count, valid_count, skipped_count, created_at, updated_at)
+                     VALUES (:id, :name, :status, :status_message, :step_index, :step_count, :chunk_size, :duration, :data, :result_summary, :filename, :executed_by, :data_format, :row_count, :imported_count, :error_count, :valid_count, :skipped_count, :created_at, :updated_at);`,
                     {
                         replacements: newJob as any,
                         transaction: txn,
@@ -272,6 +284,150 @@ export class JobService {
                 return newJob;
             }
         });
+    }
+
+    async updateJobCounts(jobId: string, counts: {
+        row_count?: number;
+        imported_count?: number;
+        error_count?: number;
+        valid_count?: number;
+        skipped_count?: number;
+        result_summary?: string | null;
+    }): Promise<void> {
+        const updateClauses: string[] = [];
+        const replacements: any = { id: jobId };
+        if (counts.row_count !== undefined) {
+            updateClauses.push('row_count = :row_count');
+            replacements.row_count = counts.row_count;
+        }
+        if (counts.imported_count !== undefined) {
+            updateClauses.push('imported_count = :imported_count');
+            replacements.imported_count = counts.imported_count;
+        }
+        if (counts.error_count !== undefined) {
+            updateClauses.push('error_count = :error_count');
+            replacements.error_count = counts.error_count;
+        }
+        if (counts.valid_count !== undefined) {
+            updateClauses.push('valid_count = :valid_count');
+            replacements.valid_count = counts.valid_count;
+        }
+        if (counts.skipped_count !== undefined) {
+            updateClauses.push('skipped_count = :skipped_count');
+            replacements.skipped_count = counts.skipped_count;
+        }
+        if (counts.result_summary !== undefined) {
+            updateClauses.push('result_summary = :result_summary');
+            replacements.result_summary = counts.result_summary;
+        }
+        if (updateClauses.length > 0) {
+            await this.ormService.sequelize.query(
+                `UPDATE "Job" SET ${updateClauses.join(', ')} WHERE id = :id;`,
+                { replacements }
+            );
+        }
+    }
+
+    async searchJobs(criteria: {
+        pageNumber?: number;
+        pageSize?: number;
+        statusList?: string[];
+        jobNames?: string[];
+        textSearch?: string;
+        filename?: string;
+        executedBy?: string;
+        dataFormat?: string;
+        startDate?: string;
+        endDate?: string;
+    }): Promise<{ totalCount: number; pageNumber: number; pageSize: number; resultList: Job[] }> {
+        const pageNumber = Math.max(1, criteria.pageNumber || 1);
+        const pageSize = Math.max(1, Math.min(100, criteria.pageSize || 25));
+        const offset = (pageNumber - 1) * pageSize;
+
+        const whereParts: string[] = ['1=1'];
+        const replacements: any = {
+            limit: pageSize,
+            offset: offset,
+        };
+
+        if (criteria.jobNames && criteria.jobNames.length > 0) {
+            whereParts.push(`name IN (:jobNames)`);
+            replacements.jobNames = criteria.jobNames;
+        }
+
+        if (criteria.statusList && criteria.statusList.length > 0) {
+            whereParts.push(`status IN (:statusList)`);
+            replacements.statusList = criteria.statusList;
+        }
+
+        if (criteria.filename && criteria.filename.trim()) {
+            replacements.filename = `%${criteria.filename.trim()}%`;
+            whereParts.push(this.isPostgres ? `filename ILIKE :filename` : `filename LIKE :filename`);
+        }
+
+        if (criteria.executedBy && criteria.executedBy.trim()) {
+            replacements.executedBy = `%${criteria.executedBy.trim()}%`;
+            whereParts.push(this.isPostgres ? `executed_by ILIKE :executedBy` : `executed_by LIKE :executedBy`);
+        }
+
+        if (criteria.dataFormat && criteria.dataFormat.trim()) {
+            replacements.dataFormat = `%${criteria.dataFormat.trim()}%`;
+            whereParts.push(this.isPostgres ? `data_format ILIKE :dataFormat` : `data_format LIKE :dataFormat`);
+        }
+
+        if (criteria.textSearch && criteria.textSearch.trim()) {
+            const searchTerm = `%${criteria.textSearch.trim()}%`;
+            replacements.searchTerm = searchTerm;
+            if (this.isPostgres) {
+                whereParts.push(`(filename ILIKE :searchTerm OR executed_by ILIKE :searchTerm OR name ILIKE :searchTerm OR data_format ILIKE :searchTerm)`);
+            } else {
+                whereParts.push(`(filename LIKE :searchTerm OR executed_by LIKE :searchTerm OR name LIKE :searchTerm OR data_format LIKE :searchTerm)`);
+            }
+        }
+
+        if (criteria.startDate) {
+            whereParts.push(`created_at >= :startDate`);
+            replacements.startDate = new Date(criteria.startDate);
+        }
+
+        if (criteria.endDate) {
+            whereParts.push(`created_at <= :endDate`);
+            replacements.endDate = new Date(criteria.endDate);
+        }
+
+        const whereSql = whereParts.join(' AND ');
+
+        const countRows: any[] = await this.ormService.sequelize.query(
+            `SELECT COUNT(*) as count FROM "Job" WHERE ${whereSql};`,
+            {
+                replacements,
+                type: QueryTypes.SELECT,
+            }
+        );
+        const totalCount = countRows && countRows.length > 0 ? parseInt(countRows[0].count || countRows[0]['COUNT(*)'] || '0', 10) : 0;
+
+        // We intentionally omit `data` to avoid serializing massive JSON blobs in search results
+        const selectSql = `
+            SELECT id, name, status, status_message, step_index, step_count, chunk_size, duration, result_summary,
+                   filename, executed_by, data_format, row_count, imported_count, error_count, valid_count, skipped_count,
+                   created_at, updated_at
+            FROM "Job"
+            WHERE ${whereSql}
+            ORDER BY created_at DESC
+            LIMIT :limit OFFSET :offset;
+        `;
+
+        const resultList: Job[] = await this.ormService.sequelize.query(selectSql, {
+            replacements,
+            type: QueryTypes.SELECT,
+        });
+
+        return {
+            totalCount,
+            pageNumber,
+            pageSize,
+            resultList,
+        };
     }
 
     async invokeJob(jobId: string) {

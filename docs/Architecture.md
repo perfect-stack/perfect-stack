@@ -206,7 +206,10 @@ Local packages are shared between modules during development using `yalc`:
   npm run build:lib:yalc
   ```
 
-### Running Tests
+### Running Tests & Port Allocations
+To eliminate port collisions between CARMON (`3080` backend, `4200` frontend, `4010` docmon mock) and Perfect Stack test environments, Perfect Stack test projects use dedicated port numbers:
+- **Vet Clinic Backend**: Port `3180` (configured in `testing/vet-clinic/server/local.env` and `main.ts`).
+- **Vet Clinic Frontend / Static SPA**: Port `4280` (configured in `angular-workspace/angular.json`, `client/proxy.conf.json`, `support/static-server.ts`).
 - **Run Backend Service Integration Tests**:
   ```bash
   cd testing/test-server
@@ -220,7 +223,34 @@ Local packages are shared between modules during development using `yalc`:
 
 ---
 
-## 7. Architecture Evolution Rule
+## 7. Data Import & Job Lifecycle Subsystem
+
+Data Import provides a robust, two-phase bulk data processing pipeline (`validating` -> `importing`) with full historical tracking, searchability, row-level error analysis, and conflict-checked entity rollback.
+
+### 7.1. Job Metadata Tracking
+The `Job` Meta Entity tracks structured execution metrics and metadata:
+- `filename` (Text): Name of the source file processed.
+- `executed_by` (Text): User who triggered or uploaded the job (from JWT or local session).
+- `data_format` (Text): The import format identifier (e.g. `EventDataImport`).
+- `row_count`, `imported_count`, `error_count`, `valid_count`, `skipped_count` (Integer): Granular row statistics.
+- `status`: Supports `Submitted`, `Processing`, `Completed`, `Error`, `Stopped`, and `RolledBack`.
+
+### 7.2. Endpoints ([`DataImportJobController`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/nestjs-server/libs/nestjs-server/src/job/data-import-job.controller.ts))
+- `POST /job/data-import/upload-file`: Accepts a file upload, persists tracking metadata into the `Job`, and initiates `Data Import - Validate`.
+- `POST /job/data-import/import`: Submits `Data Import - Import` for execution.
+- `GET /job/data-import/search`: Reverse-chronological search over import jobs with pagination (`pageNumber`, `pageSize`), multi-select status filtering (`status=Completed,RolledBack`), and text search (`search=...`). Excludes the large `data` blob for fast response times.
+- `POST /job/data-import/rollback/:jobId`: Safely deletes all entities created by the import. It calls `DataService.destroyCheck()` on each created entity to ensure no downstream foreign key relationships exist before deletion; if dependencies are found, returns HTTP 409 Conflict. If clean, deletes entities and transitions the job to `RolledBack`.
+
+### 7.3. UI Components ([`ngx-perfect-stack`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack))
+- **`DataImportSearchComponent` (`/data/import/jobs`)**: Interactive search screen displaying import timestamp, user, filename, format, status pill badges, and row statistics. Enables users to inspect past imports and jump directly into the full import viewer.
+- **`DataImportComponent` (`/data/import`)**:
+  - Direct links to created entities (`/data/:entityName/view/:id`).
+  - Row filter bar (`All`, `Errors`, `Imported`, `Valid`, `Skipped`) allowing immediate isolation of failed rows in large spreadsheets.
+  - Rollback modal trigger to safely remove all created entities.
+
+---
+
+## 8. Architecture Evolution Rule
 Whenever:
 1. New core modules or services are added to `nestjs-server` or `ngx-perfect-stack`,
 2. Metadata schemas (attributes, page layout conventions, rule engines) are modified, or

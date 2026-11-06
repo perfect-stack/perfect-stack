@@ -6,16 +6,15 @@
           <lib-page-title-tool [ctx]="ctx"></lib-page-title-tool>
         </div>
         <div>
-          <!-- There is a tool view here and so at some point that may have something in it that isn't an Add button, that
-          needs better permission management but we will cross that bridge when we get there -->
-          <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
-            @if (!(searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight'])) {
+          <!-- If a custom TopRight tool is configured, render it (the tool itself handles any specific permissions) -->
+          @if (searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight']) {
+            <lib-tool-view [ctx]="ctx" [tool]="searchCriteriaTemplate.locations['TopRight']"></lib-tool-view>
+          }
+          @if (!(searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight'])) {
+            <lib-permission-check [action]="ActionType.Edit" [subject]="metaName" [ctx]="ctx">
               <button type="button" class="btn btn-success" (click)="onAdd(ctx)" id="addBtn" [attr.data-testid]="'btn-add'">{{addButtonLbl}}</button>
-            }
-            @if (searchCriteriaTemplate.locations && searchCriteriaTemplate.locations['TopRight']) {
-              <lib-tool-view [ctx]="ctx" [tool]="searchCriteriaTemplate.locations['TopRight']"></lib-tool-view>
-            }
-          </lib-permission-check>
+            </lib-permission-check>
+          }
         </div>
       </div>
       <form class="container-fluid container-form">

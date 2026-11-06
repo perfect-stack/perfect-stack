@@ -388,4 +388,100 @@ export class DataImportComponent implements OnInit, OnDestroy {
       this.cdr.markForCheck();
     }
   }
+
+  // Row filtering
+  rowFilter: 'all' | 'errors' | 'imported' | 'valid' | 'skipped' = 'all';
+
+  setRowFilter(filter: 'all' | 'errors' | 'imported' | 'valid' | 'skipped'): void {
+    this.rowFilter = filter;
+    this.cdr.markForCheck();
+  }
+
+  isRowVisible(rowIdx: number): boolean {
+    if (this.rowFilter === 'all') return true;
+    const summary = this.getRowResultSummary(rowIdx);
+    switch (this.rowFilter) {
+      case 'errors':
+        return summary === 'Error';
+      case 'imported':
+        return summary === 'Imported';
+      case 'valid':
+        return summary === 'Valid';
+      case 'skipped':
+        return summary === 'Skipped' || summary === 'Duplicate';
+      default:
+        return true;
+    }
+  }
+
+  get visibleRowCount(): number {
+    switch (this.rowFilter) {
+      case 'errors':
+        return this.errorRowCount;
+      case 'imported':
+        return this.importedRowCount;
+      case 'valid':
+        return this.validRowCount;
+      case 'skipped':
+        return this.skipRowCount;
+      default:
+        return this.totalRowCount;
+    }
+  }
+
+  // Rollback / Entity Deletion
+  showRollbackModal = false;
+  rollbackInProgress = false;
+  rollbackError = '';
+  rollbackSuccess = '';
+
+  canRollback(): boolean {
+    return !!(this.job &&
+      this.job.status === 'Completed' &&
+      this.phase === 'importing' &&
+      this.importedRowCount > 0);
+  }
+
+  openRollbackModal(): void {
+    this.showRollbackModal = true;
+    this.rollbackError = '';
+  }
+
+  closeRollbackModal(): void {
+    this.showRollbackModal = false;
+    this.rollbackError = '';
+  }
+
+  confirmRollback(): void {
+    if (!this.job) return;
+    this.rollbackInProgress = true;
+    this.rollbackError = '';
+    this.dataImportService.rollbackJob(this.job.id).subscribe({
+      next: (res) => {
+        this.rollbackInProgress = false;
+        this.showRollbackModal = false;
+        this.rollbackSuccess = `Rollback complete: deleted ${res.deletedCount} imported entities.`;
+        if (this.job) {
+          this.job.status = 'RolledBack';
+        }
+        if (this.data) {
+          this.data.status = 'error';
+          this.data.importedEntityList = [];
+          if (this.data.importResult) {
+            this.data.importResult.forEach(r => {
+              if (r && r.actualEntity) {
+                r.actualEntity = null;
+              }
+            });
+          }
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.rollbackInProgress = false;
+        this.rollbackError = err?.error?.message || err?.message || 'Failed to rollback import';
+        this.cdr.markForCheck();
+      }
+    });
+  }
 }

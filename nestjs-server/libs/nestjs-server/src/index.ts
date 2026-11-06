@@ -22,6 +22,7 @@ import { FileRepositoryService } from './file/file-repository.service';
 import { JobModule } from './job/job.module';
 import { JobService } from './job/job.service';
 import { Job, JobExecutionContext, JobHandler, TaskJobHandler, StepJobHandler } from './job/job.model';
+import { JobSearchQuery } from './job/job-search.query';
 import { KnexModule } from './knex/knex.module';
 import { MapModule } from './map/map.module';
 import { MapService } from './map/map.service';
@@ -86,6 +87,7 @@ export {
   JobHandler,
   TaskJobHandler,
   StepJobHandler,
+  JobSearchQuery,
 };
 export { FileRepositoryModule, FileRepositoryService };
 export { KnexModule };

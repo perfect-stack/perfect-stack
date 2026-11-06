@@ -130,7 +130,7 @@ Then('the {string} job should complete successfully within {int} seconds', async
     // Query backend directly to see true DB state
     let backendJobInfo = 'unknown';
     try {
-      const resp = await this.page.request.get('http://127.0.0.1:3080/job/latest/' + encodeURIComponent(jobName));
+      const resp = await this.page.request.get('http://127.0.0.1:3180/job/latest/' + encodeURIComponent(jobName));
       if (resp.ok()) {
         const j = await resp.json();
         backendJobInfo = `status=${j.status}, step=${j.step_index}/${j.step_count}, duration=${j.duration}ms, result=${j.result_summary?.substring(0, 60)}`;
@@ -196,7 +196,7 @@ Then('the {string} completedAt timestamp should be greater than the test start t
   let completedAtStr: string | null = match ? match[1] : null;
 
   if (!completedAtStr) {
-    const resp = await this.page.request.get('http://127.0.0.1:3080/job/latest/' + encodeURIComponent(jobName));
+    const resp = await this.page.request.get('http://127.0.0.1:3180/job/latest/' + encodeURIComponent(jobName));
     const latestJob = await resp.json();
     if (latestJob && latestJob.result_summary) {
       const summaryObj = typeof latestJob.result_summary === 'string'
