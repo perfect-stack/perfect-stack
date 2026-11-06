@@ -339,7 +339,6 @@ export function layoutComponentFactory() {
     AuthorizationErrorComponent,
     LinkListControlComponent,
     OneToManyChoiceDialogComponent,
-    BackLinkComponent,
     SelectMultipleControlComponent,
     TabToolComponent,
     DurationToolComponent,
@@ -364,6 +363,7 @@ export function layoutComponentFactory() {
     EnumerationOptionsControlComponent,
     PipeListControlComponent,
     CellComponent,
+    BackLinkComponent,
   ],
   imports: [
     CommonModule,
@@ -379,6 +379,7 @@ export function layoutComponentFactory() {
     LoadingBarHttpClientModule,
     NgOptimizedImage,
     MsalModule,
+    BackLinkComponent,
   ],
   providers: [
     {

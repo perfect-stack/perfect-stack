@@ -110,6 +110,14 @@ export class DataFormatService {
           attributeName: 'status',
           defaultValue: 'CARMON',
         },
+        {
+          attributeName: 'active',
+          defaultValue: 'Active',
+        },
+        {
+          attributeName: 'place_type',
+          defaultValue: 'DOCMON',
+        }
       ].map((mapping) => Object.assign(new DataAttributeMapping(), mapping)),
     };
   }

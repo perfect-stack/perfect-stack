@@ -45,3 +45,4 @@ export * from './lib/data/controller/layout/controls/pipe-list-control/pipe-list
 export * from './lib/meta/batch/batch-summary-tree/batch-summary-tree.component';
 export * from './lib/data/data-import/data-import.component';
 export * from './lib/data/data-import/data-import-search/data-import-search.component';
+export * from './lib/data/data-edit/back-link/back-link.component';

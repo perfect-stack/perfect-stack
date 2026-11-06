@@ -9,6 +9,7 @@ import {JobProgressMonitorComponent} from "../../job/job-progress-monitor/job-pr
 import {Job} from "../../job/job.model";
 import {Location, NgClass} from '@angular/common';
 import {JobService} from "../../job/job.service";
+import {BackLinkComponent} from "../data-edit/back-link/back-link.component";
 
 @Component({
   selector: 'lib-data-import',
@@ -18,7 +19,8 @@ import {JobService} from "../../job/job.service";
     NgbTooltip,
     RouterLink,
     JobProgressMonitorComponent,
-    NgClass
+    NgClass,
+    BackLinkComponent
   ],
   templateUrl: './data-import.component.html',
   styleUrl: './data-import.component.css'
