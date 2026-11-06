@@ -55,11 +55,21 @@ export class TypeaheadService {
       };
     }
     else if (request.searchText) {
+      const tokens = request.searchText
+        .split(' ')
+        .map((x) => x.trim())
+        .filter((x) => x.length > 0)
+        .map((x) => wrapWithWildcards(x));
+
+      const searchValue =
+        tokens.length > 0 ? tokens.join('').replace(/%+/g, '%') : '%%';
+
       const searchFieldList = metaAttribute.typeaheadSearch.join(", ' ', ");
-      const searchValue = wrapWithWildcards(request.searchText);
 
       const subQuery = `Select id from "${tableName}" where concat(${searchFieldList}) ilike :searchValue`;
-      this.logger.log(`subQuery = ${subQuery}, searchValue = ${searchValue}`);
+      this.logger.log(
+        `subQuery = ${subQuery}, searchValue = ${searchValue}, tokens = ${JSON.stringify(tokens)}`,
+      );
       const subQueryResponse = await this.ormService.sequelize.query(subQuery, {
         replacements: { searchValue: searchValue },
         type: QueryTypes.SELECT,
