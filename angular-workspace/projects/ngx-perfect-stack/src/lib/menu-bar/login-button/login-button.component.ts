@@ -60,6 +60,13 @@ export class LoginButtonComponent implements OnInit {
           this.changeDetectorRef.detectChanges();
           console.log('Finished warning sequence');
         }
+        else if(this.showTimeLeft && totalSeconds >= (5 * 60)) {
+          this.showTimeLeft = false;
+          if(this.warningModalRef) {
+            this.warningModalRef.close();
+          }
+          this.changeDetectorRef.detectChanges();
+        }
 
       }
 
