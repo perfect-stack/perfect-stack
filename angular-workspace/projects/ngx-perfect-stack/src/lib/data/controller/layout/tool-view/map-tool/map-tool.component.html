@@ -10,5 +10,26 @@
       [attr.data-has-marker]="hasMarker ? 'true' : null"
       style="width: 100%; height: 100%;">
     </div>
+
+    <div class="basemap-toggle-container shadow-sm" [attr.data-testid]="'basemap-toggle'">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Basemap switcher">
+        <button
+          type="button"
+          class="btn"
+          [ngClass]="activeBasemap === 'topo' ? 'btn-primary' : 'btn-light'"
+          (click)="setBasemap('topo')"
+          [attr.data-testid]="'basemap-btn-topo'">
+          Topo
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [ngClass]="activeBasemap === 'satellite' ? 'btn-primary' : 'btn-light'"
+          (click)="setBasemap('satellite')"
+          [attr.data-testid]="'basemap-btn-satellite'">
+          Satellite
+        </button>
+      </div>
+    </div>
   </div>
 }

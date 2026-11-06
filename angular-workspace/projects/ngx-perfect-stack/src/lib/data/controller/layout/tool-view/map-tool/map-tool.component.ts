@@ -43,6 +43,7 @@ import SimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
 import Sketch from '@arcgis/core/widgets/Sketch';
 
 export const LINZ_MAP_SERVICE_URL = 'https://services1.arcgisonline.co.nz/arcgis/rest/services/LINZ/geotiffs/MapServer';
+export const SATELLITE_MAP_SERVICE_URL = 'https://services1.arcgisonline.co.nz/arcgis/rest/services/Imagery/newzealand/MapServer';
 
 @Component({
   selector: 'lib-map-tool',
@@ -148,6 +149,11 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
   @Input()
   items?: any[];
 
+  @Input()
+  basemap: 'topo' | 'satellite' = 'topo';
+
+  activeBasemap: 'topo' | 'satellite' = 'topo';
+
   referenceFeatureLayers: { layer: FeatureLayer; config: MapReferenceLayer }[] = [];
   expandWidget?: Expand;
 
@@ -157,6 +163,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
   mapView?: MapView;
   graphicsLayer?: GraphicsLayer;
   tileLayer?: TileLayer;
+  topoLayer?: TileLayer;
+  satelliteLayer?: TileLayer;
   map?: Map;
   sketch?: Sketch;
 
@@ -185,6 +193,9 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
   ) {}
 
   ngOnInit(): void {
+    if (this.mapTool?.basemap === 'satellite' || this.basemap === 'satellite') {
+      this.activeBasemap = 'satellite';
+    }
     this.initFormListeners();
   }
 
@@ -219,9 +230,26 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       }
       this.referenceFeatureLayers = [];
     }
+    if (this.topoLayer) {
+      this.topoLayer.destroy();
+    }
+    if (this.satelliteLayer) {
+      this.satelliteLayer.destroy();
+    }
     if (this.mapView) {
       this.mapView.destroy();
     }
+  }
+
+  setBasemap(type: 'topo' | 'satellite'): void {
+    this.activeBasemap = type;
+    if (this.topoLayer) {
+      this.topoLayer.visible = type === 'topo';
+    }
+    if (this.satelliteLayer) {
+      this.satelliteLayer.visible = type === 'satellite';
+    }
+    this.cdr.markForCheck();
   }
 
   hasGeometryBinding(): boolean {
@@ -360,12 +388,23 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       return;
     }
 
-    this.tileLayer = new TileLayer({ url: LINZ_MAP_SERVICE_URL });
+    this.topoLayer = new TileLayer({
+      url: LINZ_MAP_SERVICE_URL,
+      title: 'LINZ Topo',
+      visible: this.activeBasemap === 'topo',
+    });
+    this.tileLayer = this.topoLayer;
+
+    this.satelliteLayer = new TileLayer({
+      url: SATELLITE_MAP_SERVICE_URL,
+      title: 'Satellite',
+      visible: this.activeBasemap === 'satellite',
+    });
 
     this.graphicsLayer = new GraphicsLayer();
 
     this.map = new Map({
-      layers: [this.tileLayer, this.graphicsLayer]
+      layers: [this.topoLayer, this.satelliteLayer, this.graphicsLayer]
     });
 
     const defaultNZTM = this.mapService.toNZTM({ lat: -41.20588830649284, lng: 174.91502957335638 });

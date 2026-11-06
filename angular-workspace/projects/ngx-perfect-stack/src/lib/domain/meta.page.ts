@@ -181,6 +181,7 @@ export class MapTool extends Tool {
   height?: string;
   binding?: string;
   metaEntityName?: string;
+  basemap?: 'topo' | 'satellite' | string;
 }
 
 export class PageTitleTool extends Tool {
