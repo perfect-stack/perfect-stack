@@ -458,25 +458,33 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
 
     if (this.mapView?.popup && typeof (this.mapView.popup as any).on === 'function') {
       (this.mapView.popup as any).on('trigger-action', (event: any) => {
-      if (event.action && event.action.id === 'view-details') {
-        const item = this.mapView?.popup?.selectedFeature?.attributes;
-        if (item) {
-          const metaEntity = this.getMetaEntityName();
-          const entityId = item.id || item.entity_id;
-          if (entityId) {
-            this.ngZone.run(() => {
-              this.router.navigateByUrl(`/data/${metaEntity}/view/${entityId}`);
-            });
+        if (event.action && event.action.id === 'view-details') {
+          const item = this.mapView?.popup?.selectedFeature?.attributes;
+          if (item) {
+            const url = this.resolveDetailsUrl(item);
+            if (url) {
+              this.ngZone.run(() => {
+                this.router.navigateByUrl(url);
+              });
+            }
           }
         }
-      }
       });
     }
 
     this.globalClickListener = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      const el = target?.closest?.('[data-entity-id]') as HTMLElement | null;
+      const el = target?.closest?.('[data-url], [data-entity-id]') as HTMLElement | null;
       if (el) {
+        const directUrl = el.getAttribute('data-url');
+        if (directUrl) {
+          event.preventDefault();
+          event.stopPropagation();
+          this.ngZone.run(() => {
+            this.router.navigateByUrl(directUrl);
+          });
+          return;
+        }
         const metaEntity = el.getAttribute('data-meta-entity') || this.getMetaEntityName();
         const entityId = el.getAttribute('data-entity-id');
         if (metaEntity && entityId) {
@@ -1432,9 +1440,45 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     }
   }
 
+  resolveDetailsUrl(item: any): string | null {
+    if (!item || this.mapTool?.navigation === 'Disabled') {
+      return null;
+    }
+
+    const entityId = item.id || item.entity_id;
+    if (!entityId) {
+      return null;
+    }
+
+    if (this.mapTool?.route) {
+      let url = this.mapTool.route;
+      url = url.replace('${id}', String(entityId));
+      url = url.replace('${entity_id}', String(entityId));
+      for (const key of Object.keys(item)) {
+        if (url.includes(`\${${key}}`)) {
+          url = url.replace(new RegExp(`\\$\\{${key}\\}`, 'g'), String(item[key] ?? ''));
+        }
+      }
+      return url;
+    }
+
+    let targetEntity = this.mapTool?.targetMetaEntityName;
+    if (!targetEntity) {
+      if (item.meta_entity_name || item.metaEntityName) {
+        targetEntity = item.meta_entity_name || item.metaEntityName;
+      } else if (this.mapTool?.metaEntityName && this.mapTool.metaEntityName.endsWith('SearchResult')) {
+        targetEntity = this.mapTool.metaEntityName.substring(0, this.mapTool.metaEntityName.length - 'SearchResult'.length);
+      } else {
+        targetEntity = this.getMetaEntityName();
+      }
+    }
+
+    return `/data/${targetEntity}/view/${entityId}`;
+  }
+
   private createPopupTemplate(item: any): any {
     const title = item.field_number || item.name || item.title || (item.id ? 'Item ' + String(item.id).substring(0, 8) : 'Result');
-    const metaEntity = this.getMetaEntityName();
+    const detailsUrl = this.resolveDetailsUrl(item);
     const entityId = item.id || item.entity_id;
 
     return {
@@ -1458,20 +1502,22 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
           dateDiv.innerHTML = `<strong>Date:</strong> ${this.formatDate(item.event_begin_date)}`;
           div.appendChild(dateDiv);
         }
-        if (entityId) {
+        if (detailsUrl) {
           const btnDiv = document.createElement('div');
           btnDiv.className = 'mt-2';
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'btn btn-sm btn-primary text-white';
-          btn.setAttribute('data-meta-entity', metaEntity);
-          btn.setAttribute('data-entity-id', String(entityId));
+          btn.setAttribute('data-url', detailsUrl);
+          if (entityId) {
+            btn.setAttribute('data-entity-id', String(entityId));
+          }
           btn.innerText = 'View Details';
           btn.onclick = (e: MouseEvent) => {
             e.preventDefault();
             e.stopPropagation();
             this.ngZone.run(() => {
-              this.router.navigateByUrl(`/data/${metaEntity}/view/${entityId}`);
+              this.router.navigateByUrl(detailsUrl);
             });
           };
           btnDiv.appendChild(btn);
@@ -1479,7 +1525,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
         }
         return div;
       },
-      actions: entityId ? [
+      actions: detailsUrl ? [
         {
           id: 'view-details',
           title: 'View Details',
