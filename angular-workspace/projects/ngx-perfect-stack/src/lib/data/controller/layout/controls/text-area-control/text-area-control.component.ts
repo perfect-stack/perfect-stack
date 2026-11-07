@@ -21,7 +21,7 @@ export class TextAreaControlComponent implements OnInit, ControlValueAccessor {
   mode: string | null;
 
   @Input()
-  formGroup: UntypedFormGroup;
+  formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
   @Input()
   cell: CellAttribute;

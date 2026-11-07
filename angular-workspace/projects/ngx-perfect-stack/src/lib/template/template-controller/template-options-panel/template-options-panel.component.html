@@ -6,7 +6,10 @@
       <span class="material-symbols-outlined text-muted me-2 template-type-icon">
         @switch (template.type) {
           @case ('table') { table_chart }
+          @case ('orderedTable') { table_chart }
           @case ('header') { view_headline }
+          @case ('formList') { format_list_bulleted }
+          @case ('card') { dashboard }
           @default { feed }
         }
       </span>

@@ -97,14 +97,15 @@ export class TemplateFormEditor implements OnInit {
     ];
   }
 
-  getAttribute(name: string | undefined, metaEntityMap: Map<string, MetaEntity>, metaEntityName: string): MetaAttribute | undefined {
+  getAttribute(name: string | undefined, metaEntityMap: Map<string, MetaEntity>, metaEntityName: string, cell?: Cell): MetaAttribute | undefined {
     if(name && metaEntityMap && metaEntityName) {
       const metaEntity = metaEntityMap.get(metaEntityName)
       if(metaEntity) {
-        return metaEntity.attributes.find(a => a.name === name);
+        const found = metaEntity.attributes.find(a => a.name === name);
+        if (found) return found;
       }
     }
-    return undefined;
+    return cell?.attribute;
   }
 
   onChangeWidth(value: number, row: Cell[], cell: Cell) {
@@ -250,8 +251,12 @@ export class CellViewComponent implements OnInit, OnChanges {
   deleteCell = new EventEmitter<Cell>();
 
   mouseActive = false;
+  entityForm: UntypedFormGroup = new UntypedFormGroup({});
 
-  entityForm: UntypedFormGroup = new UntypedFormGroup([] as any);
+  onDeleteNestedTemplate(template: Template) {
+    delete this.cell.template;
+    this.changeDetectorRef.detectChanges();
+  }
 
   closeResult = '';
 
@@ -331,7 +336,7 @@ export class CellViewComponent implements OnInit, OnChanges {
     delete this.cell.dataProvider;
     delete this.cell.attribute;
     this.attribute = undefined;
-    this.entityForm = new UntypedFormGroup([] as any);
+    this.entityForm = new UntypedFormGroup({});
     this.changeDetectorRef.detectChanges();
   }
 
@@ -490,14 +495,15 @@ export class TemplateHeaderEditorComponent implements OnInit{
   ngOnInit(): void {
   }
 
-  getAttribute(name: string | undefined, metaEntityMap: Map<string, MetaEntity>, metaEntityName: string): MetaAttribute | undefined {
+  getAttribute(name: string | undefined, metaEntityMap: Map<string, MetaEntity>, metaEntityName: string, cell?: Cell): MetaAttribute | undefined {
     if(name && metaEntityMap && metaEntityName) {
       const metaEntity = metaEntityMap.get(metaEntityName)
       if(metaEntity) {
-        return metaEntity.attributes.find(a => a.name === name);
+        const found = metaEntity.attributes.find(a => a.name === name);
+        if (found) return found;
       }
     }
-    return undefined;
+    return cell?.attribute;
   }
 
   onChangeWidth(value: number, row: Cell[], cell: Cell) {

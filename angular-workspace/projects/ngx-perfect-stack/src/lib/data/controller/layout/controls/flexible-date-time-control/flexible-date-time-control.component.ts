@@ -1,5 +1,5 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
-import {AbstractControl, UntypedFormGroup} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
 import {Locale} from '@js-joda/locale_en';
 import {DateTimeFormatter, Instant, LocalTime, ZonedDateTime, ZoneId} from '@js-joda/core';
@@ -23,7 +23,7 @@ export class FlexibleDateTimeControlComponent implements OnInit {
   cell: CellAttribute;
 
   @Input()
-  formGroup: UntypedFormGroup;
+  formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
   @Input()
   name: string;
@@ -58,9 +58,15 @@ export class FlexibleDateTimeControlComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.formGroup) {
+      const controlName = this.cell?.attribute?.name || this.name;
+      if (controlName && !this.formGroup.contains(controlName)) {
+        this.formGroup.addControl(controlName, new UntypedFormControl(''));
+      }
+    }
     if(this.mode !== 'edit') {
-      const formControl = this.formGroup.controls[this.name];
-      const databaseValue = formControl.value;
+      const formControl = this.formGroup?.controls?.[this.name];
+      const databaseValue = formControl?.value;
       if(databaseValue) {
         const dateTimeFormat = this.stackConfig.dateTimeFormat;
         const dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormat).withLocale(Locale.US);

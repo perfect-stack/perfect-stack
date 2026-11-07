@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
-import {AbstractControl, UntypedFormGroup, ValidationErrors, ValidatorFn} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn} from '@angular/forms';
 import {DateTimeFormatter, LocalDate, ZonedDateTime, ZoneId} from '@js-joda/core';
 import {Subscription} from 'rxjs';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../../../ngx-perfect-stack-config';
@@ -29,7 +29,7 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
   cell: CellAttribute;
 
   @Input()
-  formGroup: UntypedFormGroup;
+  formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
   @Input()
   name: string;
@@ -68,6 +68,7 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.ensureControl();
     this.syncTimeActiveFromValue();
     this.updateValue();
     this.setupValueSubscription();
@@ -75,12 +76,22 @@ export class DateTimeControlComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['formGroup'] || changes['name'] || changes['cell']) {
+      this.ensureControl();
       this.userActivatedTime = false;
       this.syncTimeActiveFromValue();
       this.setupValueSubscription();
     }
     this.updateValue();
     this.cdr.markForCheck();
+  }
+
+  private ensureControl(): void {
+    if (this.formGroup) {
+      const controlName = this.cell?.attribute?.name || this.name;
+      if (controlName && !this.formGroup.contains(controlName)) {
+        this.formGroup.addControl(controlName, new UntypedFormControl(''));
+      }
+    }
   }
 
   get precision(): DateTimePrecision {

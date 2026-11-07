@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {UntypedFormGroup} from '@angular/forms';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-page.service';
 
@@ -9,13 +9,13 @@ import {CellAttribute} from '../../../../../meta/page/meta-page-service/meta-pag
     styleUrls: ['./boolean-check-box-control.component.css'],
     standalone: false
 })
-export class BooleanCheckBoxControlComponent implements OnInit {
+export class BooleanCheckBoxControlComponent implements OnInit, OnChanges {
 
   @Input()
   mode: string;
 
   @Input()
-  formGroup: UntypedFormGroup;
+  formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
   @Input()
   attribute: MetaAttribute;
@@ -29,6 +29,17 @@ export class BooleanCheckBoxControlComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.ensureControl();
+  }
+
+  ngOnChanges(): void {
+    this.ensureControl();
+  }
+
+  private ensureControl(): void {
+    if (this.formGroup && this.attribute?.name && !this.formGroup.contains(this.attribute.name)) {
+      this.formGroup.addControl(this.attribute.name, new UntypedFormControl(false));
+    }
   }
 
   get isShowLabel(): boolean {

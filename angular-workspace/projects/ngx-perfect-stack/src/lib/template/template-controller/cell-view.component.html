@@ -62,36 +62,35 @@
                   <select class="form-select"></select>
                 }
                 @case ('OneToMany') {
-                  @if (cell.template) {
-                    <lib-template-controller [template]="cell.template"></lib-template-controller>
-                  }
-                  @if (!cell.template) {
-                    @switch (cell.component) {
-                      @case ('Media') {
-                        <div class="p-2 bg-light text-center border rounded">
-                          <span class="material-symbols-outlined text-secondary">image</span>
-                          <div class="small text-muted">Media Control</div>
-                        </div>
-                      }
-                      @case ('MediaGallery') {
-                        <div class="p-2 bg-light text-center border rounded">
-                          <span class="material-symbols-outlined text-secondary">photo_library</span>
-                          <div class="small text-muted">Media Gallery Control ({{cell.media_cols || '2'}} x {{cell.media_rows || '4'}})</div>
-                        </div>
-                      }
-                      @case ('LinkList') {
-                        <div class="p-2 bg-light text-center border rounded small text-muted">Link List</div>
-                      }
-                      @default {
-                        <div class="p-2 bg-light text-center border rounded small text-muted">OneToMany Control</div>
-                      }
+                  @switch (cell.component) {
+                    @case ('AssertionList') {
+                      <div class="p-2 bg-light text-center border rounded small text-muted">
+                        <span class="material-symbols-outlined align-middle me-1">fact_check</span>
+                        Assertion List Control
+                      </div>
+                    }
+                    @case ('Media') {
+                      <div class="p-2 bg-light text-center border rounded">
+                        <span class="material-symbols-outlined text-secondary">image</span>
+                        <div class="small text-muted">Media Control</div>
+                      </div>
+                    }
+                    @case ('MediaGallery') {
+                      <div class="p-2 bg-light text-center border rounded">
+                        <span class="material-symbols-outlined text-secondary">photo_library</span>
+                        <div class="small text-muted">Media Gallery Control ({{cell.media_cols || '2'}} x {{cell.media_rows || '4'}})</div>
+                      </div>
+                    }
+                    @case ('LinkList') {
+                      <div class="p-2 bg-light text-center border rounded small text-muted">Link List</div>
+                    }
+                    @default {
+                      <div class="p-2 bg-light text-center border rounded small text-muted">OneToMany Control</div>
                     }
                   }
                 }
                 @case ('OneToOne') {
-                  @if (cell.template) {
-                    <lib-template-controller [template]="cell.template"></lib-template-controller>
-                  }
+                  <div class="p-2 bg-light text-center border rounded small text-muted">OneToOne Control</div>
                 }
                 @case ('ManyToOne') {
                   @switch (cell.component) {
@@ -145,9 +144,9 @@
         }
 
         <!-- Cell with a nested Template -->
-        @if (!attribute && cell.template) {
+        @if (cell.template) {
           <div class="col-12">
-            <lib-template-controller [template]="cell.template"></lib-template-controller>
+            <lib-template-controller [template]="cell.template" (deleteTemplate)="onDeleteNestedTemplate($event)"></lib-template-controller>
           </div>
         }
 

@@ -7,7 +7,7 @@
             <lib-cell-view
               [metaEntity]="getMetaEntity(metaEntityMap, template.metaEntityName)"
               [cell]="nextCell"
-              [attribute]="getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName)"
+              [attribute]="getAttribute(nextCell.attributeName, metaEntityMap, template.metaEntityName, nextCell)"
               (changeWidth)="onChangeWidth($event, nextRow, nextCell)"
               (changeHeight)="onChangeHeight($event, nextRow, nextCell)"
               (deleteCell)="onDeleteCell($event, nextRow)">

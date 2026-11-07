@@ -17,7 +17,7 @@ export class SelectTwoControlComponent implements OnInit, OnDestroy {
   // Important: This is needed because we are just a wrapper for the real components and so this component sets the
   // formControlName for those components and not the Cell/template above us.
   @Input()
-  formGroup: UntypedFormGroup;
+  formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
   @Input()
   attribute: MetaAttribute;
@@ -42,7 +42,7 @@ export class SelectTwoControlComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.secondaryAttributeName = (this.cell.componentData as any)?.secondaryAttributeName;
 
-    const secondaryAttributeControl = this.formGroup.get(this.secondaryAttributeName);
+    const secondaryAttributeControl = this.formGroup?.get(this.secondaryAttributeName);
     if (secondaryAttributeControl) {
       this.secondarySub = secondaryAttributeControl.valueChanges.subscribe(() => {
         this.updateCombinedValue();

@@ -19,7 +19,7 @@ import { NgxPerfectStackConfig, STACK_CONFIG } from '../../../../../ngx-perfect-
 export class AssertionControlComponent implements OnInit, OnChanges {
 
   @Input()
-  formGroup: UntypedFormGroup;
+  formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
   @Input()
   mode: string | null = 'edit';
