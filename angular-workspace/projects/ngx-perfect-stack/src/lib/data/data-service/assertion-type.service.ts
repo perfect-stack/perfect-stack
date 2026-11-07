@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
+import { catchError, first, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { DataService } from './data.service';
 import { AssertionType } from '../../domain/assertion';
 
@@ -17,7 +17,7 @@ export class AssertionTypeService {
   constructor(protected readonly dataService: DataService) { }
 
   /**
-   * Lazily loads and caches all AssertionType records from the backend.
+   * Lazily loads and caches all AssertionType/Protocol records from the backend.
    * If already loaded, returns the cached list immediately.
    */
   loadAssertionTypes(): Observable<AssertionType[]> {
@@ -29,8 +29,20 @@ export class AssertionTypeService {
       return this.loadObservable$;
     }
 
-    this.loadObservable$ = this.dataService.findAll('AssertionType', '', 1, 500).pipe(
-      map(response => (response && response.resultList ? (response.resultList as unknown as AssertionType[]) : [])),
+    this.loadObservable$ = this.dataService.metaEntityMap$.pipe(
+      first(map => !!map),
+      switchMap(metaEntityMap => {
+        const entityName = metaEntityMap && metaEntityMap.has('Protocol') ? 'Protocol' : 'AssertionType';
+        return this.dataService.findAll(entityName, '', 1, 500);
+      }),
+      map(response => {
+        const list = (response && response.resultList ? (response.resultList as unknown as any[]) : []);
+        return list.map(item => ({
+          ...item,
+          assertion_type_name: item.protocol_name || item.assertion_type_name,
+          protocol_name: item.protocol_name || item.assertion_type_name,
+        })) as AssertionType[];
+      }),
       tap(types => {
         this.assertionTypeMap.clear();
         for (const type of types) {
@@ -41,6 +53,10 @@ export class AssertionTypeService {
         this.assertionTypeList = types;
         this.loaded = true;
         this.loadObservable$ = null;
+      }),
+      catchError(err => {
+        this.loadObservable$ = null;
+        throw err;
       }),
       shareReplay(1)
     );

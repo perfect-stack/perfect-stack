@@ -69,6 +69,9 @@ export class AssertionControlComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.checkAssertionType();
 
+    this.formGroup?.get('protocol_id')?.valueChanges.subscribe(() => {
+      this.checkAssertionType();
+    });
     this.formGroup?.get('assertion_type_id')?.valueChanges.subscribe(() => {
       this.checkAssertionType();
     });
@@ -89,16 +92,18 @@ export class AssertionControlComponent implements OnInit, OnChanges {
       return;
     }
 
-    const assertionTypeId = this.formGroup?.get('assertion_type_id')?.value;
-    if (assertionTypeId) {
-      const cached = this.assertionTypeService.getAssertionType(assertionTypeId);
+    const typeId = this.formGroup?.get('protocol_id')?.value ||
+                   this.formGroup?.get('protocol')?.value?.id ||
+                   this.formGroup?.get('assertion_type_id')?.value;
+    if (typeId) {
+      const cached = this.assertionTypeService.getAssertionType(typeId);
       if (cached) {
         this.assertionType = cached;
         this.initTypeDetails();
         this.changeDetectorRef.markForCheck();
       } else {
         this.assertionTypeService.loadAssertionTypes().subscribe(() => {
-          this.assertionType = this.assertionTypeService.getAssertionType(assertionTypeId);
+          this.assertionType = this.assertionTypeService.getAssertionType(typeId);
           this.initTypeDetails();
           this.changeDetectorRef.markForCheck();
         });
@@ -112,7 +117,9 @@ export class AssertionControlComponent implements OnInit, OnChanges {
     if (this.assertionType) {
       return this.assertionType;
     }
-    const typeId = this.formGroup?.get('assertion_type_id')?.value;
+    const typeId = this.formGroup?.get('protocol_id')?.value ||
+                   this.formGroup?.get('protocol')?.value?.id ||
+                   this.formGroup?.get('assertion_type_id')?.value;
     if (typeId) {
       const found = this.assertionTypeService.getAssertionType(typeId);
       if (found) {
@@ -176,12 +183,15 @@ export class AssertionControlComponent implements OnInit, OnChanges {
     if (this.layoutStyle) {
       return this.layoutStyle;
     }
+    if (this.activityTemplate?.layout_style) {
+      return this.activityTemplate.layout_style;
+    }
     let current: AbstractControl | null = this.formGroup;
     while (current) {
       if (current instanceof FormGroup || current instanceof UntypedFormGroup) {
         const ctrl = current.get('layout_style');
-        if (ctrl) {
-          return ctrl.value || 'Card';
+        if (ctrl?.value) {
+          return ctrl.value;
         }
       }
       current = current.parent;
@@ -190,7 +200,10 @@ export class AssertionControlComponent implements OnInit, OnChanges {
   }
 
   get assertionTypeName(): string {
-    return this.formGroup?.get('assertion_type_name')?.value ||
+    return this.formGroup?.get('protocol_name')?.value ||
+           this.formGroup?.get('protocol')?.value?.protocol_name ||
+           this.formGroup?.get('assertion_type_name')?.value ||
+           (this.resolvedAssertionType as any)?.protocol_name ||
            this.resolvedAssertionType?.assertion_type_name ||
            'Fact';
   }

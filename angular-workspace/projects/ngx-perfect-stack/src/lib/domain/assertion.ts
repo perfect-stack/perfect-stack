@@ -18,6 +18,7 @@ export enum AssertionLayoutStyle {
 
 export interface AssertionType {
   id: string;
+  protocol_name?: string;
   assertion_type_name: string;
   assertion_unit?: string;
   assertion_value_class: AssertionValueClass | string;
@@ -34,9 +35,12 @@ export interface AssertionType {
 
 export interface Assertion {
   id?: string;
+  protocol?: any;
+  protocol_id?: string;
+  protocol_name?: string;
   assertion_type?: AssertionType;
-  assertion_type_id: string;
-  assertion_type_name: string;
+  assertion_type_id?: string;
+  assertion_type_name?: string;
   assertion_unit?: string;
   assertion_value_numeric?: number | null;
   assertion_value_text?: string | null;
@@ -49,3 +53,4 @@ export interface Assertion {
   assertion_accuracy?: string | null;
   assertion_notes?: string | null;
 }
+

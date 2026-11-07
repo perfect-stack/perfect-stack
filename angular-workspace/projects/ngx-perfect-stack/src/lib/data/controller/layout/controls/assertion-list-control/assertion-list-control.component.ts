@@ -179,9 +179,13 @@ export class AssertionListControlComponent implements OnInit, OnDestroy, OnChang
       null
     );
 
+    const protoName = (type as any).protocol_name || type.assertion_type_name || '';
+
     newFg.patchValue({
+      protocol_id: type.id,
+      protocol_name: protoName,
       assertion_type_id: type.id,
-      assertion_type_name: type.assertion_type_name,
+      assertion_type_name: protoName,
       assertion_unit: type.assertion_unit || '',
       assertion_method: type.assertion_method || '',
     });
