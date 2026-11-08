@@ -138,4 +138,67 @@
     </div>
   </div>
 
+  <ng-template #mlResetModal let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="ml-reset-modal-title">ML Observation Reset</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-info">
+        Reset ML Observation <code>CaptureEvent</code> records and observations so that physical <code>Event</code> records can be re-evaluated and re-processed by the ML processing batch job.
+        <div class="mt-1 small"><strong>Timezone notice:</strong> Dates entered below are evaluated in New Zealand local time (<code>Pacific/Auckland</code>) and converted to UTC database boundaries automatically.</div>
+      </div>
+
+      <div class="card p-3 mb-3 bg-light border-warning">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="deleteAllSwitch" [(ngModel)]="mlResetDeleteAll">
+          <label class="form-check-label fw-bold text-danger" for="deleteAllSwitch">
+            Delete all ML Observation CaptureEvents
+          </label>
+        </div>
+        @if (mlResetDeleteAll) {
+          <div class="alert alert-warning mt-2 mb-0 py-2 small">
+            <strong>Caution:</strong> This will delete <em>all</em> ML Observation <code>CaptureEvent</code>s, <code>Occurrence</code>s, and <code>MediaOccurrence</code> junction links across all dates, and reset all evaluated physical <code>Event</code>s to 'Reprocess'.
+            <br>
+            <span class="text-success fw-semibold">Non-ML CaptureEvents (e.g. Field Surveys, Plant Monitoring) will NOT be deleted.</span>
+          </div>
+        }
+      </div>
+
+      @if (!mlResetDeleteAll) {
+        <div class="card p-3 mb-2">
+          <h6 class="fw-bold mb-3">Filter by Date Range (NZ Time)</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="mlFromDate" class="form-label">From Date</label>
+              <input type="date" class="form-control" id="mlFromDate" [(ngModel)]="mlResetFromDate">
+              <div class="form-text">Start of day in NZ (00:00:00 NZDT/NZST)</div>
+            </div>
+            <div class="col-md-6">
+              <label for="mlToDate" class="form-label">To Date</label>
+              <input type="date" class="form-control" id="mlToDate" [(ngModel)]="mlResetToDate">
+              <div class="form-text">End of day in NZ (23:59:59 NZDT/NZST)</div>
+            </div>
+          </div>
+          @if (mlResetFromDate && mlResetToDate && mlResetFromDate > mlResetToDate) {
+            <div class="text-danger small mt-2">
+              'From Date' must be less than or equal to 'To Date'.
+            </div>
+          }
+          @if (!mlResetFromDate && !mlResetToDate) {
+            <div class="text-muted small mt-2">
+              Please enter a start date, end date, or both.
+            </div>
+          }
+        </div>
+      }
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
+      <button type="button" class="btn btn-danger" [disabled]="!canExecuteMlReset()" (click)="confirmMlReset(modal)">
+        Reset Observations
+      </button>
+    </div>
+  </ng-template>
+
 </div>

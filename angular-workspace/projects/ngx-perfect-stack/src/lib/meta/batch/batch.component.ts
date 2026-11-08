@@ -1,5 +1,7 @@
-import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
 import {BatchService} from "./batch.service";
 import {ToastService} from "../../utils/toasts/toast.service";
@@ -21,6 +23,7 @@ interface BatchJobSummary {
   selector: 'lib-batch',
   imports: [
     CommonModule,
+    FormsModule,
     JobProgressMonitorComponent,
     BatchSummaryTreeComponent
   ],
@@ -29,6 +32,12 @@ interface BatchJobSummary {
 })
 export class BatchComponent implements OnInit {
 
+  @ViewChild('mlResetModal') mlResetModalTemplate!: TemplateRef<any>;
+
+  mlResetDeleteAll = false;
+  mlResetFromDate = '';
+  mlResetToDate = '';
+
   batchJobs: BatchJobSummary[] = [];
 
   constructor(@Inject(STACK_CONFIG)
@@ -36,7 +45,8 @@ export class BatchComponent implements OnInit {
               protected readonly batchService: BatchService,
               protected readonly jobService: JobService,
               protected readonly toastService: ToastService,
-              protected readonly cdr: ChangeDetectorRef
+              protected readonly cdr: ChangeDetectorRef,
+              protected readonly modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -88,13 +98,49 @@ export class BatchComponent implements OnInit {
   }
 
   onExecute(jobName: string) {
+    if (jobName === 'ML Observation Reset') {
+      this.mlResetDeleteAll = false;
+      this.mlResetFromDate = '';
+      this.mlResetToDate = '';
+      this.modalService.open(this.mlResetModalTemplate, { size: 'lg', backdrop: 'static' });
+      return;
+    }
+    this.executeJob(jobName);
+  }
+
+  canExecuteMlReset(): boolean {
+    if (this.mlResetDeleteAll) {
+      return true;
+    }
+    const hasFrom = !!this.mlResetFromDate;
+    const hasTo = !!this.mlResetToDate;
+    if (!hasFrom && !hasTo) {
+      return false;
+    }
+    if (hasFrom && hasTo) {
+      return this.mlResetFromDate <= this.mlResetToDate;
+    }
+    return true;
+  }
+
+  confirmMlReset(modal: any) {
+    modal.close();
+    const payload = {
+      deleteAll: this.mlResetDeleteAll,
+      fromDate: this.mlResetDeleteAll ? undefined : (this.mlResetFromDate || undefined),
+      toDate: this.mlResetDeleteAll ? undefined : (this.mlResetToDate || undefined),
+    };
+    this.executeJob('ML Observation Reset', payload);
+  }
+
+  executeJob(jobName: string, payload: any = null) {
     const jobSummary = this.batchJobs.find(j => j.name === jobName);
     if (jobSummary) {
       jobSummary.isRunning = true;
       jobSummary.currentJobId = null;
       this.cdr.markForCheck();
     }
-    this.jobService.startJob(jobName).subscribe({
+    this.jobService.startJob(jobName, payload).subscribe({
       next: (job) => {
         if (jobSummary) {
           jobSummary.currentJobId = job.id;
