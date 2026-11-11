@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { ActionPermit } from '../../authentication/action-permit';
 import { ActionType } from '../../domain/meta.role';
 import { SubjectName } from '../../authentication/subject';
@@ -42,5 +43,27 @@ export class DataImportController {
     @Query() params: Record<string, any>,
   ): Promise<{ valid: boolean; errors: string[] }> {
     return this.dataImportService.validateSchema(formatKey, params);
+  }
+
+  @ActionPermit(ActionType.Read)
+  @SubjectName('Import')
+  @ApiOperation({
+    summary: 'Download a template (grid or dictionary) for a data import format',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Template file stream',
+  })
+  @Get(':formatKey/template')
+  async downloadTemplate(
+    @Param('formatKey') formatKey: string,
+    @Query('flavour') flavour: 'grid' | 'dictionary',
+    @Query() params: Record<string, any>,
+    @Res() res: Response,
+  ): Promise<void> {
+    const result = await this.dataImportService.generateTemplate(formatKey, params, flavour || 'grid');
+    res.setHeader('Content-Type', result.contentType || 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+    res.send(result.content);
   }
 }

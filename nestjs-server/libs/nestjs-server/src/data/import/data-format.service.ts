@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { DataAttributeMapping, DataImportClientMapping, DataImportMapping, DynamicDataImportProvider } from './data-import.types';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { DataAttributeMapping, DataImportClientMapping, DataImportMapping, DynamicDataImportProvider, TemplateResult } from './data-import.types';
 import { TrackingFlightStatusConverter } from './converter/tracking-flight-status.converter';
 import { BandNumberLookupConverter } from './converter/band-number.converter';
 import { DateConverter } from './converter/date.converter';
@@ -51,6 +51,18 @@ export class DataFormatService {
       return provider.validateSchema(params);
     }
     return { valid: true, errors: [] };
+  }
+
+  async generateTemplate(
+    formatKey: string,
+    params: Record<string, any>,
+    flavour: 'grid' | 'dictionary',
+  ): Promise<TemplateResult> {
+    const provider = this.getDynamicProvider(formatKey);
+    if (!provider || !provider.generateTemplate) {
+      throw new BadRequestException(`Template generation not supported for format: ${formatKey}`);
+    }
+    return provider.generateTemplate(params, flavour);
   }
 
   isValidDataFormat(dataFormat: string) {

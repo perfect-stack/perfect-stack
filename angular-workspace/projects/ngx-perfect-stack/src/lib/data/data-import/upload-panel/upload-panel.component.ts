@@ -192,6 +192,50 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
     return missing ? missing.label : '';
   }
 
+  canDownloadTemplates(): boolean {
+    if (!this.selectedMapping || !this.selectedMapping.supportsTemplates) {
+      return false;
+    }
+    if (this.schemaErrors.length > 0) {
+      return false;
+    }
+    if (this.selectedMapping.parameters) {
+      return !this.selectedMapping.parameters.some(p => p.required && !this.parameterValues[p.name]);
+    }
+    return true;
+  }
+
+  isDownloadingTemplate = false;
+
+  downloadTemplate(flavour: 'grid' | 'dictionary'): void {
+    if (!this.selectedMapping || !this.canDownloadTemplates()) {
+      return;
+    }
+    this.isDownloadingTemplate = true;
+    this.dataImportService.downloadTemplate(this.selectedMapping.title, this.parameterValues, flavour).subscribe({
+      next: (blob) => {
+        this.isDownloadingTemplate = false;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const defaultFilename = flavour === 'grid'
+          ? `${this.selectedMapping?.title}_Entry_Template.csv`
+          : `${this.selectedMapping?.title}_Data_Dictionary.csv`;
+        a.download = defaultFilename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.isDownloadingTemplate = false;
+        console.error('Failed to download template', err);
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   ngOnDestroy(): void {
     this.fileItems.forEach(item => item.uploadSub?.unsubscribe())
   }

@@ -54,6 +54,23 @@
   </div>
 }
 
+@if (selectedMapping?.supportsTemplates) {
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+            [disabled]="!canDownloadTemplates() || isDownloadingTemplate"
+            (click)="downloadTemplate('grid')">
+      <span class="material-symbols-outlined" style="font-size: 18px;">table_view</span>
+      <span>Download Entry Template</span>
+    </button>
+    <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+            [disabled]="!canDownloadTemplates() || isDownloadingTemplate"
+            (click)="downloadTemplate('dictionary')">
+      <span class="material-symbols-outlined" style="font-size: 18px;">menu_book</span>
+      <span>Download Data Dictionary</span>
+    </button>
+  </div>
+}
+
 @if (schemaErrors.length > 0) {
   <div class="alert alert-danger mb-2">
     <div class="fw-bold mb-1">Configuration error:</div>

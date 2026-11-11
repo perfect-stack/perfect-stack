@@ -31,6 +31,12 @@ export type DataImportClientMapping = {
     supportsSchemaCheck?: boolean;
 }
 
+export interface TemplateResult {
+    filename: string;
+    contentType: string;
+    content: string | Buffer;
+}
+
 export interface DynamicDataImportProvider {
     readonly formatKey: string;
     readonly metaEntityName: string;
@@ -40,7 +46,7 @@ export interface DynamicDataImportProvider {
     getParameters(): DataImportParameter[];
     getMapping(params: Record<string, any>): Promise<DataImportMapping>;
     validateSchema?(params: Record<string, any>): Promise<{ valid: boolean; errors: string[] }>;
-    generateTemplate?(params: Record<string, any>, flavour: 'grid' | 'dictionary'): Promise<any>;
+    generateTemplate?(params: Record<string, any>, flavour: 'grid' | 'dictionary'): Promise<TemplateResult>;
 }
 
 export type DataImportMapping = {

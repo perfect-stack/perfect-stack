@@ -33,6 +33,14 @@ export class DataImportService {
     );
   }
 
+  downloadTemplate(formatKey: string, params: Record<string, any>, flavour: 'grid' | 'dictionary'): Observable<Blob> {
+    const queryParams: any = { ...params, flavour };
+    return this.http.get(
+      `${this.stackConfig.apiUrl}/data-import/${encodeURIComponent(formatKey)}/template`,
+      { params: queryParams, responseType: 'blob' }
+    );
+  }
+
   importData(dataImportModel: DataImportModel) {
     return this.http.post<Job>(`${this.stackConfig.apiUrl}/job/data-import/import`, dataImportModel);
   }

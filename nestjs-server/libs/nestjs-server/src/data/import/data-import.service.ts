@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as csv from 'fast-csv';
 import {Injectable} from "@nestjs/common";
 import {DataImportError, DataImportModel, DataImportRowResult, DataImportSkippedColumn} from "./data-import.model";
-import {CreateEntityResponse, DataAttributeMapping, DataImportClientMapping, DataImportMapping} from "./data-import.types";
+import {CreateEntityResponse, DataAttributeMapping, DataImportClientMapping, DataImportMapping, TemplateResult} from "./data-import.types";
 import {Entity} from "../../domain/entity";
 import {
     ConverterResult,
@@ -66,6 +66,14 @@ export class DataImportService {
         params: Record<string, any>,
     ): Promise<{ valid: boolean; errors: string[] }> {
         return this.dataFormatService.validateSchema(formatKey, params);
+    }
+
+    async generateTemplate(
+        formatKey: string,
+        params: Record<string, any>,
+        flavour: 'grid' | 'dictionary',
+    ): Promise<TemplateResult> {
+        return this.dataFormatService.generateTemplate(formatKey, params, flavour);
     }
 
     async parseFile(dataFormat: string, filePath: string): Promise<DataImportModel> {
