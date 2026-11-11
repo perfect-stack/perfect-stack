@@ -40,7 +40,23 @@ export class DataImportModel {
   importResult!: DataImportRowResult[];
 }
 
+export interface DataImportParameter {
+  name: string;
+  label: string;
+  type: 'entity-select' | 'select' | 'text';
+  entityName?: string;
+  displayField?: string;
+  secondaryDisplayField?: string;
+  required?: boolean;
+  defaultValue?: any;
+  options?: { label: string; value: any }[];
+}
+
 export type DataImportClientMapping = {
   title: string;
   metaEntityName: string;
+  category?: string;
+  parameters?: DataImportParameter[];
+  supportsTemplates?: boolean;
+  supportsSchemaCheck?: boolean;
 };

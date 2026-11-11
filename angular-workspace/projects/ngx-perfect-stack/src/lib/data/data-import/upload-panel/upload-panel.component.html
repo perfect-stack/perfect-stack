@@ -1,35 +1,107 @@
 <div class="pb-3">
-  <select class="form-select" [(ngModel)]="dataFormat">
-    @for (nextMapping of clientMappings; track nextMapping) {
-      <option [value]="nextMapping.title">{{nextMapping.title}}</option>
+  <label class="form-label text-muted small mb-1">Data Format</label>
+  <select class="form-select" [ngModel]="dataFormat" (ngModelChange)="onFormatTitleChange($event)">
+    @if (hasCategories()) {
+      @for (category of getCategories(); track category) {
+        <optgroup [label]="category">
+          @for (mapping of getMappingsByCategory(category); track mapping.title) {
+            <option [value]="mapping.title">{{mapping.title}}</option>
+          }
+        </optgroup>
+      }
+    } @else {
+      @for (mapping of clientMappings; track mapping.title) {
+        <option [value]="mapping.title">{{mapping.title}}</option>
+      }
     }
   </select>
 </div>
 
+@if (selectedMapping && selectedMapping.parameters && selectedMapping.parameters.length > 0) {
+  <div class="pb-3">
+    @for (param of selectedMapping.parameters; track param.name) {
+      <div class="mb-2">
+        <label class="form-label text-muted small mb-1">
+          {{param.label}}
+          @if (param.required) {
+            <span class="text-danger">*</span>
+          }
+        </label>
+
+        @if (param.type === 'entity-select') {
+          <select class="form-select" [(ngModel)]="parameterValues[param.name]" (change)="onParameterChange(param)">
+            <option [ngValue]="null" [value]="undefined" disabled selected>Select {{param.label}}...</option>
+            @for (opt of parameterEntityOptions[param.name]; track opt.id) {
+              <option [value]="opt.id">{{getParamOptionLabel(param, opt)}}</option>
+            }
+          </select>
+        }
+
+        @if (param.type === 'select') {
+          <select class="form-select" [(ngModel)]="parameterValues[param.name]" (change)="onParameterChange(param)">
+            <option [ngValue]="null" [value]="undefined" disabled selected>Select {{param.label}}...</option>
+            @for (opt of param.options; track opt.value) {
+              <option [value]="opt.value">{{opt.label}}</option>
+            }
+          </select>
+        }
+
+        @if (param.type === 'text') {
+          <input type="text" class="form-control" [(ngModel)]="parameterValues[param.name]" (input)="onParameterChange(param)">
+        }
+      </div>
+    }
+  </div>
+}
+
+@if (schemaErrors.length > 0) {
+  <div class="alert alert-danger mb-2">
+    <div class="fw-bold mb-1">Configuration error:</div>
+    <ul class="mb-0 ps-3">
+      @for (err of schemaErrors; track err) {
+        <li>{{err}}</li>
+      }
+    </ul>
+    <div class="small mt-1 text-muted">Please resolve before importing.</div>
+  </div>
+}
+
 <div class="upload-dropzone border border-dashed border-secondary border-3 rounded mb-2"
+  [class.disabled]="isUploadDisabled()"
   (dragover)="onDragOver($event)"
   (dragleave)="onDragLeave($event)"
   (drop)="onDrop($event)"
-  [class.dragover]="isDraggingOver">
+  [class.dragover]="isDraggingOver && !isUploadDisabled()">
 
   <div class="d-flex flex-column justify-content-center align-items-center p-3">
+    @if (schemaErrors.length > 0) {
+      <div class="text-danger text-center py-2">
+        <span class="material-symbols-outlined text-danger mb-1" style="font-size: 36px;">warning</span>
+        <div>Please resolve configuration errors before uploading a file.</div>
+      </div>
+    } @else if (isUploadDisabled()) {
+      <div class="text-muted text-center py-2">
+        <span class="material-symbols-outlined text-secondary mb-1" style="font-size: 36px;">info</span>
+        <div>Please select {{getMissingRequiredParameterLabel()}} before uploading a file.</div>
+      </div>
+    } @else {
+      <div class="mb-2">
+        <label for="fileUploadInput" class="upload-circle">
+          <span class="material-symbols-outlined">upload</span>
+        </label>
+      </div>
 
-    <div class="mb-2">
-      <label for="fileUploadInput" class="upload-circle">
-        <span class="material-symbols-outlined">upload</span>
-      </label>
-    </div>
+      <div>Drop <b>ONE</b> file here, or click to upload...</div>
 
-    <div>Drop <b>ONE</b> file here, or click to upload...</div>
-
-    <!-- The actual file input, hidden visually -->
-    <input
-      type="file"
-      id="fileUploadInput"
-      multiple
-      (change)="onFileSelected($event)"
-      style="display: none;"
-      />
+      <!-- The actual file input, hidden visually -->
+      <input
+        type="file"
+        id="fileUploadInput"
+        multiple
+        (change)="onFileSelected($event)"
+        style="display: none;"
+        />
+    }
   </div>
 </div>
 

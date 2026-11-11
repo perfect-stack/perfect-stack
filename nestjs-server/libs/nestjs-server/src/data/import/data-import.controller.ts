@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ActionPermit } from '../../authentication/action-permit';
 import { ActionType } from '../../domain/meta.role';
@@ -24,5 +24,23 @@ export class DataImportController {
   @Get()
   getDataImportClientMapping(): DataImportClientMapping[] {
     return this.dataImportService.getDataImportClientMapping();
+  }
+
+  @ActionPermit(ActionType.Read)
+  @SubjectName('Import')
+  @ApiOperation({
+    summary: 'Validate schema collisions and configuration for a data import format',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Validation result containing valid boolean and list of error messages',
+    type: Object,
+  })
+  @Get(':formatKey/schema-check')
+  async validateSchema(
+    @Param('formatKey') formatKey: string,
+    @Query() params: Record<string, any>,
+  ): Promise<{ valid: boolean; errors: string[] }> {
+    return this.dataImportService.validateSchema(formatKey, params);
   }
 }

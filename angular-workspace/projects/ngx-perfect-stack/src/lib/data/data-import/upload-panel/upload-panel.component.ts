@@ -7,7 +7,8 @@ import {finalize, Subscription} from "rxjs";
 import {Job} from "../../../job/job.model";
 import {FormsModule} from "@angular/forms";
 import {DataImportService} from "../data-import.service";
-import {DataImportClientMapping} from "./data-import.model";
+import {DataImportClientMapping, DataImportParameter} from "./data-import.model";
+import {DataService} from "../../data-service/data.service";
 
 export class FileItem {
   file: File;
@@ -37,27 +38,158 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
   isDraggingOver = false;
 
   clientMappings: DataImportClientMapping[] = [];
-
-  // Set default value
   dataFormat = "Place";
+  selectedMapping: DataImportClientMapping | null = null;
+
+  // Generic dynamic parameter values and entity options
+  parameterValues: Record<string, any> = {};
+  parameterEntityOptions: Record<string, any[]> = {};
+
+  schemaErrors: string[] = [];
+  isValidatingSchema = false;
 
   uploadedData = signal<null | Job>(null);
 
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly dataImportService: DataImportService,
+              protected readonly dataService: DataService,
               private http: HttpClient,
               protected readonly cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
     this.dataImportService.getDataImportClientMapping().subscribe(mappings => {
-      this.clientMappings = mappings;
-      if (this.clientMappings.length > 0 && !this.clientMappings.some(m => m.title === this.dataFormat)) {
-        this.dataFormat = this.clientMappings[0].title;
+      this.clientMappings = mappings || [];
+      if (this.clientMappings.length > 0) {
+        const current = this.clientMappings.find(m => m.title === this.dataFormat) || this.clientMappings[0];
+        this.selectMapping(current);
       }
       this.cdr.markForCheck();
     });
+  }
+
+  hasCategories(): boolean {
+    return this.clientMappings.some(m => !!m.category);
+  }
+
+  getCategories(): string[] {
+    const set = new Set<string>();
+    for (const m of this.clientMappings) {
+      set.add(m.category || 'Predefined');
+    }
+    return Array.from(set);
+  }
+
+  getMappingsByCategory(category: string): DataImportClientMapping[] {
+    return this.clientMappings.filter(m => (m.category || 'Predefined') === category);
+  }
+
+  onFormatTitleChange(newTitle: string): void {
+    const found = this.clientMappings.find(m => m.title === newTitle);
+    if (found) {
+      this.selectMapping(found);
+    }
+  }
+
+  selectMapping(mapping: DataImportClientMapping): void {
+    this.selectedMapping = mapping;
+    this.dataFormat = mapping.title;
+    this.parameterValues = {};
+    this.schemaErrors = [];
+
+    if (mapping.parameters && mapping.parameters.length > 0) {
+      for (const param of mapping.parameters) {
+        if (param.defaultValue !== undefined) {
+          this.parameterValues[param.name] = param.defaultValue;
+        }
+        if (param.type === 'entity-select' && param.entityName) {
+          this.loadEntityOptions(param);
+        }
+      }
+    }
+    this.checkSchemaIfReady();
+    this.cdr.markForCheck();
+  }
+
+  loadEntityOptions(param: DataImportParameter): void {
+    if (!param.entityName || this.parameterEntityOptions[param.name]) {
+      return;
+    }
+    this.dataService.findAll(param.entityName, '', 1, 500).subscribe({
+      next: (response) => {
+        if (response && response.resultList) {
+          const displayProp = param.displayField || 'name';
+          this.parameterEntityOptions[param.name] = response.resultList.sort((a: any, b: any) =>
+            String(a[displayProp] || '').localeCompare(String(b[displayProp] || ''))
+          );
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error(`Failed to load options for entity parameter ${param.name} (${param.entityName})`, err);
+      }
+    });
+  }
+
+  getParamOptionLabel(param: DataImportParameter, item: any): string {
+    const display = item[param.displayField || 'name'] || '';
+    const secondary = param.secondaryDisplayField ? item[param.secondaryDisplayField] : null;
+    return secondary ? `${display} (${secondary})` : display;
+  }
+
+  onParameterChange(param: DataImportParameter): void {
+    this.checkSchemaIfReady();
+    this.cdr.markForCheck();
+  }
+
+  checkSchemaIfReady(): void {
+    this.schemaErrors = [];
+    if (!this.selectedMapping || !this.selectedMapping.supportsSchemaCheck) {
+      return;
+    }
+    const hasAllRequired = !(this.selectedMapping.parameters || []).some(
+      p => p.required && (this.parameterValues[p.name] === undefined || this.parameterValues[p.name] === null || this.parameterValues[p.name] === '')
+    );
+    if (!hasAllRequired) {
+      return;
+    }
+
+    this.isValidatingSchema = true;
+    this.dataImportService.checkSchema(this.selectedMapping.title, this.parameterValues).subscribe({
+      next: (result) => {
+        this.isValidatingSchema = false;
+        if (!result.valid && result.errors && result.errors.length > 0) {
+          this.schemaErrors = result.errors;
+        } else {
+          this.schemaErrors = [];
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.isValidatingSchema = false;
+        console.error('Failed to validate schema for format', err);
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  isUploadDisabled(): boolean {
+    if (this.isValidatingSchema || this.schemaErrors.length > 0) {
+      return true;
+    }
+    if (!this.selectedMapping || !this.selectedMapping.parameters) {
+      return false;
+    }
+    return this.selectedMapping.parameters.some(p => p.required && !this.parameterValues[p.name]);
+  }
+
+  getMissingRequiredParameterLabel(): string {
+    if (!this.selectedMapping || !this.selectedMapping.parameters) {
+      return '';
+    }
+    const missing = this.selectedMapping.parameters.find(p => p.required && !this.parameterValues[p.name]);
+    return missing ? missing.label : '';
   }
 
   ngOnDestroy(): void {
@@ -67,6 +199,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
   // --- Drag and Drop Handlers ---
 
   onDragOver(event: DragEvent) {
+    if (this.isUploadDisabled()) return;
     event.preventDefault(); // Prevent default browser behavior
     event.stopPropagation(); // Stop event bubbling
     this.isDraggingOver = true; // Activate visual feedback
@@ -81,6 +214,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
   }
 
   onDrop(event: DragEvent) {
+    if (this.isUploadDisabled()) return;
     event.preventDefault();
     event.stopPropagation();
     this.isDraggingOver = false; // Deactivate visual feedback
@@ -95,6 +229,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
   // --- File Selection Handler ---
 
   onFileSelected(event: Event): void {
+    if (this.isUploadDisabled()) return;
     const element = event.currentTarget as HTMLInputElement;
     const files: FileList | null = element.files;
     if (files && files.length > 0) {
@@ -106,6 +241,9 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
   // --- Common File Processing Logic ---
 
   processFiles(files: FileList): void {
+    if (this.isUploadDisabled()) {
+      return;
+    }
     this.fileItems = [];
     this.uploadedData.set(null);
 
@@ -136,11 +274,17 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
     // 1. Create a FormData object to build the multipart request
     const formData = new FormData();
 
-    // 2. Append the file. The first argument, 'file', is the field name
-    //    the server API expects. You may need to change this if your
-    //    backend expects a different name (e.g., 'upload', 'fileData').
+    // 2. Append the file and format parameters
     formData.append('file', fileItem.file, fileItem.file.name);
     formData.append('dataFormat', this.dataFormat);
+
+    // Generic parameter propagation
+    for (const [key, value] of Object.entries(this.parameterValues)) {
+      if (value !== undefined && value !== null && value !== '') {
+        formData.append(key, value);
+        formData.append(`params[${key}]`, value);
+      }
+    }
 
     // 3. Make the POST request with the FormData.
     //    DO NOT set the 'Content-Type' header manually. The browser

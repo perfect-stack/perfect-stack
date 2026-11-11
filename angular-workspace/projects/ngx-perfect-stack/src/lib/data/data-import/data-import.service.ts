@@ -26,6 +26,13 @@ export class DataImportService {
     return this.dataImportClientMappingCache$;
   }
 
+  checkSchema(formatKey: string, params: Record<string, any>): Observable<{ valid: boolean; errors: string[] }> {
+    return this.http.get<{ valid: boolean; errors: string[] }>(
+      `${this.stackConfig.apiUrl}/data-import/${encodeURIComponent(formatKey)}/schema-check`,
+      { params }
+    );
+  }
+
   importData(dataImportModel: DataImportModel) {
     return this.http.post<Job>(`${this.stackConfig.apiUrl}/job/data-import/import`, dataImportModel);
   }

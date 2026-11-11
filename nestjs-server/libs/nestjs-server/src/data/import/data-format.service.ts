@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataAttributeMapping, DataImportClientMapping, DataImportMapping } from './data-import.types';
+import { DataAttributeMapping, DataImportClientMapping, DataImportMapping, DynamicDataImportProvider } from './data-import.types';
 import { TrackingFlightStatusConverter } from './converter/tracking-flight-status.converter';
 import { BandNumberLookupConverter } from './converter/band-number.converter';
 import { DateConverter } from './converter/date.converter';
@@ -23,6 +23,7 @@ import { ESRIService } from '../../esri/esri.service';
 @Injectable()
 export class DataFormatService {
   private _dataFormatMap: Map<string, DataImportMapping> | null = null;
+  private _dynamicProviders: Map<string, DynamicDataImportProvider> = new Map();
 
   constructor(
     protected readonly queryService: QueryService,
@@ -33,8 +34,27 @@ export class DataFormatService {
     protected readonly esriService: ESRIService,
   ) {}
 
+  registerDynamicProvider(provider: DynamicDataImportProvider) {
+    this._dynamicProviders.set(provider.formatKey, provider);
+  }
+
+  getDynamicProvider(formatKey: string): DynamicDataImportProvider | undefined {
+    return this._dynamicProviders.get(formatKey);
+  }
+
+  async validateSchema(
+    formatKey: string,
+    params: Record<string, any>,
+  ): Promise<{ valid: boolean; errors: string[] }> {
+    const provider = this.getDynamicProvider(formatKey);
+    if (provider && provider.validateSchema) {
+      return provider.validateSchema(params);
+    }
+    return { valid: true, errors: [] };
+  }
+
   isValidDataFormat(dataFormat: string) {
-    return this.getDataFormatMap().has(dataFormat);
+    return this.getDataFormatMap().has(dataFormat) || this._dynamicProviders.has(dataFormat);
   }
 
   getDataFormat(dataFormat: string) {
@@ -42,12 +62,24 @@ export class DataFormatService {
   }
 
   getDataImportClientMapping(): DataImportClientMapping[] {
-    return Array.from(this.getDataFormatMap().values())
+    const staticMappings = Array.from(this.getDataFormatMap().values())
       .map((format) => ({
         title: format.title,
         metaEntityName: format.metaEntityName,
-      }))
-      .sort((a, b) => a.title.localeCompare(b.title));
+        category: 'Predefined',
+      }));
+
+    const dynamicMappings = Array.from(this._dynamicProviders.values())
+      .map((provider) => ({
+        title: provider.formatKey,
+        metaEntityName: provider.metaEntityName,
+        category: provider.category || 'Dynamic Models',
+        parameters: provider.getParameters(),
+        supportsTemplates: provider.supportsTemplates ?? false,
+        supportsSchemaCheck: provider.supportsSchemaCheck ?? false,
+      }));
+
+    return [...staticMappings, ...dynamicMappings].sort((a, b) => a.title.localeCompare(b.title));
   }
 
   addDataFormat(dataFormat: DataImportMapping) {

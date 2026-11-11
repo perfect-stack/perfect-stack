@@ -61,6 +61,13 @@ export class DataImportService {
         return this.dataFormatService.getDataImportClientMapping();
     }
 
+    async validateSchema(
+        formatKey: string,
+        params: Record<string, any>,
+    ): Promise<{ valid: boolean; errors: string[] }> {
+        return this.dataFormatService.validateSchema(formatKey, params);
+    }
+
     async parseFile(dataFormat: string, filePath: string): Promise<DataImportModel> {
 
         try {
