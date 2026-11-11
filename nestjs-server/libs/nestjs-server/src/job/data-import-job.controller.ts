@@ -34,6 +34,7 @@ import {DataImportService} from "../data/import/data-import.service";
 import {ConfigService} from "@nestjs/config";
 import {OrmService} from "../orm/orm.service";
 import {DataService} from "../data/data.service";
+import {Op} from "sequelize";
 
 
 const storageOptions = diskStorage({
@@ -290,14 +291,19 @@ export class DataImportJobController {
             throw new BadRequestException(`Failed to parse job data payload`);
         }
 
-        const importedIds = (dataImportModel.importedEntityList || []).filter((id): id is string => !!id);
-        if (importedIds.length === 0) {
+        // Check if dynamic provider supports specialized high-performance rollback (e.g. batch service)
+        const customResult = await this.dataImportService.rollbackImport(jobId, dataImportModel);
+        if (customResult) {
             return {
                 success: true,
-                message: 'No imported entities were found to delete for this job',
-                deletedCount: 0,
+                deletedCount: customResult.deletedCount,
+                message: customResult.message,
+                jobId,
+                status: 'RolledBack',
             };
         }
+
+        let importedIds = (dataImportModel.importedEntityList || []).filter((id): id is string => !!id);
 
         let metaEntityName: string | undefined;
         const provider = this.dataImportService.dataFormatService.getDynamicProvider(dataImportModel.dataFormat);
@@ -311,68 +317,152 @@ export class DataImportJobController {
             metaEntityName = dataImportMapping.metaEntityName;
         }
 
-        // Safe conflict check: ensure none of the entities have new relationships preventing deletion
-        const blockedIds: string[] = [];
-        for (const entityId of importedIds) {
+        if (!metaEntityName) {
+            throw new BadRequestException(`Target meta entity not found for data format '${dataImportModel.dataFormat}'`);
+        }
+
+        const model = this.ormService.sequelize.model(metaEntityName);
+        if (!model) {
+            throw new BadRequestException(`Model '${metaEntityName}' not found in sequelize`);
+        }
+
+        // Fallback: If importedEntityList is empty, look up records associated by job_id if the column exists
+        if (importedIds.length === 0 && model.rawAttributes && model.rawAttributes['job_id']) {
             try {
-                const canDestroy = await this.dataService.destroyCheck(metaEntityName, entityId);
-                if (!canDestroy) {
-                    blockedIds.push(entityId);
-                }
-            } catch (err: any) {
-                blockedIds.push(entityId);
+                const existingRecords = await model.findAll({
+                    where: { job_id: jobId },
+                    attributes: ['id'],
+                    raw: true,
+                });
+                importedIds = existingRecords.map((r: any) => r.id);
+            } catch (e: any) {
+                this.logger.warn(`Failed fallback lookup by job_id for ${metaEntityName}: ${e.message}`);
             }
         }
 
-        if (blockedIds.length > 0) {
+        if (importedIds.length === 0) {
+            return {
+                success: true,
+                message: 'No imported entities were found to delete for this job',
+                deletedCount: 0,
+            };
+        }
+
+        // Fast dependency check: If tree entity, check if any nodes outside of importedIds depend on imported entities
+        try {
+            const metaEntity = await (this.dataService as any).metaEntityService?.findOne(metaEntityName);
+            const parentAttr = (this.dataService as any).getTreeParentAttribute ? (this.dataService as any).getTreeParentAttribute(metaEntity) : null;
+            if (parentAttr) {
+                const parentFkName = parentAttr.name + '_id';
+                const conflictCount = await model.count({
+                    where: {
+                        [parentFkName]: { [Op.in]: importedIds },
+                        id: { [Op.notIn]: importedIds },
+                    },
+                });
+                if (conflictCount > 0) {
+                    throw new ConflictException({
+                        statusCode: 409,
+                        message: `Unable to roll back import: ${conflictCount} child records created outside this import depend on these entities.`,
+                    });
+                }
+            }
+        } catch (err: any) {
+            if (err instanceof ConflictException) throw err;
+            this.logger.warn(`Tree dependency check warning: ${err.message}`);
+        }
+
+        // Delete entities in chunks from this single server request
+        const CHUNK_SIZE = 100;
+        let deletedCount = 0;
+        const transaction = await this.ormService.sequelize.transaction();
+
+        try {
+            for (let i = 0; i < importedIds.length; i += CHUNK_SIZE) {
+                const chunkIds = importedIds.slice(i, i + CHUNK_SIZE);
+                this.logger.log(`Deleting chunk ${Math.floor(i / CHUNK_SIZE) + 1} (${chunkIds.length} entities) for rollback of job ${jobId}...`);
+
+                let locationIdsToDelete: string[] = [];
+                if (metaEntityName === 'CaptureEvent') {
+                    try {
+                        const events = await model.findAll({
+                            where: { id: { [Op.in]: chunkIds } },
+                            attributes: ['location_id'],
+                            raw: true,
+                            transaction,
+                        });
+                        locationIdsToDelete = events.map((e: any) => e.location_id).filter(Boolean);
+                    } catch (e: any) {
+                        this.logger.warn(`Could not read location_ids for chunk: ${e.message}`);
+                    }
+                }
+
+                const count = await model.destroy({
+                    where: {
+                        id: { [Op.in]: chunkIds },
+                    },
+                    transaction,
+                });
+                deletedCount += count;
+
+                // Clean up associated Location entities if any
+                if (locationIdsToDelete.length > 0) {
+                    try {
+                        const locationModel = this.ormService.sequelize.model('Location');
+                        if (locationModel) {
+                            await locationModel.destroy({
+                                where: {
+                                    id: { [Op.in]: locationIdsToDelete },
+                                },
+                                transaction,
+                            });
+                        }
+                    } catch (locErr: any) {
+                        this.logger.warn(`Non-fatal: could not delete locations for chunk: ${locErr.message}`);
+                    }
+                }
+            }
+
+            // Update DataImportModel to reflect deletion
+            dataImportModel.status = 'error';
+            dataImportModel.importedEntityList = [];
+            if (dataImportModel.importResult) {
+                for (const rowResult of dataImportModel.importResult) {
+                    if (rowResult.actualEntity) {
+                        rowResult.actualEntity = null;
+                    }
+                }
+            }
+
+            const isPostgres = this.ormService.sequelize.getDialect() === 'postgres';
+            await this.ormService.sequelize.query(
+                `UPDATE "Job"
+                 SET status = 'RolledBack',
+                     status_message = 'Imported entities were rolled back by user',
+                     imported_count = 0,
+                     data = :data,
+                     result_summary = :resultSummary,
+                     updated_at = ${isPostgres ? 'NOW()' : 'CURRENT_TIMESTAMP'}
+                 WHERE id = :id;`,
+                {
+                    replacements: {
+                        id: jobId,
+                        data: JSON.stringify(dataImportModel),
+                        resultSummary: `Rolled back: ${deletedCount} entities deleted`,
+                    },
+                    transaction,
+                }
+            );
+
+            await transaction.commit();
+        } catch (err: any) {
+            await transaction.rollback();
+            this.logger.error(`Error deleting entities during rollback:`, err);
             throw new ConflictException({
                 statusCode: 409,
-                message: `Unable to roll back import: ${blockedIds.length} of ${importedIds.length} entities cannot be deleted because dependent records or relationships exist.`,
-                blockedIds,
+                message: `Unable to roll back import: dependent records or relationships prevent deletion (${err.message})`,
             });
         }
-
-        // All checks passed, destroy entities
-        let deletedCount = 0;
-        for (const entityId of importedIds) {
-            try {
-                await this.dataService.destroy(metaEntityName, entityId);
-                deletedCount++;
-            } catch (err: any) {
-                this.logger.error(`Error deleting entity ${entityId} during rollback:`, err);
-                throw new Error(`Failed to delete entity ${entityId}: ${err.message}`);
-            }
-        }
-
-        // Update DataImportModel to reflect deletion
-        dataImportModel.status = 'error';
-        dataImportModel.importedEntityList = [];
-        if (dataImportModel.importResult) {
-            for (const rowResult of dataImportModel.importResult) {
-                if (rowResult.actualEntity) {
-                    rowResult.actualEntity = null;
-                }
-            }
-        }
-
-        const isPostgres = this.ormService.sequelize.getDialect() === 'postgres';
-        await this.ormService.sequelize.query(
-            `UPDATE "Job"
-             SET status = 'RolledBack',
-                 status_message = 'Imported entities were rolled back by user',
-                 imported_count = 0,
-                 data = :data,
-                 result_summary = :resultSummary,
-                 updated_at = ${isPostgres ? 'NOW()' : 'CURRENT_TIMESTAMP'}
-             WHERE id = :id;`,
-            {
-                replacements: {
-                    id: jobId,
-                    data: JSON.stringify(dataImportModel),
-                    resultSummary: `Rolled back: ${deletedCount} entities deleted`,
-                },
-            }
-        );
 
         return {
             success: true,

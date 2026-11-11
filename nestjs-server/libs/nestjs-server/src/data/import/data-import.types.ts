@@ -45,11 +45,13 @@ export interface DynamicDataImportProvider {
     readonly supportsTemplates?: boolean;
     readonly supportsSchemaCheck?: boolean;
     readonly supportsAccept?: boolean;
+    readonly supportsRollback?: boolean;
     getParameters(): DataImportParameter[];
     getMapping(params: Record<string, any>): Promise<DataImportMapping>;
     validateSchema?(params: Record<string, any>): Promise<{ valid: boolean; errors: string[] }>;
     generateTemplate?(params: Record<string, any>, flavour: 'grid' | 'dictionary'): Promise<TemplateResult>;
     acceptImport?(jobId: string): Promise<{ acceptedCount: number; message: string }>;
+    rollbackImport?(jobId: string): Promise<{ deletedCount: number; message: string }>;
 }
 
 export type DataImportMapping = {

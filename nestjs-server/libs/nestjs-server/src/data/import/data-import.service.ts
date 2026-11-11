@@ -713,4 +713,8 @@ export class DataImportService {
     async acceptImport(jobId: string, dataImportModel: DataImportModel): Promise<{ acceptedCount: number; message: string }> {
         return this.dataFormatService.acceptImport(dataImportModel.dataFormat, jobId);
     }
+
+    async rollbackImport(jobId: string, dataImportModel: DataImportModel): Promise<{ deletedCount: number; message: string } | null> {
+        return this.dataFormatService.rollbackImport(dataImportModel.dataFormat, jobId);
+    }
 }

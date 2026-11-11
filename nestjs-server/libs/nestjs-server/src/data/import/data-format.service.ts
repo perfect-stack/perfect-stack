@@ -115,6 +115,17 @@ export class DataFormatService {
     return provider.acceptImport(jobId);
   }
 
+  async rollbackImport(
+    formatKey: string,
+    jobId: string,
+  ): Promise<{ deletedCount: number; message: string } | null> {
+    const provider = this.getDynamicProvider(formatKey);
+    if (!provider || !provider.rollbackImport) {
+      return null;
+    }
+    return provider.rollbackImport(jobId);
+  }
+
   addDataFormat(dataFormat: DataImportMapping) {
     this.getDataFormatMap().set(dataFormat.title, dataFormat);
   }
