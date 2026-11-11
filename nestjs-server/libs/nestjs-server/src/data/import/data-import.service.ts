@@ -152,9 +152,12 @@ export class DataImportService {
             dataImportModel.importResult = [];
         }
 
+        const effectiveJobId = dataImportModel.jobId;
         const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat, {
             ...dataImportModel.parameters,
             headers: dataImportModel.headers,
+            executedBy: dataImportModel.executedBy,
+            jobId: effectiveJobId,
         });
         if (!dataImportMapping) {
             throw new Error(`Data import format '${dataImportModel.dataFormat}' not found`);
@@ -260,6 +263,8 @@ export class DataImportService {
         const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat, {
             ...dataImportModel.parameters,
             headers: dataImportModel.headers,
+            executedBy: dataImportModel.executedBy,
+            jobId: effectiveJobId,
         });
         if (!dataImportMapping) {
             throw new Error(`Data import format '${dataImportModel.dataFormat}' not found`);

@@ -15,3 +15,4 @@ export * from './place-lookup.converter';
 export * from './text.converter';
 export * from './time.converter';
 export * from './tracking-flight-status.converter';
+export * from './current-user.converter';

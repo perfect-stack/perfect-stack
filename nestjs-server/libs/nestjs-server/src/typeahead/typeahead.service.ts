@@ -43,6 +43,22 @@ export class TypeaheadService {
 
     const tableName = metaAttribute.relationshipTarget;
 
+    let searchFields = metaAttribute.typeaheadSearch || [];
+    if (request.metaAttribute && Array.isArray(request.metaAttribute.typeaheadSearch) && request.metaAttribute.typeaheadSearch.length > 0) {
+      try {
+        const targetMetaEntity = await this.metaEntityService.findOne(metaAttribute.relationshipTarget);
+        if (targetMetaEntity && targetMetaEntity.attributes) {
+          const validAttrs = new Set(targetMetaEntity.attributes.map((a: any) => a.name));
+          const requestedValidFields = request.metaAttribute.typeaheadSearch.filter((f: string) => validAttrs.has(f));
+          if (requestedValidFields.length > 0) {
+            searchFields = requestedValidFields;
+          }
+        }
+      } catch (e) {
+        // Fallback to default metaAttribute.typeaheadSearch
+      }
+    }
+
     const whereClause = {};
     if (request.searchId) {
       whereClause['id'] = {
@@ -64,7 +80,7 @@ export class TypeaheadService {
       const searchValue =
         tokens.length > 0 ? tokens.join('').replace(/%+/g, '%') : '%%';
 
-      const searchFieldList = metaAttribute.typeaheadSearch.join(", ' ', ");
+      const searchFieldList = searchFields.join(", ' ', ");
 
       const subQuery = `Select id from "${tableName}" where concat(${searchFieldList}) ilike :searchValue`;
       this.logger.log(
@@ -87,7 +103,7 @@ export class TypeaheadService {
     }
 
     const orderClause = [];
-    for (const nextSearchTerm of metaAttribute.typeaheadSearch) {
+    for (const nextSearchTerm of searchFields) {
       orderClause.push([nextSearchTerm, 'ASC']);
     }
 
@@ -105,21 +121,25 @@ export class TypeaheadService {
     for (const nextModel of rows) {
       results.push({
         id: nextModel['id'],
-        displayText: this.toDisplayText(nextModel, metaAttribute),
+        displayText: this.toDisplayText(nextModel, searchFields),
       });
     }
 
     return results;
   }
 
-  toDisplayText(row: Model<any, any>, metaAttribute: MetaAttribute) {
+  toDisplayText(row: Model<any, any>, searchFields: string[]) {
     let displayText = '';
-    for (const nextDisplayAttribute of metaAttribute.typeaheadSearch) {
+    for (const nextDisplayAttribute of searchFields) {
       if (row[nextDisplayAttribute]) {
         displayText += row[nextDisplayAttribute];
         displayText += ' ';
       }
     }
-    return displayText.trim();
+    displayText = displayText.trim();
+    if (!displayText && row['name']) {
+      displayText = String(row['name']);
+    }
+    return displayText;
   }
 }

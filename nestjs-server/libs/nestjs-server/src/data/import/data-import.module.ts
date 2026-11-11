@@ -77,6 +77,9 @@ export class DataImportModule implements OnApplicationBootstrap {
         if (!data.jobId && job.id) {
           data.jobId = job.id;
         }
+        if (!data.executedBy && job.executed_by) {
+          data.executedBy = job.executed_by;
+        }
         await this.dataImportService.dataImportImport(stepIdx, data, job.id);
         job.data = JSON.stringify(data);
       },
