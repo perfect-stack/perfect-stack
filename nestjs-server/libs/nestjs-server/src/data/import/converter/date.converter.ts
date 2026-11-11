@@ -35,10 +35,15 @@ export class DateConverter extends DataImportConverter {
             };
         }
 
+        const trimmed = String(externalValue).trim();
+        const dateInput = trimmed.includes(' ')
+            ? trimmed.split(' ')[0]
+            : (trimmed.includes('T') ? trimmed.split('T')[0] : trimmed);
+
         for (const formatter of DateConverter.SUPPORTED_FORMATS) {
             try {
                 // Attempt to parse the date with the current formatter
-                const parsedDate = LocalDate.parse(externalValue, formatter);
+                const parsedDate = LocalDate.parse(dateInput, formatter);
 
                 // Success! Return the standardized ISO format with time (YYYY-MM-DDTHH:mm:ssZ)
                 console.log('SUCCESS: ' + parsedDate.toString());

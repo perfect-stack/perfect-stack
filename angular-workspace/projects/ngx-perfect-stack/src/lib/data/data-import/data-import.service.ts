@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../ngx-perfect-stack-config";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpResponse} from "@angular/common/http";
 import {DataImportClientMapping, DataImportModel} from "./upload-panel/data-import.model";
 import {Job} from "../../job/job.model";
 import {Observable, shareReplay} from "rxjs";
@@ -33,11 +33,11 @@ export class DataImportService {
     );
   }
 
-  downloadTemplate(formatKey: string, params: Record<string, any>, flavour: 'grid' | 'dictionary'): Observable<Blob> {
+  downloadTemplate(formatKey: string, params: Record<string, any>, flavour: 'grid' | 'dictionary'): Observable<HttpResponse<Blob>> {
     const queryParams: any = { ...params, flavour };
     return this.http.get(
       `${this.stackConfig.apiUrl}/data-import/${encodeURIComponent(formatKey)}/template`,
-      { params: queryParams, responseType: 'blob' }
+      { params: queryParams, responseType: 'blob', observe: 'response' }
     );
   }
 
@@ -72,6 +72,13 @@ export class DataImportService {
   rollbackJob(jobId: string): Observable<{ success: boolean; deletedCount: number; message: string; jobId: string; status: string }> {
     return this.http.post<{ success: boolean; deletedCount: number; message: string; jobId: string; status: string }>(
       `${this.stackConfig.apiUrl}/job/data-import/rollback/${jobId}`,
+      {}
+    );
+  }
+
+  acceptJob(jobId: string): Observable<{ success: boolean; jobId: string; reviewStatus: string; message: string; acceptedCount?: number }> {
+    return this.http.post<{ success: boolean; jobId: string; reviewStatus: string; message: string; acceptedCount?: number }>(
+      `${this.stackConfig.apiUrl}/job/data-import/accept/${jobId}`,
       {}
     );
   }

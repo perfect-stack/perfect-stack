@@ -7,7 +7,7 @@ export class ExternalValue {
 
 export class AttributeValue {
     name: string;
-    value: string | number | [] | null;
+    value: any;
     error?: string;
 }
 

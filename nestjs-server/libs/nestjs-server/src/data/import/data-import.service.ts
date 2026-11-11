@@ -52,7 +52,7 @@ export class DataImportService {
 
     constructor(protected readonly queryService: QueryService,
                 protected readonly dataService: DataService,
-                protected readonly dataFormatService: DataFormatService,
+                public readonly dataFormatService: DataFormatService,
                 protected readonly metaEntityService: MetaEntityService,
                 protected readonly validationService: ValidationService) {
     }
@@ -76,7 +76,7 @@ export class DataImportService {
         return this.dataFormatService.generateTemplate(formatKey, params, flavour);
     }
 
-    async parseFile(dataFormat: string, filePath: string): Promise<DataImportModel> {
+    async parseFile(dataFormat: string, filePath: string, params?: Record<string, any>): Promise<DataImportModel> {
 
         try {
             // Use fast-csv and parse the file into a 2d array of raw values
@@ -109,6 +109,7 @@ export class DataImportService {
                 dataImportModel.dataRows = data.slice(1);
                 dataImportModel.duplicateCheckList = [];
                 dataImportModel.importResult = [];
+                dataImportModel.parameters = params;
             }
 
             return dataImportModel;
@@ -151,7 +152,10 @@ export class DataImportService {
             dataImportModel.importResult = [];
         }
 
-        const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
+        const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat, {
+            ...dataImportModel.parameters,
+            headers: dataImportModel.headers,
+        });
         if (!dataImportMapping) {
             throw new Error(`Data import format '${dataImportModel.dataFormat}' not found`);
         }
@@ -231,19 +235,32 @@ export class DataImportService {
 
 
 
-    async dataImportImport(stepIndex: number, dataImportModel: DataImportModel) {
+    async dataImportImport(stepIndex: number, dataImportModel: DataImportModel, jobId?: string) {
 
         if(stepIndex === 0) {
             dataImportModel.importedEntityList = [];
             dataImportModel.duplicateCheckList = [];
             dataImportModel.importResult = [];
+            dataImportModel.reviewStatus = 'Review';
         }
 
         if(!dataImportModel.importResult) {
             dataImportModel.importResult = [];
         }
 
-        const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat);
+        const effectiveJobId = jobId || dataImportModel.jobId;
+        if (effectiveJobId) {
+            dataImportModel.jobId = effectiveJobId;
+            if (!dataImportModel.parameters) {
+                dataImportModel.parameters = {};
+            }
+            dataImportModel.parameters.jobId = effectiveJobId;
+        }
+
+        const dataImportMapping = await this.findDataImportMapping(dataImportModel.dataFormat, {
+            ...dataImportModel.parameters,
+            headers: dataImportModel.headers,
+        });
         if (!dataImportMapping) {
             throw new Error(`Data import format '${dataImportModel.dataFormat}' not found`);
         }
@@ -296,6 +313,17 @@ export class DataImportService {
                     });
                 }
                 else {
+                    if (effectiveJobId && !createEntityResponse.entity.job_id) {
+                        try {
+                            const metaEntity = await this.metaEntityService.findOne(dataImportMapping.metaEntityName);
+                            if (metaEntity && metaEntity.attributes.some(a => a.name === 'job' || a.name === 'job_id')) {
+                                createEntityResponse.entity.job_id = effectiveJobId;
+                            }
+                        } catch (e) {
+                            // Non-fatal check failure
+                        }
+                    }
+
                     const entityResponse = await this.dataService.save(dataImportMapping.metaEntityName, createEntityResponse.entity);
                     if (entityResponse) {
                         const entityResultMapController = new ValidationResultMapController(entityResponse.validationResults);
@@ -303,6 +331,12 @@ export class DataImportService {
                             throw new Error('Attempted save, but it failed with new errors');
                         }
                         else {
+                            const actualEntityPayload = {
+                                ...entityResponse,
+                                entity: typeof (entityResponse.entity as any)?.toJSON === 'function'
+                                    ? (entityResponse.entity as any).toJSON()
+                                    : entityResponse.entity
+                            };
                             dataImportModel.importedEntityList.push(entityResponse.entity.id);
                             dataImportModel.importResult.push({
                                 skipReason: "Processed",
@@ -311,7 +345,7 @@ export class DataImportService {
                                 importedEntity: entityResponse.entity.id,
                                 skippedColumns: skippedColumns,
                                 proposedEntity: createEntityResponse.entity,
-                                actualEntity: entityResponse
+                                actualEntity: actualEntityPayload
                             });
 
                             if (dataImportMapping.postImportActions) {
@@ -330,8 +364,12 @@ export class DataImportService {
     findSkippedColumns(dataImportMapping: DataImportMapping, headers: string[]): DataImportSkippedColumn[] {
         const mappedIndices = new Set<number>();
         for (const attributeMapping of dataImportMapping.attributeMappings) {
-            for (const colName of attributeMapping.getColumnNamesAsArray()) {
-                const idx = headers.indexOf(colName);
+            const candidates = [
+                ...attributeMapping.getColumnNamesAsArray(),
+                ...(attributeMapping.attributeName ? [attributeMapping.attributeName] : [])
+            ];
+            for (const colName of candidates) {
+                const idx = this.findColumnIndex(colName, headers);
                 if (idx >= 0) {
                     mappedIndices.add(idx);
                 }
@@ -425,14 +463,16 @@ export class DataImportService {
         // return true if the "Imported" fields in the dataRow are null, empty, or undefined
         // - we don't care about the fields that we are not importing
         for(const nextAttributeMapping of dataImportMapping.attributeMappings) {
-            if(nextAttributeMapping.columnName && nextAttributeMapping.indicatesBlankRow) {
-                for(const nextColumName of nextAttributeMapping.getColumnNamesAsArray()) {
-                    const colIdx = headers.indexOf(nextColumName);
-                    if (colIdx >= 0) {
-                        const colValue = dataRow[colIdx];
-                        if (colValue !== null && colValue !== '' && typeof colValue !== 'undefined') {
-                            return false;
-                        }
+            if(nextAttributeMapping.indicatesBlankRow) {
+                const candidates = [
+                    ...nextAttributeMapping.getColumnNamesAsArray(),
+                    ...(nextAttributeMapping.attributeName ? [nextAttributeMapping.attributeName] : [])
+                ];
+                const colIdx = this.findColumnIndex(candidates, headers);
+                if (colIdx >= 0) {
+                    const colValue = dataRow[colIdx];
+                    if (colValue !== null && colValue !== '' && typeof colValue !== 'undefined') {
+                        return false;
                     }
                 }
             }
@@ -453,14 +493,29 @@ export class DataImportService {
         // for each data mapping
         for(const nextAttributeMapping of dataImportMapping.attributeMappings) {
             let converterResult: ConverterResult;
-            //if nextAttributeMapping.columnName is an array of string
-            if(nextAttributeMapping.columnName && Array.isArray(nextAttributeMapping.columnName)) {
+
+            const isDataListConverter = nextAttributeMapping.converter &&
+                typeof (nextAttributeMapping.converter as any).toAttributeValueFromExternalValueList === 'function';
+
+            if(isDataListConverter) {
                 converterResult = await this.convertDataListExternalValue(nextAttributeMapping, headers, dataRow);
             }
-            else if(nextAttributeMapping.columnName) {
-                converterResult = await this.convertExternalValue(nextAttributeMapping, headers, dataRow);
+            else if(nextAttributeMapping.columnName || nextAttributeMapping.attributeName) {
+                const candidateNames = [
+                    ...nextAttributeMapping.getColumnNamesAsArray(),
+                    ...(nextAttributeMapping.attributeName ? [nextAttributeMapping.attributeName] : [])
+                ];
+                const colIdx = this.findColumnIndex(candidateNames, headers);
+                if (colIdx >= 0) {
+                    converterResult = await this.convertExternalValueAtColumn(nextAttributeMapping, colIdx, headers, dataRow);
+                } else if(nextAttributeMapping.defaultValue !== undefined) {
+                    converterResult = this.convertDefaultValue(nextAttributeMapping);
+                } else {
+                    const colDesc = nextAttributeMapping.columnName ? JSON.stringify(nextAttributeMapping.columnName) : nextAttributeMapping.attributeName;
+                    throw new Error(`Unable to find column name ${colDesc} in file`);
+                }
             }
-            else if(nextAttributeMapping.defaultValue) {
+            else if(nextAttributeMapping.defaultValue !== undefined) {
                 converterResult = this.convertDefaultValue(nextAttributeMapping);
             }
             else {
@@ -471,9 +526,14 @@ export class DataImportService {
             for(const nextAttributeValue of converterResult.attributeValues) {
                 entity[nextAttributeValue.name] = nextAttributeValue.value;
                 if(nextAttributeValue.error) {
+                    const candidateNames = [
+                        ...nextAttributeMapping.getColumnNamesAsArray(),
+                        ...(nextAttributeMapping.attributeName ? [nextAttributeMapping.attributeName] : [])
+                    ];
+                    const colIndices = this.findColumnIndices(candidateNames, headers);
                     dataImportErrors.push({
                         row: rowIdx,
-                        cols: this.findColumnIndices(nextAttributeMapping.getColumnNamesAsArray(), headers),
+                        cols: colIndices.length > 0 ? colIndices : [0],
                         message: nextAttributeValue.error
                     });
                 }
@@ -544,21 +604,35 @@ export class DataImportService {
         return converterResult;
     }
 
-    async convertExternalValue(attributeMapping: DataAttributeMapping, headers: string[], dataRow: string[]) {
-        // find the externalValue by single "columnName"
-        const colIdx = headers.indexOf(attributeMapping.columnName as string);
-        if(colIdx < 0) {
-            throw new Error(`Unable to find column name ${attributeMapping.columnName} in file`);
-        }
-
+    async convertExternalValueAtColumn(attributeMapping: DataAttributeMapping, colIdx: number, headers: string[], dataRow: string[]) {
         const externalValue = dataRow[colIdx];
         const converter = attributeMapping.converter as DataImportConverter;
-        const converterResult = await converter.toAttributeValue(attributeMapping.attributeName as string, externalValue);
-        if(!converterResult) {
-            // This error should never happen but probably will during development if Converter is not implemented
-            throw new Error(`Unable to convert external value ${externalValue} for attribute ${attributeMapping.attributeName}`);
+        if (converter && typeof converter.toAttributeValue === 'function') {
+            const converterResult = await converter.toAttributeValue(attributeMapping.attributeName as string, externalValue);
+            if(!converterResult) {
+                throw new Error(`Unable to convert external value ${externalValue} for attribute ${attributeMapping.attributeName}`);
+            }
+            return converterResult;
+        } else {
+            return {
+                attributeValues: [{
+                    name: attributeMapping.attributeName as string,
+                    value: externalValue
+                }]
+            };
         }
-        return converterResult;
+    }
+
+    async convertExternalValue(attributeMapping: DataAttributeMapping, headers: string[], dataRow: string[]) {
+        const candidateNames = [
+            ...attributeMapping.getColumnNamesAsArray(),
+            ...(attributeMapping.attributeName ? [attributeMapping.attributeName] : [])
+        ];
+        const colIdx = this.findColumnIndex(candidateNames, headers);
+        if(colIdx < 0) {
+            throw new Error(`Unable to find column name ${attributeMapping.columnName || attributeMapping.attributeName} in file`);
+        }
+        return this.convertExternalValueAtColumn(attributeMapping, colIdx, headers, dataRow);
     }
 
 
@@ -571,31 +645,67 @@ export class DataImportService {
         }
     }
 
+    findColumnIndex(candidateNames: string | string[], headers: string[]): number {
+        const candidates = Array.isArray(candidateNames) ? candidateNames : [candidateNames];
+        // 1. Exact match
+        for (const candidate of candidates) {
+            if (!candidate) continue;
+            const idx = headers.indexOf(candidate);
+            if (idx >= 0) return idx;
+        }
+
+        // 2. Case-insensitive trimmed match
+        for (const candidate of candidates) {
+            if (!candidate) continue;
+            const trimmedCandidate = candidate.trim().toLowerCase();
+            const idx = headers.findIndex(h => h && h.trim().toLowerCase() === trimmedCandidate);
+            if (idx >= 0) return idx;
+        }
+
+        // 3. Normalized match (ignoring spaces, underscores, and hyphens)
+        const normalize = (s: string) => s.toLowerCase().replace(/[\s_\-]+/g, '');
+        for (const candidate of candidates) {
+            if (!candidate) continue;
+            const normCandidate = normalize(candidate);
+            const idx = headers.findIndex(h => h && normalize(h) === normCandidate);
+            if (idx >= 0) return idx;
+        }
+
+        return -1;
+    }
+
     findColumnIndices(columnNames: string[], headers: string[]): number[] {
         const indices: number[] = [];
         for (const colName of columnNames) {
-            const idx = headers.indexOf(colName);
-            if (idx >= 0) {
+            const idx = this.findColumnIndex(colName, headers);
+            if (idx >= 0 && !indices.includes(idx)) {
                 indices.push(idx);
-            } else {
-                // Handle case where column name is not found, e.g., throw an error or push a -1
-                throw new Error(`Column '${colName}' not found in headers.`);
             }
         }
         return indices;
     }
 
     findExternalValues(columnNames: string[], headers: string[], dataRow: string[]): ExternalValue[] {
-        const columnIndices = this.findColumnIndices(columnNames, headers);
-        return columnIndices.map((colIdx, i) => ({
-            name: columnNames[i],
-            value: dataRow[colIdx],
-            col: colIdx
-        }));
+        const externalValues: ExternalValue[] = [];
+        for (const colName of columnNames) {
+            const idx = this.findColumnIndex(colName, headers);
+            if (idx >= 0) {
+                externalValues.push({
+                    name: headers[idx] || colName,
+                    value: dataRow[idx],
+                    col: idx
+                });
+            }
+        }
+        return externalValues;
     }
 
 
-    async findDataImportMapping(dataFormat: string): Promise<DataImportMapping | undefined> {
-        return this.dataFormatService.getDataFormat(dataFormat);
+    async findDataImportMapping(dataFormat: string, params?: Record<string, any>): Promise<DataImportMapping | undefined> {
+        return this.dataFormatService.getDataImportMapping(dataFormat, params);
+    }
+
+    async acceptImport(jobId: string, dataImportModel: DataImportModel): Promise<{ acceptedCount: number; message: string }> {
+        return this.dataFormatService.acceptImport(dataImportModel.dataFormat, jobId);
     }
 }

@@ -64,6 +64,7 @@ export class DataImportController {
     const result = await this.dataImportService.generateTemplate(formatKey, params, flavour || 'grid');
     res.setHeader('Content-Type', result.contentType || 'text/csv');
     res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
     res.send(result.content);
   }
 }

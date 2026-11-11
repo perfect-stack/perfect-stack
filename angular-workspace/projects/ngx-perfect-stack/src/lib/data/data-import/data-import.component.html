@@ -77,11 +77,33 @@
 
       @if(job && job.status === 'Completed') {
       <p class="text-success">Import Successful</p>
-      @if (canRollback()) {
-      <button class="btn btn-outline-danger btn-sm mb-2" (click)="openRollbackModal()">
-        Delete All Imported Entities
-      </button>
+      <div class="d-flex gap-2 mb-2">
+        @if (canAccept()) {
+        <button class="btn btn-success btn-sm" [disabled]="acceptInProgress" (click)="acceptImport()">
+          @if (acceptInProgress) {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+          }
+          Accept Import
+        </button>
+        }
+        @if (canRollback()) {
+        <button class="btn btn-outline-danger btn-sm" (click)="openRollbackModal()">
+          Delete All Imported Entities
+        </button>
+        }
+      </div>
       }
+
+      @if (acceptSuccess) {
+      <div class="alert alert-success py-2" role="alert">
+        {{acceptSuccess}}
+      </div>
+      }
+
+      @if (acceptError) {
+      <div class="alert alert-danger py-2" role="alert">
+        {{acceptError}}
+      </div>
       }
 
       @if (rollbackSuccess) {

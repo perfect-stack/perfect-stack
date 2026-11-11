@@ -29,6 +29,7 @@ export type DataImportClientMapping = {
     parameters?: DataImportParameter[];
     supportsTemplates?: boolean;
     supportsSchemaCheck?: boolean;
+    supportsAccept?: boolean;
 }
 
 export interface TemplateResult {
@@ -43,10 +44,12 @@ export interface DynamicDataImportProvider {
     readonly category?: string;
     readonly supportsTemplates?: boolean;
     readonly supportsSchemaCheck?: boolean;
+    readonly supportsAccept?: boolean;
     getParameters(): DataImportParameter[];
     getMapping(params: Record<string, any>): Promise<DataImportMapping>;
     validateSchema?(params: Record<string, any>): Promise<{ valid: boolean; errors: string[] }>;
     generateTemplate?(params: Record<string, any>, flavour: 'grid' | 'dictionary'): Promise<TemplateResult>;
+    acceptImport?(jobId: string): Promise<{ acceptedCount: number; message: string }>;
 }
 
 export type DataImportMapping = {
@@ -62,7 +65,7 @@ export class DataAttributeMapping {
     attributeName?: string;
     indicatesBlankRow?: boolean;
     converter?: DataImportConverter | DataListImportConverter;
-    defaultValue?: string | number | [];
+    defaultValue?: any;
 
     /**
      * Safely returns the columnName(s) as a string array, regardless of whether the

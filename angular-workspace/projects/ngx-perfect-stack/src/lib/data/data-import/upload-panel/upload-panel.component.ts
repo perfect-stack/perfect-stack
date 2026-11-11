@@ -213,15 +213,43 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
     }
     this.isDownloadingTemplate = true;
     this.dataImportService.downloadTemplate(this.selectedMapping.title, this.parameterValues, flavour).subscribe({
-      next: (blob) => {
+      next: (response) => {
         this.isDownloadingTemplate = false;
+        const blob = response.body;
+        if (!blob) return;
+
+        let filename = '';
+        const disposition = response.headers.get('content-disposition');
+        if (disposition) {
+          const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+          if (match && match[1]) {
+            filename = match[1].replace(/['"]/g, '').trim();
+          }
+        }
+
+        if (!filename) {
+          const entity = this.selectedMapping?.metaEntityName || this.selectedMapping?.title || 'Data';
+          let methodPart = '';
+          if (this.selectedMapping?.parameters) {
+            for (const p of this.selectedMapping.parameters) {
+              const val = this.parameterValues[p.name];
+              if (val) {
+                const options = this.parameterEntityOptions[p.name];
+                const opt = options?.find((o: any) => o.id === val);
+                const displayVal = opt ? (opt[p.displayField || 'name'] || opt.name || val) : val;
+                methodPart = `_${String(displayVal).trim().replace(/[^a-zA-Z0-9_\-]+/g, '_')}`;
+                break;
+              }
+            }
+          }
+          const suffix = flavour === 'grid' ? 'Template.csv' : 'Data_Dictionary.csv';
+          filename = `${entity}${methodPart}_${suffix}`;
+        }
+
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        const defaultFilename = flavour === 'grid'
-          ? `${this.selectedMapping?.title}_Entry_Template.csv`
-          : `${this.selectedMapping?.title}_Data_Dictionary.csv`;
-        a.download = defaultFilename;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

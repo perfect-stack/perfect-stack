@@ -74,7 +74,10 @@ export class DataImportModule implements OnApplicationBootstrap {
       showInBatchUI: () => false,
       executeStep: async (job, stepIdx) => {
         const data = JSON.parse(job.data);
-        await this.dataImportService.dataImportImport(stepIdx, data);
+        if (!data.jobId && job.id) {
+          data.jobId = job.id;
+        }
+        await this.dataImportService.dataImportImport(stepIdx, data, job.id);
         job.data = JSON.stringify(data);
       },
       onComplete: async (job) => {

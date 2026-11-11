@@ -38,6 +38,9 @@ export class DataImportModel {
   duplicateCheckList!: string[];
 
   importResult!: DataImportRowResult[];
+  parameters?: Record<string, any>;
+  jobId?: string;
+  reviewStatus?: 'Review' | 'Accepted';
 }
 
 export interface DataImportParameter {
@@ -59,4 +62,5 @@ export type DataImportClientMapping = {
   parameters?: DataImportParameter[];
   supportsTemplates?: boolean;
   supportsSchemaCheck?: boolean;
+  supportsAccept?: boolean;
 };

@@ -39,5 +39,8 @@ export class DataImportModel {
     duplicateCheckList!: string[];
 
     importResult!: DataImportRowResult[];
+    parameters?: Record<string, any>;
+    jobId?: string;
+    reviewStatus?: 'Review' | 'Accepted';
 }
 

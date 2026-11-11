@@ -6,7 +6,10 @@ import {AttributeType, ComparisonOperator} from "../../../domain/meta.entity";
 
 export class LocationNameConverter implements DataImportConverter {
 
-    constructor(protected readonly queryService: QueryService) {}
+    constructor(
+        protected readonly queryService: QueryService,
+        protected readonly required: boolean = true
+    ) {}
 
     toCriteria(locationName: string): Criteria {
         return {
@@ -76,6 +79,14 @@ export class LocationNameConverter implements DataImportConverter {
             }
         }
         else {
+            if (!this.required) {
+                return {
+                    attributeValues: [{
+                        name: attributeName,
+                        value: null
+                    }]
+                };
+            }
             return {
                 attributeValues: [{
                     name: attributeName,

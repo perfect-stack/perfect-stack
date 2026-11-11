@@ -198,6 +198,25 @@ export class DataImportSearchComponent implements OnInit {
     this.rollbackInProgress = false;
   }
 
+  canAccept(job: Job): boolean {
+    if (job.status !== 'Completed') return false;
+    if (!job.imported_count || job.imported_count <= 0) return false;
+    if (job.result_summary && job.result_summary.includes('Accepted')) return false;
+    return true;
+  }
+
+  acceptJob(job: Job): void {
+    this.dataImportService.acceptJob(job.id).subscribe({
+      next: (res) => {
+        job.result_summary = res.message || 'Accepted';
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        alert(err?.error?.message || err?.message || 'Failed to accept import');
+      }
+    });
+  }
+
   confirmRollback(): void {
     if (!this.rollbackTargetJob) return;
 

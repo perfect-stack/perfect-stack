@@ -8,6 +8,7 @@ export * from './double.converter';
 export * from './dual-field-date-time.converter';
 export * from './integer.converter';
 export * from './location-name.converter';
+export * from './location.converter';
 export * from './microchip.converter';
 export * from './nztm-coordinate.converter';
 export * from './place-lookup.converter';

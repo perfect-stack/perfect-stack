@@ -127,6 +127,7 @@ export class DataImportJobController {
             fileIsRequired: true
         })) file: Express.Multer.File,
         @Body('dataFormat') dataFormat: string,
+        @Body() body: any,
         @Req() req: Request
     ): Promise<Job> {
 
@@ -142,7 +143,21 @@ export class DataImportJobController {
             const executedBy = this.extractUserName(req);
             const filename = file.originalname;
 
-            const dataImportModel = await this.dataImportService.parseFile(dataFormat, file.path);
+            const params: Record<string, any> = {};
+            if (body) {
+                for (const [key, val] of Object.entries(body)) {
+                    if (key !== 'dataFormat' && key !== 'file') {
+                        if (key.startsWith('params[') && key.endsWith(']')) {
+                            const paramKey = key.slice(7, -1);
+                            params[paramKey] = val;
+                        } else if (!key.includes('[')) {
+                            params[key] = val;
+                        }
+                    }
+                }
+            }
+
+            const dataImportModel = await this.dataImportService.parseFile(dataFormat, file.path, params);
             dataImportModel.status = 'loaded';
             dataImportModel.filename = filename;
             dataImportModel.executedBy = executedBy;
@@ -284,11 +299,17 @@ export class DataImportJobController {
             };
         }
 
-        const dataImportMapping = await this.dataImportService.findDataImportMapping(dataImportModel.dataFormat);
-        if (!dataImportMapping) {
-            throw new BadRequestException(`Data format mapping '${dataImportModel.dataFormat}' not found`);
+        let metaEntityName: string | undefined;
+        const provider = this.dataImportService.dataFormatService.getDynamicProvider(dataImportModel.dataFormat);
+        if (provider) {
+            metaEntityName = provider.metaEntityName;
+        } else {
+            const dataImportMapping = await this.dataImportService.findDataImportMapping(dataImportModel.dataFormat, dataImportModel.parameters);
+            if (!dataImportMapping) {
+                throw new BadRequestException(`Data format mapping '${dataImportModel.dataFormat}' not found`);
+            }
+            metaEntityName = dataImportMapping.metaEntityName;
         }
-        const metaEntityName = dataImportMapping.metaEntityName;
 
         // Safe conflict check: ensure none of the entities have new relationships preventing deletion
         const blockedIds: string[] = [];
@@ -359,6 +380,69 @@ export class DataImportJobController {
             message: `Successfully deleted ${deletedCount} imported entities`,
             jobId,
             status: 'RolledBack',
+        };
+    }
+
+    @ActionPermit(ActionType.Edit)
+    @SubjectName('Import')
+    @Post('/accept/:jobId')
+    async acceptJob(@Param('jobId') jobId: string): Promise<any> {
+        const job = await this.jobService.getJobById(jobId);
+        if (!job) {
+            throw new NotFoundException(`Job with ID ${jobId} not found`);
+        }
+
+        if (job.status === 'RolledBack') {
+            throw new BadRequestException(`Job ${jobId} has been rolled back and cannot be accepted`);
+        }
+
+        if (!job.data) {
+            throw new BadRequestException(`Job ${jobId} contains no data payload`);
+        }
+
+        let dataImportModel: DataImportModel;
+        try {
+            dataImportModel = JSON.parse(job.data);
+        } catch (e) {
+            throw new BadRequestException(`Failed to parse job data payload`);
+        }
+
+        if (dataImportModel.reviewStatus === 'Accepted') {
+            return {
+                success: true,
+                message: `Job ${jobId} has already been accepted`,
+                jobId,
+                reviewStatus: 'Accepted',
+            };
+        }
+
+        const acceptResult = await this.dataImportService.acceptImport(jobId, dataImportModel);
+        dataImportModel.reviewStatus = 'Accepted';
+
+        const isPostgres = this.ormService.sequelize.getDialect() === 'postgres';
+        const summaryMsg = acceptResult?.message || `Import accepted for job ${jobId}`;
+
+        await this.ormService.sequelize.query(
+            `UPDATE "Job"
+             SET data = :data,
+                 result_summary = :resultSummary,
+                 updated_at = ${isPostgres ? 'NOW()' : 'CURRENT_TIMESTAMP'}
+             WHERE id = :id;`,
+            {
+                replacements: {
+                    id: jobId,
+                    data: JSON.stringify(dataImportModel),
+                    resultSummary: summaryMsg,
+                },
+            }
+        );
+
+        return {
+            success: true,
+            jobId,
+            reviewStatus: 'Accepted',
+            message: summaryMsg,
+            acceptedCount: acceptResult?.acceptedCount,
         };
     }
 }

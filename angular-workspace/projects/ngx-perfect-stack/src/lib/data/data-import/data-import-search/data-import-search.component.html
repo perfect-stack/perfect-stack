@@ -210,6 +210,16 @@
                       View
                     </button>
 
+                    @if (canAccept(job)) {
+                      <button
+                        type="button"
+                        class="btn btn-outline-success btn-sm me-1"
+                        (click)="acceptJob(job)"
+                        title="Accept imported entities">
+                        Accept
+                      </button>
+                    }
+
                     @if (canRollback(job)) {
                       <button
                         type="button"

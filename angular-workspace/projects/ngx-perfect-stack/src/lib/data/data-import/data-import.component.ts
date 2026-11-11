@@ -431,6 +431,41 @@ export class DataImportComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Review & Acceptance
+  acceptInProgress = false;
+  acceptSuccess = '';
+  acceptError = '';
+
+  canAccept(): boolean {
+    return !!(this.job &&
+      this.job.status === 'Completed' &&
+      this.phase === 'importing' &&
+      this.importedRowCount > 0 &&
+      this.data?.reviewStatus !== 'Accepted');
+  }
+
+  acceptImport(): void {
+    if (!this.job) return;
+    this.acceptInProgress = true;
+    this.acceptError = '';
+    this.acceptSuccess = '';
+    this.dataImportService.acceptJob(this.job.id).subscribe({
+      next: (res) => {
+        this.acceptInProgress = false;
+        this.acceptSuccess = res.message || 'Imported entities accepted successfully.';
+        if (this.data) {
+          this.data.reviewStatus = 'Accepted';
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.acceptInProgress = false;
+        this.acceptError = err?.error?.message || err?.message || 'Failed to accept import';
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   // Rollback / Entity Deletion
   showRollbackModal = false;
   rollbackInProgress = false;

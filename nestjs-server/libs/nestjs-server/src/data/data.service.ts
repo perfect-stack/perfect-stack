@@ -249,6 +249,34 @@ export class DataService {
     }
   }
 
+  syncManyToOneAttributes(entity: any, metaEntity: MetaEntity) {
+    if (!entity || !metaEntity || !metaEntity.attributes) {
+      return;
+    }
+    for (const attr of metaEntity.attributes) {
+      if (attr.type === AttributeType.ManyToOne) {
+        const fkName = attr.name + '_id';
+        if (entity[fkName] === '') {
+          entity[fkName] = null;
+        }
+        if (
+          (entity[fkName] === undefined || entity[fkName] === null) &&
+          entity[attr.name] &&
+          typeof entity[attr.name] === 'object' &&
+          entity[attr.name].id
+        ) {
+          entity[fkName] = entity[attr.name].id;
+        }
+        if (
+          entity[fkName] &&
+          (!entity[attr.name] || typeof entity[attr.name] !== 'object')
+        ) {
+          entity[attr.name] = { id: entity[fkName] };
+        }
+      }
+    }
+  }
+
   async saveValidatedEntity(
     entity: Entity,
     metaEntity: MetaEntity,
@@ -256,6 +284,7 @@ export class DataService {
     txn?: Transaction,
   ): Promise<EntityResponse> {
     await this.validateTreeInvariants(entity, metaEntity, txn);
+    this.syncManyToOneAttributes(entity, metaEntity);
     await this.saveOneToOneChildren(metaEntity, entity, metaEntityMap);
 
     const model = this.ormService.sequelize.model(metaEntity.name);
@@ -290,6 +319,17 @@ export class DataService {
     // recursively save all Poly relationships
     await this.saveAllPolys(metaEntityMap, metaEntity, entity);
 
+    // Attach saved OneToOne child models to entityModel
+    for (const attribute of metaEntity.attributes) {
+      if (attribute.type === AttributeType.OneToOne && entity[attribute.name]) {
+        if (!entityModel.dataValues) {
+          entityModel.dataValues = {};
+        }
+        entityModel.dataValues[attribute.name] = entity[attribute.name];
+        entityModel[attribute.name] = entity[attribute.name];
+      }
+    }
+
     return {
         action: action,
         entity: entityModel,
@@ -321,6 +361,7 @@ export class DataService {
 
           // Now that the child is saved, we have its ID. Update the parent's FK field.
           entity[attribute.name + '_id'] = savedChildEntityModel.id;
+          entity[attribute.name] = savedChildEntityModel;
         } else if (entity[attribute.name + '_id'] === '') {
           // If there is no child entity, make sure the foreign key is set to null if it's an empty string.
           entity[attribute.name + '_id'] = null;
@@ -483,8 +524,20 @@ export class DataService {
         (association as any)?.foreignKeyField ||
         Utils.underscoredIf(parentMetaEntity.name, true) + "_id";
 
+      const savedChildList: any[] = [];
       for (const nextChild of childList) {
         const childEntity = nextChild as Entity;
+
+        const metaEntity = metaEntityMap.get(
+          relationshipAttribute.relationshipTarget,
+        );
+        if (!metaEntity) {
+          throw new Error(
+            `Unable to find MetaEntity ${relationshipAttribute.relationshipTarget}`,
+          );
+        }
+
+        this.syncManyToOneAttributes(childEntity, metaEntity);
 
         let childEntityModel = null;
         if (childEntity.id) {
@@ -496,6 +549,9 @@ export class DataService {
 
         // Extract plain data in case 'childEntity' is a Sequelize Model instance
         const childEntityData = typeof (childEntity as any).toJSON === 'function' ? (childEntity as any).toJSON() : childEntity;
+        if (childEntityData !== childEntity) {
+          this.syncManyToOneAttributes(childEntityData, metaEntity);
+        }
 
         if (parentEntity.id && parentFkName) {
           if (!childEntityData[parentFkName]) {
@@ -528,15 +584,6 @@ export class DataService {
           this.logger.log(`saveListOfChildren: updating existing child record ${childEntity.id}`);
         }
 
-        const metaEntity = metaEntityMap.get(
-          relationshipAttribute.relationshipTarget,
-        );
-        if (!metaEntity) {
-          throw new Error(
-            `Unable to find MetaEntity ${relationshipAttribute.relationshipTarget}`,
-          );
-        }
-
         // Hmm: this is a tricky bit of code and may not be right yet. There was a bug with Projects where it didn't
         // update the Project Team Member's Role and these next two line fixed that. Watch out for changes here in the
         // future.
@@ -555,6 +602,16 @@ export class DataService {
           childEntityModel,
           relationshipAttribute,
         );
+
+        savedChildList.push(childEntityModel);
+      }
+
+      if (parentEntityModel) {
+        if (!parentEntityModel.dataValues) {
+          parentEntityModel.dataValues = {};
+        }
+        parentEntityModel.dataValues[relationshipAttribute.name] = savedChildList;
+        parentEntityModel[relationshipAttribute.name] = savedChildList;
       }
     }
   }

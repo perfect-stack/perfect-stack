@@ -73,6 +73,18 @@ export class DataFormatService {
     return this.getDataFormatMap().get(dataFormat);
   }
 
+  async getDataImportMapping(dataFormat: string, params?: Record<string, any>): Promise<DataImportMapping | undefined> {
+    const staticFormat = this.getDataFormatMap().get(dataFormat);
+    if (staticFormat) {
+      return staticFormat;
+    }
+    const provider = this.getDynamicProvider(dataFormat);
+    if (provider) {
+      return provider.getMapping(params || {});
+    }
+    return undefined;
+  }
+
   getDataImportClientMapping(): DataImportClientMapping[] {
     const staticMappings = Array.from(this.getDataFormatMap().values())
       .map((format) => ({
@@ -89,9 +101,18 @@ export class DataFormatService {
         parameters: provider.getParameters(),
         supportsTemplates: provider.supportsTemplates ?? false,
         supportsSchemaCheck: provider.supportsSchemaCheck ?? false,
+        supportsAccept: provider.supportsAccept ?? false,
       }));
 
     return [...staticMappings, ...dynamicMappings].sort((a, b) => a.title.localeCompare(b.title));
+  }
+
+  async acceptImport(formatKey: string, jobId: string): Promise<{ acceptedCount: number; message: string }> {
+    const provider = this.getDynamicProvider(formatKey);
+    if (!provider || !provider.acceptImport) {
+      return { acceptedCount: 0, message: `Accept is not supported for format '${formatKey}'` };
+    }
+    return provider.acceptImport(jobId);
   }
 
   addDataFormat(dataFormat: DataImportMapping) {
