@@ -5,6 +5,8 @@ import {MetaAttribute} from '../../../../../domain/meta.entity';
 import {FormControlWithAttribute} from '../../../../data-edit/form-service/form.service';
 import {ResultType, ValidationResult} from '../../../../../domain/meta.rule';
 import {ToastService} from '../../../../../utils/toasts/toast.service';
+import {GeoJsonPoint, MapService} from '../../tool-view/map-tool/map.service';
+import {MapEditCoordinatorService, resolveTargetFromFormGroup} from '../../tool-view/map-tool/map-edit-coordinator.service';
 
 export interface GeoJsonValidationResult {
   valid: boolean;
@@ -490,6 +492,9 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
   name: string;
 
   @Input()
+  idSuffix?: string | null;
+
+  @Input()
   disabled = false;
 
   readonly isExpanded: WritableSignal<boolean> = signal<boolean>(false);
@@ -504,6 +509,21 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
   });
 
   readonly attributeName = computed(() => this.name || this._cell()?.attribute?.name || '');
+
+  readonly componentId = computed(() => {
+    const attr = this.attributeName();
+    return this.idSuffix ? `${attr}-${this.idSuffix}` : attr;
+  });
+
+  readonly centerpointAttributeName = computed(() => {
+    return (this._cell()?.componentData as any)?.centerpointAttribute || 'centerpoint';
+  });
+
+  readonly hasRegisteredMap = computed(() => this.mapCoordinator?.hasRegisteredMap() ?? false);
+
+  readonly isEditingOnMap = computed(() => {
+    return this.mapCoordinator?.isTargetActive(this.formGroup, this.attributeName()) ?? false;
+  });
 
   readonly hasValue = computed(() => {
     const val = this.geometryValue();
@@ -573,7 +593,9 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
   constructor(
     @Optional() public ngControl: NgControl,
     protected readonly toastService: ToastService,
-    protected readonly cdr: ChangeDetectorRef
+    protected readonly cdr: ChangeDetectorRef,
+    @Optional() protected readonly mapService?: MapService,
+    @Optional() protected readonly mapCoordinator?: MapEditCoordinatorService,
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -595,6 +617,24 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
 
   toggleExpanded(): void {
     this.isExpanded.update(v => !v);
+  }
+
+  onEditOnMap(): void {
+    if (!this.mapCoordinator || !this.formGroup) {
+      return;
+    }
+    if (this.isEditingOnMap()) {
+      this.mapCoordinator.exitEdit();
+      return;
+    }
+    const target = resolveTargetFromFormGroup(
+      this.formGroup,
+      this.attributeName(),
+      this.centerpointAttributeName(),
+    );
+    if (target) {
+      this.mapCoordinator.editTarget(target);
+    }
   }
 
   onViewControlClick(event: MouseEvent): void {
@@ -709,8 +749,10 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
       this.validationError.set(null);
       if (this.ngControl?.control) {
         this.ngControl.control.setErrors(null);
+        this.ngControl.control.markAsDirty();
       }
       this.onChange(null);
+      this.syncSiblingCenterpoint(null);
       return;
     }
 
@@ -722,8 +764,10 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
       this.validationError.set(null);
       if (this.ngControl?.control) {
         this.ngControl.control.setErrors(null);
+        this.ngControl.control.markAsDirty();
       }
       this.onChange(geometry);
+      this.syncSiblingCenterpoint(geometry);
     } else {
       this.geometryValue.set(null);
       this.validationError.set(result.error || 'Invalid GeoJSON');
@@ -734,8 +778,61 @@ export class GeometryControlComponent implements OnInit, ControlValueAccessor {
       };
       if (this.ngControl?.control) {
         this.ngControl.control.setErrors(errorResult);
+        this.ngControl.control.markAsDirty();
       }
       this.onChange(text);
+    }
+  }
+
+  private syncSiblingCenterpoint(geometry: any): void {
+    const cpControl = this.formGroup?.get(this.centerpointAttributeName());
+    if (!cpControl) {
+      return;
+    }
+
+    let nextCenter: GeoJsonPoint | null | undefined;
+
+    if (!geometry) {
+      nextCenter = null;
+    } else if (
+      geometry.type === 'Point' &&
+      Array.isArray(geometry.coordinates) &&
+      geometry.coordinates.length >= 2
+    ) {
+      nextCenter = {
+        type: 'Point',
+        coordinates: [Number(geometry.coordinates[0]), Number(geometry.coordinates[1])],
+      };
+    } else if (geometry.type === 'LineString' || geometry.type === 'MultiLineString') {
+      const coords =
+        geometry.type === 'LineString' ? geometry.coordinates : geometry.coordinates?.[0];
+      const midpoint = this.mapService?.calculateLineMidpoint(coords);
+      if (midpoint) {
+        nextCenter = midpoint;
+      }
+    } else if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
+      cpControl.updateValueAndValidity();
+      return;
+    }
+
+    if (nextCenter === undefined) {
+      return;
+    }
+
+    const curr = cpControl.value;
+    const isSame =
+      (!curr && !nextCenter) ||
+      (curr &&
+        nextCenter &&
+        curr.type === 'Point' &&
+        Array.isArray(curr.coordinates) &&
+        Math.abs(Number(curr.coordinates[0]) - nextCenter.coordinates[0]) < 1e-7 &&
+        Math.abs(Number(curr.coordinates[1]) - nextCenter.coordinates[1]) < 1e-7);
+
+    if (!isSame) {
+      cpControl.setValue(nextCenter);
+      cpControl.markAsDirty();
+      cpControl.updateValueAndValidity();
     }
   }
 

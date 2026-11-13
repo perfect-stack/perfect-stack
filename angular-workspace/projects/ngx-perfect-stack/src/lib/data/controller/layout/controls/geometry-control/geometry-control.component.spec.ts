@@ -475,8 +475,9 @@ describe('GeometryControlComponent', () => {
       expect(component.isReadOnly()).toBeFalse();
     });
 
-    it('should position copy button as the rightmost button in edit mode', () => {
+    it('should position copy button as the rightmost button in edit mode when GeoJSON panel is expanded', () => {
       component.writeValue({ type: 'Point', coordinates: [10, 20] });
+      component.toggleExpanded();
       fixture.detectChanges();
 
       const compiled = fixture.nativeElement as HTMLElement;
@@ -486,12 +487,18 @@ describe('GeometryControlComponent', () => {
       expect(buttons[1].getAttribute('data-testid')).toBe('copy-edit-boundary');
     });
 
-    it('should display textarea with formatted JSON on writeValue', () => {
+    it('should display compact summary by default and textarea with formatted JSON when expanded', () => {
       const geometry = { type: 'Point', coordinates: [174.77, -41.28] };
       component.writeValue(geometry);
       fixture.detectChanges();
 
       const compiled = fixture.nativeElement as HTMLElement;
+      expect(compiled.querySelector('[data-testid="edit-summary-boundary"]')).toBeTruthy();
+      expect(compiled.querySelector('textarea')).toBeNull();
+
+      component.toggleExpanded();
+      fixture.detectChanges();
+
       const textarea = compiled.querySelector('textarea') as HTMLTextAreaElement;
       expect(textarea).toBeTruthy();
       expect(textarea.value).toBe(JSON.stringify(geometry, null, 2));

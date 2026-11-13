@@ -199,25 +199,11 @@ export class LocationConverter implements DataListImportConverter {
         lng = easting;
         lat = northing;
         srs = 'EPSG:4326';
-        try {
-          const [derivedE, derivedN] = proj4('EPSG:4326', 'EPSG:2193', [lng, lat]);
-          easting = Math.round(derivedE);
-          northing = Math.round(derivedN);
-        } catch (e) {
-          // Keep easting/northing as is
-        }
       } else if (Math.abs(northing) <= 180 && Math.abs(easting) <= 90) {
         // Inverted: [latitude, longitude] in easting, northing
         lat = easting;
         lng = northing;
         srs = 'EPSG:4326';
-        try {
-          const [derivedE, derivedN] = proj4('EPSG:4326', 'EPSG:2193', [lng, lat]);
-          easting = Math.round(derivedE);
-          northing = Math.round(derivedN);
-        } catch (e) {
-          // Keep easting/northing as is
-        }
       } else if (
         (srs.includes('27200') || srs.toUpperCase().includes('NZMG')) ||
         (easting >= 2100000 && easting <= 3100000 && northing >= 5000000 && northing <= 7000000)
@@ -277,13 +263,6 @@ export class LocationConverter implements DataListImportConverter {
       }
 
       srs = 'EPSG:4326';
-      try {
-        const [derivedE, derivedN] = proj4('EPSG:4326', 'EPSG:2193', [lng, lat]);
-        easting = Math.round(derivedE);
-        northing = Math.round(derivedN);
-      } catch (e) {
-        // Non-fatal
-      }
     }
 
     if (lng === null || lat === null) {
@@ -311,15 +290,16 @@ export class LocationConverter implements DataListImportConverter {
       };
     }
 
+    const pointGeometry = {
+      type: 'Point',
+      coordinates: [Number(lng.toFixed(7)), Number(lat.toFixed(7))],
+    };
+
     const locationEntity: any = {
       id: null,
-      geometry: {
-        type: 'Point',
-        coordinates: [Number(lng.toFixed(7)), Number(lat.toFixed(7))],
-      },
+      geometry: pointGeometry,
+      centerpoint: pointGeometry,
       srs_or_coord_system: srs,
-      easting_derived: easting !== null ? Math.round(easting) : null,
-      northing_derived: northing !== null ? Math.round(northing) : null,
       location_notes: stationRaw || null,
     };
 

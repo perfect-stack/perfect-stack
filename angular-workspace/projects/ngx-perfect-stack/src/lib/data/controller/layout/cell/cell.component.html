@@ -157,7 +157,14 @@
     }
     @case ('Geometry') {
       <ng-container [formGroup]="formGroup">
-        <lib-geometry-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [formControlName]="cell.attribute.name"></lib-geometry-control>
+        @switch (cell.component) {
+          @case ('CenterPoint') {
+            <lib-center-point-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [formControlName]="cell.attribute.name" [idSuffix]="idSuffix"></lib-center-point-control>
+          }
+          @default {
+            <lib-geometry-control [mode]="mode" [cell]="cell" [formGroup]="formGroup" [formControlName]="cell.attribute.name" [idSuffix]="idSuffix"></lib-geometry-control>
+          }
+        }
       </ng-container>
     }
     @default {

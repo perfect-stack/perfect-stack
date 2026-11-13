@@ -3,6 +3,7 @@ import {MetaAttribute} from './meta.entity';
 
 export enum ComponentType {
   BadgeList = 'BadgeList',
+  CenterPoint = 'CenterPoint',
   ColourBand = 'ColourBand',
   DatePicker = 'DatePicker',
   FlexibleDateTime = 'FlexibleDateTime',
@@ -52,6 +53,10 @@ export class Cell {
 }
 
 export class ComponentData {}
+
+export class CenterPointComponentData implements ComponentData {
+  geometryAttribute?: string;
+}
 
 export enum DateTimePrecision {
   DateOnly = "DateOnly",
@@ -174,6 +179,8 @@ export interface MapReferenceLayer {
 
 export class MapTool extends Tool {
   geometry?: string;
+  centerpoint?: string;
+  occurrencesBinding?: string;
   easting: string;
   northing: string;
   placeBinding?: string;

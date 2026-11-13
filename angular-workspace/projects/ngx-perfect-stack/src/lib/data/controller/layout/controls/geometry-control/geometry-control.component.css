@@ -23,11 +23,24 @@
 .geometry-view-container:hover .geometry-action-buttons,
 .geometry-view-container.is-expanded .geometry-action-buttons,
 .geometry-view-container:focus-within .geometry-action-buttons,
-/* In edit mode, show on hover or when focused */
-.geometry-edit-container:hover .geometry-action-buttons,
-.geometry-edit-container:focus-within .geometry-action-buttons {
+/* In edit mode, show on hover or when focused inside the GeoJSON panel */
+.geometry-geojson-panel:hover .geometry-action-buttons,
+.geometry-geojson-panel:focus-within .geometry-action-buttons {
   opacity: 1;
   pointer-events: auto;
+}
+
+.geometry-edit-bar {
+  min-height: 38px;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+}
+
+.geometry-edit-bar.is-active-map-target {
+  border-color: #ff2dc0;
+  box-shadow: 0 0 0 0.2rem rgba(255, 45, 192, 0.2);
+  background-color: #fdf2f8;
 }
 
 .geometry-action-btn {

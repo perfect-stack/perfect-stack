@@ -1,0 +1,53 @@
+.center-point-container {
+  width: 100%;
+}
+
+.center-point-toolbar .btn-group-sm .btn {
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.action-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.center-point-status {
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.center-point-status-info {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #0f4c81;
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
+}
+
+.center-point-status-ok {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #166534;
+  background-color: #dcfce7;
+  border: 1px solid #bbf7d0;
+}
+
+.center-point-view {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  min-height: 38px;
+  color: #1e293b;
+}
+
+.empty-value {
+  color: var(--bs-secondary-color, #6c757d);
+  background-color: var(--bs-secondary-bg, #e9ecef);
+  height: 38px;
+}
+
+input[readonly].form-control {
+  background-color: #f8fafc;
+  color: #475569;
+}

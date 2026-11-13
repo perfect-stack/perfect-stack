@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, Optional } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { MetaPage, Template } from '../../../../../domain/meta.page';
 import { MetaEntity } from '../../../../../domain/meta.entity';
 import { MetaEntityService } from '../../../../../meta/entity/meta-entity-service/meta-entity.service';
@@ -9,6 +9,7 @@ import { FormContext } from '../../../../data-edit/form-service/form.service';
 import { FormGroupService } from '../../../../data-edit/form-service/form-group.service';
 import { EventService } from '../../../../../event/event.service';
 import { ActivityTemplateService } from '../../../../data-service/activity-template.service';
+import { MapEditCoordinatorService } from '../../tool-view/map-tool/map-edit-coordinator.service';
 
 @Component({
   selector: 'lib-form-list-layout',
@@ -38,17 +39,21 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
   metaEntity: MetaEntity;
   metaEntityMap: Map<string, MetaEntity>;
   metaPageMap: Map<string, MetaPage>;
+  highlightedIndex: number | null = null;
 
   private readonly fetchingTemplateIds = new Set<string>();
   private formArraySub?: Subscription;
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
     private readonly metaEntityService: MetaEntityService,
     private readonly metaPageService: MetaPageService,
     private readonly formGroupService: FormGroupService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly elementRef: ElementRef<HTMLElement>,
     @Optional() private readonly eventService?: EventService,
     @Optional() private readonly activityTemplateService?: ActivityTemplateService,
+    @Optional() private readonly mapCoordinator?: MapEditCoordinatorService,
   ) {}
 
   ngOnInit(): void {
@@ -70,7 +75,7 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
         if (me) this.metaEntity = me;
       }
 
-      this.metaEntityService.metaEntityMap$.subscribe((entityMap) => {
+      this.metaEntityService.metaEntityMap$.pipe(takeUntil(this.destroy$)).subscribe((entityMap) => {
         this.metaEntityMap = entityMap;
         if (this.template && this.template.metaEntityName) {
           const me = entityMap.get(this.template.metaEntityName);
@@ -79,9 +84,26 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.metaPageService.metaPageMap$.subscribe((pageMap) => {
+    this.metaPageService.metaPageMap$.pipe(takeUntil(this.destroy$)).subscribe((pageMap) => {
       this.metaPageMap = pageMap;
     });
+
+    if (this.isOccurrencesList() && this.mapCoordinator) {
+      this.mapCoordinator.focusCard$.pipe(takeUntil(this.destroy$)).subscribe((idx) => {
+        const cardEl = this.elementRef.nativeElement.querySelector(`#occurrence-card-${idx}`) as HTMLElement | null;
+        if (cardEl) {
+          cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          this.highlightedIndex = idx;
+          this.cdr.markForCheck();
+          setTimeout(() => {
+            if (this.highlightedIndex === idx) {
+              this.highlightedIndex = null;
+              this.cdr.markForCheck();
+            }
+          }, 1800);
+        }
+      });
+    }
 
     this.subscribeToFormArray();
   }
@@ -98,6 +120,52 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.formArraySub?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  isOccurrencesList(): boolean {
+    const binding = this.relationshipProperty || this.template?.binding;
+    return binding === 'occurrences' || this.template?.metaEntityName === 'Occurrence';
+  }
+
+  getCardElementId(rowIdx: number): string {
+    if (this.isOccurrencesList()) {
+      return `occurrence-card-${rowIdx}`;
+    }
+    const binding = this.relationshipProperty || this.template?.binding || 'item';
+    return `${binding}-card-${rowIdx}`;
+  }
+
+  isCardActiveOnMap(rowIdx: number): boolean {
+    if (!this.isOccurrencesList() || !this.mapCoordinator) {
+      return false;
+    }
+    const active = this.mapCoordinator.activeTarget();
+    return active?.kind === 'occurrence' && active.index === rowIdx && this.mapCoordinator.editPhase() !== 'idle';
+  }
+
+  isCardHoveredOnMap(rowIdx: number): boolean {
+    if (!this.isOccurrencesList() || !this.mapCoordinator) {
+      return false;
+    }
+    const hovered = this.mapCoordinator.hoveredTarget();
+    return (hovered?.kind === 'occurrence' && hovered.index === rowIdx) || this.highlightedIndex === rowIdx;
+  }
+
+  onCardMouseEnter(rowIdx: number): void {
+    if (this.isOccurrencesList()) {
+      this.mapCoordinator?.setHoveredTarget({ kind: 'occurrence', index: rowIdx });
+    }
+  }
+
+  onCardMouseLeave(rowIdx: number): void {
+    if (this.isOccurrencesList()) {
+      const curr = this.mapCoordinator?.hoveredTarget();
+      if (curr?.kind === 'occurrence' && curr.index === rowIdx) {
+        this.mapCoordinator?.setHoveredTarget(null);
+      }
+    }
   }
 
   get attributes(): UntypedFormArray | null {

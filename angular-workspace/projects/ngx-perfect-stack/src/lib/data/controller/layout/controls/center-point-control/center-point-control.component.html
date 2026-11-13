@@ -1,0 +1,180 @@
+<div class="center-point-container" [attr.data-testid]="'field-' + attributeName()">
+  <!-- Header bar: NZTM | WGS84 pill + status badge + actions -->
+  @if (!isReadOnly() || hasValue()) {
+    <div class="center-point-toolbar d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1">
+    <div class="d-flex align-items-center flex-wrap gap-2">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Coordinate system">
+        <button type="button"
+                class="btn"
+                [class.btn-secondary]="effectiveCoordSystem() === 'NZTM'"
+                [class.btn-outline-secondary]="effectiveCoordSystem() !== 'NZTM'"
+                [disabled]="isOutOfNztmBounds()"
+                [title]="isOutOfNztmBounds() ? 'Outside NZTM2000 coverage — using WGS84' : 'Display coordinates in NZTM2000 (metres)'"
+                (click)="setCoordSystem('NZTM')"
+                [attr.data-testid]="'toggle-nztm-' + attributeName()">
+          NZTM
+        </button>
+        <button type="button"
+                class="btn"
+                [class.btn-secondary]="effectiveCoordSystem() === 'WGS84'"
+                [class.btn-outline-secondary]="effectiveCoordSystem() !== 'WGS84'"
+                title="Display coordinates in WGS84 (decimal degrees)"
+                (click)="setCoordSystem('WGS84')"
+                [attr.data-testid]="'toggle-wgs84-' + attributeName()">
+          WGS84
+        </button>
+      </div>
+
+      @if (!isReadOnly()) {
+        @if (isPolygonMissingCenterpoint()) {
+          <span class="badge text-bg-warning text-dark center-point-status"
+                [attr.data-testid]="'status-' + attributeName()">
+            Required for Polygon
+          </span>
+        } @else if (geometryKind() === 'polygon' && hasValue()) {
+          <span class="badge center-point-status-ok"
+                [attr.data-testid]="'status-' + attributeName()">
+            Polygon center
+          </span>
+        } @else if (isLineAutoMidpoint()) {
+          <span class="badge center-point-status-info"
+                title="Automatically calculated 50% Great Circle midpoint along the line"
+                [attr.data-testid]="'status-' + attributeName()">
+            Auto midpoint
+          </span>
+        } @else if (isPointSynced()) {
+          <span class="badge center-point-status-info"
+                [attr.data-testid]="'status-' + attributeName()">
+            Synced with Point
+          </span>
+        }
+      }
+    </div>
+
+    <div class="d-flex align-items-center gap-1">
+      @if (!isReadOnly() && hasRegisteredMap() && !isLineAutoMidpoint()) {
+        <button type="button"
+                class="btn btn-sm d-inline-flex align-items-center gap-1"
+                [class.btn-primary]="isAwaitingMapClick()"
+                [class.btn-warning]="!isAwaitingMapClick() && isPolygonMissingCenterpoint()"
+                [class.btn-outline-primary]="!isAwaitingMapClick() && !isPolygonMissingCenterpoint()"
+                (click)="onSetOnMap()"
+                [title]="isAwaitingMapClick() ? 'Cancel picking centerpoint on map' : 'Click on the map to place the centerpoint'"
+                [attr.data-testid]="'set-center-map-' + attributeName()">
+          <span class="material-symbols-outlined action-icon">my_location</span>
+          <span>{{ isAwaitingMapClick() ? 'Click Map...' : (isPolygonMissingCenterpoint() ? 'Set Center on Map' : 'Pick on Map') }}</span>
+        </button>
+      }
+
+      @if (hasValue()) {
+        <button type="button"
+                class="btn btn-sm btn-light border d-inline-flex align-items-center"
+                (click)="copyCoordinates()"
+                [title]="copied() ? 'Copied!' : 'Copy coordinates'"
+                [attr.data-testid]="'copy-' + attributeName()">
+          <span class="material-symbols-outlined action-icon">{{ copied() ? 'check' : 'content_copy' }}</span>
+        </button>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Edit Mode -->
+  @if (!isReadOnly()) {
+    @if (effectiveCoordSystem() === 'NZTM') {
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">E</span>
+            <input type="number"
+                   step="1"
+                   class="form-control"
+                   [class.is-invalid]="hasErrors() && touched"
+                   [id]="componentId() + '-easting'"
+                   [readonly]="disabled || isLineAutoMidpoint()"
+                   [value]="eastingText()"
+                   (input)="onNztmInput('easting', $event)"
+                   (blur)="onBlur()"
+                   placeholder="Easting (m)"
+                   [attr.data-testid]="'input-easting-' + attributeName()" />
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">N</span>
+            <input type="number"
+                   step="1"
+                   class="form-control"
+                   [class.is-invalid]="hasErrors() && touched"
+                   [id]="componentId() + '-northing'"
+                   [readonly]="disabled || isLineAutoMidpoint()"
+                   [value]="northingText()"
+                   (input)="onNztmInput('northing', $event)"
+                   (blur)="onBlur()"
+                   placeholder="Northing (m)"
+                   [attr.data-testid]="'input-northing-' + attributeName()" />
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">Lat</span>
+            <input type="number"
+                   step="0.000001"
+                   class="form-control"
+                   [class.is-invalid]="hasErrors() && touched"
+                   [id]="componentId() + '-lat'"
+                   [readonly]="disabled || isLineAutoMidpoint()"
+                   [value]="latText()"
+                   (input)="onWgs84Input('lat', $event)"
+                   (blur)="onBlur()"
+                   placeholder="Latitude"
+                   [attr.data-testid]="'input-lat-' + attributeName()" />
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">Lng</span>
+            <input type="number"
+                   step="0.000001"
+                   class="form-control"
+                   [class.is-invalid]="hasErrors() && touched"
+                   [id]="componentId() + '-lng'"
+                   [readonly]="disabled || isLineAutoMidpoint()"
+                   [value]="lngText()"
+                   (input)="onWgs84Input('lng', $event)"
+                   (blur)="onBlur()"
+                   placeholder="Longitude"
+                   [attr.data-testid]="'input-lng-' + attributeName()" />
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (hasErrors() && touched && validationResult && attribute) {
+      <div class="mt-1">
+        <lib-validation-result-label [attribute]="attribute"
+                                     [validationResult]="validationResult"></lib-validation-result-label>
+      </div>
+    }
+  }
+
+  <!-- View Mode -->
+  @if (isReadOnly()) {
+    @if (hasValue()) {
+      <div class="form-control center-point-view d-flex align-items-center"
+           [id]="componentId()"
+           [attr.data-testid]="'view-' + attributeName()">
+        <span class="font-monospace small">{{ getFormattedDisplay() }}</span>
+      </div>
+    } @else {
+      <div class="form-control empty-value d-flex align-items-center"
+           [id]="componentId()"
+           [attr.data-testid]="'view-' + attributeName()">
+        <span>&mdash;</span>
+      </div>
+    }
+  }
+</div>

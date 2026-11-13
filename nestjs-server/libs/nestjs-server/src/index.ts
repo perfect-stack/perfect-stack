@@ -92,6 +92,17 @@ export {
 export { FileRepositoryModule, FileRepositoryService };
 export { KnexModule };
 export { MapModule, MapService };
+export {
+  Nztm,
+  LatLng,
+  GeoJsonPoint,
+  parseGeoJsonGeometry,
+  isWithinNztmBounds,
+  haversineDistanceMeters,
+  calculateLineMidpoint,
+  isGeometryPolygon,
+  isValidGeoJsonPoint,
+} from './map/map.service';
 export { MigrateModule };
 export { OrmModule, OrmService };
 export { TypeaheadModule, TypeaheadService };

@@ -1,35 +1,93 @@
 @if (!isReadOnly()) {
-  <div class="geometry-edit-container position-relative" [attr.data-testid]="'field-' + attributeName()">
-    <div class="geometry-action-buttons">
-      <button type="button"
-              class="btn btn-sm btn-light border geometry-action-btn"
-              title="Format GeoJSON"
-              [disabled]="!hasValue() || hasErrors()"
-              (click)="formatGeoJson()"
-              [attr.data-testid]="'format-edit-' + attributeName()">
-        <span class="material-symbols-outlined action-icon">format_align_left</span>
-      </button>
-      <button type="button"
-              class="btn btn-sm btn-light border geometry-action-btn"
-              [title]="copied() ? 'Copied!' : 'Copy GeoJSON'"
-              [disabled]="!hasValue()"
-              (click)="copyToClipboard()"
-              [attr.data-testid]="'copy-edit-' + attributeName()">
-        <span class="material-symbols-outlined action-icon">{{ copied() ? 'check' : 'content_copy' }}</span>
-      </button>
+  <div class="geometry-edit-container position-relative"
+       [class.no-esri-font]="!hasEsriFont()"
+       [attr.data-testid]="'field-' + attributeName()">
+    <!-- Compact Summary Bar (default) -->
+    <div class="geometry-edit-bar form-control d-flex align-items-center justify-content-between gap-2"
+         [class.is-invalid]="hasErrors() && touched"
+         [class.is-active-map-target]="isEditingOnMap()"
+         [attr.data-testid]="'edit-summary-' + attributeName()">
+      <div class="d-flex align-items-center min-w-0 flex-grow-1">
+        @if (validationError()) {
+          <span class="badge text-bg-danger me-2">Invalid</span>
+          <span class="text-danger small text-truncate">Invalid GeoJSON</span>
+        } @else if (geometrySummary(); as summary) {
+          <span class="geometry-type-icon me-2" aria-hidden="true">
+            <span class="esri-geometry-icon" [ngClass]="summary.esriIcon"></span>
+            <span class="material-symbols-outlined material-geometry-icon">{{ summary.materialIcon }}</span>
+          </span>
+          <span class="badge geometry-badge me-2" [attr.data-testid]="'badge-type-' + attributeName()">{{ summary.type }}</span>
+          <span class="geometry-summary-text text-truncate"
+                [title]="summary.tooltip"
+                [attr.data-testid]="'summary-text-' + attributeName()">{{ summary.textSummary }}</span>
+        } @else {
+          <span class="text-muted small fst-italic" [attr.data-testid]="'empty-text-' + attributeName()">Not set</span>
+        }
+      </div>
+
+      <div class="d-flex align-items-center gap-1 flex-shrink-0">
+        @if (hasRegisteredMap()) {
+          <button type="button"
+                  class="btn btn-sm d-inline-flex align-items-center gap-1"
+                  [class.btn-primary]="isEditingOnMap()"
+                  [class.btn-outline-primary]="!isEditingOnMap()"
+                  [disabled]="disabled"
+                  (click)="onEditOnMap()"
+                  [title]="isEditingOnMap() ? 'Finish editing this geometry on the map' : 'Draw or edit this geometry on the map'"
+                  [attr.data-testid]="'edit-on-map-' + attributeName()">
+            <span class="material-symbols-outlined action-icon">edit_location_alt</span>
+            <span>{{ isEditingOnMap() ? 'Editing on Map' : 'Edit on Map' }}</span>
+          </button>
+        }
+
+        <button type="button"
+                class="btn btn-sm d-inline-flex align-items-center gap-1"
+                [class.btn-secondary]="isExpanded()"
+                [class.btn-outline-secondary]="!isExpanded()"
+                (click)="toggleExpanded()"
+                [title]="isExpanded() ? 'Hide GeoJSON editor' : 'Expand GeoJSON editor for copy/paste'"
+                [attr.data-testid]="'toggle-geojson-' + attributeName()">
+          <span class="font-monospace small fw-bold">&#123; &#125;</span>
+          <span>GeoJSON</span>
+        </button>
+      </div>
     </div>
 
-    <textarea rows="6"
-              class="form-control font-monospace geometry-textarea"
-              [class.is-invalid]="hasErrors() && touched"
-              [id]="attributeName()"
-              [name]="attributeName()"
-              [disabled]="disabled"
-              [value]="rawText()"
-              (input)="onTextInput($event)"
-              (blur)="onBlur()"
-              placeholder="Paste or enter GeoJSON here..."
-              [attr.data-testid]="'textarea-' + attributeName()"></textarea>
+    <!-- Collapsible GeoJSON Textarea Panel -->
+    @if (isExpanded()) {
+      <div class="geometry-geojson-panel position-relative mt-2">
+        <div class="geometry-action-buttons">
+          <button type="button"
+                  class="btn btn-sm btn-light border geometry-action-btn"
+                  title="Format GeoJSON"
+                  [disabled]="!hasValue() || hasErrors()"
+                  (click)="formatGeoJson()"
+                  [attr.data-testid]="'format-edit-' + attributeName()">
+            <span class="material-symbols-outlined action-icon">format_align_left</span>
+          </button>
+          <button type="button"
+                  class="btn btn-sm btn-light border geometry-action-btn"
+                  [title]="copied() ? 'Copied!' : 'Copy GeoJSON'"
+                  [disabled]="!hasValue()"
+                  (click)="copyToClipboard()"
+                  [attr.data-testid]="'copy-edit-' + attributeName()">
+            <span class="material-symbols-outlined action-icon">{{ copied() ? 'check' : 'content_copy' }}</span>
+          </button>
+        </div>
+
+        <textarea rows="6"
+                  class="form-control font-monospace geometry-textarea"
+                  [class.is-invalid]="hasErrors() && touched"
+                  [id]="componentId()"
+                  [name]="attributeName()"
+                  [disabled]="disabled"
+                  [value]="rawText()"
+                  (input)="onTextInput($event)"
+                  (blur)="onBlur()"
+                  placeholder="Paste or enter GeoJSON here..."
+                  [attr.data-testid]="'textarea-' + attributeName()"></textarea>
+      </div>
+    }
 
     @if (hasErrors() && touched && validationResult && attribute) {
       <div class="mt-1">
@@ -68,7 +126,7 @@
       @if (!isExpanded()) {
         @if (geometrySummary(); as summary) {
           <div class="form-control geometry-view-summary geometry-view-single d-flex align-items-center"
-               [id]="attributeName()"
+               [id]="componentId()"
                [title]="summary.tooltip + '. Click to view raw GeoJSON.'"
                [attr.data-testid]="'view-' + attributeName()">
             <span class="geometry-type-icon me-2" aria-hidden="true">
@@ -80,7 +138,7 @@
           </div>
         } @else {
           <div class="form-control font-monospace geometry-view-single text-truncate"
-               [id]="attributeName()"
+               [id]="componentId()"
                [title]="'Click to expand'"
                [attr.data-testid]="'view-' + attributeName()">
             {{ singleLineText() }}
@@ -90,7 +148,7 @@
 
       @if (isExpanded()) {
         <div class="form-control font-monospace geometry-view-multi"
-             [id]="attributeName()"
+             [id]="componentId()"
              [title]="'Click to contract to summary'"
              [attr.data-testid]="'view-' + attributeName()">
           <pre class="m-0 font-monospace geometry-pre"><code>{{ multiLineText() }}</code></pre>
@@ -102,7 +160,7 @@
   @if (!hasValue()) {
     <div class="geometry-view-container" [attr.data-testid]="'field-' + attributeName()">
       <div class="form-control empty-value d-flex align-items-center"
-            [id]="attributeName()"
+            [id]="componentId()"
             [attr.data-testid]="'view-' + attributeName()">
         <span>&mdash;</span>
       </div>

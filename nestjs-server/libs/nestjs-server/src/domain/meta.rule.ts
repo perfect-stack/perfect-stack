@@ -4,6 +4,7 @@ export enum RuleType {
   Custom = 'Custom',
   Email = 'Email',
   Pattern = 'Pattern',
+  PolygonCenterpoint = 'PolygonCenterpoint',
   Range = 'Range',
   Required = 'Required',
   Unique = 'Unique',

@@ -4,6 +4,8 @@ import {AttributeType, MetaAttribute, MetaEntity, VisibilityType} from '../../..
 import {Entity} from '../../../domain/entity';
 import {AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {FormArrayWithAttribute, FormControlWithAttribute} from './form.service';
+import {ResultType, RuleType} from '../../../domain/meta.rule';
+import {isGeometryPolygon, isValidGeoJsonPoint} from '../../controller/layout/tool-view/map-tool/map.service';
 
 @Injectable({
   providedIn: 'root'
@@ -93,6 +95,28 @@ export class FormGroupService {
       }
       else {
         //console.warn(`No abstractControl created for:`, nextAttribute);
+      }
+    }
+
+    // Attach cross-field PolygonCenterpoint validators once all sibling controls exist
+    if (mode !== 'view') {
+      for (const nextAttribute of metaEntity.attributes) {
+        const polygonRule = nextAttribute.rules?.find((r) => r.type === RuleType.PolygonCenterpoint);
+        if (polygonRule) {
+          const centerControl = formGroup.get(nextAttribute.name);
+          if (centerControl) {
+            const geomAttrName = polygonRule.config?.trim() || 'geometry';
+            centerControl.addValidators(polygonCenterpointValidator(nextAttribute.name, geomAttrName));
+            centerControl.updateValueAndValidity({ emitEvent: false });
+
+            const geomControl = formGroup.get(geomAttrName);
+            if (geomControl) {
+              geomControl.valueChanges.subscribe(() => {
+                centerControl.updateValueAndValidity();
+              });
+            }
+          }
+        }
       }
     }
 
@@ -207,5 +231,26 @@ export function manyToOneRequiredValidator(configDataIfNeeded: any): ValidatorFn
     const currentValue = control.value;
     const validationResult = !currentValue || !currentValue.id ? {'required': {value: 'some data'}} : null;
     return validationResult;
+  };
+}
+
+export function polygonCenterpointValidator(attributeName: string, geometryAttrName = 'geometry'): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const parent = control.parent;
+    if (!parent) {
+      return null;
+    }
+    const geometryControl = parent.get(geometryAttrName);
+    if (!geometryControl) {
+      return null;
+    }
+    if (isGeometryPolygon(geometryControl.value) && !isValidGeoJsonPoint(control.value)) {
+      return {
+        name: attributeName,
+        resultType: ResultType.Error,
+        message: 'A center point is required when geometry is a Polygon.',
+      };
+    }
+    return null;
   };
 }

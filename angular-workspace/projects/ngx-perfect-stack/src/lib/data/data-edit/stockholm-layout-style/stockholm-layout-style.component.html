@@ -15,10 +15,16 @@
       </div>
     </div>
   }
-  <div class="container-fluid container-border-radius p-0">
+  <div
+    class="container-fluid container-border-radius p-0"
+    [class.split-view-active]="isSplitViewActive">
     @for (template of contentTemplates; track template; let i = $index) {
       @if (template.showSideHeadings !== 'Disabled') {
-        <div class="row template">
+        <div
+          class="row template"
+          [class.map-template-item]="isMapTemplate(template)"
+          [class.sticky-map-template]="isStickyMapTemplate(template)"
+          [style.grid-row]="isSplitViewActive && isMapTemplate(template) ? '1 / span ' + splitGridRowSpan : null">
           <div class="col-12 col-md-3 col-xl-2">
             <h4 id="template[{{i}}].sectionHdg" class="mb-3 mb-md-0">{{template.templateHeading}}</h4>
           </div>
@@ -29,12 +35,16 @@
       }
       <!-- This row doesn't get the "template" class that the row above does so that it stretches full width -->
       @if (template.showSideHeadings === 'Disabled') {
-        <div class="template-full-width px-4 pt-4 pb-2">
+        <div
+          class="template-full-width px-4 pt-4 pb-2"
+          [class.map-template-item]="isMapTemplate(template)"
+          [class.sticky-map-template]="isStickyMapTemplate(template)"
+          [style.grid-row]="isSplitViewActive && isMapTemplate(template) ? '1 / span ' + splitGridRowSpan : null">
           <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
         </div>
       }
     }
-    <div class="d-flex justify-content-between px-4 pb-4">
+    <div class="d-flex justify-content-between px-4 pb-4 stockholm-bottom-actions">
       <div>
         <ng-content select="[BottomLeftActions]"></ng-content>
       </div>

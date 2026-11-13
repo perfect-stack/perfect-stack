@@ -9,3 +9,13 @@
 .form-list-card:hover {
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
+
+.form-list-card.is-map-active {
+  border-color: #ff2dc0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 45, 192, 0.22) !important;
+}
+
+.form-list-card.is-map-hovered:not(.is-map-active) {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 0.15rem rgba(245, 158, 11, 0.25) !important;
+}

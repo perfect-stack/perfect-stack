@@ -1,7 +1,12 @@
 <div class="form-list-container">
   @if (attributes) {
     @for (row of attributes.controls; track $index; let rowIdx = $index) {
-      <div class="card form-list-card mb-3 shadow-sm border">
+      <div class="card form-list-card mb-3 shadow-sm border"
+           [id]="getCardElementId(rowIdx)"
+           [class.is-map-active]="isCardActiveOnMap(rowIdx)"
+           [class.is-map-hovered]="isCardHoveredOnMap(rowIdx)"
+           (mouseenter)="onCardMouseEnter(rowIdx)"
+           (mouseleave)="onCardMouseLeave(rowIdx)">
         <div class="card-header bg-light d-flex justify-content-between align-items-center py-2 px-3">
           <span class="fw-semibold text-secondary small">
             #{{ rowIdx + 1 }} {{ getItemTitle(rowIdx) || metaEntity?.name || 'Item' }}

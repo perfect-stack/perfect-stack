@@ -17,6 +17,7 @@ import { UniqueRuleValidator } from './rules/unique-rule-validator';
 import { KnexService } from '../../knex/knex.service';
 import { UniqueInsensitiveRuleValidator } from './rules/unique-insensitive-rule-validator';
 import { EmailRuleValidator } from './rules/email-rule-validator';
+import { PolygonCenterpointRuleValidator } from './rules/polygon-centerpoint-rule-validator';
 import { CustomRuleService } from './custom-rule.service';
 import {DiscriminatorService} from "../discriminator.service";
 
@@ -183,6 +184,8 @@ export class RuleService implements MetaEntityRuleValidator {
         return this.createCustomRuleValidator(metaEntity, attribute, ruleData);
       case RuleType.Email:
         return new EmailRuleValidator(metaEntity, attribute, ruleData);
+      case RuleType.PolygonCenterpoint:
+        return new PolygonCenterpointRuleValidator(metaEntity, attribute, ruleData);
       case RuleType.Required:
         return new RequiredRuleValidator(metaEntity, attribute, ruleData);
       case RuleType.Range:

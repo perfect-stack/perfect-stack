@@ -3,14 +3,193 @@
 }
 
 @if (!editorMode) {
-  <div class="map-wrapper" style="position: relative;" [ngStyle]="{'height': mapHeight}">
+  <div
+    #mapWrapper
+    class="map-wrapper"
+    [class.is-css-fullscreen]="isCssFullscreen"
+    [ngStyle]="{'height': effectiveMapHeight}">
     <div
       #mapContainer
       class="esri-view"
+      [class.cursor-crosshair]="isEditMode && mapCoordinator?.editPhase() === 'awaiting-centerpoint'"
       [attr.data-has-marker]="hasMarker ? 'true' : null"
       style="width: 100%; height: 100%;">
     </div>
 
+    <!-- Top Map Controls Row (aligned with Esri Zoom & Sketch controls) -->
+    <div class="map-top-controls" [class.has-sketch]="isEditMode">
+      <div class="map-size-toggle-container shadow-sm" data-testid="map-size-toggle">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Map size">
+          <button
+            type="button"
+            class="btn"
+            [ngClass]="currentSizeMode === 'small' ? 'btn-primary' : 'btn-light'"
+            data-testid="map-size-small"
+            (click)="setMapSizeMode('small')">
+            Small
+          </button>
+          <button
+            type="button"
+            class="btn"
+            [ngClass]="currentSizeMode === 'medium' ? 'btn-primary' : 'btn-light'"
+            data-testid="map-size-medium"
+            (click)="setMapSizeMode('medium')">
+            Medium
+          </button>
+          @if (isDesktopSplitEligible && !isSearchMapMode) {
+            <button
+              type="button"
+              class="btn"
+              [ngClass]="currentSizeMode === 'split' ? 'btn-primary' : 'btn-light'"
+              data-testid="map-size-split"
+              (click)="setMapSizeMode('split')">
+              Split
+            </button>
+          }
+          <button
+            type="button"
+            class="btn"
+            [ngClass]="isFullscreenActive || currentSizeMode === 'fullscreen' ? 'btn-primary' : 'btn-light'"
+            data-testid="map-size-fullscreen"
+            (click)="setMapSizeMode('fullscreen')">
+            {{ isFullscreenActive ? 'Exit' : 'Full' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Floating Target Banner (Active Editing / Step 2 Centerpoint Prompt) -->
+      @if (isEditMode && mapCoordinator?.activeTarget() && mapCoordinator?.editPhase() !== 'idle') {
+        @if (mapCoordinator?.editPhase() === 'awaiting-centerpoint') {
+          <div
+            class="target-banner target-banner-step2 shadow"
+            data-testid="map-step2-banner">
+            <span class="step-badge">Step 2 of 2</span>
+            <span class="banner-text">
+              Click on the map to place Centerpoint for <strong>{{ activeTargetDisplayLabel }}</strong>
+            </span>
+            <div class="banner-actions">
+              <button
+                type="button"
+                class="btn btn-sm btn-warning fw-semibold"
+                data-testid="suggest-interior-center-btn"
+                (click)="suggestInteriorCenterpoint()">
+                Suggest Interior Point
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-light"
+                data-testid="skip-centerpoint-btn"
+                (click)="skipPolygonCenterpoint()">
+                Skip for now
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div
+            class="target-banner shadow"
+            data-testid="map-target-banner">
+            <span class="banner-target-label" [title]="'Editing: ' + activeTargetDisplayLabel">
+              <span class="target-dot"></span>
+              <span class="banner-target-text">Editing: <strong>{{ activeTargetDisplayLabel }}</strong></span>
+            </span>
+            <div class="banner-actions">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Geometry draw tools">
+                <button
+                  type="button"
+                  class="btn btn-outline-light"
+                  [class.active]="mapCoordinator?.activeDrawTool() === 'point'"
+                  (click)="startBannerDraw('point')">
+                  Point
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-light"
+                  [class.active]="mapCoordinator?.activeDrawTool() === 'polyline'"
+                  (click)="startBannerDraw('polyline')">
+                  Line
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-light"
+                  [class.active]="mapCoordinator?.activeDrawTool() === 'polygon'"
+                  (click)="startBannerDraw('polygon')">
+                  Polygon
+                </button>
+              </div>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-light"
+                [class.active]="mapCoordinator?.editPhase() === 'quick-move'"
+                title="Drag the active shape to reposition"
+                (click)="toggleMoveMode()">
+                Move
+              </button>
+              @if (isActiveTargetPolygon) {
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-warning"
+                  title="Click on map to reposition Polygon centerpoint"
+                  (click)="startActiveTargetCenterpoint()">
+                  Set Center
+                </button>
+              }
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                (click)="clearActiveTarget()">
+                Clear
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-success fw-semibold"
+                data-testid="map-done-editing-btn"
+                (click)="doneEditingTarget()">
+                Done
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Fullscreen Occurrence Cycle Bar (bottom-center, visible in fullscreen when Occurrences exist) -->
+    @if (isFullscreenActive && occurrenceCount > 0) {
+      <div class="fullscreen-cycle-bar shadow" data-testid="fullscreen-cycle-bar">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-light"
+          data-testid="fullscreen-event-btn"
+          [class.active]="mapCoordinator?.activeTarget()?.kind === 'event' || mapCoordinator?.hoveredTarget()?.kind === 'event'"
+          (click)="selectFullscreenEvent()">
+          Event
+        </button>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Cycle occurrences">
+          <button
+            type="button"
+            class="btn btn-outline-light"
+            data-testid="fullscreen-prev-occ-btn"
+            (click)="selectFullscreenOccurrence(-1)">
+            &lsaquo; Prev
+          </button>
+          <span class="cycle-status">
+            @if (currentOccurrenceCycleIndex >= 0) {
+              Occ #{{ currentOccurrenceCycleIndex + 1 }} / {{ occurrenceCount }}
+            } @else {
+              {{ occurrenceCount }} Occurrences
+            }
+          </span>
+          <button
+            type="button"
+            class="btn btn-outline-light"
+            data-testid="fullscreen-next-occ-btn"
+            (click)="selectFullscreenOccurrence(1)">
+            Next &rsaquo;
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Basemap & Coordinate System Indicator (bottom-left) -->
     <div class="basemap-toggle-container shadow-sm" [attr.data-testid]="'basemap-toggle'">
       <div class="btn-group btn-group-sm" role="group" aria-label="Basemap switcher">
         <button
@@ -30,6 +209,31 @@
           Satellite
         </button>
       </div>
+      <span
+        class="coord-mode-pill"
+        [class.is-global]="coordSystemMode === 'global'"
+        [title]="coordSystemMode === 'global' ? 'Outside NZTM2000 extent: using Global WGS84 / ArcGIS World basemap' : 'New Zealand Transverse Mercator 2000 (LINZ)'">
+        {{ coordSystemMode === 'global' ? 'Global WGS84' : 'NZTM' }}
+      </span>
     </div>
+
+    <!-- Compact Corner Legend (bottom-right) -->
+    @if (getItems().length === 0 && (hasEventLayerData || occurrenceCount > 0)) {
+      <div class="map-legend-pill shadow-sm" data-testid="map-legend-pill">
+        <span class="legend-item">
+          <span class="legend-dot legend-event"></span>Event
+        </span>
+        @if (occurrenceCount > 0) {
+          <span class="legend-item">
+            <span class="legend-dot legend-occurrence"></span>Occurrence #
+          </span>
+        }
+        @if (mapCoordinator?.editPhase() !== 'idle') {
+          <span class="legend-item">
+            <span class="legend-dot legend-editing"></span>Editing
+          </span>
+        }
+      </div>
+    }
   </div>
 }
