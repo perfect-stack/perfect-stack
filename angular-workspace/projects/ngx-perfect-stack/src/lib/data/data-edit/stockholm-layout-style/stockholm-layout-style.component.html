@@ -24,6 +24,8 @@
           class="row template"
           [class.map-template-item]="isMapTemplate(template)"
           [class.sticky-map-template]="isStickyMapTemplate(template)"
+          [class.event-section-highlighted]="isEventLocationTemplate(template) && eventHighlighted"
+          [attr.data-map-event-section]="isEventLocationTemplate(template) ? 'true' : null"
           [style.grid-row]="isSplitViewActive && isMapTemplate(template) ? '1 / span ' + splitGridRowSpan : null">
           <div class="col-12 col-md-3 col-xl-2">
             <h4 id="template[{{i}}].sectionHdg" class="mb-3 mb-md-0">{{template.templateHeading}}</h4>
@@ -39,6 +41,8 @@
           class="template-full-width px-4 pt-4 pb-2"
           [class.map-template-item]="isMapTemplate(template)"
           [class.sticky-map-template]="isStickyMapTemplate(template)"
+          [class.event-section-highlighted]="isEventLocationTemplate(template) && eventHighlighted"
+          [attr.data-map-event-section]="isEventLocationTemplate(template) ? 'true' : null"
           [style.grid-row]="isSplitViewActive && isMapTemplate(template) ? '1 / span ' + splitGridRowSpan : null">
           <lib-controller [ctx]="ctx" [template]="template" [showTemplateHeadings]="false"></lib-controller>
         </div>

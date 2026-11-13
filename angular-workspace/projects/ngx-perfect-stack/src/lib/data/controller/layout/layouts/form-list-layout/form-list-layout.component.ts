@@ -92,7 +92,7 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
       this.mapCoordinator.focusCard$.pipe(takeUntil(this.destroy$)).subscribe((idx) => {
         const cardEl = this.elementRef.nativeElement.querySelector(`#occurrence-card-${idx}`) as HTMLElement | null;
         if (cardEl) {
-          cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          this.mapCoordinator!.scrollElementIntoViewBelowMap(cardEl);
           this.highlightedIndex = idx;
           this.cdr.markForCheck();
           setTimeout(() => {

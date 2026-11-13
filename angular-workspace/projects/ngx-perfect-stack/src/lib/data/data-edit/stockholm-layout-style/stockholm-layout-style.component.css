@@ -122,3 +122,9 @@
 :host ::ng-deep .split-view-active > .map-template-item lib-form-layout .row {
   display: flex;
 }
+
+.event-section-highlighted {
+  box-shadow: inset 0 0 0 2px #f59e0b;
+  background-color: #fffbeb;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}

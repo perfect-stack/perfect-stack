@@ -25,10 +25,10 @@
         }
       </div>
 
-      <div class="d-flex align-items-center gap-1 flex-shrink-0">
+      <div class="btn-group btn-group-sm flex-shrink-0" role="group" aria-label="Geometry actions">
         @if (hasRegisteredMap()) {
           <button type="button"
-                  class="btn btn-sm d-inline-flex align-items-center gap-1"
+                  class="btn d-inline-flex align-items-center gap-1"
                   [class.btn-primary]="isEditingOnMap()"
                   [class.btn-outline-primary]="!isEditingOnMap()"
                   [disabled]="disabled"
@@ -41,7 +41,7 @@
         }
 
         <button type="button"
-                class="btn btn-sm d-inline-flex align-items-center gap-1"
+                class="btn d-inline-flex align-items-center gap-1"
                 [class.btn-secondary]="isExpanded()"
                 [class.btn-outline-secondary]="!isExpanded()"
                 (click)="toggleExpanded()"

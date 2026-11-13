@@ -80,6 +80,7 @@ export class MapEditCoordinatorService {
 
   readonly editRequest$ = new Subject<MapEditRequest>();
   readonly focusCard$ = new Subject<number>();
+  readonly focusEvent$ = new Subject<void>();
   readonly panToTarget$ = new Subject<MapEditTarget>();
   readonly cancelEdit$ = new Subject<void>();
 
@@ -164,6 +165,47 @@ export class MapEditCoordinatorService {
 
   focusCard(index: number): void {
     this.focusCard$.next(index);
+  }
+
+  focusEvent(): void {
+    this.focusEvent$.next();
+  }
+
+  scrollElementIntoViewBelowMap(
+    el: HTMLElement | null | undefined,
+    gapPx = 12,
+  ): void {
+    if (!el || typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
+    const mode = this.mapSizeMode();
+    const isSplitActive = mode === 'split' && window.innerWidth >= 1200;
+
+    let topOffset = gapPx;
+
+    if (!isSplitActive && (mode === 'small' || mode === 'medium')) {
+      const stickyMap = document.querySelector(
+        '.sticky-map-template',
+      ) as HTMLElement | null;
+      if (stickyMap) {
+        const stickyTopCss = parseFloat(window.getComputedStyle(stickyMap).top);
+        const stickyTop = Number.isFinite(stickyTopCss) ? stickyTopCss : 0;
+        const mapHeight = stickyMap.getBoundingClientRect().height;
+        if (mapHeight > 0) {
+          topOffset = stickyTop + mapHeight + gapPx;
+        }
+      }
+    }
+
+    const elRect = el.getBoundingClientRect();
+    const elDocTop = window.scrollY + elRect.top;
+    const targetScrollTop = Math.max(0, elDocTop - topOffset);
+
+    window.scrollTo({
+      top: targetScrollTop,
+      behavior: 'smooth',
+    });
   }
 
   panToTarget(target: MapEditTarget): void {

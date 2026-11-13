@@ -3055,13 +3055,17 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       return;
     }
 
-    // Bidirectional focus: clicking an Occurrence graphic or #N badge highlights and scrolls to its card
-    if (this.mapView && this.occurrenceGraphicsLayer && currentPhase === 'idle') {
+    // Bidirectional focus: clicking an Occurrence graphic/#N badge or Event graphic highlights and scrolls to its form section
+    const focusLayers = [
+      this.occurrenceGraphicsLayer,
+      this.eventGraphicsLayer,
+    ].filter((l): l is GraphicsLayer => !!l);
+    if (this.mapView && focusLayers.length > 0 && currentPhase === 'idle') {
       this.mapView
-        .hitTest(event, { include: [this.occurrenceGraphicsLayer] })
-        .then((occResp: any) => {
+        .hitTest(event, { include: focusLayers })
+        .then((hitResp: any) => {
           this.ngZone.run(() => {
-            const occHit = occResp?.results?.find(
+            const occHit = hitResp?.results?.find(
               (r: any) =>
                 r.type === 'graphic' &&
                 r.graphic?.attributes?.targetKind === 'occurrence' &&
@@ -3069,6 +3073,15 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
             );
             if (occHit) {
               this.mapCoordinator?.focusCard(occHit.graphic.attributes.occurrenceIndex);
+              return;
+            }
+            const eventHit = hitResp?.results?.find(
+              (r: any) =>
+                r.type === 'graphic' &&
+                r.graphic?.attributes?.targetKind === 'event',
+            );
+            if (eventHit) {
+              this.mapCoordinator?.focusEvent();
               return;
             }
             this.hitTestReferenceLayers(event);

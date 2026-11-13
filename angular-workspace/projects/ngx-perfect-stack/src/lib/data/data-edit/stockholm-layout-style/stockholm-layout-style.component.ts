@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, Optional } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, Optional } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { FormContext } from '../form-service/form.service';
 import { Template, TemplateType, ToolType } from '../../../domain/meta.page';
 import {
@@ -12,13 +13,42 @@ import {
   styleUrls: ['./stockholm-layout-style.component.css'],
   standalone: false,
 })
-export class StockholmLayoutStyleComponent implements OnInit {
+export class StockholmLayoutStyleComponent implements OnInit, OnDestroy {
   @Input()
   ctx: FormContext;
 
-  constructor(@Optional() public readonly mapCoordinator?: MapEditCoordinatorService) {}
+  eventHighlighted = false;
+  private readonly destroy$ = new Subject<void>();
 
-  ngOnInit(): void {}
+  constructor(
+    private readonly elementRef: ElementRef<HTMLElement>,
+    private readonly cdr: ChangeDetectorRef,
+    @Optional() public readonly mapCoordinator?: MapEditCoordinatorService,
+  ) {}
+
+  ngOnInit(): void {
+    if (this.mapCoordinator) {
+      this.mapCoordinator.focusEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        const eventSection = this.elementRef.nativeElement.querySelector(
+          '[data-map-event-section="true"]',
+        ) as HTMLElement | null;
+        if (eventSection) {
+          this.mapCoordinator!.scrollElementIntoViewBelowMap(eventSection);
+          this.eventHighlighted = true;
+          this.cdr.markForCheck();
+          setTimeout(() => {
+            this.eventHighlighted = false;
+            this.cdr.markForCheck();
+          }, 1800);
+        }
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   get headerTemplates() {
     return this.ctx.metaPage.templates.filter((s) => s.type === TemplateType.header);
@@ -52,6 +82,23 @@ export class StockholmLayoutStyleComponent implements OnInit {
     return (
       template?.cells?.some((row) => row?.some((cell) => cell?.tool?.type === ToolType.Map)) ??
       false
+    );
+  }
+
+  isEventLocationTemplate(template: Template): boolean {
+    if (!template || this.isMapTemplate(template) || template.type !== TemplateType.form) {
+      return false;
+    }
+    if (template.metaEntityName === 'Location') {
+      return true;
+    }
+    return (
+      template.cells?.some((row) =>
+        row?.some(
+          (cell) =>
+            cell?.attributeName === 'geometry' || cell?.attribute?.name === 'geometry',
+        ),
+      ) ?? false
     );
   }
 

@@ -34,9 +34,9 @@
 }
 
 .coord-input-group.coord-input-wgs84 {
-  flex: 1 1 102px;
-  min-width: 96px;
-  max-width: 126px;
+  flex: 1 1 112px;
+  min-width: 104px;
+  max-width: 132px;
 }
 
 .coord-input-group .input-group-text {
@@ -63,7 +63,7 @@
 }
 
 .action-icon-btn {
-  padding: 0.2rem 0.35rem;
+  padding: 0.2rem 0.4rem;
   line-height: 1;
 }
 
@@ -82,22 +82,29 @@
   padding: 0.2rem 0.4rem;
 }
 
-.center-point-status-info {
+.center-point-required-btn {
   font-size: 0.7rem;
   font-weight: 600;
-  padding: 0.2rem 0.4rem;
-  color: #0f4c81;
-  background-color: #e0f2fe;
-  border: 1px solid #bae6fd;
+  padding: 0.15rem 0.45rem;
+  line-height: 1.2;
 }
 
-.center-point-status-ok {
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.2rem 0.4rem;
-  color: #166534;
-  background-color: #dcfce7;
-  border: 1px solid #bbf7d0;
+.center-point-status-icon {
+  padding: 0 0.15rem;
+  cursor: help;
+}
+
+.center-point-status-icon .material-symbols-outlined {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.center-point-status-icon.is-info {
+  color: #0369a1;
+}
+
+.center-point-status-icon.is-ok {
+  color: #15803d;
 }
 
 .center-point-view {
