@@ -271,6 +271,12 @@ export class CenterPointControlComponent
     this.localError.set(null);
   }
 
+  toggleCoordSystem(): void {
+    const next: CenterPointCoordSystem =
+      this.effectiveCoordSystem() === 'NZTM' ? 'WGS84' : 'NZTM';
+    this.setCoordSystem(next);
+  }
+
   onNztmInput(axis: 'easting' | 'northing', event: Event): void {
     const raw = (event.target as HTMLInputElement).value;
     if (axis === 'easting') {

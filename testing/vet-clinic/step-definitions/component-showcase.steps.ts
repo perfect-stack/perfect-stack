@@ -592,6 +592,21 @@ Then('the media gallery control should be visible', async function (this: UIWorl
   expect(await el.isVisible()).to.be.true;
 });
 
+Then('the geometry control summary should contain {string}', async function (this: UIWorld, expectedText: string) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const summary = this.page.locator('lib-geometry-control [data-testid^="edit-summary-"]').first();
+  await summary.waitFor({ state: 'visible', timeout: 15000 });
+  const text = await summary.innerText();
+  expect(text).to.include(expectedText);
+});
+
+When('I click the geometry control GeoJSON toggle button', async function (this: UIWorld) {
+  if (!this.page) throw new Error('Playwright page is not initialized');
+  const toggleBtn = this.page.locator('lib-geometry-control [data-testid^="toggle-geojson-"]').first();
+  await toggleBtn.waitFor({ state: 'visible', timeout: 15000 });
+  await toggleBtn.click();
+});
+
 Then('the geometry control textarea should contain {string}', async function (this: UIWorld, expectedText: string) {
   if (!this.page) throw new Error('Playwright page is not initialized');
   const textarea = this.page.locator('lib-geometry-control textarea').first();

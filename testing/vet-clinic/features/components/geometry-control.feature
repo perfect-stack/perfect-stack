@@ -7,7 +7,9 @@ Feature: Geometry Control Component
   Scenario: Display and edit GeoJSON geometry
     When I navigate to "/showcase/geometry-control"
     Then the showcase header should display "GeometryControlComponent"
-    And the geometry control textarea should contain "Point"
+    And the geometry control summary should contain "Point"
+    When I click the geometry control GeoJSON toggle button
+    Then the geometry control textarea should contain "Point"
     When I click the showcase button "btn-mode-view"
     Then the geometry control should be visible
     When I click the showcase button "btn-mode-edit"
