@@ -463,7 +463,12 @@ export class DataImportService {
             );
             if (rootMapping) {
                 const rootColIndices = new Set(this.findColumnIndices(rootMapping.getColumnNamesAsArray(), headers));
-                const leafColIndices = this.findColumnIndices([leafAttrName], headers)
+                const leafCandidates = [
+                    leafAttrName,
+                    `event_${leafAttrName}`,
+                    `occurrence_${leafAttrName}`,
+                ];
+                const leafColIndices = this.findColumnIndices(leafCandidates, headers)
                     .filter(idx => rootColIndices.has(idx));
                 if (leafColIndices.length > 0) {
                     columnIndices = leafColIndices;
