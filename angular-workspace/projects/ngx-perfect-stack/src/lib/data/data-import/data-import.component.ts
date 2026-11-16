@@ -355,6 +355,40 @@ export class DataImportComponent implements OnInit, OnDestroy {
     return errorMessages && errorMessages.length > 0 ? errorMessages.join(' ') : '';
   }
 
+  findRowLevelErrors(rowIdx: number) {
+    const errors = [];
+    const rowErrors = this.data?.importResult?.[rowIdx]?.errors;
+    if (rowErrors) {
+      for (const nextError of rowErrors) {
+        if (!nextError.cols || nextError.cols.length === 0) {
+          errors.push(nextError);
+        }
+      }
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+
+  hasRowLevelErrors(rowIdx: number): boolean {
+    return !!this.findRowLevelErrors(rowIdx);
+  }
+
+  findAllRowErrorMessages(rowIdx: number): string[] {
+    const rowErrors = this.data?.importResult?.[rowIdx]?.errors;
+    if (rowErrors && rowErrors.length > 0) {
+      return rowErrors.map(nextError => nextError.message);
+    }
+    return [];
+  }
+
+  findRowLevelErrorMessagesAsTooltip(rowIdx: number): string {
+    const errors = this.findRowLevelErrors(rowIdx);
+    if (errors && errors.length > 0) {
+      return errors.map(nextError => nextError.message).join(' ');
+    }
+    return '';
+  }
+
   onImportData() {
     if(this.data && !this.importHasErrors()) {
       this.importStarted = true;

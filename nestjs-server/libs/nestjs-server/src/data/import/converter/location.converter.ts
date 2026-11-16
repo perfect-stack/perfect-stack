@@ -102,6 +102,11 @@ export class LocationConverter implements DataListImportConverter {
     const hasLng = isPresent(lngRaw);
     const hasLat = isPresent(latRaw);
 
+    const getCols = (...items: (ExternalValue | undefined)[]): number[] =>
+      items
+        .filter((item): item is ExternalValue => item !== undefined && typeof item.col === 'number' && item.col >= 0)
+        .map((item) => item.col);
+
     // If one of easting/northing is present without the other
     if (hasEasting !== hasNorthing) {
       return {
@@ -110,6 +115,7 @@ export class LocationConverter implements DataListImportConverter {
             name: attributeName,
             value: null,
             error: 'Both easting and northing must be provided',
+            cols: getCols(eastingItem, northingItem),
           },
         ],
       };
@@ -123,6 +129,7 @@ export class LocationConverter implements DataListImportConverter {
             name: attributeName,
             value: null,
             error: 'Both longitude and latitude must be provided',
+            cols: getCols(lngItem, latItem),
           },
         ],
       };
@@ -188,6 +195,10 @@ export class LocationConverter implements DataListImportConverter {
               name: attributeName,
               value: null,
               error: `Invalid coordinates: easting '${eastingRaw}', northing '${northingRaw}'`,
+              cols: getCols(
+                isNaN(easting) ? eastingItem : undefined,
+                isNaN(northing) ? northingItem : undefined,
+              ),
             },
           ],
         };
@@ -221,6 +232,7 @@ export class LocationConverter implements DataListImportConverter {
                 name: attributeName,
                 value: null,
                 error: `NZMG coordinate projection error: ${err.message || String(err)}`,
+                cols: getCols(eastingItem, northingItem),
               },
             ],
           };
@@ -239,6 +251,7 @@ export class LocationConverter implements DataListImportConverter {
                 name: attributeName,
                 value: null,
                 error: `NZTM coordinate projection error: ${err.message || String(err)}`,
+                cols: getCols(eastingItem, northingItem),
               },
             ],
           };
@@ -257,6 +270,10 @@ export class LocationConverter implements DataListImportConverter {
               name: attributeName,
               value: null,
               error: `Invalid coordinates: longitude '${lngRaw}', latitude '${latRaw}'`,
+              cols: getCols(
+                isNaN(lng) ? lngItem : undefined,
+                isNaN(lat) ? latItem : undefined,
+              ),
             },
           ],
         };
@@ -272,6 +289,7 @@ export class LocationConverter implements DataListImportConverter {
             name: attributeName,
             value: null,
             error: 'Unable to derive coordinates',
+            cols: getCols(eastingItem, northingItem, lngItem, latItem),
           },
         ],
       };
@@ -285,6 +303,7 @@ export class LocationConverter implements DataListImportConverter {
             name: attributeName,
             value: null,
             error: `Derived coordinates are outside valid WGS84 boundaries: [${lng}, ${lat}]`,
+            cols: getCols(eastingItem, northingItem, lngItem, latItem),
           },
         ],
       };

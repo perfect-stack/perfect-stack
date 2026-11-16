@@ -171,10 +171,12 @@
       <tbody>
         @for (group of formRows; track $index; let rowIdx = $index) {
         @if (isRowVisible(rowIdx)) {
-        <tr [formGroup]="group">
+        <tr [formGroup]="group" [class.table-danger]="hasRowLevelErrors(rowIdx)">
 
           <!-- Print the row number to make error correction in original spreadsheet easier -->
-          <td [class.skipped-cell]="isRowSkipped(rowIdx)">
+          <td [class.skipped-cell]="isRowSkipped(rowIdx)"
+              [class.bg-danger]="hasRowLevelErrors(rowIdx)"
+              [class.text-white]="hasRowLevelErrors(rowIdx)">
             <ng-template #rowTooltip>
               <div class="row-tooltip-content text-start"
                    (mouseenter)="cancelCloseTooltip()"
@@ -183,6 +185,18 @@
                   <span class="fw-bold me-3">Row {{rowIdx + 2}} Result:</span>
                   <span class="badge px-2 py-1" [ngClass]="getRowResultBadgeClass(rowIdx)">{{getRowResultSummary(rowIdx)}}</span>
                 </div>
+                @if (findAllRowErrorMessages(rowIdx); as rowErrorMsgs) {
+                @if (rowErrorMsgs.length > 0) {
+                <div class="mt-1 mb-2">
+                  <div class="fw-bold small text-danger">Errors:</div>
+                  <ul class="mb-0 ps-3 small text-warning">
+                    @for (msg of rowErrorMsgs; track $index) {
+                    <li>{{msg}}</li>
+                    }
+                  </ul>
+                </div>
+                }
+                }
                 @if (getRowActualEntityJson(rowIdx); as actualJson) {
                 <div class="mt-1">
                   <div class="fw-bold small text-success">Actual Entity Response:</div>
@@ -227,7 +241,7 @@
           </td>
           } @else {
           <td class="px-2" [class.skipped-cell]="isCellSkipped(rowIdx, colIdx)">
-            <span class="d-block" style="min-height: 1.2em;" [ngbTooltip]="isCellSkippedToolTip(rowIdx, colIdx)">
+            <span class="d-block" style="min-height: 1.2em;" [ngbTooltip]="isCellSkippedToolTip(rowIdx, colIdx) || findRowLevelErrorMessagesAsTooltip(rowIdx)">
               {{control.value}}
             </span>
           </td>

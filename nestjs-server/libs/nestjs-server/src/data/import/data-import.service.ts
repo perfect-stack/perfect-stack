@@ -408,7 +408,7 @@ export class DataImportService {
             const validationErrors = validationResultMapController.validationResultMap;
             for(const nextErrorKey of Object.keys(validationErrors)) {
                 const nextError = validationErrors[nextErrorKey];
-                const dataImportError = this.toDataImportError(nextError, stepIndex, headers, dataImportMapping);
+                const dataImportError = this.toDataImportError(nextError, stepIndex, headers, dataImportMapping, nextErrorKey);
                 rowValidationErrors.push(dataImportError);
             }
 
@@ -432,20 +432,49 @@ export class DataImportService {
     toDataImportError(validationResult: ValidationResult,
                       rowIdx: number,
                       headers: string[],
-                      dataImportMapping: DataImportMapping): DataImportError {
+                      dataImportMapping: DataImportMapping,
+                      errorPathKey?: string): DataImportError {
 
-        const attributeMapping = dataImportMapping.attributeMappings.find(mapping => {
-            mapping.getColumnNamesAsArray().includes(validationResult.name)
-        });
+        const pathParts = (errorPathKey || validationResult.name || '')
+            .split('.')
+            .filter(part => part.length > 0 && !/^\d+$/.test(part));
 
-        const columnIndices: number[] = attributeMapping ?
-            this.findColumnIndices(attributeMapping.getColumnNamesAsArray(), headers)
-            : [0];
+        let columnIndices: number[] = [];
+
+        if (pathParts.length <= 1) {
+            const attrName = pathParts[0] || validationResult.name;
+            const normAttrName = attrName ? DataImportService.normalizeColumnName(attrName) : '';
+            const attributeMapping = dataImportMapping.attributeMappings.find(mapping =>
+                mapping.attributeName === attrName ||
+                mapping.getColumnNamesAsArray().some(col => DataImportService.normalizeColumnName(col) === normAttrName)
+            );
+            if (attributeMapping) {
+                columnIndices = this.findColumnIndices(attributeMapping.getColumnNamesAsArray(), headers);
+            }
+        } else {
+            const rootAttrName = pathParts[0];
+            const leafAttrName = validationResult.name || pathParts[pathParts.length - 1];
+            const rootMapping = dataImportMapping.attributeMappings.find(
+                mapping => mapping.attributeName === rootAttrName
+            );
+            if (rootMapping) {
+                const rootColIndices = new Set(this.findColumnIndices(rootMapping.getColumnNamesAsArray(), headers));
+                const leafColIndices = this.findColumnIndices([leafAttrName], headers)
+                    .filter(idx => rootColIndices.has(idx));
+                if (leafColIndices.length > 0) {
+                    columnIndices = leafColIndices;
+                }
+            }
+        }
+
+        const displayPath = errorPathKey && errorPathKey !== validationResult.name
+            ? errorPathKey
+            : validationResult.name;
 
         return {
             row: rowIdx,
             cols: columnIndices,
-            message: validationResult.message + ` [${validationResult.name}]`
+            message: validationResult.message + ` [${displayPath}]`
         };
     }
 
@@ -527,14 +556,19 @@ export class DataImportService {
             for(const nextAttributeValue of converterResult.attributeValues) {
                 entity[nextAttributeValue.name] = nextAttributeValue.value;
                 if(nextAttributeValue.error) {
-                    const candidateNames = [
-                        ...nextAttributeMapping.getColumnNamesAsArray(),
-                        ...(nextAttributeMapping.attributeName ? [nextAttributeMapping.attributeName] : [])
-                    ];
-                    const colIndices = this.findColumnIndices(candidateNames, headers);
+                    let colIndices: number[];
+                    if (nextAttributeValue.cols !== undefined) {
+                        colIndices = nextAttributeValue.cols;
+                    } else {
+                        const candidateNames = [
+                            ...nextAttributeMapping.getColumnNamesAsArray(),
+                            ...(nextAttributeMapping.attributeName ? [nextAttributeMapping.attributeName] : [])
+                        ];
+                        colIndices = this.findColumnIndices(candidateNames, headers);
+                    }
                     dataImportErrors.push({
                         row: rowIdx,
-                        cols: colIndices.length > 0 ? colIndices : [0],
+                        cols: colIndices,
                         message: nextAttributeValue.error
                     });
                 }
@@ -546,7 +580,8 @@ export class DataImportService {
         if(dataImportErrors.length === 0) {
             if(dataImportMapping.duplicateCheck) {
                 duplicateCheckResult = await dataImportMapping.duplicateCheck.checkForDuplicates(headers, entity, duplicateCheckList);
-                const col = duplicateCheckResult.cellNumber !== undefined && duplicateCheckResult.cellNumber >= 0 ? duplicateCheckResult.cellNumber : 0;
+                const col = duplicateCheckResult.cellNumber !== undefined ? duplicateCheckResult.cellNumber : -1;
+                const duplicateCols = col >= 0 ? [col] : [];
 
                 switch (duplicateCheckResult.action) {
                     case DuplicateCheckAction.NOT_A_DUPLICATE:
@@ -557,21 +592,21 @@ export class DataImportService {
                     case DuplicateCheckAction.DUPLICATE_IN_FILE_ERROR:
                         dataImportErrors.push({
                             row: rowIdx,
-                            cols: [col],
+                            cols: duplicateCols,
                             message: 'A duplicate in this file already exists - unable to import'
                         });
                         break;
                     case DuplicateCheckAction.DUPLICATE_IN_DB_ERROR:
                         dataImportErrors.push({
                             row: rowIdx,
-                            cols: [col],
+                            cols: duplicateCols,
                             message: 'A duplicate entity for this data already exists in the database - unable to import'
                         });
                         break;
                     case DuplicateCheckAction.UNABLE_TO_DETERMINE:
                         dataImportErrors.push({
                             row: rowIdx,
-                            cols: [col],
+                            cols: duplicateCols,
                             message: 'Unable to perform duplicate check - due to missing or invalid data'
                         });
                         break;
@@ -646,6 +681,10 @@ export class DataImportService {
         }
     }
 
+    static normalizeColumnName(name: string): string {
+        return name.replace(/ /g, '_').toLowerCase();
+    }
+
     findColumnIndex(candidateNames: string | string[], headers: string[]): number {
         const candidates = Array.isArray(candidateNames) ? candidateNames : [candidateNames];
         // 1. Exact match
@@ -655,20 +694,11 @@ export class DataImportService {
             if (idx >= 0) return idx;
         }
 
-        // 2. Case-insensitive trimmed match
+        // 2. Case-insensitive match with single spaces replaced by underscores
         for (const candidate of candidates) {
             if (!candidate) continue;
-            const trimmedCandidate = candidate.trim().toLowerCase();
-            const idx = headers.findIndex(h => h && h.trim().toLowerCase() === trimmedCandidate);
-            if (idx >= 0) return idx;
-        }
-
-        // 3. Normalized match (ignoring spaces, underscores, and hyphens)
-        const normalize = (s: string) => s.toLowerCase().replace(/[\s_\-]+/g, '');
-        for (const candidate of candidates) {
-            if (!candidate) continue;
-            const normCandidate = normalize(candidate);
-            const idx = headers.findIndex(h => h && normalize(h) === normCandidate);
+            const normCandidate = DataImportService.normalizeColumnName(candidate);
+            const idx = headers.findIndex(h => h && DataImportService.normalizeColumnName(h) === normCandidate);
             if (idx >= 0) return idx;
         }
 

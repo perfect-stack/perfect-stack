@@ -9,6 +9,7 @@ export class AttributeValue {
     name: string;
     value: any;
     error?: string;
+    cols?: number[];
 }
 
 export class ConverterResult {
