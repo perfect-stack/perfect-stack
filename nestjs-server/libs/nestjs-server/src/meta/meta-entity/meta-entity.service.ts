@@ -1,4 +1,5 @@
 import { Injectable, Logger} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { OrmService } from '../../orm/orm.service';
 import {
   AttributeType,
@@ -12,21 +13,35 @@ import { FileRepositoryService } from '../../file/file-repository.service';
 import { ModelCtor } from 'sequelize-typescript';
 import { DeleteAttributeRequest } from './delete-attribute.request';
 import { EventService } from '../../event/event.service';
+import { MetaEditControlValue } from '../meta-edit/meta-edit-control-value';
+import { isMetaCacheEnabledFor } from '../meta-edit/meta-edit-utils';
 
 @Injectable()
 export class MetaEntityService {
   static readonly META_ENTITY_DIR = 'entities';
 
   private readonly logger = new Logger(MetaEntityService.name);
+  private cacheMap: Map<string, MetaEntity> | null = null;
+  private cacheLoadPromise: Promise<Map<string, MetaEntity>> | null = null;
 
   constructor(
     protected readonly ormService: OrmService,
     protected readonly fileRepositoryService: FileRepositoryService,
-    protected readonly eventService: EventService
+    protected readonly eventService: EventService,
+    protected readonly configService: ConfigService,
   ) {}
 
-  async findAll(): Promise<MetaEntity[]> {
-    const resultList: MetaEntity[] = [];
+  cacheReset(): void {
+    this.cacheMap = null;
+    this.cacheLoadPromise = null;
+  }
+
+  private isCacheEnabled(): boolean {
+    return isMetaCacheEnabledFor(this.configService, MetaEditControlValue.Entity);
+  }
+
+  private async loadAllIntoMap(): Promise<Map<string, MetaEntity>> {
+    const resultMap = new Map<string, MetaEntity>();
     const fileNames = await this.fileRepositoryService.listFiles(
       MetaEntityService.META_ENTITY_DIR,
     );
@@ -34,15 +49,54 @@ export class MetaEntityService {
     //this.logger.log(`Found meta-data files: ${fileNames}`);
 
     if (fileNames && fileNames.length > 0) {
-      for (const nextName of fileNames) {
-        const metaEntity = await this.findOne(this.toMetaName(nextName));
-        resultList.push(metaEntity);
+      const metaEntities = await Promise.all(
+        fileNames.map((nextName) =>
+          this.readMetaEntityFromFile(this.toMetaName(nextName)),
+        ),
+      );
+      for (const metaEntity of metaEntities) {
+        resultMap.set(metaEntity.name, metaEntity);
       }
     }
-    return resultList;
+    return resultMap;
   }
 
-  async findOne(metaName: string): Promise<MetaEntity> {
+  async findAllMap(): Promise<Map<string, MetaEntity>> {
+    if (!this.isCacheEnabled()) {
+      return this.loadAllIntoMap();
+    }
+
+    if (this.cacheMap) {
+      return this.cacheMap;
+    }
+
+    if (!this.cacheLoadPromise) {
+      const loadPromise = this.loadAllIntoMap()
+        .then((map) => {
+          if (this.cacheLoadPromise === loadPromise) {
+            this.cacheMap = map;
+            this.cacheLoadPromise = null;
+          }
+          return map;
+        })
+        .catch((err) => {
+          if (this.cacheLoadPromise === loadPromise) {
+            this.cacheLoadPromise = null;
+          }
+          throw err;
+        });
+      this.cacheLoadPromise = loadPromise;
+    }
+
+    return this.cacheLoadPromise;
+  }
+
+  async findAll(): Promise<MetaEntity[]> {
+    const metaEntityMap = await this.findAllMap();
+    return Array.from(metaEntityMap.values());
+  }
+
+  private async readMetaEntityFromFile(metaName: string): Promise<MetaEntity> {
     const metaFileName =
       MetaEntityService.META_ENTITY_DIR + '/' + this.toFileName(metaName);
     const metaEntityFromFile = JSON.parse(
@@ -64,6 +118,19 @@ export class MetaEntityService {
     return metaEntity;
   }
 
+  async findOne(metaName: string): Promise<MetaEntity> {
+    if (this.isCacheEnabled()) {
+      const metaEntityMap = await this.findAllMap();
+      const metaEntity = metaEntityMap.get(metaName);
+      if (!metaEntity) {
+        throw new Error(`Unable to find MetaEntity ${metaName}`);
+      }
+      return metaEntity;
+    }
+
+    return this.readMetaEntityFromFile(metaName);
+  }
+
   async create(metaEntity: MetaEntity): Promise<EntityResponse> {
     const metaFileName =
       MetaEntityService.META_ENTITY_DIR +
@@ -74,6 +141,7 @@ export class MetaEntityService {
       metaFileName,
       JSON.stringify(metaEntity, null, 2),
     );
+    this.cacheReset();
 
     return;
   }
@@ -88,11 +156,13 @@ export class MetaEntityService {
       metaFileName,
       JSON.stringify(metaEntity, null, 2),
     );
+    this.cacheReset();
 
     return;
   }
 
   archive(): Promise<void> {
+    this.cacheReset();
     return;
   }
 
@@ -597,6 +667,8 @@ export class MetaEntityService {
             metaEntity.attributes.splice(attributeIdx, 1);
             await this.update(metaEntity);
           }
+
+          this.cacheReset();
 
           // now reload the ORM config because model definitions may have changed
           await this.ormService.reload();

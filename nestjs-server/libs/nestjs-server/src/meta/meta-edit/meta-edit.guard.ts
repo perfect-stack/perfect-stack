@@ -9,6 +9,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { META_EDIT_ACTION_PERMIT } from './meta-edit-action-permit.decorator';
+import { getMetaEditEnabledList } from './meta-edit-utils';
 
 @Injectable()
 export class MetaEditGuard implements CanActivate {
@@ -32,19 +33,10 @@ export class MetaEditGuard implements CanActivate {
       return true;
     }
 
-    const metaEditEnabled = this.configService.get<string>('META_EDIT_ENABLED');
-    if (metaEditEnabled === undefined || metaEditEnabled === null) {
-      throw new Error(
-        'Configuration error: META_EDIT_ENABLED must be defined in the server environment configuration (e.g. "Entity, Menu, Page, Role" or "" for none).',
-      );
-    }
-
-    const enabledList = metaEditEnabled
-      .split(',')
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
+    const enabledList = getMetaEditEnabledList(this.configService);
 
     if (!enabledList.includes(controlValue)) {
+      const metaEditEnabled = this.configService.get<string>('META_EDIT_ENABLED');
       this.logger.warn(
         `Meta edit rejected: ${controlValue} is not in META_EDIT_ENABLED [${metaEditEnabled}]`,
       );

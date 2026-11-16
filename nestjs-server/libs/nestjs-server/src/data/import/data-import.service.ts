@@ -450,11 +450,7 @@ export class DataImportService {
     }
 
     async validate(entityName: string, entity: any): Promise<ValidationResultMapController> {
-        const metaEntityList = await this.metaEntityService.findAll();
-        const metaEntityMap = new Map<string, MetaEntity>();
-        for (const nextMetaEntity of metaEntityList) {
-            metaEntityMap.set(nextMetaEntity.name, nextMetaEntity);
-        }
+        const metaEntityMap = await this.metaEntityService.findAllMap();
 
         const metaEntity = metaEntityMap.get(entityName);
         if (!metaEntity) {

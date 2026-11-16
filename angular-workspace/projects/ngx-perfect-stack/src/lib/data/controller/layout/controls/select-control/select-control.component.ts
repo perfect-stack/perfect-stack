@@ -46,6 +46,7 @@ export class SelectControlComponent implements OnInit, OnChanges, OnDestroy, Con
   optionList: any[] = [];
   isLoading = false;
   optionListSubscription: Subscription;
+  findByIdSubscription?: Subscription;
 
   disabled = false;
 
@@ -148,6 +149,10 @@ export class SelectControlComponent implements OnInit, OnChanges, OnDestroy, Con
     if (this.optionListSubscription) {
       this.optionListSubscription.unsubscribe();
     }
+    if (this.findByIdSubscription) {
+      this.findByIdSubscription.unsubscribe();
+      this.findByIdSubscription = undefined;
+    }
   }
 
   /**
@@ -155,6 +160,11 @@ export class SelectControlComponent implements OnInit, OnChanges, OnDestroy, Con
    * is set. So we need call this method whenever either changes but only do the actual selection if both are set.
    */
   updateSelectedEntity() {
+    if (this.findByIdSubscription) {
+      this.findByIdSubscription.unsubscribe();
+      this.findByIdSubscription = undefined;
+    }
+
     if (this.optionList && this.optionList.length > 0) {
       if (this.selectedEntityId) {
         this.selectedEntity = this.optionList.find(x => x.id === this.selectedEntityId) || null;
@@ -164,14 +174,21 @@ export class SelectControlComponent implements OnInit, OnChanges, OnDestroy, Con
       this.selectedEntityEvent.next(this.selectedEntity);
     } else {
       if (this.selectedEntityId && this.attribute?.relationshipTarget) {
-        this.dataService.findByIdUsingCache(this.attribute.relationshipTarget, this.selectedEntityId).subscribe({
+        const requestedId = this.selectedEntityId;
+        this.findByIdSubscription = this.dataService.findByIdUsingCache(this.attribute.relationshipTarget, requestedId).subscribe({
           next: (response) => {
+            if (requestedId !== this.selectedEntityId) {
+              return;
+            }
             this.selectedEntity = response;
             this.selectedEntityEvent.next(this.selectedEntity);
             this.cdr.markForCheck();
           },
           error: (err) => {
-            console.warn(`[SelectControlComponent] Could not resolve entity for id ${this.selectedEntityId}:`, err);
+            if (requestedId !== this.selectedEntityId) {
+              return;
+            }
+            console.warn(`[SelectControlComponent] Could not resolve entity for id ${requestedId}:`, err);
             this.selectedEntity = null;
             this.selectedEntityEvent.next(null);
             this.cdr.markForCheck();

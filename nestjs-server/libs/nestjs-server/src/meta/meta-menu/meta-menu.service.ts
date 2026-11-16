@@ -3,10 +3,15 @@ import { MetaMenu } from '../../domain/meta.menu';
 import { FileRepositoryService } from '../../file/file-repository.service';
 import { ConfigService } from '@nestjs/config';
 import { OrmService } from '../../orm/orm.service';
+import { MetaEditControlValue } from '../meta-edit/meta-edit-control-value';
+import { isMetaCacheEnabledFor } from '../meta-edit/meta-edit-utils';
 
 @Injectable()
 export class MetaMenuService {
   static readonly META_MENU_DIR = 'menu';
+
+  private cacheMenu: MetaMenu | null = null;
+  private cacheLoadPromise: Promise<MetaMenu> | null = null;
 
   constructor(
     protected readonly configService: ConfigService,
@@ -14,7 +19,16 @@ export class MetaMenuService {
     protected readonly ormService: OrmService,
   ) { }
 
-  async findOne() {
+  cacheReset(): void {
+    this.cacheMenu = null;
+    this.cacheLoadPromise = null;
+  }
+
+  private isCacheEnabled(): boolean {
+    return isMetaCacheEnabledFor(this.configService, MetaEditControlValue.Menu);
+  }
+
+  private async readMetaMenuFromFile(): Promise<MetaMenu> {
     const metaFileName = MetaMenuService.META_MENU_DIR + '/MetaMenu.json';
     const metaMenuFromFile = JSON.parse(
       await this.fileRepositoryService.readFile(metaFileName),
@@ -24,6 +38,36 @@ export class MetaMenuService {
     return metaMenu;
   }
 
+  async findOne() {
+    if (!this.isCacheEnabled()) {
+      return this.readMetaMenuFromFile();
+    }
+
+    if (this.cacheMenu) {
+      return this.cacheMenu;
+    }
+
+    if (!this.cacheLoadPromise) {
+      const loadPromise = this.readMetaMenuFromFile()
+        .then((metaMenu) => {
+          if (this.cacheLoadPromise === loadPromise) {
+            this.cacheMenu = metaMenu;
+            this.cacheLoadPromise = null;
+          }
+          return metaMenu;
+        })
+        .catch((err) => {
+          if (this.cacheLoadPromise === loadPromise) {
+            this.cacheLoadPromise = null;
+          }
+          throw err;
+        });
+      this.cacheLoadPromise = loadPromise;
+    }
+
+    return this.cacheLoadPromise;
+  }
+
   async update(metaMenu: MetaMenu) {
     const metaFileName = MetaMenuService.META_MENU_DIR + '/MetaMenu.json';
 
@@ -31,6 +75,7 @@ export class MetaMenuService {
       metaFileName,
       JSON.stringify(metaMenu, null, 2),
     );
+    this.cacheReset();
 
     return;
   }
