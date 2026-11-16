@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, effect, Inject, Injector, input, OnDestroy, OnInit, signal} from '@angular/core';
 
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../ngx-perfect-stack-config";
@@ -7,7 +7,7 @@ import {finalize, Subscription} from "rxjs";
 import {Job} from "../../../job/job.model";
 import {FormsModule} from "@angular/forms";
 import {DataImportService} from "../data-import.service";
-import {DataImportClientMapping, DataImportParameter} from "./data-import.model";
+import {DataImportClientMapping, DataImportModel, DataImportParameter} from "./data-import.model";
 import {DataService} from "../../data-service/data.service";
 
 export class FileItem {
@@ -34,6 +34,9 @@ export interface CreateFileResponse {
   styleUrl: './upload-panel.component.css'
 })
 export class UploadPanelComponent implements OnInit, OnDestroy {
+  job = input<Job | null>(null);
+  dataImportModel = input<DataImportModel | null>(null);
+
   fileItems: FileItem[] = [];
   isDraggingOver = false;
 
@@ -50,23 +53,104 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
 
   uploadedData = signal<null | Job>(null);
 
+  private hadLoadedJob = false;
+  private appliedJobKey: string | null = null;
+
   constructor(@Inject(STACK_CONFIG)
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly dataImportService: DataImportService,
               protected readonly dataService: DataService,
               private http: HttpClient,
+              private injector: Injector,
               protected readonly cdr: ChangeDetectorRef) {
+    effect(() => {
+      const job = this.job();
+      const data = this.dataImportModel();
+      if (job || data) {
+        this.hadLoadedJob = true;
+        this.syncFromLoadedJob();
+      } else if (this.hadLoadedJob) {
+        this.hadLoadedJob = false;
+        this.appliedJobKey = null;
+        this.fileItems = [];
+        this.uploadedData.set(null);
+        if (this.clientMappings.length > 0) {
+          this.selectMapping(this.clientMappings[0]);
+        }
+        this.cdr.markForCheck();
+      }
+    }, {injector: this.injector});
+  }
+
+  get hasUploadedFile(): boolean {
+    return !!(
+      this.job() ||
+      this.dataImportModel() ||
+      this.fileItems.some(item => item.status === 'loading' || item.status === 'success')
+    );
+  }
+
+  get uploadedFilename(): string {
+    const liveItem = this.fileItems.find(item => item.status === 'loading' || item.status === 'success');
+    if (liveItem) {
+      return liveItem.file.name;
+    }
+    return this.dataImportModel()?.filename || this.job()?.filename || '';
+  }
+
+  hasMappingForFormat(title: string): boolean {
+    return this.clientMappings.some(m => m.title === title);
   }
 
   ngOnInit(): void {
     this.dataImportService.getDataImportClientMapping().subscribe(mappings => {
       this.clientMappings = mappings || [];
       if (this.clientMappings.length > 0) {
-        const current = this.clientMappings.find(m => m.title === this.dataFormat) || this.clientMappings[0];
-        this.selectMapping(current);
+        if (this.job() || this.dataImportModel()) {
+          this.syncFromLoadedJob();
+        } else {
+          const current = this.clientMappings.find(m => m.title === this.dataFormat) || this.clientMappings[0];
+          this.selectMapping(current);
+        }
       }
       this.cdr.markForCheck();
     });
+  }
+
+  private syncFromLoadedJob(): void {
+    const job = this.job();
+    const data = this.dataImportModel();
+    if (!job && !data) {
+      return;
+    }
+
+    const targetFormat = data?.dataFormat || job?.data_format;
+    const targetParams = data?.parameters || {};
+    const jobKey = `${job?.id || ''}|${targetFormat || ''}|${JSON.stringify(targetParams)}`;
+    if (this.appliedJobKey === jobKey) {
+      return;
+    }
+
+    if (this.clientMappings.length === 0) {
+      if (targetFormat) {
+        this.dataFormat = targetFormat;
+      }
+      return;
+    }
+
+    if (targetFormat) {
+      const found = this.clientMappings.find(m => m.title === targetFormat);
+      if (found) {
+        this.selectMapping(found, targetParams, false);
+      } else {
+        this.dataFormat = targetFormat;
+        this.selectedMapping = null;
+        this.parameterValues = { ...targetParams };
+      }
+    }
+
+    this.appliedJobKey = jobKey;
+    this.cdr.markForCheck();
   }
 
   hasCategories(): boolean {
@@ -92,7 +176,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectMapping(mapping: DataImportClientMapping): void {
+  selectMapping(mapping: DataImportClientMapping, initialParams?: Record<string, any>, runSchemaCheck = true): void {
     this.selectedMapping = mapping;
     this.dataFormat = mapping.title;
     this.parameterValues = {};
@@ -100,15 +184,21 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
 
     if (mapping.parameters && mapping.parameters.length > 0) {
       for (const param of mapping.parameters) {
-        if (param.defaultValue !== undefined) {
+        if (initialParams && initialParams[param.name] !== undefined && initialParams[param.name] !== null) {
+          this.parameterValues[param.name] = initialParams[param.name];
+        } else if (param.defaultValue !== undefined) {
           this.parameterValues[param.name] = param.defaultValue;
+        } else {
+          this.parameterValues[param.name] = null;
         }
         if (param.type === 'entity-select' && param.entityName) {
           this.loadEntityOptions(param);
         }
       }
     }
-    this.checkSchemaIfReady();
+    if (runSchemaCheck) {
+      this.checkSchemaIfReady();
+    }
     this.cdr.markForCheck();
   }
 
@@ -175,6 +265,9 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
   }
 
   isUploadDisabled(): boolean {
+    if (this.hasUploadedFile) {
+      return true;
+    }
     if (this.isValidatingSchema || this.schemaErrors.length > 0) {
       return true;
     }

@@ -30,14 +30,14 @@ export class DataImportComponent implements OnInit, OnDestroy {
   uploadPanel = viewChild(UploadPanelComponent);
 
   clientMappings: DataImportClientMapping[] = [];
-  job: Job | null;
-  data: DataImportModel | null;
+  job: Job | null = null;
+  data: DataImportModel | null = null;
   form: FormArray;
 
   phase: null | 'validating' | 'importing' = null;
 
-  jobIdValidate: string | null;
-  jobIdImport: string | null;
+  jobIdValidate: string | null = null;
+  jobIdImport: string | null = null;
 
   importStarted = false;
 
@@ -104,6 +104,13 @@ export class DataImportComponent implements OnInit, OnDestroy {
         this.jobService.getJob(jobId).subscribe(job => {
           this.onJobUpdated(job);
         });
+      } else {
+        this.job = null;
+        this.data = null;
+        this.form = null as any;
+        this.importStarted = false;
+        this.jobIdValidate = null;
+        this.jobIdImport = null;
       }
       this.cdr.markForCheck();
     });
@@ -175,6 +182,10 @@ export class DataImportComponent implements OnInit, OnDestroy {
       return this.data.headers;
     }
     return null;
+  }
+
+  get uploadedFilename(): string {
+    return this.data?.filename || this.job?.filename || '';
   }
 
   get formRows(): FormGroup[] {

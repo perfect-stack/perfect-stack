@@ -103,13 +103,16 @@ export class DataImportService {
             }
 
             const dataImportModel = new DataImportModel();
+            dataImportModel.dataFormat = dataFormat;
+            dataImportModel.parameters = params;
+            dataImportModel.duplicateCheckList = [];
+            dataImportModel.importResult = [];
             if (data && data.length > 0) {
-                dataImportModel.dataFormat = dataFormat;
                 dataImportModel.headers = data[0];
                 dataImportModel.dataRows = data.slice(1);
-                dataImportModel.duplicateCheckList = [];
-                dataImportModel.importResult = [];
-                dataImportModel.parameters = params;
+            } else {
+                dataImportModel.headers = [];
+                dataImportModel.dataRows = [];
             }
 
             return dataImportModel;
@@ -119,6 +122,7 @@ export class DataImportService {
             return {
                 status: 'error',
                 dataFormat: dataFormat,
+                parameters: params,
                 headers: ["Error parsing file"],
                 dataRows: [[errorMessage]],
                 importedEntityList: [],

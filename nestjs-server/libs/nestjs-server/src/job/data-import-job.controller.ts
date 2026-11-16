@@ -148,7 +148,9 @@ export class DataImportJobController {
             if (body) {
                 for (const [key, val] of Object.entries(body)) {
                     if (key !== 'dataFormat' && key !== 'file') {
-                        if (key.startsWith('params[') && key.endsWith(']')) {
+                        if (key === 'params' && val && typeof val === 'object') {
+                            Object.assign(params, val);
+                        } else if (key.startsWith('params[') && key.endsWith(']')) {
                             const paramKey = key.slice(7, -1);
                             params[paramKey] = val;
                         } else if (!key.includes('[')) {
@@ -160,6 +162,8 @@ export class DataImportJobController {
 
             const dataImportModel = await this.dataImportService.parseFile(dataFormat, file.path, params);
             dataImportModel.status = 'loaded';
+            dataImportModel.dataFormat = dataImportModel.dataFormat || dataFormat;
+            dataImportModel.parameters = dataImportModel.parameters || params;
             dataImportModel.filename = filename;
             dataImportModel.executedBy = executedBy;
 
