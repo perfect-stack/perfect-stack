@@ -4,7 +4,7 @@ import {AuthenticationService} from '../authentication/authentication.service';
 import {MetaMenuService} from '../meta/menu/meta-menu-service/meta-menu.service';
 import {AuthorizationService} from '../authentication/authorization.service';
 import {ActionType} from '../domain/meta.role';
-import {Menu, MenuItem, OpenIn} from '../domain/meta.menu';
+import {Menu, MenuItem, MenuItemType, OpenIn} from '../domain/meta.menu';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../ngx-perfect-stack-config';
 import {ClientConfigService} from '../client/config/client-config.service';
 
@@ -60,6 +60,10 @@ export class MenuBarComponent implements OnInit {
         this.updateMenuEnabled();
       }
     });
+
+    this.metaMenuService.menuUpdated$?.subscribe(() => {
+      this.updateMenuEnabled();
+    });
   }
 
   isMenuItemVisible(menuItem: MenuItem): boolean {
@@ -81,11 +85,30 @@ export class MenuBarComponent implements OnInit {
     return true;
   }
 
+  isSeparator(menuItem: MenuItem | null | undefined): boolean {
+    return menuItem?.type === MenuItemType.Separator;
+  }
+
   getVisibleMenuItems(menu: Menu): MenuItem[] {
     if (!menu || !menu.items) {
       return [];
     }
-    return menu.items.filter((item) => this.isMenuItemVisible(item));
+    const envFiltered = menu.items.filter((item) => this.isMenuItemVisible(item));
+
+    const cleaned: MenuItem[] = [];
+    for (const item of envFiltered) {
+      if (this.isSeparator(item)) {
+        if (cleaned.length > 0 && !this.isSeparator(cleaned[cleaned.length - 1])) {
+          cleaned.push(item);
+        }
+      } else {
+        cleaned.push(item);
+      }
+    }
+    while (cleaned.length > 0 && this.isSeparator(cleaned[cleaned.length - 1])) {
+      cleaned.pop();
+    }
+    return cleaned;
   }
 
   updateMenuEnabled() {
@@ -114,7 +137,7 @@ export class MenuBarComponent implements OnInit {
 
     event.preventDefault();
     const openIn = menuItem.openIn || OpenIn.Current;
-    const route = menuItem.route;
+    const route = menuItem.route || '';
 
     switch (openIn) {
       case OpenIn.NewTab:
@@ -139,7 +162,7 @@ export class MenuBarComponent implements OnInit {
     return openIn === OpenIn.Current && !this.isExternalOrServerRoute(menuItem.route);
   }
 
-  isExternalOrServerRoute(route: string): boolean {
+  isExternalOrServerRoute(route?: string): boolean {
     return !route || route === '/api' || route.startsWith('/api/') || route.startsWith('http://') || route.startsWith('https://');
   }
 }

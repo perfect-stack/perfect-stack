@@ -29,10 +29,16 @@
                 </lib-menu-item-view>
               }
 
-              <button type="button" class="btn add-item-btn w-100" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onAddItem(metaMenu, colIdx)">
-                <span class="material-symbols-outlined me-1" style="font-size: 16px;">add</span>
-                <span>Add Item</span>
-              </button>
+              <div class="d-flex gap-1">
+                <button type="button" class="btn add-item-btn flex-grow-1" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onAddItem(metaMenu, colIdx)">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+                  <span>Add Item</span>
+                </button>
+                <button type="button" class="btn add-item-btn flex-shrink-0" title="Add Menu Separator" [disabled]="!(isMetaEditEnabled$ | async)" (click)="onAddSeparator(metaMenu, colIdx)">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">horizontal_rule</span>
+                  <span>Separator</span>
+                </button>
+              </div>
             </div>
           </div>
         }

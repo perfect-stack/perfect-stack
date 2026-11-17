@@ -4,11 +4,17 @@ export enum OpenIn {
   NewWindow = 'New Window',
 }
 
+export enum MenuItemType {
+  Link = 'link',
+  Separator = 'separator',
+}
+
 export class MenuItem {
-  label: string;
-  route: string;
-  editable = true;
-  roles: string[] = [];
+  type?: MenuItemType = MenuItemType.Link;
+  label?: string;
+  route?: string;
+  editable? = true;
+  roles?: string[] = [];
   openIn?: OpenIn = OpenIn.Current;
   environments?: string[] = [];
 }

@@ -15,6 +15,30 @@
   box-shadow: 0 2px 4px rgba(16, 24, 40, 0.08);
 }
 
+.item-card-separator {
+  background: #F2F4F7;
+  border-style: dashed;
+  border-color: #D0D5DD;
+  padding: 6px 10px;
+}
+
+.separator-preview {
+  min-height: 18px;
+}
+
+.separator-line {
+  height: 1px;
+  background-color: #98A2B3;
+}
+
+.separator-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #667085;
+}
+
 .item-content {
   min-width: 0;
 }

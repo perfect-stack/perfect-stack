@@ -1,17 +1,25 @@
 @if (menuItem) {
-  <div class="item-card">
+  <div class="item-card" [class.item-card-separator]="isSeparator()">
     <div class="item-content">
-      <div class="item-label">{{menuItem.label}}</div>
-      <div class="item-route d-flex align-items-center">
-        <span class="text-truncate">{{menuItem.route}}</span>
-        @if (isOpenDifferentToCurrent()) {
-          <span class="material-symbols-outlined open-in-icon ms-1"
-                [ngbTooltip]="getOpenInTooltip()"
-                placement="top">
-            {{getOpenInIcon()}}
-          </span>
-        }
-      </div>
+      @if (isSeparator()) {
+        <div class="separator-preview d-flex align-items-center gap-2">
+          <span class="separator-line flex-grow-1"></span>
+          <span class="separator-badge">Separator</span>
+          <span class="separator-line flex-grow-1"></span>
+        </div>
+      } @else {
+        <div class="item-label">{{menuItem.label}}</div>
+        <div class="item-route d-flex align-items-center">
+          <span class="text-truncate">{{menuItem.route}}</span>
+          @if (isOpenDifferentToCurrent()) {
+            <span class="material-symbols-outlined open-in-icon ms-1"
+                  [ngbTooltip]="getOpenInTooltip()"
+                  placement="top">
+              {{getOpenInIcon()}}
+            </span>
+          }
+        </div>
+      }
       @if (menuItem.environments && menuItem.environments.length > 0) {
         <div class="d-flex flex-wrap gap-1 mt-1">
           @for (env of menuItem.environments; track env) {
@@ -31,8 +39,8 @@
           </div>
           <div class="action-divider"></div>
           <div class="d-flex align-items-center">
-            <span class="material-symbols-outlined action-icon" (click)="onEditMenuItem(content)" title="Edit Item">edit</span>
-            <span class="material-symbols-outlined action-icon action-delete" (click)="onDelete()" title="Delete Item">delete</span>
+            <span class="material-symbols-outlined action-icon" (click)="onEditMenuItem(content)" [title]="isSeparator() ? 'Edit Separator' : 'Edit Item'">edit</span>
+            <span class="material-symbols-outlined action-icon action-delete" (click)="onDelete()" [title]="isSeparator() ? 'Delete Separator' : 'Delete Item'">delete</span>
           </div>
         </div>
       </div>
@@ -42,27 +50,29 @@
 
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Edit Menu Item</h4>
+    <h4 class="modal-title" id="modal-basic-title">{{ isSeparator() ? 'Edit Menu Separator' : 'Edit Menu Item' }}</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
     <form [formGroup]="menuItemForm" (ngSubmit)="modal.close('Save click')">
-      <div class="form-group mb-3">
-        <label class="form-label" for="label">Label</label>
-        <input id="label" class="form-control" [formControlName]="'label'">
-      </div>
-      <div class="form-group mb-3">
-        <label class="form-label" for="route">Route</label>
-        <input id="route" class="form-control" [formControlName]="'route'">
-      </div>
-      <div class="form-group mb-3">
-        <label class="form-label" for="openIn">Open In</label>
-        <select id="openIn" class="form-select" [formControlName]="'openIn'">
-          @for (option of openInOptions; track option) {
-            <option [value]="option">{{option}}</option>
-          }
-        </select>
-      </div>
+      @if (!isSeparator()) {
+        <div class="form-group mb-3">
+          <label class="form-label" for="label">Label</label>
+          <input id="label" class="form-control" [formControlName]="'label'">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="route">Route</label>
+          <input id="route" class="form-control" [formControlName]="'route'">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="openIn">Open In</label>
+          <select id="openIn" class="form-select" [formControlName]="'openIn'">
+            @for (option of openInOptions; track option) {
+              <option [value]="option">{{option}}</option>
+            }
+          </select>
+        </div>
+      }
       <div class="form-group">
         <label class="form-label">Environments (Feature Flag)</label>
         <lib-enumeration-edit-control

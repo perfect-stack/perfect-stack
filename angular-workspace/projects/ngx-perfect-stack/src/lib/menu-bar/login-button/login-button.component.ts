@@ -76,7 +76,7 @@ export class LoginButtonComponent implements OnInit {
 
   onLogin() {
     const menuItem = this.metaMenuService.getFirstLoginMenuItem();
-    if(menuItem) {
+    if(menuItem && menuItem.route) {
       console.log(`LoginButton setting up first login menu item`);
       this.authenticationService.redirectUrl = menuItem.route;
     }

@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { catchError, from, map, Observable, of, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MenuItem, Menu, MetaMenu, OpenIn } from '../../../domain/meta.menu';
+import { MenuItem, MenuItemType, Menu, MetaMenu, OpenIn } from '../../../domain/meta.menu';
 import { MetaMenuService } from '../meta-menu-service/meta-menu.service';
 import { ComponentCanDeactivate } from '../../../utils/can-deactivate.guard';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -213,6 +213,18 @@ export class MetaMenuViewComponent implements OnInit, ComponentCanDeactivate {
     newItem.openIn = OpenIn.Current;
     const menu = metaMenu.menuList[colIdx];
     menu.items.push(newItem);
+    this.examine(metaMenu);
+    this.checkDirty(metaMenu);
+    this.metaMenu$ = of(metaMenu);
+  }
+
+  onAddSeparator(metaMenu: MetaMenu, colIdx: number) {
+    const separator: MenuItem = {
+      type: MenuItemType.Separator,
+      environments: []
+    };
+    const menu = metaMenu.menuList[colIdx];
+    menu.items.push(separator);
     this.examine(metaMenu);
     this.checkDirty(metaMenu);
     this.metaMenu$ = of(metaMenu);

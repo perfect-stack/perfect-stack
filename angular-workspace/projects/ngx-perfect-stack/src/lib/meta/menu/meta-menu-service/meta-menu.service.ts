@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
-import {MenuItem, MetaMenu} from '../../../domain/meta.menu';
+import {MenuItem, MenuItemType, MetaMenu} from '../../../domain/meta.menu';
 import { HttpClient } from '@angular/common/http';
-import {tap} from 'rxjs';
+import {Subject, tap} from 'rxjs';
 import {NgxPerfectStackConfig, STACK_CONFIG} from '../../../ngx-perfect-stack-config';
 import {withBypassAuth} from '../../../authentication/auth-interceptor';
 
@@ -9,6 +9,7 @@ import {withBypassAuth} from '../../../authentication/auth-interceptor';
 export class MetaMenuService {
 
   menu: MetaMenu = new MetaMenu();
+  menuUpdated$ = new Subject<void>();
 
   constructor(
     @Inject(STACK_CONFIG)
@@ -26,7 +27,7 @@ export class MetaMenuService {
   getFirstLoginMenuItem(): MenuItem | null {
     const menu = this.menu?.menuList?.[0];
     if(menu && menu.items && menu.items.length > 0) {
-      return menu.items[0];
+      return menu.items.find((item) => item.type !== MenuItemType.Separator) || null;
     }
     return null;
   }
@@ -36,7 +37,12 @@ export class MetaMenuService {
   }
 
   update(metaMenu: MetaMenu) {
-    return this.http.post<void>(`${this.stackConfig.apiUrl}/meta/menu`, metaMenu);
+    return this.http.post<void>(`${this.stackConfig.apiUrl}/meta/menu`, metaMenu).pipe(
+      tap(() => {
+        this.menu = JSON.parse(JSON.stringify(metaMenu)) as MetaMenu;
+        this.menuUpdated$.next();
+      })
+    );
   }
 
   getPostGisVersion() {

@@ -29,15 +29,19 @@
               {{nextMenu.label}}
             </a>
             <div class="dropdown-menu" ngbDropdownMenu>
-              @for(menuItem of visibleItems; track menuItem.label) {
-                <a ngbDropdownItem
-                  [routerLink]="isInternalRoute(menuItem) ? menuItem.route : null"
-                  [href]="menuItem.route"
-                  (click)="onMenuItemClick(menuItem, $event)"
-                  id="{{menuItem.label}}MenuItem"
-                  [attr.data-testid]="'menu-item-' + menuItem.label">
-                  {{menuItem.label}}
-                </a>
+              @for(menuItem of visibleItems; track $index) {
+                @if (isSeparator(menuItem)) {
+                  <div class="dropdown-divider"></div>
+                } @else {
+                  <a ngbDropdownItem
+                    [routerLink]="isInternalRoute(menuItem) ? menuItem.route : null"
+                    [href]="menuItem.route"
+                    (click)="onMenuItemClick(menuItem, $event)"
+                    id="{{menuItem.label}}MenuItem"
+                    [attr.data-testid]="'menu-item-' + menuItem.label">
+                    {{menuItem.label}}
+                  </a>
+                }
               }
             </div>
           }

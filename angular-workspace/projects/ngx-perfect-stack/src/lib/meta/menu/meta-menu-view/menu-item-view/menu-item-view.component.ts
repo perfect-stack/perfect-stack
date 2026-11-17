@@ -1,5 +1,5 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
-import {Menu, MenuItem, OpenIn} from '../../../../domain/meta.menu';
+import {Menu, MenuItem, MenuItemType, OpenIn} from '../../../../domain/meta.menu';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {UntypedFormBuilder} from '@angular/forms';
 
@@ -54,6 +54,10 @@ export class MenuItemViewComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  isSeparator(): boolean {
+    return this.menuItem?.type === MenuItemType.Separator;
+  }
+
   @HostListener('mouseenter')
   mouseenter() {
     // console.log("OMG It's a Mouse!!!");
@@ -93,8 +97,8 @@ export class MenuItemViewComponent implements OnInit {
   onEditMenuItem(content: any) {
     if(this.menuItem) {
       this.menuItemForm.patchValue({
-        label: this.menuItem.label,
-        route: this.menuItem.route,
+        label: this.menuItem.label || '',
+        route: this.menuItem.route || '',
         openIn: this.menuItem.openIn || OpenIn.Current,
         environments: this.menuItem.environments || [],
       });
@@ -137,9 +141,13 @@ export class MenuItemViewComponent implements OnInit {
     if(menuItem) {
       const editedItem = this.menuItemForm.value;
       console.log(`Edited item: ${JSON.stringify(editedItem)}`);
-      Object.assign(menuItem, editedItem);
-      if (!menuItem.openIn) {
-        menuItem.openIn = OpenIn.Current;
+      if (this.isSeparator()) {
+        menuItem.environments = editedItem.environments;
+      } else {
+        Object.assign(menuItem, editedItem);
+        if (!menuItem.openIn) {
+          menuItem.openIn = OpenIn.Current;
+        }
       }
       if (!menuItem.environments) {
         menuItem.environments = [];
