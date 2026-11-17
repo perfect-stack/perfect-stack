@@ -36,3 +36,15 @@
   opacity: 0.85;
 }
 
+.dictionary-filter-input {
+  max-width: 420px;
+}
+
+.dictionary-table {
+  font-size: 0.875rem;
+}
+
+.dictionary-description-cell {
+  min-width: 280px;
+  white-space: normal;
+}

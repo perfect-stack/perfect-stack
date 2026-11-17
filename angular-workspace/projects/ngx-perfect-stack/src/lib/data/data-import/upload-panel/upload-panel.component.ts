@@ -1,6 +1,6 @@
-import {ChangeDetectorRef, Component, effect, Inject, Injector, input, OnDestroy, OnInit, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, effect, Inject, Injector, input, OnDestroy, OnInit, signal, TemplateRef} from '@angular/core';
 
-import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModal, NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {NgxPerfectStackConfig, STACK_CONFIG} from "../../../ngx-perfect-stack-config";
 import {HttpClient, HttpEventType} from "@angular/common/http";
 import {finalize, Subscription} from "rxjs";
@@ -60,6 +60,7 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
               protected readonly stackConfig: NgxPerfectStackConfig,
               protected readonly dataImportService: DataImportService,
               protected readonly dataService: DataService,
+              protected readonly modalService: NgbModal,
               private http: HttpClient,
               private injector: Injector,
               protected readonly cdr: ChangeDetectorRef) {
@@ -299,6 +300,145 @@ export class UploadPanelComponent implements OnInit, OnDestroy {
   }
 
   isDownloadingTemplate = false;
+  isLoadingDictionary = false;
+  dictionaryError: string | null = null;
+  dictionaryHeaders: string[] = [];
+  dictionaryRows: string[][] = [];
+  dictionaryFilter = '';
+
+  get dictionarySubtitle(): string {
+    if (!this.selectedMapping) {
+      return '';
+    }
+    const parts: string[] = [this.selectedMapping.title];
+    if (this.selectedMapping.parameters) {
+      for (const p of this.selectedMapping.parameters) {
+        const val = this.parameterValues[p.name];
+        if (val !== undefined && val !== null && val !== '') {
+          const options = this.parameterEntityOptions[p.name];
+          const opt = options?.find((o: any) => o.id === val);
+          const displayVal = opt ? this.getParamOptionLabel(p, opt) : val;
+          parts.push(`${p.label}: ${displayVal}`);
+        }
+      }
+    }
+    return parts.join(' — ');
+  }
+
+  get filteredDictionaryRows(): string[][] {
+    const query = this.dictionaryFilter.trim().toLowerCase();
+    if (!query) {
+      return this.dictionaryRows;
+    }
+    return this.dictionaryRows.filter(row =>
+      row.some(cell => (cell || '').toLowerCase().includes(query))
+    );
+  }
+
+  viewDataDictionary(modalTemplate: TemplateRef<any>): void {
+    if (!this.selectedMapping || !this.canDownloadTemplates()) {
+      return;
+    }
+
+    this.isLoadingDictionary = true;
+    this.dictionaryError = null;
+    this.dictionaryHeaders = [];
+    this.dictionaryRows = [];
+    this.dictionaryFilter = '';
+
+    this.modalService.open(modalTemplate, { size: 'xl', scrollable: true });
+
+    this.dataImportService.downloadTemplate(this.selectedMapping.title, this.parameterValues, 'dictionary').subscribe({
+      next: (response) => {
+        const blob = response.body;
+        if (!blob) {
+          this.dictionaryError = 'No data dictionary content was returned.';
+          this.isLoadingDictionary = false;
+          this.cdr.markForCheck();
+          return;
+        }
+
+        blob.text().then(csvText => {
+          const parsed = this.parseCsv(csvText);
+          if (parsed.length > 0) {
+            this.dictionaryHeaders = parsed[0];
+            const columnCount = this.dictionaryHeaders.length;
+            this.dictionaryRows = parsed.slice(1).map(row => {
+              if (row.length === columnCount) {
+                return row;
+              }
+              return Array.from({ length: columnCount }, (_, idx) => row[idx] ?? '');
+            });
+          }
+          this.isLoadingDictionary = false;
+          this.cdr.markForCheck();
+        }).catch(err => {
+          console.error('Failed to read data dictionary text', err);
+          this.dictionaryError = 'Failed to parse data dictionary content.';
+          this.isLoadingDictionary = false;
+          this.cdr.markForCheck();
+        });
+      },
+      error: (err) => {
+        console.error('Failed to load data dictionary', err);
+        this.dictionaryError = 'Failed to load data dictionary.';
+        this.isLoadingDictionary = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  private parseCsv(csvText: string): string[][] {
+    const rows: string[][] = [];
+    const text = csvText.replace(/^\uFEFF/, '');
+    let currentRow: string[] = [];
+    let currentField = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const nextChar = text[i + 1];
+
+      if (inQuotes) {
+        if (char === '"' && nextChar === '"') {
+          currentField += '"';
+          i++;
+        } else if (char === '"') {
+          inQuotes = false;
+        } else {
+          currentField += char;
+        }
+      } else {
+        if (char === '"') {
+          inQuotes = true;
+        } else if (char === ',') {
+          currentRow.push(currentField);
+          currentField = '';
+        } else if (char === '\r' || char === '\n') {
+          if (char === '\r' && nextChar === '\n') {
+            i++;
+          }
+          currentRow.push(currentField);
+          if (currentRow.some(cell => cell !== '') || currentRow.length > 1) {
+            rows.push(currentRow);
+          }
+          currentRow = [];
+          currentField = '';
+        } else {
+          currentField += char;
+        }
+      }
+    }
+
+    if (currentField !== '' || currentRow.length > 0) {
+      currentRow.push(currentField);
+      if (currentRow.some(cell => cell !== '') || currentRow.length > 1) {
+        rows.push(currentRow);
+      }
+    }
+
+    return rows;
+  }
 
   downloadTemplate(flavour: 'grid' | 'dictionary'): void {
     if (!this.selectedMapping || !this.canDownloadTemplates()) {

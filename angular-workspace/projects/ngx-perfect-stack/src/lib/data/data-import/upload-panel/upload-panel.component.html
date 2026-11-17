@@ -66,13 +66,112 @@
       <span>Download Template</span>
     </button>
     <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
-            [disabled]="!canDownloadTemplates() || isDownloadingTemplate"
-            (click)="downloadTemplate('dictionary')">
-      <span class="material-symbols-outlined" style="font-size: 18px;">menu_book</span>
-      <span>Download Data Dictionary</span>
+            [disabled]="!canDownloadTemplates() || isDownloadingTemplate || isLoadingDictionary"
+            (click)="viewDataDictionary(dataDictionaryModal)">
+      <span class="material-symbols-outlined" style="font-size: 18px;">visibility</span>
+      <span>View Data Dictionary</span>
     </button>
   </div>
 }
+
+<ng-template #dataDictionaryModal let-modal>
+  <div class="modal-header">
+    <div>
+      <h4 class="modal-title mb-0" id="data-dictionary-modal-title">Data Dictionary</h4>
+      @if (dictionarySubtitle) {
+        <div class="text-muted small">{{dictionarySubtitle}}</div>
+      }
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    @if (isLoadingDictionary) {
+      <div class="d-flex align-items-center justify-content-center py-5 text-muted">
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        <span>Loading data dictionary...</span>
+      </div>
+    } @else if (dictionaryError) {
+      <div class="alert alert-danger mb-0" role="alert">
+        {{dictionaryError}}
+      </div>
+    } @else if (dictionaryHeaders.length > 0) {
+      <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+        <div class="input-group input-group-sm dictionary-filter-input">
+          <span class="input-group-text">Filter</span>
+          <input type="text"
+                 class="form-control"
+                 placeholder="Search columns, entities, types, or descriptions..."
+                 [(ngModel)]="dictionaryFilter">
+          @if (dictionaryFilter) {
+            <button type="button" class="btn btn-outline-secondary" (click)="dictionaryFilter = ''">Clear</button>
+          }
+        </div>
+        <div class="text-muted small text-nowrap">
+          {{filteredDictionaryRows.length}} of {{dictionaryRows.length}} columns
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm table-striped table-hover align-middle mb-0 dictionary-table">
+          <thead class="table-light sticky-top">
+            <tr>
+              @for (header of dictionaryHeaders; track $index) {
+                <th scope="col" class="text-nowrap">{{header}}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredDictionaryRows.length === 0) {
+              <tr>
+                <td [attr.colspan]="dictionaryHeaders.length" class="text-center text-muted py-4">
+                  No matching columns found.
+                </td>
+              </tr>
+            } @else {
+              @for (row of filteredDictionaryRows; track $index) {
+                <tr>
+                  @for (header of dictionaryHeaders; track colIdx; let colIdx = $index) {
+                    @if (colIdx === 0) {
+                      <td class="fw-semibold text-nowrap"><code>{{row[colIdx]}}</code></td>
+                    } @else if (header.toLowerCase().includes('mandatory')) {
+                      <td class="text-nowrap">
+                        @if (row[colIdx] === 'Yes') {
+                          <span class="badge text-bg-primary">Yes</span>
+                        } @else if (row[colIdx] === 'No') {
+                          <span class="badge text-bg-secondary">No</span>
+                        } @else {
+                          {{row[colIdx]}}
+                        }
+                      </td>
+                    } @else if (colIdx === dictionaryHeaders.length - 1) {
+                      <td class="dictionary-description-cell">{{row[colIdx]}}</td>
+                    } @else {
+                      <td>{{row[colIdx]}}</td>
+                    }
+                  }
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="text-muted text-center py-4">
+        No data dictionary entries found.
+      </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+            [disabled]="!canDownloadTemplates() || isDownloadingTemplate"
+            (click)="downloadTemplate('dictionary')">
+      <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
+      <span>Download CSV</span>
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
+  </div>
+</ng-template>
 
 @if (schemaErrors.length > 0) {
   <div class="alert alert-danger mb-2">
