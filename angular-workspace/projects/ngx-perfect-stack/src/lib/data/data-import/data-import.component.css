@@ -19,6 +19,12 @@ td .material-symbols-outlined {
   font-style: italic;
 }
 
+.populated-cell {
+  --bs-table-bg: #dbeafe;
+  background-color: #dbeafe !important;
+  color: #084298;
+}
+
 ::ng-deep .entity-json-tooltip {
   pointer-events: auto !important;
 }

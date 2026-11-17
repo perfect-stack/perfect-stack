@@ -151,8 +151,11 @@
     <div class="d-flex justify-content-between align-items-center mb-2">
       <h3 class="mb-0">Imported Data</h3>
       <div class="btn-group btn-group-sm">
-        <button type="button" class="btn" [ngClass]="rowFilter === 'all' ? 'btn-primary' : 'btn-outline-secondary'" (click)="setRowFilter('all')">
-          All ({{totalRowCount}})
+        <button type="button" class="btn" [ngClass]="rowFilter === 'skipped' ? 'btn-secondary' : 'btn-outline-secondary'" (click)="setRowFilter('skipped')">
+          Skipped ({{skipRowCount}})
+        </button>
+        <button type="button" class="btn" [ngClass]="rowFilter === 'valid' ? 'btn-info' : 'btn-outline-info'" (click)="setRowFilter('valid')">
+          Valid ({{validRowCount}})
         </button>
         <button type="button" class="btn" [ngClass]="rowFilter === 'errors' ? 'btn-danger' : 'btn-outline-danger'" (click)="setRowFilter('errors')">
           Errors ({{errorRowCount}})
@@ -160,11 +163,8 @@
         <button type="button" class="btn" [ngClass]="rowFilter === 'imported' ? 'btn-success' : 'btn-outline-success'" (click)="setRowFilter('imported')">
           Imported ({{importedRowCount}})
         </button>
-        <button type="button" class="btn" [ngClass]="rowFilter === 'valid' ? 'btn-info' : 'btn-outline-info'" (click)="setRowFilter('valid')">
-          Valid ({{validRowCount}})
-        </button>
-        <button type="button" class="btn" [ngClass]="rowFilter === 'skipped' ? 'btn-secondary' : 'btn-outline-secondary'" (click)="setRowFilter('skipped')">
-          Skipped ({{skipRowCount}})
+        <button type="button" class="btn" [ngClass]="rowFilter === 'all' ? 'btn-primary' : 'btn-outline-secondary'" (click)="setRowFilter('all')">
+          All ({{totalRowCount}})
         </button>
       </div>
     </div>
@@ -255,8 +255,10 @@
             </span>
           </td>
           } @else {
-          <td class="px-2" [class.skipped-cell]="isCellSkipped(rowIdx, colIdx)">
-            <span class="d-block" style="min-height: 1.2em;" [ngbTooltip]="isCellSkippedToolTip(rowIdx, colIdx) || findRowLevelErrorMessagesAsTooltip(rowIdx)">
+          <td class="px-2"
+              [class.skipped-cell]="isCellSkipped(rowIdx, colIdx)"
+              [class.populated-cell]="isCellPopulated(rowIdx, colIdx)">
+            <span class="d-block" style="min-height: 1.2em;" [ngbTooltip]="isCellSkippedToolTip(rowIdx, colIdx) || isCellPopulatedToolTip(rowIdx, colIdx) || findRowLevelErrorMessagesAsTooltip(rowIdx)">
               {{control.value}}
             </span>
           </td>

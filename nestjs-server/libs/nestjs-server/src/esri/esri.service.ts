@@ -7,13 +7,18 @@ import {
 } from '@aws-sdk/client-secrets-manager';
 import { firstValueFrom } from 'rxjs';
 import * as proj4 from 'proj4';
-import { Nztm } from '../map/map.service';
+import { Nztm, isWithinNztmBounds } from '../map/map.service';
 
 export interface EsriPoint {
   x?: number;
   y?: number;
   easting?: number;
   northing?: number;
+}
+
+export interface EsriElevationResult {
+  elevation: number;
+  accuracy: number | null;
 }
 
 export interface EsriIdentifyResponse {
@@ -32,6 +37,12 @@ export interface EsriIdentifyResponse {
     Values?: string[];
     [key: string]: any;
   };
+  catalogItems?: {
+    features?: Array<{
+      attributes?: Record<string, any>;
+    }>;
+  };
+  catalogItemVisibilities?: number[];
   [key: string]: any;
 }
 
@@ -70,6 +81,7 @@ export class ESRIService {
   public static readonly WEB_MERCATOR_WKID = 3857;
 
   private readonly altitudeCache = new Map<string, number>();
+  private readonly elevationCache = new Map<string, EsriElevationResult>();
   private cachedApiKey: string | null = null;
 
   constructor(
@@ -139,6 +151,135 @@ export class ESRIService {
     if (terrain3dAltitude !== null) {
       this.altitudeCache.set(cacheKey, terrain3dAltitude);
       return terrain3dAltitude;
+    }
+
+    return null;
+  }
+
+  /**
+   * Finds the elevation (in meters) and accuracy estimate (LE90 when < 999, otherwise LowPS)
+   * for a given NZTM2000 coordinate using ESRI elevation services.
+   */
+  async getElevation(
+    eastingOrPoint: number | EsriPoint | Nztm,
+    northing?: number,
+  ): Promise<EsriElevationResult | null> {
+    let x: number | undefined;
+    let y: number | undefined;
+
+    if (typeof eastingOrPoint === 'number') {
+      x = eastingOrPoint;
+      y = northing;
+    } else if (eastingOrPoint && typeof eastingOrPoint === 'object') {
+      x =
+        'easting' in eastingOrPoint
+          ? eastingOrPoint.easting
+          : (eastingOrPoint as EsriPoint).x;
+      y =
+        'northing' in eastingOrPoint
+          ? eastingOrPoint.northing
+          : (eastingOrPoint as EsriPoint).y;
+    }
+
+    if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) {
+      this.logger.warn(
+        `Invalid coordinates provided for elevation lookup: x=${x}, y=${y}`,
+      );
+      return null;
+    }
+
+    const cacheKey = `nztm:${Math.round(x)},${Math.round(y)}`;
+    if (this.elevationCache.has(cacheKey)) {
+      return this.elevationCache.get(cacheKey)!;
+    }
+
+    const prj4 = (proj4 as any).default || proj4;
+    const [lng, lat] = prj4(ESRIService.NZTM2000_PROJECTION).inverse([x, y]);
+
+    const esriTerrainResult = await this.getElevationFromEsriTerrainWgs84(
+      lng,
+      lat,
+    );
+    if (esriTerrainResult !== null) {
+      this.elevationCache.set(cacheKey, esriTerrainResult);
+      return esriTerrainResult;
+    }
+
+    const nzResult = await this.getElevationFromNzElevationService(x, y);
+    if (nzResult !== null) {
+      this.elevationCache.set(cacheKey, nzResult);
+      return nzResult;
+    }
+
+    const terrain3dResult = await this.getElevationFromEsriTerrain3DWgs84(
+      lng,
+      lat,
+    );
+    if (terrain3dResult !== null) {
+      this.elevationCache.set(cacheKey, terrain3dResult);
+      return terrain3dResult;
+    }
+
+    return null;
+  }
+
+  /**
+   * Finds the elevation (in meters) and accuracy estimate (LE90 when < 999, otherwise LowPS)
+   * for a given WGS84 (longitude, latitude) coordinate using ESRI elevation services.
+   */
+  async getElevationForWgs84(
+    lng: number,
+    lat: number,
+  ): Promise<EsriElevationResult | null> {
+    if (
+      !Number.isFinite(lng) ||
+      !Number.isFinite(lat) ||
+      lng < -180 ||
+      lng > 180 ||
+      lat < -90 ||
+      lat > 90
+    ) {
+      this.logger.warn(
+        `Invalid WGS84 coordinates provided for elevation lookup: lng=${lng}, lat=${lat}`,
+      );
+      return null;
+    }
+
+    const cacheKey = `wgs84:${lng.toFixed(6)},${lat.toFixed(6)}`;
+    if (this.elevationCache.has(cacheKey)) {
+      return this.elevationCache.get(cacheKey)!;
+    }
+
+    this.logger.log(
+      `Looking up elevation for WGS84 coordinate (${lng}, ${lat})`,
+    );
+
+    const esriTerrainResult = await this.getElevationFromEsriTerrainWgs84(
+      lng,
+      lat,
+    );
+    if (esriTerrainResult !== null) {
+      this.elevationCache.set(cacheKey, esriTerrainResult);
+      return esriTerrainResult;
+    }
+
+    if (isWithinNztmBounds(lat, lng)) {
+      const prj4 = (proj4 as any).default || proj4;
+      const [x, y] = prj4(ESRIService.NZTM2000_PROJECTION).forward([lng, lat]);
+      const nzResult = await this.getElevationFromNzElevationService(x, y);
+      if (nzResult !== null) {
+        this.elevationCache.set(cacheKey, nzResult);
+        return nzResult;
+      }
+    }
+
+    const terrain3dResult = await this.getElevationFromEsriTerrain3DWgs84(
+      lng,
+      lat,
+    );
+    if (terrain3dResult !== null) {
+      this.elevationCache.set(cacheKey, terrain3dResult);
+      return terrain3dResult;
     }
 
     return null;
@@ -307,6 +448,149 @@ export class ESRIService {
     }
   }
 
+  public async getElevationFromEsriTerrainWgs84(
+    lng: number,
+    lat: number,
+  ): Promise<EsriElevationResult | null> {
+    const apiKey = await this.getApiKey();
+
+    try {
+      const geometry = JSON.stringify({
+        x: lng,
+        y: lat,
+        spatialReference: { wkid: ESRIService.WGS84_WKID },
+      });
+
+      const params: Record<string, any> = {
+        geometry,
+        geometryType: 'esriGeometryPoint',
+        returnGeometry: 'false',
+        returnCatalogItems: 'true',
+        f: 'json',
+        token: apiKey,
+      };
+
+      const response = await firstValueFrom(
+        this.httpService.get<EsriIdentifyResponse>(
+          ESRIService.ESRI_TERRAIN_URL,
+          { params },
+        ),
+      );
+
+      const data = response.data;
+      const elevation = this.parseIdentifyResponse(data);
+      if (elevation !== null) {
+        const accuracy = this.parseAccuracyFromIdentifyResponse(data);
+        this.logger.log(
+          `Resolved elevation ${elevation}m (accuracy=${accuracy}m) from ESRI WorldElevation Terrain for (${lng}, ${lat})`,
+        );
+        return { elevation, accuracy };
+      }
+
+      return null;
+    } catch (error: any) {
+      this.logger.warn(
+        `ESRI WorldElevation Terrain lookup failed for coordinate (${lng}, ${lat}): ${error?.message || error}`,
+      );
+      return null;
+    }
+  }
+
+  public async getElevationFromNzElevationService(
+    x: number,
+    y: number,
+  ): Promise<EsriElevationResult | null> {
+    try {
+      const geometry = JSON.stringify({
+        x,
+        y,
+        spatialReference: {
+          wkid: ESRIService.NZTM2000_WKID,
+        },
+      });
+
+      const params = {
+        geometry,
+        geometryType: 'esriGeometryPoint',
+        returnGeometry: 'false',
+        returnCatalogItems: 'true',
+        f: 'json',
+      };
+
+      const response = await firstValueFrom(
+        this.httpService.get<EsriIdentifyResponse>(
+          ESRIService.NZ_ELEVATION_SERVICE_URL,
+          { params },
+        ),
+      );
+
+      const data = response.data;
+      const elevation = this.parseIdentifyResponse(data);
+      if (elevation !== null) {
+        const accuracy = this.parseAccuracyFromIdentifyResponse(data);
+        this.logger.log(
+          `Resolved elevation ${elevation}m (accuracy=${accuracy}m) from NZ Elevation service for (${x}, ${y})`,
+        );
+        return { elevation, accuracy };
+      }
+
+      return null;
+    } catch (error: any) {
+      this.logger.warn(
+        `NZ Elevation service request failed for coordinate (${x}, ${y}): ${error?.message || error}`,
+      );
+      return null;
+    }
+  }
+
+  public async getElevationFromEsriTerrain3DWgs84(
+    lng: number,
+    lat: number,
+  ): Promise<EsriElevationResult | null> {
+    try {
+      const prj4 = (proj4 as any).default || proj4;
+      const [mercX, mercY] = prj4('EPSG:4326', 'EPSG:3857', [lng, lat]);
+
+      const geometry = JSON.stringify({
+        x: mercX,
+        y: mercY,
+        spatialReference: { wkid: ESRIService.WEB_MERCATOR_WKID },
+      });
+
+      const params = {
+        geometry,
+        geometryType: 'esriGeometryPoint',
+        returnGeometry: 'false',
+        returnCatalogItems: 'true',
+        f: 'json',
+      };
+
+      const response = await firstValueFrom(
+        this.httpService.get<EsriIdentifyResponse>(
+          ESRIService.ESRI_TERRAIN_3D_URL,
+          { params },
+        ),
+      );
+
+      const data = response.data;
+      const elevation = this.parseIdentifyResponse(data);
+      if (elevation !== null) {
+        const accuracy = this.parseAccuracyFromIdentifyResponse(data);
+        this.logger.log(
+          `Resolved elevation ${elevation}m (accuracy=${accuracy}m) from ESRI Terrain3D service for (${lng}, ${lat})`,
+        );
+        return { elevation, accuracy };
+      }
+
+      return null;
+    } catch (error: any) {
+      this.logger.warn(
+        `ESRI Terrain3D lookup failed for coordinate (${lng}, ${lat}): ${error?.message || error}`,
+      );
+      return null;
+    }
+  }
+
   /**
    * Retrieves the ESRI API Key from ConfigService or AWS Secrets Manager using the service role.
    * If ESRI_API_KEY is not configured directly, performs a secret lookup using ENV_NAME:
@@ -393,6 +677,48 @@ export class ESRIService {
             return parsed;
           }
         }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Helper to extract accuracy estimate (in meters) from ESRI Identify catalog items.
+   * Uses LE90 when valid (< 999), otherwise falls back to LowPS (raster cell resolution), or null if unavailable.
+   */
+  private parseAccuracyFromIdentifyResponse(
+    data?: EsriIdentifyResponse,
+  ): number | null {
+    const features = data?.catalogItems?.features;
+    if (!Array.isArray(features) || features.length === 0) {
+      return null;
+    }
+
+    let featureIndex = 0;
+    if (Array.isArray(data?.catalogItemVisibilities)) {
+      const visibleIdx = data.catalogItemVisibilities.findIndex((v) => v > 0);
+      if (visibleIdx >= 0 && visibleIdx < features.length) {
+        featureIndex = visibleIdx;
+      }
+    }
+
+    const attrs = features[featureIndex]?.attributes;
+    if (!attrs || typeof attrs !== 'object') {
+      return null;
+    }
+
+    if (attrs.LE90 !== undefined && attrs.LE90 !== null) {
+      const le90 = Number(attrs.LE90);
+      if (Number.isFinite(le90) && le90 > 0 && le90 < 999) {
+        return Math.round(le90 * 100) / 100;
+      }
+    }
+
+    if (attrs.LowPS !== undefined && attrs.LowPS !== null) {
+      const lowPs = Number(attrs.LowPS);
+      if (Number.isFinite(lowPs) && lowPs > 0) {
+        return Math.round(lowPs * 100) / 100;
       }
     }
 

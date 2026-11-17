@@ -1,5 +1,5 @@
 import {Entity} from "../../domain/entity";
-import {DataImportError} from "./data-import.model";
+import {DataImportError, DataImportPopulatedColumn} from "./data-import.model";
 import {DataImportConverter, DataListImportConverter} from "./converter/converter.types";
 import {CheckForDuplicates, DuplicateCheckAction, DuplicateCheckResult, PostImportActions} from "./data-import.service";
 
@@ -8,6 +8,7 @@ export type CreateEntityResponse = {
     duplicateCheckResult: DuplicateCheckResult;
     duplicateCheckAction: DuplicateCheckAction;
     dataImportErrors: DataImportError[];
+    populatedColumns: DataImportPopulatedColumn[];
 }
 
 export interface DataImportParameter {

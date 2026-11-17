@@ -13,7 +13,11 @@ import { DataImportModule } from './data/import/data-import.module';
 import { DataService } from './data/data.service';
 import { UpdateSortIndexRequest } from './data/update-sort-index.request';
 import { EsriModule, ESRIModule } from './esri/esri.module';
-import { ESRIService, EsriService } from './esri/esri.service';
+import {
+  ESRIService,
+  EsriService,
+  EsriElevationResult,
+} from './esri/esri.service';
 import { EventModule } from './event/event.module';
 import { DiscriminatorMapping } from './data/discriminator.service';
 import { DiscriminatorService } from './data/discriminator.service';
@@ -77,7 +81,13 @@ export * from './domain/meta.menu';
 export * from './data/query.request';
 export * from './data/query.response';
 export * from './data/import';
-export { EsriModule, ESRIModule, ESRIService, EsriService };
+export {
+  EsriModule,
+  ESRIModule,
+  ESRIService,
+  EsriService,
+  EsriElevationResult,
+};
 export { EventModule };
 export {
   JobModule,

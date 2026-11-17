@@ -12,8 +12,15 @@ export class AttributeValue {
     cols?: number[];
 }
 
+export class PopulatedCell {
+    col: number;
+    value: string;
+    reason?: string;
+}
+
 export class ConverterResult {
     attributeValues: AttributeValue[] = [];
+    populatedCells?: PopulatedCell[];
 }
 
 export class DataImportConverter {

@@ -1,7 +1,13 @@
 import * as fs from 'fs';
 import * as csv from 'fast-csv';
 import {Injectable} from "@nestjs/common";
-import {DataImportError, DataImportModel, DataImportRowResult, DataImportSkippedColumn} from "./data-import.model";
+import {
+    DataImportError,
+    DataImportModel,
+    DataImportPopulatedColumn,
+    DataImportRowResult,
+    DataImportSkippedColumn
+} from "./data-import.model";
 import {CreateEntityResponse, DataAttributeMapping, DataImportClientMapping, DataImportMapping, TemplateResult} from "./data-import.types";
 import {Entity} from "../../domain/entity";
 import {
@@ -150,6 +156,7 @@ export class DataImportService {
             dataImportModel.importedEntityList = [];
             dataImportModel.duplicateCheckList = [];
             dataImportModel.importResult = [];
+            dataImportModel.preservedPopulatedColumns = [];
         }
 
         if(!dataImportModel.importResult) {
@@ -176,6 +183,7 @@ export class DataImportService {
                 errors: [],
                 importedEntity: null,
                 skippedColumns: skippedColumns,
+                populatedColumns: [],
                 proposedEntity: null,
                 actualEntity: null
             });
@@ -192,6 +200,7 @@ export class DataImportService {
                     errors: rowErrors,
                     importedEntity: null,
                     skippedColumns: skippedColumns,
+                    populatedColumns: createEntityResponse.populatedColumns,
                     proposedEntity: createEntityResponse.entity,
                     actualEntity: null
                 });
@@ -207,6 +216,7 @@ export class DataImportService {
                         errors: rowErrors,
                         importedEntity: null,
                         skippedColumns: skippedColumns,
+                        populatedColumns: createEntityResponse.populatedColumns,
                         proposedEntity: createEntityResponse.entity,
                         actualEntity: null
                     });
@@ -220,6 +230,7 @@ export class DataImportService {
                             errors: rowErrors,
                             importedEntity: null,
                             skippedColumns: skippedColumns,
+                            populatedColumns: createEntityResponse.populatedColumns,
                             proposedEntity: createEntityResponse.entity,
                             actualEntity: null
                         });
@@ -231,6 +242,7 @@ export class DataImportService {
                             errors: rowErrors,
                             importedEntity: null,
                             skippedColumns: skippedColumns,
+                            populatedColumns: createEntityResponse.populatedColumns,
                             proposedEntity: createEntityResponse.entity,
                             actualEntity: null
                         });
@@ -245,6 +257,7 @@ export class DataImportService {
     async dataImportImport(stepIndex: number, dataImportModel: DataImportModel, jobId?: string) {
 
         if(stepIndex === 0) {
+            dataImportModel.preservedPopulatedColumns = (dataImportModel.importResult || []).map(r => r?.populatedColumns || []);
             dataImportModel.importedEntityList = [];
             dataImportModel.duplicateCheckList = [];
             dataImportModel.importResult = [];
@@ -254,6 +267,16 @@ export class DataImportService {
         if(!dataImportModel.importResult) {
             dataImportModel.importResult = [];
         }
+
+        const mergePopulatedColumns = (fresh: DataImportPopulatedColumn[] = []): DataImportPopulatedColumn[] => {
+            const preserved = dataImportModel.preservedPopulatedColumns?.[stepIndex] || [];
+            if (preserved.length === 0) return fresh;
+            if (fresh.length === 0) return preserved;
+            const byCol = new Map<number, DataImportPopulatedColumn>();
+            for (const p of preserved) byCol.set(p.col, p);
+            for (const f of fresh) byCol.set(f.col, f);
+            return Array.from(byCol.values());
+        };
 
         const effectiveJobId = jobId || dataImportModel.jobId;
         if (effectiveJobId) {
@@ -284,6 +307,7 @@ export class DataImportService {
                 errors: [],
                 importedEntity: null,
                 skippedColumns: skippedColumns,
+                populatedColumns: [],
                 proposedEntity: null,
                 actualEntity: null
             });
@@ -291,6 +315,7 @@ export class DataImportService {
         else {
             const createEntityResponse = await this.createEntity(dataImportMapping, dataImportModel.headers, nextRow, stepIndex, dataImportModel.duplicateCheckList);
             const rowErrors: DataImportError[] = [...createEntityResponse.dataImportErrors];
+            const populatedColumns = mergePopulatedColumns(createEntityResponse.populatedColumns);
 
             if(createEntityResponse.duplicateCheckResult.action === DuplicateCheckAction.DUPLICATE_IN_FILE_IGNORE) {
                 dataImportModel.importedEntityList.push(null);
@@ -301,6 +326,7 @@ export class DataImportService {
                     errors: rowErrors,
                     importedEntity: null,
                     skippedColumns: skippedColumns,
+                    populatedColumns: populatedColumns,
                     proposedEntity: createEntityResponse.entity,
                     actualEntity: null
                 });
@@ -317,6 +343,7 @@ export class DataImportService {
                         errors: rowErrors,
                         importedEntity: null,
                         skippedColumns: skippedColumns,
+                        populatedColumns: populatedColumns,
                         proposedEntity: createEntityResponse.entity,
                         actualEntity: null
                     });
@@ -353,6 +380,7 @@ export class DataImportService {
                                 errors: rowErrors,
                                 importedEntity: entityResponse.entity.id,
                                 skippedColumns: skippedColumns,
+                                populatedColumns: populatedColumns,
                                 proposedEntity: createEntityResponse.entity,
                                 actualEntity: actualEntityPayload
                             });
@@ -528,6 +556,7 @@ export class DataImportService {
         };
 
         const dataImportErrors: DataImportError[] = [];
+        const populatedColumnsByCol = new Map<number, DataImportPopulatedColumn>();
 
         // for each data mapping
         for(const nextAttributeMapping of dataImportMapping.attributeMappings) {
@@ -559,6 +588,19 @@ export class DataImportService {
             }
             else {
                 throw new Error(`Invalid mapping. No columnName OR default value supplied for ${nextAttributeMapping.attributeName}`);
+            }
+
+            if (converterResult.populatedCells && converterResult.populatedCells.length > 0) {
+                for (const cell of converterResult.populatedCells) {
+                    if (typeof cell.col === 'number' && cell.col >= 0 && cell.col < headers.length) {
+                        dataRow[cell.col] = cell.value;
+                        populatedColumnsByCol.set(cell.col, {
+                            col: cell.col,
+                            value: cell.value,
+                            reason: cell.reason
+                        });
+                    }
+                }
             }
 
             // Add the converted results to the entity
@@ -632,7 +674,8 @@ export class DataImportService {
             entity,
             duplicateCheckResult,
             duplicateCheckAction: duplicateCheckResult.action,
-            dataImportErrors
+            dataImportErrors,
+            populatedColumns: Array.from(populatedColumnsByCol.values())
         };
     }
 

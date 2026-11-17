@@ -11,6 +11,12 @@ export class DataImportSkippedColumn {
   reason!: string;
 }
 
+export class DataImportPopulatedColumn {
+  col!: number;
+  value!: string;
+  reason?: string;
+}
+
 export class DataImportRowResult {
   skipReason!: SkipReason;
   duplicateReason?: string;
@@ -18,6 +24,7 @@ export class DataImportRowResult {
   errors!: DataImportError[];
   importedEntity!: any;
   skippedColumns!: DataImportSkippedColumn[];
+  populatedColumns?: DataImportPopulatedColumn[];
   proposedEntity?: any;
   actualEntity?: any;
 }
@@ -38,6 +45,7 @@ export class DataImportModel {
   duplicateCheckList!: string[];
 
   importResult!: DataImportRowResult[];
+  preservedPopulatedColumns?: DataImportPopulatedColumn[][];
   parameters?: Record<string, any>;
   jobId?: string;
   reviewStatus?: 'Review' | 'Accepted';

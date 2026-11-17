@@ -31,10 +31,16 @@
 }
 
 .geometry-edit-bar {
-  min-height: 38px;
+  min-height: var(--ps-form-control-height, 38px);
   background-color: #f8fafc;
   border: 1px solid #cbd5e1;
   padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+}
+
+.geometry-edit-container .btn,
+.geometry-view-container .btn {
+  height: 28px;
+  line-height: 1.2;
 }
 
 .geometry-edit-bar.is-active-map-target {

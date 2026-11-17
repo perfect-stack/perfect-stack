@@ -1,7 +1,12 @@
 import {ChangeDetectorRef, Component, effect, Injector, OnDestroy, OnInit, viewChild} from '@angular/core';
 import {UploadPanelComponent} from "./upload-panel/upload-panel.component";
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {DataImportClientMapping, DataImportModel, DataImportSkippedColumn} from "./upload-panel/data-import.model";
+import {
+  DataImportClientMapping,
+  DataImportModel,
+  DataImportPopulatedColumn,
+  DataImportSkippedColumn
+} from "./upload-panel/data-import.model";
 import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
 import {DataImportService} from "./data-import.service";
 import {ActivatedRoute, RouterLink} from "@angular/router";
@@ -165,6 +170,30 @@ export class DataImportComponent implements OnInit, OnDestroy {
       for(let colIdx = 0; colIdx < rowData.length; colIdx++) {
         const initialValue = rowData[colIdx] || '';
         rowGroup.addControl(`col-${colIdx}`, new FormControl(initialValue));
+      }
+    }
+  }
+
+  private syncFormValues(data: DataImportModel) {
+    if (!this.form || !data?.dataRows) {
+      return;
+    }
+    const rowGroups = this.form.controls as FormGroup[];
+    for (let rowIdx = 0; rowIdx < data.dataRows.length; rowIdx++) {
+      const rowGroup = rowGroups[rowIdx];
+      const rowData = data.dataRows[rowIdx] || [];
+      if (!rowGroup) continue;
+      for (let colIdx = 0; colIdx < rowData.length; colIdx++) {
+        const value = rowData[colIdx] || '';
+        const controlName = `col-${colIdx}`;
+        const control = rowGroup.get(controlName) as FormControl | null;
+        if (control) {
+          if (control.value !== value) {
+            control.setValue(value, { emitEvent: false });
+          }
+        } else {
+          rowGroup.addControl(controlName, new FormControl(value));
+        }
       }
     }
   }
@@ -335,6 +364,32 @@ export class DataImportComponent implements OnInit, OnDestroy {
     return '';
   }
 
+  findPopulatedColumn(rowIdx: number, colIdx: number): DataImportPopulatedColumn | null {
+    const rowResult = this.data?.importResult?.[rowIdx];
+    if (rowResult && rowResult.populatedColumns) {
+      return rowResult.populatedColumns.find(pc => pc.col === colIdx) || null;
+    }
+    return null;
+  }
+
+  isCellPopulated(rowIdx: number, colIdx: number): boolean {
+    if (this.isCellSkipped(rowIdx, colIdx) || this.findErrors(rowIdx, colIdx)) {
+      return false;
+    }
+    return !!this.findPopulatedColumn(rowIdx, colIdx);
+  }
+
+  isCellPopulatedToolTip(rowIdx: number, colIdx: number): string {
+    if (this.isCellSkipped(rowIdx, colIdx) || this.findErrors(rowIdx, colIdx)) {
+      return '';
+    }
+    const populatedCol = this.findPopulatedColumn(rowIdx, colIdx);
+    if (populatedCol) {
+      return populatedCol.reason || 'Auto-populated during import validation';
+    }
+    return '';
+  }
+
   importHasErrors(): boolean {
     return this.errorRowCount > 0;
   }
@@ -411,6 +466,11 @@ export class DataImportComponent implements OnInit, OnDestroy {
         this.phase = 'importing';
         this.location.replaceState(`/data/import?jobId=${result.id}&phase=importing`);
         this.data = JSON.parse(result.data) as DataImportModel;
+        if (!this.form) {
+          this.createForm(this.data);
+        } else {
+          this.syncFormValues(this.data);
+        }
         this.cdr.markForCheck();
       });
     }
@@ -427,6 +487,7 @@ export class DataImportComponent implements OnInit, OnDestroy {
           this.createForm(this.data);
         } else {
           this.data = dataProgress;
+          this.syncFormValues(this.data);
         }
       }
 
