@@ -31,3 +31,9 @@
   display: inline-flex;
   align-items: center;
 }
+
+.assertion-table-double-control {
+  display: inline-block;
+  min-width: 145px;
+  max-width: 210px;
+}

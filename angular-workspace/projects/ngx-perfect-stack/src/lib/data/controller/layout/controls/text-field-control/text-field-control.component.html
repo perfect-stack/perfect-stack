@@ -1,15 +1,36 @@
 @if (mode !== 'view' && !cell.displayOnly) {
-  <div class="input-group flex-nowrap" [attr.data-testid]="'field-' + name">
-    <input class="form-control" [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched}" [readonly]="isReadOnly()" [id]="componentId"
+  <div class="input-group flex-nowrap" [ngClass]="{'input-group-sm': compact, 'uom-scaled': isScaledUnitActive}" [attr.data-testid]="'field-' + name">
+    <input class="form-control"
+      [ngClass]="{'ng-invalid': hasErrors(), 'ng-touched': touched, 'bg-info-subtle border-info': isScaledUnitActive}"
+      [readonly]="isReadOnly()"
+      [disabled]="disabled"
+      [id]="resolvedInputId"
       [attr.name]="name"
       [attr.data-testid]="'input-' + name"
-      [ngModel]="internalValue" (ngModelChange)="onModelChange($event)" [ngModelOptions]="{standalone: true}"
-      libDecimalNumber [scale]="cell.attribute?.scale">
-    @if (cell && cell.attribute && cell.attribute.unitOfMeasure) {
-      <span class="input-group-text" [id]="componentId + '_uom'" [attr.data-testid]="'uom-' + name">
-        {{cell.attribute.unitOfMeasure}}
-      </span>
+      [ngModel]="internalValue"
+      (ngModelChange)="onModelChange($event)"
+      [ngModelOptions]="{standalone: true}"
+      libDecimalNumber [scale]="effectiveScale">
+    @if (defaultUnit) {
+      @if (isUnitToggleEnabled) {
+        <button
+          type="button"
+          class="btn uom-toggle-btn"
+          [ngClass]="isScaledUnitActive ? 'bg-info-subtle border-info text-info-emphasis fw-semibold' : 'uom-toggle-btn-default'"
+          [disabled]="disabled"
+          [id]="uomElementId"
+          [attr.data-testid]="'uom-' + name"
+          [attr.title]="'Click to switch unit (default: ' + defaultUnit + ')'"
+          (click)="onToggleUnit()">
+          {{activeUnit}}
+        </button>
+      } @else {
+        <span class="input-group-text" [id]="uomElementId" [attr.data-testid]="'uom-' + name">
+          {{defaultUnit}}
+        </span>
+      }
     }
+    <ng-content select="[inputGroupAppend]"></ng-content>
   </div>
   @if (hasErrors() && cell.attribute) {
     <lib-validation-result-label [attribute]="cell.attribute" [validationResult]="validationResult"></lib-validation-result-label>
@@ -19,9 +40,9 @@
 @if (mode === 'view' || cell.displayOnly) {
   @if (internalValue) {
     <div class="input-group" [attr.data-testid]="'field-' + name">
-      <span class="form-control" readonly="true" [id]="componentId" [attr.data-testid]="'view-' + name">
+      <span class="form-control" readonly="true" [id]="resolvedInputId" [attr.data-testid]="'view-' + name">
         {{internalValue}} @if (cell.attribute?.unitOfMeasure) {
-        <span [id]="componentId + '_uom'" [attr.data-testid]="'uom-' + name">{{cell.attribute?.unitOfMeasure}}</span>
+        <span [id]="uomElementId" [attr.data-testid]="'uom-' + name">{{cell.attribute?.unitOfMeasure}}</span>
       }
     </span>
     <!--<input class="form-control" [type]="inputType" [readonly]="isReadOnly()" [id]="name"
@@ -30,7 +51,7 @@
 }
 @if (!internalValue) {
   <div class="input-group" [attr.data-testid]="'field-' + name">
-    <span class="form-control empty-value" readonly [id]="componentId" [attr.data-testid]="'view-' + name">&mdash;</span>
+    <span class="form-control empty-value" readonly [id]="resolvedInputId" [attr.data-testid]="'view-' + name">&mdash;</span>
   </div>
 }
 }

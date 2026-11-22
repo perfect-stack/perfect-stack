@@ -75,10 +75,16 @@ export class AssertionControlComponent implements OnInit, OnChanges {
     this.formGroup?.get('assertion_type_id')?.valueChanges.subscribe(() => {
       this.checkAssertionType();
     });
+    this.formGroup?.get('assertion_unit')?.valueChanges.subscribe(() => {
+      this.initTypeDetails();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['assertionType'] && !changes['assertionType'].firstChange) {
+      this.initTypeDetails();
+    }
+    if (changes['layoutStyle'] && !changes['layoutStyle'].firstChange) {
       this.initTypeDetails();
     }
     if (changes['formGroup'] && !changes['formGroup'].firstChange) {
@@ -433,7 +439,8 @@ export class AssertionControlComponent implements OnInit, OnChanges {
       ? AttributeType.Integer
       : AttributeType.Double;
 
-    this.numericCell = this.createSyntheticCell('assertion_value_numeric', numType, scale);
+    const unit = this.isAttributeVisible('unit') ? this.assertionUnit : '';
+    this.numericCell = this.createSyntheticCell('assertion_value_numeric', numType, scale, unit);
     this.textCell = this.createSyntheticCell('assertion_value_text', AttributeType.Text);
     this.dateAttribute = this.createSyntheticAttribute('assertion_value_date', AttributeType.Date);
     this.timeCell = this.createSyntheticCell('assertion_value_time', AttributeType.Time);
@@ -447,7 +454,7 @@ export class AssertionControlComponent implements OnInit, OnChanges {
     this.enumerationCell.attribute = this.enumerationAttribute;
   }
 
-  private createSyntheticAttribute(name: string, type: AttributeType, scale = ''): MetaAttribute {
+  private createSyntheticAttribute(name: string, type: AttributeType, scale = '', unitOfMeasure = ''): MetaAttribute {
     return {
       name,
       label: this.assertionTypeName,
@@ -460,14 +467,14 @@ export class AssertionControlComponent implements OnInit, OnChanges {
       typeaheadSearch: [],
       discriminator: null as any,
       enumeration: [],
-      unitOfMeasure: this.assertionUnit,
+      unitOfMeasure,
       scale,
       rules: [],
     } as unknown as MetaAttribute;
   }
 
-  private createSyntheticCell(name: string, type: AttributeType, scale = ''): CellAttribute {
-    const attribute = this.createSyntheticAttribute(name, type, scale);
+  private createSyntheticCell(name: string, type: AttributeType, scale = '', unitOfMeasure = ''): CellAttribute {
+    const attribute = this.createSyntheticAttribute(name, type, scale, unitOfMeasure);
     return {
       attributeName: name,
       attribute,

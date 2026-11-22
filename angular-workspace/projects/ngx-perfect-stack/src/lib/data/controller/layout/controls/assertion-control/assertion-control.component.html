@@ -36,104 +36,129 @@
             }
           </div>
         } @else {
-          <div class="input-group">
-            @if (isAttributeVisible('value')) {
-              @switch (valueClass) {
-                @case ('Enumeration') {
-                  <select
-                    class="form-select"
-                    [id]="inputId"
-                    formControlName="assertion_value_text">
-                    <option value="">Choose...</option>
-                    @for (opt of enumOptions; track opt) {
-                      <option [value]="opt">{{ opt }}</option>
-                    }
-                  </select>
+          @if (isAttributeVisible('value') && valueClass === 'Double') {
+            <lib-text-field-control
+              [mode]="mode || 'edit'"
+              [cell]="numericCell"
+              [inputId]="inputId"
+              formControlName="assertion_value_numeric">
+              <ng-container inputGroupAppend>
+                @if (hasSecondaryAttributesConfigured) {
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary d-flex align-items-center"
+                    [class.active]="expanded"
+                    (click)="toggleDetails()"
+                    title="Additional details (method, accuracy, notes)"
+                    data-testid="btn-toggle-assertion-details">
+                    <span class="material-symbols-outlined fs-6">tune</span>
+                  </button>
                 }
-                @case ('Integer') {
-                  <input
-                    type="number"
-                    step="1"
-                    class="form-control"
-                    [id]="inputId"
-                    formControlName="assertion_value_numeric" />
+
+                @if (isDeletable) {
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger d-flex align-items-center"
+                    (click)="onDelete()"
+                    title="Delete this assertion"
+                    data-testid="btn-delete-assertion">
+                    <span class="material-symbols-outlined fs-6">delete</span>
+                  </button>
                 }
-                @case ('Double') {
-                  <input
-                    type="number"
-                    step="any"
-                    class="form-control"
-                    [id]="inputId"
-                    formControlName="assertion_value_numeric" />
-                }
-                @case ('Date') {
-                  <input
-                    type="date"
-                    class="form-control"
-                    [id]="inputId"
-                    formControlName="assertion_value_date" />
-                }
-                @case ('Time') {
-                  <input
-                    type="time"
-                    class="form-control"
-                    [id]="inputId"
-                    formControlName="assertion_value_time" />
-                }
-                @case ('DateTime') {
-                  <input
-                    type="datetime-local"
-                    class="form-control"
-                    [id]="inputId"
-                    formControlName="assertion_value_date_time" />
-                }
-                @case ('Boolean') {
-                  <select
-                    class="form-select"
-                    [id]="inputId"
-                    formControlName="assertion_value_boolean">
-                    <option [ngValue]="null">Choose...</option>
-                    <option [ngValue]="true">Yes</option>
-                    <option [ngValue]="false">No</option>
-                  </select>
-                }
-                @default {
-                  <input
-                    type="text"
-                    class="form-control"
-                    [id]="inputId"
-                    formControlName="assertion_value_text" />
+              </ng-container>
+            </lib-text-field-control>
+          } @else {
+            <div class="input-group">
+              @if (isAttributeVisible('value')) {
+                @switch (valueClass) {
+                  @case ('Enumeration') {
+                    <select
+                      class="form-select"
+                      [id]="inputId"
+                      formControlName="assertion_value_text">
+                      <option value="">Choose...</option>
+                      @for (opt of enumOptions; track opt) {
+                        <option [value]="opt">{{ opt }}</option>
+                      }
+                    </select>
+                  }
+                  @case ('Integer') {
+                    <input
+                      type="number"
+                      step="1"
+                      class="form-control"
+                      [id]="inputId"
+                      formControlName="assertion_value_numeric" />
+                  }
+                  @case ('Date') {
+                    <input
+                      type="date"
+                      class="form-control"
+                      [id]="inputId"
+                      formControlName="assertion_value_date" />
+                  }
+                  @case ('Time') {
+                    <input
+                      type="time"
+                      class="form-control"
+                      [id]="inputId"
+                      formControlName="assertion_value_time" />
+                  }
+                  @case ('DateTime') {
+                    <input
+                      type="datetime-local"
+                      class="form-control"
+                      [id]="inputId"
+                      formControlName="assertion_value_date_time" />
+                  }
+                  @case ('Boolean') {
+                    <select
+                      class="form-select"
+                      [id]="inputId"
+                      formControlName="assertion_value_boolean">
+                      <option [ngValue]="null">Choose...</option>
+                      <option [ngValue]="true">Yes</option>
+                      <option [ngValue]="false">No</option>
+                    </select>
+                  }
+                  @default {
+                    <input
+                      type="text"
+                      class="form-control"
+                      [id]="inputId"
+                      formControlName="assertion_value_text" />
+                  }
                 }
               }
-            }
 
-            @if (isAttributeVisible('unit') && assertionUnit) {
-              <span class="input-group-text">{{ assertionUnit }}</span>
-            }
+              @if (isAttributeVisible('unit') && assertionUnit) {
+                <span class="input-group-text">{{ assertionUnit }}</span>
+              }
 
-            @if (hasSecondaryAttributesConfigured) {
-              <button
-                type="button"
-                class="btn btn-outline-secondary d-flex align-items-center"
-                [class.active]="expanded"
-                (click)="toggleDetails()"
-                title="Additional details (method, accuracy, notes)"
-                data-testid="btn-toggle-assertion-details">
-                <span class="material-symbols-outlined fs-6">tune</span>
-              </button>
-            }
+              @if (hasSecondaryAttributesConfigured) {
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary d-flex align-items-center"
+                  [class.active]="expanded"
+                  (click)="toggleDetails()"
+                  title="Additional details (method, accuracy, notes)"
+                  data-testid="btn-toggle-assertion-details">
+                  <span class="material-symbols-outlined fs-6">tune</span>
+                </button>
+              }
 
-            @if (isDeletable) {
-              <button
-                type="button"
-                class="btn btn-outline-danger d-flex align-items-center"
-                (click)="onDelete()"
-                title="Delete this assertion"
-                data-testid="btn-delete-assertion">
-                <span class="material-symbols-outlined fs-6">delete</span>
-              </button>
-            }
-          </div>
+              @if (isDeletable) {
+                <button
+                  type="button"
+                  class="btn btn-outline-danger d-flex align-items-center"
+                  (click)="onDelete()"
+                  title="Delete this assertion"
+                  data-testid="btn-delete-assertion">
+                  <span class="material-symbols-outlined fs-6">delete</span>
+                </button>
+              }
+            </div>
+          }
         }
 
         @if (expanded) {
@@ -189,7 +214,14 @@
               }
               @case ('Double') {
                 @if (mode === 'edit') {
-                  <input type="number" step="any" class="form-control form-control-sm text-end" style="width: 100px;" formControlName="assertion_value_numeric" />
+                  <lib-text-field-control
+                    class="assertion-table-double-control"
+                    [mode]="'edit'"
+                    [compact]="true"
+                    [cell]="numericCell"
+                    [inputId]="inputId"
+                    formControlName="assertion_value_numeric">
+                  </lib-text-field-control>
                 } @else {
                   <span>{{ assertionValueDisplay || '—' }}</span>
                 }
@@ -224,7 +256,7 @@
           </div>
         }
 
-        @if (isAttributeVisible('unit') && assertionUnit) {
+        @if (isAttributeVisible('unit') && assertionUnit && !(mode === 'edit' && isAttributeVisible('value') && valueClass === 'Double')) {
           <span class="text-muted small">{{ assertionUnit }}</span>
         }
 
@@ -307,10 +339,10 @@
               <div class="assertion-value-col flex-grow-1">
                 @switch (valueClass) {
                   @case ('Integer') {
-                    <lib-text-field-control [mode]="mode || 'edit'" [cell]="numericCell" formControlName="assertion_value_numeric"></lib-text-field-control>
+                    <lib-text-field-control [mode]="mode || 'edit'" [cell]="numericCell" [inputId]="inputId" formControlName="assertion_value_numeric"></lib-text-field-control>
                   }
                   @case ('Double') {
-                    <lib-text-field-control [mode]="mode || 'edit'" [cell]="numericCell" formControlName="assertion_value_numeric"></lib-text-field-control>
+                    <lib-text-field-control [mode]="mode || 'edit'" [cell]="numericCell" [inputId]="inputId" formControlName="assertion_value_numeric"></lib-text-field-control>
                   }
                   @case ('Enumeration') {
                     <lib-enumeration-control [mode]="mode || 'edit'" [cell]="enumerationCell" [attribute]="enumerationAttribute" [formGroup]="formGroup" formControlName="assertion_value_text" [options]="enumOptions"></lib-enumeration-control>

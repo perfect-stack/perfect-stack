@@ -1,30 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { Component, forwardRef, Input, NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
 import { of } from 'rxjs';
 import { AssertionControlComponent } from './assertion-control.component';
 import { AssertionTypeService } from '../../../../data-service/assertion-type.service';
 import { AssertionType, AssertionValueClass } from '../../../../../domain/assertion';
-
-@Component({
-  selector: 'lib-text-field-control',
-  template: '',
-  standalone: false,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => MockTextFieldControlComponent),
-      multi: true,
-    },
-  ],
-})
-class MockTextFieldControlComponent implements ControlValueAccessor {
-  @Input() mode: any;
-  @Input() cell: any;
-  writeValue(obj: any): void {}
-  registerOnChange(fn: any): void {}
-  registerOnTouched(fn: any): void {}
-}
+import { TextFieldControlComponent } from '../text-field-control/text-field-control.component';
+import { DecimalNumberDirective } from '../../../../../utils/decimal-number.directive';
+import { ValidationResultLabelComponent } from '../validation-result-label/validation-result-label.component';
 
 describe('AssertionControlComponent', () => {
   let component: AssertionControlComponent;
@@ -50,8 +33,13 @@ describe('AssertionControlComponent', () => {
     mockAssertionTypeService.loadAssertionTypes.and.returnValue(of([mockType]));
 
     await TestBed.configureTestingModule({
-      declarations: [AssertionControlComponent, MockTextFieldControlComponent],
-      imports: [ReactiveFormsModule],
+      declarations: [
+        AssertionControlComponent,
+        TextFieldControlComponent,
+        DecimalNumberDirective,
+        ValidationResultLabelComponent,
+      ],
+      imports: [FormsModule, ReactiveFormsModule],
       providers: [
         { provide: AssertionTypeService, useValue: mockAssertionTypeService },
       ],
@@ -273,10 +261,10 @@ describe('AssertionControlComponent', () => {
     const inputGroupEl = rootEl.querySelector('.input-group');
     expect(inputGroupEl).toBeTruthy();
 
-    const unitEl = inputGroupEl?.querySelector('.input-group-text');
+    const unitEl = inputGroupEl?.querySelector('[data-testid="uom-assertion_value_numeric"]');
     expect(unitEl?.textContent?.trim()).toBe('kg');
 
-    const inputEl = inputGroupEl?.querySelector('input[type="number"]');
+    const inputEl = inputGroupEl?.querySelector('input.form-control');
     expect(inputEl).toBeTruthy();
   });
 
