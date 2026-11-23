@@ -3442,6 +3442,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
         maxScale: layerConfig.maxScale ?? 0,
         visible: initialVisible,
         outFields: ['*'],
+        ...(layerConfig.opacity !== undefined ? { opacity: layerConfig.opacity } : {}),
+        ...(layerConfig.renderer ? { renderer: layerConfig.renderer } : {}),
       });
 
       if (this.eventGraphicsLayer) {

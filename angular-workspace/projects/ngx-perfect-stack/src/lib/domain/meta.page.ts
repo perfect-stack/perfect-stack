@@ -175,6 +175,8 @@ export interface MapReferenceLayer {
   visible?: boolean;
   selectable?: boolean;
   placeType?: string;
+  opacity?: number;
+  renderer?: any;
 }
 
 export class MapTool extends Tool {
