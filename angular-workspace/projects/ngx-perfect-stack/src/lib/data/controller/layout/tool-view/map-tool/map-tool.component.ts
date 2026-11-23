@@ -54,6 +54,7 @@ import {
   MapSizeMode,
   resolveTargetFromFormGroup,
 } from './map-edit-coordinator.service';
+import { MapPreferencesService } from './map-preferences.service';
 import { GeoJsonPoint, MapService, parseGeoJsonGeometry } from './map.service';
 
 export const LINZ_MAP_SERVICE_URL =
@@ -186,6 +187,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     protected readonly router: Router,
     @Optional() @Inject(STACK_CONFIG) protected readonly stackConfig?: NgxPerfectStackConfig,
     @Optional() public readonly mapCoordinator?: MapEditCoordinatorService,
+    @Optional() protected readonly mapPreferences?: MapPreferencesService,
   ) {
     if (this.mapCoordinator) {
       effect(() => {
@@ -215,6 +217,15 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     return this.getItems().length > 0;
   }
 
+  get isSplitSupported(): boolean {
+    return (
+      this.isDesktopSplitEligible &&
+      !this.isSearchMapMode &&
+      this.mapTool?.binding !== 'results' &&
+      this.ctx?.metaPage?.type !== 'search'
+    );
+  }
+
   get currentSizeMode(): MapSizeMode {
     return this.mapCoordinator?.mapSizeMode() || 'small';
   }
@@ -229,7 +240,11 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
   }
 
   get effectiveMapHeight(): string {
-    if (this.isFullscreenActive || this.currentSizeMode === 'fullscreen' || this.currentSizeMode === 'split') {
+    if (
+      this.isFullscreenActive ||
+      this.currentSizeMode === 'fullscreen' ||
+      (this.currentSizeMode === 'split' && this.isSplitSupported)
+    ) {
       return '100%';
     }
     if (this.currentSizeMode === 'medium') {
@@ -284,9 +299,20 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
   }
 
   ngOnInit(): void {
-    if (this.mapTool?.basemap === 'satellite' || this.basemap === 'satellite') {
+    const savedBasemap = this.mapPreferences?.getBasemap();
+    if (savedBasemap) {
+      this.activeBasemap = savedBasemap;
+    } else if (this.mapTool?.basemap === 'satellite' || this.basemap === 'satellite') {
       this.activeBasemap = 'satellite';
     }
+
+    if (!this.editorMode && this.mapCoordinator) {
+      const savedSizeMode = this.mapPreferences?.getSizeMode() ?? 'small';
+      const initialSizeMode: MapSizeMode =
+        savedSizeMode === 'split' && !this.isSplitSupported ? 'medium' : savedSizeMode;
+      this.mapCoordinator.setMapSizeMode(initialSizeMode);
+    }
+
     this.initFormListeners();
     this.initCoordinatorListeners();
   }
@@ -303,6 +329,10 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
   ngDoCheck(): void {
     if (this.editorMode) {
       return;
+    }
+
+    if (this.mapCoordinator && this.currentSizeMode === 'split' && !this.isSplitSupported) {
+      this.mapCoordinator.setMapSizeMode('medium');
     }
 
     const currentItems = this.getItems();
@@ -421,6 +451,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
         mode === 'split' && !this.isDesktopSplitEligible ? 'medium' : mode;
       this.exitFullscreenIfActive();
       this.mapCoordinator.setMapSizeMode(targetMode);
+      this.mapPreferences?.setSizeMode(targetMode);
     }
 
     setTimeout(() => {
@@ -538,6 +569,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
 
   setBasemap(type: 'topo' | 'satellite'): void {
     this.activeBasemap = type;
+    this.mapPreferences?.setBasemap(type);
     if (this.topoLayer) {
       this.topoLayer.visible = type === 'topo';
     }
@@ -3429,10 +3461,13 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     for (const layerConfig of this.mapTool.referenceLayers) {
       if (!layerConfig.url) continue;
 
+      const persistedVisible = this.mapPreferences?.getReferenceLayerVisibility(layerConfig.id);
       const initialVisible =
         layerConfig.id in this.referenceLayerVisibility
           ? this.referenceLayerVisibility[layerConfig.id]
-          : layerConfig.visible !== false;
+          : typeof persistedVisible === 'boolean'
+            ? persistedVisible
+            : layerConfig.visible !== false;
 
       const featureLayer = new FeatureLayer({
         id: layerConfig.id,
@@ -3494,6 +3529,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
         this.ngZone.run(() => {
           layer.visible = input.checked;
           this.referenceLayerVisibility[config.id] = input.checked;
+          this.mapPreferences?.setReferenceLayerVisible(config.id, input.checked);
         });
       });
 

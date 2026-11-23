@@ -20,6 +20,7 @@ export * from './lib/data/controller/layout/cell/cell.component';
 export * from './lib/data/controller/layout/tool-view/tree-tool/tree-tool.component';
 export * from './lib/data/controller/layout/tool-view/map-tool/map-attribution.service';
 export * from './lib/data/controller/layout/tool-view/map-tool/map-edit-coordinator.service';
+export * from './lib/data/controller/layout/tool-view/map-tool/map-preferences.service';
 export * from './lib/data/controller/layout/tool-view/map-tool/map.service';
 export * from './lib/data/data-edit/form-service/form.service';
 export * from './lib/data/data-edit/form-service/form-group.service';

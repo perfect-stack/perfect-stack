@@ -83,6 +83,7 @@ Located at [`angular-workspace/projects/ngx-perfect-stack/src/lib`](file:///User
   - `data-search/`: Dynamic search pages, criteria filters, sorting, and result tables.
   - `data-edit/`: Dynamic create/edit forms with automatic validation, dirty checking, and save handlers.
   - `data-service/`: Angular HTTP client communicating with backend `DataService` and `QueryService`.
+  - `controller/layout/tool-view/map-tool/`: ArcGIS `MapToolComponent`, `MapEditCoordinatorService`, and `MapPreferencesService` (versioned, extendable `localStorage` persistence for map size mode excluding `fullscreen`, basemap, and reference layer visibility toggles, plus `MapReferenceLayer` `opacity`/`renderer` overrides).
 - **[`template/`](file:///Users/richardperfect/dev/perfect-consulting/perfect-stack/angular-workspace/projects/ngx-perfect-stack/src/lib/template)**:
   - Layout rendering engine: Interprets templates, cell coordinates, and widget component bindings across header, form, table, card, and formList (card-based form lists for child collections).
   - Property sheets, attribute palettes, and template controllers.

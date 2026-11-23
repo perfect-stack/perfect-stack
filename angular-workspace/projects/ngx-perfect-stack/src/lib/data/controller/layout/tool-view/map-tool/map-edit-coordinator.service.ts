@@ -1,6 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, Optional, signal } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
+import { MapPreferencesService } from './map-preferences.service';
 
 export type MapTargetKind = 'event' | 'occurrence';
 export type MapEditPhase =
@@ -84,6 +85,10 @@ export class MapEditCoordinatorService {
   readonly panToTarget$ = new Subject<MapEditTarget>();
   readonly cancelEdit$ = new Subject<void>();
 
+  constructor(@Optional() private readonly mapPreferences?: MapPreferencesService) {
+    this.mapSizeMode.set(this.mapPreferences?.getSizeMode() ?? 'small');
+  }
+
   registerMap(): void {
     this.hasRegisteredMap.set(true);
   }
@@ -94,7 +99,7 @@ export class MapEditCoordinatorService {
     this.editPhase.set('idle');
     this.activeDrawTool.set(null);
     this.hoveredTarget.set(null);
-    this.mapSizeMode.set('small');
+    this.mapSizeMode.set(this.mapPreferences?.getSizeMode() ?? 'small');
   }
 
   isTargetActive(
