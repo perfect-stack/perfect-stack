@@ -156,6 +156,7 @@ export class QueryService {
                   model: targetModel,
                   as: attr.name,
                   required: false,
+                  separate: true,
                 });
               }
             } else {
@@ -169,6 +170,7 @@ export class QueryService {
                 model: targetModel,
                 as: attr.name,
                 required: false,
+                separate: true,
               };
               if (nestedIncludes.length > 0) {
                 includeItem.include = nestedIncludes;
