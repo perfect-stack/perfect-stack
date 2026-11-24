@@ -211,6 +211,7 @@ export class Template {
   noItemsHtml: string; // Html displayed when no items
   navigation?: TemplateNavigationType;
   route?: string;
+  displayOnly?: boolean;
 }
 
 export enum TemplateNavigationType {

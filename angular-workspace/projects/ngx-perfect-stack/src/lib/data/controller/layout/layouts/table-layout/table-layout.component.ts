@@ -91,9 +91,14 @@ export class TableLayoutComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  private updateTable(): void {
-    this.mode = this.mode ? this.mode : this.ctx?.mode;
+  get effectiveMode(): string | null {
+    if (this.template?.displayOnly) {
+      return 'view';
+    }
+    return this.mode ? this.mode : (this.ctx?.mode ?? null);
+  }
 
+  private updateTable(): void {
     if (!this.relationshipProperty && this.template?.binding) {
       this.relationshipProperty = this.template.binding;
     }
@@ -162,8 +167,8 @@ export class TableLayoutComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onAddRow() {
-    if(this.mode === 'edit') {
-      const formGroup = this.formGroupService.createFormGroup(this.mode, this.template.metaEntityName, this.metaPageMap, this.metaEntityMap, null);
+    if(this.effectiveMode === 'edit') {
+      const formGroup = this.formGroupService.createFormGroup(this.effectiveMode, this.template.metaEntityName, this.metaPageMap, this.metaEntityMap, null);
       if(this.attributes) {
         console.log('onAddRow()');
         this.attributes.push(formGroup);
@@ -213,7 +218,7 @@ export class TableLayoutComponent implements OnInit, OnChanges, OnDestroy {
 
   onDeleteRow(i: number) {
     console.log(`delete row: ${i}`);
-    if(this.attributes) {
+    if(this.effectiveMode === 'edit' && this.attributes) {
       this.attributes.removeAt(i);
       this.cdr.markForCheck();
       this.cdr.detectChanges();

@@ -212,6 +212,7 @@ export const TemplatePropertyList = [
   { name: 'noItemsHtml', type: PropertyType.string},
   { name: 'navigation', type: PropertyType.string, options: TemplateNavigationType},
   { name: 'route', type: PropertyType.string},
+  { name: 'displayOnly', type: PropertyType.boolean},
 ];
 
 // Cell Properties

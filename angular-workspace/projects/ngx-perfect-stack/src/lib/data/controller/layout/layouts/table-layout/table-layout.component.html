@@ -3,7 +3,7 @@
 }
 
 @if (cells$ | async; as cells) {
-  @if (cells && attributes && (attributes.length > 0 || mode === 'edit')) {
+  @if (cells && attributes && (attributes.length > 0 || effectiveMode === 'edit')) {
     @if (hasResultsSummary()) {
       <div class="results-summary" [attr.data-testid]="'results-summary'">
         {{formGroup.controls['resultsSummary'].value}}
@@ -17,7 +17,7 @@
               <th>
                 @if (nextCell.attribute) {
                   {{nextCell.attribute.label}}
-                  @if (mode === 'edit' && nextCell.attribute.visibility === 'Required' && attributes.length > 0) {
+                  @if (effectiveMode === 'edit' && nextCell.attribute.visibility === 'Required' && attributes.length > 0) {
                     <span class="text-danger">*</span>
                   }
                 }
@@ -26,7 +26,7 @@
                 }
               </th>
             }
-            @if (mode === 'edit') {
+            @if (effectiveMode === 'edit') {
               <th>
                 <!-- This is an empty th element to act as a header for the delete action below -->
               </th>
@@ -40,11 +40,11 @@
             @for (nextCell of cells[0]; track nextCell) {
               <td [ngStyle]="{'width': getCellWidth(nextCell) }">
                 @if (nextCell.attribute || nextCell.tool) {
-                  <lib-cell [mode]="mode" [ctx]="ctx" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!" [idSuffix]="getRowIdSuffix(i)"></lib-cell>
+                  <lib-cell [mode]="effectiveMode" [ctx]="ctx" [cell]="nextCell" [formGroup]="getFormGroupForRow(i)!" [idSuffix]="getRowIdSuffix(i)"></lib-cell>
                 }
               </td>
             }
-            @if (mode === 'edit') {
+            @if (effectiveMode === 'edit') {
               <td>
                 <span class="btn-icon text-primary material-symbols-outlined" (click)="onDeleteRow(i)" [attr.data-testid]="'btn-delete-row-' + i">delete</span>
               </td>
@@ -54,7 +54,7 @@
       </tbody>
     </table>
   }
-  @if (mode !== 'edit' && cells && attributes && attributes.length == 0) {
+  @if (effectiveMode !== 'edit' && cells && attributes && attributes.length == 0) {
     <div class="no-items-container" [attr.data-testid]="'no-items-container'">
       <div class="d-flex justify-content-center no-items-icon">
         <span class="material-symbols-outlined no-items-icon">manage_search</span>
@@ -64,7 +64,7 @@
       </div>
     </div>
   }
-  @if (mode === 'edit' && attributes) {
+  @if (effectiveMode === 'edit' && attributes) {
     <div class="d-flex">
       <a class="text-primary" (click)="onAddRow()" id="addRowBtn" [attr.data-testid]="'btn-add-row'" role="button">
         <span class="material-symbols-outlined icon-filled align-middle">add_circle</span>

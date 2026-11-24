@@ -303,6 +303,7 @@ export class Template {
   navigation?: TemplateNavigationType;
   route?: string;
   visible?: boolean; // Dynamically display/hide this template (true by default)
+  displayOnly?: boolean; // When true, renders the template in view-only mode even on edit pages
 }
 
 export enum TemplateShowSideHeadingsType {

@@ -85,6 +85,13 @@ export class LayoutComponent implements OnInit, OnChanges {
 
   hasBottomLocations = false;
 
+  get effectiveMode(): string | null {
+    if (this.template?.displayOnly) {
+      return 'view';
+    }
+    return this.mode ? this.mode : (this.ctx?.mode ?? null);
+  }
+
   get effectiveFormGroup(): UntypedFormGroup | null {
     if (this.ctx && this.ctx.formMap && this.template?.binding && this.ctx.formMap.has(this.template.binding)) {
       return this.ctx.formMap.get(this.template.binding) as UntypedFormGroup;
@@ -113,7 +120,6 @@ export class LayoutComponent implements OnInit, OnChanges {
     }
 
     if(this.ctx) {
-      this.mode = this.mode ? this.mode : this.ctx.mode;
       if (this.template?.metaEntityName) {
         this.metaEntity = this.ctx.metaEntityMap?.get(this.template.metaEntityName) as MetaEntity;
       }

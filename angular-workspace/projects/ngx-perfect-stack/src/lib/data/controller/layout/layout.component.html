@@ -3,10 +3,10 @@
 }
 @if (ctx && template) {
   <div [ngClass]="template.styles">
-    @if (showTemplateHeadings && template.templateHeading && mode) {
+    @if (showTemplateHeadings && template.templateHeading && effectiveMode) {
       <div class="border-bottom py-4 px-2">
         <div class="panel-heading">
-          <lib-expression-control [mode]="mode" [formMap]="ctx.formMap" [expression]="template.templateHeading"></lib-expression-control>
+          <lib-expression-control [mode]="effectiveMode" [formMap]="ctx.formMap" [expression]="template.templateHeading"></lib-expression-control>
         </div>
       </div>
     }
@@ -27,7 +27,7 @@
           [ctx]="ctx"
           [metaEntity]="metaEntity"
           [template]="template"
-          [mode]="mode"
+          [mode]="effectiveMode"
           [formGroup]="effectiveFormGroup!"
           [idSuffix]="idSuffix ?? undefined">
         </lib-form-layout>
@@ -36,7 +36,7 @@
         <lib-table-layout
           [ctx]="ctx"
           [template]="template"
-          [mode]="mode"
+          [mode]="effectiveMode"
           [formGroup]="effectiveFormGroup!"
           [relationshipProperty]="relationshipProperty"
           [idSuffix]="idSuffix ?? undefined">
@@ -46,7 +46,7 @@
         <lib-ordered-table-layout
           [ctx]="ctx"
           [template]="template"
-          [mode]="mode"
+          [mode]="effectiveMode"
           [formGroup]="effectiveFormGroup!"
           [relationshipProperty]="relationshipProperty"
           [idSuffix]="idSuffix ?? undefined">
@@ -55,7 +55,7 @@
       @case ('card') {
         <lib-card-layout
           [ctx]="ctx"
-          [mode]="mode"
+          [mode]="effectiveMode"
           [formGroup]="effectiveFormGroup!"
           [relationshipProperty]="relationshipProperty">
         </lib-card-layout>
@@ -64,7 +64,7 @@
         <lib-form-list-layout
           [ctx]="ctx"
           [template]="template"
-          [mode]="mode"
+          [mode]="effectiveMode"
           [formGroup]="effectiveFormGroup!"
           [relationshipProperty]="relationshipProperty"
           [idSuffix]="idSuffix ?? undefined">
