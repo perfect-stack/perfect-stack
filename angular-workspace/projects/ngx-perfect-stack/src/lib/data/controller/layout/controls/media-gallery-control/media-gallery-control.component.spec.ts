@@ -1,6 +1,7 @@
 import '@angular/localize/init';
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MediaGalleryControlComponent } from './media-gallery-control.component';
+import { GalleryItem, MediaGalleryControlComponent } from './media-gallery-control.component';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { STACK_CONFIG } from '../../../../../ngx-perfect-stack-config';
@@ -13,6 +14,16 @@ import { MediaDataProvider, MediaPageQuery } from '../media-data-provider';
 import { of } from 'rxjs';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+
+@Component({
+  selector: 'lib-test-media-card-footer',
+  template: `<div class="test-footer-content">{{ item?.id }} - {{ mode }}</div>`,
+  standalone: true,
+})
+class TestCardFooterComponent {
+  @Input() item?: GalleryItem;
+  @Input() mode?: string | null;
+}
 
 class MockCustomMediaProvider implements MediaDataProvider {
   lastQuery: MediaPageQuery | null = null;
@@ -43,7 +54,7 @@ describe('MediaGalleryControlComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [MediaGalleryControlComponent],
-      imports: [NgbPaginationModule],
+      imports: [NgbPaginationModule, TestCardFooterComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -116,5 +127,26 @@ describe('MediaGalleryControlComponent', () => {
     component.loadPage(3);
 
     expect(mockCustomProvider.lastQuery).toEqual({ pageNumber: 3, pageSize: 4 });
+  });
+
+  it('should render custom cardFooterComponent when supplied on cell.componentData', () => {
+    component.mode = 'view';
+    component.cell = {
+      width: '12',
+      height: '4',
+      media_cols: '2',
+      media_rows: '2',
+      dataProvider: 'CustomTestMediaProvider',
+      componentData: {
+        cardFooterComponent: TestCardFooterComponent,
+      } as any,
+    };
+
+    fixture.detectChanges();
+
+    const footers = fixture.nativeElement.querySelectorAll('.test-footer-content');
+    expect(footers.length).toBe(2);
+    expect(footers[0].textContent).toContain('item-1 - view');
+    expect(footers[1].textContent).toContain('item-2 - view');
   });
 });

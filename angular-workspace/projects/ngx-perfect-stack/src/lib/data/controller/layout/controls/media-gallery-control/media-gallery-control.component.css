@@ -43,3 +43,8 @@
   background-color: #f8f9fa;
   border-top: 1px solid #e9ecef;
 }
+
+.gallery-card-footer {
+  font-size: 0.8rem;
+  background-color: #ffffff;
+}

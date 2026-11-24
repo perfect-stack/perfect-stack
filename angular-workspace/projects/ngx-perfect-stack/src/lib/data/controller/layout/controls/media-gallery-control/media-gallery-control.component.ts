@@ -8,7 +8,9 @@ import {
   OnDestroy,
   OnInit,
   Optional,
-  SimpleChanges
+  reflectComponentType,
+  SimpleChanges,
+  Type
 } from '@angular/core';
 import { CellAttribute } from '../../../../../meta/page/meta-page-service/meta-page.service';
 import { ControlValueAccessor, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
@@ -41,6 +43,7 @@ export interface GalleryItem {
   hasError: boolean;
   index: number;
   data?: any;
+  footerInputs?: Record<string, any>;
 }
 
 @Component({
@@ -200,6 +203,38 @@ export class MediaGalleryControlComponent implements OnInit, OnChanges, OnDestro
     return Math.min(this.startIndex + this.pageSize, this.totalItems);
   }
 
+  get cardFooterComponent(): Type<any> | null {
+    return (this.cell?.componentData as any)?.cardFooterComponent ?? null;
+  }
+
+  private buildFooterInputs(galleryItem: GalleryItem): Record<string, any> {
+    const footerComponent = this.cardFooterComponent;
+    if (!footerComponent) {
+      return {};
+    }
+
+    const candidateInputs: Record<string, any> = {
+      item: galleryItem,
+      ctx: this.ctx ?? null,
+      cell: this.cell,
+      mode: this.mode ?? null,
+    };
+
+    const mirror = reflectComponentType(footerComponent);
+    if (!mirror) {
+      return candidateInputs;
+    }
+
+    const declaredInputs = new Set(mirror.inputs.map(input => input.templateName));
+    const filteredInputs: Record<string, any> = {};
+    for (const [key, value] of Object.entries(candidateInputs)) {
+      if (declaredInputs.has(key)) {
+        filteredInputs[key] = value;
+      }
+    }
+    return filteredInputs;
+  }
+
   get gridTemplateColumns(): string {
     return `repeat(${this.cols}, minmax(0, 1fr))`;
   }
@@ -237,7 +272,7 @@ export class MediaGalleryControlComponent implements OnInit, OnChanges, OnDestro
 
         this.pageItems = items.map((item, i) => {
           const pathOrUrl = item.path || item.url || '';
-          return {
+          const galleryItem: GalleryItem = {
             id: item.id,
             path: pathOrUrl,
             comments: item.comments,
@@ -248,6 +283,8 @@ export class MediaGalleryControlComponent implements OnInit, OnChanges, OnDestro
             index: start + i,
             data: item.data
           };
+          galleryItem.footerInputs = this.buildFooterInputs(galleryItem);
+          return galleryItem;
         });
 
         this.pageItems.forEach((galleryItem, idx) => {

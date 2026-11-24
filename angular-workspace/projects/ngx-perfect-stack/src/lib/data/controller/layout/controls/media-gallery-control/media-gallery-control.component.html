@@ -28,6 +28,11 @@
               {{ item.comments }}
             </div>
           }
+          @if (cardFooterComponent) {
+            <div class="gallery-card-footer border-top mt-auto" [attr.data-testid]="'gallery-item-footer-' + item.index">
+              <ng-container *ngComponentOutlet="cardFooterComponent; inputs: item.footerInputs"></ng-container>
+            </div>
+          }
         </div>
       }
     </div>

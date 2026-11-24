@@ -32,6 +32,13 @@ export interface MediaPageResult {
   totalCount: number;
 }
 
+export interface MediaCardFooterInputs {
+  item: MediaItem;
+  ctx: FormContext | null;
+  cell: CellAttribute;
+  mode: string | null;
+}
+
 /**
  * Interface that downstream applications can implement to supply
  * data and resolve URLs for media UI controls.

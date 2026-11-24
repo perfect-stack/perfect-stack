@@ -73,6 +73,10 @@ export class SelectTwoComponentData implements ComponentData {
   optionsMap?: Record<string, string | string[]>;
 }
 
+export class MediaGalleryComponentData implements ComponentData {
+  cardFooterComponent?: any;
+}
+
 export enum TemplateType {
   header = 'header',
   form = 'form',
