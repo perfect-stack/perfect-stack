@@ -27,7 +27,11 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/ngx-perfect-stack/src/test.ts",
+            "builderMode": "application",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "projects/ngx-perfect-stack/tsconfig.spec.json",
             "karmaConfig": "projects/ngx-perfect-stack/karma.conf.js"
           }

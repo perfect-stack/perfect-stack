@@ -19,12 +19,12 @@ import { Router } from '@angular/router';
 import { DateTimeFormatter, ZoneId, ZonedDateTime } from '@js-joda/core';
 import { Locale } from '@js-joda/locale_en';
 import '@js-joda/timezone';
-import { distinctUntilChanged, map, Subject, Subscription, takeUntil } from 'rxjs';
+import { catchError, distinctUntilChanged, forkJoin, map, of, Subject, Subscription, takeUntil } from 'rxjs';
 
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import type { ResourceHandle } from '@arcgis/core/core/Handles';
 import Graphic from '@arcgis/core/Graphic';
-import Map from '@arcgis/core/Map';
+import EsriMap from '@arcgis/core/Map';
 import Point from '@arcgis/core/geometry/Point';
 import Polygon from '@arcgis/core/geometry/Polygon';
 import Polyline from '@arcgis/core/geometry/Polyline';
@@ -33,6 +33,7 @@ import * as webMercatorUtils from '@arcgis/core/geometry/support/webMercatorUtil
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 import TileLayer from '@arcgis/core/layers/TileLayer';
+import PictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import SimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
 import SimpleLineSymbol from '@arcgis/core/symbols/SimpleLineSymbol';
 import SimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
@@ -41,10 +42,12 @@ import Expand from '@arcgis/core/widgets/Expand';
 import MapView from '@arcgis/core/views/MapView';
 import Sketch from '@arcgis/core/widgets/Sketch';
 
+import { MetaAttribute, MetaEntity } from '../../../../../domain/meta.entity';
 import { MapReferenceLayer, MapTool } from '../../../../../domain/meta.page';
 import { NgxPerfectStackConfig, STACK_CONFIG } from '../../../../../ngx-perfect-stack-config';
 import { PropertySheetService } from '../../../../../template/property-sheet/property-sheet.service';
-import { FormContext } from '../../../../data-edit/form-service/form.service';
+import { FormContext, FormControlWithAttribute } from '../../../../data-edit/form-service/form.service';
+import { TypeaheadService } from '../../controls/many-to-one-control/typeahead.service';
 import { MapAttributionService } from './map-attribution.service';
 import {
   MapDrawTool,
@@ -65,6 +68,41 @@ export const WORLD_TOPO_MAP_SERVICE_URL =
   'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer';
 export const WORLD_IMAGERY_MAP_SERVICE_URL =
   'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer';
+
+export const OCCURRENCE_SPIDERFY_LIMIT = 10;
+export const CLUSTER_PILL_COLOR = '#4f46e5';
+export const CLUSTER_PILL_ACTIVE_COLOR = '#ff2dc0';
+
+export interface ClusterPopoverItem {
+  index: number;
+  displayIndex: number;
+  label: string;
+  taxonId: string | null;
+  taxonName: string;
+  recordNumber: string;
+  dateLabel: string;
+  statusLabel: string;
+}
+
+export interface ClusterSpeciesGroup {
+  taxonId: string | null;
+  taxonName: string;
+  count: number;
+  indices: number[];
+}
+
+export interface ClusterPopoverState {
+  clusterKey: string;
+  totalCount: number;
+  indices: number[];
+  items: ClusterPopoverItem[];
+  speciesGroups: ClusterSpeciesGroup[];
+  activeTab: 'species' | 'items';
+  selectedTaxonFilter: string | null;
+  filterText: string;
+  visibleLimit: number;
+  isLoadingTaxa: boolean;
+}
 
 interface OccurrenceAnchor {
   index: number;
@@ -94,7 +132,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     return this.height || '300px';
   }
 
-  private lastItemsRef: any[] | null = null;
+  private static readonly EMPTY_ITEMS: any[] = [];
+  private lastItemsRef: any[] | null = MapToolComponent.EMPTY_ITEMS;
   private lastOccurrenceCount = -1;
 
   @Input()
@@ -140,18 +179,22 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
 
   mapView?: MapView;
   graphicsLayer?: GraphicsLayer;
+  leaderGraphicsLayer?: GraphicsLayer;
   eventGraphicsLayer?: GraphicsLayer;
   occurrenceGraphicsLayer?: GraphicsLayer;
   activeEditLayer?: GraphicsLayer;
   tileLayer?: TileLayer;
   topoLayer?: TileLayer;
   satelliteLayer?: TileLayer;
-  map?: Map;
+  map?: EsriMap;
   sketch?: Sketch;
 
   hasMarker = false;
   hasEventLayerData = false;
   occurrenceCount = 0;
+  hasCollapsedClusters = false;
+  highlightedIndex: number | null = null;
+  clusterPopover: ClusterPopoverState | null = null;
 
   private hasInitializedView = false;
   private isInternalMapUpdate = false;
@@ -163,7 +206,10 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
 
   private occurrenceAnchors: OccurrenceAnchor[] = [];
   private occurrenceBadgeGraphics: Graphic[] = [];
+  private leaderGraphics: Graphic[] = [];
+  private eventAnchorPoint: Point | null = null;
   private viewStationaryHandle?: ResourceHandle;
+  private readonly typeaheadLabelCache = new Map<string, string>();
 
   geometryControl?: AbstractControl;
   centerpointControl?: AbstractControl;
@@ -174,6 +220,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
 
   private formSub?: Subscription;
   private occSub?: Subscription;
+  private clusterLookupSub?: Subscription;
   private attributionHandle?: ResourceHandle;
   private globalClickListener?: (event: MouseEvent) => void;
   private destroy$ = new Subject<void>();
@@ -188,6 +235,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     @Optional() @Inject(STACK_CONFIG) protected readonly stackConfig?: NgxPerfectStackConfig,
     @Optional() public readonly mapCoordinator?: MapEditCoordinatorService,
     @Optional() protected readonly mapPreferences?: MapPreferencesService,
+    @Optional() protected readonly typeaheadService?: TypeaheadService,
   ) {
     if (this.mapCoordinator) {
       effect(() => {
@@ -365,6 +413,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     }
     this.formSub?.unsubscribe();
     this.occSub?.unsubscribe();
+    this.clusterLookupSub?.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
     if (this.globalClickListener) {
@@ -406,6 +455,10 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
   @HostListener('window:keydown', ['$event'])
   onWindowKeyDown(event: KeyboardEvent): void {
     if (event.key !== 'Escape' || this.editorMode) {
+      return;
+    }
+    if (this.clusterPopover) {
+      this.closeClusterPopover();
       return;
     }
     if (this.isCssFullscreen) {
@@ -557,10 +610,12 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       this.mapView = undefined;
     }
     this.map = undefined;
+    this.leaderGraphicsLayer = undefined;
     this.eventGraphicsLayer = undefined;
     this.occurrenceGraphicsLayer = undefined;
     this.activeEditLayer = undefined;
     this.graphicsLayer = undefined;
+    this.leaderGraphics = [];
     this.occurrenceBadgeGraphics = [];
     this.occurrenceAnchors = [];
     this.isViewReadyForViewportSync = false;
@@ -616,7 +671,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       }
     }
 
-    return [];
+    return MapToolComponent.EMPTY_ITEMS;
   }
 
   static resolveProperty(obj: any, path: string | undefined): any {
@@ -1245,15 +1300,17 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       visible: this.activeBasemap === 'satellite',
     });
 
+    this.leaderGraphicsLayer = new GraphicsLayer({ id: 'leader-graphics-layer' });
     this.eventGraphicsLayer = new GraphicsLayer({ id: 'event-graphics-layer' });
     this.occurrenceGraphicsLayer = new GraphicsLayer({ id: 'occurrence-graphics-layer' });
     this.activeEditLayer = new GraphicsLayer({ id: 'active-edit-layer' });
     this.graphicsLayer = this.eventGraphicsLayer;
 
-    this.map = new Map({
+    this.map = new EsriMap({
       layers: [
         this.topoLayer,
         this.satelliteLayer,
+        this.leaderGraphicsLayer,
         this.eventGraphicsLayer,
         this.occurrenceGraphicsLayer,
         this.activeEditLayer,
@@ -2337,10 +2394,14 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       return;
     }
 
+    this.leaderGraphicsLayer?.removeAll();
     this.eventGraphicsLayer.removeAll();
     this.occurrenceGraphicsLayer.removeAll();
+    this.leaderGraphics = [];
     this.occurrenceBadgeGraphics = [];
     this.occurrenceAnchors = [];
+    this.eventAnchorPoint = null;
+    this.hasCollapsedClusters = false;
     this.hasMarker = false;
     this.hasEventLayerData = false;
 
@@ -2349,7 +2410,12 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     const hoveredTarget = this.mapCoordinator?.hoveredTarget() ?? null;
     const isEditing = editPhase !== 'idle' && !!activeTarget;
 
+    if (isEditing && this.clusterPopover) {
+      this.clusterPopover = null;
+    }
+
     const allExtentGraphics: Graphic[] = [];
+    const seenOccurrenceExtentCoords = new Set<string>();
 
     // 1. Render Parent Event / Location Layer (Teal underlay)
     const locForm = this.getLocationForm();
@@ -2385,6 +2451,14 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       this.hasEventLayerData = true;
       const esriEventGeom = this.geoJsonToEsriGeometry(eventGeo);
       if (esriEventGeom) {
+        if (esriEventGeom.type === 'point') {
+          this.eventAnchorPoint = esriEventGeom as Point;
+        } else if (eventCp && eventCp.type === 'Point') {
+          const cpPt = this.geoJsonToEsriGeometry(eventCp);
+          if (cpPt && cpPt.type === 'point') {
+            this.eventAnchorPoint = cpPt as Point;
+          }
+        }
         const isEventHighlighted =
           (activeTarget?.kind === 'event' && editPhase !== 'idle') ||
           hoveredTarget?.kind === 'event';
@@ -2401,6 +2475,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       if (esriCp) {
         this.hasMarker = true;
         this.hasEventLayerData = true;
+        this.eventAnchorPoint = esriCp as Point;
         this.addEventCenterpointPin(esriCp as Point, false, allExtentGraphics);
       }
     }
@@ -2549,7 +2624,11 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
             labelText,
             isHighlighted: isOccActive || isOccHovered,
           });
-          allExtentGraphics.push(new Graphic({ geometry: anchorPoint }));
+          const coordKey = this.getCoordinateBucketKey(anchorPoint);
+          if (!seenOccurrenceExtentCoords.has(coordKey)) {
+            seenOccurrenceExtentCoords.add(coordKey);
+            allExtentGraphics.push(new Graphic({ geometry: anchorPoint }));
+          }
         }
       }
 
@@ -2560,6 +2639,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       this.hasInitializedView = true;
       this.zoomToGraphics(allExtentGraphics);
     }
+
+    this.cdr.markForCheck();
   }
 
   private addEventGraphics(
@@ -2686,13 +2767,144 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     extentCollector.push(circle);
   }
 
+  private getCoordinateBucketKey(pt: Point): string {
+    const wkid = pt.spatialReference?.wkid ?? this.mapWkid;
+    const isGeographic = !!pt.spatialReference?.isGeographic || wkid === 4326;
+    const xKey = isGeographic ? pt.x.toFixed(6) : pt.x.toFixed(3);
+    const yKey = isGeographic ? pt.y.toFixed(6) : pt.y.toFixed(3);
+    return `${wkid}:${xKey}:${yKey}`;
+  }
+
+  private getClusterPillDimensions(label: string): { widthPx: number; heightPx: number } {
+    return {
+      widthPx: Math.max(40, Math.ceil(label.length * 8.5 + 18)),
+      heightPx: 28,
+    };
+  }
+
+  private buildClusterPillSymbol(label: string, isActive: boolean): PictureMarkerSymbol {
+    const fillColor = isActive ? CLUSTER_PILL_ACTIVE_COLOR : CLUSTER_PILL_COLOR;
+    const { widthPx, heightPx } = this.getClusterPillDimensions(label);
+    const rx = (heightPx - 3) / 2;
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${widthPx}" height="${heightPx}" viewBox="0 0 ${widthPx} ${heightPx}">` +
+      `<rect x="1.5" y="1.5" width="${widthPx - 3}" height="${heightPx - 3}" rx="${rx}" ry="${rx}" fill="${fillColor}" stroke="#ffffff" stroke-width="2"/>` +
+      `</svg>`;
+    return new PictureMarkerSymbol({
+      url: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`,
+      width: `${widthPx}px`,
+      height: `${heightPx}px`,
+    });
+  }
+
+  private addClusterLeaderLine(
+    fromPt: Point,
+    toPt: Point,
+    attributes: Record<string, any>,
+  ): void {
+    const targetLayer = this.leaderGraphicsLayer ?? this.occurrenceGraphicsLayer;
+    if (!targetLayer) {
+      return;
+    }
+    const leader = new Graphic({
+      geometry: new Polyline({
+        paths: [
+          [
+            [fromPt.x, fromPt.y],
+            [toPt.x, toPt.y],
+          ],
+        ],
+        spatialReference: fromPt.spatialReference ?? this.mapSpatialReference,
+      }),
+      symbol: new SimpleLineSymbol({
+        color: '#334155',
+        width: 2,
+        style: 'short-dot',
+      }),
+      attributes,
+    });
+    this.leaderGraphics.push(leader);
+    targetLayer.add(leader);
+  }
+
+  private addCollapsedClusterPill(
+    clusterKey: string,
+    cluster: OccurrenceAnchor[],
+    pillPt: Point,
+  ): void {
+    if (!this.occurrenceGraphicsLayer) {
+      return;
+    }
+    const clusterIndices = cluster.map((a) => a.index);
+    const isActive = this.clusterPopover?.clusterKey === clusterKey;
+    const label = `x${cluster.length}`;
+    const attributes = {
+      targetKind: 'occurrenceCluster',
+      clusterKey,
+      clusterIndices,
+    };
+    const pillGraphic = new Graphic({
+      geometry: pillPt,
+      symbol: this.buildClusterPillSymbol(label, isActive),
+      attributes,
+    });
+    const textGraphic = new Graphic({
+      geometry: pillPt,
+      symbol: new TextSymbol({
+        text: label,
+        color: '#ffffff',
+        font: {
+          family: 'sans-serif',
+          size: 10,
+          weight: 'bold',
+        },
+        verticalAlignment: 'middle',
+        horizontalAlignment: 'center',
+      }),
+      attributes,
+    });
+    this.occurrenceBadgeGraphics.push(pillGraphic, textGraphic);
+    this.occurrenceGraphicsLayer.addMany([pillGraphic, textGraphic]);
+  }
+
+  private renderFallbackBucket(bucketKey: string, anchors: OccurrenceAnchor[]): void {
+    if (anchors.length > OCCURRENCE_SPIDERFY_LIMIT) {
+      this.hasCollapsedClusters = true;
+      this.addCollapsedClusterPill(bucketKey, anchors, anchors[0].point);
+      const highlighted = anchors.filter(
+        (a) => a.isHighlighted || a.index === this.highlightedIndex,
+      );
+      for (const h of highlighted) {
+        this.addBadgeAtPoint(
+          {
+            ...h,
+            isHighlighted: true,
+            badgeColor: CLUSTER_PILL_ACTIVE_COLOR,
+          },
+          h.point,
+        );
+      }
+      return;
+    }
+
+    for (const anchor of anchors) {
+      this.addBadgeAtPoint(anchor, anchor.point);
+    }
+  }
+
   /**
-   * Renders Occurrence #1..#N circle badges and deconflicts closely clustered markers
-   * within <= 18px screen space using radial fan-out with leader lines.
+   * Renders Occurrence #1..#N circle badges and deconflicts closely clustered markers.
+   * Screen-space clusters with <= OCCURRENCE_SPIDERFY_LIMIT (10) items fan out radially;
+   * clusters with > 10 items collapse into an indigo xN rounded pill with active/hovered pop-out.
    */
   private updateOccurrenceBadges(): void {
     if (!this.occurrenceGraphicsLayer) {
       return;
+    }
+
+    if (this.leaderGraphics.length > 0) {
+      (this.leaderGraphicsLayer ?? this.occurrenceGraphicsLayer).removeMany(this.leaderGraphics);
+      this.leaderGraphics = [];
     }
 
     if (this.occurrenceBadgeGraphics.length > 0) {
@@ -2700,9 +2912,30 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       this.occurrenceBadgeGraphics = [];
     }
 
+    this.hasCollapsedClusters = false;
+
     if (this.occurrenceAnchors.length === 0) {
       return;
     }
+
+    interface CoordBucket {
+      key: string;
+      anchors: OccurrenceAnchor[];
+      repPoint: Point;
+    }
+
+    // Group exact-coordinate anchors BEFORE calling toScreen() so 500 coincident points require 1 projection.
+    const coordBucketMap = new Map<string, CoordBucket>();
+    for (const anchor of this.occurrenceAnchors) {
+      const key = this.getCoordinateBucketKey(anchor.point);
+      let bucket = coordBucketMap.get(key);
+      if (!bucket) {
+        bucket = { key, anchors: [], repPoint: anchor.point };
+        coordBucketMap.set(key, bucket);
+      }
+      bucket.anchors.push(anchor);
+    }
+    const coordBuckets = Array.from(coordBucketMap.values());
 
     const canProjectToScreen = !!(
       this.mapView &&
@@ -2712,37 +2945,43 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       typeof this.mapView.toMap === 'function'
     );
 
-    if (!canProjectToScreen || this.occurrenceAnchors.length === 1) {
-      for (const anchor of this.occurrenceAnchors) {
-        this.addBadgeAtPoint(anchor, anchor.point);
+    if (!canProjectToScreen) {
+      for (const bucket of coordBuckets) {
+        this.renderFallbackBucket(bucket.key, bucket.anchors);
       }
       return;
     }
 
-    interface ProjectedAnchor {
-      anchor: OccurrenceAnchor;
+    interface ProjectedBucket extends CoordBucket {
       sx: number;
       sy: number;
     }
 
-    const projected: ProjectedAnchor[] = [];
-    const unprojected: OccurrenceAnchor[] = [];
+    const projected: ProjectedBucket[] = [];
 
-    for (const anchor of this.occurrenceAnchors) {
+    for (const bucket of coordBuckets) {
       try {
-        const screenPt = this.mapView!.toScreen(anchor.point);
+        const screenPt = this.mapView!.toScreen(bucket.repPoint);
         if (screenPt && Number.isFinite(screenPt.x) && Number.isFinite(screenPt.y)) {
-          projected.push({ anchor, sx: screenPt.x, sy: screenPt.y });
+          projected.push({ ...bucket, sx: screenPt.x, sy: screenPt.y });
         } else {
-          unprojected.push(anchor);
+          this.renderFallbackBucket(bucket.key, bucket.anchors);
         }
       } catch {
-        unprojected.push(anchor);
+        this.renderFallbackBucket(bucket.key, bucket.anchors);
       }
     }
 
-    for (const anchor of unprojected) {
-      this.addBadgeAtPoint(anchor, anchor.point);
+    let eventScreenPt: { x: number; y: number } | null = null;
+    if (this.eventAnchorPoint) {
+      try {
+        const pt = this.mapView!.toScreen(this.eventAnchorPoint);
+        if (pt && Number.isFinite(pt.x) && Number.isFinite(pt.y)) {
+          eventScreenPt = { x: pt.x, y: pt.y };
+        }
+      } catch {
+        eventScreenPt = null;
+      }
     }
 
     const visited = new Array(projected.length).fill(false);
@@ -2751,7 +2990,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
     for (let i = 0; i < projected.length; i++) {
       if (visited[i]) continue;
       visited[i] = true;
-      const cluster: ProjectedAnchor[] = [projected[i]];
+      const groupBuckets: ProjectedBucket[] = [projected[i]];
 
       for (let j = i + 1; j < projected.length; j++) {
         if (visited[j]) continue;
@@ -2759,16 +2998,31 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
         const dy = projected[j].sy - projected[i].sy;
         if (dx * dx + dy * dy <= thresholdSq) {
           visited[j] = true;
-          cluster.push(projected[j]);
+          groupBuckets.push(projected[j]);
         }
       }
 
+      const cluster: OccurrenceAnchor[] = [];
+      for (const b of groupBuckets) {
+        cluster.push(...b.anchors);
+      }
+
       if (cluster.length === 1) {
-        this.addBadgeAtPoint(cluster[0].anchor, cluster[0].anchor.point);
-      } else {
-        const cx = cluster.reduce((sum, p) => sum + p.sx, 0) / cluster.length;
-        const cy = cluster.reduce((sum, p) => sum + p.sy, 0) / cluster.length;
-        const radiusPx = Math.max(22, cluster.length * 6);
+        this.addBadgeAtPoint(cluster[0], cluster[0].point);
+        continue;
+      }
+
+      let weightedX = 0;
+      let weightedY = 0;
+      for (const b of groupBuckets) {
+        weightedX += b.sx * b.anchors.length;
+        weightedY += b.sy * b.anchors.length;
+      }
+      const cx = weightedX / cluster.length;
+      const cy = weightedY / cluster.length;
+
+      if (cluster.length <= OCCURRENCE_SPIDERFY_LIMIT) {
+        const radiusPx = Math.max(40, cluster.length * 6);
 
         for (let k = 0; k < cluster.length; k++) {
           const item = cluster[k];
@@ -2778,33 +3032,92 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
           const fannedMapPt = this.mapView!.toMap({ x: fx, y: fy });
 
           if (fannedMapPt) {
-            const leader = new Graphic({
-              geometry: new Polyline({
-                paths: [
-                  [
-                    [item.anchor.point.x, item.anchor.point.y],
-                    [fannedMapPt.x, fannedMapPt.y],
-                  ],
-                ],
-                spatialReference: this.mapSpatialReference,
-              }),
-              symbol: new SimpleLineSymbol({
-                color: '#334155',
-                width: 1.5,
-                style: 'short-dot',
-              }),
-              attributes: {
-                targetKind: 'occurrence',
-                occurrenceIndex: item.anchor.index,
-              },
+            this.addClusterLeaderLine(item.point, fannedMapPt, {
+              targetKind: 'occurrence',
+              occurrenceIndex: item.index,
             });
-            this.occurrenceBadgeGraphics.push(leader);
-            this.occurrenceGraphicsLayer.add(leader);
-            this.addBadgeAtPoint(item.anchor, fannedMapPt);
+            this.addBadgeAtPoint(item, fannedMapPt);
           } else {
-            this.addBadgeAtPoint(item.anchor, item.anchor.point);
+            this.addBadgeAtPoint(item, item.point);
           }
         }
+        continue;
+      }
+
+      // Collapsed rounded pill mode (> OCCURRENCE_SPIDERFY_LIMIT)
+      this.hasCollapsedClusters = true;
+      const clusterKey =
+        groupBuckets.length === 1
+          ? groupBuckets[0].key
+          : groupBuckets
+              .map((b) => b.key)
+              .sort()
+              .join('|');
+
+      const tooCloseToEvent =
+        !!eventScreenPt && Math.hypot(cx - eventScreenPt.x, cy - eventScreenPt.y) < 22;
+
+      let pillScreenX = cx;
+      let pillScreenY = cy;
+      let pillPoint = groupBuckets[0].repPoint;
+      let wasOffsetFromEvent = false;
+
+      if (tooCloseToEvent) {
+        const { widthPx } = this.getClusterPillDimensions(`x${cluster.length}`);
+        pillScreenX = cx + 28 + Math.round(widthPx / 4);
+        pillScreenY = cy - 28;
+        const offsetMapPt = this.mapView!.toMap({ x: pillScreenX, y: pillScreenY });
+        if (offsetMapPt) {
+          pillPoint = offsetMapPt;
+          wasOffsetFromEvent = true;
+          this.addClusterLeaderLine(groupBuckets[0].repPoint, pillPoint, {
+            targetKind: 'occurrenceCluster',
+            clusterKey,
+            clusterIndices: cluster.map((a) => a.index),
+          });
+        } else {
+          pillScreenX = cx;
+          pillScreenY = cy;
+        }
+      } else if (groupBuckets.length > 1) {
+        const centerMapPt = this.mapView!.toMap({ x: cx, y: cy });
+        if (centerMapPt) {
+          pillPoint = centerMapPt;
+        }
+      }
+
+      this.addCollapsedClusterPill(clusterKey, cluster, pillPoint);
+
+      // Keep active or hovered item(s) popped out on top in magenta so selection stays visible
+      const highlighted = cluster.filter(
+        (a) => a.isHighlighted || a.index === this.highlightedIndex,
+      );
+      for (let hi = 0; hi < highlighted.length; hi++) {
+        const h = highlighted[hi];
+        const baseAngle = wasOffsetFromEvent ? (5 * Math.PI) / 4 : -Math.PI / 4;
+        const angle = baseAngle + hi * (Math.PI / 4);
+        const offsetDist = wasOffsetFromEvent ? 54 : 60;
+        const originX = wasOffsetFromEvent ? cx : pillScreenX;
+        const originY = wasOffsetFromEvent ? cy : pillScreenY;
+        const popSx = originX + offsetDist * Math.cos(angle);
+        const popSy = originY + offsetDist * Math.sin(angle);
+        const popPt = this.mapView!.toMap({ x: popSx, y: popSy }) ?? h.point;
+
+        if (popPt !== h.point) {
+          this.addClusterLeaderLine(h.point, popPt, {
+            targetKind: 'occurrence',
+            occurrenceIndex: h.index,
+          });
+        }
+
+        this.addBadgeAtPoint(
+          {
+            ...h,
+            isHighlighted: true,
+            badgeColor: CLUSTER_PILL_ACTIVE_COLOR,
+          },
+          popPt,
+        );
       }
     }
   }
@@ -2839,7 +3152,7 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
         color: '#ffffff',
         font: {
           family: 'sans-serif',
-          size: anchor.labelText.length > 2 ? 9 : 11,
+          size: !anchor.isHighlighted && anchor.labelText.length > 2 ? 9 : 10,
           weight: 'bold',
         },
         verticalAlignment: 'middle',
@@ -3087,7 +3400,8 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       return;
     }
 
-    // Bidirectional focus: clicking an Occurrence graphic/#N badge or Event graphic highlights and scrolls to its form section
+    // Bidirectional focus: clicking an Occurrence graphic/#N badge or Event graphic highlights and scrolls to its form section;
+    // clicking a collapsed xN cluster pill opens the cluster summary popover without triggering page scroll.
     const focusLayers = [
       this.occurrenceGraphicsLayer,
       this.eventGraphicsLayer,
@@ -3104,8 +3418,28 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
                 typeof r.graphic.attributes.occurrenceIndex === 'number',
             );
             if (occHit) {
+              this.highlightedIndex = occHit.graphic.attributes.occurrenceIndex;
               this.mapCoordinator?.focusCard(occHit.graphic.attributes.occurrenceIndex);
+              this.updateOccurrenceBadges();
+              this.cdr.markForCheck();
               return;
+            }
+            const clusterHit = hitResp?.results?.find(
+              (r: any) =>
+                r.type === 'graphic' &&
+                r.graphic?.attributes?.targetKind === 'occurrenceCluster' &&
+                Array.isArray(r.graphic.attributes.clusterIndices),
+            );
+            if (clusterHit) {
+              const attrs = clusterHit.graphic.attributes;
+              this.openClusterPopover(
+                String(attrs.clusterKey || 'cluster'),
+                attrs.clusterIndices,
+              );
+              return;
+            }
+            if (this.clusterPopover) {
+              this.closeClusterPopover();
             }
             const eventHit = hitResp?.results?.find(
               (r: any) =>
@@ -3125,7 +3459,498 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
       return;
     }
 
+    if (this.clusterPopover) {
+      this.closeClusterPopover();
+    }
     this.hitTestReferenceLayers(event);
+  }
+
+  // --- Cluster Popover State & Lookup ---
+
+  openClusterPopover(clusterKey: string, indices: number[]): void {
+    this.clusterLookupSub?.unsubscribe();
+    this.clusterLookupSub = undefined;
+
+    if (this.clusterPopover?.clusterKey === clusterKey) {
+      this.closeClusterPopover();
+      return;
+    }
+
+    const occArray = this.resolveOccurrencesArray();
+    const sortedIndices = [...indices].sort((a, b) => a - b);
+
+    let ownerMetaEntity: MetaEntity | null = null;
+    let labelMetaAttribute: MetaAttribute | null = null;
+    let targetName = 'Taxon';
+    const missingIds: string[] = [];
+
+    const items: ClusterPopoverItem[] = sortedIndices.map((idx) => {
+      const occForm = occArray?.at(idx) as UntypedFormGroup | undefined;
+      const resolved = this.extractClusterItemSummary(occForm, idx);
+      if (resolved.ownerMetaEntity && !ownerMetaEntity) {
+        ownerMetaEntity = resolved.ownerMetaEntity;
+      }
+      if (resolved.metaAttribute && !labelMetaAttribute) {
+        labelMetaAttribute = resolved.metaAttribute;
+        targetName = resolved.targetName;
+      }
+      if (resolved.needsLookup && resolved.taxonId) {
+        missingIds.push(resolved.taxonId);
+      }
+      return resolved.item;
+    });
+
+    const speciesGroups = this.buildClusterSpeciesGroups(items);
+    const canResolveAsync =
+      missingIds.length > 0 &&
+      !!this.typeaheadService &&
+      !!ownerMetaEntity &&
+      !!labelMetaAttribute;
+
+    const finalItems = canResolveAsync
+      ? items
+      : items.map((row) =>
+          row.taxonName === 'Loading...'
+            ? {
+                ...row,
+                taxonName: row.taxonId ? `ID: ${row.taxonId.slice(0, 8)}` : 'Unidentified taxon',
+                label: row.recordNumber || `Occurrence #${row.displayIndex}`,
+              }
+            : row,
+        );
+
+    this.clusterPopover = {
+      clusterKey,
+      totalCount: finalItems.length,
+      indices: sortedIndices,
+      items: finalItems,
+      speciesGroups: canResolveAsync
+        ? speciesGroups
+        : this.buildClusterSpeciesGroups(finalItems),
+      activeTab: 'species',
+      selectedTaxonFilter: null,
+      filterText: '',
+      visibleLimit: 100,
+      isLoadingTaxa: canResolveAsync,
+    };
+
+    this.updateOccurrenceBadges();
+    this.cdr.markForCheck();
+
+    if (canResolveAsync && ownerMetaEntity && labelMetaAttribute) {
+      this.batchResolveTaxonNames(
+        clusterKey,
+        targetName,
+        ownerMetaEntity,
+        labelMetaAttribute,
+        missingIds,
+      );
+    }
+  }
+
+  closeClusterPopover(): void {
+    this.clusterLookupSub?.unsubscribe();
+    this.clusterLookupSub = undefined;
+    if (!this.clusterPopover) {
+      return;
+    }
+    this.clusterPopover = null;
+    if (this.highlightedIndex !== null) {
+      this.highlightedIndex = null;
+      this.mapCoordinator?.setHoveredTarget(null);
+    }
+    this.updateOccurrenceBadges();
+    this.cdr.markForCheck();
+  }
+
+  setClusterPopoverTab(tab: 'species' | 'items'): void {
+    if (!this.clusterPopover) {
+      return;
+    }
+    this.clusterPopover = {
+      ...this.clusterPopover,
+      activeTab: tab,
+    };
+    this.cdr.markForCheck();
+  }
+
+  setClusterPopoverFilter(text: string): void {
+    if (!this.clusterPopover) {
+      return;
+    }
+    this.clusterPopover = {
+      ...this.clusterPopover,
+      filterText: text,
+      visibleLimit: 100,
+    };
+    this.cdr.markForCheck();
+  }
+
+  clearClusterTaxonFilter(): void {
+    if (!this.clusterPopover) {
+      return;
+    }
+    this.clusterPopover = {
+      ...this.clusterPopover,
+      selectedTaxonFilter: null,
+      visibleLimit: 100,
+    };
+    this.cdr.markForCheck();
+  }
+
+  onClusterPopoverSelectSpecies(group: ClusterSpeciesGroup): void {
+    if (!this.clusterPopover) {
+      return;
+    }
+    this.clusterPopover = {
+      ...this.clusterPopover,
+      activeTab: 'items',
+      selectedTaxonFilter: group.taxonName,
+      visibleLimit: 100,
+    };
+    this.cdr.markForCheck();
+  }
+
+  onClusterPopoverHoverItem(index: number | null): void {
+    if (this.highlightedIndex === index) {
+      return;
+    }
+    this.highlightedIndex = index;
+    this.mapCoordinator?.setHoveredTarget(
+      index !== null ? { kind: 'occurrence', index } : null,
+    );
+    this.updateOccurrenceBadges();
+    this.cdr.markForCheck();
+  }
+
+  onClusterPopoverSelectItem(item: ClusterPopoverItem): void {
+    this.highlightedIndex = item.index;
+    this.mapCoordinator?.setHoveredTarget({ kind: 'occurrence', index: item.index });
+    this.mapCoordinator?.focusCard(item.index);
+    this.updateOccurrenceBadges();
+    this.cdr.markForCheck();
+  }
+
+  showMoreClusterItems(): void {
+    if (!this.clusterPopover) {
+      return;
+    }
+    this.clusterPopover = {
+      ...this.clusterPopover,
+      visibleLimit: this.clusterPopover.visibleLimit + 100,
+    };
+    this.cdr.markForCheck();
+  }
+
+  getFilteredClusterItems(): ClusterPopoverItem[] {
+    if (!this.clusterPopover) {
+      return [];
+    }
+    let list = this.clusterPopover.items;
+    if (this.clusterPopover.selectedTaxonFilter) {
+      const targetTaxon = this.clusterPopover.selectedTaxonFilter;
+      list = list.filter((item) => item.taxonName === targetTaxon);
+    }
+    const q = this.clusterPopover.filterText.trim().toLowerCase();
+    if (q) {
+      list = list.filter(
+        (item) =>
+          `#${item.displayIndex}`.includes(q) ||
+          item.taxonName.toLowerCase().includes(q) ||
+          item.recordNumber.toLowerCase().includes(q) ||
+          item.dateLabel.toLowerCase().includes(q) ||
+          item.statusLabel.toLowerCase().includes(q),
+      );
+    }
+    return list;
+  }
+
+  getVisibleClusterItems(): ClusterPopoverItem[] {
+    if (!this.clusterPopover) {
+      return [];
+    }
+    return this.getFilteredClusterItems().slice(0, this.clusterPopover.visibleLimit);
+  }
+
+  private extractClusterItemSummary(
+    occForm: UntypedFormGroup | undefined,
+    idx: number,
+  ): {
+    item: ClusterPopoverItem;
+    taxonId: string | null;
+    needsLookup: boolean;
+    targetName: string;
+    ownerMetaEntity: MetaEntity | null;
+    metaAttribute: MetaAttribute | null;
+  } {
+    const displayIndex = idx + 1;
+    const rawVal = occForm?.value || {};
+    const recordNumber = String(
+      occForm?.get('record_number')?.value ??
+        occForm?.get('field_number')?.value ??
+        occForm?.get('organism_id')?.value ??
+        rawVal?.record_number ??
+        '',
+    ).trim();
+    const rawDate =
+      occForm?.get('occurrence_date')?.value ??
+      occForm?.get('event_begin_date')?.value ??
+      occForm?.get('date')?.value ??
+      rawVal?.occurrence_date;
+    const dateLabel = rawDate ? this.formatDate(rawDate) : '';
+    const statusLabel = String(
+      occForm?.get('occurrence_status')?.value ??
+        occForm?.get('status')?.value ??
+        rawVal?.occurrence_status ??
+        '',
+    ).trim();
+
+    const { control, attribute, targetName } = this.resolveManyToOneLabelControl(occForm);
+    const ownerMetaEntity = this.resolveOccurrenceOwnerMetaEntity(occForm, attribute);
+
+    let taxonId: string | null = null;
+    let taxonName = '';
+    let needsLookup = false;
+
+    const nestedObj =
+      (occForm?.get('taxon')?.value && typeof occForm.get('taxon')?.value === 'object'
+        ? occForm.get('taxon')?.value
+        : null) ||
+      (occForm?.get('species')?.value && typeof occForm.get('species')?.value === 'object'
+        ? occForm.get('species')?.value
+        : null) ||
+      (control?.value && typeof control.value === 'object' ? control.value : null);
+
+    if (nestedObj) {
+      taxonId = nestedObj.id ? String(nestedObj.id) : null;
+      taxonName = String(
+        nestedObj.canonical_name ||
+          nestedObj.common_name ||
+          nestedObj.displayText ||
+          nestedObj.name ||
+          nestedObj.label ||
+          '',
+      ).trim();
+    }
+
+    if (!taxonId && typeof control?.value === 'string' && control.value.trim()) {
+      taxonId = control.value.trim();
+    } else if (!taxonId && typeof rawVal?.taxon_id === 'string' && rawVal.taxon_id.trim()) {
+      taxonId = rawVal.taxon_id.trim();
+    } else if (!taxonId && typeof rawVal?.species_id === 'string' && rawVal.species_id.trim()) {
+      taxonId = rawVal.species_id.trim();
+    }
+
+    if (!taxonName && taxonId) {
+      const cached = this.typeaheadLabelCache.get(`${targetName}:${taxonId}`);
+      if (cached) {
+        taxonName = cached;
+      } else {
+        taxonName = 'Loading...';
+        needsLookup = true;
+      }
+    }
+
+    if (!taxonName) {
+      taxonName = 'Unidentified taxon';
+    }
+
+    return {
+      item: {
+        index: idx,
+        displayIndex,
+        label: taxonName,
+        taxonId,
+        taxonName,
+        recordNumber,
+        dateLabel,
+        statusLabel,
+      },
+      taxonId,
+      needsLookup,
+      targetName,
+      ownerMetaEntity,
+      metaAttribute: attribute,
+    };
+  }
+
+  private resolveManyToOneLabelControl(occForm: UntypedFormGroup | undefined): {
+    control: AbstractControl | null;
+    attribute: MetaAttribute | null;
+    targetName: string;
+  } {
+    if (!occForm?.controls) {
+      return { control: null, attribute: null, targetName: 'Taxon' };
+    }
+
+    const candidates: { name: string; ctrl: AbstractControl; attr: MetaAttribute; score: number }[] = [];
+
+    for (const [name, ctrl] of Object.entries(occForm.controls)) {
+      const attr = (ctrl as FormControlWithAttribute)?.attribute;
+      if (attr?.relationshipTarget) {
+        const target = attr.relationshipTarget;
+        let score = 0;
+        if (/^(taxon|species)$/i.test(target) || /^(taxon|species)$/i.test(attr.name)) {
+          score += 100;
+        } else if (!/^(location|job|site|user)$/i.test(target)) {
+          score += 20;
+        }
+        if (Array.isArray(attr.typeaheadSearch) && attr.typeaheadSearch.length > 0) {
+          score += 10;
+        }
+        candidates.push({ name, ctrl, attr, score });
+      }
+    }
+
+    if (candidates.length > 0) {
+      candidates.sort((a, b) => b.score - a.score);
+      const best = candidates[0];
+      return {
+        control: best.ctrl,
+        attribute: best.attr,
+        targetName: best.attr.relationshipTarget || 'Taxon',
+      };
+    }
+
+    for (const fallbackName of ['taxon_id', 'species_id', 'taxon', 'species']) {
+      const ctrl = occForm.get(fallbackName);
+      if (ctrl) {
+        return {
+          control: ctrl,
+          attribute: ((ctrl as FormControlWithAttribute).attribute as MetaAttribute) ?? null,
+          targetName: 'Taxon',
+        };
+      }
+    }
+
+    return { control: null, attribute: null, targetName: 'Taxon' };
+  }
+
+  private resolveOccurrenceOwnerMetaEntity(
+    occForm: UntypedFormGroup | undefined,
+    metaAttribute: MetaAttribute | null,
+  ): MetaEntity | null {
+    const formMeta = (occForm as any)?.metaEntity as MetaEntity | undefined;
+    if (formMeta?.name) {
+      return formMeta;
+    }
+    const occArray = this.resolveOccurrencesArray();
+    const arrayTargetName = (occArray as any)?.attribute?.relationshipTarget as string | undefined;
+    if (arrayTargetName && this.ctx?.metaEntityMap?.get(arrayTargetName)) {
+      return this.ctx.metaEntityMap.get(arrayTargetName) ?? null;
+    }
+    const bindingName = this.mapTool?.occurrencesBinding?.trim() || 'occurrences';
+    const parentAttr = this.ctx?.metaEntity?.attributes?.find((a) => a.name === bindingName);
+    if (parentAttr?.relationshipTarget && this.ctx?.metaEntityMap?.get(parentAttr.relationshipTarget)) {
+      return this.ctx.metaEntityMap.get(parentAttr.relationshipTarget) ?? null;
+    }
+    if (metaAttribute && this.ctx?.metaEntityMap) {
+      for (const entity of this.ctx.metaEntityMap.values()) {
+        if (
+          entity.attributes?.some(
+            (a) =>
+              a === metaAttribute ||
+              (a.name === metaAttribute.name &&
+                a.relationshipTarget === metaAttribute.relationshipTarget),
+          )
+        ) {
+          return entity;
+        }
+      }
+    }
+    return null;
+  }
+
+  private buildClusterSpeciesGroups(items: ClusterPopoverItem[]): ClusterSpeciesGroup[] {
+    const mapByTaxon = new Map<string, ClusterSpeciesGroup>();
+    for (const item of items) {
+      const groupKey = `${item.taxonId ?? ''}::${item.taxonName}`;
+      let group = mapByTaxon.get(groupKey);
+      if (!group) {
+        group = {
+          taxonId: item.taxonId,
+          taxonName: item.taxonName,
+          count: 0,
+          indices: [],
+        };
+        mapByTaxon.set(groupKey, group);
+      }
+      group.count++;
+      group.indices.push(item.index);
+    }
+    return Array.from(mapByTaxon.values()).sort(
+      (a, b) => b.count - a.count || a.taxonName.localeCompare(b.taxonName),
+    );
+  }
+
+  private batchResolveTaxonNames(
+    clusterKey: string,
+    targetName: string,
+    ownerMetaEntity: MetaEntity,
+    manyToOneAttr: MetaAttribute,
+    missingIds: string[],
+  ): void {
+    if (!this.typeaheadService || missingIds.length === 0) {
+      return;
+    }
+    const uniqueIds = Array.from(new Set(missingIds));
+    const chunkSize = 20; // NestJS TypeaheadService limits queries to 20 rows
+    const chunks: string[][] = [];
+    for (let i = 0; i < uniqueIds.length; i += chunkSize) {
+      chunks.push(uniqueIds.slice(i, i + chunkSize));
+    }
+
+    this.clusterLookupSub = forkJoin(
+      chunks.map((chunk) =>
+        this.typeaheadService!
+          .searchByIdList(chunk, ownerMetaEntity, manyToOneAttr)
+          .pipe(catchError(() => of([]))),
+      ),
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((responses) => {
+        for (const list of responses) {
+          for (const item of list || []) {
+            if (item?.id) {
+              const label =
+                item.displayText ||
+                (item as any).name ||
+                (item as any).canonical_name ||
+                String(item.id);
+              this.typeaheadLabelCache.set(`${targetName}:${item.id}`, label);
+            }
+          }
+        }
+
+        if (!this.clusterPopover || this.clusterPopover.clusterKey !== clusterKey) {
+          return;
+        }
+
+        const updatedItems = this.clusterPopover.items.map((row) => {
+          if (!row.taxonId) {
+            return row;
+          }
+          const resolved = this.typeaheadLabelCache.get(`${targetName}:${row.taxonId}`);
+          if (resolved) {
+            return {
+              ...row,
+              taxonName: resolved,
+              label: resolved,
+            };
+          }
+          return row.taxonName === 'Loading...'
+            ? { ...row, taxonName: `ID: ${row.taxonId.slice(0, 8)}`, label: `ID: ${row.taxonId.slice(0, 8)}` }
+            : row;
+        });
+
+        this.clusterPopover = {
+          ...this.clusterPopover,
+          items: updatedItems,
+          speciesGroups: this.buildClusterSpeciesGroups(updatedItems),
+          isLoadingTaxa: false,
+        };
+        this.cdr.markForCheck();
+      });
   }
 
   private hitTestReferenceLayers(event: any): void {
@@ -3202,14 +4027,18 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
 
   renderMultipleGeometries(items: any[], zoomToExtent = true): void {
     if (!this.eventGraphicsLayer || !items || items.length === 0) {
+      this.leaderGraphicsLayer?.removeAll();
       this.eventGraphicsLayer?.removeAll();
       this.occurrenceGraphicsLayer?.removeAll();
+      this.leaderGraphics = [];
       this.hasMarker = false;
       return;
     }
 
+    this.leaderGraphicsLayer?.removeAll();
     this.eventGraphicsLayer.removeAll();
     this.occurrenceGraphicsLayer?.removeAll();
+    this.leaderGraphics = [];
     this.hasMarker = false;
 
     const geomAttr = this.mapTool?.geometry || 'geometry';
@@ -3481,8 +4310,9 @@ export class MapToolComponent implements OnInit, AfterViewInit, OnDestroy, DoChe
         ...(layerConfig.renderer ? { renderer: layerConfig.renderer } : {}),
       });
 
-      if (this.eventGraphicsLayer) {
-        const idx = this.map.layers.indexOf(this.eventGraphicsLayer);
+      const anchorLayer = this.leaderGraphicsLayer || this.eventGraphicsLayer;
+      if (anchorLayer) {
+        const idx = this.map.layers.indexOf(anchorLayer);
         if (idx >= 0) {
           this.map.layers.add(featureLayer, idx);
         } else {

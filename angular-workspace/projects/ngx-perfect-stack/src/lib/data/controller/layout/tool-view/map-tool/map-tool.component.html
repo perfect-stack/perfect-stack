@@ -189,6 +189,145 @@
       </div>
     }
 
+    <!-- Cluster Summary & Item Picker Popover (Option B) -->
+    @if (clusterPopover) {
+      <div
+        class="cluster-popover shadow"
+        data-testid="cluster-popover"
+        role="dialog"
+        aria-label="Clustered occurrences">
+        <div class="cluster-popover-header">
+          <div class="cluster-popover-title">
+            <span class="cluster-count-badge">x{{ clusterPopover.totalCount }}</span>
+            <span>Occurrences at this location</span>
+          </div>
+          <button
+            type="button"
+            class="cluster-popover-close"
+            data-testid="cluster-popover-close"
+            aria-label="Close cluster list"
+            (click)="closeClusterPopover()">
+            &times;
+          </button>
+        </div>
+
+        <div class="cluster-popover-tabs" role="tablist">
+          <button
+            type="button"
+            class="cluster-tab-btn"
+            role="tab"
+            data-testid="cluster-tab-species"
+            [class.active]="clusterPopover.activeTab === 'species'"
+            [attr.aria-selected]="clusterPopover.activeTab === 'species'"
+            (click)="setClusterPopoverTab('species')">
+            By Taxon ({{ clusterPopover.speciesGroups.length }})
+          </button>
+          <button
+            type="button"
+            class="cluster-tab-btn"
+            role="tab"
+            data-testid="cluster-tab-items"
+            [class.active]="clusterPopover.activeTab === 'items'"
+            [attr.aria-selected]="clusterPopover.activeTab === 'items'"
+            (click)="setClusterPopoverTab('items')">
+            All Occurrences ({{ clusterPopover.totalCount }})
+          </button>
+        </div>
+
+        @if (clusterPopover.isLoadingTaxa) {
+          <div class="cluster-popover-loading" data-testid="cluster-popover-loading">
+            Loading taxon names...
+          </div>
+        }
+
+        @if (clusterPopover.activeTab === 'species') {
+          <div class="cluster-popover-body" data-testid="cluster-species-list">
+            @for (group of clusterPopover.speciesGroups; track group.taxonName + ':' + (group.taxonId || '')) {
+              <button
+                type="button"
+                class="cluster-row-btn"
+                data-testid="cluster-species-row"
+                (click)="onClusterPopoverSelectSpecies(group)">
+                <span class="cluster-row-label">{{ group.taxonName }}</span>
+                <span class="cluster-row-count">{{ group.count }}</span>
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="cluster-popover-filter">
+            <input
+              type="search"
+              class="cluster-filter-input"
+              data-testid="cluster-filter-input"
+              placeholder="Filter by # or taxon or record..."
+              [value]="clusterPopover.filterText"
+              (input)="setClusterPopoverFilter($any($event.target).value)" />
+            @if (clusterPopover.selectedTaxonFilter) {
+              <div class="cluster-active-chip">
+                <span class="chip-text" [title]="clusterPopover.selectedTaxonFilter">
+                  {{ clusterPopover.selectedTaxonFilter }}
+                </span>
+                <button
+                  type="button"
+                  class="chip-clear-btn"
+                  data-testid="cluster-clear-taxon-filter"
+                  aria-label="Clear taxon filter"
+                  (click)="clearClusterTaxonFilter()">
+                  &times;
+                </button>
+              </div>
+            }
+          </div>
+
+          <div class="cluster-popover-body" data-testid="cluster-items-list">
+            @let filteredItems = getFilteredClusterItems();
+            @let visibleItems = getVisibleClusterItems();
+            @if (visibleItems.length === 0) {
+              <div class="cluster-popover-empty">No matching occurrences.</div>
+            } @else {
+              @for (item of visibleItems; track item.index) {
+                <button
+                  type="button"
+                  class="cluster-item-btn"
+                  data-testid="cluster-item-row"
+                  [class.is-highlighted]="item.index === highlightedIndex"
+                  (mouseenter)="onClusterPopoverHoverItem(item.index)"
+                  (mouseleave)="onClusterPopoverHoverItem(null)"
+                  (click)="onClusterPopoverSelectItem(item)">
+                  <span class="cluster-item-badge">#{{ item.displayIndex }}</span>
+                  <span class="cluster-item-main">
+                    <span class="cluster-item-name">{{ item.taxonName }}</span>
+                    @if (item.recordNumber || item.dateLabel || item.statusLabel) {
+                      <span class="cluster-item-meta">
+                        @if (item.recordNumber) {
+                          <span>{{ item.recordNumber }}</span>
+                        }
+                        @if (item.dateLabel) {
+                          <span>{{ item.dateLabel }}</span>
+                        }
+                        @if (item.statusLabel) {
+                          <span>{{ item.statusLabel }}</span>
+                        }
+                      </span>
+                    }
+                  </span>
+                </button>
+              }
+              @if (filteredItems.length > visibleItems.length) {
+                <button
+                  type="button"
+                  class="cluster-show-more-btn"
+                  data-testid="cluster-show-more-btn"
+                  (click)="showMoreClusterItems()">
+                  Show more ({{ filteredItems.length - visibleItems.length }} remaining)
+                </button>
+              }
+            }
+          </div>
+        }
+      </div>
+    }
+
     <!-- Basemap & Coordinate System Indicator (bottom-left) -->
     <div class="basemap-toggle-container shadow-sm" [attr.data-testid]="'basemap-toggle'">
       <div class="btn-group btn-group-sm" role="group" aria-label="Basemap switcher">
@@ -226,6 +365,11 @@
         @if (occurrenceCount > 0) {
           <span class="legend-item">
             <span class="legend-dot legend-occurrence"></span>Occurrence #
+          </span>
+        }
+        @if (hasCollapsedClusters) {
+          <span class="legend-item" data-testid="legend-cluster-item">
+            <span class="legend-pill">xN</span>Cluster
           </span>
         }
         @if (mapCoordinator?.editPhase() !== 'idle') {
