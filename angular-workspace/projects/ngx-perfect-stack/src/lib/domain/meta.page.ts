@@ -294,6 +294,7 @@ export class Template {
 
   styles: string; // CSS style classes
   action?: string; // Optional custom action trigger (e.g. for formList)
+  pageSize?: number; // Optional client-side page size (e.g. for formList)
 
   // for table templates
   customQuery?: string; // for when we need to call for complex custom queries

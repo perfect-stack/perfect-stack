@@ -19,3 +19,7 @@
   border-color: #f59e0b !important;
   box-shadow: 0 0 0 0.15rem rgba(245, 158, 11, 0.25) !important;
 }
+
+.form-list-pagination ::ng-deep .pagination {
+  margin-bottom: 0;
+}

@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, Optional } from '@angular/core';
-import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChanges } from '@angular/core';
+import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { MetaPage, Template } from '../../../../../domain/meta.page';
 import { MetaEntity } from '../../../../../domain/meta.entity';
@@ -17,7 +17,7 @@ import { MapEditCoordinatorService } from '../../tool-view/map-tool/map-edit-coo
   styleUrls: ['./form-list-layout.component.css'],
   standalone: false,
 })
-export class FormListLayoutComponent implements OnInit, OnDestroy {
+export class FormListLayoutComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
   mode: string | null;
 
@@ -40,8 +40,11 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
   metaEntityMap: Map<string, MetaEntity>;
   metaPageMap: Map<string, MetaPage>;
   highlightedIndex: number | null = null;
+  currentPage = 1;
 
   private readonly fetchingTemplateIds = new Set<string>();
+  private readonly rowTrackIds = new WeakMap<AbstractControl, number>();
+  private nextTrackId = 1;
   private formArraySub?: Subscription;
   private readonly destroy$ = new Subject<void>();
 
@@ -90,6 +93,10 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
 
     if (this.isOccurrencesList() && this.mapCoordinator) {
       this.mapCoordinator.focusCard$.pipe(takeUntil(this.destroy$)).subscribe((idx) => {
+        if (this.goToPageForIndex(idx)) {
+          this.cdr.markForCheck();
+          this.cdr.detectChanges();
+        }
         const cardEl = this.elementRef.nativeElement.querySelector(`#occurrence-card-${idx}`) as HTMLElement | null;
         if (cardEl) {
           this.mapCoordinator!.scrollElementIntoViewBelowMap(cardEl);
@@ -106,12 +113,28 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
     }
 
     this.subscribeToFormArray();
+    this.clampCurrentPage();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const formGroupChanged = changes['formGroup'] && !changes['formGroup'].firstChange;
+    const relPropChanged = changes['relationshipProperty'] && !changes['relationshipProperty'].firstChange;
+
+    if (formGroupChanged || relPropChanged) {
+      this.currentPage = 1;
+      this.subscribeToFormArray();
+    }
+
+    if (changes['template'] && !changes['template'].firstChange) {
+      this.clampCurrentPage();
+    }
   }
 
   private subscribeToFormArray(): void {
     this.formArraySub?.unsubscribe();
     if (this.attributes) {
       this.formArraySub = this.attributes.valueChanges.subscribe(() => {
+        this.clampCurrentPage();
         this.cdr.markForCheck();
         this.cdr.detectChanges();
       });
@@ -122,6 +145,118 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
     this.formArraySub?.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  get effectivePageSize(): number | null {
+    const raw = Number(this.template?.pageSize);
+    return Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : null;
+  }
+
+  get totalCount(): number {
+    return this.attributes ? this.attributes.length : 0;
+  }
+
+  get isPaginated(): boolean {
+    return this.effectivePageSize !== null;
+  }
+
+  get totalPages(): number {
+    const pageSize = this.effectivePageSize;
+    if (!pageSize || this.totalCount <= 0) {
+      return 1;
+    }
+    return Math.ceil(this.totalCount / pageSize);
+  }
+
+  get showPagination(): boolean {
+    const pageSize = this.effectivePageSize;
+    return pageSize !== null && this.totalCount > pageSize;
+  }
+
+  get clampedPage(): number {
+    const maxPage = this.totalPages;
+    if (this.currentPage < 1) {
+      return 1;
+    }
+    if (this.currentPage > maxPage) {
+      return maxPage;
+    }
+    return this.currentPage;
+  }
+
+  get pageStartIndex(): number {
+    const pageSize = this.effectivePageSize;
+    if (!pageSize || this.totalCount === 0) {
+      return 0;
+    }
+    return (this.clampedPage - 1) * pageSize;
+  }
+
+  get pageEndIndex(): number {
+    const pageSize = this.effectivePageSize;
+    if (!pageSize) {
+      return this.totalCount;
+    }
+    return Math.min(this.pageStartIndex + pageSize, this.totalCount);
+  }
+
+  get visibleControls(): AbstractControl[] {
+    const attrs = this.attributes;
+    if (!attrs) {
+      return [];
+    }
+    const pageSize = this.effectivePageSize;
+    if (!pageSize) {
+      return attrs.controls;
+    }
+    return attrs.controls.slice(this.pageStartIndex, this.pageEndIndex);
+  }
+
+  getRowTrackId(row: AbstractControl): number {
+    let id = this.rowTrackIds.get(row);
+    if (id === undefined) {
+      id = this.nextTrackId++;
+      this.rowTrackIds.set(row, id);
+    }
+    return id;
+  }
+
+  onPageChange(page: number, scrollToTop = false): void {
+    this.currentPage = page;
+    this.clampCurrentPage();
+    this.cdr.markForCheck();
+    this.cdr.detectChanges();
+
+    if (scrollToTop) {
+      const container = this.elementRef.nativeElement.querySelector('.form-list-container') as HTMLElement | null;
+      if (container) {
+        if (this.mapCoordinator) {
+          this.mapCoordinator.scrollElementIntoViewBelowMap(container);
+        } else if (typeof container.scrollIntoView === 'function') {
+          container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+  }
+
+  private clampCurrentPage(): void {
+    const clamped = this.clampedPage;
+    if (this.currentPage !== clamped) {
+      this.currentPage = clamped;
+    }
+  }
+
+  private goToPageForIndex(idx: number): boolean {
+    const pageSize = this.effectivePageSize;
+    if (!pageSize || idx < 0 || idx >= this.totalCount) {
+      return false;
+    }
+    const targetPage = Math.floor(idx / pageSize) + 1;
+    if (this.currentPage !== targetPage) {
+      this.currentPage = targetPage;
+      return true;
+    }
+    return false;
   }
 
   isOccurrencesList(): boolean {
@@ -229,6 +364,9 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
             template: this.template,
             cdr: this.cdr,
             onComplete: () => {
+              if (this.effectivePageSize) {
+                this.currentPage = this.totalPages;
+              }
               this.cdr.markForCheck();
               this.cdr.detectChanges();
             },
@@ -245,6 +383,9 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
         null,
       );
       this.attributes.push(newRowForm);
+      if (this.effectivePageSize) {
+        this.currentPage = this.totalPages;
+      }
       this.cdr.markForCheck();
       this.cdr.detectChanges();
     }
@@ -253,6 +394,7 @@ export class FormListLayoutComponent implements OnInit, OnDestroy {
   onDeleteRow(idx: number): void {
     if (this.mode === 'edit' && this.attributes) {
       this.attributes.removeAt(idx);
+      this.clampCurrentPage();
       this.cdr.markForCheck();
       this.cdr.detectChanges();
     }

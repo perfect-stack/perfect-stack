@@ -213,6 +213,7 @@ export const TemplatePropertyList = [
   { name: 'navigation', type: PropertyType.string, options: TemplateNavigationType},
   { name: 'route', type: PropertyType.string},
   { name: 'displayOnly', type: PropertyType.boolean},
+  { name: 'pageSize', type: PropertyType.number},
 ];
 
 // Cell Properties
